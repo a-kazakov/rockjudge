@@ -1,0 +1,15 @@
+<h1>Welcome to RockJudge!</h1>
+{% for comp in competitions %}
+  <h2>{{ comp.name }}</h2>
+  {% for inner in comp.inners %}
+    <h3>{{ inner.name }}</h3>
+    {% for round in inner.rounds %}
+      <h4>{{ round.name }}</h4>
+      <b>Finalized:</b> {{ round.finalized }}<br>
+      <b>Participants:</b><br>
+      {% for run in round.runs %}
+        {{ run.participant.name }}: {{ run.total_score }}<br>
+      {% end %}
+    {% end %}
+  {% end %}
+{% end %}

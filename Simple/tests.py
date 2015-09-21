@@ -33,7 +33,6 @@ class SimplerTests(RockTestCase):
         f = self.fixture
         f.rq.init()
         self.assertEqual(f.ic.get_current_round(), f.rq)
-        f.ic.get_current_round().init()
         for pn in range(10):
             pr = f.ic.get_current_round().get_participant_run(f.p[pn])
             pr.set_judge_score(f.j1, (10 - pn) * 2)

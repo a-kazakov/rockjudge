@@ -32,7 +32,7 @@ class Round(peewee.Model):
         except self.DoesNotExist:
             return Participant.select()
         table = sorted([
-            (run.get_total_score(), run.participant)
+            (run.total_score, run.participant)
             for run in prev_round.runs
         ], key=lambda x: -x[0])
         participants_advances = [x[1] for x in table[:self.num_participants]]
@@ -65,17 +65,18 @@ class InnerCompetition(peewee.Model):
         database = Database.instance().db
 
     name = peewee.CharField()
-    competition = peewee.ForeignKeyField(Competition)
+    competition = peewee.ForeignKeyField(Competition, related_name="inners")
     first_round = peewee.ForeignKeyField(Round, null=True)
 
-    def get_all_rounds(self):
+    @property
+    def rounds(self):
         round = self.first_round
         while round is not None:
             yield round
             round = round.next_round
 
     def get_current_round(self):
-        for round in self.get_all_rounds():
+        for round in self.rounds:
             if not round.finalized:
                 return round
         return None
@@ -92,6 +93,9 @@ class Judge(peewee.Model):
 class ParticipantRun(peewee.Model):
     class Meta:
         database = Database.instance().db
+        indexes = (
+            (("participant", "round"), True),
+        )
 
     participant = peewee.ForeignKeyField(Participant)
     round = peewee.ForeignKeyField(Round, related_name="runs")
@@ -108,7 +112,8 @@ class ParticipantRun(peewee.Model):
         judge_score_obj.score = score
         judge_score_obj.save()
 
-    def get_total_score(self):
+    @property
+    def total_score(self):
         return sum([js.score for js in self.scores])
 
 
