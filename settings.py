@@ -12,8 +12,7 @@ DB_CONFIG = {
 }
 
 APPS = [
-    "Global",
-    "Tournament",
+    "Simple",
 ]
 
 

@@ -32,13 +32,13 @@ class Commands:
 
     @staticmethod
     def setup():
-        ModelManager.reset("base")
+        ModelManager.instance().reset("simple")
 
     @staticmethod
     def test():
         AsyncIOMainLoop().install()
         loader = unittest.TestLoader()
-        suite = loader.discover("Tournament")
+        suite = loader.discover("Simple")
         unittest.TextTestRunner().run(suite)
 
 getattr(Commands, argv[1])(*argv[2:])
