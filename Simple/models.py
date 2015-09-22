@@ -9,6 +9,11 @@ class Participant(peewee.Model):
 
     name = peewee.CharField()
 
+    def serialize(self):
+        return {
+            "name": self.name,
+        }
+
 
 class Competition(peewee.Model):
     class Meta:

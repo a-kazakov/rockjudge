@@ -1,0 +1,12 @@
+<h1>Results of round {{ round.name }}</h1>
+
+<table border="1">
+{% for row in results %}
+  <tr>
+    <td>{{ row["place"] }}</td>
+    <th>{{ row["participant"]["name"] }}</th>
+    <td>{{ row["total_score"] }}</td>
+    <td>{{ row["advances"] }}</td>
+  </tr>
+{% end %}
+</table>
