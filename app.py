@@ -24,7 +24,7 @@ class Application(tornado.web.Application):
             template_path=os.path.join(os.path.dirname(__file__), 'templates'),
             static_path=os.path.join(os.path.dirname(__file__), 'static'),
             login_url='/',
-            xsrf_cookies=True,
+            xsrf_cookies=False,
             debug=settings.DEBUG,
         )
         super().__init__(urls.handlers, **config)

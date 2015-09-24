@@ -10,3 +10,7 @@
   </tr>
 {% end %}
 </table>
+
+{% if round.next_round %}
+  <a href="/round/{{ round.next_round.id }}">Next round</a>
+{% end %}

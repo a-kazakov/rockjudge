@@ -12,3 +12,21 @@ def make_round_results(round):
         result[p]["place"] = p + 1
         result[p]["advances"] = p < advances
     return result
+
+
+def make_round_data(round):
+    return {
+        "judges": [
+            {
+                "name": judge.name,
+                "id": judge.id,
+            } for judge in round.judges
+        ],
+        "scores": [
+            {
+                "participant": run.participant.name,
+                "scores": [js.score for js in run.scores],
+                "run_id": run.id,
+            } for run in round.runs
+        ]
+    }

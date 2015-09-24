@@ -6,6 +6,7 @@ from db import Database
 class Participant(peewee.Model):
     class Meta:
         database = Database.instance().db
+        order_by = ["name"]
 
     name = peewee.CharField()
 
@@ -57,12 +58,18 @@ class Round(peewee.Model):
     def get_participant_run(self, participant):
         return self.runs.where(ParticipantRun.participant == participant).get()
 
+    @property
+    def judges(self):
+        return list(Judge.select())
+
     def init(self):
         self.create_participant_runs()
 
     def finalize(self):
         self.finalized = True
         self.save()
+        if self.next_round:
+            self.next_round.init()
 
 
 class InnerCompetition(peewee.Model):
@@ -90,10 +97,11 @@ class InnerCompetition(peewee.Model):
 class Judge(peewee.Model):
     class Meta:
         database = Database.instance().db
+        order_by = ["name"]
 
     name = peewee.CharField()
 
-# Manages automatically
+# Managed automatically
 
 class ParticipantRun(peewee.Model):
     class Meta:
@@ -101,12 +109,13 @@ class ParticipantRun(peewee.Model):
         indexes = (
             (("participant", "round"), True),
         )
+        order_by = ["participant"]
 
     participant = peewee.ForeignKeyField(Participant)
     round = peewee.ForeignKeyField(Round, related_name="runs")
 
     def create_judge_scores(self):
-        for judge in Judge.select():
+        for judge in self.round.judges:
             JudgeScore.create(
                 participant_run=self,
                 judge=judge
@@ -125,6 +134,7 @@ class ParticipantRun(peewee.Model):
 class JudgeScore(peewee.Model):
     class Meta:
         database = Database.instance().db
+        order_by = ["judge"]
 
     participant_run = peewee.ForeignKeyField(ParticipantRun, related_name="scores")
     judge = peewee.ForeignKeyField(Judge)

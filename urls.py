@@ -1,9 +1,15 @@
 from Simple.handlers import (
-    RoundResultsHandler,
-    StatusHandler
+    ApiHandler,
+    RoundControlHandler,
+    RoundFinalizeHandler,
+    RoundInitHandler,
+    StatusHandler,
 )
 
 handlers = [
-    (r"/status", StatusHandler),
-    (r"/round/(\d+)/result", RoundResultsHandler),
+    (r"/status$", StatusHandler),
+    (r"/round/(\d+)$", RoundControlHandler),
+    (r"/round/(\d+)/init$", RoundInitHandler),
+    (r"/round/(\d+)/finalize$", RoundFinalizeHandler),
+    (r"/api", ApiHandler),
 ]

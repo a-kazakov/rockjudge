@@ -40,7 +40,6 @@ class SimplerTests(RockTestCase):
             pr.set_judge_score(f.j3, (10 - pn) * 4)
         f.ic.get_current_round().finalize()
         self.assertEqual(f.ic.get_current_round(), f.rs)
-        f.ic.get_current_round().init()
         self.assertEqual(
             set([p.name for p in f.ic.get_current_round().get_participants()]),
             set([p.name for p in f.p[:6]])
@@ -52,7 +51,6 @@ class SimplerTests(RockTestCase):
             pr.set_judge_score(f.j3, (10 - pn) * 4)
         f.ic.get_current_round().finalize()
         self.assertEqual(f.ic.get_current_round(), f.rf)
-        f.ic.get_current_round().init()
         self.assertEqual(
             set([p.name for p in f.ic.get_current_round().get_participants()]),
             set([p.name for p in f.p[:3]])

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+{% autoescape None %}
+<html>
+<head>
+  <title>Round page</title>
+  <script src="/static/thirdparty/react/react.js"></script>
+  <script src="/static/thirdparty/react/JSXTransformer.js"></script>
+  <script src="/static/thirdparty/jquery/jquery.js"></script>
+  <script src="/static/js/Simple/round_table.jsx" type="text/jsx"></script>
+  <script type="text/jsx">
+    var DATA = {{ json_encode(data) }};
+    React.render(
+      <AdminTourTable data={ DATA } />,
+      document.getElementById("content")
+    );
+  </script>
+</head>
+<body>
+  <h1>Round {{ round.name }}</h1>
+
+  <div id="content"></div>
+  <a href="/round/{{ round.id }}/init">Init</a><br>
+  <a href="/round/{{ round.id }}/finalize">Finalize</a><br>
+</body>
+</html>
