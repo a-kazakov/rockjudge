@@ -30,6 +30,7 @@ class Round(peewee.Model):
     name = peewee.CharField()
     next_round = peewee.ForeignKeyField("self", null=True, related_name="prev_round")
     num_participants = peewee.IntegerField()
+    participants_per_heat = peewee.IntegerField()
     finalized = peewee.BooleanField(default=False)
 
     def estimate_participants(self):
@@ -45,12 +46,15 @@ class Round(peewee.Model):
         return participants_advances
 
     def create_participant_runs(self):
+        idx = 0
         for participant in self.estimate_participants():
             run = ParticipantRun.create(
                 participant=participant,
+                heat=(idx // self.participants_per_heat + 1),
                 round=self,
             )
             run.create_judge_scores()
+            idx += 1
 
     def get_participants(self):
         return [run.participant for run in self.runs.select()]
@@ -63,6 +67,12 @@ class Round(peewee.Model):
         return list(Judge.select())
 
     def init(self):
+        try:
+            prev_round = self.prev_round.get()
+            if not prev_round.finalized:
+                raise RuntimeError("Previous round should be finalized")
+        except self.DoesNotExist:
+            pass
         self.create_participant_runs()
 
     def finalize(self):
@@ -109,9 +119,10 @@ class ParticipantRun(peewee.Model):
         indexes = (
             (("participant", "round"), True),
         )
-        order_by = ["participant"]
+        order_by = ["heat", "participant"]
 
     participant = peewee.ForeignKeyField(Participant)
+    heat = peewee.IntegerField()
     round = peewee.ForeignKeyField(Round, related_name="runs")
 
     def create_judge_scores(self):

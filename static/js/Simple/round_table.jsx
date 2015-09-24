@@ -44,15 +44,16 @@ var AdminTourTableScoreCell = React.createClass({
 var AdminTourTableScoreRow = React.createClass({
   render: function() {
     var cells = [];
-    for (var i = 0; i < this.props.data.scores.length; ++i) {
+    for (var i = 0; i < this.props.run.scores.length; ++i) {
       cells.push(<AdminTourTableScoreCell
-        score={this.props.data.scores[i]}
+        score={this.props.run.scores[i]}
         judge_id={this.props.judge_ids[i]}
-        run_id={this.props.data.run_id} />);
+        run_id={this.props.run.run_id} />);
     }
     return (
       <tr>
-        <th>{ this.props.data.participant }</th>
+        <th>{ this.props.run.participant }</th>
+        <td>{ this.props.run.heat }</td>
         { cells }
       </tr>
     );
@@ -67,15 +68,16 @@ var AdminTourTable = React.createClass({
     judge_ids = this.props.data.judges.map(function(judge) {
       return judge.id;
     });
-    rows = this.props.data.scores.map(function(scores) {
+    rows = this.props.data.runs.map(function(run) {
       return <AdminTourTableScoreRow
-        data={scores}
+        run={run}
         judge_ids={judge_ids} />;
     });
     return (
       <table border="1">
         <tr>
           <th>Participant</th>
+          <th>Heat</th>
           { judges }
         </tr>
         { rows }

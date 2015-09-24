@@ -22,11 +22,12 @@ def make_round_data(round):
                 "id": judge.id,
             } for judge in round.judges
         ],
-        "scores": [
+        "runs": [
             {
                 "participant": run.participant.name,
                 "scores": [js.score for js in run.scores],
                 "run_id": run.id,
+                "heat": run.heat,
             } for run in round.runs
         ]
     }

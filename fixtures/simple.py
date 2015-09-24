@@ -18,9 +18,9 @@ class Fixture(RockFixture):
         # Competition
         self.comp = Competition.create(name="Test competition")
         # Rounds
-        self.rf = Round.create(name="Final", next_round=None, num_participants=3)
-        self.rs = Round.create(name="Semifinal", next_round=self.rf, num_participants=6)
-        self.rq = Round.create(name="Qualification", next_round=self.rs, num_participants=9)
+        self.rf = Round.create(name="Final", next_round=None, num_participants=3, participants_per_heat=1)
+        self.rs = Round.create(name="Semifinal", next_round=self.rf, num_participants=6, participants_per_heat=2)
+        self.rq = Round.create(name="Qualification", next_round=self.rs, num_participants=9, participants_per_heat=2)
         # Inner competition
         self.ic = InnerCompetition.create(name="Test category", first_round=self.rq, competition=self.comp)
         # Judges
