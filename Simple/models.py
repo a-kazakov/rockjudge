@@ -113,6 +113,7 @@ class Judge(peewee.Model):
 
 # Managed automatically
 
+
 class ParticipantRun(peewee.Model):
     class Meta:
         database = Database.instance().db
