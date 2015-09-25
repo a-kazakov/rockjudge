@@ -31,3 +31,10 @@ def make_round_data(round):
             } for run in round.runs
         ]
     }
+
+def make_run_data_for_tablet(run, judge):
+    return {
+        "participant": run.participant.name,
+        "score": run.get_judge_score(judge),
+        "id": run.id,
+    }

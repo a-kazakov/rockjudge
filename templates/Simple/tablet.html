@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% autoescape None %}
+
+{% block title %}
+  Round control
+{% end %}
+
+{% block scripts %}
+  <script src="/static/js/Simple/tablet.jsx" type="text/jsx;harmony=true"></script>
+  <script type="text/jsx">
+    var STATE = {{ json_encode(state) }};
+    React.render(
+      <TabletUI
+        initialState={ STATE }
+        judge_id = { {{ judge.id }} } />,
+      document.getElementById("content")
+    );
+  </script>
+{% end %}
+
+{% block body %}
+  <h1>Judge {{ judge.name }}</h1>
+  <div id="content"></div>
+{% end %}

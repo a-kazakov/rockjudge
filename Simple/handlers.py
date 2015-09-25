@@ -1,3 +1,4 @@
+import json
 import tornado.web
 
 from .models import (
@@ -10,6 +11,7 @@ from .serializers import (
     make_round_data,
     make_round_results,
 )
+from .utils import get_tablet_state
 from .websocket import WebSocketClients
 
 
@@ -56,12 +58,22 @@ class RoundFinalizeHandler(tornado.web.RequestHandler):
         round = Round.select().where(Round.id == int(round_id)).get()
         round.finalize()
         WebSocketClients.broadcast({
-            "type": "round_update",
+            "type": "status_update",
             "data": {
                 "round_id": round.id,
             }
         })
         self.redirect("/round/{}".format(round_id))
+
+
+class TabletHandler(tornado.web.RequestHandler):
+    def get(self, judge_id):
+        judge = Judge.select().where(Judge.id == judge_id).get()
+        return self.render(
+            "Simple/tablet.html",
+            judge=judge,
+            state=get_tablet_state(judge),
+        )
 
 
 class ApiHandler(tornado.web.RequestHandler):
@@ -80,10 +92,39 @@ class ApiHandler(tornado.web.RequestHandler):
                 "score": score,
             }
         })
+        return {}
+
+    def api_start_round(self):
+        round_id = self.get_argument("round")
+        round = Round.select().where(Round.id == int(round_id)).get()
+        round.start()
+        WebSocketClients.broadcast({
+            "type": "status_update",
+            "data": {},
+        })
+        return {
+            "current_heat": round.current_heat,
+        }
+
+    def api_next_heat(self):
+        round = Round.get_active()
+        round.next_heat()
+        WebSocketClients.broadcast({
+            "type": "status_update",
+            "data": {},
+        })
+        return {
+            "current_heat": round.current_heat,
+        }
+
+    def api_get_tablet_state(self):
+        judge_id = self.get_argument("judge")
+        judge = Judge.select().where(Judge.id == judge_id).get()
+        return get_tablet_state(judge)
 
     def post(self):
         method = self.get_argument("method", "")
-        getattr(self, "api_{}".format(method))()
+        self.write(json.dumps(getattr(self, "api_{}".format(method))()))
 
     def get(self):
         self.post()

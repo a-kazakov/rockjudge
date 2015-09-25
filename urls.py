@@ -4,6 +4,7 @@ from Simple.handlers import (
     RoundFinalizeHandler,
     RoundInitHandler,
     StatusHandler,
+    TabletHandler,
 )
 from Simple.websocket import WebSocketHandler
 
@@ -12,6 +13,7 @@ handlers = [
     (r"/round/(\d+)$", RoundControlHandler),
     (r"/round/(\d+)/init$", RoundInitHandler),
     (r"/round/(\d+)/finalize$", RoundFinalizeHandler),
+    (r"/tablet/(\d+)$", TabletHandler),
     (r"/api", ApiHandler),
     (r"/ws", WebSocketHandler),
 ]

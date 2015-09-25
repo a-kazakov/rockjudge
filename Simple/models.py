@@ -15,7 +15,6 @@ class Participant(peewee.Model):
             "name": self.name,
         }
 
-
 class Competition(peewee.Model):
     class Meta:
         database = Database.instance().db
@@ -32,6 +31,8 @@ class Round(peewee.Model):
     num_participants = peewee.IntegerField()
     participants_per_heat = peewee.IntegerField()
     finalized = peewee.BooleanField(default=False)
+    is_active = peewee.BooleanField(default=False)
+    current_heat = peewee.IntegerField(default=0)
 
     def estimate_participants(self):
         try:
@@ -62,6 +63,30 @@ class Round(peewee.Model):
     def get_participant_run(self, participant):
         return self.runs.where(ParticipantRun.participant == participant).get()
 
+    def get_current_heat_runs(self):
+        return self.runs.where(ParticipantRun.heat == self.current_heat)
+
+    def start(self):
+        for round in self.select().where(self.is_active == True):
+            round.stop()
+        self.is_active = True
+        self.save()
+
+    def stop(self):
+        self.is_active = False
+        self.save()
+
+    def next_heat(self):
+        self.current_heat += 1
+        self.save()
+
+    @classmethod
+    def get_active(cls):
+        try:
+            return cls.select().where(cls.is_active == True).get()
+        except cls.DoesNotExist:
+            return None
+
     @property
     def judges(self):
         return list(Judge.select())
@@ -76,6 +101,8 @@ class Round(peewee.Model):
         self.create_participant_runs()
 
     def finalize(self):
+        if self.is_active:
+            self.stop()
         self.finalized = True
         self.save()
         if self.next_round:
@@ -137,6 +164,10 @@ class ParticipantRun(peewee.Model):
         judge_score_obj = self.scores.select().where(JudgeScore.judge == judge).get()
         judge_score_obj.score = score
         judge_score_obj.save()
+
+    def get_judge_score(self, judge):
+        judge_score_obj = self.scores.select().where(JudgeScore.judge == judge).get()
+        return judge_score_obj.score
 
     @property
     def total_score(self):

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{% block title %}{% end %}</title>
+  <script src="/static/thirdparty/react/react.js"></script>
+  <script src="/static/thirdparty/react/JSXTransformer.js"></script>
+  <script src="/static/thirdparty/jquery/jquery.js"></script>
+  <script src="/static/thirdparty/reconnecting-websocket/websocket.js"></script>
+  <script src="/static/js/Simple/message_dispatcher.js"></script>
+  {% block scripts %}{% end %}
+</head>
+<body>
+  {% block body %}{% end %}
+</body>
+</html>
