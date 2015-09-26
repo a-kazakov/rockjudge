@@ -700,7 +700,7 @@ var i,
     var high = "0x" + escaped - 0x10000;
     // NaN means non-codepoint
     // Support: Firefox<24
-    // Workaround erroneous numeric interpretation of +"0x"
+    // Workatour erroneous numeric interpretation of +"0x"
     return high !== high || escapedWhitespace ?
       escaped :
       high < 0 ?
@@ -814,7 +814,7 @@ function Sizzle( selector, context, results, seed ) {
       newSelector = nodeType !== 1 && selector;
 
       // qSA works strangely on Element-rooted queries
-      // We can work around this by specifying an extra ID on the root
+      // We can work atour this by specifying an extra ID on the root
       // and working up from there (Thanks to Andrew Dupont for the technique)
       // IE 8 doesn't work on object elements
       if ( nodeType === 1 && context.nodeName.toLowerCase() !== "object" ) {
@@ -1078,7 +1078,7 @@ setDocument = Sizzle.setDocument = function( node ) {
   // Support: IE<10
   // Check if getElementById returns elements by name
   // The broken getElementById methods don't pick up programatically-set names,
-  // so use a roundabout getElementsByName test
+  // so use a tourabout getElementsByName test
   support.getById = assert(function( div ) {
     docElem.appendChild( div ).id = expando;
     return !doc.getElementsByName || !doc.getElementsByName( expando ).length;
@@ -5628,9 +5628,9 @@ function addGetHookIf( conditionFn, hookFn ) {
 
   // Support: IE9-11+
   // Style of cloned element affects source element cloned (#8908)
-  div.style.backgroundClip = "content-box";
-  div.cloneNode( true ).style.backgroundClip = "";
-  support.clearCloneStyle = div.style.backgroundClip === "content-box";
+  div.style.backgtourClip = "content-box";
+  div.cloneNode( true ).style.backgtourClip = "";
+  support.clearCloneStyle = div.style.backgtourClip === "content-box";
 
   container.style.cssText = "border:0;width:0;height:0;top:0;left:-9999px;margin-top:1px;" +
     "position:absolute";
@@ -5986,8 +5986,8 @@ jQuery.extend({
       }
 
       // Support: IE9-11+
-      // background-* props affect original clone's values
-      if ( !support.clearCloneStyle && value === "" && name.indexOf( "background" ) === 0 ) {
+      // backgtour-* props affect original clone's values
+      if ( !support.clearCloneStyle && value === "" && name.indexOf( "backgtour" ) === 0 ) {
         style[ name ] = "inherit";
       }
 
@@ -7517,7 +7517,7 @@ var rquery = (/\?/);
 
 
 // Support: Android 2.3
-// Workaround failure to string-cast null input
+// Workatour failure to string-cast null input
 jQuery.parseJSON = function( data ) {
   return JSON.parse( data + "" );
 };
@@ -8343,7 +8343,7 @@ jQuery.fn.extend({
 
     if ( this[ 0 ] ) {
 
-      // The elements to wrap the target around
+      // The elements to wrap the target atour
       wrap = jQuery( html, this[ 0 ].ownerDocument ).eq( 0 ).clone( true );
 
       if ( this[ 0 ].parentNode ) {
@@ -8770,7 +8770,7 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 
       // Save back as free
       if ( s[ callbackName ] ) {
-        // make sure that re-using the options doesn't screw things around
+        // make sure that re-using the options doesn't screw things atour
         s.jsonpCallback = originalSettings.jsonpCallback;
 
         // save the callback name for future use

@@ -3,17 +3,18 @@
 {% autoescape None %}
 
 {% block title %}
-  Round control
+  Tour control
 {% end %}
 
 {% block scripts %}
   <script src="/static/js/Simple/tablet.jsx" type="text/jsx;harmony=true"></script>
+  <script src="/static/js/scoring_systems/rosfarr_no_acro/tablet_input.jsx" type="text/jsx;harmony=true"></script>
   <script type="text/jsx">
     var STATE = {{ json_encode(state) }};
     React.render(
-      <TabletUI
+      <JudgeTablet
         initialState={ STATE }
-        judge_id = { {{ judge.id }} } />,
+        judge_id={ {{ judge.id }} } />,
       document.getElementById("content")
     );
   </script>

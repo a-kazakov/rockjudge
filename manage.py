@@ -38,7 +38,7 @@ class Commands:
     def test():
         AsyncIOMainLoop().install()
         loader = unittest.TestLoader()
-        suite = loader.discover("Simple")
+        suite = loader.discover("scoring_systems/rosfarr_no_acro")
         unittest.TextTestRunner().run(suite)
 
 getattr(Commands, argv[1])(*argv[2:])

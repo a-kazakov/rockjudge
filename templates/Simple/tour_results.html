@@ -1,0 +1,16 @@
+<h1>Results of tour {{ tour.name }}</h1>
+
+<table border="1">
+{% for row in results %}
+  <tr>
+    <td>{{ row["place"] }}</td>
+    <th>{{ row["participant"] }}</th>
+    <td>{{ row["score"] }}</td>
+    <td>{{ row["advances"] }}</td>
+  </tr>
+{% end %}
+</table>
+
+{% if tour.next_tour %}
+  <a href="/tour/{{ tour.next_tour.id }}">Next tour</a>
+{% end %}

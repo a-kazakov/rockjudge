@@ -1,3 +1,4 @@
+import json
 import peewee
 
 from db import Database
@@ -22,12 +23,12 @@ class Competition(peewee.Model):
     name = peewee.CharField()
 
 
-class Round(peewee.Model):
+class Tour(peewee.Model):
     class Meta:
         database = Database.instance().db
 
     name = peewee.CharField()
-    next_round = peewee.ForeignKeyField("self", null=True, related_name="prev_round")
+    next_tour = peewee.ForeignKeyField("self", null=True, related_name="prev_tour")
     num_participants = peewee.IntegerField()
     participants_per_heat = peewee.IntegerField()
     finalized = peewee.BooleanField(default=False)
@@ -35,24 +36,19 @@ class Round(peewee.Model):
     current_heat = peewee.IntegerField(default=0)
 
     def estimate_participants(self):
+        from scoring_systems.rosfarr_no_acro import computer
         try:
-            prev_round = self.prev_round.get()
+            prev_tour = self.prev_tour.get()
+            return computer.get_advanced_to_next_tour(prev_tour)
         except self.DoesNotExist:
             return Participant.select()
-        table = sorted([
-            (run.total_score, run.participant)
-            for run in prev_round.runs
-        ], key=lambda x: -x[0])
-        participants_advances = [x[1] for x in table[:self.num_participants]]
-        return participants_advances
 
     def create_participant_runs(self):
-        idx = 0
-        for participant in self.estimate_participants():
+        for idx, participant in enumerate(self.estimate_participants()):
             run = ParticipantRun.create(
                 participant=participant,
                 heat=(idx // self.participants_per_heat + 1),
-                round=self,
+                tour=self,
             )
             run.create_judge_scores()
             idx += 1
@@ -67,8 +63,8 @@ class Round(peewee.Model):
         return self.runs.where(ParticipantRun.heat == self.current_heat)
 
     def start(self):
-        for round in self.select().where(self.is_active == True):
-            round.stop()
+        for tour in self.select().where(self.is_active == True):
+            tour.stop()
         self.is_active = True
         self.save()
 
@@ -93,9 +89,9 @@ class Round(peewee.Model):
 
     def init(self):
         try:
-            prev_round = self.prev_round.get()
-            if not prev_round.finalized:
-                raise RuntimeError("Previous round should be finalized")
+            prev_tour = self.prev_tour.get()
+            if not prev_tour.finalized:
+                raise RuntimeError("Previous tour should be finalized")
         except self.DoesNotExist:
             pass
         self.create_participant_runs()
@@ -105,8 +101,8 @@ class Round(peewee.Model):
             self.stop()
         self.finalized = True
         self.save()
-        if self.next_round:
-            self.next_round.init()
+        if self.next_tour:
+            self.next_tour.init()
 
 
 class InnerCompetition(peewee.Model):
@@ -115,19 +111,19 @@ class InnerCompetition(peewee.Model):
 
     name = peewee.CharField()
     competition = peewee.ForeignKeyField(Competition, related_name="inners")
-    first_round = peewee.ForeignKeyField(Round, null=True)
+    first_tour = peewee.ForeignKeyField(Tour, null=True)
 
     @property
-    def rounds(self):
-        round = self.first_round
-        while round is not None:
-            yield round
-            round = round.next_round
+    def tours(self):
+        tour = self.first_tour
+        while tour is not None:
+            yield tour
+            tour = tour.next_tour
 
-    def get_current_round(self):
-        for round in self.rounds:
-            if not round.finalized:
-                return round
+    def get_current_tour(self):
+        for tour in self.tours:
+            if not tour.finalized:
+                return tour
         return None
 
 
@@ -145,33 +141,29 @@ class ParticipantRun(peewee.Model):
     class Meta:
         database = Database.instance().db
         indexes = (
-            (("participant", "round"), True),
+            (("participant", "tour"), True),
         )
         order_by = ["heat", "participant"]
 
     participant = peewee.ForeignKeyField(Participant)
     heat = peewee.IntegerField()
-    round = peewee.ForeignKeyField(Round, related_name="runs")
+    tour = peewee.ForeignKeyField(Tour, related_name="runs")
 
     def create_judge_scores(self):
-        for judge in self.round.judges:
+        for judge in self.tour.judges:
             JudgeScore.create(
                 participant_run=self,
                 judge=judge
             )
 
-    def set_judge_score(self, judge, score):
+    def set_judge_score(self, judge, score_data):
         judge_score_obj = self.scores.select().where(JudgeScore.judge == judge).get()
-        judge_score_obj.score = score
+        judge_score_obj.score_data = json.dumps(score_data)
         judge_score_obj.save()
 
     def get_judge_score(self, judge):
         judge_score_obj = self.scores.select().where(JudgeScore.judge == judge).get()
-        return judge_score_obj.score
-
-    @property
-    def total_score(self):
-        return sum([js.score for js in self.scores])
+        return json.loads(judge_score_obj.score_data)
 
 
 class JudgeScore(peewee.Model):
@@ -181,4 +173,4 @@ class JudgeScore(peewee.Model):
 
     participant_run = peewee.ForeignKeyField(ParticipantRun, related_name="scores")
     judge = peewee.ForeignKeyField(Judge)
-    score = peewee.IntegerField(default=0)
+    score_data = peewee.TextField(default="{}")

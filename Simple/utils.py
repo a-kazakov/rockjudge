@@ -1,17 +1,17 @@
 from .models import (
     Judge,
-    Round
+    Tour
 )
 from .serializers import make_run_data_for_tablet
 
 def get_tablet_state(judge):
-    round = Round.get_active()
-    if round is None:
+    tour = Tour.get_active()
+    if tour is None:
         return {
             "status": "HOLD",
         }
     else:
-        runs = round.get_current_heat_runs()
+        runs = tour.get_current_heat_runs()
         return {
             "status": "ACTIVE",
             "runs": [

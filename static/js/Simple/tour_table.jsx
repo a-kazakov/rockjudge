@@ -70,11 +70,11 @@ var AdminTourTableScoreRow = React.createClass({
 
 var AdminTourTable = React.createClass({
     getInitialState : function() {
-        window.message_dispatcher.subscribe("round_update", this.dispatchRoundUpdate);
+        window.message_dispatcher.subscribe("tour_update", this.dispatchTourUpdate);
         return {};
     },
-    dispatchRoundUpdate: function(data) {
-        if (data["round_id"] == this.props.round_id) {
+    dispatchTourUpdate: function(data) {
+        if (data["tour_id"] == this.props.tour_id) {
             window.location.href = window.location.href;
         }
     },

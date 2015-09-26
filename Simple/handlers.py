@@ -5,11 +5,11 @@ from .models import (
     Competition,
     Judge,
     ParticipantRun,
-    Round,
+    Tour,
 )
 from .serializers import (
-    make_round_data,
-    make_round_results,
+    make_tour_data,
+    make_tour_results,
 )
 from .utils import get_tablet_state
 from .websocket import WebSocketClients
@@ -23,47 +23,47 @@ class StatusHandler(tornado.web.RequestHandler):
         self.render("Simple/status.html", competitions=competitions)
 
 
-class RoundControlHandler(tornado.web.RequestHandler):
-    def get(self, round_id):
-        round = Round.select().where(Round.id == int(round_id)).get()
-        if round.finalized:
+class TourControlHandler(tornado.web.RequestHandler):
+    def get(self, tour_id):
+        tour = Tour.select().where(Tour.id == int(tour_id)).get()
+        if tour.finalized:
             self.render(
-                "Simple/round_results.html",
-                round=round,
-                results=make_round_results(round),
+                "Simple/tour_results.html",
+                tour=tour,
+                results=make_tour_results(tour),
             )
         else:
             return self.render(
-                "Simple/round.html",
-                round=round,
-                data=make_round_data(round)
+                "Simple/tour.html",
+                tour=tour,
+                data=make_tour_data(tour)
             )
 
 
-class RoundInitHandler(tornado.web.RequestHandler):
-    def get(self, round_id):
-        round = Round.select().where(Round.id == int(round_id)).get()
-        round.init()
+class TourInitHandler(tornado.web.RequestHandler):
+    def get(self, tour_id):
+        tour = Tour.select().where(Tour.id == int(tour_id)).get()
+        tour.init()
         WebSocketClients.broadcast({
-            "type": "round_update",
+            "type": "tour_update",
             "data": {
-                "round_id": round.id,
+                "tour_id": tour.id,
             }
         })
-        self.redirect("/round/{}".format(round_id))
+        self.redirect("/tour/{}".format(tour_id))
 
 
-class RoundFinalizeHandler(tornado.web.RequestHandler):
-    def get(self, round_id):
-        round = Round.select().where(Round.id == int(round_id)).get()
-        round.finalize()
+class TourFinalizeHandler(tornado.web.RequestHandler):
+    def get(self, tour_id):
+        tour = Tour.select().where(Tour.id == int(tour_id)).get()
+        tour.finalize()
         WebSocketClients.broadcast({
             "type": "status_update",
             "data": {
-                "round_id": round.id,
+                "tour_id": tour.id,
             }
         })
-        self.redirect("/round/{}".format(round_id))
+        self.redirect("/tour/{}".format(tour_id))
 
 
 class TabletHandler(tornado.web.RequestHandler):
@@ -78,9 +78,10 @@ class TabletHandler(tornado.web.RequestHandler):
 
 class ApiHandler(tornado.web.RequestHandler):
     def api_set_judge_score(self):
-        run_id = self.get_argument("run")
-        judge_id = self.get_argument("judge")
-        score = self.get_argument("score")
+        from scoring_systems.rosfarr_no_acro import serializers
+        run_id = self.data["run"]
+        judge_id = self.data["judge"]
+        score = self.data["score"]
         run = ParticipantRun.select().where(ParticipantRun.id == run_id).get()
         judge = Judge.select().where(Judge.id == judge_id).get()
         run.set_judge_score(judge, score)
@@ -89,42 +90,43 @@ class ApiHandler(tornado.web.RequestHandler):
             "data": {
                 "run_id": run_id,
                 "judge_id": judge_id,
-                "score": score,
+                "score": serializers.serialize_judge_score(run, judge),
             }
         })
         return {}
 
-    def api_start_round(self):
-        round_id = self.get_argument("round")
-        round = Round.select().where(Round.id == int(round_id)).get()
-        round.start()
+    def api_start_tour(self):
+        tour_id = self.data["tour"]
+        tour = Tour.select().where(Tour.id == int(tour_id)).get()
+        tour.start()
         WebSocketClients.broadcast({
             "type": "status_update",
             "data": {},
         })
         return {
-            "current_heat": round.current_heat,
+            "current_heat": tour.current_heat,
         }
 
     def api_next_heat(self):
-        round = Round.get_active()
-        round.next_heat()
+        tour = Tour.get_active()
+        tour.next_heat()
         WebSocketClients.broadcast({
             "type": "status_update",
             "data": {},
         })
         return {
-            "current_heat": round.current_heat,
+            "current_heat": tour.current_heat,
         }
 
     def api_get_tablet_state(self):
-        judge_id = self.get_argument("judge")
+        judge_id = self.data["judge"]
         judge = Judge.select().where(Judge.id == judge_id).get()
         return get_tablet_state(judge)
 
     def post(self):
-        method = self.get_argument("method", "")
-        self.write(json.dumps(getattr(self, "api_{}".format(method))()))
+        raw_data = json.loads(self.get_argument("request"))
+        self.data = raw_data["data"]
+        self.write(json.dumps(getattr(self, "api_{}".format(raw_data["method"]))()))
 
     def get(self):
         self.post()

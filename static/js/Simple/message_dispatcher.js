@@ -5,7 +5,7 @@ var MessageDispatcher = (function () {
         this.ws.onmessage = this.onMessage.bind(this);
     }
     MessageDispatcher.prototype.onMessage = function (message) {
-        console.log(message);
+        console.log("Received message", message);
         var data = JSON.parse(message.data);
         (this.subscribers[data["type"]] || []).forEach(function (cb) {
             cb(data["data"]);

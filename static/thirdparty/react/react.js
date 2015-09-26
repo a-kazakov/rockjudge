@@ -750,11 +750,11 @@ Object.keys(isUnitlessNumber).forEach(function(prop) {
  * special prodding.
  */
 var shorthandPropertyExpansions = {
-  background: {
-    backgroundImage: true,
-    backgroundPosition: true,
-    backgroundRepeat: true,
-    backgroundColor: true
+  backgtour: {
+    backgtourImage: true,
+    backgtourPosition: true,
+    backgtourRepeat: true,
+    backgtourColor: true
   },
   border: {
     borderWidth: true,
@@ -2138,7 +2138,7 @@ var RESULT_INDEX_ATTR = 'data-danger-index';
  *
  * NOTE: Extracting the `nodeName` does not require a regular expression match
  * because we make assumptions about React-generated markup (i.e. there are no
- * spaces surrounding the opening tag and there is at least one attribute).
+ * spaces surtouring the opening tag and there is at least one attribute).
  *
  * @param {string} markup String of markup.
  * @return {string} Node name of the supplied markup.
@@ -4121,10 +4121,10 @@ var topLevelTypes = EventConstants.topLevelTypes;
 
 /**
  * Mobile Safari does not fire properly bubble click events on non-interactive
- * elements, which means delegated click listeners do not fire. The workaround
+ * elements, which means delegated click listeners do not fire. The workatour
  * for this bug involves attaching an empty click listener on the target node.
  *
- * This particular plugin works around the bug by attaching an empty click
+ * This particular plugin works atour the bug by attaching an empty click
  * listener on `touchstart` (which does fire on every element).
  */
 var MobileSafariClickEventPlugin = {
@@ -4546,7 +4546,7 @@ var ReactBrowserEventEmitter = assign({}, ReactEventEmitterMixin, {
    * Firefox v8.01 (and possibly others) exhibited strange behavior when
    * mounting `onmousemove` events at some node that was not the document
    * element. The symptoms were that if your mouse is not moving over something
-   * contained within that mount point (for example on the background) the
+   * contained within that mount point (for example on the backgtour) the
    * top-level listeners for `onmousemove` won't be called. However, if you
    * register the `mousemove` on the document object, then it will of course
    * catch all `mousemove`s. This along with iOS quirks, justifies restricting
@@ -9382,7 +9382,7 @@ var ReactPerf = _dereq_(75);
 
 var performanceNow = _dereq_(146);
 
-function roundFloat(val) {
+function tourFloat(val) {
   return Math.floor(val * 100) / 100;
 }
 
@@ -9418,11 +9418,11 @@ var ReactDefaultPerf = {
     console.table(summary.map(function(item) {
       return {
         'Component class name': item.componentName,
-        'Total inclusive time (ms)': roundFloat(item.inclusive),
-        'Exclusive mount time (ms)': roundFloat(item.exclusive),
-        'Exclusive render time (ms)': roundFloat(item.render),
-        'Mount time per instance (ms)': roundFloat(item.exclusive / item.count),
-        'Render time per instance (ms)': roundFloat(item.render / item.count),
+        'Total inclusive time (ms)': tourFloat(item.inclusive),
+        'Exclusive mount time (ms)': tourFloat(item.exclusive),
+        'Exclusive render time (ms)': tourFloat(item.render),
+        'Mount time per instance (ms)': tourFloat(item.exclusive / item.count),
+        'Render time per instance (ms)': tourFloat(item.render / item.count),
         'Instances': item.count
       };
     }));
@@ -9436,7 +9436,7 @@ var ReactDefaultPerf = {
     console.table(summary.map(function(item) {
       return {
         'Owner > component': item.componentName,
-        'Inclusive time (ms)': roundFloat(item.time),
+        'Inclusive time (ms)': tourFloat(item.time),
         'Instances': item.count
       };
     }));
@@ -10151,7 +10151,7 @@ module.exports = ReactElement;
  */
 
 /**
- * ReactElementValidator provides a wrapper around a element factory
+ * ReactElementValidator provides a wrapper atour a element factory
  * which validates the props passed to the element. This is intended to be
  * used only in DEV and could be replaced by a static type checker for languages
  * that support it.
@@ -12268,7 +12268,7 @@ var ReactMount = {
               false,
               'render(): Target node has markup rendered by React, but there ' +
               'are unrelated nodes as well. This is most commonly caused by ' +
-              'white-space inserted around server-rendered markup.'
+              'white-space inserted atour server-rendered markup.'
             ) : null);
             break;
           }
@@ -13158,7 +13158,7 @@ var invariant = _dereq_(135);
 
 var autoGenerateWrapperClass = null;
 var genericComponentClass = null;
-// This registry keeps track of wrapper classes around native tags
+// This registry keeps track of wrapper classes atour native tags
 var tagToComponentClass = {};
 var textComponentClass = null;
 
@@ -14895,7 +14895,7 @@ assign(
 
   perform: function(method, scope, a) {
     // Essentially calls `this.reconcileTransaction.perform(method, scope, a)`
-    // with this transaction's wrappers around it.
+    // with this transaction's wrappers atour it.
     return Transaction.Mixin.perform.call(
       this,
       this.reconcileTransaction.perform,
@@ -16930,8 +16930,8 @@ var _hyphenPattern = /-(.)/g;
 /**
  * Camelcases a hyphenated string, for example:
  *
- *   > camelize('background-color')
- *   < "backgroundColor"
+ *   > camelize('backgtour-color')
+ *   < "backgtourColor"
  *
  * @param {string} string
  * @return {string}
@@ -16966,8 +16966,8 @@ var msPattern = /^-ms-/;
 /**
  * Camelcases a hyphenated CSS property name, for example:
  *
- *   > camelizeStyleName('background-color')
- *   < "backgroundColor"
+ *   > camelizeStyleName('backgtour-color')
+ *   < "backgtourColor"
  *   > camelizeStyleName('-moz-transition')
  *   < "MozTransition"
  *   > camelizeStyleName('-ms-transition')
@@ -18235,8 +18235,8 @@ var _uppercasePattern = /([A-Z])/g;
 /**
  * Hyphenates a camelcased string, for example:
  *
- *   > hyphenate('backgroundColor')
- *   < "background-color"
+ *   > hyphenate('backgtourColor')
+ *   < "backgtour-color"
  *
  * For CSS style names, use `hyphenateStyleName` instead which works properly
  * with all vendor prefixes, including `ms`.
@@ -18272,8 +18272,8 @@ var msPattern = /^ms-/;
 /**
  * Hyphenates a camelcased CSS property name, for example:
  *
- *   > hyphenateStyleName('backgroundColor')
- *   < "background-color"
+ *   > hyphenateStyleName('backgtourColor')
+ *   < "backgtour-color"
  *   > hyphenateStyleName('MozTransition')
  *   < "-moz-transition"
  *   > hyphenateStyleName('msTransition')
@@ -19001,7 +19001,7 @@ if (ExecutionEnvironment.canUseDOM) {
         node.parentNode.replaceChild(node, node);
       }
 
-      // We also implement a workaround for non-visible tags disappearing into
+      // We also implement a workatour for non-visible tags disappearing into
       // thin air on IE8, this only happens if there is no visible text
       // in-front of the non-visible tags. Piggyback on the whitespace fix
       // and simply check if any non-visible tags appear in the source.
