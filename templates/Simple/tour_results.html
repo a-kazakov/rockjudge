@@ -1,16 +1,28 @@
-<h1>Results of tour {{ tour.name }}</h1>
+{% extends "base.html" %}
 
-<table border="1">
-{% for row in results %}
-  <tr>
-    <td>{{ row["place"] }}</td>
-    <th>{{ row["participant"] }}</th>
-    <td>{{ row["score"] }}</td>
-    <td>{{ row["advances"] }}</td>
-  </tr>
+{% autoescape None %}
+
+{% block title %}
+  Results of tour {{ tour.name }}
 {% end %}
-</table>
 
-{% if tour.next_tour %}
-  <a href="/tour/{{ tour.next_tour.id }}">Next tour</a>
+{% block scripts %}
+  <script src="/static/js/scoring_systems/rosfarr_no_acro/tour_table.jsx" type="text/jsx;harmony=true"></script>
+  <script type="text/jsx">
+    var DATA = {{ json_encode(results) }};
+    React.render(
+      <TourTable
+        data={ DATA }
+        tour_id={ {{ tour.id }} } />,
+      document.getElementById("content")
+    );
+  </script>
+{% end %}
+
+{% block body %}
+<h1>Results of tour {{ tour.name }}</h1>
+  <div id="content"></div>
+  {% if tour.next_tour %}
+    <a href="/tour/{{ tour.next_tour.id }}">Next tour</a>
+  {% end %}
 {% end %}

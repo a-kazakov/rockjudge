@@ -6,8 +6,8 @@ class JudgeScore:
     def __init__(self, run, judge):
         raw_data = run.get_judge_score(judge)
         self.data = {
-            "fw_man": raw_data.pop("fw_man", 0),
-            "fw_woman": raw_data.pop("fw_woman", 0),
+            "fw_man": raw_data.pop("fw_man", 100),
+            "fw_woman": raw_data.pop("fw_woman", 100),
             "dance_figs": raw_data.pop("dance_figs", 0),
             "composition": raw_data.pop("composition", 0),
         }

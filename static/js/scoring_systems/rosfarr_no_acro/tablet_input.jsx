@@ -56,13 +56,13 @@ class TabletScoreInput extends React.Component {
         return <table>
             <tr><th>Footwork man:</th><td>
                 <TabletSelectorInput
-                    choices={ [[0, "0%"], [5, "5%"], [10, "10%"], [25, "25%"], [50, "50%"], [75, "75%"], [100, "100%"]] }
+                    choices={ [[0, "0%"], [5, "5%"], [10, "10%"], [25, "25%"], [50, "50%"], [75, "75%"], [100, "X"]] }
                     active={ this.props.score.raw_data.fw_man }
                     onValueUpdate={ this.updateScores.bind(this, "fw_man") } />
             </td></tr>
             <tr><th>Footwork woman:</th><td>
                 <TabletSelectorInput
-                    choices={ [[0, "0%"], [5, "5%"], [10, "10%"], [25, "25%"], [50, "50%"], [75, "75%"], [100, "100%"]] }
+                    choices={ [[0, "0%"], [5, "5%"], [10, "10%"], [25, "25%"], [50, "50%"], [75, "75%"], [100, "X"]] }
                     active={ this.props.score.raw_data.fw_woman }
                     onValueUpdate={ this.updateScores.bind(this, "fw_woman") } />
             </td></tr>

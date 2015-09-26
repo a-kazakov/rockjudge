@@ -1,17 +1,17 @@
 class TourTableRow extends React.Component {
     render() {
         return <tr>
-            <td>{ this.props.place }</td>
-            <td>{ this.props.participant }</td>
-            <td>{ this.props.total_score }</td>
-            <td>{ this.props.advances ? "Yes" : "No" }</td>
+            <td>{ this.props.row.place }</td>
+            <td>{ this.props.row.participant }</td>
+            <td>{ this.props.row.score }</td>
+            <td>{ this.props.row.advances ? "Yes" : "No" }</td>
         </tr>
     }
 }
 
 class TourTable extends React.Component {
     render() {
-        rows = this.props.data.map(function(row) {
+        var rows = this.props.data.map(function(row) {
             return <TourTableRow row={ row } />
         })
         return <table>
