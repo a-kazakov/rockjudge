@@ -35,7 +35,7 @@ class AdminScoreInput extends React.Component {
                 </td></tr>
             </table>
             <input type="submit" />
-            <button onClick={ this.props.discardEditing }>Discard </button>
+            <button type="button" onClick={ this.props.discardEditing }>Discard</button>
         </form>
     }
     onChange(key, event) {

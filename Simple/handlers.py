@@ -95,13 +95,29 @@ class ApiHandler(tornado.web.RequestHandler):
         })
         return {}
 
+    def api_update_run_heat(self):
+        run_id = self.data["run"]
+        heat = self.data["heat"]
+        run = ParticipantRun.select().where(ParticipantRun.id == run_id).get()
+        run.heat = heat
+        run.save()
+        WebSocketClients.broadcast({
+            "type": "status_update",
+            "data": {
+                "tour_id": run.tour.id,
+            },
+        })
+        return {}
+
     def api_start_tour(self):
         tour_id = self.data["tour"]
         tour = Tour.select().where(Tour.id == int(tour_id)).get()
         tour.start()
         WebSocketClients.broadcast({
             "type": "status_update",
-            "data": {},
+            "data": {
+                "tour_id": tour_id,
+            },
         })
         return {
             "current_heat": tour.current_heat,
@@ -112,7 +128,9 @@ class ApiHandler(tornado.web.RequestHandler):
         tour.next_heat()
         WebSocketClients.broadcast({
             "type": "status_update",
-            "data": {},
+            "data": {
+                "tour_id": tour.id,
+            },
         })
         return {
             "current_heat": tour.current_heat,
