@@ -32,27 +32,58 @@ class Tour(peewee.Model):
 
     name = peewee.CharField()
     next_tour = peewee.ForeignKeyField("self", null=True, related_name="prev_tour")
-    num_participants = peewee.IntegerField()
+    num_advances = peewee.IntegerField()
     participants_per_heat = peewee.IntegerField()
     finalized = peewee.BooleanField(default=False)
     active = peewee.BooleanField(default=False)
     current_heat = peewee.IntegerField(default=0)
+    hope_tour = peewee.BooleanField(default=False)
+    total_advanced = peewee.IntegerField(default=0)
 
     def estimate_participants(self):
         from scoring_systems.rosfarr_no_acro import computer
         try:
             prev_tour = self.prev_tour.get()
-            table = computer.get_tour_table(prev_tour)
-            return [
-                row["run"].participant
-                for row in table
-                if row["advances"]
-            ]
+            if self.hope_tour:
+                return [
+                    row["run"].participant
+                    for row in computer.get_tour_table(prev_tour)
+                    if not row["advances"]
+                ]
+            result = []
+            while True:
+                result += [
+                    row["run"].participant
+                    for row in computer.get_tour_table(prev_tour)
+                    if row["advances"]
+                ]
+                if prev_tour.hope_tour:
+                    prev_tour = prev_tour.prev_tour.get()
+                else:
+                    break
+            return result
         except self.DoesNotExist:
-            return Participant.select()
+            return list(Participant.select())
+
+    def get_actual_num_advances(self):
+        base_value = self.num_advances
+        if not self.hope_tour:
+            return base_value
+        advanced_over_quote = 0
+        try:
+            tour = self.prev_tour.get()
+            while True:
+                tour = tour.prev_tour.get()
+                advanced_over_quote += tour.num_advances - tour.total_advanced
+                if not tour.hope_tour:
+                    break
+        except self.DoesNotExist:
+            pass
+        return max(0, base_value - advanced_over_quote)
 
     def create_participant_runs(self):
-        for idx, participant in enumerate(self.estimate_participants()):
+        estimated_participants = self.estimate_participants()
+        for idx, participant in enumerate(estimated_participants):
             run = ParticipantRun.create(
                 participant=participant,
                 heat=(idx // self.participants_per_heat + 1),
@@ -112,9 +143,18 @@ class Tour(peewee.Model):
         })
 
     def finalize(self):
+        from scoring_systems.rosfarr_no_acro import computer
         if self.active:
             self.stop()
         self.finalized = True
+        try:
+            self.total_advanced = len([
+                None
+                for row in computer.get_tour_table(self)
+                if row["advances"]
+            ])
+        except self.DoesNotExist:
+            pass
         self.save()
         if self.next_tour:
             self.next_tour.init()

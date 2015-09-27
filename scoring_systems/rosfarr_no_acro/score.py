@@ -99,13 +99,14 @@ class TourScores:
         next_tour = self.tour.next_tour
         place = 1
         lastest_sorting_score = None
+        num_advances = self.tour.get_actual_num_advances()
         for idx, row in enumerate(self.table, start=1):
             if lastest_sorting_score != row["sorting_score"]:
                 place = idx
             lastest_sorting_score = row["sorting_score"]
             row.update({
                 "place": place,
-                "advances": next_tour is not None and next_tour.num_participants >= place,
+                "advances": next_tour is not None and num_advances >= place,
             })
 
     def get_tour_table(self):

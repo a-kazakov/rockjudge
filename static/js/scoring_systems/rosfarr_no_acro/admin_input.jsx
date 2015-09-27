@@ -45,10 +45,10 @@ class TourAdminScoreInput extends React.Component {
     }
     serializeScore() {
         return {
-            fw_man: parseInt(this.props.score.fw_man),
-            fw_woman: parseInt(this.props.score.fw_woman),
-            dance_figs: parseInt(this.props.score.dance_figs),
-            composition: parseInt(this.props.score.composition),
+            fw_man: parseInt(this.props.score.fw_man) || 0,
+            fw_woman: parseInt(this.props.score.fw_woman) || 0,
+            dance_figs: parseInt(this.props.score.dance_figs) || 0,
+            composition: parseInt(this.props.score.composition) || 0,
         }
     }
     onSubmit(e) {

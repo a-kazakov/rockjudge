@@ -38,7 +38,7 @@ class TourAdminHeatValue extends React.Component {
         });
     }
     submitValue() {
-        Api.set_run_heat(this.props.tour_id, this.state.current_value, function() {
+        Api.set_run_heat(this.props.run_id, this.state.current_value, function() {
             this.stopEditing();
         }.bind(this));
     }
@@ -108,7 +108,7 @@ class TourAdminScoresRow extends React.Component {
         return <tr>
             <td>{ this.props.participant.name }</td>
             <TourAdminHeatValue
-                run_id={ this.props.tour_id }
+                run_id={ this.props.run_id }
                 value={ this.props.heat }
                 updateValue={ this.updateHeat.bind(this) } />
             { scores }
@@ -189,7 +189,6 @@ class TourAdminScoresTable extends React.Component {
             });
             return;
         }
-        console.log(data);
         this.setState({
             active: true,
             current_heat: data.current_heat,
