@@ -1,4 +1,4 @@
-class AdminScoreInput extends React.Component {
+class TourAdminScoreInput extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -35,13 +35,15 @@ class AdminScoreInput extends React.Component {
                 </td></tr>
             </table>
             <input type="submit" />
-            <button type="button" onClick={ this.props.discardEditing }>Discard</button>
+            <button type="button" onClick={ this.props.stopEditing }>Discard</button>
         </form>
     }
     onChange(key, event) {
-        this.props.onChange(key, event.target.value);
+        var score = this.serializeScore();
+        score[key] = event.target.value;
+        this.props.updateValue(score);
     }
-    serializeScores() {
+    serializeScore() {
         return {
             fw_man: parseInt(this.props.score.fw_man),
             fw_woman: parseInt(this.props.score.fw_woman),
@@ -51,6 +53,20 @@ class AdminScoreInput extends React.Component {
     }
     onSubmit(e) {
         e.preventDefault();
-        this.props.onFinishEditing(this.serializeScores());
+        this.props.submitValue(this.serializeScore());
+    }
+}
+
+class TourAdminScoreCell extends React.Component {
+    render() {
+        if (!this.props.editing) {
+            return <div onClick={ this.props.startEditing }>{ this.props.value.total_score.toFixed(1) }</div>
+        } else {
+            return <TourAdminScoreInput
+                score={ this.props.value.raw_data }
+                stopEditing={ this.props.stopEditing }
+                updateValue={ this.props.updateValue }
+                submitValue={ this.props.submitValue } />
+        }
     }
 }

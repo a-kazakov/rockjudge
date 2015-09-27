@@ -14,8 +14,5 @@ def get_tablet_state(judge):
         runs = tour.get_current_heat_runs()
         return {
             "status": "ACTIVE",
-            "runs": [
-                make_run_data_for_tablet(run, judge)
-                for run in runs
-            ],
+            "runs": [run.serialize() for run in runs],
         }

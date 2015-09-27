@@ -3,16 +3,15 @@ import math
 
 
 class JudgeScore:
-    def __init__(self, run, judge):
-        raw_data = run.get_judge_score(judge)
+    def __init__(self, judge_score):
+        raw_data = judge_score.get()
         self.data = {
             "fw_man": raw_data.pop("fw_man", 100),
             "fw_woman": raw_data.pop("fw_woman", 100),
             "dance_figs": raw_data.pop("dance_figs", 0),
             "composition": raw_data.pop("composition", 0),
         }
-        self.run = run
-        self.judge = judge
+        self.judge = judge_score.judge
 
     @staticmethod
     def apply_deduction(base_score, deduction):
@@ -34,7 +33,7 @@ class JudgeScore:
         }
 
     def save(self):
-        self.run.set_judge_score(self.judge, self.data)
+        self.judge_score.set(self.data)
 
     def update_score(self, new_score):
         self.data = new_score
@@ -44,7 +43,7 @@ class JudgeScore:
 class RunScore:
     def __init__(self, run):
         self.run = run
-        self.raw_scores = [JudgeScore(run, judge) for judge in run.tour.judges]
+        self.raw_scores = [JudgeScore(run.get_judge_score_obj(judge)) for judge in run.tour.judges]
         self.scores = [rs.total_score for rs in self.raw_scores]
 
     @property
@@ -73,8 +72,11 @@ class RunScore:
 
     def serialize(self):
         return {
-            str(rs.judge.id): rs.serialize()
-            for rs in self.raw_scores
+            "total_score": math.floor(0.5 + self.primary_score / self.factor) / 100,
+            "scores": {
+                str(js.judge.id): js.serialize()
+                for js in self.raw_scores
+            }
         }
 
 
@@ -83,17 +85,14 @@ class TourScores:
         self.tour = tour
         self.judges = list(tour.judges)
         self.data = [RunScore(run) for run in tour.runs]
-        if tour.finalized:
-            self.create_table()
+        self.create_table()
 
     def create_table(self):
         self.table = sorted([
             {
-                "participant": rs.run.participant,
-                "heat": rs.run.heat,
+                "rs": rs,
                 "score": math.floor(0.5 + rs.primary_score / rs.factor) / 100,
                 "sorting_score": (-rs.primary_score, -rs.secondary_score, ),
-                "detailed_scores": rs.serialize(),
             } for rs in self.data],
             key=lambda s: s["sorting_score"]
         )
@@ -109,35 +108,22 @@ class TourScores:
                 "advances": next_tour is not None and next_tour.num_participants >= place,
             })
 
-    def get_advanced_to_next_tour(self):
-        return (
-            row["participant"]
-            for row in self.table
-            if row["advances"]
-        )
+    def get_tour_table(self):
+        return [{
+            "run": row["rs"].run,
+            "place": row["place"],
+            "advances": row["advances"],
+        } for row in self.table]
 
     def serialize_for_admin(self):
-        return {
-            "judges": [{
-                "id": str(judge.id),
-                "name": judge.name,
-            } for judge in self.judges],
-            "runs": [{
-                "participant": rs.run.participant.name,
-                "run_id": rs.run.id,
-                "scores": rs.serialize(),
-                "heat": rs.run.heat,
-                "total_score": math.floor(0.5 + rs.primary_score / rs.factor) / 100,
-            } for rs in self.data]
-        }
+        return [{
+            "scores": rs.serialize(),
+            "total_score": math.floor(0.5 + rs.primary_score / rs.factor) / 100,
+        } for rs in self.data]
 
     def seriailze_for_tour_results(self):
-        return [
-            {
-                "participant": row["participant"].name,
-                "score": row["score"],
-                "detailed_scores": row["detailed_scores"],
-                "place": row["place"],
-                "advances": row["advances"],
-            } for row in self.table
-        ]
+        return [{
+            "score": row["score"],
+            "place": row["place"],
+            "advances": row["advances"],
+        } for row in self.table]

@@ -54,32 +54,38 @@ class TabletScoreInput extends React.Component {
     }
     render() {
         return <table>
-            <tr><th>Footwork man:</th><td>
-                <TabletSelectorInput
-                    choices={ [[0, "0%"], [5, "5%"], [10, "10%"], [25, "25%"], [50, "50%"], [75, "75%"], [100, "X"]] }
-                    active={ this.props.score.raw_data.fw_man }
-                    onValueUpdate={ this.updateScores.bind(this, "fw_man") } />
-            </td></tr>
-            <tr><th>Footwork woman:</th><td>
-                <TabletSelectorInput
-                    choices={ [[0, "0%"], [5, "5%"], [10, "10%"], [25, "25%"], [50, "50%"], [75, "75%"], [100, "X"]] }
-                    active={ this.props.score.raw_data.fw_woman }
-                    onValueUpdate={ this.updateScores.bind(this, "fw_woman") } />
-            </td></tr>
-            <tr><th>Dance figures:</th><td>
-                <TabletIntegerInput
-                    min={ 0 }
-                    max={ 25 }
-                    active={ this.props.score.raw_data.dance_figs }
-                    onValueUpdate={ this.updateScores.bind(this, "dance_figs") } />
-            </td></tr>
-            <tr><th>Composition:</th><td>
-                <TabletIntegerInput
-                    min={ 0 }
-                    max={ 20 }
-                    active={ this.props.score.raw_data.composition }
-                    onValueUpdate={ this.updateScores.bind(this, "composition") } />
-            </td></tr>
+            <tbody>
+                <tr><th>Footwork man:</th><td>
+                    <TabletSelectorInput
+                        choices={ [[0, "0%"], [5, "5%"], [10, "10%"], [25, "25%"], [50, "50%"], [75, "75%"], [100, "X"]] }
+                        active={ this.props.score.raw_data.fw_man }
+                        onValueUpdate={ this.updateScores.bind(this, "fw_man") } />
+                </td></tr>
+                <tr><th>Footwork woman:</th><td>
+                    <TabletSelectorInput
+                        choices={ [[0, "0%"], [5, "5%"], [10, "10%"], [25, "25%"], [50, "50%"], [75, "75%"], [100, "X"]] }
+                        active={ this.props.score.raw_data.fw_woman }
+                        onValueUpdate={ this.updateScores.bind(this, "fw_woman") } />
+                </td></tr>
+                <tr><th>Dance figures:</th><td>
+                    <TabletIntegerInput
+                        min={ 0 }
+                        max={ 25 }
+                        active={ this.props.score.raw_data.dance_figs }
+                        onValueUpdate={ this.updateScores.bind(this, "dance_figs") } />
+                </td></tr>
+                <tr><th>Composition:</th><td>
+                    <TabletIntegerInput
+                        min={ 0 }
+                        max={ 20 }
+                        active={ this.props.score.raw_data.composition }
+                        onValueUpdate={ this.updateScores.bind(this, "composition") } />
+                </td></tr>
+            </tbody>
+            <tfoot>
+                <th>Total score:</th>
+                <td>{ this.props.score.total_score }</td>
+            </tfoot>
         </table>
     }
 }

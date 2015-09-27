@@ -3,26 +3,21 @@
 {% autoescape None %}
 
 {% block title %}
-  Results of tour {{ tour.name }}
+  Tour results
 {% end %}
 
 {% block scripts %}
   <script src="/static/js/scoring_systems/rosfarr_no_acro/tour_table.jsx" type="text/jsx;harmony=true"></script>
+  <script src="/static/js/Simple/tour_results.jsx" type="text/jsx;harmony=true"></script>
   <script type="text/jsx">
-    var DATA = {{ json_encode(results) }};
     React.render(
-      <TourTable
-        data={ DATA }
-        tour_id={ {{ tour.id }} } />,
+      <TourResults
+        tour_id={ {{ tour_id }} } />,
       document.getElementById("content")
     );
   </script>
 {% end %}
 
 {% block body %}
-<h1>Results of tour {{ tour.name }}</h1>
   <div id="content"></div>
-  {% if tour.next_tour %}
-    <a href="/tour/{{ tour.next_tour.id }}">Next tour</a>
-  {% end %}
 {% end %}

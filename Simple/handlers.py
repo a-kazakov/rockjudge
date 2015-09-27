@@ -23,48 +23,23 @@ class StatusHandler(tornado.web.RequestHandler):
         self.render("Simple/status.html", competitions=competitions)
 
 
-class TourControlHandler(tornado.web.RequestHandler):
+class TourAdminHandler(tornado.web.RequestHandler):
     def get(self, tour_id):
-        tour = Tour.select().where(Tour.id == int(tour_id)).get()
+        tour = Tour.select().where(Tour.id == tour_id).get()
         if tour.finalized:
-            self.render(
-                "Simple/tour_results.html",
-                tour=tour,
-                results=make_tour_results(tour),
-            )
+            self.redirect("/tour/{}/results".format(tour_id))
         else:
             return self.render(
-                "Simple/tour.html",
-                tour=tour,
-                data=make_tour_data(tour)
+                "Simple/tour_admin.html",
+                tour_id=tour_id,
             )
 
-
-class TourInitHandler(tornado.web.RequestHandler):
+class TourResultsHandler(tornado.web.RequestHandler):
     def get(self, tour_id):
-        tour = Tour.select().where(Tour.id == int(tour_id)).get()
-        tour.init()
-        WebSocketClients.broadcast({
-            "type": "tour_update",
-            "data": {
-                "tour_id": tour.id,
-            }
-        })
-        self.redirect("/tour/{}".format(tour_id))
-
-
-class TourFinalizeHandler(tornado.web.RequestHandler):
-    def get(self, tour_id):
-        tour = Tour.select().where(Tour.id == int(tour_id)).get()
-        tour.finalize()
-        WebSocketClients.broadcast({
-            "type": "status_update",
-            "data": {
-                "tour_id": tour.id,
-            }
-        })
-        self.redirect("/tour/{}".format(tour_id))
-
+        self.render(
+            "Simple/tour_results.html",
+            tour_id=tour_id,
+        )
 
 class TabletHandler(tornado.web.RequestHandler):
     def get(self, judge_id):
@@ -72,74 +47,87 @@ class TabletHandler(tornado.web.RequestHandler):
         return self.render(
             "Simple/tablet.html",
             judge=judge,
-            state=get_tablet_state(judge),
         )
 
 
 class ApiHandler(tornado.web.RequestHandler):
     def api_set_judge_score(self):
-        from scoring_systems.rosfarr_no_acro import serializers
-        run_id = self.data["run"]
-        judge_id = self.data["judge"]
-        score = self.data["score"]
-        run = ParticipantRun.select().where(ParticipantRun.id == run_id).get()
-        judge = Judge.select().where(Judge.id == judge_id).get()
-        run.set_judge_score(judge, score)
-        WebSocketClients.broadcast({
-            "type": "score_update",
-            "data": {
-                "run_id": run_id,
-                "judge_id": judge_id,
-                "score": serializers.serialize_judge_score(run, judge),
-            }
-        })
+        run = ParticipantRun.select().where(ParticipantRun.id == self.data["run_id"]).get()
+        judge = Judge.select().where(Judge.id == self.data["judge_id"]).get()
+        run.set_judge_score(judge, self.data["score"])
         return {}
 
-    def api_update_run_heat(self):
-        run_id = self.data["run"]
-        heat = self.data["heat"]
-        run = ParticipantRun.select().where(ParticipantRun.id == run_id).get()
-        run.heat = heat
-        run.save()
-        WebSocketClients.broadcast({
-            "type": "status_update",
-            "data": {
-                "tour_id": run.tour.id,
-            },
-        })
+    def api_set_judge_score(self):
+        run = ParticipantRun.select().where(ParticipantRun.id == self.data["run_id"]).get()
+        judge = Judge.select().where(Judge.id == self.data["judge_id"]).get()
+        run.set_judge_score(judge, self.data["score"]);
+        return {}
+
+    def api_get_run(self):
+        run = ParticipantRun.select().where(ParticipantRun.id == self.data["run_id"]).get()
+        return run.serialize()
+
+    def api_set_run_heat(self):
+        run = ParticipantRun.select().where(ParticipantRun.id == self.data["run_id"]).get()
+        run.set_heat(self.data["heat"])
+        return {}
+
+    def api_get_tour(self):
+        tour = Tour.select().where(Tour.id == self.data["tour_id"]).get()
+        return tour.serialize()
+
+    def api_init_tour(self):
+        tour_id = self.data["tour_id"]
+        tour = Tour.select().where(Tour.id == tour_id).get()
+        tour.init()
+        return {}
+
+    def api_finalize_tour(self):
+        tour_id = self.data["tour_id"]
+        tour = Tour.select().where(Tour.id == tour_id).get()
+        tour.finalize()
         return {}
 
     def api_start_tour(self):
-        tour_id = self.data["tour"]
-        tour = Tour.select().where(Tour.id == int(tour_id)).get()
+        tour_id = self.data["tour_id"]
+        tour = Tour.select().where(Tour.id == tour_id).get()
         tour.start()
-        WebSocketClients.broadcast({
-            "type": "status_update",
-            "data": {
-                "tour_id": tour_id,
-            },
-        })
-        return {
-            "current_heat": tour.current_heat,
-        }
+        return {}
+
+    def api_stop_tour(self):
+        tour_id = self.data["tour_id"]
+        tour = Tour.select().where(Tour.id == tour_id).get()
+        tour.stop()
+        return {}
 
     def api_next_heat(self):
         tour = Tour.get_active()
         tour.next_heat()
-        WebSocketClients.broadcast({
-            "type": "status_update",
-            "data": {
-                "tour_id": tour.id,
-            },
-        })
         return {
             "current_heat": tour.current_heat,
         }
 
+    def api_get_current_heat(self):
+        tour = Tour.get_active()
+        if tour is None:
+            return {
+                "tour_id": None,
+                "current_heat": None,
+            }
+        else:
+            return {
+                "tour_id": tour.id,
+                "current_heat": tour.current_heat,
+            }
+
     def api_get_tablet_state(self):
-        judge_id = self.data["judge"]
+        judge_id = self.data["judge_id"]
         judge = Judge.select().where(Judge.id == judge_id).get()
         return get_tablet_state(judge)
+
+    def api_get_tour_results(self):
+        tour = Tour.select().where(Tour.id == self.data["tour_id"]).get()
+        return tour.get_serialized_results()
 
     def post(self):
         raw_data = json.loads(self.get_argument("request"))

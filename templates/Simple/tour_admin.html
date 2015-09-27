@@ -10,20 +10,14 @@
   <script src="/static/js/Simple/tour_admin.jsx" type="text/jsx;harmony=true"></script>
   <script src="/static/js/scoring_systems/rosfarr_no_acro/admin_input.jsx" type="text/jsx;harmony=true"></script>
   <script type="text/jsx">
-    var DATA = {{ json_encode(data) }};
     React.render(
       <TourAdminScoresTable
-        runs={ DATA.runs }
-        judges={ DATA.judges }
-        tour_id={ {{ tour.id }} } />,
+        tour_id={ {{ tour_id }} } />,
       document.getElementById("content")
     );
   </script>
 {% end %}
 
 {% block body %}
-  <h1>Tour {{ tour.name }}</h1>
   <div id="content"></div>
-  <a href="/tour/{{ tour.id }}/init">Init</a><br>
-  <a href="/tour/{{ tour.id }}/finalize">Finalize</a><br>
 {% end %}

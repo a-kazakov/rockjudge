@@ -15,8 +15,11 @@ class WebSocketClients:
         cls.clients.discard(cl)
 
     @classmethod
-    def broadcast(cls, message):
-        json_message = json.dumps(message)
+    def broadcast(cls, msg_type, msg_data):
+        json_message = json.dumps({
+            "type": msg_type,
+            "data": msg_data,
+        })
         for cl in cls.clients:
             cl.write_message(json_message)
 
