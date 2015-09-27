@@ -5,9 +5,7 @@ class JudgeTablet extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            "status": "HOLD",
-            "next_state": null,
-            "runs": [],
+            "status": null,
         };
         this.state.next_state = null;
         window.message_dispatcher.subscribe("run_update", this.dispatchRunUpdate.bind(this));
@@ -61,7 +59,10 @@ class JudgeTablet extends React.Component {
 
     // Rendering
 
-    getScoringLayout() {
+    renderHeader() {
+        return <h1>{ this.state.judge.name }</h1>
+    }
+    renderScoringLayout() {
         console.log(this.state);
         switch (this.state.status) {
         case "HOLD":
@@ -78,15 +79,19 @@ class JudgeTablet extends React.Component {
             }.bind(this));
         }
     }
-    getSubmitButton() {
+    renderSubmitButton() {
         if (this.state.next_state !== null) {
             return <button onClick={ this.toNextState.bind(this) }>To next heat ...</button>
         }
     }
     render() {
+        if (this.state.status === null) {
+            return <div>Loading ...</div>
+        }
         return <div>
-            { this.getScoringLayout() }
-            { this.getSubmitButton() }
+            { this.renderHeader() }
+            { this.renderScoringLayout() }
+            { this.renderSubmitButton() }
         </div>
     }
 }

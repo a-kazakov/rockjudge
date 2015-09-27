@@ -189,7 +189,7 @@ class TourAdminScoresTable extends React.Component {
             });
             return;
         }
-        this.setState({
+         this.setState({
             active: true,
             current_heat: data.current_heat,
         });
@@ -236,7 +236,7 @@ class TourAdminScoresTable extends React.Component {
                 (a.props.participant > b.props.participant ? 1 : -1);
         });
         var judges_header = this.state.judges.map(function(judge) {
-            return <th>{ judge.name }</th>;
+            return <th>Judge { judge.number }</th>;
         }.bind(this));
         return <div>
             <h1>{ this.state.name }</h1>

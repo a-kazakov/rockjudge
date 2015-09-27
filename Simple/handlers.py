@@ -3,7 +3,7 @@ import tornado.web
 
 from .models import (
     Competition,
-    Judge,
+    CompetitionJudge,
     ParticipantRun,
     Tour,
 )
@@ -43,23 +43,22 @@ class TourResultsHandler(tornado.web.RequestHandler):
 
 class TabletHandler(tornado.web.RequestHandler):
     def get(self, judge_id):
-        judge = Judge.select().where(Judge.id == judge_id).get()
         return self.render(
             "Simple/tablet.html",
-            judge=judge,
+            judge_id=judge_id,
         )
 
 
 class ApiHandler(tornado.web.RequestHandler):
     def api_set_judge_score(self):
         run = ParticipantRun.select().where(ParticipantRun.id == self.data["run_id"]).get()
-        judge = Judge.select().where(Judge.id == self.data["judge_id"]).get()
+        judge = CompetitionJudge.select().where(CompetitionJudge.id == self.data["judge_id"]).get()
         run.set_judge_score(judge, self.data["score"])
         return {}
 
     def api_set_judge_score(self):
         run = ParticipantRun.select().where(ParticipantRun.id == self.data["run_id"]).get()
-        judge = Judge.select().where(Judge.id == self.data["judge_id"]).get()
+        judge = CompetitionJudge.select().where(CompetitionJudge.id == self.data["judge_id"]).get()
         run.set_judge_score(judge, self.data["score"]);
         return {}
 
@@ -122,7 +121,7 @@ class ApiHandler(tornado.web.RequestHandler):
 
     def api_get_tablet_state(self):
         judge_id = self.data["judge_id"]
-        judge = Judge.select().where(Judge.id == judge_id).get()
+        judge = CompetitionJudge.select().where(CompetitionJudge.id == judge_id).get()
         return get_tablet_state(judge)
 
     def api_get_tour_results(self):

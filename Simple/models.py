@@ -39,6 +39,7 @@ class Tour(peewee.Model):
     current_heat = peewee.IntegerField(default=0)
     hope_tour = peewee.BooleanField(default=False)
     total_advanced = peewee.IntegerField(default=0)
+    inner_competition_id = peewee.IntegerField()
 
     def estimate_participants(self):
         from scoring_systems.rosfarr_no_acro import computer
@@ -128,7 +129,8 @@ class Tour(peewee.Model):
 
     @property
     def judges(self):
-        return list(Judge.select())
+        inner_competition = InnerCompetition.select().where(InnerCompetition.id == self.inner_competition_id).get()
+        return list(inner_competition.competition.judges)
 
     def init(self):
         try:
@@ -219,10 +221,29 @@ class Judge(peewee.Model):
 
     name = peewee.CharField()
 
+
+class CompetitionJudge(peewee.Model):
+    class Meta:
+        database = Database.instance().db
+        order_by = ["number"]
+        indexes = (
+            (("competition", "judge"), True),
+        )
+
+    competition = peewee.ForeignKeyField(Competition, related_name="judges")
+    judge = peewee.ForeignKeyField(Judge)
+    number = peewee.CharField()
+
+    @property
+    def name(self):
+        return self.judge.name
+
+
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name,
+            "name": self.judge.name,
+            "number": self.number,
         }
 
 # Managed automatically
@@ -285,7 +306,7 @@ class JudgeScore(peewee.Model):
         order_by = ["judge"]
 
     run = peewee.ForeignKeyField(ParticipantRun, related_name="scores")
-    judge = peewee.ForeignKeyField(Judge)
+    judge = peewee.ForeignKeyField(CompetitionJudge)
     score_data = peewee.TextField(default="{}")
 
     def get(self):

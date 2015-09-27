@@ -9,10 +9,12 @@ def get_tablet_state(judge):
     if tour is None:
         return {
             "status": "HOLD",
+            "judge": judge.serialize(),
         }
     else:
         runs = tour.get_current_heat_runs()
         return {
             "status": "ACTIVE",
+            "judge": judge.serialize(),
             "runs": [run.serialize() for run in runs],
         }
