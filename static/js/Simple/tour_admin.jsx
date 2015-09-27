@@ -106,6 +106,7 @@ class TourAdminScoresRow extends React.Component {
                 judge_id={ judge_id } />
         }.bind(this));
         return <tr>
+            <td>{ this.props.participant.number }</td>
             <td>{ this.props.participant.name }</td>
             <TourAdminHeatValue
                 run_id={ this.props.run_id }
@@ -243,7 +244,8 @@ class TourAdminScoresTable extends React.Component {
             <table>
                 <tbody>
                     <tr>
-                        <th>Participant</th>
+                        <th>Number</th>
+                        <th>Name</th>
                         <th>Heat</th>
                         { judges_header }
                         <th>Total</th>

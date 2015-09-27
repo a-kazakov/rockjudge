@@ -6,24 +6,31 @@ from db import Database
 from Simple.websocket import WebSocketClients
 
 
-class Participant(peewee.Model):
-    class Meta:
-        database = Database.instance().db
-        order_by = ["name"]
-
-    name = peewee.CharField()
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-        }
-
 class Competition(peewee.Model):
     class Meta:
         database = Database.instance().db
 
     name = peewee.CharField()
+
+
+class Participant(peewee.Model):
+    class Meta:
+        database = Database.instance().db
+        indexes = (
+            (("number", "competition"), True),
+        )
+        order_by = ["number"]
+
+    name = peewee.CharField()
+    number = peewee.IntegerField()
+    competition = peewee.ForeignKeyField(Competition)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "number": self.number,
+        }
 
 
 class Tour(peewee.Model):

@@ -3,20 +3,20 @@ from fixtures import RockFixture
 
 class Fixture(RockFixture):
     def execute(self):
-        # Participants
-        self.p = [None] * 10
-        self.p[0] = Participant.create(name="P:0")
-        self.p[1] = Participant.create(name="P:1")
-        self.p[2] = Participant.create(name="P:2")
-        self.p[3] = Participant.create(name="P:3")
-        self.p[4] = Participant.create(name="P:4")
-        self.p[5] = Participant.create(name="P:5")
-        self.p[6] = Participant.create(name="P:6")
-        self.p[7] = Participant.create(name="P:7")
-        self.p[8] = Participant.create(name="P:8")
-        self.p[9] = Participant.create(name="P:9")
         # Competition
         self.comp = Competition.create(name="Test competition")
+        # Participants
+        self.p = [None] * 10
+        self.p[0] = Participant.create(name="P:0", competition=self.comp, number=1)
+        self.p[1] = Participant.create(name="P:1", competition=self.comp, number=2)
+        self.p[2] = Participant.create(name="P:2", competition=self.comp, number=3)
+        self.p[3] = Participant.create(name="P:3", competition=self.comp, number=4)
+        self.p[4] = Participant.create(name="P:4", competition=self.comp, number=5)
+        self.p[5] = Participant.create(name="P:5", competition=self.comp, number=6)
+        self.p[6] = Participant.create(name="P:6", competition=self.comp, number=7)
+        self.p[7] = Participant.create(name="P:7", competition=self.comp, number=8)
+        self.p[8] = Participant.create(name="P:8", competition=self.comp, number=9)
+        self.p[9] = Participant.create(name="P:9", competition=self.comp, number=10)
         # Tours
         self.rf = Tour.create(name="Final", next_tour=None, num_advances=0, inner_competition_id=1, participants_per_heat=1)
         self.rs = Tour.create(name="Semifinal", next_tour=self.rf, num_advances=3, inner_competition_id=1, participants_per_heat=2)

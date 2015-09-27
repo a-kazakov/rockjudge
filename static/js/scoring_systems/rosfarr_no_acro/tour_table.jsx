@@ -5,6 +5,7 @@ class TourTableRow extends React.Component {
             : null;
         return <tr>
             <td>{ this.props.row.place }</td>
+            <td>{ this.props.row.run.participant.number }</td>
             <td>{ this.props.row.run.participant.name }</td>
             <td>{ this.props.row.run.total_score }</td>
             { next_tour_cell }
@@ -24,6 +25,7 @@ class TourTable extends React.Component {
             <thead>
                 <tr>
                     <th>Place</th>
+                    <th>Number</th>
                     <th>Participant</th>
                     <th>Score</th>
                     { this.props.has_next_tour ? <th>Next tour</th> : null }
