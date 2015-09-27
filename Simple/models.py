@@ -79,10 +79,10 @@ class Tour(peewee.Model):
             return base_value
         advanced_over_quote = 0
         try:
-            tour = self.prev_tour.get()
+            tour = self
             while True:
                 tour = tour.prev_tour.get()
-                advanced_over_quote += tour.num_advances - tour.total_advanced
+                advanced_over_quote += tour.total_advanced - tour.num_advances
                 if not tour.hope_tour:
                     break
         except self.DoesNotExist:
