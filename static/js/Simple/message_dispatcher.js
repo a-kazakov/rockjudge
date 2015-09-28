@@ -7,6 +7,7 @@ var MessageDispatcher = (function () {
         this.ws.onmessage = this.onMessage.bind(this);
     }
     MessageDispatcher.prototype.DISPATCHERS = {
+        competition_update    : "dispatchCompetitionUpdate",
         tour_results_update   : "dispatchResultsUpdate",
         tour_update           : "dispatchTourUpdate",
         run_update            : "dispatchRunUpdate",
@@ -57,6 +58,13 @@ var MessageDispatcher = (function () {
         Api.get_tour(message.tour_id, function(new_data) {
             subscribers.forEach(function(cb) {
                 cb(message.tour_id, new_data);
+            });
+        });
+    };
+    MessageDispatcher.prototype.dispatchCompetitionUpdate = function (event_type, message, subscribers) {
+        Api.get_competition(message.competition_id, function(new_data) {
+            subscribers.forEach(function(cb) {
+                cb(message.comptition_id, new_data);
             });
         });
     };

@@ -6,7 +6,6 @@ class CompetitionSchema extends React.Component {
         this.props.updateTourId(tour_id);
     }
     renderTour(tour) {
-        console.log(tour.id, this.props.current_tour_id);
         var className = "tour" +
             (tour.finalized ? " finalized" : "") +
             (tour.id == this.props.current_tour_id ? " current" : "");
@@ -15,7 +14,7 @@ class CompetitionSchema extends React.Component {
         </div>
     }
     renderInnerCompetition(ic) {
-        return <details className="inner-competition">
+        return <details open="true" className="inner-competition">
             <summary className="name">{ ic.name }</summary>
             { ic.tours.map(this.renderTour.bind(this)) }
         </details>
@@ -49,7 +48,8 @@ class JudgingUI extends React.Component {
                         current_tour_id={ this.state.tour_id } />
                 </td>
                 <td>
-                    { this.state.tour_id === null ? <br /> : <iframe className="judging-frame" src={ "/tour/" + this.state.tour_id } /> }
+                    { this.state.tour_id === null ? <br />
+                        : <iframe className="judging-frame" src={ "/tour/" + this.state.tour_id } /> }
                 </td>
             </tr></tbody>
         </table>;
@@ -66,12 +66,41 @@ class AdminUI extends React.Component {
             active_app: "judging",
             id: null,
         };
+        window.message_dispatcher.subscribe("competition_update", this.onConmeptitionUpdate.bind(this));
+        window.message_dispatcher.subscribe("tour_update", this.onTourUpdate.bind(this));
         this.loadData();
     }
     loadData() {
         Api.get_competition(this.props.competition_id, function(response) {
             this.setState(response);
         }.bind(this));
+    }
+
+    // Dispatchers
+
+    onConmeptitionUpdate(competition_id, new_comp) {
+        if (this.state.id == competition_id) {
+            this.setState(new_comp);
+        }
+    }
+    onTourUpdate(tour_id, new_tour) {
+        var updated = false;
+        var new_inners = this.state.inner_competitions.map(function(inner) {
+            var new_inner = $.extend(true, {}, inner);
+            new_inner.tours = new_inner.tours.map(function(tour) {
+                if (tour.id == tour_id) {
+                    updated = true;
+                    return new_tour;
+                }
+                return tour;
+            });
+            return new_inner;
+        });
+        if (updated) {
+            this.setState({
+                inner_competitions: new_inners,
+            });
+        }
     }
 
     // Rendering
