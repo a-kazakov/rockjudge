@@ -5,41 +5,60 @@ class JudgeTablet extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            "status": null,
+            tour_id: null,
+            judge: null,
+            current_heat: 1,
         };
         this.state.next_state = null;
         window.message_dispatcher.subscribe("run_update", this.dispatchRunUpdate.bind(this));
-        window.message_dispatcher.subscribe("current_heat_update", this.dispatchCurrentHeatUpdate.bind(this));
+        window.message_dispatcher.subscribe("active_tour_update", this.dispatchActiveTourUpdate.bind(this));
         this.loadData();
     }
     loadData() {
-        Api.get_tablet_state(this.props.judge_id, function(state) {
-            this.setState(state);
+        Api.get_judge(this.props.judge_id, function(new_judge) {
+            this.setState({
+                judge: new_judge
+            });
+        }.bind(this));
+        Api.get_active_tour(function(response) {
+            this.dispatchActiveTourUpdate(response["tour_id"]);
         }.bind(this));
     }
 
     // Dispatchers
 
     dispatchRunUpdate(run_id, new_run) {
-        var new_runs = this.state.runs.map(function(run) {
+        var changed = false;
+        var new_runs = this.state.tour.runs.map(function(run) {
             if (run_id != run.id) {
+                changed = true;
                 return run;
             }
             return new_run;
         });
-        this.setState({
-            runs: new_runs,
-        });
+        if (changed) {
+            var new_tour = $.extend({}, this.state.tour);
+            new_tour.runs = new_runs
+            this.setState({
+                tour: new_tour,
+            });
+        }
     }
-    dispatchCurrentHeatUpdate() {
-        Api.get_tablet_state(this.props.judge_id, function(state) {
-            if (this.state.status == "HOLD" || this.state.runs.length == 0) {
-                this.setState(state);
-            } else {
-                this.setState({
-                    next_state: state,
-                });
-            }
+    dispatchActiveTourUpdate(tour_id) {
+        if (tour_id === null) {
+            this.setState({
+                tour_id: null,
+                current_heat: 1,
+            });
+        }
+        if (this.state.tour_id == tour_id) {
+            return;
+        }
+        Api.get_tour(tour_id, function(new_tour) {
+            this.setState({
+                tour_id: tour_id,
+                tour: new_tour,
+            });
         }.bind(this));
     }
 
@@ -51,24 +70,34 @@ class JudgeTablet extends React.Component {
 
     // Actions
 
-    toNextState() {
-        var new_state = this.state.next_state;
-        new_state.next_state = null;
-        this.setState(new_state);
+    toPrevHeat() {
+        this.setState({
+            current_heat: this.state.current_heat - 1,
+        });
+    }
+
+    toNextHeat() {
+        this.setState({
+            current_heat: this.state.current_heat + 1,
+        });
     }
 
     // Rendering
 
     renderHeader() {
-        return <h1>{ this.state.judge.name }</h1>
+        return <header>
+            <h1>{ this.state.judge.name }</h1>
+        </header>
     }
     renderScoringLayout() {
-        console.log(this.state);
-        switch (this.state.status) {
-        case "HOLD":
-            return <span>No active tour</span>;
-        case "ACTIVE":
-            return this.state.runs.map(function(run) {
+        if (this.state.tour_id === null) {
+            return <p>No active tour</p>;
+        }
+        return this.state.tour.runs
+            .filter(function(run) {
+                return run.heat == this.state.current_heat;
+            }.bind(this))
+            .map(function(run) {
                 return <div>
                     <h2>{ run.participant.name }</h2>
                     <TabletScoreInput
@@ -77,21 +106,25 @@ class JudgeTablet extends React.Component {
                         onScoreUpdate={ this.onScoreUpdate.bind(this, run.id) } />
                 </div>
             }.bind(this));
-        }
     }
-    renderSubmitButton() {
-        if (this.state.next_state !== null) {
-            return <button onClick={ this.toNextState.bind(this) }>To next heat ...</button>
+    renderCurrentHeatControl() {
+        if (this.state.tour_id === null) {
+            return <div></div>;
         }
+        return <div>
+            <button onClick={ this.toPrevHeat.bind(this) }>Prev heat</button>
+            <button onClick={ this.toNextHeat.bind(this) }>Next heat</button>
+            Current heat: { this.state.current_heat }
+        </div>;
     }
     render() {
-        if (this.state.status === null) {
-            return <div>Loading ...</div>
+        if (this.state.judge === null) {
+            return <p>Loading ...</p>;
         }
         return <div>
             { this.renderHeader() }
             { this.renderScoringLayout() }
-            { this.renderSubmitButton() }
+            { this.renderCurrentHeatControl() }
         </div>
     }
 }

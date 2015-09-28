@@ -123,8 +123,7 @@ class TourAdminScoresRow extends React.Component {
                 run_id={ this.props.run_id }
                 judge_id={ judge_id } />
         }.bind(this));
-        var tr_class = "judge " + (this.props.active ? "active" : "");
-        return <tr className={ tr_class }>
+        return <tr>
             <td className="number">{ this.props.participant.number }</td>
             <td className="name">{ this.props.participant.name }</td>
             <TourAdminHeatValue
@@ -152,13 +151,12 @@ class TourAdminScoresTable extends React.Component {
             runs: [],
             judges: [],
             active: false,
-            current_heat: null,
             current_editing: null,
         };
         window.message_dispatcher.subscribe("tour_update", this.dispatchTourUpdate.bind(this));
         window.message_dispatcher.subscribe("run_update", this.dispatchRunUpdate.bind(this));
         window.message_dispatcher.subscribe("score_update", this.dispatchScoreUpdate.bind(this));
-        window.message_dispatcher.subscribe("current_heat_update", this.dispatchCurrentHeatUpdate.bind(this));
+        window.message_dispatcher.subscribe("active_tour_update", this.dispatchActiveTourUpdate.bind(this));
         this.loadData();
     }
     loadData() {
@@ -202,16 +200,9 @@ class TourAdminScoresTable extends React.Component {
             runs: new_runs,
         });
     }
-    dispatchCurrentHeatUpdate(data) {
-        if (data.tour_id == null || data.tour_id != this.props.tour_id) {
-            this.setState({
-                active: false,
-            });
-            return;
-        }
-         this.setState({
-            active: true,
-            current_heat: data.current_heat,
+    dispatchActiveTourUpdate(data) {
+        this.setState({
+            active: data.tour_id === this.props.tour_id,
         });
     }
 
@@ -241,7 +232,6 @@ class TourAdminScoresTable extends React.Component {
             return <span>
                 <button onClick={ Api.next_heat }>To next heat</button>
                 <button onClick={ Api.stop_tour.bind(null, this.props.tour_id) }>Stop tour</button><br />
-                <span className="current-heat">Current heat: { this.state.current_heat }</span>
             </span>
         }
     }
@@ -257,8 +247,7 @@ class TourAdminScoresTable extends React.Component {
                 participant={ run.participant }
                 scores={ run.scores }
                 total_score={ run.total_score }
-                judges_order={ judges_order }
-                active={ run.heat == this.state.current_heat } />
+                judges_order={ judges_order } />
         }.bind(this));
         rows.sort(function(a, b) {
             return (a.props.heat - b.props.heat) ||

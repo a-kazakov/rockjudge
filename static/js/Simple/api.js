@@ -46,8 +46,8 @@ var Api = {
         }, callback);
     },
 
-    get_current_heat: function(callback) {
-        Api._call_method("get_current_heat", {}, callback);
+    get_active_tour: function(callback) {
+        Api._call_method("get_active_tour", {}, callback);
     },
 
     get_tour: function(tour_id, callback) {
@@ -86,12 +86,8 @@ var Api = {
         }, callback);
     },
 
-    next_heat: function(callback) {
-        Api._call_method("next_heat", {}, callback);
-    },
-
-    get_tablet_state: function(judge_id, callback) {
-        Api._call_method("get_tablet_state", {
+    get_judge: function(judge_id, callback) {
+        Api._call_method("get_judge", {
             "judge_id": judge_id
         }, callback);
     },

@@ -11,7 +11,7 @@ var MessageDispatcher = (function () {
         tour_results_update   : "dispatchResultsUpdate",
         tour_update           : "dispatchTourUpdate",
         run_update            : "dispatchRunUpdate",
-        current_heat_update   : "dispatchCurrentHeatUpdate",
+        active_tour_update    : "dispatchActiveTourUpdate",
         force_refresh         : "dispatchForceRefresh",
     }
     MessageDispatcher.prototype.VIRTUAL_DEPENDENCIES = {
@@ -47,10 +47,10 @@ var MessageDispatcher = (function () {
             });
         });
     };
-    MessageDispatcher.prototype.dispatchCurrentHeatUpdate = function (event_type, message, subscribers) {
-        Api.get_current_heat(function(new_data) {
+    MessageDispatcher.prototype.dispatchActiveTourUpdate = function (event_type, message, subscribers) {
+        Api.get_active_tour(function(new_data) {
             subscribers.forEach(function(cb) {
-                cb(new_data);
+                cb(new_data["tour_id"]);
             });
         });
     };

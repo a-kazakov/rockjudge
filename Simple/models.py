@@ -50,7 +50,6 @@ class Tour(peewee.Model):
     participants_per_heat = peewee.IntegerField()
     finalized = peewee.BooleanField(default=False)
     active = peewee.BooleanField(default=False)
-    current_heat = peewee.IntegerField(default=0)
     hope_tour = peewee.BooleanField(default=False)
     total_advanced = peewee.IntegerField(default=0)
     inner_competition_id = peewee.IntegerField()
@@ -121,18 +120,13 @@ class Tour(peewee.Model):
             tour.stop(broadcast=False)
         self.active = True
         self.save()
-        WebSocketClients.broadcast("current_heat_update", {})
+        WebSocketClients.broadcast("active_tour_update", {})
 
     def stop(self, broadcast=True):
         self.active = False
         self.save()
         if broadcast:
-            WebSocketClients.broadcast("current_heat_update", {})
-
-    def next_heat(self):
-        self.current_heat += 1
-        self.save()
-        WebSocketClients.broadcast("current_heat_update", {})
+            WebSocketClients.broadcast("active_tour_update", {})
 
     @classmethod
     def get_active(cls):
@@ -185,7 +179,6 @@ class Tour(peewee.Model):
         return {
             "id": self.id,
             "active": self.active,
-            "current_heat": self.current_heat,
             "finalized": self.finalized,
             "name": self.name,
             "next_tour_id": self.next_tour.id if self.next_tour else None,

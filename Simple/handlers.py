@@ -78,6 +78,12 @@ class ApiHandler(tornado.web.RequestHandler):
         tour = Tour.select().where(Tour.id == self.data["tour_id"]).get()
         return tour.serialize()
 
+    def api_get_active_tour(self):
+        tour = Tour.get_active()
+        return {
+            "tour_id": None if tour is None else tour.id,
+        }
+
     def api_init_tour(self):
         tour_id = self.data["tour_id"]
         tour = Tour.select().where(Tour.id == tour_id).get()
@@ -102,13 +108,6 @@ class ApiHandler(tornado.web.RequestHandler):
         tour.stop()
         return {}
 
-    def api_next_heat(self):
-        tour = Tour.get_active()
-        tour.next_heat()
-        return {
-            "current_heat": tour.current_heat,
-        }
-
     def api_get_current_heat(self):
         tour = Tour.get_active()
         if tour is None:
@@ -122,10 +121,9 @@ class ApiHandler(tornado.web.RequestHandler):
                 "current_heat": tour.current_heat,
             }
 
-    def api_get_tablet_state(self):
-        judge_id = self.data["judge_id"]
-        judge = CompetitionJudge.select().where(CompetitionJudge.id == judge_id).get()
-        return get_tablet_state(judge)
+    def api_get_judge(self):
+        judge = CompetitionJudge.select().where(CompetitionJudge.id == self.data["judge_id"]).get()
+        return judge.serialize()
 
     def api_get_tour_results(self):
         tour = Tour.select().where(Tour.id == self.data["tour_id"]).get()
