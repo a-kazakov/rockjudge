@@ -2,6 +2,10 @@
 <html>
 <head>
   <title>{% block title %}{% end %}</title>
+  <link href="/static/thirdparty/css-reset/reset.css" rel="stylesheet">
+  <link href="/static/css/fonts.css" rel="stylesheet">
+  {% block styles %}{% end %}
+  <script src="/static/thirdparty/less/less.js"></script>
   <script src="/static/thirdparty/react/react.js"></script>
   <script src="/static/thirdparty/react/JSXTransformer.js"></script>
   <script src="/static/thirdparty/jquery/jquery.js"></script>

@@ -56,6 +56,12 @@ var Api = {
         }, callback);
     },
 
+    get_competition: function(competition_id, callback) {
+        Api._call_method("get_competition", {
+            "competition_id": competition_id
+        }, callback);
+    },
+
     init_tour: function(tour_id, callback) {
         Api._call_method("init_tour", {
             "tour_id": tour_id

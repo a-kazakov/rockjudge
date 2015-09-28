@@ -12,6 +12,13 @@ class Competition(peewee.Model):
 
     name = peewee.CharField()
 
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "inner_competitions": [ic.serialize() for ic in self.inners],
+        }
+
 
 class Participant(peewee.Model):
     class Meta:
@@ -135,9 +142,12 @@ class Tour(peewee.Model):
             return None
 
     @property
+    def inner_competition(self):
+        return InnerCompetition.select().where(InnerCompetition.id == self.inner_competition_id).get()
+
+    @property
     def judges(self):
-        inner_competition = InnerCompetition.select().where(InnerCompetition.id == self.inner_competition_id).get()
-        return list(inner_competition.competition.judges)
+        return list(self.inner_competition.competition.judges)
 
     def init(self):
         try:
@@ -171,32 +181,38 @@ class Tour(peewee.Model):
             "tour_id": self.id,
         })
 
+    def serialize_base(self):
+        return {
+            "id": self.id,
+            "active": self.active,
+            "current_heat": self.current_heat,
+            "finalized": self.finalized,
+            "name": self.name,
+            "next_tour_id": self.next_tour.id if self.next_tour else None,
+            "participants_per_heat": self.participants_per_heat,
+        }
+
     def get_serialized_results(self):
         from scoring_systems.rosfarr_no_acro import computer
         results = computer.get_tour_table(self)
         for row in results:
             row["run"] = row["run"].serialize()
-        return {
-            "id": self.id,
-            "name": self.name,
-            "finalized": self.finalized,
-            "next_tour": self.next_tour_id,
-            "results": results,
+        res = self.serialize_base()
+        res.update({
+            "inner_competition_name": self.inner_competition.name,
             "judges": [judge.serialize() for judge in self.judges],
-        }
+            "results": results,
+        })
+        return res
 
     def serialize(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "active": self.active,
-            "current_heat": self.current_heat,
-            "finalized": self.finalized,
-            "participants_per_heat": self.participants_per_heat,
-            "next_tour_id": self.next_tour.id if self.next_tour else None,
-            "runs": [run.serialize() for run in self.runs],
+        res = self.serialize_base()
+        res.update({
+            "inner_competition_name": self.inner_competition.name,
             "judges": [judge.serialize() for judge in self.judges],
-        }
+            "runs": [run.serialize() for run in self.runs],
+        })
+        return res
 
 
 class InnerCompetition(peewee.Model):
@@ -219,6 +235,13 @@ class InnerCompetition(peewee.Model):
             if not tour.finalized:
                 return tour
         return None
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "tours": [tour.serialize() for tour in self.tours],
+        }
 
 
 class Judge(peewee.Model):

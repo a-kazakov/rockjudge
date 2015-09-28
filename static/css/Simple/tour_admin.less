@@ -1,0 +1,56 @@
+.tour-admin {
+  .scores-table {
+    margin: 10px;
+    .number { width: 50px;  }
+    .name   { width: 400px; }
+    .heat   { width: 40px;  }
+    .judge  { width: 50px;  }
+    .total  { width: 100px; }
+    td {
+      position: relative;
+      &.judge, &.heat {
+        cursor: pointer,
+      }
+    }
+    th, td {
+      text-align: center;
+    }
+    td.editing {
+      background-color: @ui-contrast;
+    }
+    td.name {
+      text-align: left !important;
+    }
+    tr.active {
+      background-color: @ui-light;
+    }
+    .form-score-input {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      background-color: @ui-medium;
+      z-index: 10;
+      padding: 10px;
+      color: @ui-white;
+      table {
+        margin-bottom: 10px;
+      }
+      td, th {
+        border: 0;
+        text-align: left;
+        input {
+          width: 30px;
+        }
+      }
+    }
+    .input-heat {
+      width: 100%;
+      box-sizing: border-box;
+      height: 14px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      text-align: center;
+    }
+  }
+}

@@ -17,10 +17,9 @@ from .websocket import WebSocketClients
 
 clients = set()
 
-class StatusHandler(tornado.web.RequestHandler):
-    def get(self):
-        competitions = Competition.select()
-        self.render("Simple/status.html", competitions=competitions)
+class AdminHandler(tornado.web.RequestHandler):
+    def get(self, competition_id):
+        self.render("Simple/admin.html", competition_id=competition_id)
 
 
 class TourAdminHandler(tornado.web.RequestHandler):
@@ -55,6 +54,10 @@ class ApiHandler(tornado.web.RequestHandler):
         judge = CompetitionJudge.select().where(CompetitionJudge.id == self.data["judge_id"]).get()
         run.set_judge_score(judge, self.data["score"])
         return {}
+
+    def api_get_competition(self):
+        competition = Competition.select().where(Competition.id == self.data["competition_id"]).get()
+        return competition.serialize()
 
     def api_set_judge_score(self):
         run = ParticipantRun.select().where(ParticipantRun.id == self.data["run_id"]).get()

@@ -31,16 +31,24 @@ class TourResults extends React.Component {
 
     renderNonFinalizedWarning() {
         if (!this.state.finalized) {
-            return <h2>This results are not yet finalized!</h2>
+            return <div className="non-finalized-warning">These results are not yet finalized!</div>
         }
     }
     render() {
         return <div>
-            <h1>{ this.state.name } results</h1>
-            { this.renderNonFinalizedWarning() }
-            <TourTable
-                data={ this.state.results }
-                has_next_tour={ this.state.next_tour != null } />
+            <header>
+                <div className="controls">
+                    <button onClick={ function() { window.print(); } }>Print</button>
+                </div>
+                <h1>{ this.state.inner_competition_name }</h1>
+                <h2>{ this.state.name }</h2>
+            </header>
+            <div className="tour-results">
+                { this.renderNonFinalizedWarning() }
+                <TourTable
+                    data={ this.state.results }
+                    has_next_tour={ this.state.next_tour_id != null } />
+            </div>
         </div>
     }
 }

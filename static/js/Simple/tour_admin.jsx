@@ -1,3 +1,5 @@
+var current_editing_cell = null;
+
 class TourAdminHeatValue extends React.Component {
     constructor(props) {
         super(props);
@@ -8,13 +10,14 @@ class TourAdminHeatValue extends React.Component {
     }
     render() {
         if (this.state.editing) {
-            return <td><input
+            return <td className="heat"><input
+                className="input-heat"
                 type="text"
                 value={ this.state.current_value || "" }
                 onChange={ this.onChange.bind(this) }
                 onKeyDown={ this.onKeyUp.bind(this) } /></td>
         } else {
-            return <td onClick={ this.startEditing.bind(this) }>
+            return <td className="heat" onClick={ this.startEditing.bind(this) }>
                 { this.props.value }
             </td>
         }
@@ -26,13 +29,23 @@ class TourAdminHeatValue extends React.Component {
             this.stopEditing();
         }
     }
+    componentDidUpdate (prevProps, prevState) {
+        if (!prevState.editing && this.state.editing) {
+            React.findDOMNode(this).querySelector("input").select();
+        }
+    }
     startEditing () {
+        if (current_editing_cell !== null) {
+            current_editing_cell.stopEditing();
+        }
+        current_editing_cell = this;
         this.setState({
             editing: true,
             current_value: this.props.value,
         });
     }
     stopEditing() {
+        current_editing_cell = null;
         this.setState({
             editing: false,
         });
@@ -62,7 +75,7 @@ class TourAdminScoreCellWrapper extends React.Component {
         };
     }
     render() {
-        return <td>
+        return <td className={ "judge" + (this.state.editing ? " editing" : "") } >
             <TourAdminScoreCell
                 startEditing={ this.startEditing.bind(this) }
                 stopEditing={ this.stopEditing.bind(this) }
@@ -73,15 +86,20 @@ class TourAdminScoreCellWrapper extends React.Component {
         </td>
     }
     startEditing() {
+        if (current_editing_cell !== null) {
+            current_editing_cell.stopEditing();
+        }
+        current_editing_cell = this;
         this.setState({
             editing: true,
-            current_value: this.props.value,
+            current_value: $.extend({}, this.props.value),
         });
     }
     stopEditing() {
         this.setState({
             editing: false,
         });
+        current_editing_cell = null;
     }
     updateValue(new_value) {
         var value = this.state.current_value;
@@ -105,15 +123,16 @@ class TourAdminScoresRow extends React.Component {
                 run_id={ this.props.run_id }
                 judge_id={ judge_id } />
         }.bind(this));
-        return <tr>
-            <td>{ this.props.participant.number }</td>
-            <td>{ this.props.participant.name }</td>
+        var tr_class = "judge " + (this.props.active ? "active" : "");
+        return <tr className={ tr_class }>
+            <td className="number">{ this.props.participant.number }</td>
+            <td className="name">{ this.props.participant.name }</td>
             <TourAdminHeatValue
                 run_id={ this.props.run_id }
                 value={ this.props.heat }
                 updateValue={ this.updateHeat.bind(this) } />
             { scores }
-            <td>{ this.props.total_score.toFixed(2) }</td>
+            <td className="total">{ this.props.total_score.toFixed(2) }</td>
         </tr>;
     }
     updateHeat(new_value) {
@@ -205,17 +224,25 @@ class TourAdminScoresTable extends React.Component {
         return filtered[0];
     }
 
+    // Listeners
+
+    onFinalizeButtonClick() {
+        if (confirm("Are you sure want to finalize this tour?")) {
+            Api.finalize_tour(this.props.tour_id);
+        }
+    }
+
     // Rendering
 
-    getActiveTourControls() {
+    renderActiveTourControls() {
         if (!this.state.active) {
             return <button onClick={ Api.start_tour.bind(null, this.props.tour_id) }>Start tour</button>
         } else {
-            return <div>
-                Current heat: { this.state.current_heat }<br />
+            return <span>
                 <button onClick={ Api.next_heat }>To next heat</button>
-                <button onClick={ Api.stop_tour.bind(null, this.props.tour_id) }>Stop tour</button>
-            </div>
+                <button onClick={ Api.stop_tour.bind(null, this.props.tour_id) }>Stop tour</button><br />
+                <span className="current-heat">Current heat: { this.state.current_heat }</span>
+            </span>
         }
     }
     render() {
@@ -230,32 +257,38 @@ class TourAdminScoresTable extends React.Component {
                 participant={ run.participant }
                 scores={ run.scores }
                 total_score={ run.total_score }
-                judges_order={ judges_order } />
+                judges_order={ judges_order }
+                active={ run.heat == this.state.current_heat } />
         }.bind(this));
         rows.sort(function(a, b) {
             return (a.props.heat - b.props.heat) ||
                 (a.props.participant > b.props.participant ? 1 : -1);
         });
         var judges_header = this.state.judges.map(function(judge) {
-            return <th>Judge { judge.number }</th>;
+            return <th className="judge">{ judge.number }</th>;
         }.bind(this));
-        return <div>
-            <h1>{ this.state.name }</h1>
-            <table>
+        return <div className="tour-admin">
+            <header>
+                <div className="controls">
+                    <button onClick={ Api.init_tour.bind(null, this.props.tour_id) }>Recreate list</button>
+                    <button onClick={ this.onFinalizeButtonClick.bind(this) }>Finalize</button>
+                    { this.renderActiveTourControls() }
+                </div>
+                <h1>{ this.state.inner_competition_name }</h1>
+                <h2>{ this.state.name }</h2>
+            </header>
+            <table className="table scores-table">
                 <tbody>
                     <tr>
-                        <th>Number</th>
-                        <th>Name</th>
-                        <th>Heat</th>
+                        <th className="number">#</th>
+                        <th className="name">Name</th>
+                        <th className="heat">Heat</th>
                         { judges_header }
-                        <th>Total</th>
+                        <th className="total">Total</th>
                     </tr>
                     { rows }
                 </tbody>
             </table>
-            <button onClick={ Api.init_tour.bind(null, this.props.tour_id) }>Init</button>
-            <button onClick={ Api.finalize_tour.bind(null, this.props.tour_id) }>Finalize</button>
-            { this.getActiveTourControls() }
         </div>;
     }
 }

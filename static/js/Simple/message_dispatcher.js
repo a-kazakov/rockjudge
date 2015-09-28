@@ -61,7 +61,7 @@ var MessageDispatcher = (function () {
         });
     };
     MessageDispatcher.prototype.dispatchForceRefresh = function (event_type, message, subscribers) {
-        console.log("reloading");
+        console.log("Reloading...");
         window.location.reload(true);
     };
     MessageDispatcher.prototype.onMessage = function (message) {

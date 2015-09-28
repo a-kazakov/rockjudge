@@ -3,38 +3,42 @@ class TourAdminScoreInput extends React.Component {
         super(props);
     }
     render() {
-        return <form onSubmit={ this.onSubmit.bind(this) }>
-            <table border="1">
-                <tr><th>Footwork man:</th><td>
-                    <input
-                        type="text"
-                        ref="inp_fw_man"
-                        value={this.props.score.fw_man}
-                        onChange={ this.onChange.bind(this, "fw_man") } />
-                </td></tr>
-                <tr><th>Footwork woman:</th><td>
+        return <form onSubmit={ this.onSubmit.bind(this) } className="form-score-input">
+            <table>
+                <tr><th>FW:</th><td>
                     <input
                         type="text"
                         ref="inp_fw_woman"
                         value={this.props.score.fw_woman}
-                        onChange={ this.onChange.bind(this, "fw_woman") } />
+                        onChange={ this.onChange.bind(this, "fw_woman") }
+                        onKeyUp={ this.onKeyUp.bind(this) } />
+                </td>
+                <th>FM:</th><td>
+                    <input
+                        type="text"
+                        ref="inp_fw_man"
+                        value={this.props.score.fw_man}
+                        onChange={ this.onChange.bind(this, "fw_man") }
+                        onKeyUp={ this.onKeyUp.bind(this) } />
                 </td></tr>
-                <tr><th>Dance figures:</th><td>
+                <tr><th>DF:</th><td>
                     <input
                         type="text"
                         ref="inp_dance_figs"
                         value={this.props.score.dance_figs}
-                        onChange={ this.onChange.bind(this, "dance_figs") } />
-                </td></tr>
-                <tr><th>Composition:</th><td>
+                        onChange={ this.onChange.bind(this, "dance_figs") }
+                        onKeyUp={ this.onKeyUp.bind(this) } />
+                </td>
+                <th>C:</th><td>
                     <input
                         type="text"
                         ref="inp_composition"
                         value={this.props.score.composition}
-                        onChange={ this.onChange.bind(this, "composition") } />
+                        onChange={ this.onChange.bind(this, "composition") }
+                        onKeyUp={ this.onKeyUp.bind(this) } />
                 </td></tr>
             </table>
-            <input type="submit" />
+            <button type="submit">Submit</button>
             <button type="button" onClick={ this.props.stopEditing }>Discard</button>
         </form>
     }
@@ -42,6 +46,16 @@ class TourAdminScoreInput extends React.Component {
         var score = this.serializeScore();
         score[key] = event.target.value;
         this.props.updateValue(score);
+    }
+    componentDidMount() {
+        React.findDOMNode(this).querySelectorAll("input")[0].select();
+    }
+    onKeyUp(event) {
+        if (event.keyCode == 13) { // Enter
+            this.props.submitValue(this.serializeScore());
+        } else if (event.keyCode == 27) { // Esc
+            this.props.stopEditing();
+        }
     }
     serializeScore() {
         return {

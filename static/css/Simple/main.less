@@ -1,0 +1,163 @@
+@ui-dark: #1C1D21;
+@ui-white: #EFEFEF;
+@ui-light: #BDD4DE;
+@ui-medium: #3F5765;
+@ui-dark: #2B3A42;
+@ui-contrast: #FF530D;
+
+@left-pane-size: 100px;
+
+html, body, #content {
+  height: 100%;
+  background-color: @ui-white;
+  font-family: Roboto, Arial, sans-serif;
+  overflow: hidden;
+}
+
+table.outer-table {
+  width: 100%;
+  height: 100%;
+
+  td {
+    vertical-align: top;
+  }
+
+  .left-col {
+    width: @left-pane-size;
+    background-color: @ui-dark;
+
+    div.app {
+      width: @left-pane-size;
+      height: @left-pane-size;
+      cursor: pointer;
+      position: relative;
+      color: @ui-light;
+      margin-bottom: 30px;
+      .icon {
+        text-align: center;
+        font-size: 90px;
+        font-weight: 900;
+      }
+      .label {
+        text-align: center;
+        font-size: 12px;
+        font-weight: bold;
+        position: absolute;
+        bottom: 3px;
+        left: 0;
+        right: 0;
+        height: 15px;
+      }
+
+      &:hover {
+        background-color: lighten(@ui-dark, 10%);
+      }
+
+      &.active, &.active:hover {
+        background-color: darken(@ui-dark, 10%);
+      }
+    }
+  }
+}
+
+table.judging-ui {
+  width: 100%;
+  height: 100%;
+
+  .competition-schema {
+    width: 350px;
+    background-color: @ui-light;
+
+    .inner-competition {
+      margin-bottom: 10px;
+    }
+    .name {
+      font-weight: bold;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .tour {
+      padding: 5px 5px 5px 30px;
+      cursor: pointer;
+      &:hover {
+        background-color: @ui-medium !important;
+      }
+      &.finalized {
+        color: #999;
+      }
+      &.current {
+        background-color: @ui-contrast;
+      }
+    }
+  }
+
+  .judging-frame {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+header {
+  background-color: @ui-medium;
+  padding: 10px;
+  h1 {
+    color: @ui-white;
+    font-size: 25px;
+    font-weight: 400;
+    margin-bottom: 3px;
+  }
+  h2 {
+    color: @ui-white;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .controls {
+    float: right;
+    text-align: right;
+    .current-heat {
+      color: @ui-white;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    button {
+      margin-right: 0;
+      margin-left: 10px;
+    }
+  }
+}
+
+.table {
+  td, th {
+    border: 2px solid @ui-dark;
+    padding: 2px 5px;
+  }
+  th {
+    font-weight: bold;
+  }
+  th, td {
+    text-align: center;
+  }
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+button {
+  background-color: @ui-dark;
+  color: @ui-white;
+  border: none;
+  padding: 5px 10px;
+  margin: 1px 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: Roboto;
+  &:hover {
+    background-color: lighten(@ui-dark, 5%);
+  }
+}
