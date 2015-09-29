@@ -112,9 +112,6 @@ class Tour(peewee.Model):
     def get_participant_run(self, participant):
         return self.runs.where(ParticipantRun.participant == participant).get()
 
-    def get_current_heat_runs(self):
-        return self.runs.where(ParticipantRun.heat == self.current_heat)
-
     def start(self):
         for tour in self.select().where(Tour.active == True):
             tour.stop(broadcast=False)

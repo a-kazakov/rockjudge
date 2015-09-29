@@ -82,6 +82,14 @@ class JudgeTablet extends React.Component {
         });
     }
 
+    // Helpers
+
+    getHeatsCount() {
+        return Math.max(...this.state.tour.runs.map(function(run) {
+            return run.heat;
+        }));
+    }
+
     // Rendering
 
     renderHeader() {
@@ -91,12 +99,14 @@ class JudgeTablet extends React.Component {
             if (this.state.current_heat > 1) {
                 btn_prev = <button className="btn-prev-heat" onClick={ this.toPrevHeat.bind(this) }>Previous heat</button>;
             }
-            btn_next = <button className="btn-next-heat" onClick={ this.toNextHeat.bind(this) }>Next heat</button>;
+            if (this.state.current_heat < this.getHeatsCount()) {
+                btn_next = <button className="btn-next-heat" onClick={ this.toNextHeat.bind(this) }>Next heat</button>;
+            }
         }
         var current_tour = (this.state.tour_id === null) ? null :
             <div className="header">
                 <h1>{ this.state.tour.inner_competition_name }: { this.state.tour.name }</h1>
-                <h2>Current heat: { this.state.current_heat }</h2>
+                <h2>Heat: { this.state.current_heat } / { this.getHeatsCount() }</h2>
             </div>
         return <header>
             { btn_prev }
@@ -104,9 +114,16 @@ class JudgeTablet extends React.Component {
             { current_tour }
         </header>
     }
+    renderJudgeInfo() {
+        return <div>
+            <div className="judge-number">Judge { this.state.judge.number }</div>
+            <div className="judge-name">{ this.state.judge.name }</div>
+        </div>
+
+    }
     renderScoringLayout() {
         if (this.state.tour_id === null) {
-            return <p>No active tour</p>;
+            return this.renderJudgeInfo();
         }
         var cells = this.state.tour.runs
             .filter(function(run) {
