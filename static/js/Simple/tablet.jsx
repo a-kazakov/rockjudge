@@ -85,37 +85,45 @@ class JudgeTablet extends React.Component {
     // Rendering
 
     renderHeader() {
+        var btn_prev = null;
+        var btn_next = null;
+        if (this.state.tour_id !== null) {
+            if (this.state.current_heat > 1) {
+                btn_prev = <button className="btn-prev-heat" onClick={ this.toPrevHeat.bind(this) }>Previous heat</button>;
+            }
+            btn_next = <button className="btn-next-heat" onClick={ this.toNextHeat.bind(this) }>Next heat</button>;
+        }
+        var current_tour = (this.state.tour_id === null) ? null :
+            <div className="header">
+                <h1>{ this.state.tour.inner_competition_name }: { this.state.tour.name }</h1>
+                <h2>Current heat: { this.state.current_heat }</h2>
+            </div>
         return <header>
-            <h1>{ this.state.judge.name }</h1>
+            { btn_prev }
+            { btn_next }
+            { current_tour }
         </header>
     }
     renderScoringLayout() {
         if (this.state.tour_id === null) {
             return <p>No active tour</p>;
         }
-        return this.state.tour.runs
+        var cells = this.state.tour.runs
             .filter(function(run) {
                 return run.heat == this.state.current_heat;
             }.bind(this))
             .map(function(run) {
-                return <div>
-                    <h2>{ run.participant.name }</h2>
+                return <td key={ run.id }>
+                    <h2>Participant №{ run.participant.number }</h2>
                     <TabletScoreInput
-                        key={ run.id }
                         score={ run.scores[this.props.judge_id] }
                         onScoreUpdate={ this.onScoreUpdate.bind(this, run.id) } />
-                </div>
+                </td>
             }.bind(this));
-    }
-    renderCurrentHeatControl() {
-        if (this.state.tour_id === null) {
-            return <div></div>;
-        }
-        return <div>
-            <button onClick={ this.toPrevHeat.bind(this) }>Prev heat</button>
-            <button onClick={ this.toNextHeat.bind(this) }>Next heat</button>
-            Current heat: { this.state.current_heat }
-        </div>;
+        var one_run_class = cells.length == 1 ? " single-run" : "";
+        return <table className={ "tablet-main-table" + one_run_class }><tbody><tr>
+            { cells }
+        </tr></tbody></table>;
     }
     render() {
         if (this.state.judge === null) {
@@ -124,7 +132,6 @@ class JudgeTablet extends React.Component {
         return <div>
             { this.renderHeader() }
             { this.renderScoringLayout() }
-            { this.renderCurrentHeatControl() }
         </div>
     }
 }

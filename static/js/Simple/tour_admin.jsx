@@ -200,9 +200,9 @@ class TourAdminScoresTable extends React.Component {
             runs: new_runs,
         });
     }
-    dispatchActiveTourUpdate(data) {
+    dispatchActiveTourUpdate(new_tour_id) {
         this.setState({
-            active: data.tour_id === this.props.tour_id,
+            active: new_tour_id === this.props.tour_id,
         });
     }
 

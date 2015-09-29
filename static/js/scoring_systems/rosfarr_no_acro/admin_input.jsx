@@ -8,7 +8,6 @@ class TourAdminScoreInput extends React.Component {
                 <tr><th>FW:</th><td>
                     <input
                         type="text"
-                        ref="inp_fw_woman"
                         value={this.props.score.fw_woman}
                         onChange={ this.onChange.bind(this, "fw_woman") }
                         onKeyUp={ this.onKeyUp.bind(this) } />
@@ -16,7 +15,6 @@ class TourAdminScoreInput extends React.Component {
                 <th>FM:</th><td>
                     <input
                         type="text"
-                        ref="inp_fw_man"
                         value={this.props.score.fw_man}
                         onChange={ this.onChange.bind(this, "fw_man") }
                         onKeyUp={ this.onKeyUp.bind(this) } />
@@ -24,7 +22,6 @@ class TourAdminScoreInput extends React.Component {
                 <tr><th>DF:</th><td>
                     <input
                         type="text"
-                        ref="inp_dance_figs"
                         value={this.props.score.dance_figs}
                         onChange={ this.onChange.bind(this, "dance_figs") }
                         onKeyUp={ this.onKeyUp.bind(this) } />
@@ -32,9 +29,22 @@ class TourAdminScoreInput extends React.Component {
                 <th>C:</th><td>
                     <input
                         type="text"
-                        ref="inp_composition"
                         value={this.props.score.composition}
                         onChange={ this.onChange.bind(this, "composition") }
+                        onKeyUp={ this.onKeyUp.bind(this) } />
+                </td></tr>
+                <tr><th>SM:</th><td>
+                    <input
+                        type="text"
+                        value={this.props.score.dance_figs}
+                        onChange={ this.onChange.bind(this, "small_mistakes") }
+                        onKeyUp={ this.onKeyUp.bind(this) } />
+                </td>
+                <th>BM:</th><td>
+                    <input
+                        type="text"
+                        value={this.props.score.composition}
+                        onChange={ this.onChange.bind(this, "big_mistakes") }
                         onKeyUp={ this.onKeyUp.bind(this) } />
                 </td></tr>
             </table>
@@ -63,6 +73,8 @@ class TourAdminScoreInput extends React.Component {
             fw_woman: parseInt(this.props.score.fw_woman) || 0,
             dance_figs: parseInt(this.props.score.dance_figs) || 0,
             composition: parseInt(this.props.score.composition) || 0,
+            small_mistakes: parseInt(this.props.score.small_mistakes) || 0,
+            big_mistakes: parseInt(this.props.score.small_mistakes) || 0,
         }
     }
     onSubmit(e) {

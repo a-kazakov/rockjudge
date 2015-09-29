@@ -10,6 +10,8 @@ class JudgeScore:
             "fw_woman": raw_data.pop("fw_woman", 100),
             "dance_figs": raw_data.pop("dance_figs", 0),
             "composition": raw_data.pop("composition", 0),
+            "small_mistakes": raw_data.pop("small_mistakes", 0),
+            "big_mistakes": raw_data.pop("big_mistakes", 0),
         }
         self.judge = judge_score.judge
 
@@ -19,12 +21,14 @@ class JudgeScore:
 
     @property
     def total_score(self):
-        return sum([
+        return max(0, sum([
             self.apply_deduction(10 * 100, self.data["fw_man"]),
             self.apply_deduction(10 * 100, self.data["fw_woman"]),
             100 * self.data["dance_figs"],
             100 * self.data["composition"],
-        ])
+            -500 * self.data["small_mistakes"],
+            -3000 * self.data["big_mistakes"],
+        ]))
 
     def serialize(self):
         return {
