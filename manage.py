@@ -21,22 +21,13 @@ from app import (
 
 from Simple.websocket import WebSocketClients
 
-@tornado.gen.engine
-def post_start():
-    print("Started successfully, waiting 5 seconds")
-    yield tornado.gen.Task(tornado.ioloop.IOLoop.instance().add_timeout, time.time() + 5)
-    print("Reloading all clients...", end=" ")
-    WebSocketClients.broadcast("force_refresh", {})
-    print("DONE")
-
 
 class Commands:
     @staticmethod
     def start():
-        AsyncIOMainLoop().install()
+        print("Starting RockJudge server...")
         app = Application.instance()
         app.listen(settings.LISTEN_PORT)
-        post_start()
         tornado.ioloop.IOLoop.instance().start()
 
     @staticmethod

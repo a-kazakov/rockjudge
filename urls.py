@@ -1,3 +1,5 @@
+from sockjs.tornado import SockJSRouter
+
 from Simple.handlers import (
     ApiHandler,
     AdminHandler,
@@ -5,7 +7,10 @@ from Simple.handlers import (
     TourResultsHandler,
     TabletHandler,
 )
-from Simple.websocket import WebSocketHandler
+from Simple.websocket import WebSocketClients
+
+
+ws_router = SockJSRouter(WebSocketClients, '/ws')
 
 handlers = [
     (r"/admin/(\d+)$", AdminHandler),
@@ -13,5 +18,4 @@ handlers = [
     (r"/tour/(\d+)/results$", TourResultsHandler),
     (r"/tablet/(\d+)$", TabletHandler),
     (r"/api", ApiHandler),
-    (r"/ws", WebSocketHandler),
-]
+] + ws_router.urls

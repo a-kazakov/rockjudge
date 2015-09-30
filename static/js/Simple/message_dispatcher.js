@@ -1,10 +1,25 @@
 var MessageDispatcher = (function () {
-    function MessageDispatcher() {
-        this.subscribers = {};
-        this.ws = new WebSocket("ws://" + window.location.host + "/ws", [], {
-            maxReconnectInterval: 3000,
-        });
+    MessageDispatcher.prototype.connect = function() {
+        console.log("Connecting to websocket...");
+        this.ws = new SockJS("http://" + window.location.host + "/ws");
+        this.ws.onopen = function() {
+            console.log("Connected.");
+            if (this.closed) {
+                window.location.reload(true);
+            }
+        }.bind(this);
+        this.ws.onclose = function() {
+            console.log("Connection closed.");
+            $("#connection-problem").show();
+            this.closed = true;
+            setTimeout(this.connect.bind(this), 500);
+        }.bind(this);
         this.ws.onmessage = this.onMessage.bind(this);
+    }
+    function MessageDispatcher() {
+        this.closed = false;
+        this.connect();
+        this.subscribers = {};
     }
     MessageDispatcher.prototype.DISPATCHERS = {
         competition_update    : "dispatchCompetitionUpdate",
@@ -57,7 +72,7 @@ var MessageDispatcher = (function () {
     MessageDispatcher.prototype.dispatchTourUpdate = function (event_type, message, subscribers) {
         Api.get_tour(message.tour_id, function(new_data) {
             subscribers.forEach(function(cb) {
-                cb(message.tour_id, new_data);
+            cb(message.tour_id, new_data);
             });
         });
     };
