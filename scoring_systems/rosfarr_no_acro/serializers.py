@@ -1,14 +1,14 @@
 import math
 
 from .score import (
-    JudgeScore,
     RunScore,
     TourScores,
+    create_judge_score,
 )
 
 
 def serialize_judge_score(judge_score):
-    return JudgeScore(judge_score).serialize()
+    return create_judge_score(judge_score).serialize()
 
 def get_total_run_score(run):
     rs = RunScore(run)

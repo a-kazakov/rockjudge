@@ -1,4 +1,6 @@
 import json
+import random
+
 import peewee
 
 from db import Database
@@ -97,20 +99,35 @@ class Tour(peewee.Model):
 
     def create_participant_runs(self):
         estimated_participants = self.estimate_participants()
-        for idx, participant in enumerate(estimated_participants):
+        for participant in estimated_participants:
             run = ParticipantRun.create(
                 participant=participant,
-                heat=(idx // self.participants_per_heat + 1),
+                heat=1,
                 tour=self,
             )
             run.create_judge_scores()
-            idx += 1
+            self.shuffle_heats()
 
     def get_participants(self):
         return [run.participant for run in self.runs.select()]
 
     def get_participant_run(self, participant):
         return self.runs.where(ParticipantRun.participant == participant).get()
+
+    def shuffle_heats(self):
+        runs = list(self.runs)
+        random.shuffle(runs)
+        last_heat = len(runs) % self.participants_per_heat
+        if last_heat == 1:
+            last_heat = self.participants_per_heat // 2
+        for idx, run in enumerate(runs):
+            run.heat = idx // self.participants_per_heat + 1
+            if len(runs) - idx <= last_heat:
+                run.heat = (len(runs) - 1) // self.participants_per_heat + 1
+            run.save()
+        WebSocketClients.broadcast("tour_update", {
+            "tour_id": self.id
+        })
 
     def start(self):
         for tour in self.select().where(Tour.active == True):
@@ -252,17 +269,18 @@ class CompetitionJudge(peewee.Model):
 
     competition = peewee.ForeignKeyField(Competition, related_name="judges")
     judge = peewee.ForeignKeyField(Judge)
+    role = peewee.CharField()
     number = peewee.CharField()
 
     @property
     def name(self):
         return self.judge.name
 
-
     def serialize(self):
         return {
             "id": self.id,
             "name": self.judge.name,
+            "role": self.role,
             "number": self.number,
         }
 

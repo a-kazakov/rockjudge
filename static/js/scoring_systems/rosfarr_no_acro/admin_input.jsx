@@ -36,14 +36,14 @@ class TourAdminScoreInput extends React.Component {
                 <tr><th>SM:</th><td>
                     <input
                         type="text"
-                        value={this.props.score.dance_figs}
+                        value={this.props.score.small_mistakes}
                         onChange={ this.onChange.bind(this, "small_mistakes") }
                         onKeyUp={ this.onKeyUp.bind(this) } />
                 </td>
                 <th>BM:</th><td>
                     <input
                         type="text"
-                        value={this.props.score.composition}
+                        value={this.props.score.big_mistakes}
                         onChange={ this.onChange.bind(this, "big_mistakes") }
                         onKeyUp={ this.onKeyUp.bind(this) } />
                 </td></tr>
@@ -74,7 +74,7 @@ class TourAdminScoreInput extends React.Component {
             dance_figs: parseInt(this.props.score.dance_figs) || 0,
             composition: parseInt(this.props.score.composition) || 0,
             small_mistakes: parseInt(this.props.score.small_mistakes) || 0,
-            big_mistakes: parseInt(this.props.score.small_mistakes) || 0,
+            big_mistakes: parseInt(this.props.score.big_mistakes) || 0,
         }
     }
     onSubmit(e) {

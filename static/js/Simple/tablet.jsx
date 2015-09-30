@@ -1,3 +1,50 @@
+React.initializeTouchEvents(true);
+
+class MusicSpeedChecker extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            queue: [],
+        };
+    }
+    now() {
+        return (new Date()).getTime();
+    }
+    tick() {
+        var new_queue = $.extend([], this.state.queue);
+        new_queue.push(this.now());
+        if (new_queue.length > 8) {
+            new_queue.shift();
+        }
+        this.setState({
+            queue: new_queue,
+        });
+    }
+    getTempo() {
+        var intervals = [];
+        for (var i = 1; i < this.state.queue.length; ++i) {
+            intervals.push(this.state.queue[i] - this.state.queue[i - 1]);
+        }
+        intervals.sort();
+        return 60000 / intervals[Math.round(intervals.length / 2)];
+    }
+    getBtnText() {
+        if (this.state.queue.length == 0) {
+            return "Hit me following music tempo";
+        }
+        if (this.state.queue.length < 8) {
+            return "Hit me following music tempo (" + (8 - this.state.queue.length).toString() + ")";
+        }
+        return this.getTempo().toFixed(1) + " bpm";
+    }
+    render() {
+        return <div className="music-speed-checker">
+            <h3>Music speed checker</h3>
+            <button onTouchStart={ this.tick.bind(this) }>{ this.getBtnText() }</button>
+        </div>
+    }
+}
+
 class JudgeTablet extends React.Component {
 
     // Intiialization
@@ -15,9 +62,9 @@ class JudgeTablet extends React.Component {
         this.loadData();
     }
     loadData() {
-        Api.get_judge(this.props.judge_id, function(new_judge) {
+        Api.get_judge(this.props.judge_id, function(response) {
             this.setState({
-                judge: new_judge
+                judge: response
             });
         }.bind(this));
         Api.get_active_tour(function(response) {
@@ -121,6 +168,12 @@ class JudgeTablet extends React.Component {
         </div>
 
     }
+    renderFooter() {
+        if (this.state.tour_id === null || this.state.judge.role == "line_judge") {
+            return null;
+        }
+        return <MusicSpeedChecker />
+    }
     renderScoringLayout() {
         if (this.state.tour_id === null) {
             return this.renderJudgeInfo();
@@ -133,7 +186,9 @@ class JudgeTablet extends React.Component {
                 return <td key={ run.id }>
                     <h2>Participant №{ run.participant.number }</h2>
                     <TabletScoreInput
-                        score={ run.scores[this.props.judge_id] }
+                        scores={ run.scores }
+                        judge_id={ this.props.judge_id }
+                        judges={ this.state.tour.judges }
                         onScoreUpdate={ this.onScoreUpdate.bind(this, run.id) } />
                 </td>
             }.bind(this));
@@ -149,6 +204,7 @@ class JudgeTablet extends React.Component {
         return <div>
             { this.renderHeader() }
             { this.renderScoringLayout() }
+            { this.renderFooter() }
         </div>
     }
 }

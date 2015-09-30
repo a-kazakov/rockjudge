@@ -1,5 +1,9 @@
 @import "main.less";
 
+.spacer {
+  height: 30px;
+}
+
 .scoring-layout {
   margin-bottom: 7px;
 }
@@ -26,26 +30,28 @@
     font-weight: 500;
     margin-bottom: 20px;
   }
+}
 
-  h3 {
-    font-weight: bold;
-    font-size: 13px;
-    margin-bottom: 4px;
-  }
+h3 {
+  font-weight: bold;
+  font-size: 13px;
+  margin-bottom: 4px;
 }
 
 .tablet-number-input {
   display: inline-block;
+  margin-bottom: 7px;
   width: 100%;
   .btn {
-    width: 35%;
+    width: 32.333%;
     display: inline-block;
     margin: 0;
     font-weight: bold;
     vertical-align: middle;
+    margin: 0.5%;
   }
   .value {
-    width: 30%;
+    width: 33.333%;
     display: inline-block;
     margin: 0;
     text-align: center;
@@ -100,6 +106,43 @@ header .header {
   }
 }
 
+.tech-judge-info {
+  font-weight: bold;
+  font-size: 14px;
+  width: 50%;
+  pading: 5px;
+  box-sizing: border-box;
+  display: inline-block;
+  vertical-align: top;
+  margin-bottom: 10px;
+  height: 29px;
+  line-height: 29px;
+  .title {
+    box-sizing: border-box;
+    display: inline-block;
+    vertical-align: top;
+    width: 65%;
+    padding-right: 5px;
+    text-align: right;
+  }
+  .value {
+    box-sizing: border-box;
+    display: inline-block;
+    vertical-align: top;
+    width: 35%;
+    text-align: center;
+    background-color: lighten(@ui-dark, 50%);
+    &.ok {
+      background-color: #090;
+      color: @ui-white;
+    }
+    &.fail {
+      background-color: #900;
+      color: @ui-white;
+    }
+  }
+}
+
 button.score-btn {
   vertical-align: top;
   margin: 0.5%;
@@ -114,7 +157,7 @@ button.score-btn {
   }
 }
 
-.loop-width(@counter) when (@counter >= 5) {
+.loop-width(@counter) when (@counter >= 2) {
   .loop-width((@counter - 1));
   &.n-@{counter} {
     button {
@@ -123,7 +166,7 @@ button.score-btn {
   }
 }
 
-.loop-width-2rows(@counter) when (@counter >= 5) {
+.loop-width-2rows(@counter) when (@counter >= 2) {
   .loop-width-2rows((@counter - 1));
   &.n-@{counter} {
     button {
@@ -142,4 +185,32 @@ button.score-btn {
 
 .selector-layout-2rows {
   .loop-width-2rows(26);
+}
+
+.stopwatch {
+  width: 100%;
+  padding-bottom: 15px;
+  .time {
+    line-height: 31px;
+    vertical-align: middle;
+    font-weight: 500;
+  }
+  .btn-toggle, .btn-reset {
+    margin-left: 0.5%;
+    margin-right: 10px;
+    display: block;
+    float: left;
+    vertical-align: middle;
+    width: 100px;
+  }
+}
+
+.music-speed-checker {
+  width: 100%;
+  text-align: center;
+  button {
+    width: 500px;
+    height: 60px;
+    line-height: 48px;
+  }
 }

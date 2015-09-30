@@ -42,9 +42,11 @@ class TourResultsHandler(tornado.web.RequestHandler):
 
 class TabletHandler(tornado.web.RequestHandler):
     def get(self, judge_id):
+        judge = CompetitionJudge.select().where(CompetitionJudge.id == judge_id).get()
         return self.render(
             "Simple/tablet.html",
             judge_id=judge_id,
+            competition_id=judge.competition_id,
         )
 
 
@@ -77,6 +79,11 @@ class ApiHandler(tornado.web.RequestHandler):
     def api_get_tour(self):
         tour = Tour.select().where(Tour.id == self.data["tour_id"]).get()
         return tour.serialize()
+
+    def api_shuffle_heats(self):
+        tour = Tour.select().where(Tour.id == self.data["tour_id"]).get()
+        tour.shuffle_heats()
+        return {}
 
     def api_get_active_tour(self):
         tour = Tour.get_active()
@@ -124,6 +131,11 @@ class ApiHandler(tornado.web.RequestHandler):
     def api_get_judge(self):
         judge = CompetitionJudge.select().where(CompetitionJudge.id == self.data["judge_id"]).get()
         return judge.serialize()
+
+    def api_get_judges(self):
+        competition = Competition.select().where(Competition.id == self.data["competition_id"]).get()
+        judges = CompetitionJudge.select().where(CompetitionJudge.competition == competition)
+        return [judge.serialize() for judge in judges]
 
     def api_get_tour_results(self):
         tour = Tour.select().where(Tour.id == self.data["tour_id"]).get()

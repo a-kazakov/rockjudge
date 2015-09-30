@@ -56,6 +56,12 @@ var Api = {
         }, callback);
     },
 
+    shuffle_heats: function(tour_id, callback) {
+        Api._call_method("shuffle_heats", {
+            "tour_id": tour_id
+        }, callback);
+    },
+
     get_competition: function(competition_id, callback) {
         Api._call_method("get_competition", {
             "competition_id": competition_id
@@ -89,6 +95,12 @@ var Api = {
     get_judge: function(judge_id, callback) {
         Api._call_method("get_judge", {
             "judge_id": judge_id
+        }, callback);
+    },
+
+    get_judges: function(competition_id, callback) {
+        Api._call_method("get_judges", {
+            "competition_id": competition_id
         }, callback);
     },
 

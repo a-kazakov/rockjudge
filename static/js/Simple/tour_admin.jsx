@@ -222,6 +222,11 @@ class TourAdminScoresTable extends React.Component {
             Api.finalize_tour(this.props.tour_id);
         }
     }
+    onShuffleHeatsButtonClick() {
+        if (confirm("Are you sure want to shuffle heats?")) {
+            Api.shuffle_heats(this.props.tour_id);
+        }
+    }
 
     // Rendering
 
@@ -261,6 +266,7 @@ class TourAdminScoresTable extends React.Component {
                 <div className="controls">
                     <button onClick={ Api.init_tour.bind(null, this.props.tour_id) }>Recreate list</button>
                     <button onClick={ this.onFinalizeButtonClick.bind(this) }>Finalize</button>
+                    <button onClick={ this.onShuffleHeatsButtonClick.bind(this) }>Shuffle heats</button>
                     { this.renderActiveTourControls() }
                 </div>
                 <h1>{ this.state.inner_competition_name }</h1>

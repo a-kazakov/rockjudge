@@ -2,7 +2,7 @@ import json
 import math
 
 
-class JudgeScore:
+class LineJudgeScore:
     def __init__(self, judge_score):
         raw_data = judge_score.get()
         self.data = {
@@ -36,19 +36,76 @@ class JudgeScore:
             "raw_data": self.data
         }
 
-    def save(self):
-        self.judge_score.set(self.data)
 
-    def update_score(self, new_score):
-        self.data = new_score
-        self.save()
+class HeadJudgeScore:
+    def __init__(self, judge_score):
+        raw_data = judge_score.get()
+        self.data = {
+            "penalty": raw_data.pop("penalty", 0),
+        }
+        self.judge = judge_score.judge
+
+    @property
+    def total_score(self):
+        return 100 * self.data["penalty"]
+
+    def serialize(self):
+        return {
+            "total_score": self.total_score / 100,
+            "raw_data": self.data,
+        }
+
+
+class TechJudgeScore:
+    def __init__(self, judge_score):
+        raw_data = judge_score.get()
+        self.data = {
+            "jump_steps": raw_data.pop("jump_steps", 0),
+            "timing_violation": raw_data.pop("timing_violation", None),
+        }
+        self.judge = judge_score.judge
+
+    @property
+    def total_score(self):
+        return 0
+
+    def serialize(self):
+        return {
+            "total_score": self.total_score,
+            "raw_data": self.data,
+        }
+
+
+def create_judge_score(judge_score):
+    CLASSES = {
+        "line_judge": LineJudgeScore,
+        "head_judge": HeadJudgeScore,
+        "tech_judge": TechJudgeScore,
+    }
+    return CLASSES[judge_score.judge.role](judge_score)
 
 
 class RunScore:
     def __init__(self, run):
         self.run = run
-        self.raw_scores = [JudgeScore(run.get_judge_score_obj(judge)) for judge in run.tour.judges]
-        self.scores = [rs.total_score for rs in self.raw_scores]
+        self.raw_scores = [create_judge_score(run.get_judge_score_obj(judge)) for judge in run.tour.judges]
+        self.scores = [self.raw_scores[idx].total_score for idx in self.line_judge_idxs]
+
+    @property
+    def head_judge_idx(self):
+        for idx, judge in enumerate(self.run.tour.judges):
+            if judge.role == "head_judge":
+                return idx
+
+    @property
+    def line_judge_idxs(self):
+        for idx, judge in enumerate(self.run.tour.judges):
+            if judge.role == "line_judge":
+                yield idx
+
+    @property
+    def penalies(self):
+        return self.raw_scores[self.head_judge_idx].total_score * len(list(self.line_judge_idxs)) * self.factor
 
     @property
     def primary_divisor(self):
@@ -63,12 +120,12 @@ class RunScore:
     @property
     def primary_score(self):
         if len(self.scores) < 5:
-            return (2 * sum(self.scores) - min(self.scores) - max(self.scores)) * self.secondary_divisor
-        return (sum(self.scores) - min(self.scores) - max(self.scores)) * self.secondary_divisor
+            return max(0, (2 * sum(self.scores) - min(self.scores) - max(self.scores)) * self.secondary_divisor + self.penalies)
+        return max(0, (sum(self.scores) - min(self.scores) - max(self.scores)) * self.secondary_divisor + self.penalies)
 
     @property
     def secondary_score(self):
-        return sum(self.scores) * self.primary_divisor
+        return max(0, sum(self.scores) * self.primary_divisor + self.penalies)
 
     @property
     def factor(self):
