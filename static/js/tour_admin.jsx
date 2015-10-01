@@ -51,9 +51,9 @@ class TourAdminHeatValue extends React.Component {
         });
     }
     submitValue() {
-        Api.set_run_heat(this.props.run_id, this.state.current_value, function() {
+        (new Api("tournaments.run.set", {run_id: this.props.run_id, data: {heat: this.state.current_value}})).onSuccess(function() {
             this.stopEditing();
-        }.bind(this));
+        }.bind(this)).send();
     }
     onChange(event) {
         var value = parseInt(event.target.value.replace(/\D/g,''));
@@ -109,9 +109,9 @@ class TourAdminScoreCellWrapper extends React.Component {
         });
     }
     submitValue(new_value) {
-        Api.set_judge_score(this.props.run_id, this.props.judge_id, new_value, function() {
+        (new Api("tournaments.score.set", {score_id: this.props.value.id, data: new_value})).onSuccess(function() {
             this.stopEditing();
-        }.bind(this));
+        }.bind(this)).send();
     }
 }
 
@@ -119,9 +119,7 @@ class TourAdminScoresRow extends React.Component {
     render() {
         var scores = this.props.judges_order.map(function(judge_id) {
             return <TourAdminScoreCellWrapper
-                value={ this.props.scores[judge_id] }
-                run_id={ this.props.run_id }
-                judge_id={ judge_id } />
+                value={ this.props.scores.scores[judge_id] } />
         }.bind(this));
         return <tr>
             <td className="number">{ this.props.participant.number }</td>
@@ -131,7 +129,7 @@ class TourAdminScoresRow extends React.Component {
                 value={ this.props.heat }
                 updateValue={ this.updateHeat.bind(this) } />
             { scores }
-            <td className="total">{ this.props.total_score.toFixed(2) }</td>
+            <td className="total">{ this.props.scores.total_run_score }</td>
         </tr>;
     }
     updateHeat(new_value) {
@@ -153,90 +151,107 @@ class TourAdminScoresTable extends React.Component {
             active: false,
             current_editing: null,
         };
-        window.message_dispatcher.subscribe("tour_update", this.dispatchTourUpdate.bind(this));
-        window.message_dispatcher.subscribe("run_update", this.dispatchRunUpdate.bind(this));
-        window.message_dispatcher.subscribe("score_update", this.dispatchScoreUpdate.bind(this));
-        window.message_dispatcher.subscribe("active_tour_update", this.dispatchActiveTourUpdate.bind(this));
+        window.message_dispatcher.addListener("score_update").fetchObject("tournaments.run.get", true).setFilter(function(message) {
+            return this.getScoreIdPath(message.score_id) !== null;
+        }.bind(this)).setCallback(this.dispatchRunUpdate.bind(this));
+        window.message_dispatcher.addListener("score_update run_update").fetchObject("tournaments.run.get", false).setFilter(function(message) {
+            return this.getRunIdx(message.run_id) !== null;
+        }.bind(this)).setCallback(this.dispatchRunUpdate.bind(this));
+        window.message_dispatcher.addListener("tour_update").fetchObject("tournaments.tour.get", false).setFilter(function(message) {
+            return this.props.tour_id == message.tour_id;
+        }.bind(this)).setCallback(this.dispatchTourUpdate.bind(this));
+        window.message_dispatcher.addListener("tour_full_update").fetchObject("tournaments.tour.get", true).setFilter(function(message) {
+            return this.props.tour_id == message.tour_id;
+        }.bind(this)).setCallback(this.dispatchTourUpdate.bind(this));
+        window.message_dispatcher.addListener("active_tour_update").fetchObject("tournaments.tour.find_active").setCallback(this.dispatchActiveTourUpdate.bind(this));
         this.loadData();
     }
     loadData() {
-        Api.get_tour(this.props.tour_id, function(tour) {
+        (new Api("tournaments.tour.get", {tour_id: this.props.tour_id, recursive: true})).onSuccess(function(tour) {
             if (tour.finalized) {
                 window.location.reload(true);
             }
             this.setState(tour);
-        }.bind(this));
+        }.bind(this)).send();
     }
 
     // Dispatchers
 
-    dispatchTourUpdate(tour_id, tour) {
-        if (tour_id != this.props.tour_id) {
-            return;
-        }
-        if (tour.finalized) {
+    dispatchTourUpdate(new_tour) {
+        if (new_tour.finalized) {
             window.location.reload(true);
         }
-        this.setState(tour);
+        this.setState(new_tour);
     }
-    dispatchRunUpdate(run_id, new_run) {
-        var new_runs = this.state.runs.map(function(local_run) {
-            return (local_run.id == run_id) ? new_run : local_run;
-        });
+    dispatchRunUpdate(new_run) {
+        var new_runs = $.extend([], this.state.runs);
+        var run_idx = this.getRunIdx(new_run.id);
+        for (var idx in new_run) if (new_run.hasOwnProperty(idx)) {
+            new_runs[run_idx][idx] = new_run[idx];
+        }
         this.setState({
             runs: new_runs,
         });
     }
-    dispatchScoreUpdate(run_id, judge_id, score) {
-        new_runs = this.state.runs.map(function(local_run) {
-            if (local_run.id == run_id) {
-                new_run = $.extend({}, local_run);
-                new_run.score = score;
-                return new_run;
-            }
-            return local_run;
-        });
+    dispatchActiveTourUpdate(message) {
         this.setState({
-            runs: new_runs,
-        });
-    }
-    dispatchActiveTourUpdate(new_tour_id) {
-        this.setState({
-            active: new_tour_id === this.props.tour_id,
+            active: message.tour_id === this.props.tour_id,
         });
     }
 
     // Helpers
 
-    getRunById(run_id) {
-        var filtered = this.state.runs.filter(function(run) {
-            return run_id == run.run_id;
+    getRunIdx(run_id) {
+        var result = null;
+        this.state.runs.forEach(function(run, run_idx) {
+            if (run.id == run_id) {
+                result = run_idx;
+            }
         });
-        return filtered[0];
+        return result;
+    }
+    getScoreIdPath(score_id) {
+        var result = null;
+        this.state.runs.forEach(function(run, run_idx) {
+            for (var score_idx in run.scores.scores) if (run.scores.scores.hasOwnProperty(score_idx)) {
+                if (run.scores.scores[score_idx].id == score_id) {
+                    result = [run_idx, score_idx];
+                }
+            }
+        });
+        return result;
     }
 
     // Listeners
 
+    onInitButtonClick() {
+        (new Api("tournaments.tour.init", {tour_id: this.props.tour_id})).send();
+    }
     onFinalizeButtonClick() {
         if (confirm("Are you sure want to finalize this tour?")) {
-            Api.finalize_tour(this.props.tour_id);
+            (new Api("tournaments.tour.finalize", {tour_id: this.props.tour_id})).send();
         }
     }
     onShuffleHeatsButtonClick() {
         if (confirm("Are you sure want to shuffle heats?")) {
-            Api.shuffle_heats(this.props.tour_id);
+            (new Api("tournaments.tour.shuffle_heats", {tour_id: this.props.tour_id})).send();
         }
+    }
+    onStartTourButtonClick() {
+        (new Api("tournaments.tour.start", {tour_id: this.props.tour_id})).send();
+    }
+    onStopTourButtonClick() {
+        (new Api("tournaments.tour.stop", {tour_id: this.props.tour_id})).send();
     }
 
     // Rendering
 
     renderActiveTourControls() {
         if (!this.state.active) {
-            return <button onClick={ Api.start_tour.bind(null, this.props.tour_id) }>Start tour</button>
+            return <button onClick={ this.onStartTourButtonClick.bind(this) }>Start tour</button>
         } else {
             return <span>
-                <button onClick={ Api.next_heat }>To next heat</button>
-                <button onClick={ Api.stop_tour.bind(null, this.props.tour_id) }>Stop tour</button><br />
+                <button onClick={ this.onStopTourButtonClick.bind(this) }>Stop tour</button><br />
             </span>
         }
     }
@@ -264,7 +279,7 @@ class TourAdminScoresTable extends React.Component {
         return <div className="tour-admin">
             <header>
                 <div className="controls">
-                    <button onClick={ Api.init_tour.bind(null, this.props.tour_id) }>Recreate list</button>
+                    <button onClick={ this.onInitButtonClick.bind(this) }>Recreate list</button>
                     <button onClick={ this.onFinalizeButtonClick.bind(this) }>Finalize</button>
                     <button onClick={ this.onShuffleHeatsButtonClick.bind(this) }>Shuffle heats</button>
                     { this.renderActiveTourControls() }

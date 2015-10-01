@@ -66,41 +66,15 @@ class AdminUI extends React.Component {
             active_app: "judging",
             id: null,
         };
-        window.message_dispatcher.subscribe("competition_update", this.onConmeptitionUpdate.bind(this));
-        window.message_dispatcher.subscribe("tour_update", this.onTourUpdate.bind(this));
+        window.message_dispatcher.addListener("competition_update inner_competition_update tour_update tour_full_update")
+            .setCallback(this.loadData.bind(this))
         this.loadData();
     }
     loadData() {
-        Api.get_competition(this.props.competition_id, function(response) {
-            this.setState(response);
-        }.bind(this));
-    }
-
-    // Dispatchers
-
-    onConmeptitionUpdate(competition_id, new_comp) {
-        if (this.state.id == competition_id) {
-            this.setState(new_comp);
-        }
-    }
-    onTourUpdate(tour_id, new_tour) {
-        var updated = false;
-        var new_inners = this.state.inner_competitions.map(function(inner) {
-            var new_inner = $.extend(true, {}, inner);
-            new_inner.tours = new_inner.tours.map(function(tour) {
-                if (tour.id == tour_id) {
-                    updated = true;
-                    return new_tour;
-                }
-                return tour;
-            });
-            return new_inner;
-        });
-        if (updated) {
-            this.setState({
-                inner_competitions: new_inners,
-            });
-        }
+        (new Api("tournaments.competition.get", {competition_id: this.props.competition_id, recursive:true}))
+            .onSuccess(function(response) {
+                this.setState(response);
+            }.bind(this)).send();
     }
 
     // Rendering

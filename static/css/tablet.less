@@ -17,11 +17,12 @@
 .tablet-main-table {
   width: 100%;
   margin: 0 auto;
+  table-layout: fixed;
   &.single-run {
     width: 65%;
   }
   > tbody > tr > td {
-    padding: 20px;
+    padding: 15px;
     max-width: 75%;
   }
   h2 {
@@ -193,15 +194,19 @@ button.score-btn {
   .time {
     line-height: 31px;
     vertical-align: middle;
+    text-align: center;
     font-weight: 500;
+    width: 32.3333%;
+    margin-left: 0.5%;
+    margin-right: 0.5%;
+    display: inline-block;
   }
   .btn-toggle, .btn-reset {
     margin-left: 0.5%;
-    margin-right: 10px;
-    display: block;
-    float: left;
+    margin-right: 0.5%;
     vertical-align: middle;
-    width: 100px;
+    width: 32.3333%;
+    display: inline-block;
   }
 }
 

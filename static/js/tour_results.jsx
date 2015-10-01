@@ -9,22 +9,15 @@ class TourResults extends React.Component {
             results: [],
             finalized: true,
         }
-        window.message_dispatcher.subscribe("tour_results_update", this.dispatchTourResultsUpdate.bind(this));
+        window.message_dispatcher.addListener("tour_update tour_full_update score_update")
+            .setCallback(this.loadData.bind(this));
+            // TODO: add filter
         this.loadData();
     }
     loadData() {
-        Api.get_tour_results(this.props.tour_id, function(new_results) {
+        (new Api("tournaments.tour.get_results", {tour_id: this.props.tour_id})).onSuccess(function(new_results) {
             this.setState(new_results);
-        }.bind(this));
-    }
-
-    // Dispatchers
-
-    dispatchTourResultsUpdate(tour_id, new_results) {
-        if (tour_id != this.props.tour_id) {
-            return;
-        }
-        this.setState(new_results);
+        }.bind(this)).send();
     }
 
     // Rendering
@@ -45,7 +38,7 @@ class TourResults extends React.Component {
             </header>
             <div className="tour-results">
                 { this.renderNonFinalizedWarning() }
-                <TourTable
+                <TourResultsTable
                     data={ this.state.results }
                     has_next_tour={ this.state.next_tour_id != null } />
             </div>

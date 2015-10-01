@@ -7,12 +7,13 @@
 {% end %}
 
 {% block styles %}
-  <link rel="stylesheet" href="/static/css/Simple/tablet_input.less" type="text/less">
+  <link rel="stylesheet" href="/static/css/tablet.less" type="text/less">
 {% end %}
 
 {% block scripts %}
-  <script src="/static/js/Simple/tablet.jsx" type="text/jsx;harmony=true"></script>
-  <script src="/static/js/scoring_systems/rosfarr_no_acro/tablet_input.jsx" type="text/jsx;harmony=true"></script>
+  <script src="/static/js/tablet.jsx" type="text/jsx;harmony=true"></script>
+  <script src="/static/js/lib/tablet_controls.jsx" type="text/jsx;harmony=true"></script>
+  <script src="/static/js/scoring_systems/rosfarr_no_acro/tablet.jsx" type="text/jsx;harmony=true"></script>
   <script type="text/jsx">
     React.render(
       <JudgeTablet

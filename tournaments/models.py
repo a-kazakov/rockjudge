@@ -5,7 +5,11 @@ import peewee
 
 from db import Database
 
-from Simple.websocket import WebSocketClients
+from participants.models import (
+    Participant
+)
+from scoring_systems import get_scoring_system
+from webserver.websocket import WebSocketClients
 
 
 class Competition(peewee.Model):
@@ -14,32 +18,14 @@ class Competition(peewee.Model):
 
     name = peewee.CharField()
 
-    def serialize(self):
-        return {
+    def serialize(self, recursive=False):
+        result = {
             "id": self.id,
             "name": self.name,
-            "inner_competitions": [ic.serialize() for ic in self.inners],
         }
-
-
-class Participant(peewee.Model):
-    class Meta:
-        database = Database.instance().db
-        indexes = (
-            (("number", "competition"), True),
-        )
-        order_by = ["number"]
-
-    name = peewee.CharField()
-    number = peewee.IntegerField()
-    competition = peewee.ForeignKeyField(Competition)
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "number": self.number,
-        }
+        if recursive:
+            result["inner_competitions"] = [ic.serialize(recursive=True) for ic in self.inners]
+        return result
 
 
 class Tour(peewee.Model):
@@ -55,22 +41,22 @@ class Tour(peewee.Model):
     hope_tour = peewee.BooleanField(default=False)
     total_advanced = peewee.IntegerField(default=0)
     inner_competition_id = peewee.IntegerField()
+    scoring_system_name = peewee.CharField()
 
     def estimate_participants(self):
-        from scoring_systems.rosfarr_no_acro import computer
         try:
             prev_tour = self.prev_tour.get()
             if self.hope_tour:
                 return [
-                    row["run"].participant
-                    for row in computer.get_tour_table(prev_tour)
+                    row["participant"]
+                    for row in self.scoring_system.get_tour_results(prev_tour)
                     if not row["advances"]
                 ]
             result = []
             while True:
                 result += [
-                    row["run"].participant
-                    for row in computer.get_tour_table(prev_tour)
+                    row["participant"]
+                    for row in self.scoring_system.get_tour_results(prev_tour)
                     if row["advances"]
                 ]
                 if prev_tour.hope_tour:
@@ -100,21 +86,21 @@ class Tour(peewee.Model):
     def create_participant_runs(self):
         estimated_participants = self.estimate_participants()
         for participant in estimated_participants:
-            run = ParticipantRun.create(
+            run = Run.create(
                 participant=participant,
                 heat=1,
                 tour=self,
             )
-            run.create_judge_scores()
-            self.shuffle_heats()
+            run.create_scores()
+        self.shuffle_heats(broadcast=False)
 
     def get_participants(self):
         return [run.participant for run in self.runs.select()]
 
     def get_participant_run(self, participant):
-        return self.runs.where(ParticipantRun.participant == participant).get()
+        return self.runs.where(Run.participant == participant).get()
 
-    def shuffle_heats(self):
+    def shuffle_heats(self, broadcast=True):
         runs = list(self.runs)
         random.shuffle(runs)
         last_heat = len(runs) % self.participants_per_heat
@@ -125,9 +111,10 @@ class Tour(peewee.Model):
             if len(runs) - idx <= last_heat:
                 run.heat = (len(runs) - 1) // self.participants_per_heat + 1
             run.save()
-        WebSocketClients.broadcast("tour_update", {
-            "tour_id": self.id
-        })
+        if broadcast:
+            WebSocketClients.broadcast("tour_full_update", {
+                "tour_id": self.id
+            })
 
     def start(self):
         for tour in self.select().where(Tour.active == True):
@@ -165,19 +152,18 @@ class Tour(peewee.Model):
         except self.DoesNotExist:
             pass
         self.create_participant_runs()
-        WebSocketClients.broadcast("tour_update", {
+        WebSocketClients.broadcast("tour_full_update", {
             "tour_id": self.id,
         })
 
     def finalize(self):
-        from scoring_systems.rosfarr_no_acro import computer
         if self.active:
             self.stop()
         self.finalized = True
         try:
             self.total_advanced = len([
                 None
-                for row in computer.get_tour_table(self)
+                for row in self.scoring_system.get_tour_results(self)
                 if row["advances"]
             ])
         except self.DoesNotExist:
@@ -188,6 +174,10 @@ class Tour(peewee.Model):
         WebSocketClients.broadcast("tour_update", {
             "tour_id": self.id,
         })
+
+    @property
+    def scoring_system(self):
+        return get_scoring_system(self)
 
     def serialize_base(self):
         return {
@@ -200,26 +190,28 @@ class Tour(peewee.Model):
         }
 
     def get_serialized_results(self):
-        from scoring_systems.rosfarr_no_acro import computer
-        results = computer.get_tour_table(self)
-        for row in results:
-            row["run"] = row["run"].serialize()
-        res = self.serialize_base()
-        res.update({
+        tour_results = self.scoring_system.get_tour_results(self)
+        for row in tour_results:
+            row["participant"] = row["participant"].serialize()
+        result = self.serialize_base()
+        result.update({
             "inner_competition_name": self.inner_competition.name,
             "judges": [judge.serialize() for judge in self.judges],
-            "results": results,
+            "results": tour_results,
         })
-        return res
+        return result
 
-    def serialize(self):
-        res = self.serialize_base()
-        res.update({
+    def serialize(self, recursive=False):
+        result = self.serialize_base()
+        result.update({
             "inner_competition_name": self.inner_competition.name,
-            "judges": [judge.serialize() for judge in self.judges],
-            "runs": [run.serialize() for run in self.runs],
         })
-        return res
+        if recursive:
+            result.update({
+                "judges": [judge.serialize(recursive=True) for judge in self.judges],
+                "runs": [run.serialize(recursive=True) for run in self.runs],
+            })
+        return result
 
 
 class InnerCompetition(peewee.Model):
@@ -243,23 +235,17 @@ class InnerCompetition(peewee.Model):
                 return tour
         return None
 
-    def serialize(self):
-        return {
+    def serialize(self, recursive=False):
+        result = {
             "id": self.id,
             "name": self.name,
-            "tours": [tour.serialize() for tour in self.tours],
         }
+        if recursive:
+            result["tours"] = [tour.serialize(recursive=False) for tour in self.tours]
+        return result
 
 
 class Judge(peewee.Model):
-    class Meta:
-        database = Database.instance().db
-        order_by = ["name"]
-
-    name = peewee.CharField()
-
-
-class CompetitionJudge(peewee.Model):
     class Meta:
         database = Database.instance().db
         order_by = ["number"]
@@ -268,25 +254,21 @@ class CompetitionJudge(peewee.Model):
         )
 
     competition = peewee.ForeignKeyField(Competition, related_name="judges")
-    judge = peewee.ForeignKeyField(Judge)
+    name = peewee.CharField()
     role = peewee.CharField()
     number = peewee.CharField()
 
-    @property
-    def name(self):
-        return self.judge.name
-
-    def serialize(self):
+    def serialize(self, recursive=False):
         return {
             "id": self.id,
-            "name": self.judge.name,
+            "name": self.name,
             "role": self.role,
             "number": self.number,
         }
 
 # Managed automatically
 
-class ParticipantRun(peewee.Model):
+class Run(peewee.Model):
     class Meta:
         database = Database.instance().db
         indexes = (
@@ -305,58 +287,67 @@ class ParticipantRun(peewee.Model):
             "run_id": self.id,
         })
 
-    def create_judge_scores(self):
+    def create_scores(self):
         for judge in self.tour.judges:
-            JudgeScore.create(
+            Score.create(
                 run=self,
                 judge=judge,
             )
 
-    def get_judge_score_obj(self, judge):
-        return self.scores.select().where(JudgeScore.judge == judge).get()
+    def get_score_obj(self, judge):
+        return self.scores.select().where(Score.judge == judge).get()
 
-    def set_judge_score(self, judge, score_data):
-        judge_score_obj = self.get_judge_score_obj(judge)
-        judge_score_obj.set(score_data)
+    def set_score(self, judge, score_data):
+        score_obj = self.get_score_obj(judge)
+        score_obj.set(score_data)
 
-    def get_judge_score(self, judge):
-        judge_score_obj = self.get_judge_score_obj(judge)
-        return judge_score_obj.get()
+    def get_score(self, judge):
+        score_obj = self.get_score_obj(judge)
+        return score_obj.get()
 
-    def serialize(self):
-        from scoring_systems.rosfarr_no_acro import serializers
-        return {
+    def update_data(self, new_data):
+        if "heat" in new_data:
+            self.heat = new_data["heat"]
+        self.save()
+        WebSocketClients.broadcast("run_update", {
+            "run_id": self.id,
+        })
+
+    def serialize(self, recursive=False):
+        result = {
             "id": self.id,
             "participant": self.participant.serialize(),
             "heat": self.heat,
-            "scores": {
-                str(score.judge_id): score.serialize()
-                for score in self.scores
-            },
-            "total_score": serializers.get_total_run_score(self),
             "tour_id": self.tour_id,
         }
+        if (recursive):
+            result["scores"] = self.tour.scoring_system.get_run_scores(self)
+        return result
 
 
-class JudgeScore(peewee.Model):
+class Score(peewee.Model):
     class Meta:
         database = Database.instance().db
         order_by = ["judge"]
 
-    run = peewee.ForeignKeyField(ParticipantRun, related_name="scores")
-    judge = peewee.ForeignKeyField(CompetitionJudge)
+    run = peewee.ForeignKeyField(Run, related_name="scores")
+    judge = peewee.ForeignKeyField(Judge)
     score_data = peewee.TextField(default="{}")
 
-    def get(self):
+    def get_data(self):
         return json.loads(self.score_data)
 
-    def set(self, score_data):
+    def set_data(self, score_data):
         self.score_data = json.dumps(score_data)
         self.save()
-        WebSocketClients.broadcast("run_update", {
-            "run_id": self.run_id,
+        WebSocketClients.broadcast("score_update", {
+            "score_id": self.id,
         })
 
-    def serialize(self):
-        from scoring_systems.rosfarr_no_acro import serializers
-        return serializers.serialize_judge_score(self)
+    def update_data(self, new_data):
+        self.run.tour.scoring_system.update_score(self, new_data)
+
+    def serialize(self, recursive=False):
+        result = self.run.tour.scoring_system.serialize_score(self)
+        result["id"] = self.id
+        return result

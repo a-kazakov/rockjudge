@@ -19,7 +19,7 @@ from app import (
     ModelManager,
 )
 
-from Simple.websocket import WebSocketClients
+from webserver.websocket import WebSocketClients
 
 
 class Commands:

@@ -61,9 +61,7 @@ class TourAdminScoreInput extends React.Component {
         React.findDOMNode(this).querySelectorAll("input")[0].select();
     }
     onKeyUp(event) {
-        if (event.keyCode == 13) { // Enter
-            this.props.submitValue(this.serializeScore());
-        } else if (event.keyCode == 27) { // Esc
+        if (event.keyCode == 27) { // Esc
             this.props.stopEditing();
         }
     }

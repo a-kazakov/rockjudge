@@ -10,7 +10,7 @@ class Fixture(RockFixture):
                 "dance_figs": df,
                 "composition": c,
             }
-        self.judge_scores = [
+        self.scores = [
             [m(25, 0, 12, 15), m(25, 75, 12, 15), m(25, 0, 12, 15)]
         ]
         # Participants

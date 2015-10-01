@@ -1,22 +1,22 @@
-class TourTableRow extends React.Component {
+class TourResultsTableRow extends React.Component {
     render() {
         var next_tour_cell = this.props.has_next_tour
             ? <td className="next-tour">{ this.props.row.advances ? "Yes" : "No" }</td>
             : null;
         return <tr>
             <td className="place">{ this.props.row.place }</td>
-            <td className="number">{ this.props.row.run.participant.number }</td>
-            <td className="participant">{ this.props.row.run.participant.name }</td>
-            <td className="score">{ this.props.row.run.total_score }</td>
+            <td className="number">{ this.props.row.participant.number }</td>
+            <td className="participant">{ this.props.row.participant.name }</td>
+            <td className="score">{ this.props.row.scores.total_run_score }</td>
             { next_tour_cell }
         </tr>
     }
 }
 
-class TourTable extends React.Component {
+class TourResultsTable extends React.Component {
     render() {
         var rows = this.props.data.map(function(row) {
-            return <TourTableRow
+            return <TourResultsTableRow
                 row={ row }
                 key={ row.id }
                 has_next_tour={ this.props.has_next_tour } />

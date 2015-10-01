@@ -1,49 +1,5 @@
 React.initializeTouchEvents(true);
 
-class MusicSpeedChecker extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            queue: [],
-        };
-    }
-    now() {
-        return (new Date()).getTime();
-    }
-    tick() {
-        var new_queue = $.extend([], this.state.queue);
-        new_queue.push(this.now());
-        if (new_queue.length > 8) {
-            new_queue.shift();
-        }
-        this.setState({
-            queue: new_queue,
-        });
-    }
-    getTempo() {
-        var intervals = [];
-        for (var i = 1; i < this.state.queue.length; ++i) {
-            intervals.push(this.state.queue[i] - this.state.queue[i - 1]);
-        }
-        intervals.sort();
-        return 60000 / intervals[Math.round(intervals.length / 2)];
-    }
-    getBtnText() {
-        if (this.state.queue.length == 0) {
-            return "Hit me following music tempo";
-        }
-        if (this.state.queue.length < 8) {
-            return "Hit me following music tempo (" + (8 - this.state.queue.length).toString() + ")";
-        }
-        return this.getTempo().toFixed(1) + " bpm";
-    }
-    render() {
-        return <div className="music-speed-checker">
-            <h3>Music speed checker</h3>
-            <button onTouchStart={ this.tick.bind(this) }>{ this.getBtnText() }</button>
-        </div>
-    }
-}
 
 class JudgeTablet extends React.Component {
 
@@ -57,27 +13,33 @@ class JudgeTablet extends React.Component {
             current_heat: 1,
         };
         this.state.next_state = null;
-        window.message_dispatcher.subscribe("run_update", this.dispatchRunUpdate.bind(this));
-        window.message_dispatcher.subscribe("active_tour_update", this.dispatchActiveTourUpdate.bind(this));
+        // TODO: add filters
+        // TODO: support tour_full_update
+        window.message_dispatcher.addListener("run_update score_update")
+            .fetchObject("tournaments.run.get", true)
+            .setCallback(this.dispatchRunUpdate.bind(this));
+        window.message_dispatcher.addListener("active_tour_update")
+            .fetchObject("tournaments.tour.find_active")
+            .setCallback(this.dispatchActiveTourUpdate.bind(this));
         this.loadData();
     }
     loadData() {
-        Api.get_judge(this.props.judge_id, function(response) {
+        (new Api("tournaments.judge.get", {judge_id: this.props.judge_id, recursive: false})).onSuccess(function(response) {
             this.setState({
                 judge: response
             });
-        }.bind(this));
-        Api.get_active_tour(function(response) {
-            this.dispatchActiveTourUpdate(response["tour_id"]);
-        }.bind(this));
+        }.bind(this)).send();
+        (new Api("tournaments.tour.find_active", {})).onSuccess(function(response) {
+            this.dispatchActiveTourUpdate(response);
+        }.bind(this)).send();
     }
 
     // Dispatchers
 
-    dispatchRunUpdate(run_id, new_run) {
+    dispatchRunUpdate(new_run) {
         var changed = false;
         var new_runs = this.state.tour.runs.map(function(run) {
-            if (run_id != run.id) {
+            if (new_run.id != run.id) {
                 changed = true;
                 return run;
             }
@@ -91,7 +53,8 @@ class JudgeTablet extends React.Component {
             });
         }
     }
-    dispatchActiveTourUpdate(tour_id) {
+    dispatchActiveTourUpdate(response) {
+        var tour_id = response.tour_id;
         if (tour_id === null) {
             this.setState({
                 tour_id: null,
@@ -101,18 +64,18 @@ class JudgeTablet extends React.Component {
         if (this.state.tour_id == tour_id) {
             return;
         }
-        Api.get_tour(tour_id, function(new_tour) {
+        (new Api("tournaments.tour.get", {tour_id: tour_id, recursive: true})).onSuccess(function(new_tour) {
             this.setState({
                 tour_id: tour_id,
                 tour: new_tour,
             });
-        }.bind(this));
+        }.bind(this)).send();
     }
 
     // Listeners
 
-    onScoreUpdate(run_id, new_score) {
-        Api.set_judge_score(run_id, this.props.judge_id, new_score);
+    onScoreUpdate(score_id, new_score) {
+        (new Api("tournaments.score.set", {score_id: score_id, data: new_score})).send();
     }
 
     // Actions
@@ -178,6 +141,7 @@ class JudgeTablet extends React.Component {
         if (this.state.tour_id === null) {
             return this.renderJudgeInfo();
         }
+        console.log(this.state);
         var cells = this.state.tour.runs
             .filter(function(run) {
                 return run.heat == this.state.current_heat;
@@ -186,10 +150,10 @@ class JudgeTablet extends React.Component {
                 return <td key={ run.id }>
                     <h2>Participant №{ run.participant.number }</h2>
                     <TabletScoreInput
-                        scores={ run.scores }
+                        scores={ run.scores.scores }
                         judge_id={ this.props.judge_id }
                         judges={ this.state.tour.judges }
-                        onScoreUpdate={ this.onScoreUpdate.bind(this, run.id) } />
+                        onScoreUpdate={ this.onScoreUpdate.bind(this, run.scores.scores[this.props.judge_id].id) } />
                 </td>
             }.bind(this));
         var one_run_class = cells.length == 1 ? " single-run" : "";

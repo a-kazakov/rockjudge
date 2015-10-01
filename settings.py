@@ -12,7 +12,8 @@ DB_CONFIG = {
 }
 
 APPS = [
-    "Simple",
+    "participants",
+    "tournaments",
 ]
 
 

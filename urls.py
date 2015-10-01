@@ -1,13 +1,13 @@
 from sockjs.tornado import SockJSRouter
 
-from Simple.handlers import (
+from webserver.handlers import (
     ApiHandler,
     AdminHandler,
     TourAdminHandler,
     TourResultsHandler,
     TabletHandler,
 )
-from Simple.websocket import WebSocketClients
+from webserver.websocket import WebSocketClients
 
 
 ws_router = SockJSRouter(WebSocketClients, '/ws')
