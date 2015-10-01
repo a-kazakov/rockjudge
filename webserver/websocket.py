@@ -1,7 +1,5 @@
 import json
 
-import tornado.websocket
-
 from sockjs.tornado import SockJSConnection
 
 

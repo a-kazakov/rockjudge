@@ -1,5 +1,4 @@
 import asyncio
-import peewee
 import peewee_async
 
 from settings import DB_CONFIG

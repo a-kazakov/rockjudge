@@ -2,7 +2,6 @@ import importlib
 import inspect
 import os.path
 
-import asyncio
 import peewee
 import tornado.web
 

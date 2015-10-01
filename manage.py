@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 
-import importlib
-import inspect
-import time
 import unittest
 
 from sys import argv
@@ -18,8 +15,6 @@ from app import (
     Application,
     ModelManager,
 )
-
-from webserver.websocket import WebSocketClients
 
 
 class Commands:

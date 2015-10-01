@@ -3,12 +3,9 @@ import tornado.web
 
 from tournaments.api import Api as TournamentsApi
 from tournaments.models import (
-    Competition,
     Judge,
-    Run,
     Tour,
 )
-from webserver.websocket import WebSocketClients
 
 
 class AdminHandler(tornado.web.RequestHandler):

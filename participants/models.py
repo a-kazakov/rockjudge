@@ -2,8 +2,6 @@ import peewee
 
 from db import Database
 
-from webserver.websocket import WebSocketClients
-
 
 class Participant(peewee.Model):
     class Meta:

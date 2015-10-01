@@ -207,13 +207,13 @@ class Api:
                 "message": "Invalid method name: {}".format(method),
             }
         internal_name = "_".join(parts)
-#        try:
-        return {
-            "success": True,
-            "response": getattr(cls, internal_name)(request)
-        }
-        # except AttributeError:
-        #     return {
-        #         "success": False,
-        #         "message": "Unknown method name: {}".format(method),
-        #     }
+        try:
+            return {
+                "success": True,
+                "response": getattr(cls, internal_name)(request)
+            }
+        except AttributeError:
+            return {
+                "success": False,
+                "message": "Unknown method name: {}".format(method),
+            }
