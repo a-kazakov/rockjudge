@@ -20,3 +20,22 @@ class Participant(peewee.Model):
             "name": self.name,
             "number": self.number,
         }
+
+
+class Acrobatic(peewee.Model):
+    class Meta:
+        database = Database.instance().db
+        order_by = ["number"]
+
+    participant = peewee.ForeignKeyField(Participant, related_name="acrobatics")
+    number = peewee.IntegerField()
+    description = peewee.CharField()
+    score = peewee.IntegerField()
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "number": self.number,
+            "description": self.description,
+            "score": self.score,
+        }

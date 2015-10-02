@@ -1,8 +1,11 @@
-import json
-import math
+from fractions import Fraction as frac
 
 
-class LineScore:
+def apply_deduction(base_score, deduction):
+    return base_score * (100 - deduction) // 100;
+
+
+class DanceScore:
     def __init__(self, score):
         self.score = score
         raw_data = score.get_data()
@@ -15,15 +18,11 @@ class LineScore:
             "big_mistakes":     raw_data.pop("big_mistakes",    0),
         }
 
-    @staticmethod
-    def apply_deduction(base_score, deduction):
-        return base_score * (100 - deduction) // 100;
-
     @property
     def total_score(self):
         return max(0, sum([
-            self.apply_deduction(10 * 100, self.data["fw_man"]),
-            self.apply_deduction(10 * 100, self.data["fw_woman"]),
+            apply_deduction(10 * 100, self.data["fw_man"]),
+            apply_deduction(10 * 100, self.data["fw_woman"]),
               100 * self.data["dance_figs"],
               100 * self.data["composition"],
              -500 * self.data["small_mistakes"],
@@ -48,6 +47,40 @@ class LineScore:
         }
 
 
+class AcroScore:
+    def __init__(self, score):
+        self.score = score
+        raw_data = score.get_data()
+        num_acros = score.run.participant.acrobatics.count()
+        self.data = {
+            "deductions": raw_data.pop("deductions", [100] * num_acros),
+            "mistakes": raw_data.pop("mistakes", 0),
+        }
+
+    @property
+    def total_score(self):
+        result = 0
+        for acro, deduction in zip(self.score.run.participant.acrobatics, self.data["deductions"]):
+            override = self.score.run.get_acrobatic_override(acro)
+            base_score = override.score if override is not None else acro.score
+            result += max(0, min(1200, apply_deduction(100 * base_score, deduction)))
+        result -= 3000 * self.data["mistakes"]
+        return max(0, result)
+
+    def update(self, new_data):
+        self.data = {
+            "deductions": [int(d) for d in new_data["deductions"]],
+            "mistakes": int(new_data.pop("mistakes", 0)),
+        }
+        self.score.set_data(self.data)
+
+    def serialize(self):
+        return {
+            "total_score": self.total_score / 100,
+            "raw_data": self.data,
+        }
+
+
 class HeadScore:
     def __init__(self, score):
         self.score = score
@@ -62,7 +95,7 @@ class HeadScore:
 
     def update(self, new_data):
         self.data = {
-            "new_data": int(new_data["penalty"])
+            "penalty": int(new_data["penalty"])
         }
         self.score.set_data(self.data)
 
@@ -78,8 +111,8 @@ class TechScore:
         self.score = score
         raw_data = score.get_data()
         self.data = {
-            "jump_steps":       raw_data.pop("jump_steps", 0),
-            "timing_violation": raw_data.pop("timing_violation", None),
+            "jump_steps":           raw_data.pop("jump_steps", 0),
+            "timing_violation":     raw_data.pop("timing_violation", None),
         }
         self.judge = score.judge
 
@@ -89,8 +122,8 @@ class TechScore:
 
     def update(self, new_data):
         self.data = {
-            "jump_steps": int(new_data.pop("jump_steps", this.data["jump_steps"])),
-            "timing_violation": new_data.pop("timing_violation", this.data["timing_violation"]),
+            "jump_steps": int(new_data.pop("jump_steps", self.data["jump_steps"])),
+            "timing_violation": new_data.pop("timing_violation", self.data["timing_violation"]),
         }
         self.score.set_data(self.data)
 
@@ -101,25 +134,59 @@ class TechScore:
         }
 
 
-def ScoreWrapper(score):
+def ScoreWrapper(score, acro):
     CLASSES = {
-        "line_judge": LineScore,
+        "dance_judge": DanceScore,
+        "acro_judge": AcroScore,
         "head_judge": HeadScore,
         "tech_judge": TechScore,
     }
-    return CLASSES[score.judge.role](score)
+    role = score.judge.role
+    if not acro and role == "acro_judge":
+        role = "dance_judge"
+    return CLASSES[role](score)
+
+
+class SmallScoresSet:
+    def __init__(self, scores):
+        self.scores = scores
+        num_scores = len(scores)
+        min_score = min(scores)
+        max_score = max(scores)
+        sum_scores = sum(scores)
+        self.primary_score = frac(2 * sum_scores - min_score - max_score, 2 * num_scores - 2)
+        self.secondary_score = frac(sum_scores, num_scores)
+
+
+class LargeScoresSet:
+    def __init__(self, scores):
+        self.scores = scores
+        num_scores = len(scores)
+        min_score = min(scores)
+        max_score = max(scores)
+        sum_scores = sum(scores)
+        self.primary_score = frac(sum_scores - min_score - max_score, num_scores - 2)
+        self.secondary_score = frac(sum_scores, num_scores)
 
 
 class RunScore:
-    def __init__(self, run):
+    def __init__(self, run, acro=False):
         self.run = run
+        self.acro = acro
         self.judges = list(run.tour.judges)
         self.head_judge = self.get_head_judge()
-        self.line_judges = list(self.get_line_judges())
+        self.dance_judges = list(self.get_dance_judges())
+        self.acro_judges = list(self.get_acro_judges())
         self.judges_scores = [run.get_score_obj(judge) for judge in self.judges]
-        self.line_judges_total_scores = [ScoreWrapper(run.get_score_obj(judge)).total_score for judge in self.line_judges]
+        self.dance_judges_total_scores = [ScoreWrapper(run.get_score_obj(judge), acro).total_score for judge in self.dance_judges]
+        self.acro_judges_total_scores = [ScoreWrapper(run.get_score_obj(judge), acro).total_score for judge in self.acro_judges]
         if self.head_judge is not None:
-            self.head_judge_total_score = ScoreWrapper(run.get_score_obj(self.head_judge)).total_score
+            self.head_judge_total_score = ScoreWrapper(run.get_score_obj(self.head_judge), acro).total_score
+        if acro:
+            self.acro_scores = SmallScoresSet(self.acro_judges_total_scores)
+            self.dance_scores = SmallScoresSet(self.dance_judges_total_scores)
+        else:
+            self.dance_scores = SmallScoresSet(self.dance_judges_total_scores) if len(self.dance_judges_total_scores) < 5 else LargeScoresSet(self.dance_judges_total_scores)
 
     def get_head_judge(self):
         for judge in self.judges:
@@ -127,54 +194,44 @@ class RunScore:
                 return judge
         return None
 
-    def get_line_judges(self):
+    def get_dance_judges(self):
         return [
             judge
             for judge in self.judges
-            if judge.role == "line_judge"
+            if judge.role == "dance_judge" or (not self.acro and judge.role == "acro_judge")
+        ]
+
+    def get_acro_judges(self):
+        return [
+            judge
+            for judge in self.judges
+            if self.acro and judge.role == "acro_judge"
         ]
 
     @property
-    def penalies(self):
+    def penalties(self):
         if self.head_judge is None:
             return 0
         penalty = self.head_judge_total_score
-        num_line_judges = len(self.line_judges)
-        return penalty * num_line_judges * self.factor
+        num_judges = len(self.dance_judges) + len(self.acro_judges)
+        return frac(penalty * num_judges)
 
     @property
-    def primary_multiplier(self):
-        if len(self.line_judges_total_scores) < 5:
-            return 2 * len(self.line_judges_total_scores) - 2
-        return len(self.line_judges_total_scores) - 2
-
-    @property
-    def secondary_multiplier(self):
-        return len(self.line_judges_total_scores)
-
-    @property
-    def factor(self):
-        return self.primary_multiplier * self.secondary_multiplier
-
-    @property
-    def primary_score(self):
-        sum_scores = sum(self.line_judges_total_scores)
-        min_score = min(self.line_judges_total_scores)
-        max_score = max(self.line_judges_total_scores)
-        if len(self.line_judges_total_scores) < 5:
-            result = (2 * sum_scores - min_score - max_score) * self.secondary_multiplier
+    def sorting_score(self):
+        if self.acro:
+            return (
+                -max(0, self.dance_scores.primary_score + self.acro_scores.primary_score + self.penalties),
+                -max(0, self.dance_scores.secondary_score + self.acro_scores.secondary_score + self.penalties),
+            )
         else:
-            result = (sum_scores - min_score - max_score) * self.secondary_multiplier
-        result += self.penalies
-        return max(0, result)
-
-    @property
-    def secondary_score(self):
-        return max(0, sum(self.line_judges_total_scores) * self.primary_multiplier + self.penalies)
+            return (
+                -max(0, self.dance_scores.primary_score + self.penalties),
+                -max(0, self.dance_scores.secondary_score + self.penalties),
+            )
 
     @property
     def display_score(self):
-        return "{:.2f}".format(math.floor(0.5 + self.primary_score / self.factor) / 100)
+        return "{:.2f}".format(-self.sorting_score[0] / 100.0)
 
     def serialize(self):
         return {
@@ -187,12 +244,12 @@ class RunScore:
 
 
 class TourScores:
-    def __init__(self, tour):
+    def __init__(self, tour, acro=False):
         self.tour = tour
         self.judges = list(tour.judges)
         self._table = None
         self.run_scores = [
-            RunScore(run) for run in self.tour.runs
+            RunScore(run, acro) for run in self.tour.runs
         ]
 
     def create_table(self):
@@ -200,7 +257,7 @@ class TourScores:
             {
                 "run_score": run_score,
                 "scores": run_score.serialize(),
-                "sorting_score": (-run_score.primary_score, -run_score.secondary_score, ),
+                "sorting_score": run_score.sorting_score,
             } for run_score in self.run_scores],
             key=lambda s: s["sorting_score"]
         )
@@ -231,15 +288,3 @@ class TourScores:
             "advances": row["advances"],
             "scores": row["scores"]
         } for row in self.table]
-
-
-class InnerCompetitionScores:
-    def __init__(self, ic):
-        self.ic = ic
-
-    def get_results(self):
-        result = {}
-        for tour in self.ic.tours:
-            tour_table = TourScores(tour).get_tour_table()
-            for row in tour_table:
-                result[row["participant"]["id"]] = row

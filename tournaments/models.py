@@ -6,7 +6,8 @@ import peewee
 from db import Database
 
 from participants.models import (
-    Participant
+    Acrobatic,
+    Participant,
 )
 from scoring_systems import get_scoring_system
 from webserver.websocket import WebSocketClients
@@ -183,6 +184,7 @@ class Tour(peewee.Model):
         return {
             "id": self.id,
             "active": self.active,
+            "scoring_system": self.scoring_system_name,
             "finalized": self.finalized,
             "name": self.name,
             "next_tour_id": self.next_tour.id if self.next_tour else None,
@@ -313,6 +315,31 @@ class Run(peewee.Model):
             "run_id": self.id,
         })
 
+    def get_acrobatic_override(self, acrobatic):
+        try:
+            return self.acrobatic_overrides.where(AcrobaticOverride.acrobatic == acrobatic).get()
+        except AcrobaticOverride.DoesNotExist:
+            return None
+
+    def set_acrobatic_override(self, acrobatic, score):
+        override = self.get_acrobatic_override(acrobatic)
+        if override is None:
+            if score is not None:
+                AcrobaticOverride.create(
+                    run=self,
+                    acrobatic=acrobatic,
+                    score=score,
+                )
+        else:
+            if score is not None:
+                override.score = score
+                override.save()
+            else:
+                override.delete_instance()
+        WebSocketClients.broadcast("run_update", {
+            "run_id": self.id,
+        })
+
     def serialize(self, recursive=False):
         result = {
             "id": self.id,
@@ -320,9 +347,32 @@ class Run(peewee.Model):
             "heat": self.heat,
             "tour_id": self.tour_id,
         }
+        acro_list = []
+        for acro in self.participant.acrobatics:
+            serialized = acro.serialize()
+            override = self.get_acrobatic_override(acro)
+            serialized["original_score"] = serialized["score"]
+            if override is not None:
+                serialized["score"] = override.score
+            acro_list.append(serialized)
         if (recursive):
-            result["scores"] = self.tour.scoring_system.get_run_scores(self)
+            result.update({
+                "scores": self.tour.scoring_system.get_run_scores(self),
+                "acrobatics": acro_list,
+            })
         return result
+
+
+class AcrobaticOverride(peewee.Model):
+    class Meta:
+        database = Database.instance().db
+        indexes = (
+            (("run", "acrobatic"), True),
+        )
+
+    run = peewee.ForeignKeyField(Run, related_name="acrobatic_overrides")
+    acrobatic = peewee.ForeignKeyField(Acrobatic)
+    score = peewee.IntegerField()
 
 
 class Score(peewee.Model):

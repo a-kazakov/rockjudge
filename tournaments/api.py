@@ -1,5 +1,6 @@
 from collections import deque
 
+from participants.models import Acrobatic
 from tournaments.models import (
     Competition,
     InnerCompetition,
@@ -26,6 +27,7 @@ class IdTransformer:
         },
         "run_id": {
             "tour_id": lambda run_id: Run.get(Run.id == run_id).tour_id,
+            "participant_id": lambda run_id: Run.get(Run.id == run_id).participant_id,
         },
         "tour_id": {
             "inner_competition_id": lambda tour_id: Tour.get(Tour.id == tour_id).inner_competition_id,
@@ -34,6 +36,11 @@ class IdTransformer:
             "competition_id": lambda inner_competition_id: \
                 InnerCompetition.get(InnerCompetition.id == inner_competition_id).competition_id,
         },
+        "acrobatic_id": {
+            "participant_id": lambda acrobatic_id: Acrobatic.get(Acrobatic.id == acrobatic_id).participant_id,
+        },
+        "participant_id": {},
+        "competition_id": {},
     }
 
     @classmethod
@@ -54,17 +61,20 @@ class IdTransformer:
                     visited.add(next_node)
                     prev[next_node] = node
                     q.append(next_node)
-        raise RuntimeError("Unable to convert {} to {}".format(src, dest))
+        return None
 
     @classmethod
     def execute(cls, request, wanted_id_type):
-        current_id_type = [k for k in request.keys() if k.endswith("_id")][0]
-        id_value = request[current_id_type]
-        path = cls.path(current_id_type, wanted_id_type)
-        for id_type in path:
-            id_value = cls.TRANSFORMATIONS[current_id_type][id_type](id_value)
-            current_id_type = id_type
-        return id_value
+        for current_id_type in [k for k in request.keys() if k.endswith("_id")]:
+            id_value = request[current_id_type]
+            path = cls.path(current_id_type, wanted_id_type)
+            if path is None:
+                continue
+            for id_type in path:
+                id_value = cls.TRANSFORMATIONS[current_id_type][id_type](id_value)
+                current_id_type = id_type
+            return id_value
+        raise RuntimeError("Unable to get {} from request".format(wanted_id_type))
 
 
 class Api:
@@ -155,6 +165,13 @@ class Api:
     # Custom actions
 
     @classmethod
+    def acrobatic_override_set(cls, request):
+        run = cls.get_model(Run, "run_id", request)
+        acrobatic = cls.get_model(Acrobatic, "acrobatic_id", request)
+        run.set_acrobatic_override(acrobatic, request["score"])
+        return {}
+
+    @classmethod
     def tour_find_active(cls, request):
         tour = Tour.get_active()
         return {
@@ -207,13 +224,13 @@ class Api:
                 "message": "Invalid method name: {}".format(method),
             }
         internal_name = "_".join(parts)
-        try:
-            return {
-                "success": True,
-                "response": getattr(cls, internal_name)(request)
-            }
-        except AttributeError:
-            return {
-                "success": False,
-                "message": "Unknown method name: {}".format(method),
-            }
+#        try:
+        return {
+            "success": True,
+            "response": getattr(cls, internal_name)(request)
+        }
+        # except AttributeError:
+        #     return {
+        #         "success": False,
+        #         "message": "Unknown method name: {}".format(method),
+        #     }

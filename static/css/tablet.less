@@ -101,6 +101,10 @@ header .header {
   .value {
     background-color: #fcc;
   }
+  div& {
+    width: 50%;
+    margin: 0 auto;
+  }
   td {
     width: 50%;
     padding: 10px;
@@ -210,12 +214,36 @@ button.score-btn {
   }
 }
 
-.music-speed-checker {
-  width: 100%;
+.tech-judge-acro {
+  padding-bottom: 10px;
+  .controls {
+    float: right;
+    .btn-reset {
+      width: 110px;
+      display: inline-block;
+      vertical-align: top;
+    }
+    .setter {
+      width: 150px;
+      display: inline-block;
+      vertical-align: top;
+    }
+  }
+}
+
+.footer.page-selector {
   text-align: center;
   button {
-    width: 500px;
-    height: 60px;
-    line-height: 48px;
+    width: 200px;
+    background-color: lighten(@ui-dark, 30%);
+    &.active {
+      background-color: lighten(@ui-dark, 10%);
+    }
   }
+}
+
+.clearfix {
+  clear: both;
+  overflow: auto;
+  zoom: 1;
 }

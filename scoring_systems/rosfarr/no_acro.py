@@ -1,5 +1,4 @@
 from .impl import (
-    InnerCompetitionScores,
     ScoreWrapper,
     RunScore,
     TourScores,
@@ -7,23 +6,19 @@ from .impl import (
 
 
 def get_tour_results(tour):
-    return TourScores(tour).get_results()
-
-
-def get_inner_competition_results(inner_competition):
-    return InnerCompetitionScores(inner_competition).get_results()
+    return TourScores(tour, acro=False).get_results()
 
 
 def get_run_scores(run):
-    return RunScore(run).serialize()
+    return RunScore(run, acro=False).serialize()
 
 
 def serialize_score(score):
-    return ScoreWrapper(score).serialize()
+    return ScoreWrapper(score, acro=False).serialize()
 
 
 def update_score(score, client_data):
-    ScoreWrapper(score).update(client_data)
+    ScoreWrapper(score, acro=False).update(client_data)
 
 
 def get_tablet_css():

@@ -11,8 +11,8 @@ class JudgeTablet extends React.Component {
             tour_id: null,
             judge: null,
             current_heat: 1,
+            page: "dance",
         };
-        this.state.next_state = null;
         // TODO: add filters
         // TODO: support tour_full_update
         window.message_dispatcher.addListener("run_update score_update")
@@ -85,10 +85,14 @@ class JudgeTablet extends React.Component {
             current_heat: this.state.current_heat - 1,
         });
     }
-
     toNextHeat() {
         this.setState({
             current_heat: this.state.current_heat + 1,
+        });
+    }
+    switchPage(page) {
+        this.setState({
+            page: page,
         });
     }
 
@@ -131,17 +135,10 @@ class JudgeTablet extends React.Component {
         </div>
 
     }
-    renderFooter() {
-        if (this.state.tour_id === null || this.state.judge.role == "line_judge") {
-            return null;
-        }
-        return <MusicSpeedChecker />
-    }
     renderScoringLayout() {
         if (this.state.tour_id === null) {
             return this.renderJudgeInfo();
         }
-        console.log(this.state);
         var cells = this.state.tour.runs
             .filter(function(run) {
                 return run.heat == this.state.current_heat;
@@ -150,9 +147,13 @@ class JudgeTablet extends React.Component {
                 return <td key={ run.id }>
                     <h2>Participant №{ run.participant.number }</h2>
                     <TabletScoreInput
-                        scores={ run.scores.scores }
+                        acrobatics={ run.acrobatics }
                         judge_id={ this.props.judge_id }
                         judges={ this.state.tour.judges }
+                        run_id={ run.id }
+                        page={ this.state.page }
+                        scores={ run.scores.scores }
+                        scoring_system={ this.state.tour.scoring_system }
                         onScoreUpdate={ this.onScoreUpdate.bind(this, run.scores.scores[this.props.judge_id].id) } />
                 </td>
             }.bind(this));
@@ -160,6 +161,22 @@ class JudgeTablet extends React.Component {
         return <table className={ "tablet-main-table" + one_run_class }><tbody><tr>
             { cells }
         </tr></tbody></table>;
+    }
+    renderFooter() {
+        if (this.state.tour_id === null || this.state.judge.role != "tech_judge") {
+            return null;
+        }
+        return <div className="footer page-selector">
+            <h3>Select page:</h3>
+            <button
+                className={ this.state.page == "dance" ? "active" : ""}
+                onClick={ this.switchPage.bind(this, "dance") }>Dance
+            </button>
+            <button
+                className={ this.state.page == "acro" ? "active" : ""}
+                onClick={ this.switchPage.bind(this, "acro") }>Acrobaics
+            </button>
+        </div>;
     }
     render() {
         if (this.state.judge === null) {
