@@ -44,6 +44,13 @@ class Tour(peewee.Model):
     inner_competition_id = peewee.IntegerField()
     scoring_system_name = peewee.CharField()
 
+    @property
+    def runs_pf(self):
+        try:
+            return self.runs_prefetch
+        except AttributeError:
+            return self.runs
+
     def estimate_participants(self):
         try:
             prev_tour = self.prev_tour.get()
@@ -95,14 +102,8 @@ class Tour(peewee.Model):
             run.create_scores()
         self.shuffle_heats(broadcast=False)
 
-    def get_participants(self):
-        return [run.participant for run in self.runs.select()]
-
-    def get_participant_run(self, participant):
-        return self.runs.where(Run.participant == participant).get()
-
     def shuffle_heats(self, broadcast=True):
-        runs = list(self.runs)
+        runs = list(self.runs_pf)
         random.shuffle(runs)
         last_heat = len(runs) % self.participants_per_heat
         if last_heat == 1:
@@ -187,7 +188,7 @@ class Tour(peewee.Model):
             "scoring_system": self.scoring_system_name,
             "finalized": self.finalized,
             "name": self.name,
-            "next_tour_id": self.next_tour.id if self.next_tour else None,
+            "next_tour_id": self.next_tour_id,
             "participants_per_heat": self.participants_per_heat,
         }
 
@@ -209,9 +210,10 @@ class Tour(peewee.Model):
             "inner_competition_name": self.inner_competition.name,
         })
         if recursive:
+            judges = list(self.judges)
             result.update({
-                "judges": [judge.serialize(recursive=True) for judge in self.judges],
-                "runs": [run.serialize(recursive=True) for run in self.runs],
+                "judges": [judge.serialize(recursive=True) for judge in judges],
+                "runs": [run.serialize(recursive=True, judges=judges) for run in self.runs_pf],
             })
         return result
 
@@ -282,6 +284,13 @@ class Run(peewee.Model):
     tour = peewee.ForeignKeyField(Tour, related_name="runs")
     heat = peewee.IntegerField()
 
+    @property
+    def scores_pf(self):
+        try:
+            return self.scores_prefetch
+        except AttributeError:
+            return self.scores
+
     def set_heat(self, new_value):
         self.heat = new_value
         self.save()
@@ -316,10 +325,10 @@ class Run(peewee.Model):
         })
 
     def get_acrobatic_override(self, acrobatic):
-        try:
-            return self.acrobatic_overrides.where(AcrobaticOverride.acrobatic == acrobatic).get()
-        except AcrobaticOverride.DoesNotExist:
-            return None
+        for override in self.acrobatic_overrides:
+            if override.acrobatic_id == acrobatic.id:
+                return override
+        return None
 
     def set_acrobatic_override(self, acrobatic, score):
         override = self.get_acrobatic_override(acrobatic)
@@ -340,7 +349,7 @@ class Run(peewee.Model):
             "run_id": self.id,
         })
 
-    def serialize(self, recursive=False):
+    def serialize(self, recursive=False, judges=None):
         result = {
             "id": self.id,
             "participant": self.participant.serialize(),
@@ -355,9 +364,9 @@ class Run(peewee.Model):
             if override is not None:
                 serialized["score"] = override.score
             acro_list.append(serialized)
-        if (recursive):
+        if recursive:
             result.update({
-                "scores": self.tour.scoring_system.get_run_scores(self),
+                "scores": self.tour.scoring_system.get_run_scores(self, judges=judges),
                 "acrobatics": acro_list,
             })
         return result
@@ -369,6 +378,7 @@ class AcrobaticOverride(peewee.Model):
         indexes = (
             (("run", "acrobatic"), True),
         )
+        order_by = ["run", "acrobatic"]
 
     run = peewee.ForeignKeyField(Run, related_name="acrobatic_overrides")
     acrobatic = peewee.ForeignKeyField(Acrobatic)
@@ -397,7 +407,7 @@ class Score(peewee.Model):
     def update_data(self, new_data):
         self.run.tour.scoring_system.update_score(self, new_data)
 
-    def serialize(self, recursive=False):
-        result = self.run.tour.scoring_system.serialize_score(self)
+    def serialize(self, recursive=False, judge=None):
+        result = self.run.tour.scoring_system.serialize_score(self, judge=judge)
         result["id"] = self.id
         return result

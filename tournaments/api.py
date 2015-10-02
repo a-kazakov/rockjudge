@@ -1,7 +1,13 @@
 from collections import deque
 
-from participants.models import Acrobatic
+import peewee
+
+from participants.models import (
+    Acrobatic,
+    Participant,
+)
 from tournaments.models import (
+    AcrobaticOverride,
     Competition,
     InnerCompetition,
     Judge,
@@ -9,11 +15,6 @@ from tournaments.models import (
     Score,
     Tour,
 )
-
-class ApiImpl:
-    @staticmethod
-    def judge_get(judge_id):
-        pass
 
 
 class IdTransformer:
@@ -103,11 +104,33 @@ class Api:
 
     @classmethod
     def run_get(cls, request):
-        return cls.get_model(Run, "run_id", request).serialize(recursive=request["recursive"])
+        model_id = IdTransformer.execute(request, "run_id")
+        runs = (Run
+            .select(Run, Participant, Acrobatic, AcrobaticOverride)
+            .where(Run.id == model_id)
+            .join(Participant)
+            .join(Acrobatic, peewee.JOIN.LEFT_OUTER)
+            .switch(Run)
+            .join(AcrobaticOverride, peewee.JOIN.LEFT_OUTER)
+            .aggregate_rows()
+        )
+        prefetched = peewee.prefetch(runs, Score)
+        return list(prefetched)[0].serialize(recursive=request["recursive"])
 
     @classmethod
     def tour_get(cls, request):
-        return cls.get_model(Tour, "tour_id", request).serialize(recursive=request["recursive"])
+        model_id = IdTransformer.execute(request, "tour_id")
+        tour = Tour.select().where(Tour.id == model_id)
+        runs = (Run
+            .select(Run, Participant, Acrobatic, AcrobaticOverride)
+            .join(Participant)
+            .join(Acrobatic, peewee.JOIN.LEFT_OUTER)
+            .switch(Run)
+            .join(AcrobaticOverride, peewee.JOIN.LEFT_OUTER)
+            .aggregate_rows()
+        )
+        prefetched = peewee.prefetch(tour, runs, Score)
+        return list(prefetched)[0].serialize(recursive=request["recursive"])
 
     @classmethod
     def competition_get(cls, request):

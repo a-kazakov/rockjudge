@@ -51,7 +51,10 @@ class AcroScore:
     def __init__(self, score):
         self.score = score
         raw_data = score.get_data()
-        num_acros = score.run.participant.acrobatics.count()
+        if isinstance(score.run.participant.acrobatics, list):
+            num_acros = len(score.run.participant.acrobatics)
+        else:
+            num_acros = score.run.participant.acrobatics.count()
         self.data = {
             "deductions": raw_data.pop("deductions", [100] * num_acros),
             "mistakes": raw_data.pop("mistakes", 0),
@@ -114,7 +117,6 @@ class TechScore:
             "jump_steps":           raw_data.pop("jump_steps", 0),
             "timing_violation":     raw_data.pop("timing_violation", None),
         }
-        self.judge = score.judge
 
     @property
     def total_score(self):
@@ -134,14 +136,16 @@ class TechScore:
         }
 
 
-def ScoreWrapper(score, acro):
+def ScoreWrapper(score, acro, judge=None):
     CLASSES = {
         "dance_judge": DanceScore,
         "acro_judge": AcroScore,
         "head_judge": HeadScore,
         "tech_judge": TechScore,
     }
-    role = score.judge.role
+    if judge is None:
+        judge = score.judge
+    role = judge.role
     if not acro and role == "acro_judge":
         role = "dance_judge"
     return CLASSES[role](score)
@@ -170,50 +174,59 @@ class LargeScoresSet:
 
 
 class RunScore:
-    def __init__(self, run, acro=False):
+    def __init__(self, run, acro=False, judges=None):
         self.run = run
         self.acro = acro
-        self.judges = list(run.tour.judges)
-        self.head_judge = self.get_head_judge()
-        self.dance_judges = list(self.get_dance_judges())
-        self.acro_judges = list(self.get_acro_judges())
-        self.judges_scores = [run.get_score_obj(judge) for judge in self.judges]
-        self.dance_judges_total_scores = [ScoreWrapper(run.get_score_obj(judge), acro).total_score for judge in self.dance_judges]
-        self.acro_judges_total_scores = [ScoreWrapper(run.get_score_obj(judge), acro).total_score for judge in self.acro_judges]
-        if self.head_judge is not None:
-            self.head_judge_total_score = ScoreWrapper(run.get_score_obj(self.head_judge), acro).total_score
+        judges = run.tour.judges if judges is None else judges
+        scores = run.scores_pf
+        self.judge_scores = list(zip(judges, scores))
+        self.dance_judges_total_scores = [
+            ScoreWrapper(score, acro, judge=judge).total_score
+            for judge, score
+            in self.dance_judge_scores
+        ]
+        self.acro_judges_total_scores = [
+            ScoreWrapper(score, acro, judge=judge).total_score
+            for judge, score
+            in self.acro_judge_scores
+        ]
+        if self.head_judge_score is not None:
+            judge, score = self.head_judge_score
+            self.head_judge_total_score = ScoreWrapper(score, acro, judge=judge).total_score
         if acro:
             self.acro_scores = SmallScoresSet(self.acro_judges_total_scores)
             self.dance_scores = SmallScoresSet(self.dance_judges_total_scores)
         else:
             self.dance_scores = SmallScoresSet(self.dance_judges_total_scores) if len(self.dance_judges_total_scores) < 5 else LargeScoresSet(self.dance_judges_total_scores)
 
-    def get_head_judge(self):
-        for judge in self.judges:
+
+    @property
+    def head_judge_score(self):
+        for judge, score in self.judge_scores:
             if judge.role == "head_judge":
-                return judge
+                return judge, score
         return None
 
-    def get_dance_judges(self):
-        return [
-            judge
-            for judge in self.judges
-            if judge.role == "dance_judge" or (not self.acro and judge.role == "acro_judge")
-        ]
+    @property
+    def dance_judge_scores(self):
+        for judge, score in self.judge_scores:
+            if judge.role == "dance_judge":
+                yield judge, score
+            elif judge.role == "acro_judge" and self.acro:
+                yield judge, score
 
-    def get_acro_judges(self):
-        return [
-            judge
-            for judge in self.judges
-            if self.acro and judge.role == "acro_judge"
-        ]
+    @property
+    def acro_judge_scores(self):
+        for judge, score in self.judge_scores:
+            if judge.role == "acro_judge" and self.acro:
+                yield judge, score
 
     @property
     def penalties(self):
-        if self.head_judge is None:
+        if self.head_judge_score is None:
             return 0
         penalty = self.head_judge_total_score
-        num_judges = len(self.dance_judges) + len(self.acro_judges)
+        num_judges = len(self.dance_judges_total_scores) + len(self.acro_judges_total_scores)
         return frac(penalty * num_judges)
 
     @property
@@ -237,8 +250,8 @@ class RunScore:
         return {
             "total_run_score": self.display_score,
             "scores": {
-                str(js.judge.id): js.serialize()
-                for js in self.judges_scores
+                str(judge.id): score.serialize(judge=judge)
+                for judge, score in self.judge_scores
             }
         }
 

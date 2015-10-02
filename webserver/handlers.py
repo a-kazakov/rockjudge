@@ -1,4 +1,7 @@
 import json
+import time
+
+import tornado.gen
 import tornado.web
 
 from tournaments.api import Api as TournamentsApi
@@ -45,6 +48,7 @@ class TabletHandler(tornado.web.RequestHandler):
 
 class ApiHandler(tornado.web.RequestHandler):
     def post(self):
+        begin = time.time()
         data = json.loads(self.get_argument("data"))
         method = self.get_argument("method")
         method_parts = method.split(".")
@@ -57,6 +61,7 @@ class ApiHandler(tornado.web.RequestHandler):
                 "success": False,
                 "message": "Unknown method name: {}".format(method)
             }))
+        print("Api call: {} ({:.3f}s)".format(method, time.time() - begin))
 
     def get(self):
-        self.post()
+        yield from self.post()

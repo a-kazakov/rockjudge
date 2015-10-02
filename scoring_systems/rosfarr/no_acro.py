@@ -9,12 +9,12 @@ def get_tour_results(tour):
     return TourScores(tour, acro=False).get_results()
 
 
-def get_run_scores(run):
-    return RunScore(run, acro=False).serialize()
+def get_run_scores(run, judges=None):
+    return RunScore(run, judges=judges, acro=False).serialize()
 
 
-def serialize_score(score):
-    return ScoreWrapper(score, acro=False).serialize()
+def serialize_score(score, judge=None):
+    return ScoreWrapper(score, judge=judge, acro=False).serialize()
 
 
 def update_score(score, client_data):
