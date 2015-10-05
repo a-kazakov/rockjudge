@@ -222,7 +222,7 @@ class RunScore:
         for judge, score in self.judge_scores:
             if judge.role == "dance_judge":
                 yield judge, score
-            elif judge.role == "acro_judge" and self.acro:
+            elif judge.role == "acro_judge" and not self.acro:
                 yield judge, score
 
     @property

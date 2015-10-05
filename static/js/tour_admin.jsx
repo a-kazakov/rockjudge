@@ -77,6 +77,8 @@ class TourAdminScoreCellWrapper extends React.Component {
     render() {
         return <td className={ "judge" + (this.state.editing ? " editing" : "") } >
             <TourAdminScoreCell
+                judge={ this.props.judge }
+                scoring_system={ this.props.scoring_system }
                 startEditing={ this.startEditing.bind(this) }
                 stopEditing={ this.stopEditing.bind(this) }
                 updateValue={ this.updateValue.bind(this) }
@@ -117,9 +119,11 @@ class TourAdminScoreCellWrapper extends React.Component {
 
 class TourAdminScoresRow extends React.Component {
     render() {
-        var scores = this.props.judges_order.map(function(judge_id) {
+        var scores = this.props.judges.map(function(judge) {
             return <TourAdminScoreCellWrapper
-                value={ this.props.scores.scores[judge_id] } />
+                judge={ judge }
+                scoring_system={ this.props.scoring_system }
+                value={ this.props.scores.scores[judge.id] } />
         }.bind(this));
         return <tr className={ this.props.heat % 2 ? "odd-heat" : ""}>
             <td className="number">{ this.props.participant.number }</td>
@@ -262,9 +266,6 @@ class TourAdminScoresTable extends React.Component {
         var active_judges = this.state.judges.filter(function(judge) {
             return !judge.hide_from_results;
         })
-        var judges_order = active_judges.map(function(judge) {
-            return judge.id;
-        });
         var rows = this.state.runs.map(function(run) {
             return <TourAdminScoresRow
                 key={ run.id }
@@ -272,8 +273,9 @@ class TourAdminScoresTable extends React.Component {
                 heat={ run.heat }
                 participant={ run.participant }
                 scores={ run.scores }
+                scoring_system={ this.state.scoring_system }
                 total_score={ run.total_score }
-                judges_order={ judges_order } />
+                judges={ active_judges } />
         }.bind(this));
         var judges_header = active_judges.map(function(judge) {
             return <th className="judge">{ judge.number }</th>;
