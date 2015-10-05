@@ -1,11 +1,10 @@
 import peewee
 
-from db import Database
+from db import BaseModel
 
 
-class Participant(peewee.Model):
+class Participant(BaseModel):
     class Meta:
-        database = Database.instance().db
         indexes = (
             (("number", "competition"), True),
         )
@@ -22,9 +21,8 @@ class Participant(peewee.Model):
         }
 
 
-class Acrobatic(peewee.Model):
+class Acrobatic(BaseModel):
     class Meta:
-        database = Database.instance().db
         order_by = ["number"]
 
     participant = peewee.ForeignKeyField(Participant, related_name="acrobatics")

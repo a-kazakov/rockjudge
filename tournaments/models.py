@@ -2,8 +2,13 @@ import json
 import random
 
 import peewee
+import peewee_async
+import tornado.gen
 
-from db import Database
+from db import (
+    BaseModel,
+    Database,
+)
 
 from participants.models import (
     Acrobatic,
@@ -13,11 +18,22 @@ from scoring_systems import get_scoring_system
 from webserver.websocket import WebSocketClients
 
 
-class Competition(peewee.Model):
-    class Meta:
-        database = Database.instance().db
-
+class Competition(BaseModel):
     name = peewee.CharField()
+
+    @tornado.gen.coroutine
+    def full_prefetch(self):
+        yield self.prefetch([{
+            "model": InnerCompetition,
+            "ref": "competition",
+            "ref_dir": "up",
+            "children": [{
+                "model": Tour,
+                "ref": "inner_competition",
+                "ref_dir": "up",
+                "children": [],
+            }],
+        }])
 
     def serialize(self, recursive=False):
         result = {
@@ -29,10 +45,38 @@ class Competition(peewee.Model):
         return result
 
 
-class Tour(peewee.Model):
-    class Meta:
-        database = Database.instance().db
+tour_proxy = peewee.Proxy()
 
+
+class InnerCompetition(BaseModel):
+    name = peewee.CharField()
+    competition = peewee.ForeignKeyField(Competition, related_name="inners")
+    first_tour = peewee.ForeignKeyField(tour_proxy, null=True)
+
+    @property
+    def tours(self):
+        tour = self.first_tour
+        while tour is not None:
+            yield tour
+            tour = tour.next_tour
+
+    def get_current_tour(self):
+        for tour in self.tours:
+            if not tour.finalized:
+                return tour
+        return None
+
+    def serialize(self, recursive=False):
+        result = {
+            "id": self.id,
+            "name": self.name,
+        }
+        if recursive:
+            result["tours"] = [tour.serialize(recursive=False) for tour in self.tours]
+        return result
+
+
+class Tour(BaseModel):
     name = peewee.CharField()
     next_tour = peewee.ForeignKeyField("self", null=True, related_name="prev_tour")
     num_advances = peewee.IntegerField()
@@ -41,34 +85,74 @@ class Tour(peewee.Model):
     active = peewee.BooleanField(default=False)
     hope_tour = peewee.BooleanField(default=False)
     total_advanced = peewee.IntegerField(default=0)
-    inner_competition_id = peewee.IntegerField()
+    inner_competition = peewee.ForeignKeyField(InnerCompetition)
     scoring_system_name = peewee.CharField()
 
-    @property
-    def runs_pf(self):
-        try:
-            return self.runs_prefetch
-        except AttributeError:
-            return self.runs
+    @tornado.gen.coroutine
+    def full_prefetch(self):
+        yield self.prefetch([{
+            "model": Run,
+            "ref": "tour",
+            "ref_dir": "up",
+            "children": [{
+                "model": Score,
+                "ref": "run",
+                "ref_dir": "up",
+                "children": [],
+            }, {
+                "model": AcrobaticOverride,
+                "ref": "run",
+                "ref_dir": "up",
+                "children": [],
+            }, {
+                "model": Participant,
+                "ref": "participant",
+                "ref_dir": "down",
+                "children": [{
+                    "model": Acrobatic,
+                    "ref": "participant",
+                    "ref_dir": "up",
+                    "children": [],
+                }],
+            }],
+        }, {
+            "model": InnerCompetition,
+            "ref": "inner_competition",
+            "ref_dir": "down",
+            "children": [{
+                "model": Competition,
+                "ref": "competition",
+                "ref_dir": "down",
+                "children": [{
+                    "model": Judge,
+                    "ref": "competition",
+                    "ref_dir": "up",
+                    "children": [],
+                }],
+            }]
+        }])
 
+    @tornado.gen.coroutine
     def estimate_participants(self):
         try:
-            prev_tour = self.prev_tour.get()
+            prev_tour = yield self.get_prev_tour(throw=True)
+            yield prev_tour.full_prefetch()
             if self.hope_tour:
                 return [
                     row["participant"]
-                    for row in self.scoring_system.get_tour_results(prev_tour)
+                    for row in prev_tour.scoring_system.get_tour_results(prev_tour)
                     if not row["advances"]
                 ]
             result = []
             while True:
                 result += [
                     row["participant"]
-                    for row in self.scoring_system.get_tour_results(prev_tour)
+                    for row in prev_tour.scoring_system.get_tour_results(prev_tour)
                     if row["advances"]
                 ]
                 if prev_tour.hope_tour:
-                    prev_tour = prev_tour.prev_tour.get()
+                    prev_tour = yield prev_tour.get_prev_tour(throw=True)
+                    yield prev_tour.full_prefetch()
                 else:
                     break
             return result
@@ -91,8 +175,9 @@ class Tour(peewee.Model):
             pass
         return max(0, base_value - advanced_over_quote)
 
+    @tornado.gen.coroutine
     def create_participant_runs(self):
-        estimated_participants = self.estimate_participants()
+        estimated_participants = yield self.estimate_participants()
         for participant in estimated_participants:
             run = Run.create(
                 participant=participant,
@@ -100,79 +185,100 @@ class Tour(peewee.Model):
                 tour=self,
             )
             run.create_scores()
-        self.shuffle_heats(broadcast=False)
+        yield self.shuffle_heats(broadcast=False)
 
+    @tornado.gen.coroutine
     def shuffle_heats(self, broadcast=True):
-        runs = list(self.runs_pf)
-        random.shuffle(runs)
-        last_heat = len(runs) % self.participants_per_heat
-        if last_heat == 1:
-            last_heat = self.participants_per_heat // 2
-        for idx, run in enumerate(runs):
-            run.heat = idx // self.participants_per_heat + 1
-            if len(runs) - idx <= last_heat:
-                run.heat = (len(runs) - 1) // self.participants_per_heat + 1
-            run.save()
+        with Database.instance().db.atomic():
+            if type(self.runs) != list:
+                runs = yield from peewee_async.execute(self.runs)
+                runs = list(runs)
+            else:
+                runs = list(self.runs)
+            random.shuffle(runs)
+            last_heat = len(runs) % self.participants_per_heat
+            if last_heat == 1:
+                last_heat = self.participants_per_heat // 2
+            for idx, run in enumerate(runs):
+                run.heat = idx // self.participants_per_heat + 1
+                if len(runs) - idx <= last_heat:
+                    run.heat = (len(runs) - 1) // self.participants_per_heat + 1
+                yield from peewee_async.update_object(run)
         if broadcast:
             WebSocketClients.broadcast("tour_full_update", {
                 "tour_id": self.id
             })
 
-    def start(self):
-        for tour in self.select().where(Tour.active == True):
-            tour.stop(broadcast=False)
-        self.active = True
-        self.save()
-        WebSocketClients.broadcast("active_tour_update", {})
-
-    def stop(self, broadcast=True):
-        self.active = False
-        self.save()
-        if broadcast:
-            WebSocketClients.broadcast("active_tour_update", {})
-
     @classmethod
+    @tornado.gen.coroutine
     def get_active(cls):
         try:
-            return cls.select().where(cls.active == True).get()
+            active_tour = yield from peewee_async.get_object(cls, cls.active == True)
+            return active_tour
         except cls.DoesNotExist:
             return None
 
-    @property
-    def inner_competition(self):
-        return InnerCompetition.select().where(InnerCompetition.id == self.inner_competition_id).get()
+    @tornado.gen.coroutine
+    def start(self):
+        active_tours = yield from peewee_async.execute(self.select().where(Tour.active == True))
+        for tour in active_tours:
+            tour.stop(broadcast=False)
+        self.active = True
+        peewee_async.update_object(self)
+        WebSocketClients.broadcast("active_tour_update", {})
+
+    @tornado.gen.coroutine
+    def stop(self, broadcast=True):
+        self.active = False
+        peewee_async.update_object(self)
+        if broadcast:
+            WebSocketClients.broadcast("active_tour_update", {})
 
     @property
     def judges(self):
         return list(self.inner_competition.competition.judges)
 
+    @tornado.gen.coroutine
+    def get_prev_tour(self, throw=False):
+        prev_tours_iter = yield from peewee_async.execute(self.prev_tour)
+        prev_tours_list = list(prev_tours_iter)
+        if prev_tours_list == []:
+            if throw:
+                raise self.DoesNotExist
+            return None
+        return prev_tours_list[0]
+
+    @tornado.gen.coroutine
+    def check_prev_tour_finalized(self):
+        prev_tour = yield self.get_prev_tour()
+        if prev_tour is None:
+            return
+        if not prev_tour.finalized:
+            raise RuntimeError("Previous tour should be finalized")
+
+    @tornado.gen.coroutine
     def init(self):
-        try:
-            prev_tour = self.prev_tour.get()
-            if not prev_tour.finalized:
-                raise RuntimeError("Previous tour should be finalized")
-        except self.DoesNotExist:
-            pass
-        self.create_participant_runs()
+        yield self.check_prev_tour_finalized()
+        yield self.create_participant_runs()
         WebSocketClients.broadcast("tour_full_update", {
             "tour_id": self.id,
         })
 
+    @tornado.gen.coroutine
     def finalize(self):
+        yield self.full_prefetch()
+        yield self.check_prev_tour_finalized()
         if self.active:
             self.stop()
         self.finalized = True
-        try:
-            self.total_advanced = len([
-                None
-                for row in self.scoring_system.get_tour_results(self)
-                if row["advances"]
-            ])
-        except self.DoesNotExist:
-            pass
-        self.save()
+        self.total_advanced = len([
+            None
+            for row in self.scoring_system.get_tour_results(self)
+            if row["advances"]
+        ])
+        yield from peewee_async.update_object(self)
         if self.next_tour:
-            self.next_tour.init()
+            yield self.next_tour.init()
         WebSocketClients.broadcast("tour_update", {
             "tour_id": self.id,
         })
@@ -213,45 +319,13 @@ class Tour(peewee.Model):
             judges = list(self.judges)
             result.update({
                 "judges": [judge.serialize(recursive=True) for judge in judges],
-                "runs": [run.serialize(recursive=True, judges=judges) for run in self.runs_pf],
+                "runs": [run.serialize(recursive=True, judges=judges) for run in self.runs],
             })
         return result
 
 
-class InnerCompetition(peewee.Model):
+class Judge(BaseModel):
     class Meta:
-        database = Database.instance().db
-
-    name = peewee.CharField()
-    competition = peewee.ForeignKeyField(Competition, related_name="inners")
-    first_tour = peewee.ForeignKeyField(Tour, null=True)
-
-    @property
-    def tours(self):
-        tour = self.first_tour
-        while tour is not None:
-            yield tour
-            tour = tour.next_tour
-
-    def get_current_tour(self):
-        for tour in self.tours:
-            if not tour.finalized:
-                return tour
-        return None
-
-    def serialize(self, recursive=False):
-        result = {
-            "id": self.id,
-            "name": self.name,
-        }
-        if recursive:
-            result["tours"] = [tour.serialize(recursive=False) for tour in self.tours]
-        return result
-
-
-class Judge(peewee.Model):
-    class Meta:
-        database = Database.instance().db
         order_by = ["number"]
         indexes = (
             (("competition", "judge"), True),
@@ -272,9 +346,8 @@ class Judge(peewee.Model):
 
 # Managed automatically
 
-class Run(peewee.Model):
+class Run(BaseModel):
     class Meta:
-        database = Database.instance().db
         indexes = (
             (("participant", "tour"), True),
         )
@@ -283,13 +356,6 @@ class Run(peewee.Model):
     participant = peewee.ForeignKeyField(Participant)
     tour = peewee.ForeignKeyField(Tour, related_name="runs")
     heat = peewee.IntegerField()
-
-    @property
-    def scores_pf(self):
-        try:
-            return self.scores_prefetch
-        except AttributeError:
-            return self.scores
 
     def set_heat(self, new_value):
         self.heat = new_value
@@ -316,10 +382,11 @@ class Run(peewee.Model):
         score_obj = self.get_score_obj(judge)
         return score_obj.get()
 
+    @tornado.gen.coroutine
     def update_data(self, new_data):
         if "heat" in new_data:
             self.heat = new_data["heat"]
-        self.save()
+        peewee_async.update_object(self)
         WebSocketClients.broadcast("run_update", {
             "run_id": self.id,
         })
@@ -345,7 +412,7 @@ class Run(peewee.Model):
                 override.save()
             else:
                 override.delete_instance()
-        WebSocketClients.broadcast("run_update", {
+        WebSocketClients.broadcast("run_full_update", {
             "run_id": self.id,
         })
 
@@ -372,9 +439,8 @@ class Run(peewee.Model):
         return result
 
 
-class AcrobaticOverride(peewee.Model):
+class AcrobaticOverride(BaseModel):
     class Meta:
-        database = Database.instance().db
         indexes = (
             (("run", "acrobatic"), True),
         )
@@ -385,9 +451,8 @@ class AcrobaticOverride(peewee.Model):
     score = peewee.IntegerField()
 
 
-class Score(peewee.Model):
+class Score(BaseModel):
     class Meta:
-        database = Database.instance().db
         order_by = ["judge"]
 
     run = peewee.ForeignKeyField(Run, related_name="scores")
@@ -397,17 +462,22 @@ class Score(peewee.Model):
     def get_data(self):
         return json.loads(self.score_data)
 
+    @tornado.gen.coroutine
     def set_data(self, score_data):
         self.score_data = json.dumps(score_data)
-        self.save()
+        yield from peewee_async.update_object(self)
         WebSocketClients.broadcast("score_update", {
             "score_id": self.id,
         })
 
+    @tornado.gen.coroutine
     def update_data(self, new_data):
-        self.run.tour.scoring_system.update_score(self, new_data)
+        yield self.run.tour.scoring_system.update_score(self, new_data)
 
     def serialize(self, recursive=False, judge=None):
         result = self.run.tour.scoring_system.serialize_score(self, judge=judge)
         result["id"] = self.id
         return result
+
+
+tour_proxy.initialize(Tour)

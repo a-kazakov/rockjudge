@@ -1,6 +1,10 @@
 import cProfile
-import tempfile
 import pstats
+import tempfile
+import time
+
+from contextlib import contextmanager
+
 
 def profile(sort='cumulative', lines=50, strip_dirs=False):
     def outer(fun):
@@ -33,3 +37,10 @@ def profile(sort='cumulative', lines=50, strip_dirs=False):
         sort = 'cumulative'
         outer = outer(fun)
     return outer
+
+
+@contextmanager
+def timer(name):
+    s = time.time()
+    yield
+    print("Execution time of {}: {:.3f}s".format(name, time.time() - s))

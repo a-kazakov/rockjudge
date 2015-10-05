@@ -151,8 +151,10 @@ class TourAdminScoresTable extends React.Component {
             active: false,
             current_editing: null,
         };
-        window.message_dispatcher.addListener("score_update").fetchObject("tournaments.run.get", true).setFilter(function(message) {
-            return this.getScoreIdPath(message.score_id) !== null;
+        window.message_dispatcher.addListener("score_update run_full_update").fetchObject("tournaments.run.get", true).setFilter(function(message) {
+            return message.score_id
+                ? this.getScoreIdPath(message.score_id) !== null
+                : this.getRunIdx(message.run_id) !== null
         }.bind(this)).setCallback(this.dispatchRunUpdate.bind(this));
         window.message_dispatcher.addListener("score_update run_update").fetchObject("tournaments.run.get", false).setFilter(function(message) {
             return this.getRunIdx(message.run_id) !== null;

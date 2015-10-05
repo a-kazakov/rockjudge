@@ -15,7 +15,8 @@ class JudgeTablet extends React.Component {
         };
         // TODO: add filters
         // TODO: support tour_full_update
-        window.message_dispatcher.addListener("run_update score_update")
+        // TOFO: suport run update withour "full"
+        window.message_dispatcher.addListener("run_update run_full_update score_update")
             .fetchObject("tournaments.run.get", true)
             .setCallback(this.dispatchRunUpdate.bind(this));
         window.message_dispatcher.addListener("active_tour_update")

@@ -1,3 +1,5 @@
+import tornado.gen
+
 from .impl import (
     ScoreWrapper,
     RunScore,
@@ -17,8 +19,9 @@ def serialize_score(score, judge=None):
     return ScoreWrapper(score, judge=judge, acro=True).serialize()
 
 
+@tornado.gen.coroutine
 def update_score(score, client_data):
-    ScoreWrapper(score, acro=True).update(client_data)
+    yield ScoreWrapper(score, acro=True).update(client_data)
 
 
 def get_tablet_css():

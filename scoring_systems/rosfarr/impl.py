@@ -1,5 +1,7 @@
 from fractions import Fraction as frac
 
+import tornado.gen
+
 
 def apply_deduction(base_score, deduction):
     return base_score * (100 - deduction) // 100;
@@ -29,6 +31,7 @@ class DanceScore:
             -3000 * self.data["big_mistakes"],
         ]))
 
+    @tornado.gen.coroutine
     def update(self, new_data):
         self.data = {
             "fw_man":           int(new_data.pop("fw_man",          self.data["fw_man"])),
@@ -38,7 +41,7 @@ class DanceScore:
             "small_mistakes":   int(new_data.pop("small_mistakes",  self.data["small_mistakes"])),
             "big_mistakes":     int(new_data.pop("big_mistakes",    self.data["big_mistakes"])),
         }
-        self.score.set_data(self.data)
+        yield self.score.set_data(self.data)
 
     def serialize(self):
         return {
@@ -178,7 +181,7 @@ class RunScore:
         self.run = run
         self.acro = acro
         judges = run.tour.judges if judges is None else judges
-        scores = run.scores_pf
+        scores = run.scores
         self.judge_scores = list(zip(judges, scores))
         self.dance_judges_total_scores = [
             ScoreWrapper(score, acro, judge=judge).total_score
@@ -254,7 +257,6 @@ class RunScore:
                 for judge, score in self.judge_scores
             }
         }
-
 
 class TourScores:
     def __init__(self, tour, acro=False):

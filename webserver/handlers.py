@@ -47,6 +47,7 @@ class TabletHandler(tornado.web.RequestHandler):
 
 
 class ApiHandler(tornado.web.RequestHandler):
+    @tornado.gen.coroutine
     def post(self):
         begin = time.time()
         data = json.loads(self.get_argument("data"))
@@ -54,7 +55,7 @@ class ApiHandler(tornado.web.RequestHandler):
         method_parts = method.split(".")
         inner_method = ".".join(method_parts[1:])
         if method_parts[0] == "tournaments":
-            result = TournamentsApi.call(inner_method, data)
+            result = yield TournamentsApi.call(inner_method, data)
             self.write(json.dumps(result))
         else:
             self.write(json.dumps({
@@ -63,5 +64,6 @@ class ApiHandler(tornado.web.RequestHandler):
             }))
         print("Api call: {} ({:.3f}s)".format(method, time.time() - begin))
 
+    @tornado.gen.coroutine
     def get(self):
-        yield from self.post()
+        yield self.post()
