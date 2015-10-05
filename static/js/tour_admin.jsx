@@ -121,9 +121,10 @@ class TourAdminScoresRow extends React.Component {
             return <TourAdminScoreCellWrapper
                 value={ this.props.scores.scores[judge_id] } />
         }.bind(this));
-        return <tr>
+        return <tr className={ this.props.heat % 2 ? "odd-heat" : ""}>
             <td className="number">{ this.props.participant.number }</td>
             <td className="name">{ this.props.participant.name }</td>
+            <td className="club">{ this.props.participant.club.name }</td>
             <TourAdminHeatValue
                 run_id={ this.props.run_id }
                 value={ this.props.heat }
@@ -293,6 +294,7 @@ class TourAdminScoresTable extends React.Component {
                     <tr>
                         <th className="number">#</th>
                         <th className="name">Name</th>
+                        <th className="club">Club</th>
                         <th className="heat">Heat</th>
                         { judges_header }
                         <th className="total">Total</th>

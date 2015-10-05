@@ -5,6 +5,7 @@
     margin: 10px;
     .number { width: 50px;  }
     .name   { width: 400px; }
+    .club   { width: 150px; }
     .heat   { width: 40px;  }
     .judge  { width: 50px;  }
     .total  { width: 100px; }
@@ -14,13 +15,16 @@
         cursor: pointer,
       }
     }
+    tr.odd-heat {
+      background-color: lighten(@ui-light, 10%);
+    }
     th, td {
       text-align: center;
     }
     td.editing {
       background-color: @ui-contrast;
     }
-    td.name {
+    td.name, td.club {
       text-align: left !important;
     }
     tr.active {

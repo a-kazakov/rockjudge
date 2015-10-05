@@ -43,6 +43,7 @@ class DanceScore:
         }
         yield self.score.set_data(self.data)
 
+    @tornado.gen.coroutine
     def serialize(self):
         return {
             "total_score": self.total_score / 100,
@@ -73,13 +74,15 @@ class AcroScore:
         result -= 3000 * self.data["mistakes"]
         return max(0, result)
 
+    @tornado.gen.coroutine
     def update(self, new_data):
         self.data = {
             "deductions": [int(d) for d in new_data["deductions"]],
             "mistakes": int(new_data.pop("mistakes", 0)),
         }
-        self.score.set_data(self.data)
+        yield self.score.set_data(self.data)
 
+    @tornado.gen.coroutine
     def serialize(self):
         return {
             "total_score": self.total_score / 100,
@@ -99,12 +102,14 @@ class HeadScore:
     def total_score(self):
         return 100 * self.data["penalty"]
 
+    @tornado.gen.coroutine
     def update(self, new_data):
         self.data = {
             "penalty": int(new_data["penalty"])
         }
-        self.score.set_data(self.data)
+        yield self.score.set_data(self.data)
 
+    @tornado.gen.coroutine
     def serialize(self):
         return {
             "total_score": self.total_score / 100,
@@ -125,13 +130,15 @@ class TechScore:
     def total_score(self):
         return 0
 
+    @tornado.gen.coroutine
     def update(self, new_data):
         self.data = {
             "jump_steps": int(new_data.pop("jump_steps", self.data["jump_steps"])),
             "timing_violation": new_data.pop("timing_violation", self.data["timing_violation"]),
         }
-        self.score.set_data(self.data)
+        yield self.score.set_data(self.data)
 
+    @tornado.gen.coroutine
     def serialize(self):
         return {
             "total_score": self.total_score,
@@ -249,13 +256,14 @@ class RunScore:
     def display_score(self):
         return "{:.2f}".format(-self.sorting_score[0] / 100.0)
 
+    @tornado.gen.coroutine
     def serialize(self):
+        scores = {}
+        for judge, score in self.judge_scores:
+            scores[str(judge.id)] = yield score.serialize(judge=judge)
         return {
             "total_run_score": self.display_score,
-            "scores": {
-                str(judge.id): score.serialize(judge=judge)
-                for judge, score in self.judge_scores
-            }
+            "scores": scores
         }
 
 class TourScores:
@@ -267,15 +275,16 @@ class TourScores:
             RunScore(run, acro) for run in self.tour.runs
         ]
 
+    @tornado.gen.coroutine
     def create_table(self):
-        table = sorted([
-            {
+        table = []
+        for run_score in self.run_scores:
+            table.append({
                 "run_score": run_score,
-                "scores": run_score.serialize(),
+                "scores": (yield run_score.serialize()),
                 "sorting_score": run_score.sorting_score,
-            } for run_score in self.run_scores],
-            key=lambda s: s["sorting_score"]
-        )
+            })
+        table = sorted(table, key=lambda s: s["sorting_score"])
         next_tour = self.tour.next_tour
         place = 1
         lastest_sorting_score = None
@@ -290,16 +299,17 @@ class TourScores:
             })
         return table
 
-    @property
+    @tornado.gen.coroutine
     def table(self):
         if not self._table:
-            self._table = self.create_table()
+            self._table = yield self.create_table()
         return self._table
 
+    @tornado.gen.coroutine
     def get_results(self):
         return [{
             "participant": row["run_score"].run.participant,
             "place": row["place"],
             "advances": row["advances"],
             "scores": row["scores"]
-        } for row in self.table]
+        } for row in (yield self.table())]

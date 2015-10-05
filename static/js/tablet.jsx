@@ -14,24 +14,36 @@ class JudgeTablet extends React.Component {
             page: "dance",
         };
         // TODO: add filters
-        // TODO: support tour_full_update
-        // TOFO: suport run update withour "full"
+        // TODO: suport run update withour "full"
         window.message_dispatcher.addListener("run_update run_full_update score_update")
             .fetchObject("tournaments.run.get", true)
             .setCallback(this.dispatchRunUpdate.bind(this));
         window.message_dispatcher.addListener("active_tour_update")
             .fetchObject("tournaments.tour.find_active")
             .setCallback(this.dispatchActiveTourUpdate.bind(this));
+        window.message_dispatcher.addListener("tour_full_update")
+            .setFilter(function(message) {
+                return message.tour_id == this.state.tour_id
+            }.bind(this))
+            .setCallback(this.reloadTour.bind(this));
         this.loadData();
     }
     loadData() {
         (new Api("tournaments.judge.get", {judge_id: this.props.judge_id, recursive: false})).onSuccess(function(response) {
             this.setState({
-                judge: response
+                judge: response,
             });
         }.bind(this)).send();
         (new Api("tournaments.tour.find_active", {})).onSuccess(function(response) {
             this.dispatchActiveTourUpdate(response);
+        }.bind(this)).send();
+    }
+    reloadTour() {
+        // TODO: Fix possible race condition here (occurs if active tour is changed while following api is still executing)
+        (new Api("tournaments.tour.get", {tour_id: this.state.tour_id, recursive: true})).onSuccess(function(new_tour) {
+            this.setState({
+                tour: new_tour,
+            });
         }.bind(this)).send();
     }
 
@@ -56,19 +68,21 @@ class JudgeTablet extends React.Component {
     }
     dispatchActiveTourUpdate(response) {
         var tour_id = response.tour_id;
+        if (this.state.tour_id == tour_id) {
+            return;
+        }
         if (tour_id === null) {
             this.setState({
                 tour_id: null,
                 current_heat: 1,
             });
-        }
-        if (this.state.tour_id == tour_id) {
             return;
         }
         (new Api("tournaments.tour.get", {tour_id: tour_id, recursive: true})).onSuccess(function(new_tour) {
             this.setState({
                 tour_id: tour_id,
                 tour: new_tour,
+                current_heat: 1,
             });
         }.bind(this)).send();
     }

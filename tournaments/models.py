@@ -12,10 +12,16 @@ from db import (
 
 from participants.models import (
     Acrobatic,
+    Club,
     Participant,
+    ParticipantSportsman,
+    Sportsman,
 )
 from scoring_systems import get_scoring_system
 from webserver.websocket import WebSocketClients
+
+
+tour_proxy = peewee.Proxy()
 
 
 class Competition(BaseModel):
@@ -35,17 +41,17 @@ class Competition(BaseModel):
             }],
         }])
 
+    @tornado.gen.coroutine
     def serialize(self, recursive=False):
         result = {
             "id": self.id,
             "name": self.name,
         }
         if recursive:
-            result["inner_competitions"] = [ic.serialize(recursive=True) for ic in self.inners]
+            result["inner_competitions"] = []
+            for ic in self.inners:
+                result["inner_competitions"].append((yield ic.serialize(recursive=True)))
         return result
-
-
-tour_proxy = peewee.Proxy()
 
 
 class InnerCompetition(BaseModel):
@@ -66,13 +72,16 @@ class InnerCompetition(BaseModel):
                 return tour
         return None
 
+    @tornado.gen.coroutine
     def serialize(self, recursive=False):
         result = {
             "id": self.id,
             "name": self.name,
         }
         if recursive:
-            result["tours"] = [tour.serialize(recursive=False) for tour in self.tours]
+            result["tours"] = []
+            for tour in self.tours:
+                result["tours"].append((yield tour.serialize(recursive=False)))
         return result
 
 
@@ -113,6 +122,21 @@ class Tour(BaseModel):
                     "ref": "participant",
                     "ref_dir": "up",
                     "children": [],
+                }, {
+                    "model": Club,
+                    "ref": "club",
+                    "ref_dir": "down",
+                    "children": [],
+                }, {
+                    "model": ParticipantSportsman,
+                    "ref": "participant",
+                    "ref_dir": "up",
+                    "children": [{
+                        "model": Sportsman,
+                        "ref": "sportsman",
+                        "ref_dir": "down",
+                        "children": [],
+                    }],
                 }],
             }],
         }, {
@@ -140,14 +164,14 @@ class Tour(BaseModel):
             if self.hope_tour:
                 return [
                     row["participant"]
-                    for row in prev_tour.scoring_system.get_tour_results(prev_tour)
+                    for row in (yield prev_tour.scoring_system.get_tour_results(prev_tour))
                     if not row["advances"]
                 ]
             result = []
             while True:
                 result += [
                     row["participant"]
-                    for row in prev_tour.scoring_system.get_tour_results(prev_tour)
+                    for row in (yield prev_tour.scoring_system.get_tour_results(prev_tour))
                     if row["advances"]
                 ]
                 if prev_tour.hope_tour:
@@ -273,7 +297,7 @@ class Tour(BaseModel):
         self.finalized = True
         self.total_advanced = len([
             None
-            for row in self.scoring_system.get_tour_results(self)
+            for row in (yield self.scoring_system.get_tour_results(self))
             if row["advances"]
         ])
         yield from peewee_async.update_object(self)
@@ -298,28 +322,38 @@ class Tour(BaseModel):
             "participants_per_heat": self.participants_per_heat,
         }
 
+    @tornado.gen.coroutine
     def get_serialized_results(self):
-        tour_results = self.scoring_system.get_tour_results(self)
+        tour_results = yield self.scoring_system.get_tour_results(self)
         for row in tour_results:
-            row["participant"] = row["participant"].serialize()
+            row["participant"] = yield row["participant"].serialize(recursive=True)
         result = self.serialize_base()
+        judges = []
+        for judge in self.judges:
+            judges.append((yield judge.serialize()))
         result.update({
             "inner_competition_name": self.inner_competition.name,
-            "judges": [judge.serialize() for judge in self.judges],
+            "judges": judges,
             "results": tour_results,
         })
         return result
 
+    @tornado.gen.coroutine
     def serialize(self, recursive=False):
         result = self.serialize_base()
         result.update({
             "inner_competition_name": self.inner_competition.name,
         })
         if recursive:
-            judges = list(self.judges)
+            judges = []
+            for judge in self.judges:
+                judges.append((yield judge.serialize()))
+            runs = []
+            for run in self.runs:
+                runs.append((yield run.serialize(recursive=True, judges=list(self.judges))))
             result.update({
-                "judges": [judge.serialize(recursive=True) for judge in judges],
-                "runs": [run.serialize(recursive=True, judges=judges) for run in self.runs],
+                "judges": judges,
+                "runs": runs,
             })
         return result
 
@@ -337,6 +371,7 @@ class Judge(BaseModel):
     hide_from_results = peewee.BooleanField(default=False)
     number = peewee.CharField()
 
+    @tornado.gen.coroutine
     def serialize(self, recursive=False):
         return {
             "id": self.id,
@@ -388,9 +423,9 @@ class Run(BaseModel):
     def update_data(self, new_data):
         if "heat" in new_data:
             self.heat = new_data["heat"]
-        peewee_async.update_object(self)
-        WebSocketClients.broadcast("run_update", {
-            "run_id": self.id,
+        yield from peewee_async.update_object(self)
+        WebSocketClients.broadcast("tour_full_update", {
+            "tour_id": self.tour.id,
         })
 
     def get_acrobatic_override(self, acrobatic):
@@ -418,16 +453,17 @@ class Run(BaseModel):
             "run_id": self.id,
         })
 
+    @tornado.gen.coroutine
     def serialize(self, recursive=False, judges=None):
         result = {
             "id": self.id,
-            "participant": self.participant.serialize(),
+            "participant": (yield self.participant.serialize(recursive=False)),
             "heat": self.heat,
             "tour_id": self.tour_id,
         }
         acro_list = []
         for acro in self.participant.acrobatics:
-            serialized = acro.serialize()
+            serialized = yield acro.serialize()
             override = self.get_acrobatic_override(acro)
             serialized["original_score"] = serialized["score"]
             if override is not None:
@@ -435,7 +471,7 @@ class Run(BaseModel):
             acro_list.append(serialized)
         if recursive:
             result.update({
-                "scores": self.tour.scoring_system.get_run_scores(self, judges=judges),
+                "scores": (yield self.tour.scoring_system.get_run_scores(self, judges=judges)),
                 "acrobatics": acro_list,
             })
         return result
@@ -476,8 +512,9 @@ class Score(BaseModel):
     def update_data(self, new_data):
         yield self.run.tour.scoring_system.update_score(self, new_data)
 
+    @tornado.gen.coroutine
     def serialize(self, recursive=False, judge=None):
-        result = self.run.tour.scoring_system.serialize_score(self, judge=judge)
+        result = yield self.run.tour.scoring_system.serialize_score(self, judge=judge)
         result["id"] = self.id
         return result
 

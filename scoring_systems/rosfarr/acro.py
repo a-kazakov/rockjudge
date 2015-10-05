@@ -7,16 +7,19 @@ from .impl import (
 )
 
 
+@tornado.gen.coroutine
 def get_tour_results(tour):
-    return TourScores(tour, acro=True).get_results()
+    return (yield TourScores(tour, acro=True).get_results())
 
 
+@tornado.gen.coroutine
 def get_run_scores(run, judges=None):
-    return RunScore(run, judges=judges, acro=True).serialize()
+    return (yield RunScore(run, judges=judges, acro=True).serialize())
 
 
+@tornado.gen.coroutine
 def serialize_score(score, judge=None):
-    return ScoreWrapper(score, judge=judge, acro=True).serialize()
+    return (yield ScoreWrapper(score, judge=judge, acro=True).serialize())
 
 
 @tornado.gen.coroutine

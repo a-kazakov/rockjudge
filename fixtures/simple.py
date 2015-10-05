@@ -1,5 +1,16 @@
-from tournaments.models import *
-from participants.models import *
+from tournaments.models import (
+    Competition,
+    InnerCompetition,
+    Judge,
+    Tour,
+)
+from participants.models import (
+    Acrobatic,
+    Club,
+    Participant,
+    ParticipantSportsman,
+    Sportsman,
+)
 from fixtures import RockFixture
 
 from random import randint
@@ -8,19 +19,45 @@ class Fixture(RockFixture):
     def execute(self):
         # Competition
         self.comp = Competition.create(name="Test competition")
+        # Sportsmen
+        self.sm = [None] * 10
+        self.sf = [None] * 10
+        self.sm[0] = Sportsman.create(last_name="Степашин",    first_name="Артур",      gender="M")
+        self.sm[1] = Sportsman.create(last_name="Митрушичев",  first_name="Семён",      gender="M")
+        self.sm[2] = Sportsman.create(last_name="Моряков",     first_name="Виктор",     gender="M")
+        self.sm[3] = Sportsman.create(last_name="Медведев",    first_name="Александр",  gender="M")
+        self.sm[4] = Sportsman.create(last_name="Ханцев",      first_name="Анатолий",   gender="M")
+        self.sm[5] = Sportsman.create(last_name="Николюк",     first_name="Никита",     gender="M")
+        self.sm[6] = Sportsman.create(last_name="Ажикелямов",  first_name="Чеслав",     gender="M")
+        self.sm[7] = Sportsman.create(last_name="Куняев",      first_name="Андрей",     gender="M")
+        self.sm[8] = Sportsman.create(last_name="Козарис",     first_name="Юрий",       gender="M")
+        self.sm[9] = Sportsman.create(last_name="Зинченко",    first_name="Вячеслав",   gender="M")
+        self.sf[0] = Sportsman.create(last_name="Лепёхина",    first_name="Анисья",     gender="F")
+        self.sf[1] = Sportsman.create(last_name="Щедрова",     first_name="Лидия",      gender="F")
+        self.sf[2] = Sportsman.create(last_name="Райта",       first_name="Наталья",    gender="F")
+        self.sf[3] = Sportsman.create(last_name="Быстрова",    first_name="Виктория",   gender="F")
+        self.sf[4] = Sportsman.create(last_name="Блинова",     first_name="Ольга",      gender="F")
+        self.sf[5] = Sportsman.create(last_name="Чиркова",     first_name="Анастасия",  gender="F")
+        self.sf[6] = Sportsman.create(last_name="Сайбаталова", first_name="Лилия",      gender="F")
+        self.sf[7] = Sportsman.create(last_name="Дёмшина",     first_name="Агафья",     gender="F")
+        self.sf[8] = Sportsman.create(last_name="Косорукова",  first_name="Варвара",    gender="F")
+        self.sf[9] = Sportsman.create(last_name="Шаронова",    first_name="Дарья",      gender="F")
+        # Clubs
+        self.c = [
+            Club.create(name="Рок-Стрит", city="г. Томск"),
+            Club.create(name="Сириус", city="г. Уфа"),
+            Club.create(name="FOX", city="г. Казань"),
+        ]
         # Participants
-        self.p = [None] * 10
-        self.p[0] = Participant.create(name="Лепёхина Анисья - Степашин Артур",         number=1)
-        self.p[1] = Participant.create(name="Щедрова Лидия - Митрушичев Семён",         number=2)
-        self.p[2] = Participant.create(name="Райта Наталья - Моряков Виктор",           number=3)
-        self.p[3] = Participant.create(name="Быстрова Виктория - Медведев Александр",   number=4)
-        self.p[4] = Participant.create(name="Блинова Ольга - Ханцев Анатолий",          number=5)
-        self.p[5] = Participant.create(name="Чиркова Анастасия - Николюк Никита",       number=6)
-        self.p[6] = Participant.create(name="Сайбаталова Лилия - Ажикелямов Чеслав",    number=7)
-        self.p[7] = Participant.create(name="Дёмшина Агафья - Куняев Андрей",           number=8)
-        self.p[8] = Participant.create(name="Косорукова Варвара - Козарис Юрий",        number=9)
-        self.p[9] = Participant.create(name="Шаронова Дарья - Зинченко Вячеслав ",      number=10)
-        # Acro
+        self.p = [
+            Participant.create(number=10-x, club=self.c[199997 % (x + 1) % 3])
+            for x in range(10)
+        ]
+        # ParticipantSportsmen
+        for x in range(10):
+            ParticipantSportsman.create(participant=self.p[x], sportsman=self.sm[x])
+            ParticipantSportsman.create(participant=self.p[x], sportsman=self.sf[x])
+        # Acrobatics
         for participant in self.p:
             for n in range(5):
                 Acrobatic.create(participant=participant, description="Трюк {}".format(randint(0, 100000000)), score=randint(1, 12), number=n)

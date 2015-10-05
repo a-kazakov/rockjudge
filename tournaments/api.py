@@ -5,7 +5,10 @@ import peewee_async
 
 from participants.models import (
     Acrobatic,
+    Club,
     Participant,
+    ParticipantSportsman,
+    Sportsman,
 )
 from tournaments.models import (
     AcrobaticOverride,
@@ -93,13 +96,13 @@ class Api:
     @tornado.gen.coroutine
     def judge_get(cls, request):
         model = yield cls.get_model(Judge, "judge_id", request)
-        return model.serialize(recursive=request["recursive"])
+        return (yield model.serialize(recursive=request["recursive"]))
 
     @classmethod
     @tornado.gen.coroutine
     def score_get(cls, request):
         model = yield cls.get_model(Score, "score_id", request)
-        return model.serialize(recursive=request["recursive"])
+        return (yield model.serialize(recursive=request["recursive"]))
 
     @classmethod
     @tornado.gen.coroutine
@@ -125,9 +128,24 @@ class Api:
                     "ref": "participant",
                     "ref_dir": "up",
                     "children": [],
+                }, {
+                    "model": Club,
+                    "ref": "club",
+                    "ref_dir": "down",
+                    "children": [],
+                }, {
+                    "model": ParticipantSportsman,
+                    "ref": "participant",
+                    "ref_dir": "up",
+                    "children": [{
+                        "model": Sportsman,
+                        "ref": "sportsman",
+                        "ref_dir": "down",
+                        "children": [],
+                    }],
                 }],
             }])
-        return run.serialize(recursive=request["recursive"])
+        return (yield run.serialize(recursive=request["recursive"]))
 
     @classmethod
     @tornado.gen.coroutine
@@ -135,7 +153,7 @@ class Api:
         tour = yield cls.get_model(Tour, "tour_id", request)
         if request["recursive"]:
             yield tour.full_prefetch()
-        return tour.serialize(recursive=request["recursive"])
+        return (yield tour.serialize(recursive=request["recursive"]))
 
     @classmethod
     @tornado.gen.coroutine
@@ -143,7 +161,7 @@ class Api:
         competition = yield cls.get_model(Competition, "competition_id", request)
         if request["recursive"]:
             yield competition.full_prefetch()
-        return competition.serialize(recursive=request["recursive"])
+        return (yield competition.serialize(recursive=request["recursive"]))
 
     # Setters
 
@@ -187,8 +205,8 @@ class Api:
     @classmethod
     @tornado.gen.coroutine
     def acrobatic_override_set(cls, request):
-        run = cls.get_model(Run, "run_id", request)
-        acrobatic = cls.get_model(Acrobatic, "acrobatic_id", request)
+        run = yield cls.get_model(Run, "run_id", request)
+        acrobatic = yield cls.get_model(Acrobatic, "acrobatic_id", request)
         run.set_acrobatic_override(acrobatic, request["score"])
         return {}
 
@@ -240,7 +258,7 @@ class Api:
     def tour_get_results(cls, request):
         tour = yield cls.get_model(Tour, "tour_id", request)
         yield tour.full_prefetch()
-        return tour.get_serialized_results()
+        return (yield tour.get_serialized_results())
 
     # Service
 
