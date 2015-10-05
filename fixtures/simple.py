@@ -8,6 +8,7 @@ from participants.models import (
     Acrobatic,
     Club,
     Participant,
+    ParticipantApplication,
     ParticipantSportsman,
     Sportsman,
 )
@@ -58,20 +59,25 @@ class Fixture(RockFixture):
             ParticipantSportsman.create(participant=self.p[x], sportsman=self.sm[x])
             ParticipantSportsman.create(participant=self.p[x], sportsman=self.sf[x])
         # Acrobatics
-        for participant in self.p:
+        for participant in self.p[:7]:
             for n in range(5):
                 Acrobatic.create(participant=participant, description="Трюк {}".format(randint(0, 100000000)), score=randint(1, 12), number=n)
         # Inner competitions
         self.ic_fw = InnerCompetition.create(name="B класс микст - юноши и девушки",  competition=self.comp)
         self.ic_ac = InnerCompetition.create(name="А класс микст - юниоры и юниорки", competition=self.comp)
+        # Applications
+        for participant in self.p[:7]:
+            ParticipantApplication.create(participant=participant, inner_competition=self.ic_ac)
+        for participant in self.p[3:]:
+            ParticipantApplication.create(participant=participant, inner_competition=self.ic_fw)
         # Tours
         self.fw_rf = Tour.create(scoring_system_name="rosfarr.no_acro", name="Финал",           next_tour=None,       num_advances=0, inner_competition=self.ic_fw, participants_per_heat=1)
-        self.fw_rs = Tour.create(scoring_system_name="rosfarr.no_acro", name="1/2 финала",      next_tour=self.fw_rf, num_advances=3, inner_competition=self.ic_fw, participants_per_heat=2)
-        self.fw_rh = Tour.create(scoring_system_name="rosfarr.no_acro", name="Тур надежды",     next_tour=self.fw_rs, num_advances=4, inner_competition=self.ic_fw, participants_per_heat=2, hope_tour=True)
+        self.fw_rs = Tour.create(scoring_system_name="rosfarr.no_acro", name="1/2 финала",      next_tour=self.fw_rf, num_advances=2, inner_competition=self.ic_fw, participants_per_heat=2)
+        self.fw_rh = Tour.create(scoring_system_name="rosfarr.no_acro", name="Тур надежды",     next_tour=self.fw_rs, num_advances=3, inner_competition=self.ic_fw, participants_per_heat=2, hope_tour=True)
         self.fw_rq = Tour.create(scoring_system_name="rosfarr.no_acro", name="Отборочный тур",  next_tour=self.fw_rh, num_advances=3, inner_competition=self.ic_fw, participants_per_heat=2)
         self.ac_rf = Tour.create(scoring_system_name="rosfarr.acro",    name="Финал",           next_tour=None,       num_advances=0, inner_competition=self.ic_ac, participants_per_heat=1)
-        self.ac_rs = Tour.create(scoring_system_name="rosfarr.acro",    name="1/2 финала",      next_tour=self.ac_rf, num_advances=3, inner_competition=self.ic_ac, participants_per_heat=2)
-        self.ac_rh = Tour.create(scoring_system_name="rosfarr.acro",    name="Тур надежды",     next_tour=self.ac_rs, num_advances=4, inner_competition=self.ic_ac, participants_per_heat=2, hope_tour=True)
+        self.ac_rs = Tour.create(scoring_system_name="rosfarr.acro",    name="1/2 финала",      next_tour=self.ac_rf, num_advances=2, inner_competition=self.ic_ac, participants_per_heat=2)
+        self.ac_rh = Tour.create(scoring_system_name="rosfarr.acro",    name="Тур надежды",     next_tour=self.ac_rs, num_advances=3, inner_competition=self.ic_ac, participants_per_heat=2, hope_tour=True)
         self.ac_rq = Tour.create(scoring_system_name="rosfarr.acro",    name="Отборочный тур",  next_tour=self.ac_rh, num_advances=3, inner_competition=self.ic_ac, participants_per_heat=2)
         # Inner competition
         self.ic_fw.first_tour = self.fw_rq

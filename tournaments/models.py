@@ -16,6 +16,7 @@ from participants.models import (
     Participant,
     ParticipantSportsman,
     Sportsman,
+    inner_competition_proxy,
 )
 from scoring_systems import get_scoring_system
 from webserver.websocket import WebSocketClients
@@ -71,6 +72,17 @@ class InnerCompetition(BaseModel):
             if not tour.finalized:
                 return tour
         return None
+
+    @tornado.gen.coroutine
+    def participants(self):
+        if type(self.participants_edges) == list:
+            edges = self.participants_edges
+        else:
+            edges = yield from peewee_async.execute(self.participants_edges)
+        return [
+            edge.participant
+            for edge in edges
+        ]
 
     @tornado.gen.coroutine
     def serialize(self, recursive=False):
@@ -181,7 +193,7 @@ class Tour(BaseModel):
                     break
             return result
         except self.DoesNotExist:
-            return list(Participant.select())
+            return list((yield self.inner_competition.participants()))
 
     def get_actual_num_advances(self):
         base_value = self.num_advances
@@ -519,4 +531,5 @@ class Score(BaseModel):
         return result
 
 
+inner_competition_proxy.initialize(InnerCompetition)
 tour_proxy.initialize(Tour)

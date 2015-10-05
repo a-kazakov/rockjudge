@@ -5,6 +5,8 @@ import tornado.gen
 from db import BaseModel
 
 
+inner_competition_proxy = peewee.Proxy()
+
 class Club(BaseModel):
     name = peewee.CharField()
     city = peewee.CharField()
@@ -66,10 +68,13 @@ class Participant(BaseModel):
 
     @tornado.gen.coroutine
     def sportsmen(self):
+        if type(self.sportsmen_edges) == list:
+            edges = self.sportsmen_edges
+        else:
+            yield from peewee_async.execute(self.sportsmen_edges)
         return [
             edge.sportsman
-            for edge
-            in self.sportsmen_edges
+            for edge in edges
         ]
 
     @tornado.gen.coroutine
@@ -115,3 +120,8 @@ class Acrobatic(BaseModel):
             "description": self.description,
             "score": self.score,
         }
+
+
+class ParticipantApplication(BaseModel):
+    participant = peewee.ForeignKeyField(Participant, related_name="inner_competitions_edges")
+    inner_competition = peewee.ForeignKeyField(inner_competition_proxy, related_name="participants_edges")
