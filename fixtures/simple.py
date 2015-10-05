@@ -48,5 +48,5 @@ class Fixture(RockFixture):
         self.jD = Judge.create(name="Менде Николай Макарович",          competition=self.comp, number="D", role="acro_judge")
         self.jE = Judge.create(name="Ёжов Анатолий Гаврилевич",         competition=self.comp, number="E", role="acro_judge")
         self.jH = Judge.create(name="Цейдлерина Нина Степановна",       competition=self.comp, number="Main", role="head_judge")
-        self.jX = Judge.create(name="Амелин Давид Андреевич",           competition=self.comp, number="T1", role="tech_judge")
-        self.jY = Judge.create(name="Тычкина Вероника Владиленовна",    competition=self.comp, number="T2", role="tech_judge")
+        self.jX = Judge.create(name="Амелин Давид Андреевич",           competition=self.comp, number="T1", role="tech_judge", hide_from_results=True)
+        self.jY = Judge.create(name="Тычкина Вероника Владиленовна",    competition=self.comp, number="T2", role="tech_judge", hide_from_results=True)

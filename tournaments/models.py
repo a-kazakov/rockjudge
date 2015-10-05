@@ -224,13 +224,13 @@ class Tour(BaseModel):
         for tour in active_tours:
             tour.stop(broadcast=False)
         self.active = True
-        peewee_async.update_object(self)
+        yield from peewee_async.update_object(self)
         WebSocketClients.broadcast("active_tour_update", {})
 
     @tornado.gen.coroutine
     def stop(self, broadcast=True):
         self.active = False
-        peewee_async.update_object(self)
+        yield from peewee_async.update_object(self)
         if broadcast:
             WebSocketClients.broadcast("active_tour_update", {})
 
@@ -334,6 +334,7 @@ class Judge(BaseModel):
     competition = peewee.ForeignKeyField(Competition, related_name="judges")
     name = peewee.CharField()
     role = peewee.CharField()
+    hide_from_results = peewee.BooleanField(default=False)
     number = peewee.CharField()
 
     def serialize(self, recursive=False):
@@ -341,6 +342,7 @@ class Judge(BaseModel):
             "id": self.id,
             "name": self.name,
             "role": self.role,
+            "hide_from_results": self.hide_from_results,
             "number": self.number,
         }
 

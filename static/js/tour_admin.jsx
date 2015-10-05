@@ -258,7 +258,10 @@ class TourAdminScoresTable extends React.Component {
         }
     }
     render() {
-        var judges_order = this.state.judges.map(function(judge) {
+        var active_judges = this.state.judges.filter(function(judge) {
+            return !judge.hide_from_results;
+        })
+        var judges_order = active_judges.map(function(judge) {
             return judge.id;
         });
         var rows = this.state.runs.map(function(run) {
@@ -271,11 +274,7 @@ class TourAdminScoresTable extends React.Component {
                 total_score={ run.total_score }
                 judges_order={ judges_order } />
         }.bind(this));
-        rows.sort(function(a, b) {
-            return (a.props.heat - b.props.heat) ||
-                (a.props.participant > b.props.participant ? 1 : -1);
-        });
-        var judges_header = this.state.judges.map(function(judge) {
+        var judges_header = active_judges.map(function(judge) {
             return <th className="judge">{ judge.number }</th>;
         }.bind(this));
         return <div className="tour-admin">
