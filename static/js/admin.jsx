@@ -6,16 +6,16 @@ class CompetitionSchema extends React.Component {
         this.props.updateTourId(tour_id);
     }
     renderTour(tour) {
-        var className = "tour" +
-            (tour.finalized ? " finalized" : "") +
-            (tour.id == this.props.current_tour_id ? " current" : "");
-        return <div className={ "tour " + className } onClick={ this.activateTour.bind(this, tour.id) }>
+        var className = "level-2" +
+            (tour.finalized ? " grey" : "") +
+            (tour.id == this.props.current_tour_id ? " active" : "");
+        return <div className={ className } onClick={ this.activateTour.bind(this, tour.id) }>
             { tour.name }
         </div>
     }
     renderInnerCompetition(ic) {
-        return <details open="true" className="inner-competition">
-            <summary className="name">{ ic.name }</summary>
+        return <details open="true" className="block">
+            <summary className="level-1">{ ic.name }</summary>
             { ic.tours.map(this.renderTour.bind(this)) }
         </details>
     }
@@ -39,9 +39,9 @@ class JudgingUI extends React.Component {
         });
     }
     render() {
-        return <table className="judging-ui">
+        return <table className="app-content">
             <tbody><tr>
-                <td className="competition-schema">
+                <td className="side-panel">
                     <CompetitionSchema
                         schema={ this.props.schema }
                         updateTourId={ this.updateTourId.bind(this) }
@@ -50,6 +50,49 @@ class JudgingUI extends React.Component {
                 <td>
                     { this.state.tour_id === null ? <br />
                         : <iframe className="judging-frame" src={ "/tour/" + this.state.tour_id } /> }
+                </td>
+            </tr></tbody>
+        </table>;
+    }
+}
+
+class CompetitionLoadingUI extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            raw_text: "",
+        }
+    }
+    render() {
+        return <form onSubmit={ this.onSubmit.bind(this) } className="load-competition">
+            <textarea
+                defaultValue=""
+                ref={(c) => this._input = c}
+                placeholder="Insert serialized data here ..." />
+            <button type="submit">Apply</button>
+        </form>
+    }
+    onSubmit(event) {
+        event.preventDefault();
+        (new Api("tournaments.competition.load", {
+            competition_id: this.props.competition_id,
+            data: JSON.parse(this._input.getDOMNode().value),
+        })).onSuccess(function() { alert("Success."); }).send();
+    }
+}
+
+class ManagmentUI extends React.Component {
+    render() {
+        return <table className="app-content">
+            <tbody><tr>
+                <td className="side-panel">
+                    <div className="level-1 active">
+                        Load competition data
+                    </div>
+                </td>
+                <td>
+                    <CompetitionLoadingUI
+                        competition_id={ this.props.competition_id } />
                 </td>
             </tr></tbody>
         </table>;
@@ -66,7 +109,7 @@ class AdminUI extends React.Component {
             active_app: "judging",
             id: null,
         };
-        window.message_dispatcher.addListener("competition_update inner_competition_update tour_update tour_full_update")
+        window.message_dispatcher.addListener("competition_update inner_competition_update tour_update tour_full_update competition_full_update")
             .setCallback(this.loadData.bind(this))
         this.loadData();
     }
@@ -77,6 +120,14 @@ class AdminUI extends React.Component {
             }.bind(this)).send();
     }
 
+    // Listeners
+
+    setApp(app) {
+        this.setState({
+            active_app: app,
+        });
+    }
+
     // Rendering
 
     renderActiveApp() {
@@ -84,6 +135,9 @@ class AdminUI extends React.Component {
         case "judging":
             return <JudgingUI
                 schema={ this.state.inner_competitions } />;
+        case "management":
+            return <ManagmentUI
+                competition_id={ this.props.competition_id } />;
         }
     }
     render() {
@@ -97,11 +151,11 @@ class AdminUI extends React.Component {
                         <div className="icon">R</div>
                         <div className="label">Results</div>
                     </div>
-                    <div className="app active">
+                    <div className={ "app" + (this.state.active_app == "judging" ? " active" : "") } onClick={ this.setApp.bind(this, "judging") }>
                         <div className="icon">J</div>
                         <div className="label">Judging</div>
                     </div>
-                    <div className="app">
+                    <div className={ "app" + (this.state.active_app == "management" ? " active" : "") } onClick={ this.setApp.bind(this, "management") }>
                         <div className="icon">M</div>
                         <div className="label">Management</div>
                     </div>

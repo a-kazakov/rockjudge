@@ -26,6 +26,8 @@ class JudgeTablet extends React.Component {
                 return message.tour_id == this.state.tour_id
             }.bind(this))
             .setCallback(this.reloadTour.bind(this));
+        window.message_dispatcher.addListener("competition_full_update")
+            .setCallback(this.loadData.bind(this));
         this.loadData();
     }
     loadData() {

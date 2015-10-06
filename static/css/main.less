@@ -60,32 +60,37 @@ table.outer-table {
   }
 }
 
-table.judging-ui {
+table.app-content {
   width: 100%;
   height: 100%;
 
-  .competition-schema {
+  .side-panel {
     width: 350px;
     background-color: @ui-light;
 
-    .inner-competition {
+    .block {
       margin-bottom: 10px;
     }
-    .name {
+    .level-1 {
       font-weight: bold;
       padding: 10px;
-      cursor: pointer;
-    }
-    .tour {
-      padding: 5px 5px 5px 30px;
       cursor: pointer;
       &:hover {
         background-color: @ui-medium !important;
       }
-      &.finalized {
+    }
+    .level-2 {
+      padding: 5px 5px 5px 30px;
+      cursor: pointer;
+    }
+    .level-1, .level-2 {
+      &:hover {
+        background-color: @ui-medium !important;
+      }
+      &.grey {
         color: #999;
       }
-      &.current {
+      &.active {
         background-color: @ui-contrast;
       }
     }
@@ -94,6 +99,19 @@ table.judging-ui {
   .judging-frame {
     width: 100%;
     height: 100%;
+  }
+}
+
+form.load-competition {
+  height: 100%;
+  text-align: center;
+  textarea {
+    width: 100%;
+    height: calc(~'100% - 60px');
+    margin-bottom: 10px;
+  }
+  button {
+    width: 200px;
   }
 }
 

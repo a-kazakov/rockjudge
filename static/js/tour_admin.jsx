@@ -156,6 +156,7 @@ class TourAdminScoresTable extends React.Component {
             active: false,
             current_editing: null,
         };
+        // TODO: add filters
         window.message_dispatcher.addListener("score_update run_full_update").fetchObject("tournaments.run.get", true).setFilter(function(message) {
             return message.score_id
                 ? this.getScoreIdPath(message.score_id) !== null
@@ -171,6 +172,8 @@ class TourAdminScoresTable extends React.Component {
             return this.props.tour_id == message.tour_id;
         }.bind(this)).setCallback(this.dispatchTourUpdate.bind(this));
         window.message_dispatcher.addListener("active_tour_update").fetchObject("tournaments.tour.find_active").setCallback(this.dispatchActiveTourUpdate.bind(this));
+        window.message_dispatcher.addListener("competition_full_update")
+            .setCallback(this.loadData.bind(this));
         this.loadData();
     }
     loadData() {

@@ -260,6 +260,13 @@ class Api:
         yield tour.full_prefetch()
         return (yield tour.get_serialized_results())
 
+    @classmethod
+    @tornado.gen.coroutine
+    def competition_load(cls, request):
+        competition = yield cls.get_model(Competition, "competition_id", request)
+        yield competition.load(request["data"])
+        return {}
+
     # Service
 
     @classmethod

@@ -16,6 +16,7 @@ from participants.models import (
     Participant,
     ParticipantSportsman,
     Sportsman,
+    competition_proxy,
     inner_competition_proxy,
 )
 from scoring_systems import get_scoring_system
@@ -43,6 +44,21 @@ class Competition(BaseModel):
         }])
 
     @tornado.gen.coroutine
+    def load(self, data):
+        with Database.instance().db.atomic():
+            if "clubs" in data:
+                yield Club.load(self, data["clubs"])
+            if "sportsmen" in data:
+                yield Sportsman.load(self, data["sportsmen"])
+            if "categories" in data:
+                yield InnerCompetition.load(self, data["categories"])
+            if "participants" in data:
+                yield Participant.load(self, data["participants"])
+            WebSocketClients.broadcast("competition_full_update", {
+                "competition_id": self.id
+            })
+
+    @tornado.gen.coroutine
     def serialize(self, recursive=False):
         result = {
             "id": self.id,
@@ -56,9 +72,13 @@ class Competition(BaseModel):
 
 
 class InnerCompetition(BaseModel):
+    indexes = (
+        (("competition", "external_id"), False),
+    )
     name = peewee.CharField()
     competition = peewee.ForeignKeyField(Competition, related_name="inners")
     first_tour = peewee.ForeignKeyField(tour_proxy, null=True)
+    external_id = peewee.CharField(null=True, default=None)
 
     @property
     def tours(self):
@@ -83,6 +103,26 @@ class InnerCompetition(BaseModel):
             edge.participant
             for edge in edges
         ]
+
+    @classmethod
+    @tornado.gen.coroutine
+    def _load_one(cls, competition, obj):
+        if obj["external_id"] is not None:
+            try:
+                model = yield from peewee_async.get_object(cls, cls.competition == competition and cls.external_id == obj["external_id"])
+                for key in ["name"]:
+                    setattr(model, key, obj[key])
+                yield from peewee_async.update_object(model)
+                return
+            except cls.DoesNotExist:
+                pass
+        yield from peewee_async.create_object(cls, competition=competition, **obj)
+
+    @classmethod
+    @tornado.gen.coroutine
+    def load(cls, competition, objects):
+        for obj in objects:
+            yield cls._load_one(competition, obj)
 
     @tornado.gen.coroutine
     def serialize(self, recursive=False):
@@ -531,5 +571,6 @@ class Score(BaseModel):
         return result
 
 
+competition_proxy.initialize(Competition)
 inner_competition_proxy.initialize(InnerCompetition)
 tour_proxy.initialize(Tour)
