@@ -204,18 +204,22 @@ class AdminUI extends React.Component {
         }
         return <table className="outer-table">
             <tbody><tr>
+                <th colSpan="2">
+                    { this.state.name }
+                </th>
+            </tr><tr>
                 <td className="left-col noselect">
-                    <div className="app">
-                        <div className="icon">R</div>
-                        <div className="label">Results</div>
+                    <div className={ "app" + (this.state.active_app == "management" ? " active" : "") } onClick={ this.setApp.bind(this, "management") }>
+                        <div className="icon">M</div>
+                        <div className="label">Management</div>
                     </div>
                     <div className={ "app" + (this.state.active_app == "judging" ? " active" : "") } onClick={ this.setApp.bind(this, "judging") }>
                         <div className="icon">J</div>
                         <div className="label">Judging</div>
                     </div>
-                    <div className={ "app" + (this.state.active_app == "management" ? " active" : "") } onClick={ this.setApp.bind(this, "management") }>
-                        <div className="icon">M</div>
-                        <div className="label">Management</div>
+                    <div className="app">
+                        <div className="icon">R</div>
+                        <div className="label">Results</div>
                     </div>
                     <div className="app">
                         <div className="icon">S</div>

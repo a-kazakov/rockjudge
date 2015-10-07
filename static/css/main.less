@@ -21,6 +21,14 @@ table.outer-table {
   td {
     vertical-align: top;
   }
+  th {
+    height: 30px;
+    vertical-align: middle;
+    text-align: center;
+    background-color: @ui-dark;
+    color: @ui-light;
+    font-weight: bold;
+  }
 
   .left-col {
     width: @left-pane-size;
@@ -73,14 +81,14 @@ table.app-content {
     }
     .level-1 {
       font-weight: bold;
-      padding: 10px;
+      padding: 5px 10px;
       cursor: pointer;
       &:hover {
         background-color: @ui-medium !important;
       }
     }
     .level-2 {
-      padding: 5px 5px 5px 30px;
+      padding: 2px 5px 3px 30px;
       cursor: pointer;
     }
     .level-1, .level-2 {

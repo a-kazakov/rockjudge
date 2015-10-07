@@ -286,9 +286,9 @@ class TourAdminScoresTable extends React.Component {
         return <div className="tour-admin">
             <header>
                 <div className="controls">
-                    <button onClick={ this.onInitButtonClick.bind(this) }>Recreate list</button>
-                    <button onClick={ this.onFinalizeButtonClick.bind(this) }>Finalize</button>
-                    <button onClick={ this.onShuffleHeatsButtonClick.bind(this) }>Shuffle heats</button>
+                    { this.state.active ? null : <button onClick={ this.onInitButtonClick.bind(this) }>Recreate list</button> }
+                    { this.state.active ? null : <button onClick={ this.onFinalizeButtonClick.bind(this) }>Finalize</button> }
+                    { this.state.active ? null : <button onClick={ this.onShuffleHeatsButtonClick.bind(this) }>Shuffle heats</button> }
                     { this.renderActiveTourControls() }
                 </div>
                 <h1>{ this.state.inner_competition_name }</h1>

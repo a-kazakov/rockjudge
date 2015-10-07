@@ -105,7 +105,7 @@ class Participant(BaseModel):
             sportsmen = sorted(
                 (yield self.sportsmen()),
                 key=lambda s: (s.gender, s.last_name))
-            return ", ".join([s.full_name for s in sportsmen])
+            return " – ".join([s.full_name for s in sportsmen])
         if (yield self.is_solo()):
             return self.sportsmen[0].full_name
         return self.formation_name
