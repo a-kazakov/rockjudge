@@ -126,15 +126,15 @@ class TourAdminScoresRow extends React.Component {
                 value={ this.props.scores.scores[judge.id] } />
         }.bind(this));
         return <tr className={ this.props.heat % 2 ? "odd-heat" : ""}>
-            <td className="number">{ this.props.participant.number }</td>
-            <td className="name">{ this.props.participant.name }</td>
-            <td className="club">{ this.props.participant.club.name }</td>
             <TourAdminHeatValue
                 run_id={ this.props.run_id }
                 value={ this.props.heat }
                 updateValue={ this.updateHeat.bind(this) } />
-            { scores }
+            <td className="number">{ this.props.participant.number }</td>
+            <td className="name">{ this.props.participant.name }</td>
+            <td className="club">{ this.props.participant.club.name }</td>
             <td className="total">{ this.props.scores.total_run_score }</td>
+            { scores }
         </tr>;
     }
     updateHeat(new_value) {
@@ -297,12 +297,12 @@ class TourAdminScoresTable extends React.Component {
             <table className="table scores-table">
                 <tbody>
                     <tr>
+                        <th className="heat">Heat</th>
                         <th className="number">#</th>
                         <th className="name">Name</th>
                         <th className="club">Club</th>
-                        <th className="heat">Heat</th>
-                        { judges_header }
                         <th className="total">Total</th>
+                        { judges_header }
                     </tr>
                     { rows }
                 </tbody>
