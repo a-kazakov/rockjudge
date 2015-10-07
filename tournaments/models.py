@@ -129,7 +129,7 @@ class InnerCompetition(BaseModel):
 
     @classmethod
     @tornado.gen.coroutine
-    def create(cls, competition, name):
+    def create_model(cls, competition, name):
         yield from peewee_async.create_object(
             cls,
             name=name,
