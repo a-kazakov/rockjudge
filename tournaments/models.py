@@ -72,9 +72,12 @@ class Competition(BaseModel):
 
 
 class InnerCompetition(BaseModel):
-    indexes = (
-        (("competition", "external_id"), False),
-    )
+    class Meta:
+        indexes = (
+            (("competition", "external_id"), False),
+        )
+        order_by = ["name"]
+
     name = peewee.CharField()
     competition = peewee.ForeignKeyField(Competition, related_name="inners")
     first_tour = peewee.ForeignKeyField(tour_proxy, null=True)
@@ -123,6 +126,18 @@ class InnerCompetition(BaseModel):
     def load(cls, competition, objects):
         for obj in objects:
             yield cls._load_one(competition, obj)
+
+    @classmethod
+    @tornado.gen.coroutine
+    def create(cls, competition, name):
+        yield from peewee_async.create_object(
+            cls,
+            name=name,
+            competition=competition
+        )
+        WebSocketClients.broadcast("competition_full_update", {
+            "competition_id": competition.id
+        })
 
     @tornado.gen.coroutine
     def serialize(self, recursive=False):

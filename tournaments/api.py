@@ -200,6 +200,15 @@ class Api:
         yield model.update_data(request["data"])
         return {}
 
+    # Creaters
+
+    @classmethod
+    @tornado.gen.coroutine
+    def inner_competition_create(cls, request):
+        competition = yield cls.get_model(Competition, "competition_id", request)
+        yield InnerCompetition.create(competition=competition, name=request["name"])
+        return {}
+
     # Custom actions
 
     @classmethod

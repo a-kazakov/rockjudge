@@ -81,13 +81,60 @@ class CompetitionLoadingUI extends React.Component {
     }
 }
 
-class ManagmentUI extends React.Component {
+class InnerCompetitionManagementUI extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            id: null,
+        }
+        loadData();
+    }
+    loadData() {
+        (new Api("tournaments.inner_competition.get", {
+            inner_competition_id: this.props.competition_id,
+            recursive: true,
+        })).onSuccess(function(response) {
+            this.setState(response);
+        }.bind(this)).send();
+    }
     render() {
+        if (this.state.id === null) {
+            return <span>Loading ...</span>
+        }
+        return <header>
+            <h1>{ this.state.name }</h1>
+        </header>
+    }
+}
+
+class ManagmentUI extends React.Component {
+    renderInnerCompetition(ic) {
+        return <div className="level-2">
+            { ic.name }
+        </div>
+    }
+    render() {
+        var ics = this.props.schema.map(function(ic) {
+            return this.renderInnerCompetition(ic);
+        }.bind(this));
         return <table className="app-content">
             <tbody><tr>
                 <td className="side-panel">
-                    <div className="level-1 active">
-                        Load competition data
+                    <div className="block">
+                        <div className="level-1 active">
+                            Load competition data
+                        </div>
+                    </div>
+                    <details className="block">
+                        <summary className="level-1">
+                            Manage categories
+                        </summary>
+                        { ics }
+                    </details>
+                    <div className="block">
+                        <div className="level-1" onClick={ this.createInnerCommpetition.bind(this) }>
+                            Add new catagory
+                        </div>
                     </div>
                 </td>
                 <td>
@@ -96,6 +143,16 @@ class ManagmentUI extends React.Component {
                 </td>
             </tr></tbody>
         </table>;
+    }
+    createInnerCommpetition() {
+        var name = prompt("Enter the name of new competition:");
+        if (name === null) {
+            return;
+        }
+        (new Api("tournaments.inner_competition.create", {
+            name: name,
+            competition_id: this.props.competition_id,
+        })).send();
     }
 }
 
@@ -137,6 +194,7 @@ class AdminUI extends React.Component {
                 schema={ this.state.inner_competitions } />;
         case "management":
             return <ManagmentUI
+                schema={ this.state.inner_competitions }
                 competition_id={ this.props.competition_id } />;
         }
     }
