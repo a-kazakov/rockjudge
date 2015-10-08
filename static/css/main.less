@@ -110,16 +110,20 @@ table.app-content {
   }
 }
 
-form.load-competition {
+div.load-competition-page {
+  width: 100%;
   height: 100%;
-  text-align: center;
-  textarea {
-    width: 100%;
+  form.load-competition {
     height: calc(~'100% - 60px');
-    margin-bottom: 10px;
-  }
-  button {
-    width: 200px;
+    text-align: center;
+    textarea {
+      width: 100%;
+      height: calc(~'100% - 60px');
+      margin-bottom: 10px;
+    }
+    button {
+      width: 200px;
+    }
   }
 }
 
@@ -191,4 +195,40 @@ button {
 
 table.full-width {
   width: 100%;
+}
+
+h2 {
+  font-size: 24px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.ic-management-ui {
+  padding: 10px;
+  box-sizing: border-box;
+  .tour {
+    display: inline-block;
+    vertical-align: middle;
+    background-color: @ui-light;
+    width: 250px;
+    padding: 10px;
+    line-height: 20px;
+    margin: 10px;
+    &.tour-create {
+      background-color: #ffc;
+      margin: 5px;
+    }
+    .title {
+      font-weight: bold;
+    }
+    h3 {
+      padding-bottom: 10px;
+      font-weight: 500;
+      font-size: 20px;
+    }
+    .buttons {
+      padding-top: 10px;
+      text-align: center;
+    }
+  }
 }

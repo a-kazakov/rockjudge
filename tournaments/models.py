@@ -107,6 +107,15 @@ class InnerCompetition(BaseModel):
             for edge in edges
         ]
 
+    @tornado.gen.coroutine
+    def full_prefetch(self):
+        yield self.prefetch([{
+            "model": Tour,
+            "ref": "inner_competition",
+            "ref_dir": "up",
+            "children": [],
+        }])
+
     @classmethod
     @tornado.gen.coroutine
     def _load_one(cls, competition, obj):
@@ -140,10 +149,21 @@ class InnerCompetition(BaseModel):
         })
 
     @tornado.gen.coroutine
+    def update_data(self, new_data):
+        for key in ["name", "external_id"]:
+            if key in new_data:
+                setattr(self, key, new_data[key])
+        yield from peewee_async.update_object(self)
+        WebSocketClients.broadcast("competition_full_update", {
+            "competition_id": self.competition_id,
+        })
+
+    @tornado.gen.coroutine
     def serialize(self, recursive=False):
         result = {
             "id": self.id,
             "name": self.name,
+            "external_id": self.external_id,
         }
         if recursive:
             result["tours"] = []
@@ -154,7 +174,7 @@ class InnerCompetition(BaseModel):
 
 class Tour(BaseModel):
     name = peewee.CharField()
-    next_tour = peewee.ForeignKeyField("self", null=True, related_name="prev_tour")
+    next_tour = peewee.ForeignKeyField("self", null=True, default=None, related_name="prev_tour")
     num_advances = peewee.IntegerField()
     participants_per_heat = peewee.IntegerField()
     finalized = peewee.BooleanField(default=False)
@@ -378,6 +398,69 @@ class Tour(BaseModel):
     def scoring_system(self):
         return get_scoring_system(self)
 
+    @classmethod
+    @tornado.gen.coroutine
+    def create_model(cls, inner_competition, add_after, data):
+        with Database.instance().db.atomic():
+            create_kwargs = {
+                key: data[key]
+                for key in ["name", "num_advances", "participants_per_heat", "hope_tour"]
+            }
+            create_kwargs["scoring_system_name"] = data["scoring_system"]
+            create_kwargs["inner_competition"] = inner_competition
+            tour = yield from peewee_async.create_object(Tour, **create_kwargs)
+            if add_after is None:
+                tour.next_tour = inner_competition.first_tour
+                inner_competition.first_tour = tour
+                yield from peewee_async.update_object(inner_competition)
+                yield from peewee_async.update_object(tour)
+            else:
+                for prev_tour in inner_competition.tours:
+                    print(prev_tour.id, add_after)
+                    if prev_tour.id == add_after:
+                        tour.next_tour = prev_tour.next_tour
+                        prev_tour.next_tour = tour
+                        yield from peewee_async.update_object(prev_tour)
+                        yield from peewee_async.update_object(tour)
+                        break
+                else:
+                    raise RuntimeError("Invalid add_after ID passed")
+        WebSocketClients.broadcast("competition_full_update", {
+            "competition_id": inner_competition.competition_id,
+        })
+
+    @tornado.gen.coroutine
+    def delete_model(self):
+        with Database.instance().db.atomic():
+            if self.finalized:
+                raise RuntimeError("Unable to delete finalized tour")
+            # We don't actually delete the tour. Just removing it from linked list.
+            inner_competition = self.inner_competition
+            prev_tour = yield self.get_prev_tour()
+            if prev_tour is None: # This is the first_tour
+                inner_competition.first_tour = self.next_tour
+                yield from peewee_async.update_object(inner_competition)
+            else:
+                prev_tour.next_tour = self.next_tour
+                yield from peewee_async.update_object(prev_tour)
+            self.next_tour = None
+            yield from peewee_async.update_object(self)
+        WebSocketClients.broadcast("competition_full_update", {
+            "competition_id": inner_competition.competition_id,
+        })
+
+    @tornado.gen.coroutine
+    def update_data(self, new_data):
+        for key in ["name", "num_advances", "participants_per_heat", "active", "hope_tour"]:
+            if key in new_data:
+                setattr(self, key, new_data[key])
+        if "scoring_system" in new_data:
+            self.scoring_system_name = new_data["scoring_system"]
+        yield from peewee_async.update_object(self)
+        WebSocketClients.broadcast("competition_full_update", {
+            "competition_id": self.inner_competition.competition_id,
+        })
+
     def serialize_base(self):
         return {
             "id": self.id,
@@ -387,6 +470,8 @@ class Tour(BaseModel):
             "name": self.name,
             "next_tour_id": self.next_tour_id,
             "participants_per_heat": self.participants_per_heat,
+            "num_advances": self.num_advances,
+            "hope_tour": self.hope_tour,
         }
 
     @tornado.gen.coroutine

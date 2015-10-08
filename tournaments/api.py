@@ -163,6 +163,14 @@ class Api:
             yield competition.full_prefetch()
         return (yield competition.serialize(recursive=request["recursive"]))
 
+    @classmethod
+    @tornado.gen.coroutine
+    def inner_competition_get(cls, request):
+        inner_competition = yield cls.get_model(InnerCompetition, "inner_competition_id", request)
+        if request["recursive"]:
+            yield inner_competition.full_prefetch()
+        return (yield inner_competition.serialize(recursive=request["recursive"]))
+
     # Setters
 
     @classmethod
@@ -195,6 +203,13 @@ class Api:
 
     @classmethod
     @tornado.gen.coroutine
+    def inner_competition_set(cls, request):
+        model = yield cls.get_model(InnerCompetition, "inner_competition_id", request)
+        yield model.update_data(request["data"])
+        return {}
+
+    @classmethod
+    @tornado.gen.coroutine
     def competition_set(cls, request):
         model = yield cls.get_model(Competition, "competition_id", request)
         yield model.update_data(request["data"])
@@ -207,6 +222,25 @@ class Api:
     def inner_competition_create(cls, request):
         competition = yield cls.get_model(Competition, "competition_id", request)
         yield InnerCompetition.create_model(competition=competition, name=request["name"])
+        return {}
+
+    @classmethod
+    @tornado.gen.coroutine
+    def tour_create(cls, request):
+        inner_competition = yield cls.get_model(InnerCompetition, "inner_competition_id", request)
+        yield Tour.create_model(
+            inner_competition=inner_competition,
+            add_after=request["add_after"],
+            data=request["data"])
+        return {}
+
+    # Deleters
+
+    @classmethod
+    @tornado.gen.coroutine
+    def tour_delete(cls, request):
+        tour = yield cls.get_model(Tour, "tour_id", request)
+        yield tour.delete_model()
         return {}
 
     # Custom actions
