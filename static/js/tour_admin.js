@@ -502,3 +502,4 @@ var TourAdminScoresTable = (function (_React$Component4) {
 
     return TourAdminScoresTable;
 })(React.Component);
+//# sourceMappingURL=tour_admin.js.map

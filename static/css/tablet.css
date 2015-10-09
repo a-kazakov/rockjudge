@@ -6788,7 +6788,6 @@ body,
 #content {
   height: 100%;
   background-color: #efefef;
-  overflow: hidden;
 }
 .noselect {
   -webkit-touch-callout: none;
@@ -6841,6 +6840,15 @@ header .controls .current-heat {
 header .controls button {
   margin-right: 0;
   margin-left: 10px;
+}
+table.no-break tr,
+table.no-break th {
+  page-break-inside: avoid;
+}
+html,
+body,
+#content {
+  overflow: hidden;
 }
 .tbtn {
   background-color: #2b3a42;

@@ -14,7 +14,6 @@
 html, body, #content {
   height: 100%;
   background-color: @ui-white;
-  overflow: hidden;
 }
 
 .noselect {
@@ -70,5 +69,11 @@ header {
       margin-right: 0;
       margin-left: 10px;
     }
+  }
+}
+
+table.no-break {
+  tr, th {
+    page-break-inside: avoid;
   }
 }

@@ -103,3 +103,4 @@ var MessageDispatcher = (function () {
 })();
 
 var message_dispatcher = new MessageDispatcher();
+//# sourceMappingURL=message_dispatcher.js.map

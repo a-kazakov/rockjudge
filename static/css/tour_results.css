@@ -6769,7 +6769,6 @@ body,
 #content {
   height: 100%;
   background-color: #efefef;
-  overflow: hidden;
 }
 .noselect {
   -webkit-touch-callout: none;
@@ -6823,8 +6822,26 @@ header .controls button {
   margin-right: 0;
   margin-left: 10px;
 }
+table.no-break tr,
+table.no-break th {
+  page-break-inside: avoid;
+}
 .tour-results {
   margin: 10px;
+}
+.tour-results .score-breakdown th,
+.tour-results .score-breakdown td {
+  border: none;
+  padding: 0 3px;
+}
+.tour-results .score-breakdown th {
+  text-align: right;
+}
+.tour-results .score-breakdown td {
+  text-align: left;
+}
+.tour-results .score-breakdown .total-score {
+  font-weight: bold;
 }
 .tour-results .scores-table .place {
   width: 50px;

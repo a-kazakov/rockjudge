@@ -343,3 +343,4 @@ var TabletScoreInput = (function (_React$Component) {
 
     return TabletScoreInput;
 })(React.Component);
+//# sourceMappingURL=tablet.js.map

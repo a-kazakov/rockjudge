@@ -367,3 +367,4 @@ var TourAdminScoreCell = (function (_React$Component2) {
 
     return TourAdminScoreCell;
 })(React.Component);
+//# sourceMappingURL=tour_admin.js.map

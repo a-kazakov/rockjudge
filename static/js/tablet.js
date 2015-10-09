@@ -314,3 +314,4 @@ var JudgeTablet = (function (_React$Component) {
 
     return JudgeTablet;
 })(React.Component);
+//# sourceMappingURL=tablet.js.map

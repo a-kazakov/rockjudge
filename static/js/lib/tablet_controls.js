@@ -277,3 +277,4 @@ var StopWatch = (function (_React$Component4) {
 
     return StopWatch;
 })(React.Component);
+//# sourceMappingURL=tablet_controls.js.map

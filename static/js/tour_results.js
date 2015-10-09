@@ -20,7 +20,9 @@ var TourResults = (function (_React$Component) {
         this.state = {
             name: "",
             results: [],
-            finalized: true
+            finalized: true,
+            judges: [],
+            show_verbose: false
         };
         window.message_dispatcher.addListener("tour_update tour_full_update score_update").setCallback(this.loadData.bind(this));
         // TODO: add filter
@@ -35,8 +37,35 @@ var TourResults = (function (_React$Component) {
             }).bind(this)).send();
         }
 
+        // Control
+
+    }, {
+        key: "toggleVerbose",
+        value: function toggleVerbose() {
+            this.setState({
+                verbose: !this.state.verbose
+            });
+        }
+
         // Rendering
 
+    }, {
+        key: "renderVerboseButton",
+        value: function renderVerboseButton() {
+            if (this.state.verbose) {
+                return React.createElement(
+                    "button",
+                    { className: "btn btn-primary", onClick: this.toggleVerbose.bind(this) },
+                    "Simple view"
+                );
+            } else {
+                return React.createElement(
+                    "button",
+                    { className: "btn btn-primary", onClick: this.toggleVerbose.bind(this) },
+                    "Verbose view"
+                );
+            }
+        }
     }, {
         key: "renderNonFinalizedWarning",
         value: function renderNonFinalizedWarning() {
@@ -51,6 +80,21 @@ var TourResults = (function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
+            var active_judges = this.state.judges.filter(function (judge) {
+                return !judge.hide_from_results;
+            });
+            var table = null;
+            if (this.state.verbose) {
+                table = React.createElement(TourResultsVerboseTable, {
+                    judges: active_judges,
+                    data: this.state.results,
+                    has_next_tour: this.state.next_tour_id != null,
+                    scoring_system: this.state.scoring_system });
+            } else {
+                table = React.createElement(TourResultsTable, {
+                    data: this.state.results,
+                    has_next_tour: this.state.next_tour_id != null });
+            }
             return React.createElement(
                 "div",
                 null,
@@ -60,6 +104,7 @@ var TourResults = (function (_React$Component) {
                     React.createElement(
                         "div",
                         { className: "controls" },
+                        this.renderVerboseButton(),
                         React.createElement(
                             "button",
                             { className: "btn btn-primary", onClick: function () {
@@ -83,9 +128,7 @@ var TourResults = (function (_React$Component) {
                     "div",
                     { className: "tour-results" },
                     this.renderNonFinalizedWarning(),
-                    React.createElement(TourResultsTable, {
-                        data: this.state.results,
-                        has_next_tour: this.state.next_tour_id != null })
+                    table
                 )
             );
         }
@@ -93,3 +136,4 @@ var TourResults = (function (_React$Component) {
 
     return TourResults;
 })(React.Component);
+//# sourceMappingURL=tour_results.js.map
