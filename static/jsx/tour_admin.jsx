@@ -235,7 +235,9 @@ class TourAdminScoresTable extends React.Component {
     // Listeners
 
     onInitButtonClick() {
-        (new Api("tournaments.tour.init", {tour_id: this.props.tour_id})).send();
+        if (confirm("Are you sure want to recreate participants list for this tour?")) {
+            (new Api("tournaments.tour.init", {tour_id: this.props.tour_id})).send();
+        }
     }
     onFinalizeButtonClick() {
         if (confirm("Are you sure want to finalize this tour?")) {

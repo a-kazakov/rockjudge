@@ -4,6 +4,7 @@ import time
 import tornado.gen
 import tornado.web
 
+from db import Database
 from tournaments.api import Api as TournamentsApi
 from tournaments.models import (
     Judge,
@@ -54,14 +55,15 @@ class ApiHandler(tornado.web.RequestHandler):
         method = self.get_argument("method")
         method_parts = method.split(".")
         inner_method = ".".join(method_parts[1:])
-        if method_parts[0] == "tournaments":
-            result = yield TournamentsApi.call(inner_method, data)
-            self.write(json.dumps(result))
-        else:
-            self.write(json.dumps({
-                "success": False,
-                "message": "Unknown method name: {}".format(method)
-            }))
+        with Database.instance().db.transaction():
+            if method_parts[0] == "tournaments":
+                result = yield TournamentsApi.call(inner_method, data)
+                self.write(json.dumps(result))
+            else:
+                self.write(json.dumps({
+                    "success": False,
+                    "message": "Unknown method name: {}".format(method)
+                }))
         print("Api call: {} ({:.3f}s)".format(method, time.time() - begin))
 
     @tornado.gen.coroutine

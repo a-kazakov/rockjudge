@@ -45,18 +45,17 @@ class Competition(BaseModel):
 
     @tornado.gen.coroutine
     def load(self, data):
-        with Database.instance().db.atomic():
-            if "clubs" in data:
-                yield Club.load(self, data["clubs"])
-            if "sportsmen" in data:
-                yield Sportsman.load(self, data["sportsmen"])
-            if "categories" in data:
-                yield InnerCompetition.load(self, data["categories"])
-            if "participants" in data:
-                yield Participant.load(self, data["participants"])
-            WebSocketClients.broadcast("competition_full_update", {
-                "competition_id": self.id
-            })
+        if "clubs" in data:
+            yield Club.load(self, data["clubs"])
+        if "sportsmen" in data:
+            yield Sportsman.load(self, data["sportsmen"])
+        if "categories" in data:
+            yield InnerCompetition.load(self, data["categories"])
+        if "participants" in data:
+            yield Participant.load(self, data["participants"])
+        WebSocketClients.broadcast("competition_full_update", {
+            "competition_id": self.id
+        })
 
     @tornado.gen.coroutine
     def serialize(self, recursive=False):
@@ -244,6 +243,12 @@ class Tour(BaseModel):
         }])
 
     @tornado.gen.coroutine
+    def prefetch_runs(self):
+        if type(self.runs) is not list:
+            self.runs = yield from peewee_async.execute(self.runs)
+            self.runs = list(self.runs)
+
+    @tornado.gen.coroutine
     def estimate_participants(self):
         try:
             prev_tour = yield self.get_prev_tour(throw=True)
@@ -288,33 +293,43 @@ class Tour(BaseModel):
 
     @tornado.gen.coroutine
     def create_participant_runs(self):
+        yield self.prefetch_runs()
         estimated_participants = yield self.estimate_participants()
-        for participant in estimated_participants:
-            run = Run.create(
-                participant=participant,
+        existing_participant_ids = { run.participant_id for run in self.runs }
+        new_participant_ids = { participant.id for participant in estimated_participants }
+        participant_ids_to_create = new_participant_ids - existing_participant_ids
+        participant_ids_to_delete = existing_participant_ids - new_participant_ids
+        if len(participant_ids_to_delete) > 0:
+            runs_to_delete = yield from peewee_async.execute(Run.select().where(Run.participant << list(participant_ids_to_delete)))
+            runs_to_delete = list(runs_to_delete)
+            yield from peewee_async.execute(Score.delete().where(Score.run << runs_to_delete))
+            yield from peewee_async.execute(AcrobaticOverride.delete().where(AcrobaticOverride.run << runs_to_delete))
+            yield from peewee_async.execute(Run.delete().where(Run.id << runs_to_delete))
+        new_runs = [run for run in self.runs if run.participant_id not in participant_ids_to_delete]
+        self.runs = new_runs
+        for participant_id in participant_ids_to_create:
+            run = yield from peewee_async.create_object(Run,
+                participant=participant_id,
                 heat=1,
                 tour=self,
             )
-            run.create_scores()
-        yield self.shuffle_heats(broadcast=False)
+            yield run.create_scores()
+            self.runs.append(run)
+        yield self.shuffle_heats(broadcast=False, shuffle=(len(existing_participant_ids) == 0))
 
     @tornado.gen.coroutine
-    def shuffle_heats(self, broadcast=True):
-        with Database.instance().db.atomic():
-            if type(self.runs) != list:
-                runs = yield from peewee_async.execute(self.runs)
-                runs = list(runs)
-            else:
-                runs = list(self.runs)
-            random.shuffle(runs)
-            last_heat = len(runs) % self.participants_per_heat
-            if last_heat == 1:
-                last_heat = self.participants_per_heat // 2
-            for idx, run in enumerate(runs):
-                run.heat = idx // self.participants_per_heat + 1
-                if len(runs) - idx <= last_heat:
-                    run.heat = (len(runs) - 1) // self.participants_per_heat + 1
-                yield from peewee_async.update_object(run)
+    def shuffle_heats(self, shuffle=True, broadcast=True):
+        yield self.prefetch_runs()
+        if shuffle:
+            random.shuffle(self.runs)
+        last_heat = len(self.runs) % self.participants_per_heat
+        if last_heat == 1:
+            last_heat = self.participants_per_heat // 2
+        for idx, run in enumerate(self.runs):
+            run.heat = idx // self.participants_per_heat + 1
+            if len(self.runs) - idx <= last_heat:
+                run.heat = (len(self.runs) - 1) // self.participants_per_heat + 1
+            yield from peewee_async.update_object(run)
         if broadcast:
             WebSocketClients.broadcast("tour_full_update", {
                 "tour_id": self.id
@@ -401,50 +416,48 @@ class Tour(BaseModel):
     @classmethod
     @tornado.gen.coroutine
     def create_model(cls, inner_competition, add_after, data):
-        with Database.instance().db.atomic():
-            create_kwargs = {
-                key: data[key]
-                for key in ["name", "num_advances", "participants_per_heat", "hope_tour"]
-            }
-            create_kwargs["scoring_system_name"] = data["scoring_system"]
-            create_kwargs["inner_competition"] = inner_competition
-            tour = yield from peewee_async.create_object(Tour, **create_kwargs)
-            if add_after is None:
-                tour.next_tour = inner_competition.first_tour
-                inner_competition.first_tour = tour
-                yield from peewee_async.update_object(inner_competition)
-                yield from peewee_async.update_object(tour)
+        create_kwargs = {
+            key: data[key]
+            for key in ["name", "num_advances", "participants_per_heat", "hope_tour"]
+        }
+        create_kwargs["scoring_system_name"] = data["scoring_system"]
+        create_kwargs["inner_competition"] = inner_competition
+        tour = yield from peewee_async.create_object(Tour, **create_kwargs)
+        if add_after is None:
+            tour.next_tour = inner_competition.first_tour
+            inner_competition.first_tour = tour
+            yield from peewee_async.update_object(inner_competition)
+            yield from peewee_async.update_object(tour)
+        else:
+            for prev_tour in inner_competition.tours:
+                print(prev_tour.id, add_after)
+                if prev_tour.id == add_after:
+                    tour.next_tour = prev_tour.next_tour
+                    prev_tour.next_tour = tour
+                    yield from peewee_async.update_object(prev_tour)
+                    yield from peewee_async.update_object(tour)
+                    break
             else:
-                for prev_tour in inner_competition.tours:
-                    print(prev_tour.id, add_after)
-                    if prev_tour.id == add_after:
-                        tour.next_tour = prev_tour.next_tour
-                        prev_tour.next_tour = tour
-                        yield from peewee_async.update_object(prev_tour)
-                        yield from peewee_async.update_object(tour)
-                        break
-                else:
-                    raise RuntimeError("Invalid add_after ID passed")
+                raise RuntimeError("Invalid add_after ID passed")
         WebSocketClients.broadcast("competition_full_update", {
             "competition_id": inner_competition.competition_id,
         })
 
     @tornado.gen.coroutine
     def delete_model(self):
-        with Database.instance().db.atomic():
-            if self.finalized:
-                raise RuntimeError("Unable to delete finalized tour")
-            # We don't actually delete the tour. Just removing it from linked list.
-            inner_competition = self.inner_competition
-            prev_tour = yield self.get_prev_tour()
-            if prev_tour is None: # This is the first_tour
-                inner_competition.first_tour = self.next_tour
-                yield from peewee_async.update_object(inner_competition)
-            else:
-                prev_tour.next_tour = self.next_tour
-                yield from peewee_async.update_object(prev_tour)
-            self.next_tour = None
-            yield from peewee_async.update_object(self)
+        if self.finalized:
+            raise RuntimeError("Unable to delete finalized tour")
+        # We don't actually delete the tour. Just removing it from linked list.
+        inner_competition = self.inner_competition
+        prev_tour = yield self.get_prev_tour()
+        if prev_tour is None: # This is the first_tour
+            inner_competition.first_tour = self.next_tour
+            yield from peewee_async.update_object(inner_competition)
+        else:
+            prev_tour.next_tour = self.next_tour
+            yield from peewee_async.update_object(prev_tour)
+        self.next_tour = None
+        yield from peewee_async.update_object(self)
         WebSocketClients.broadcast("competition_full_update", {
             "competition_id": inner_competition.competition_id,
         })
@@ -553,9 +566,10 @@ class Run(BaseModel):
             "run_id": self.id,
         })
 
+    @tornado.gen.coroutine
     def create_scores(self):
         for judge in self.tour.judges:
-            Score.create(
+            yield from peewee_async.create_object(Score,
                 run=self,
                 judge=judge,
             )
@@ -586,11 +600,12 @@ class Run(BaseModel):
                 return override
         return None
 
+    @tornado.gen.coroutine
     def set_acrobatic_override(self, acrobatic, score):
         override = self.get_acrobatic_override(acrobatic)
         if override is None:
             if score is not None:
-                AcrobaticOverride.create(
+                yield from peewee_async.create_object(AcrobaticOverride,
                     run=self,
                     acrobatic=acrobatic,
                     score=score,

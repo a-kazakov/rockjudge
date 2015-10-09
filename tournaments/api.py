@@ -250,7 +250,7 @@ class Api:
     def acrobatic_override_set(cls, request):
         run = yield cls.get_model(Run, "run_id", request)
         acrobatic = yield cls.get_model(Acrobatic, "acrobatic_id", request)
-        run.set_acrobatic_override(acrobatic, request["score"])
+        yield run.set_acrobatic_override(acrobatic, request["score"])
         return {}
 
     @classmethod

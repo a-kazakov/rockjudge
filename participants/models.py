@@ -44,9 +44,8 @@ class Club(BaseModel):
     @classmethod
     @tornado.gen.coroutine
     def load(cls, competition, objects):
-        with Database.instance().db.atomic():
-            for obj in objects:
-                yield cls._load_one(competition, obj)
+        for obj in objects:
+            yield cls._load_one(competition, obj)
 
 
 class Sportsman(BaseModel):
@@ -80,9 +79,8 @@ class Sportsman(BaseModel):
     @classmethod
     @tornado.gen.coroutine
     def load(cls, competition, objects):
-        with Database.instance().db.atomic():
-            for obj in objects:
-                yield cls._load_one(competition, obj)
+        for obj in objects:
+            yield cls._load_one(competition, obj)
 
 
 class Participant(BaseModel):
@@ -174,32 +172,31 @@ class Participant(BaseModel):
     @classmethod
     @tornado.gen.coroutine
     def load(cls, competition, objects):
-        with Database.instance().db.atomic():
-            next_number = cls.select().where(cls.competition == competition).aggregate(peewee.fn.Max(cls.number)) + 1
-            for obj in objects:
-                club = Club.get(Club.external_id == obj["club"])
-                model, created = yield cls._load_one(competition, club, next_number, obj)
-                if created:
-                    next_number += 1
-                yield from peewee_async.execute(ParticipantSportsman.delete().where(ParticipantSportsman.participant == model))
-                yield from peewee_async.execute(Acrobatic.delete().where(Acrobatic.participant == model))
-                for sportaman_ex_id in obj["sportsmen"]:
-                    sportsman = Sportsman.get(Sportsman.external_id == sportaman_ex_id)
-                    ParticipantSportsman.create(
-                        participant=model,
-                        sportsman=sportsman,
-                    )
-                yield Acrobatic.load(model, obj["acrobatics"])
-                for cat in obj["categories"]:
-                    print(cat)
-                    ic = yield from peewee_async.get_object(
-                        inner_competition_proxy,
-                        inner_competition_proxy.competition == competition and
-                            inner_competition_proxy.external_id == cat)
-                    yield from peewee_async.create_object(ParticipantApplication,
-                        participant=model,
-                        inner_competition=ic,
-                    )
+        next_number = cls.select().where(cls.competition == competition).aggregate(peewee.fn.Max(cls.number)) + 1
+        for obj in objects:
+            club = Club.get(Club.external_id == obj["club"])
+            model, created = yield cls._load_one(competition, club, next_number, obj)
+            if created:
+                next_number += 1
+            yield from peewee_async.execute(ParticipantSportsman.delete().where(ParticipantSportsman.participant == model))
+            yield from peewee_async.execute(Acrobatic.delete().where(Acrobatic.participant == model))
+            for sportaman_ex_id in obj["sportsmen"]:
+                sportsman = Sportsman.get(Sportsman.external_id == sportaman_ex_id)
+                ParticipantSportsman.create(
+                    participant=model,
+                    sportsman=sportsman,
+                )
+            yield Acrobatic.load(model, obj["acrobatics"])
+            for cat in obj["categories"]:
+                print(cat)
+                ic = yield from peewee_async.get_object(
+                    inner_competition_proxy,
+                    inner_competition_proxy.competition == competition and
+                        inner_competition_proxy.external_id == cat)
+                yield from peewee_async.create_object(ParticipantApplication,
+                    participant=model,
+                    inner_competition=ic,
+                )
 
 
 class ParticipantSportsman(BaseModel):

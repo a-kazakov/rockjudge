@@ -343,7 +343,9 @@ var TourAdminScoresTable = (function (_React$Component4) {
     }, {
         key: "onInitButtonClick",
         value: function onInitButtonClick() {
-            new Api("tournaments.tour.init", { tour_id: this.props.tour_id }).send();
+            if (confirm("Are you sure want to recreate participants list for this tour?")) {
+                new Api("tournaments.tour.init", { tour_id: this.props.tour_id }).send();
+            }
         }
     }, {
         key: "onFinalizeButtonClick",
