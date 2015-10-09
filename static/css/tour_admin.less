@@ -1,4 +1,4 @@
-@import "main.less";
+@import "base.less";
 
 .tour-admin {
   .scores-table {
@@ -37,23 +37,25 @@
       background-color: @ui-medium;
       z-index: 10;
       padding: 10px;
-      color: @ui-white;
       table {
         margin-bottom: 10px;
+      }
+      th {
+        color: @ui-white;
       }
       td, th {
         border: 0;
         text-align: left;
         input {
-          width: 30px;
+          width: 40px;
         }
       }
     }
     .input-heat {
       width: 100%;
       box-sizing: border-box;
-      height: 14px;
-      margin: 0;
+      height: 22px;
+      margin: -2px;
       padding: 0;
       border: 0;
       text-align: center;

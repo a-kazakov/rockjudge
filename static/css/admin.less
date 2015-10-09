@@ -1,0 +1,138 @@
+@import "base.less";
+
+table.outer-table {
+  width: 100%;
+  height: 100%;
+
+  td {
+    vertical-align: top;
+  }
+  th {
+    height: 30px;
+    vertical-align: middle;
+    text-align: center;
+    background-color: @ui-dark;
+    color: @ui-white;
+    font-weight: bold;
+  }
+
+  .left-col {
+    width: @left-pane-size;
+    background-color: @ui-dark;
+
+    div.app {
+      width: @left-pane-size;
+      height: @left-pane-size;
+      cursor: pointer;
+      position: relative;
+      color: @ui-light;
+      margin-bottom: 30px;
+      .icon {
+        line-height: 1;
+        text-align: center;
+        font-size: 90px;
+        font-weight: 900;
+      }
+      .label {
+        text-align: center;
+        font-size: 12px;
+        font-weight: bold;
+        position: absolute;
+        bottom: 3px;
+        left: 0;
+        right: 0;
+        height: 15px;
+      }
+
+      &:hover {
+        background-color: lighten(@ui-dark, 10%);
+      }
+
+      &.active, &.active:hover {
+        background-color: darken(@ui-dark, 10%);
+      }
+    }
+  }
+}
+
+table.app-content {
+  width: 100%;
+  height: 100%;
+
+  .side-panel {
+    width: 350px;
+    background-color: @ui-light;
+    overflow: auto;
+    .block {
+      margin-bottom: 10px;
+    }
+    .level-1 {
+      font-weight: bold;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .level-2 {
+      padding: 2px 5px 3px 30px;
+      cursor: pointer;
+    }
+    .level-1, .level-2 {
+      &:hover {
+        background-color: lighten(@ui-medium, 10%) !important;
+      }
+      &.grey {
+        color: #999;
+      }
+      &.active {
+        background-color: @ui-contrast;
+      }
+    }
+  }
+
+  .app-page {
+    overflow: scroll;
+    width: 100%;
+    height: 100%;
+  }
+
+  .judging-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+}
+
+div.load-competition-page {
+  width: 100%;
+  height: 100%;
+  form.load-competition {
+    height: calc(~'100% - 60px');
+    text-align: center;
+    textarea {
+      width: 100%;
+      height: calc(~'100% - 60px');
+      margin-bottom: 10px;
+    }
+    button {
+      width: 200px;
+    }
+  }
+}
+
+.ic-management-ui {
+  padding: 10px;
+  box-sizing: border-box;
+  .tour {
+    background-color: @ui-light;
+    padding: 10px 10px 10px 10px;
+    h3 {
+      margin-top: 0;
+    }
+    &.tour-create {
+      background-color: @brand-warning;
+    }
+    .buttons {
+      padding-top: 10px;
+      text-align: center;
+    }
+  }
+}

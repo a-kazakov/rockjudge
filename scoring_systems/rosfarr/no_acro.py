@@ -32,7 +32,7 @@ def get_tablet_css():
 
 
 def get_tablet_js():
-    return ["tablet.jsx"]
+    return ["tablet.js"]
 
 
 def get_admin_css():
@@ -40,4 +40,4 @@ def get_admin_css():
 
 
 def get_admin_js():
-    return ["tour_admin.jsx", "tour_results.jsx"]
+    return ["tour_admin.js", "tour_results.js"]

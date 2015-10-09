@@ -7,18 +7,16 @@
 {% end %}
 
 {% block styles %}
-  <link rel="stylesheet" href="/static/css/tablet.less" type="text/less">
+  <link rel="stylesheet" href="/static/css/tablet.css">
 {% end %}
 
 {% block scripts %}
-  <script src="/static/js/tablet.jsx" type="text/jsx;harmony=true"></script>
-  <script src="/static/js/lib/tablet_controls.jsx" type="text/jsx;harmony=true"></script>
-  <script src="/static/js/scoring_systems/rosfarr/tablet.jsx" type="text/jsx;harmony=true"></script>
-  <script type="text/jsx">
+  <script src="/static/js/tablet.js"></script>
+  <script src="/static/js/lib/tablet_controls.js"></script>
+  <script src="/static/js/scoring_systems/rosfarr/tablet.js"></script>
+  <script>
     React.render(
-      <JudgeTablet
-        judge_id={ {{ judge_id }} }
-        competition_id={ {{ competition_id }} } />,
+      React.createElement(JudgeTablet, { judge_id: {{ judge_id }} }),
       document.getElementById("content")
     );
   </script>

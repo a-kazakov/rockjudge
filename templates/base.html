@@ -1,20 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>{% block title %}{% end %}</title>
-  <link href="/static/thirdparty/css-reset/reset.css" rel="stylesheet">
   <link href="/static/css/fonts.css" rel="stylesheet">
   {% block styles %}{% end %}
-  <script src="/static/thirdparty/less/less.js"></script>
-  <script src="/static/thirdparty/react/react.js"></script>
-  <script src="/static/thirdparty/react/JSXTransformer.js"></script>
-  <script src="/static/thirdparty/jquery/jquery.js"></script>
-  <script src="/static/thirdparty/sockjs/sockjs.js"></script>
-  <script src="/static/js/api.jsx" type="text/jsx;harmony=true"></script>
-  <script src="/static/js/message_dispatcher.jsx" type="text/jsx;harmony=true"></script>
-  {% block scripts %}{% end %}
 </head>
 <body>
   {% block body %}{% end %}
+  <script src="/static/thirdparty/react/react.js"></script>
+  <script src="/static/thirdparty/jquery/jquery.js"></script>
+  <script src="/static/thirdparty/sockjs/sockjs.js"></script>
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/message_dispatcher.js"></script>
+  {% block scripts %}{% end %}
 </body>
 </html>

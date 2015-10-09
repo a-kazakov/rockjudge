@@ -1,0 +1,74 @@
+@ui-black: #1C1D21;
+@ui-white: #EFEFEF;
+@ui-light: #BDD4DE;
+@ui-medium: #3F5765;
+@ui-dark: #2B3A42;
+@ui-contrast: #FF530D;
+
+@left-pane-size: 100px;
+
+@import "../thirdparty/bootstrap/less/variables.less";
+@import "../thirdparty/bootstrap/less/bootstrap.less";
+
+
+html, body, #content {
+  height: 100%;
+  background-color: @ui-white;
+  overflow: hidden;
+}
+
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.scores-table {
+  td, th {
+    border: 2px solid @ui-dark;
+    padding: 2px 5px;
+  }
+  th {
+    font-weight: bold;
+  }
+  th, td {
+    text-align: center;
+  }
+}
+
+header {
+  background-color: @ui-medium;
+  padding: 10px;
+  h1 {
+    color: @ui-white;
+    font-size: 25px;
+    font-weight: 400;
+    margin: 3px 5px;
+  }
+  h2 {
+    color: @ui-white;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 3px 5px;
+  }
+  .controls {
+    float: right;
+    text-align: right;
+    .current-heat {
+      color: @ui-white;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    button {
+      margin-right: 0;
+      margin-left: 10px;
+    }
+  }
+}

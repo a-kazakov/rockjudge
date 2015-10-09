@@ -1,0 +1,197 @@
+html,
+body,
+#content {
+  height: 100%;
+  background-color: #efefef;
+  font-family: Roboto, Arial, sans-serif;
+  overflow: hidden;
+}
+table.outer-table {
+  width: 100%;
+  height: 100%;
+}
+table.outer-table td {
+  vertical-align: top;
+}
+table.outer-table th {
+  height: 30px;
+  vertical-align: middle;
+  text-align: center;
+  background-color: #2b3a42;
+  color: #bdd4de;
+  font-weight: bold;
+}
+table.outer-table .left-col {
+  width: 100px;
+  background-color: #2b3a42;
+}
+table.outer-table .left-col div.app {
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+  position: relative;
+  color: #bdd4de;
+  margin-bottom: 30px;
+}
+table.outer-table .left-col div.app .icon {
+  text-align: center;
+  font-size: 90px;
+  font-weight: 900;
+}
+table.outer-table .left-col div.app .label {
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  position: absolute;
+  bottom: 3px;
+  left: 0;
+  right: 0;
+  height: 15px;
+}
+table.outer-table .left-col div.app:hover {
+  background-color: #3f5561;
+}
+table.outer-table .left-col div.app.active,
+table.outer-table .left-col div.app.active:hover {
+  background-color: #171f23;
+}
+table.app-content {
+  width: 100%;
+  height: 100%;
+}
+table.app-content .side-panel {
+  width: 350px;
+  background-color: #bdd4de;
+}
+table.app-content .side-panel .block {
+  margin-bottom: 10px;
+}
+table.app-content .side-panel .level-1 {
+  font-weight: bold;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+table.app-content .side-panel .level-1:hover {
+  background-color: #3f5765 !important;
+}
+table.app-content .side-panel .level-2 {
+  padding: 2px 5px 3px 30px;
+  cursor: pointer;
+}
+table.app-content .side-panel .level-1:hover,
+table.app-content .side-panel .level-2:hover {
+  background-color: #3f5765 !important;
+}
+table.app-content .side-panel .level-1.grey,
+table.app-content .side-panel .level-2.grey {
+  color: #999;
+}
+table.app-content .side-panel .level-1.active,
+table.app-content .side-panel .level-2.active {
+  background-color: #ff530d;
+}
+table.app-content .judging-frame {
+  width: 100%;
+  height: 100%;
+}
+div.load-competition-page {
+  width: 100%;
+  height: 100%;
+}
+div.load-competition-page form.load-competition {
+  height: calc(100% - 60px);
+  text-align: center;
+}
+div.load-competition-page form.load-competition textarea {
+  width: 100%;
+  height: calc(100% - 60px);
+  margin-bottom: 10px;
+}
+div.load-competition-page form.load-competition button {
+  width: 200px;
+}
+header {
+  background-color: #3f5765;
+  padding: 10px;
+}
+header h1 {
+  color: #efefef;
+  font-size: 25px;
+  font-weight: 400;
+  margin-bottom: 3px;
+}
+header h2 {
+  color: #efefef;
+  font-size: 14px;
+  font-weight: 500;
+}
+header .controls {
+  float: right;
+  text-align: right;
+}
+header .controls .current-heat {
+  color: #efefef;
+  font-size: 12px;
+  font-weight: 500;
+}
+header .controls button {
+  margin-right: 0;
+  margin-left: 10px;
+}
+.table td,
+.table th {
+  border: 2px solid #2b3a42;
+  padding: 2px 5px;
+}
+.table th {
+  font-weight: bold;
+}
+.table th,
+.table td {
+  text-align: center;
+}
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+table.full-width {
+  width: 100%;
+}
+h2 {
+  font-size: 24px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+.ic-management-ui {
+  padding: 10px;
+  box-sizing: border-box;
+}
+.ic-management-ui .tour {
+  display: inline-block;
+  vertical-align: middle;
+  background-color: #bdd4de;
+  width: 250px;
+  padding: 10px;
+  line-height: 20px;
+  margin: 10px;
+}
+.ic-management-ui .tour.tour-create {
+  background-color: #ffc;
+  margin: 5px;
+}
+.ic-management-ui .tour .title {
+  font-weight: bold;
+}
+.ic-management-ui .tour h3 {
+  padding-bottom: 10px;
+  font-weight: 500;
+  font-size: 20px;
+}
+.ic-management-ui .tour .buttons {
+  padding-top: 10px;
+  text-align: center;
+}

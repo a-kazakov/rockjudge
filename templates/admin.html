@@ -7,15 +7,14 @@
 {% end %}
 
 {% block styles %}
-  <link rel="stylesheet" href="/static/css/main.less" type="text/less">
+  <link rel="stylesheet" href="/static/css/admin.css">
 {% end %}
 
 {% block scripts %}
-  <script src="/static/js/admin.jsx" type="text/jsx;harmony=true"></script>
-  <script type="text/jsx">
+  <script src="/static/js/admin.js"></script>
+  <script>
     React.render(
-      <AdminUI
-        competition_id={ {{competition_id}} } />,
+      React.createElement(AdminUI, { competition_id: {{ competition_id }} }),
       document.getElementById("content")
     );
   </script>
