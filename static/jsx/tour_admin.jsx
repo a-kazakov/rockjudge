@@ -75,6 +75,9 @@ class TourAdminScoreCellWrapper extends React.Component {
         };
     }
     render() {
+        if (typeof this.props.value === "undefined") {
+            return <td className="no-score">&nbsp;</td>
+        }
         return <td className={ "judge" + (this.state.editing ? " editing" : "") } >
             <TourAdminScoreCell
                 judge={ this.props.judge }

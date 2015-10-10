@@ -228,6 +228,15 @@ class Api:
             data=request["data"])
         return {}
 
+    @classmethod
+    @tornado.gen.coroutine
+    def judge_create(cls, request):
+        competition = yield cls.get_model(Competition, "competition_id", request)
+        yield Judge.create_model(
+            competition=competition,
+            data=request["data"])
+        return {}
+
     # Deleters
 
     @classmethod
@@ -235,6 +244,13 @@ class Api:
     def tour_delete(cls, request):
         tour = yield cls.get_model(Tour, "tour_id", request)
         yield tour.delete_model()
+        return {}
+
+    @classmethod
+    @tornado.gen.coroutine
+    def judge_delete(cls, request):
+        judge = yield cls.get_model(Judge, "judge_id", request)
+        yield judge.delete_model()
         return {}
 
     # Custom actions

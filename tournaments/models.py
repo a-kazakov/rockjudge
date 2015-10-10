@@ -36,6 +36,11 @@ class Competition(BaseModel):
                 "ref_dir": "up",
                 "children": [],
             }],
+        }, {
+            "model": Judge,
+            "ref": "competition",
+            "ref_dir": "up",
+            "children": [],
         }])
 
     @tornado.gen.coroutine
@@ -68,8 +73,11 @@ class Competition(BaseModel):
         }
         if recursive:
             result["inner_competitions"] = []
+            result["judges"] = []
             for ic in self.inners:
                 result["inner_competitions"].append((yield ic.serialize(recursive=True)))
+            for judge in self.judges:
+                result["judges"].append((yield judge.serialize(recursive=False)))
         return result
 
 
@@ -296,8 +304,9 @@ class Tour(BaseModel):
                 heat=1,
                 tour=self,
             )
-            yield run.create_scores()
             self.runs.append(run)
+        for run in self.runs:
+            yield run.create_scores()
         yield self.shuffle_heats(broadcast=False, shuffle=(len(existing_participant_ids) == 0))
 
     @tornado.gen.coroutine
@@ -513,15 +522,51 @@ class Judge(BaseModel):
 
     competition = peewee.ForeignKeyField(Competition, related_name="judges")
     name = peewee.CharField()
+    category = peewee.CharField()
     role = peewee.CharField()
     hide_from_results = peewee.BooleanField(default=False)
     number = peewee.CharField()
+
+    @classmethod
+    @tornado.gen.coroutine
+    def create_model(cls, competition, data):
+        create_kwargs = {
+            key: data[key]
+            for key in ["name", "category", "role", "hide_from_results", "number"]
+        }
+        create_kwargs["competition"] = competition
+        Judge.create(**create_kwargs)
+        WebSocketClients.broadcast("competition_full_update", {
+            "competition_id": competition.id,
+        })
+
+    @tornado.gen.coroutine
+    def delete_model(self):
+        # If this judge has any scores, than this judge can't be deleted
+        if self.score_set.count() > 0:
+            raise RuntimeError("Unable to judge that has scores")
+        competition_id = self.competition_id
+        self.delete_instance()
+        WebSocketClients.broadcast("competition_full_update", {
+            "competition_id": competition_id,
+        })
+
+    @tornado.gen.coroutine
+    def update_data(self, new_data):
+        for key in ["name", "category", "role", "hide_from_results", "number"]:
+            if key in new_data:
+                setattr(self, key, new_data[key])
+        self.save()
+        WebSocketClients.broadcast("competition_full_update", {
+            "competition_id": self.competition_id,
+        })
 
     @tornado.gen.coroutine
     def serialize(self, recursive=False):
         return {
             "id": self.id,
             "name": self.name,
+            "category": self.category,
             "role": self.role,
             "hide_from_results": self.hide_from_results,
             "number": self.number,
@@ -549,11 +594,13 @@ class Run(BaseModel):
 
     @tornado.gen.coroutine
     def create_scores(self):
+        scores_judge_ids = { score.judge_id for score in self.scores }
         for judge in self.tour.judges:
-            Score.create(
-                run=self,
-                judge=judge,
-            )
+            if judge.id not in scores_judge_ids:
+                Score.create(
+                    run=self,
+                    judge=judge,
+                )
 
     def get_score_obj(self, judge):
         return self.scores.select().where(Score.judge == judge).get()

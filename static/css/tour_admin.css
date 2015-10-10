@@ -6857,6 +6857,9 @@ table.no-break th {
 .tour-admin .scores-table td.heat {
   cursor: pointer;
 }
+.tour-admin .scores-table td.no-score {
+  background-color: #999;
+}
 .tour-admin .scores-table tr.odd-heat {
   background-color: #dfeaef;
 }

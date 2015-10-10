@@ -6905,6 +6905,10 @@ table.app-content .side-panel .level-2 {
   padding: 2px 5px 3px 30px;
   cursor: pointer;
 }
+table.app-content .side-panel .level-2.new-ic {
+  margin-top: 10px;
+  font-style: italic;
+}
 table.app-content .side-panel .level-1:hover,
 table.app-content .side-panel .level-2:hover {
   background-color: #537284 !important;
@@ -6945,7 +6949,6 @@ div.load-competition-page form.load-competition button {
 }
 .ic-management-ui {
   padding: 10px;
-  box-sizing: border-box;
 }
 .ic-management-ui .tour {
   background-color: #bdd4de;
@@ -6958,6 +6961,24 @@ div.load-competition-page form.load-competition button {
   background-color: #f0ad4e;
 }
 .ic-management-ui .tour .buttons {
+  padding-top: 10px;
+  text-align: center;
+}
+.judges-management-ui {
+  padding: 10px;
+}
+.judges-management-ui .judge {
+  background-color: #bdd4de;
+  padding: 10px 10px 10px 10px;
+  margin-bottom: 10px;
+}
+.judges-management-ui .judge h3 {
+  margin-top: 0;
+}
+.judges-management-ui .judge.judge-create {
+  background-color: #f0ad4e;
+}
+.judges-management-ui .judge .buttons {
   padding-top: 10px;
   text-align: center;
 }

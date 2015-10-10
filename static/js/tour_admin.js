@@ -122,6 +122,13 @@ var TourAdminScoreCellWrapper = (function (_React$Component2) {
     _createClass(TourAdminScoreCellWrapper, [{
         key: "render",
         value: function render() {
+            if (typeof this.props.value === "undefined") {
+                return React.createElement(
+                    "td",
+                    { className: "no-score" },
+                    " "
+                );
+            }
             return React.createElement(
                 "td",
                 { className: "judge" + (this.state.editing ? " editing" : "") },

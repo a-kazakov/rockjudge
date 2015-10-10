@@ -78,6 +78,10 @@ table.app-content {
     .level-2 {
       padding: 2px 5px 3px 30px;
       cursor: pointer;
+      &.new-ic {
+        margin-top: 10px;
+        font-style: italic;
+      }
     }
     .level-1, .level-2 {
       &:hover {
@@ -124,7 +128,6 @@ div.load-competition-page {
 
 .ic-management-ui {
   padding: 10px;
-  box-sizing: border-box;
   .tour {
     background-color: @ui-light;
     padding: 10px 10px 10px 10px;
@@ -132,6 +135,25 @@ div.load-competition-page {
       margin-top: 0;
     }
     &.tour-create {
+      background-color: @brand-warning;
+    }
+    .buttons {
+      padding-top: 10px;
+      text-align: center;
+    }
+  }
+}
+
+.judges-management-ui {
+  padding: 10px;
+  .judge {
+    background-color: @ui-light;
+    padding: 10px 10px 10px 10px;
+    margin-bottom: 10px;
+    h3 {
+      margin-top: 0;
+    }
+    &.judge-create {
       background-color: @brand-warning;
     }
     .buttons {

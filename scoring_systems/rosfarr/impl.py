@@ -168,6 +168,9 @@ class SmallScoresSet:
         if num_scores == 0:
             self.primary_score, self.secondary_score = 0, 0
             return
+        if num_scores == 1:
+            self.primary_score, self.secondary_score = scores[0], scores[0]
+            return
         min_score = min(scores)
         max_score = max(scores)
         sum_scores = sum(scores)
@@ -195,7 +198,12 @@ class RunScore:
         self.acro = acro
         judges = run.tour.judges if judges is None else judges
         scores = run.scores
-        self.judge_scores = list(zip(judges, scores))
+        self.judge_scores = []
+        for judge in judges:
+            for score in scores:
+                if judge.id == score.judge_id:
+                    self.judge_scores.append((judge, score, ))
+                    break
         self.dance_judges_total_scores = [
             ScoreWrapper(score, acro, judge=judge).total_score
             for judge, score
