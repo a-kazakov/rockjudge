@@ -7,7 +7,6 @@ from participants.models import (
     Acrobatic,
     Club,
     Participant,
-    ParticipantSportsman,
     Sportsman,
 )
 from tournaments.models import (
@@ -134,15 +133,10 @@ class Api:
                     "ref_dir": "down",
                     "children": [],
                 }, {
-                    "model": ParticipantSportsman,
+                    "model": Sportsman,
                     "ref": "participant",
                     "ref_dir": "up",
-                    "children": [{
-                        "model": Sportsman,
-                        "ref": "sportsman",
-                        "ref_dir": "down",
-                        "children": [],
-                    }],
+                    "children": [],
                 }],
             }])
         return (yield run.serialize(recursive=request["recursive"]))

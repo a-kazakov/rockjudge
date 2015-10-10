@@ -6781,6 +6781,9 @@ body,
 .full-width {
   width: 100%;
 }
+.scores-table {
+  font-size: 12px;
+}
 .scores-table td,
 .scores-table th {
   border: 2px solid #2b3a42;

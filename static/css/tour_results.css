@@ -6781,6 +6781,9 @@ body,
 .full-width {
   width: 100%;
 }
+.scores-table {
+  font-size: 12px;
+}
 .scores-table td,
 .scores-table th {
   border: 2px solid #2b3a42;
@@ -6850,10 +6853,10 @@ table.no-break th {
   width: 50px;
 }
 .tour-results .scores-table .participant {
-  width: 400px;
+  width: 300px;
 }
 .tour-results .scores-table .score {
-  width: 70px;
+  width: 100px;
 }
 .tour-results .scores-table .next-tour {
   width: 70px;

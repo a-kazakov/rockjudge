@@ -165,6 +165,9 @@ class SmallScoresSet:
     def __init__(self, scores):
         self.scores = scores
         num_scores = len(scores)
+        if num_scores == 0:
+            self.primary_score, self.secondary_score = 0, 0
+            return
         min_score = min(scores)
         max_score = max(scores)
         sum_scores = sum(scores)
@@ -176,6 +179,9 @@ class LargeScoresSet:
     def __init__(self, scores):
         self.scores = scores
         num_scores = len(scores)
+        if num_scores == 0:
+            self.primary_score, self.secondary_score = 0, 0
+            return
         min_score = min(scores)
         max_score = max(scores)
         sum_scores = sum(scores)
@@ -236,8 +242,7 @@ class RunScore:
         if self.head_judge_score is None:
             return 0
         penalty = self.head_judge_total_score
-        num_judges = len(self.dance_judges_total_scores) + len(self.acro_judges_total_scores)
-        return frac(penalty * num_judges)
+        return frac(penalty)
 
     @property
     def sorting_score(self):
@@ -254,7 +259,7 @@ class RunScore:
 
     @property
     def display_score(self):
-        return "{:.2f}".format(-self.sorting_score[0] / 100.0)
+        return "{:.2f} / {:.2f}".format(-self.sorting_score[0] / 100.0, -self.sorting_score[1] / 100.0)
 
     @tornado.gen.coroutine
     def serialize(self):

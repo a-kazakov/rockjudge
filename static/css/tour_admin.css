@@ -6781,6 +6781,9 @@ body,
 .full-width {
   width: 100%;
 }
+.scores-table {
+  font-size: 12px;
+}
 .scores-table td,
 .scores-table th {
   border: 2px solid #2b3a42;
@@ -6833,10 +6836,10 @@ table.no-break th {
   width: 50px;
 }
 .tour-admin .scores-table .name {
-  width: 400px;
+  width: 320px;
 }
 .tour-admin .scores-table .club {
-  width: 150px;
+  width: 200px;
 }
 .tour-admin .scores-table .heat {
   width: 40px;
@@ -6845,7 +6848,7 @@ table.no-break th {
   width: 50px;
 }
 .tour-admin .scores-table .total {
-  width: 70px;
+  width: 100px;
 }
 .tour-admin .scores-table td {
   position: relative;

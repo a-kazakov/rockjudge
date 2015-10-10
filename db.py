@@ -38,6 +38,13 @@ class BaseModel(peewee.Model):
         database = Database.instance().db
 
     @tornado.gen.coroutine
+    def prefetch_child(self, name):
+        child = getattr(self, name)
+        if type(child) == list:
+            return
+        setattr(self, name, list(child))
+
+    @tornado.gen.coroutine
     def prefetch(self, schema):
         for child_schema in schema:
             yield self._prefetch_impl([self], child_schema)
