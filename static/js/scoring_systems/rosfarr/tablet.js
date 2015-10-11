@@ -142,7 +142,7 @@ var TabletScoreInput = (function (_React$Component) {
                         React.createElement(
                             "div",
                             { className: "setter" },
-                            React.createElement(TabletIntegerInput, {
+                            React.createElement(TabletPoint5Input, {
                                 value: acro.score,
                                 onValueUpdate: this.overrideAcroScore.bind(this, acro.id) })
                         )

@@ -634,7 +634,7 @@ class AcrobaticOverride(BaseModel):
 
     run = peewee.ForeignKeyField(Run, related_name="acrobatic_overrides")
     acrobatic = peewee.ForeignKeyField(Acrobatic)
-    score = peewee.IntegerField()
+    score = peewee.DoubleField()
 
 
 class Score(BaseModel):

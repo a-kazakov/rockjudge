@@ -4,6 +4,9 @@ from fractions import Fraction as frac
 def apply_deduction(base_score, deduction):
     return base_score * (100 - deduction) // 100;
 
+def m100(score):
+    return round(100 * score)
+
 
 class DanceScore:
     def __init__(self, score):
@@ -21,12 +24,12 @@ class DanceScore:
     @property
     def total_score(self):
         return max(0, sum([
-            apply_deduction(10 * 100, self.data["fw_man"]),
-            apply_deduction(10 * 100, self.data["fw_woman"]),
-              100 * self.data["dance_figs"],
-              100 * self.data["composition"],
-             -500 * self.data["small_mistakes"],
-            -3000 * self.data["big_mistakes"],
+            apply_deduction(m100(10), self.data["fw_man"]),
+            apply_deduction(m100(10), self.data["fw_woman"]),
+            m100(self.data["dance_figs"]),
+            m100(self.data["composition"]),
+             -5 * m100(self.data["small_mistakes"]),
+            -30 * m100(self.data["big_mistakes"]),
         ]))
 
     def update(self, new_data):
@@ -66,18 +69,18 @@ class AcroScore:
         for acro, deduction in zip(self.score.run.participant.acrobatics, self.data["deductions"]):
             override = self.score.run.get_acrobatic_override(acro)
             base_score = override.score if override is not None else acro.score
-            result += max(0, min(1200, apply_deduction(100 * base_score, deduction)))
-        result -= 3000 * self.data["mistakes"]
+            result += max(0, min(1200, apply_deduction(m100(base_score), deduction)))
+        result -= 30 * m100(self.data["mistakes"])
         return max(0, result)
 
     def update(self, new_data):
-        self.data = {
-            "mistakes": int(new_data.pop("mistakes", 0)),
-        }
+        self.data.update({
+            "mistakes": int(new_data.pop("mistakes", self.data["mistakes"])),
+        })
         if "deductions" in new_data:
             for idx, deduction in enumerate(new_data["deductions"]):
                 if deduction is not None and idx < len(self.data["deductions"]):
-                    self.data["deduction"] = int(deduction)
+                    self.data["deductions"][idx] = int(deduction)
         self.score.set_data(self.data)
 
     def serialize(self):
@@ -97,7 +100,7 @@ class HeadScore:
 
     @property
     def total_score(self):
-        return 100 * self.data["penalty"]
+        return m100(self.data["penalty"])
 
     def update(self, new_data):
         self.data = {

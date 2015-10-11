@@ -158,7 +158,7 @@ class Acrobatic(BaseModel):
     participant = peewee.ForeignKeyField(Participant, related_name="acrobatics")
     number = peewee.IntegerField()
     description = peewee.CharField()
-    score = peewee.IntegerField()
+    score = peewee.DoubleField()
 
     def serialize(self, children={}):
         return {

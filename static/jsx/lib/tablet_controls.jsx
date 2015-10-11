@@ -70,6 +70,24 @@ class TabletIntegerInput extends React.Component {
     }
 }
 
+class TabletPoint5Input extends React.Component {
+    render() {
+        return <div className="tablet-integer-input">
+            <button className="tbtn btn-minus" {...onTouchOrClick(this.onMinus.bind(this))}>&minus;</button>
+            <div className="value">{ this.props.value }</div>
+            <button className="tbtn btn-plus" {...onTouchOrClick(this.onPlus.bind(this))}>+</button>
+        </div>
+    }
+    onMinus() {
+        if (this.props.value > 0) {
+            this.props.onValueUpdate((Math.round(this.props.value * 2) - 1) / 2);
+        }
+    }
+    onPlus() {
+        this.props.onValueUpdate((Math.round(this.props.value * 2) + 1) / 2);
+    }
+}
+
 class StopWatch extends React.Component {
     constructor(props) {
         super(props);

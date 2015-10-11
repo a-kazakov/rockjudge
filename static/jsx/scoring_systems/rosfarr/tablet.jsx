@@ -76,7 +76,7 @@ class TabletScoreInput extends React.Component {
                         Reset to { acro.original_score }
                     </button>
                     <div className="setter">
-                        <TabletIntegerInput
+                        <TabletPoint5Input
                             value={ acro.score }
                             onValueUpdate={ this.overrideAcroScore.bind(this, acro.id) } />
                     </div>

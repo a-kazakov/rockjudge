@@ -162,8 +162,57 @@ var TabletIntegerInput = (function (_React$Component3) {
     return TabletIntegerInput;
 })(React.Component);
 
-var StopWatch = (function (_React$Component4) {
-    _inherits(StopWatch, _React$Component4);
+var TabletPoint5Input = (function (_React$Component4) {
+    _inherits(TabletPoint5Input, _React$Component4);
+
+    function TabletPoint5Input() {
+        _classCallCheck(this, TabletPoint5Input);
+
+        _get(Object.getPrototypeOf(TabletPoint5Input.prototype), "constructor", this).apply(this, arguments);
+    }
+
+    _createClass(TabletPoint5Input, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { className: "tablet-integer-input" },
+                React.createElement(
+                    "button",
+                    _extends({ className: "tbtn btn-minus" }, onTouchOrClick(this.onMinus.bind(this))),
+                    "−"
+                ),
+                React.createElement(
+                    "div",
+                    { className: "value" },
+                    this.props.value
+                ),
+                React.createElement(
+                    "button",
+                    _extends({ className: "tbtn btn-plus" }, onTouchOrClick(this.onPlus.bind(this))),
+                    "+"
+                )
+            );
+        }
+    }, {
+        key: "onMinus",
+        value: function onMinus() {
+            if (this.props.value > 0) {
+                this.props.onValueUpdate((Math.round(this.props.value * 2) - 1) / 2);
+            }
+        }
+    }, {
+        key: "onPlus",
+        value: function onPlus() {
+            this.props.onValueUpdate((Math.round(this.props.value * 2) + 1) / 2);
+        }
+    }]);
+
+    return TabletPoint5Input;
+})(React.Component);
+
+var StopWatch = (function (_React$Component5) {
+    _inherits(StopWatch, _React$Component5);
 
     function StopWatch(props) {
         _classCallCheck(this, StopWatch);
