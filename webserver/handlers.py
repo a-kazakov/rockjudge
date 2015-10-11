@@ -10,6 +10,7 @@ from tournaments.models import (
     Judge,
     Tour,
 )
+from webserver.websocket import WsMessage
 
 
 class AdminHandler(tornado.web.RequestHandler):
@@ -48,24 +49,26 @@ class TabletHandler(tornado.web.RequestHandler):
 
 
 class ApiHandler(tornado.web.RequestHandler):
-    @tornado.gen.coroutine
     def post(self):
         begin = time.time()
         data = json.loads(self.get_argument("data"))
         method = self.get_argument("method")
         method_parts = method.split(".")
         inner_method = ".".join(method_parts[1:])
+        ws_message = WsMessage()
         with Database.instance().db.transaction():
             if method_parts[0] == "tournaments":
-                result = yield TournamentsApi.call(inner_method, data)
+                result = TournamentsApi.call(inner_method, data, ws_message=ws_message)
                 self.write(json.dumps(result))
             else:
                 self.write(json.dumps({
                     "success": False,
                     "message": "Unknown method name: {}".format(method)
                 }))
+        if not ws_message.empty():
+            with Database.instance().db.transaction():
+                ws_message.send()
         print("Api call: {} ({:.3f}s)".format(method, time.time() - begin))
 
-    @tornado.gen.coroutine
     def get(self):
-        yield self.post()
+        self.post()

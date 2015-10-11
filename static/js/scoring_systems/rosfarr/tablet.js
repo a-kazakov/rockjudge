@@ -20,23 +20,27 @@ var TabletScoreInput = (function (_React$Component) {
     _createClass(TabletScoreInput, [{
         key: "updateScores",
         value: function updateScores(type, value) {
-            var score = this.props.scores[this.props.judge_id];
-            var new_score = $.extend({}, score.raw_data);
+            var new_score = {};
             new_score[type] = value;
             this.props.onScoreUpdate(new_score);
         }
     }, {
         key: "updateAcroDeduction",
         value: function updateAcroDeduction(idx, value) {
-            var score = this.props.scores[this.props.judge_id];
-            var new_score = $.extend({}, score.raw_data);
-            new_score["deductions"][idx] = value;
+            var score = this.props.scores[this.props.judge_id].data;
+            var deductions = score.map(function () {
+                return null;
+            });
+            deductions[idx] = value;
+            var new_score = {
+                deductions: deductions
+            };
             this.props.onScoreUpdate(new_score);
         }
     }, {
         key: "overrideAcroScore",
         value: function overrideAcroScore(acro_id, value) {
-            new Api("tournaments.acrobatic_override.set", {
+            Api("tournaments.acrobatic_override.set", {
                 run_id: this.props.run_id,
                 acrobatic_id: acro_id,
                 score: value
@@ -46,7 +50,7 @@ var TabletScoreInput = (function (_React$Component) {
         key: "getCurrentJudge",
         value: function getCurrentJudge() {
             for (var idx in this.props.judges) if (this.props.judges.hasOwnProperty(idx)) {
-                if (this.props.judges[idx].id == this.props.judge_id) {
+                if (this.props.judges[idx].id === this.props.judge_id) {
                     return this.props.judges[idx];
                 }
             }
@@ -57,7 +61,7 @@ var TabletScoreInput = (function (_React$Component) {
             var tech_judges = this.props.judges.filter(function (judge) {
                 return judge.role == "tech_judge";
             }).map((function (judge) {
-                var timing_data = this.props.scores[judge.id].raw_data.timing_violation === null ? ["-", ""] : this.props.scores[judge.id].raw_data.timing_violation ? ["X", " fail"] : ["OK", " ok"];
+                var timing_data = this.props.scores[judge.id].data.raw_data.timing_violation === null ? ["-", ""] : this.props.scores[judge.id].data.raw_data.timing_violation ? ["X", " fail"] : ["OK", " ok"];
                 return React.createElement(
                     "div",
                     null,
@@ -78,7 +82,7 @@ var TabletScoreInput = (function (_React$Component) {
                         React.createElement(
                             "div",
                             { className: "value" },
-                            this.props.scores[judge.id].raw_data.jump_steps
+                            this.props.scores[judge.id].data.raw_data.jump_steps
                         )
                     ),
                     React.createElement(
@@ -97,7 +101,7 @@ var TabletScoreInput = (function (_React$Component) {
                     )
                 );
             }).bind(this));
-            var score = this.props.scores[this.props.judge_id];
+            var score = this.props.scores[this.props.judge_id].data;
             return React.createElement(
                 "div",
                 null,
@@ -155,7 +159,7 @@ var TabletScoreInput = (function (_React$Component) {
     }, {
         key: "renderTechJudgeInputDance",
         value: function renderTechJudgeInputDance() {
-            var score = this.props.scores[this.props.judge_id];
+            var score = this.props.scores[this.props.judge_id].data;
             return React.createElement(
                 "div",
                 null,
@@ -193,7 +197,7 @@ var TabletScoreInput = (function (_React$Component) {
     }, {
         key: "renderDanceJudgeInput",
         value: function renderDanceJudgeInput() {
-            var score = this.props.scores[this.props.judge_id];
+            var score = this.props.scores[this.props.judge_id].data;
             return React.createElement(
                 "div",
                 null,
@@ -282,7 +286,7 @@ var TabletScoreInput = (function (_React$Component) {
     }, {
         key: "renderAcroJudgeInput",
         value: function renderAcroJudgeInput() {
-            var score = this.props.scores[this.props.judge_id];
+            var score = this.props.scores[this.props.judge_id].data;
             var inputs = this.props.acrobatics.map((function (acro, idx) {
                 return React.createElement(
                     "div",

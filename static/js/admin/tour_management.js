@@ -307,7 +307,7 @@ var TourEditingUI = (function (_React$Component2) {
     }, {
         key: "submitTour",
         value: function submitTour(data) {
-            new Api("tournaments.tour.set", {
+            Api("tournaments.tour.set", {
                 tour_id: this.props.tour.id,
                 data: data
             }).onSuccess((function (response) {
@@ -320,7 +320,7 @@ var TourEditingUI = (function (_React$Component2) {
             if (!confirm("Are you sure want to delete this tour?")) {
                 return false;
             }
-            new Api("tournaments.tour.delete", { tour_id: this.props.tour.id }).send();
+            Api("tournaments.tour.delete", { tour_id: this.props.tour.id }).send();
         }
     }]);
 
@@ -347,7 +347,7 @@ var TourCreatingUI = (function (_React$Component3) {
     }, {
         key: "submitTour",
         value: function submitTour(data) {
-            new Api("tournaments.tour.create", {
+            Api("tournaments.tour.create", {
                 inner_competition_id: this.props.inner_competition_id,
                 add_after: this.props.add_after,
                 data: data
@@ -376,7 +376,7 @@ var InnerCompetitionManagementUI = (function (_React$Component4) {
         key: "submitBaseData",
         value: function submitBaseData(event) {
             event.preventDefault();
-            new Api("tournaments.inner_competition.set", {
+            Api("tournaments.inner_competition.set", {
                 inner_competition_id: this.props.inner_competition.id,
                 data: {
                     name: this.refs.name.getDOMNode().value,

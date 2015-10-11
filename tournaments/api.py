@@ -1,16 +1,7 @@
-import tornado.gen
 from collections import deque
 
-import peewee_async
-
-from participants.models import (
-    Acrobatic,
-    Club,
-    Participant,
-    Sportsman,
-)
+from participants.models import Acrobatic
 from tournaments.models import (
-    AcrobaticOverride,
     Competition,
     InnerCompetition,
     Judge,
@@ -83,248 +74,177 @@ class IdTransformer:
 
 class Api:
     @staticmethod
-    @tornado.gen.coroutine
     def get_model(model_type, id_name, request):
         model_id = IdTransformer.execute(request, id_name)
-        model = yield from peewee_async.get_object(model_type, model_type.id == model_id)
-        return model
+        return model_type.get(model_type.id == model_id)
 
     # Single models getters
 
     @classmethod
-    @tornado.gen.coroutine
-    def judge_get(cls, request):
-        model = yield cls.get_model(Judge, "judge_id", request)
-        return (yield model.serialize(recursive=request["recursive"]))
+    def judge_get(cls, request, ws_message):
+        judge = cls.get_model(Judge, "judge_id", request)
+        return judge.serialize(children=request["children"])
 
     @classmethod
-    @tornado.gen.coroutine
-    def score_get(cls, request):
-        model = yield cls.get_model(Score, "score_id", request)
-        return (yield model.serialize(recursive=request["recursive"]))
+    def tour_get(cls, request, ws_message):
+        tour = cls.get_model(Tour, "tour_id", request)
+        tour.full_prefetch()
+        return tour.serialize(children=request["children"])
 
     @classmethod
-    @tornado.gen.coroutine
-    def run_get(cls, request):
-        run = yield cls.get_model(Run, "run_id", request)
-        if request["recursive"]:
-            yield run.prefetch([{
-                "model": Score,
-                "ref": "run",
-                "ref_dir": "up",
-                "children": [],
-            }, {
-                "model": AcrobaticOverride,
-                "ref": "run",
-                "ref_dir": "up",
-                "children": [],
-            }, {
-                "model": Participant,
-                "ref": "participant",
-                "ref_dir": "down",
-                "children": [{
-                    "model": Acrobatic,
-                    "ref": "participant",
-                    "ref_dir": "up",
-                    "children": [],
-                }, {
-                    "model": Club,
-                    "ref": "club",
-                    "ref_dir": "down",
-                    "children": [],
-                }, {
-                    "model": Sportsman,
-                    "ref": "participant",
-                    "ref_dir": "up",
-                    "children": [],
-                }],
-            }])
-        return (yield run.serialize(recursive=request["recursive"]))
+    def competition_get(cls, request, ws_message):
+        competition = cls.get_model(Competition, "competition_id", request)
+        competition.full_prefetch()
+        return competition.serialize(children=request["children"])
 
     @classmethod
-    @tornado.gen.coroutine
-    def tour_get(cls, request):
-        tour = yield cls.get_model(Tour, "tour_id", request)
-        if request["recursive"]:
-            yield tour.full_prefetch()
-        return (yield tour.serialize(recursive=request["recursive"]))
-
-    @classmethod
-    @tornado.gen.coroutine
-    def competition_get(cls, request):
-        competition = yield cls.get_model(Competition, "competition_id", request)
-        if request["recursive"]:
-            yield competition.full_prefetch()
-        return (yield competition.serialize(recursive=request["recursive"]))
-
-    @classmethod
-    @tornado.gen.coroutine
-    def inner_competition_get(cls, request):
-        inner_competition = yield cls.get_model(InnerCompetition, "inner_competition_id", request)
-        if request["recursive"]:
-            yield inner_competition.full_prefetch()
-        return (yield inner_competition.serialize(recursive=request["recursive"]))
+    def inner_competition_get(cls, request, ws_message):
+        inner_competition = cls.get_model(InnerCompetition, "inner_competition_id", request)
+        inner_competition.full_prefetch()
+        return inner_competition.serialize(children=request["children"])
 
     # Setters
 
     @classmethod
-    @tornado.gen.coroutine
-    def judge_set(cls, request):
-        model = yield cls.get_model(Judge, "judge_id", request)
-        yield model.update_data(request["data"])
+    def judge_set(cls, request, ws_message):
+        model = cls.get_model(Judge, "judge_id", request)
+        model.update_data(request["data"], ws_message=ws_message)
         return {}
 
     @classmethod
-    @tornado.gen.coroutine
-    def score_set(cls, request):
-        model = yield cls.get_model(Score, "score_id", request)
-        yield model.update_data(request["data"])
+    def score_set(cls, request, ws_message):
+        model = cls.get_model(Score, "score_id", request)
+        model.update_data(request["data"], ws_message=ws_message)
         return {}
 
     @classmethod
-    @tornado.gen.coroutine
-    def run_set(cls, request):
-        model = yield cls.get_model(Run, "run_id", request)
-        yield model.update_data(request["data"])
+    def run_set(cls, request, ws_message):
+        model = cls.get_model(Run, "run_id", request)
+        model.update_data(request["data"], ws_message=ws_message)
         return {}
 
     @classmethod
-    @tornado.gen.coroutine
-    def tour_set(cls, request):
-        model = yield cls.get_model(Tour, "tour_id", request)
-        yield model.update_data(request["data"])
+    def tour_set(cls, request, ws_message):
+        model = cls.get_model(Tour, "tour_id", request)
+        model.update_data(request["data"], ws_message=ws_message)
         return {}
 
     @classmethod
-    @tornado.gen.coroutine
-    def inner_competition_set(cls, request):
-        model = yield cls.get_model(InnerCompetition, "inner_competition_id", request)
-        yield model.update_data(request["data"])
+    def inner_competition_set(cls, request, ws_message):
+        model = cls.get_model(InnerCompetition, "inner_competition_id", request)
+        model.update_data(request["data"], ws_message=ws_message)
         return {}
 
     @classmethod
-    @tornado.gen.coroutine
-    def competition_set(cls, request):
-        model = yield cls.get_model(Competition, "competition_id", request)
-        yield model.update_data(request["data"])
+    def competition_set(cls, request, ws_message):
+        model = cls.get_model(Competition, "competition_id", request)
+        model.update_data(request["data"], ws_message=ws_message)
         return {}
 
     # Creaters
 
     @classmethod
-    @tornado.gen.coroutine
-    def inner_competition_create(cls, request):
-        competition = yield cls.get_model(Competition, "competition_id", request)
-        yield InnerCompetition.create_model(competition=competition, name=request["name"])
+    def inner_competition_create(cls, request, ws_message):
+        competition = cls.get_model(Competition, "competition_id", request)
+        InnerCompetition.create_model(competition=competition, name=request["name"], ws_message=ws_message)
         return {}
 
     @classmethod
-    @tornado.gen.coroutine
-    def tour_create(cls, request):
-        inner_competition = yield cls.get_model(InnerCompetition, "inner_competition_id", request)
-        yield Tour.create_model(
+    def tour_create(cls, request, ws_message):
+        inner_competition = cls.get_model(InnerCompetition, "inner_competition_id", request)
+        Tour.create_model(
             inner_competition=inner_competition,
             add_after=request["add_after"],
-            data=request["data"])
+            data=request["data"],
+            ws_message=ws_message)
         return {}
 
     @classmethod
-    @tornado.gen.coroutine
-    def judge_create(cls, request):
-        competition = yield cls.get_model(Competition, "competition_id", request)
-        yield Judge.create_model(
+    def judge_create(cls, request, ws_message):
+        competition = cls.get_model(Competition, "competition_id", request)
+        Judge.create_model(
             competition=competition,
-            data=request["data"])
+            data=request["data"],
+            ws_message=ws_message)
         return {}
 
     # Deleters
 
     @classmethod
-    @tornado.gen.coroutine
-    def tour_delete(cls, request):
-        tour = yield cls.get_model(Tour, "tour_id", request)
-        yield tour.delete_model()
+    def tour_delete(cls, request, ws_message):
+        tour = cls.get_model(Tour, "tour_id", request)
+        tour.delete_model(ws_message=ws_message)
         return {}
 
     @classmethod
-    @tornado.gen.coroutine
-    def judge_delete(cls, request):
-        judge = yield cls.get_model(Judge, "judge_id", request)
-        yield judge.delete_model()
+    def judge_delete(cls, request, ws_message):
+        judge = cls.get_model(Judge, "judge_id", request)
+        judge.delete_model(ws_message=ws_message)
         return {}
 
     # Custom actions
 
     @classmethod
-    @tornado.gen.coroutine
-    def acrobatic_override_set(cls, request):
-        run = yield cls.get_model(Run, "run_id", request)
-        acrobatic = yield cls.get_model(Acrobatic, "acrobatic_id", request)
-        yield run.set_acrobatic_override(acrobatic, request["score"])
+    def acrobatic_override_set(cls, request, ws_message):
+        run = cls.get_model(Run, "run_id", request)
+        acrobatic = cls.get_model(Acrobatic, "acrobatic_id", request)
+        run.set_acrobatic_override(acrobatic, request["score"], ws_message=ws_message)
         return {}
 
     @classmethod
-    @tornado.gen.coroutine
-    def tour_find_active(cls, request):
-        tour = yield Tour.get_active()
+    def tour_find_active(cls, request, ws_message):
+        tour = Tour.get_active()
         return {
             "tour_id": None if tour is None else tour.id,
         }
 
     @classmethod
-    @tornado.gen.coroutine
-    def tour_start(cls, request):
-        tour = yield cls.get_model(Tour, "tour_id", request)
-        yield tour.start()
+    def tour_start(cls, request, ws_message):
+        tour = cls.get_model(Tour, "tour_id", request)
+        tour.start(ws_message=ws_message)
         return {}
 
     @classmethod
-    @tornado.gen.coroutine
-    def tour_stop(cls, request):
-        tour = yield cls.get_model(Tour, "tour_id", request)
-        yield tour.stop()
+    def tour_stop(cls, request, ws_message):
+        tour = cls.get_model(Tour, "tour_id", request)
+        tour.stop(ws_message=ws_message)
         return {}
 
     @classmethod
-    @tornado.gen.coroutine
-    def tour_init(cls, request):
-        tour = yield cls.get_model(Tour, "tour_id", request)
-        yield tour.init()
+    def tour_init(cls, request, ws_message):
+        tour = cls.get_model(Tour, "tour_id", request)
+        tour.init(ws_message=ws_message)
         return {}
 
     @classmethod
-    @tornado.gen.coroutine
-    def tour_finalize(cls, request):
-        tour = yield cls.get_model(Tour, "tour_id", request)
-        yield tour.finalize()
+    def tour_finalize(cls, request, ws_message):
+        tour = cls.get_model(Tour, "tour_id", request)
+        tour.full_prefetch()
+        tour.finalize(ws_message=ws_message)
         return {}
 
     @classmethod
-    @tornado.gen.coroutine
-    def tour_shuffle_heats(cls, request):
-        tour = yield cls.get_model(Tour, "tour_id", request)
-        yield tour.shuffle_heats()
+    def tour_shuffle_heats(cls, request, ws_message):
+        tour = cls.get_model(Tour, "tour_id", request)
+        tour.shuffle_heats(ws_message=ws_message)
         return {}
 
     @classmethod
-    @tornado.gen.coroutine
-    def tour_get_results(cls, request):
-        tour = yield cls.get_model(Tour, "tour_id", request)
-        yield tour.full_prefetch()
-        return (yield tour.get_serialized_results())
+    def tour_get_results(cls, request, ws_message):
+        tour = cls.get_model(Tour, "tour_id", request)
+        tour.full_prefetch()
+        return tour.get_serialized_results()
 
     @classmethod
-    @tornado.gen.coroutine
-    def competition_load(cls, request):
-        competition = yield cls.get_model(Competition, "competition_id", request)
-        yield competition.load(request["data"])
+    def competition_load(cls, request, ws_message):
+        competition = cls.get_model(Competition, "competition_id", request)
+        competition.load(request["data"], ws_message=ws_message)
         return {}
 
     # Service
 
     @classmethod
-    @tornado.gen.coroutine
-    def call(cls, method, request):
+    def call(cls, method, request, ws_message):
         parts = method.split(".")
         if len(parts) != 2:
             return {
@@ -333,7 +253,7 @@ class Api:
             }
         internal_name = "_".join(parts)
 #        try:
-        result = yield getattr(cls, internal_name)(request)
+        result = getattr(cls, internal_name)(request, ws_message=ws_message)
         return {
             "success": True,
             "response": result

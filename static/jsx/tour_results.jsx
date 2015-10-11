@@ -4,20 +4,22 @@ class TourResults extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state={
+        this.state = {
             name: "",
             results: [],
             finalized: true,
             judges: [],
             show_verbose: false,
         }
-        window.message_dispatcher.addListener("tour_update tour_full_update score_update")
-            .setCallback(this.loadData.bind(this));
-            // TODO: add filter
+        message_dispatcher.addListener("tour_results_changed reload_data", function(message) {
+            if (message.tour_id == this.props.tour_id) {
+                this.loadData();
+            }
+        }.bind(this));
         this.loadData();
     }
     loadData() {
-        (new Api("tournaments.tour.get_results", {tour_id: this.props.tour_id})).onSuccess(function(new_results) {
+        Api("tournaments.tour.get_results", {tour_id: this.props.tour_id}).onSuccess(function(new_results) {
             this.setState(new_results);
         }.bind(this)).send();
     }
@@ -49,6 +51,7 @@ class TourResults extends React.Component {
             return !judge.hide_from_results;
         });
         var table = null;
+        console.log(this.state);
         if (this.state.verbose) {
             table = <TourResultsVerboseTable
                 judges={ active_judges }

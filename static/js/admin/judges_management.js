@@ -311,7 +311,7 @@ var JudgeEditingUI = (function (_React$Component2) {
     }, {
         key: "submitJudge",
         value: function submitJudge(data) {
-            new Api("tournaments.judge.set", {
+            Api("tournaments.judge.set", {
                 judge_id: this.props.judge.id,
                 data: data
             }).onSuccess((function (response) {
@@ -324,7 +324,7 @@ var JudgeEditingUI = (function (_React$Component2) {
             if (!confirm("Are you sure want to delete this judge?")) {
                 return false;
             }
-            new Api("tournaments.judge.delete", { judge_id: this.props.judge.id }).send();
+            Api("tournaments.judge.delete", { judge_id: this.props.judge.id }).send();
         }
     }]);
 
@@ -351,7 +351,7 @@ var JudgeCreatingUI = (function (_React$Component3) {
     }, {
         key: "submitJudge",
         value: function submitJudge(data) {
-            new Api("tournaments.judge.create", {
+            Api("tournaments.judge.create", {
                 competition_id: this.props.competition_id,
                 data: data
             }).onSuccess((function (response) {

@@ -16,7 +16,10 @@
   <script src="/static/js/scoring_systems/rosfarr/tablet.js"></script>
   <script>
     React.render(
-      React.createElement(JudgeTablet, { judge_id: {{ judge_id }} }),
+      React.createElement(JudgeTablet, {
+        judge_id: {{ judge_id }},
+        competition_id: {{ competition_id }}
+      }),
       document.getElementById("content")
     );
   </script>

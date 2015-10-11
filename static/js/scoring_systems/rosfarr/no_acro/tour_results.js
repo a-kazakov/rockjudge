@@ -213,7 +213,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                 this.props.row.advances ? "Yes" : "No"
             ) : null;
             var judges_scores = this.props.judges.map((function (judge) {
-                var score = this.props.row.scores.scores[judge.id];
+                var score = this.props.row.scores.scores[judge.id].data;
                 return React.createElement(
                     "td",
                     { key: judge.id },

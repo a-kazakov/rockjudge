@@ -24,15 +24,18 @@ var TourResults = (function (_React$Component) {
             judges: [],
             show_verbose: false
         };
-        window.message_dispatcher.addListener("tour_update tour_full_update score_update").setCallback(this.loadData.bind(this));
-        // TODO: add filter
+        message_dispatcher.addListener("tour_results_changed reload_data", (function (message) {
+            if (message.tour_id == this.props.tour_id) {
+                this.loadData();
+            }
+        }).bind(this));
         this.loadData();
     }
 
     _createClass(TourResults, [{
         key: "loadData",
         value: function loadData() {
-            new Api("tournaments.tour.get_results", { tour_id: this.props.tour_id }).onSuccess((function (new_results) {
+            Api("tournaments.tour.get_results", { tour_id: this.props.tour_id }).onSuccess((function (new_results) {
                 this.setState(new_results);
             }).bind(this)).send();
         }
@@ -84,6 +87,7 @@ var TourResults = (function (_React$Component) {
                 return !judge.hide_from_results;
             });
             var table = null;
+            console.log(this.state);
             if (this.state.verbose) {
                 table = React.createElement(TourResultsVerboseTable, {
                     judges: active_judges,

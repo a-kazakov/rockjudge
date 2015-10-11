@@ -41,7 +41,7 @@ class TourResultsVerboseTableRow extends React.Component {
             ? <td className="next-tour">{ this.props.row.advances ? "Yes" : "No" }</td>
             : null;
         var judges_scores = this.props.judges.map(function(judge) {
-            var score = this.props.row.scores.scores[judge.id];
+            var score = this.props.row.scores.scores[judge.id].data;
             return <td key={ judge.id } >{ this.renderScore(judge, score) }</td>;
         }.bind(this))
         return <tr>

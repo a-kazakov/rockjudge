@@ -24,84 +24,91 @@ var JudgeTablet = (function (_React$Component) {
 
         _get(Object.getPrototypeOf(JudgeTablet.prototype), "constructor", this).call(this, props);
         this.state = {
-            tour_id: null,
+            tour: null,
             judge: null,
             current_heat: 1,
-            page: "dance"
+            page: "dance",
+            active_tour_id: null
         };
-        // TODO: add filters
-        // TODO: suport run update withour "full"
-        window.message_dispatcher.addListener("run_update run_full_update score_update").fetchObject("tournaments.run.get", true).setCallback(this.dispatchRunUpdate.bind(this));
-        window.message_dispatcher.addListener("active_tour_update").fetchObject("tournaments.tour.find_active").setCallback(this.dispatchActiveTourUpdate.bind(this));
-        window.message_dispatcher.addListener("tour_full_update").setFilter((function (message) {
-            return message.tour_id == this.state.tour_id;
-        }).bind(this)).setCallback(this.reloadTour.bind(this));
-        window.message_dispatcher.addListener("competition_full_update").setCallback(this.loadData.bind(this));
+        message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
+        message_dispatcher.addListener("reload_data", this.loadData.bind(this));
+        message_dispatcher.addListener("active_tour_update", this.dispatchActiveTourUpdate.bind(this));
         this.loadData();
     }
 
     _createClass(JudgeTablet, [{
-        key: "loadData",
-        value: function loadData() {
-            new Api("tournaments.judge.get", { judge_id: this.props.judge_id, recursive: false }).onSuccess((function (response) {
+        key: "reloadFromStorage",
+        value: function reloadFromStorage() {
+            var judge = storage.get("Judge").by_id(this.props.judge_id).serialize();
+            var competition = storage.get("Competition").by_id(this.props.competition_id).serialize();
+            var active_tour_id = this.state.active_tour_id;
+            if (active_tour_id === null) {
                 this.setState({
-                    judge: response
+                    judge: judge,
+                    competition: competition,
+                    tour: null
                 });
-            }).bind(this)).send();
-            new Api("tournaments.tour.find_active", {}).onSuccess((function (response) {
-                this.dispatchActiveTourUpdate(response);
-            }).bind(this)).send();
+                return;
+            }
+            var active_tour_model = storage.get("Tour").by_id(active_tour_id);
+            if (!active_tour_model) {
+                this.setState({
+                    judge: judge,
+                    competition: competition,
+                    tour: null
+                });
+                return;
+            }
+            this.setState({
+                judge: judge,
+                competition: competition,
+                tour: active_tour_model.serialize()
+            });
         }
     }, {
-        key: "reloadTour",
-        value: function reloadTour() {
-            // TODO: Fix possible race condition here (occurs if active tour is changed while following api is still executing)
-            new Api("tournaments.tour.get", { tour_id: this.state.tour_id, recursive: true }).onSuccess((function (new_tour) {
-                this.setState({
-                    tour: new_tour
-                });
+        key: "loadData",
+        value: function loadData() {
+            Api("tournaments.competition.get", { competition_id: this.props.competition_id, children: {
+                    judges: {}
+                } }).updateDB("Competition", this.props.competition_id).onSuccess(this.reloadFromStorage.bind(this)).send();
+            Api("tournaments.tour.find_active", {}).onSuccess((function (response) {
+                this.dispatchActiveTourUpdate(response);
             }).bind(this)).send();
         }
 
         // Dispatchers
 
     }, {
-        key: "dispatchRunUpdate",
-        value: function dispatchRunUpdate(new_run) {
-            var changed = false;
-            var new_runs = this.state.tour.runs.map(function (run) {
-                if (new_run.id != run.id) {
-                    changed = true;
-                    return run;
-                }
-                return new_run;
-            });
-            if (changed) {
-                var new_tour = $.extend({}, this.state.tour);
-                new_tour.runs = new_runs;
-                this.setState({
-                    tour: new_tour
-                });
-            }
-        }
-    }, {
         key: "dispatchActiveTourUpdate",
         value: function dispatchActiveTourUpdate(response) {
             var tour_id = response.tour_id;
-            if (this.state.tour_id == tour_id) {
+            if (this.state.tour === null && tour_id === null || this.state.tour !== null && this.state.tour.id == tour_id) {
                 return;
             }
+            this.setState({
+                "active_tour_id": tour_id
+            });
             if (tour_id === null) {
+                storage.del("Tour");
+                storage.del("Run");
+                storage.del("Score");
+                storage.del("Participant");
                 this.setState({
-                    tour_id: null,
+                    tour: null,
                     current_heat: 1
                 });
                 return;
             }
-            new Api("tournaments.tour.get", { tour_id: tour_id, recursive: true }).onSuccess((function (new_tour) {
+            Api("tournaments.tour.get", { tour_id: tour_id, children: {
+                    runs: {
+                        participant: {},
+                        scores: {},
+                        acrobatics: {}
+                    },
+                    inner_competition: {}
+                } }).updateDB("Tour", tour_id).onSuccess((function () {
+                this.reloadFromStorage(tour_id);
                 this.setState({
-                    tour_id: tour_id,
-                    tour: new_tour,
                     current_heat: 1
                 });
             }).bind(this)).send();
@@ -112,7 +119,7 @@ var JudgeTablet = (function (_React$Component) {
     }, {
         key: "onScoreUpdate",
         value: function onScoreUpdate(score_id, new_score) {
-            new Api("tournaments.score.set", { score_id: score_id, data: new_score }).send();
+            Api("tournaments.score.set", { score_id: score_id, data: new_score }).send();
         }
 
         // Actions
@@ -156,7 +163,7 @@ var JudgeTablet = (function (_React$Component) {
         value: function renderHeader() {
             var btn_prev = null;
             var btn_next = null;
-            if (this.state.tour_id !== null) {
+            if (this.state.tour !== null) {
                 if (this.state.current_heat > 1) {
                     btn_prev = React.createElement(
                         "button",
@@ -172,13 +179,13 @@ var JudgeTablet = (function (_React$Component) {
                     );
                 }
             }
-            var current_tour = this.state.tour_id === null ? null : React.createElement(
+            var current_tour = this.state.tour === null ? null : React.createElement(
                 "div",
                 { className: "header" },
                 React.createElement(
                     "h1",
                     null,
-                    this.state.tour.inner_competition_name,
+                    this.state.tour.inner_competition.name,
                     ": ",
                     this.state.tour.name
                 ),
@@ -221,12 +228,33 @@ var JudgeTablet = (function (_React$Component) {
     }, {
         key: "renderScoringLayout",
         value: function renderScoringLayout() {
-            if (this.state.tour_id === null) {
+            if (this.state.tour === null) {
                 return this.renderJudgeInfo();
             }
             var cells = this.state.tour.runs.filter((function (run) {
                 return run.heat == this.state.current_heat;
             }).bind(this)).map((function (run) {
+                var scores_map = {};
+                run.scores.forEach(function (score_data) {
+                    scores_map[score_data.judge_id] = score_data;
+                });
+                if (typeof scores_map[this.props.judge_id] === "undefined") {
+                    return React.createElement(
+                        "td",
+                        { key: run.id },
+                        React.createElement(
+                            "h2",
+                            null,
+                            "Participant №",
+                            run.participant.number
+                        ),
+                        React.createElement(
+                            "h3",
+                            { className: "text-center" },
+                            "You are not judging this participant"
+                        )
+                    );
+                }
                 return React.createElement(
                     "td",
                     { key: run.id },
@@ -239,12 +267,12 @@ var JudgeTablet = (function (_React$Component) {
                     React.createElement(TabletScoreInput, {
                         acrobatics: run.acrobatics,
                         judge_id: this.props.judge_id,
-                        judges: this.state.tour.judges,
+                        judges: this.state.competition.judges,
                         run_id: run.id,
                         page: this.state.page,
-                        scores: run.scores.scores,
+                        scores: scores_map,
                         scoring_system: this.state.tour.scoring_system,
-                        onScoreUpdate: this.onScoreUpdate.bind(this, run.scores.scores[this.props.judge_id].id) })
+                        onScoreUpdate: this.onScoreUpdate.bind(this, scores_map[this.props.judge_id].id) })
                 );
             }).bind(this));
             var one_run_class = cells.length == 1 ? " single-run" : "";
@@ -265,7 +293,7 @@ var JudgeTablet = (function (_React$Component) {
     }, {
         key: "renderFooter",
         value: function renderFooter() {
-            if (this.state.tour_id === null || this.state.judge.role != "tech_judge") {
+            if (this.state.tour === null || this.state.judge.role != "tech_judge") {
                 return null;
             }
             return React.createElement(

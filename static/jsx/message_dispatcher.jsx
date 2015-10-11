@@ -1,27 +1,3 @@
-class Listener {
-    constructor() {
-        this.filter = function(message) { return true; };
-        this.postprocess = function(data, callback) { callback(data) };
-        this.callback = function() {};
-    }
-    setFilter(func) {
-        this.filter = func;
-        return this;
-    }
-    fetchObject(api_method, recursive) {
-        this.postprocess = function(data, callback) {
-            var request = $.extend({}, data);
-            request.recursive = recursive;
-            (new Api(api_method, request)).onSuccess(callback).send();
-        }
-        return this;
-    }
-    setCallback(func) {
-        this.callback = func;
-        return this;
-    }
-}
-
 class MessageDispatcher {
     constructor() {
         this.closed = false;
@@ -46,25 +22,36 @@ class MessageDispatcher {
         this.ws.onmessage = this.onMessage.bind(this);
     }
     onMessage(message) {
-        var data = JSON.parse(message.data);
-        var msg_type = data.type;
-        var msg_data = data.data;
-        console.log("Incoming message", msg_type, msg_data);
-        var listeners = (this.listeners[msg_type] || []).filter(function(listener) {
-            return listener.filter(msg_data);
-        }).forEach(function(listener) {
-            listener.postprocess(msg_data, listener.callback);
+        let data = JSON.parse(message.data);
+        console.log("Incoming message", data);
+        data.messages.forEach(function(data) {
+            let msg_type = data[0];
+            let msg_data = data[1];
+            (this.listeners[msg_type] || []).forEach(function(listener) {
+                listener(msg_data);
+            });
+        }.bind(this));
+        let data_changed = false;
+        data.model_updates.forEach(function(data) {
+            let model = storage.get(data.model).by_id(data.id);
+            if (model) {
+                model.update(data.data);
+            }
+            data_changed = true;
         });
+        if (data_changed) {
+            (this.listeners["db_update"] || []).forEach(function(listener) {
+                listener();
+            });
+        }
     }
-    addListener(msg_types) {
-        var listener = new Listener();
+    addListener(msg_types, callback) {
         msg_types.split(" ").forEach(function(msg_type) {
             if (!this.listeners[msg_type]) {
                 this.listeners[msg_type] = [];
             }
-            this.listeners[msg_type].push(listener);
+            this.listeners[msg_type].push(callback);
         }.bind(this));
-        return listener;
     }
 }
 

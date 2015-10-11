@@ -133,10 +133,10 @@ class JudgeEditingUI extends React.Component {
         return this.state.editing ? this.renderEditor() : this.renderViewer();
     }
     submitJudge(data) {
-        (new Api("tournaments.judge.set", {
+        Api("tournaments.judge.set", {
             judge_id: this.props.judge.id,
             data: data,
-        })).onSuccess(function(response) {
+        }).onSuccess(function(response) {
             this.stopEditing();
         }.bind(this)).send();
     }
@@ -144,7 +144,7 @@ class JudgeEditingUI extends React.Component {
         if (!confirm("Are you sure want to delete this judge?")) {
             return false;
         }
-        (new Api("tournaments.judge.delete", { judge_id: this.props.judge.id })).send();
+        Api("tournaments.judge.delete", { judge_id: this.props.judge.id }).send();
     }
 }
 
@@ -157,10 +157,10 @@ class JudgeCreatingUI extends React.Component {
 
     }
     submitJudge(data) {
-        (new Api("tournaments.judge.create", {
+        Api("tournaments.judge.create", {
             competition_id: this.props.competition_id,
             data: data,
-        })).onSuccess(function(response) {
+        }).onSuccess(function(response) {
             this.props.stopEditing();
         }.bind(this)).send();
     }

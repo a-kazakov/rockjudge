@@ -1,10 +1,11 @@
-class Api {
+class ApiImpl {
     constructor(method, data) {
         this.method = method;
         this.data = data;
         this.cb_success = null;
         this.cb_error = null;
         this.cb_fail = null;
+        this.update_db = null;
     }
     onSuccess(callback) {
         this.cb_success = callback;
@@ -18,6 +19,12 @@ class Api {
         this.cb_fail = callback;
         return this;
     }
+    updateDB(model_type, model_id) {
+        this.update_db = function(response) {
+            storage.get(model_type).add(model_id, response);
+        }
+        return this;
+    }
     send() {
         $.ajax({
             url: "/api",
@@ -29,6 +36,7 @@ class Api {
             },
             success: function(response) {
                 if (response.success) {
+                    this.update_db && this.update_db(response.response);
                     this.cb_success && this.cb_success(response.response);
                 } else {
                     console.error("Api error:", response.message);
@@ -42,4 +50,8 @@ class Api {
             },
         });
     }
+}
+
+function Api(method, data) {
+    return new ApiImpl(method, data);
 }

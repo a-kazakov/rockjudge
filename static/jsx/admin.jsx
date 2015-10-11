@@ -21,10 +21,10 @@ class CompetitionLoadingUI extends React.Component {
     }
     onSubmit(event) {
         event.preventDefault();
-        (new Api("tournaments.competition.load", {
+        Api("tournaments.competition.load", {
             competition_id: this.props.competition_id,
             data: JSON.parse(this._input.getDOMNode().value),
-        })).onSuccess(function() { alert("Success."); }).send();
+        }).onSuccess(function() { alert("Success."); }).send();
     }
 }
 
@@ -116,10 +116,10 @@ class ManagmentUI extends React.Component {
         if (name === null) {
             return;
         }
-        (new Api("tournaments.inner_competition.create", {
+        Api("tournaments.inner_competition.create", {
             name: name,
             competition_id: this.props.competition_id,
-        })).send();
+        }).send();
     }
 }
 
@@ -131,18 +131,31 @@ class AdminUI extends React.Component {
         super(props);
         this.state = {
             active_app: "judging",
-            id: null,
+            name: null,
         };
-        window.message_dispatcher.addListener("competition_update inner_competition_update tour_update tour_full_update competition_full_update")
-            .setCallback(this.loadData.bind(this))
+        message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
+        message_dispatcher.addListener("reload_data", this.loadData.bind(this));
         this.loadData();
     }
+    reloadFromStorage() {
+        this.setState(
+            storage.get("Competition")
+                .by_id(this.props.competition_id)
+                .serialize());
+    }
     loadData() {
-        (new Api("tournaments.competition.get", {competition_id: this.props.competition_id, recursive:true}))
-            .onSuccess(function(response) {
-                this.setState(response);
-                console.log(response);
-            }.bind(this)).send();
+        Api("tournaments.competition.get", {
+            competition_id: this.props.competition_id,
+            children: {
+                judges: {},
+                inner_competitions: {
+                    tours: {},
+                }
+            }
+        })
+        .updateDB("Competition", this.props.competition_id)
+        .onSuccess(this.reloadFromStorage.bind(this))
+        .send();
     }
 
     // Listeners
@@ -156,6 +169,7 @@ class AdminUI extends React.Component {
     // Rendering
 
     renderActiveApp() {
+        console.log(this.state);
         switch (this.state.active_app) {
         case "judging":
             return <JudgingUI
@@ -168,7 +182,7 @@ class AdminUI extends React.Component {
         }
     }
     render() {
-        if (this.state.id === null) {
+        if (this.state.name === null) {
             return <span>Loading...</span>;
         }
         return <table className="outer-table">

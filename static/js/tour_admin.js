@@ -86,7 +86,7 @@ var TourAdminHeatValue = (function (_React$Component) {
     }, {
         key: "submitValue",
         value: function submitValue() {
-            new Api("tournaments.run.set", { run_id: this.props.run_id, data: { heat: this.state.current_value } }).onSuccess((function () {
+            Api("tournaments.run.set", { run_id: this.props.run_id, data: { heat: this.state.current_value } }).onSuccess((function () {
                 this.stopEditing();
             }).bind(this)).send();
         }
@@ -175,7 +175,7 @@ var TourAdminScoreCellWrapper = (function (_React$Component2) {
     }, {
         key: "submitValue",
         value: function submitValue(new_value) {
-            new Api("tournaments.score.set", { score_id: this.props.value.id, data: new_value }).onSuccess((function () {
+            Api("tournaments.score.set", { score_id: this.props.score_id, data: new_value }).onSuccess((function () {
                 this.stopEditing();
             }).bind(this)).send();
         }
@@ -196,11 +196,16 @@ var TourAdminScoresRow = (function (_React$Component3) {
     _createClass(TourAdminScoresRow, [{
         key: "render",
         value: function render() {
+            var scores_map = {};
+            this.props.scores.forEach(function (score_data) {
+                scores_map[score_data.judge_id] = score_data;
+            });
             var scores = this.props.judges.map((function (judge) {
                 return React.createElement(TourAdminScoreCellWrapper, {
                     judge: judge,
                     scoring_system: this.props.scoring_system,
-                    value: this.props.scores.scores[judge.id] });
+                    score_id: scores_map[judge.id] && scores_map[judge.id].id,
+                    value: scores_map[judge.id] && scores_map[judge.id].data });
             }).bind(this));
             return React.createElement(
                 "tr",
@@ -227,7 +232,7 @@ var TourAdminScoresRow = (function (_React$Component3) {
                 React.createElement(
                     "td",
                     { className: "total" },
-                    this.props.scores.total_run_score
+                    this.props.total_score
                 ),
                 scores
             );
@@ -252,70 +257,41 @@ var TourAdminScoresTable = (function (_React$Component4) {
 
         _get(Object.getPrototypeOf(TourAdminScoresTable.prototype), "constructor", this).call(this, props);
         this.state = {
-            id: 0,
-            name: "",
-            runs: [],
-            judges: [],
-            active: false,
-            current_editing: null
+            name: null
         };
-        // TODO: add filters
-        window.message_dispatcher.addListener("score_update run_full_update").fetchObject("tournaments.run.get", true).setFilter((function (message) {
-            return message.score_id ? this.getScoreIdPath(message.score_id) !== null : this.getRunIdx(message.run_id) !== null;
-        }).bind(this)).setCallback(this.dispatchRunUpdate.bind(this));
-        window.message_dispatcher.addListener("score_update run_update").fetchObject("tournaments.run.get", false).setFilter((function (message) {
-            return this.getRunIdx(message.run_id) !== null;
-        }).bind(this)).setCallback(this.dispatchRunUpdate.bind(this));
-        window.message_dispatcher.addListener("tour_update").fetchObject("tournaments.tour.get", false).setFilter((function (message) {
-            return this.props.tour_id == message.tour_id;
-        }).bind(this)).setCallback(this.dispatchTourUpdate.bind(this));
-        window.message_dispatcher.addListener("tour_full_update").fetchObject("tournaments.tour.get", true).setFilter((function (message) {
-            return this.props.tour_id == message.tour_id;
-        }).bind(this)).setCallback(this.dispatchTourUpdate.bind(this));
-        window.message_dispatcher.addListener("active_tour_update").fetchObject("tournaments.tour.find_active").setCallback(this.dispatchActiveTourUpdate.bind(this));
-        window.message_dispatcher.addListener("competition_full_update").setCallback(this.loadData.bind(this));
+        message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
+        message_dispatcher.addListener("reload_data", this.loadData.bind(this));
         this.loadData();
     }
 
     _createClass(TourAdminScoresTable, [{
-        key: "loadData",
-        value: function loadData() {
-            new Api("tournaments.tour.get", { tour_id: this.props.tour_id, recursive: true }).onSuccess((function (tour) {
-                if (tour.finalized) {
-                    window.location.reload(true);
-                }
-                this.setState(tour);
-            }).bind(this)).send();
-        }
-
-        // Dispatchers
-
-    }, {
-        key: "dispatchTourUpdate",
-        value: function dispatchTourUpdate(new_tour) {
-            if (new_tour.finalized) {
+        key: "reloadFromStorage",
+        value: function reloadFromStorage() {
+            var serialized = storage.get("Tour").by_id(this.props.tour_id).serialize();
+            if (serialized.finalized) {
                 window.location.reload(true);
             }
-            this.setState(new_tour);
+            this.setState(serialized);
         }
     }, {
-        key: "dispatchRunUpdate",
-        value: function dispatchRunUpdate(new_run) {
-            var new_runs = $.extend([], this.state.runs);
-            var run_idx = this.getRunIdx(new_run.id);
-            for (var idx in new_run) if (new_run.hasOwnProperty(idx)) {
-                new_runs[run_idx][idx] = new_run[idx];
-            }
-            this.setState({
-                runs: new_runs
-            });
-        }
-    }, {
-        key: "dispatchActiveTourUpdate",
-        value: function dispatchActiveTourUpdate(message) {
-            this.setState({
-                active: message.tour_id === this.props.tour_id
-            });
+        key: "loadData",
+        value: function loadData() {
+            Api("tournaments.tour.get", {
+                tour_id: this.props.tour_id,
+                children: {
+                    inner_competition: {
+                        competition: {
+                            judges: {}
+                        }
+                    },
+                    runs: {
+                        scores: {},
+                        participant: {
+                            club: {}
+                        }
+                    }
+                }
+            }).updateDB("Tour", this.props.tour_id).onSuccess(this.reloadFromStorage.bind(this)).send();
         }
 
         // Helpers
@@ -351,32 +327,32 @@ var TourAdminScoresTable = (function (_React$Component4) {
         key: "onInitButtonClick",
         value: function onInitButtonClick() {
             if (confirm("Are you sure want to recreate participants list for this tour?")) {
-                new Api("tournaments.tour.init", { tour_id: this.props.tour_id }).send();
+                Api("tournaments.tour.init", { tour_id: this.props.tour_id }).send();
             }
         }
     }, {
         key: "onFinalizeButtonClick",
         value: function onFinalizeButtonClick() {
             if (confirm("Are you sure want to finalize this tour?")) {
-                new Api("tournaments.tour.finalize", { tour_id: this.props.tour_id }).send();
+                Api("tournaments.tour.finalize", { tour_id: this.props.tour_id }).send();
             }
         }
     }, {
         key: "onShuffleHeatsButtonClick",
         value: function onShuffleHeatsButtonClick() {
             if (confirm("Are you sure want to shuffle heats?")) {
-                new Api("tournaments.tour.shuffle_heats", { tour_id: this.props.tour_id }).send();
+                Api("tournaments.tour.shuffle_heats", { tour_id: this.props.tour_id }).send();
             }
         }
     }, {
         key: "onStartTourButtonClick",
         value: function onStartTourButtonClick() {
-            new Api("tournaments.tour.start", { tour_id: this.props.tour_id }).send();
+            Api("tournaments.tour.start", { tour_id: this.props.tour_id }).send();
         }
     }, {
         key: "onStopTourButtonClick",
         value: function onStopTourButtonClick() {
-            new Api("tournaments.tour.stop", { tour_id: this.props.tour_id }).send();
+            Api("tournaments.tour.stop", { tour_id: this.props.tour_id }).send();
         }
 
         // Rendering
@@ -406,7 +382,15 @@ var TourAdminScoresTable = (function (_React$Component4) {
     }, {
         key: "render",
         value: function render() {
-            var active_judges = this.state.judges.filter(function (judge) {
+            if (this.state.name === null) {
+                return React.createElement(
+                    "span",
+                    null,
+                    "Loading..."
+                );
+            }
+            var judges = this.state.inner_competition.competition.judges;
+            var active_judges = judges.filter(function (judge) {
                 return !judge.hide_from_results;
             });
             var rows = this.state.runs.map((function (run) {
@@ -456,7 +440,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
                     React.createElement(
                         "h1",
                         null,
-                        this.state.inner_competition_name
+                        this.state.inner_competition.name
                     ),
                     React.createElement(
                         "h2",

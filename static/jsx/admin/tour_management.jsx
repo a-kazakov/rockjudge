@@ -131,10 +131,10 @@ class TourEditingUI extends React.Component {
         return this.state.editing ? this.renderEditor() : this.renderViewer();
     }
     submitTour(data) {
-        (new Api("tournaments.tour.set", {
+        Api("tournaments.tour.set", {
             tour_id: this.props.tour.id,
             data: data,
-        })).onSuccess(function(response) {
+        }).onSuccess(function(response) {
             this.stopEditing();
         }.bind(this)).send();
     }
@@ -142,7 +142,7 @@ class TourEditingUI extends React.Component {
         if (!confirm("Are you sure want to delete this tour?")) {
             return false;
         }
-        (new Api("tournaments.tour.delete", { tour_id: this.props.tour.id })).send();
+        Api("tournaments.tour.delete", { tour_id: this.props.tour.id }).send();
     }
 
 }
@@ -156,11 +156,11 @@ class TourCreatingUI extends React.Component {
 
     }
     submitTour(data) {
-        (new Api("tournaments.tour.create", {
+        Api("tournaments.tour.create", {
             inner_competition_id: this.props.inner_competition_id,
             add_after: this.props.add_after,
             data: data,
-        })).onSuccess(function(response) {
+        }).onSuccess(function(response) {
             this.props.stopEditing();
         }.bind(this)).send();
     }
@@ -175,13 +175,13 @@ class InnerCompetitionManagementUI extends React.Component {
     }
     submitBaseData(event) {
         event.preventDefault();
-        (new Api("tournaments.inner_competition.set", {
+        Api("tournaments.inner_competition.set", {
             inner_competition_id: this.props.inner_competition.id,
             data: {
                 name: this.refs.name.getDOMNode().value,
                 external_id: this.refs.external_id.getDOMNode().value,
             }
-        })).onSuccess(function() {
+        }).onSuccess(function() {
             alert("Success.");
         }).send();
     }

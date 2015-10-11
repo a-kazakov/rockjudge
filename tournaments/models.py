@@ -2,7 +2,6 @@ import json
 import random
 
 import peewee
-import tornado.gen
 
 from db import BaseModel
 
@@ -10,12 +9,10 @@ from participants.models import (
     Acrobatic,
     Club,
     Participant,
-    Sportsman,
     competition_proxy,
     inner_competition_proxy,
 )
 from scoring_systems import get_scoring_system
-from webserver.websocket import WebSocketClients
 
 
 tour_proxy = peewee.Proxy()
@@ -24,26 +21,14 @@ tour_proxy = peewee.Proxy()
 class Competition(BaseModel):
     name = peewee.CharField()
 
-    @tornado.gen.coroutine
     def full_prefetch(self):
-        yield self.prefetch([{
-            "model": InnerCompetition,
-            "ref": "competition",
-            "ref_dir": "up",
-            "children": [{
-                "model": Tour,
-                "ref": "inner_competition",
-                "ref_dir": "up",
-                "children": [],
-            }],
-        }, {
-            "model": Judge,
-            "ref": "competition",
-            "ref_dir": "up",
-            "children": [],
-        }])
+        self.prefetch({
+            "inner_competitions": {
+                "tour_set": {}
+            },
+            "judges": {},
+        })
 
-    @tornado.gen.coroutine
     def get_max_number(self):
         result = (Participant.select(InnerCompetition, Participant)
             .join(InnerCompetition)
@@ -55,29 +40,20 @@ class Competition(BaseModel):
             return 0
         return result[0].number
 
-    @tornado.gen.coroutine
-    def load(self, data):
+    def load(self, data, ws_message):
         if "clubs" in data:
-            yield Club.load(self, data["clubs"])
+            Club.load(self, data["clubs"])
         if "categories" in data:
-            yield InnerCompetition.load(self, data["categories"])
-        WebSocketClients.broadcast("competition_full_update", {
-            "competition_id": self.id
-        })
+            InnerCompetition.load(self, data["categories"])
+        ws_message.add_message("reload_data")
 
-    @tornado.gen.coroutine
-    def serialize(self, recursive=False):
+    def serialize(self, children={}):
         result = {
-            "id": self.id,
             "name": self.name,
         }
-        if recursive:
-            result["inner_competitions"] = []
-            result["judges"] = []
-            for ic in self.inners:
-                result["inner_competitions"].append((yield ic.serialize(recursive=True)))
-            for judge in self.judges:
-                result["judges"].append((yield judge.serialize(recursive=False)))
+        result = self.serialize_lower_child(result, "inner_competitions", children)
+        result = self.serialize_lower_child(result, "judges", children)
+        result = self.serialize_lower_child(result, "participants", children)
         return result
 
 
@@ -89,7 +65,7 @@ class InnerCompetition(BaseModel):
         order_by = ["name"]
 
     name = peewee.CharField()
-    competition = peewee.ForeignKeyField(Competition, related_name="inners")
+    competition = peewee.ForeignKeyField(Competition, related_name="inner_competitions")
     first_tour = peewee.ForeignKeyField(tour_proxy, null=True)
     external_id = peewee.CharField(null=True, default=None)
 
@@ -106,17 +82,16 @@ class InnerCompetition(BaseModel):
                 return tour
         return None
 
-    @tornado.gen.coroutine
     def full_prefetch(self):
-        yield self.prefetch([{
-            "model": Tour,
-            "ref": "inner_competition",
-            "ref_dir": "up",
-            "children": [],
-        }])
+        self.prefetch({
+            "tour_set": {},
+            "participants": {
+                "acrobatics": {},
+                "club": {},
+            }
+        })
 
     @classmethod
-    @tornado.gen.coroutine
     def _load_one(cls, competition, obj):
         if obj["external_id"] is not None:
             try:
@@ -124,51 +99,57 @@ class InnerCompetition(BaseModel):
                 for key in ["name"]:
                     setattr(model, key, obj[key])
                 model.save()
-                yield Participant.load(model, obj["participants"])
+                Participant.load(model, obj["participants"])
                 return
             except cls.DoesNotExist:
                 pass
         model = cls.create(competition=competition, **obj)
-        yield Participant.load(model, obj["participants"])
+        Participant.load(model, obj["participants"])
 
     @classmethod
-    @tornado.gen.coroutine
     def load(cls, competition, objects):
         for obj in objects:
-            yield cls._load_one(competition, obj)
+            cls._load_one(competition, obj)
 
     @classmethod
-    @tornado.gen.coroutine
-    def create_model(cls, competition, name):
-        cls.create(
+    def create_model(cls, competition, name, ws_message):
+        new_model = cls.create(
             name=name,
             competition=competition
         )
-        WebSocketClients.broadcast("competition_full_update", {
-            "competition_id": competition.id
-        })
+        ws_message.add_model_update(
+            model_type=Competition,
+            model_id=competition.id,
+            schema={
+                "inner_competitions": {}
+            }
+        )
+        ws_message.add_model_update(
+            model_type=InnerCompetition,
+            model_id=new_model.id,
+            schema={
+                "tours": {}
+            }
+        )
 
-    @tornado.gen.coroutine
-    def update_data(self, new_data):
+    def update_data(self, new_data, ws_message):
         for key in ["name", "external_id"]:
             if key in new_data:
                 setattr(self, key, new_data[key])
         self.save()
-        WebSocketClients.broadcast("competition_full_update", {
-            "competition_id": self.competition_id,
-        })
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id,
+        )
 
-    @tornado.gen.coroutine
-    def serialize(self, recursive=False):
+    def serialize(self, children={}):
         result = {
-            "id": self.id,
             "name": self.name,
             "external_id": self.external_id,
         }
-        if recursive:
-            result["tours"] = []
-            for tour in self.tours:
-                result["tours"].append((yield tour.serialize(recursive=False)))
+        result = self.serialize_upper_child(result, "competition", children)
+        result = self.serialize_lower_child(result, "tours", children)
+        result = self.serialize_lower_child(result, "participants", children)
         return result
 
 
@@ -184,86 +165,49 @@ class Tour(BaseModel):
     inner_competition = peewee.ForeignKeyField(InnerCompetition)
     scoring_system_name = peewee.CharField()
 
-    @tornado.gen.coroutine
     def full_prefetch(self):
-        yield self.prefetch([{
-            "model": Run,
-            "ref": "tour",
-            "ref_dir": "up",
-            "children": [{
-                "model": Score,
-                "ref": "run",
-                "ref_dir": "up",
-                "children": [],
-            }, {
-                "model": AcrobaticOverride,
-                "ref": "run",
-                "ref_dir": "up",
-                "children": [],
-            }, {
-                "model": Participant,
-                "ref": "participant",
-                "ref_dir": "down",
-                "children": [{
-                    "model": Acrobatic,
-                    "ref": "participant",
-                    "ref_dir": "up",
-                    "children": [],
-                }, {
-                    "model": Club,
-                    "ref": "club",
-                    "ref_dir": "down",
-                    "children": [],
-                }, {
-                    "model": Sportsman,
-                    "ref": "participant",
-                    "ref_dir": "up",
-                    "children": [],
-                }],
-            }],
-        }, {
-            "model": InnerCompetition,
-            "ref": "inner_competition",
-            "ref_dir": "down",
-            "children": [{
-                "model": Competition,
-                "ref": "competition",
-                "ref_dir": "down",
-                "children": [{
-                    "model": Judge,
-                    "ref": "competition",
-                    "ref_dir": "up",
-                    "children": [],
-                }],
-            }]
-        }])
+        self.prefetch({
+            "runs": {
+                "scores": {},
+                "acrobatic_overrides": {},
+                "participant": {
+                    "acrobatics": {},
+                    "club": {},
+                    "sportsmen": {},
+                },
+            },
+            "inner_competition": {
+                "competition": {
+                    "judges": {},
+                },
+            }
+        })
 
-    @tornado.gen.coroutine
     def estimate_participants(self):
         try:
-            prev_tour = yield self.get_prev_tour(throw=True)
-            yield prev_tour.full_prefetch()
+            prev_tour = self.get_prev_tour(throw=True)
+            prev_tour.full_prefetch()
             if self.hope_tour:
                 return [
                     row["participant"]
-                    for row in (yield prev_tour.scoring_system.get_tour_results(prev_tour))
+                    for row in  prev_tour.scoring_system.get_tour_results(prev_tour)
                     if not row["advances"]
                 ]
             result = []
             while True:
                 result += [
                     row["participant"]
-                    for row in (yield prev_tour.scoring_system.get_tour_results(prev_tour))
+                    for row in prev_tour.scoring_system.get_tour_results(prev_tour)
                     if row["advances"]
                 ]
                 if prev_tour.hope_tour:
-                    prev_tour = yield prev_tour.get_prev_tour(throw=True)
-                    yield prev_tour.full_prefetch()
+                    prev_tour = prev_tour.get_prev_tour(throw=True)
+                    prev_tour.full_prefetch()
                 else:
                     break
             return result
         except self.DoesNotExist:
-            yield self.inner_competition.prefetch_child("participants")
+            self.inner_competition.prefetch_child("participants")
             return self.inner_competition.participants
 
     def get_actual_num_advances(self):
@@ -282,10 +226,9 @@ class Tour(BaseModel):
             pass
         return max(0, base_value - advanced_over_quote)
 
-    @tornado.gen.coroutine
     def create_participant_runs(self):
-        yield self.prefetch_child("runs")
-        estimated_participants = yield self.estimate_participants()
+        self.prefetch_child("runs")
+        estimated_participants = self.estimate_participants()
         existing_participant_ids = { run.participant_id for run in self.runs }
         new_participant_ids = { participant.id for participant in estimated_participants }
         participant_ids_to_create = new_participant_ids - existing_participant_ids
@@ -306,12 +249,11 @@ class Tour(BaseModel):
             )
             self.runs.append(run)
         for run in self.runs:
-            yield run.create_scores()
-        yield self.shuffle_heats(broadcast=False, shuffle=(len(existing_participant_ids) == 0))
+            run.create_scores()
+        self.shuffle_heats(ws_message=None, broadcast=False, shuffle=(len(existing_participant_ids) == 0))
 
-    @tornado.gen.coroutine
-    def shuffle_heats(self, shuffle=True, broadcast=True):
-        yield self.prefetch_child("runs")
+    def shuffle_heats(self, ws_message, shuffle=True, broadcast=True):
+        self.prefetch_child("runs")
         if shuffle:
             random.shuffle(self.runs)
         last_heat = len(self.runs) % self.participants_per_heat
@@ -323,12 +265,15 @@ class Tour(BaseModel):
                 run.heat = (len(self.runs) - 1) // self.participants_per_heat + 1
             run.save()
         if broadcast:
-            WebSocketClients.broadcast("tour_full_update", {
-                "tour_id": self.id
-            })
+            ws_message.add_model_update(
+                model_type=self.__class__,
+                model_id=self.id,
+                schema={
+                    "runs": {},
+                },
+            )
 
     @classmethod
-    @tornado.gen.coroutine
     def get_active(cls):
         try:
             active_tour = cls.get(cls.active == True)
@@ -336,27 +281,33 @@ class Tour(BaseModel):
         except cls.DoesNotExist:
             return None
 
-    @tornado.gen.coroutine
-    def start(self):
+    def start(self, ws_message):
         active_tours = list(self.select().where(Tour.active == True))
         for tour in active_tours:
-            tour.stop(broadcast=False)
+            tour.stop(ws_message=ws_message, broadcast=False)
         self.active = True
         self.save()
-        WebSocketClients.broadcast("active_tour_update", {})
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id,
+        )
+        ws_message.add_message("active_tour_update", {"tour_id": self.id})
 
-    @tornado.gen.coroutine
-    def stop(self, broadcast=True):
+
+    def stop(self, ws_message, broadcast=True):
         self.active = False
         self.save()
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id,
+        )
         if broadcast:
-            WebSocketClients.broadcast("active_tour_update", {})
+            ws_message.add_message("active_tour_update", {"tour_id": None})
 
     @property
     def judges(self):
         return list(self.inner_competition.competition.judges)
 
-    @tornado.gen.coroutine
     def get_prev_tour(self, throw=False):
         prev_tours_list = list(self.prev_tour)
         if prev_tours_list == []:
@@ -365,48 +316,54 @@ class Tour(BaseModel):
             return None
         return prev_tours_list[0]
 
-    @tornado.gen.coroutine
     def check_prev_tour_finalized(self):
-        prev_tour = yield self.get_prev_tour()
+        prev_tour = self.get_prev_tour()
         if prev_tour is None:
             return
         if not prev_tour.finalized:
             raise RuntimeError("Previous tour should be finalized")
 
-    @tornado.gen.coroutine
-    def init(self):
-        yield self.check_prev_tour_finalized()
-        yield self.create_participant_runs()
-        WebSocketClients.broadcast("tour_full_update", {
-            "tour_id": self.id,
-        })
+    def init(self, ws_message):
+        self.check_prev_tour_finalized()
+        self.create_participant_runs()
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id,
+            schema={
+                "runs": {
+                    "participant": {
+                        "club": {}
+                    },
+                    "acrobatics": {},
+                    "scores": {},
+                }
+            }
+        )
 
-    @tornado.gen.coroutine
-    def finalize(self):
-        yield self.full_prefetch()
-        yield self.check_prev_tour_finalized()
+    def finalize(self, ws_message):
+        self.check_prev_tour_finalized()
         if self.active:
-            self.stop()
+            self.stop(ws_message)
         self.finalized = True
         self.total_advanced = len([
             None
-            for row in (yield self.scoring_system.get_tour_results(self))
+            for row in self.scoring_system.get_tour_results(self)
             if row["advances"]
         ])
         self.save()
         if self.next_tour:
-            yield self.next_tour.init()
-        WebSocketClients.broadcast("tour_update", {
-            "tour_id": self.id,
-        })
+            self.next_tour.init(ws_message)
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id
+        )
 
     @property
     def scoring_system(self):
         return get_scoring_system(self)
 
     @classmethod
-    @tornado.gen.coroutine
-    def create_model(cls, inner_competition, add_after, data):
+    def create_model(cls, inner_competition, add_after, data, ws_message):
         create_kwargs = {
             key: data[key]
             for key in ["name", "num_advances", "participants_per_heat", "hope_tour"]
@@ -429,17 +386,20 @@ class Tour(BaseModel):
                     break
             else:
                 raise RuntimeError("Invalid add_after ID passed")
-        WebSocketClients.broadcast("competition_full_update", {
-            "competition_id": inner_competition.competition_id,
-        })
+        ws_message.add_model_update(
+            model_type=InnerCompetition,
+            model_id=inner_competition.id,
+            schema={
+                "tours": {},
+            }
+        )
 
-    @tornado.gen.coroutine
-    def delete_model(self):
+    def delete_model(self, ws_message):
         if self.finalized:
             raise RuntimeError("Unable to delete finalized tour")
         # We don't actually delete the tour. Just removing it from linked list.
         inner_competition = self.inner_competition
-        prev_tour = yield self.get_prev_tour()
+        prev_tour = self.get_prev_tour()
         if prev_tour is None: # This is the first_tour
             inner_competition.first_tour = self.next_tour
             inner_competition.save()
@@ -448,25 +408,29 @@ class Tour(BaseModel):
             prev_tour.save()
         self.next_tour = None
         self.save()
-        WebSocketClients.broadcast("competition_full_update", {
-            "competition_id": inner_competition.competition_id,
-        })
+        ws_message.add_model_update(
+            model_type=InnerCompetition,
+            model_id=inner_competition.id,
+            schema={
+                "tours": {},
+            }
+        )
+        ws_message.add_message("active_tour_update")
 
-    @tornado.gen.coroutine
-    def update_data(self, new_data):
+    def update_data(self, new_data, ws_message):
         for key in ["name", "num_advances", "participants_per_heat", "active", "hope_tour"]:
             if key in new_data:
                 setattr(self, key, new_data[key])
         if "scoring_system" in new_data:
             self.scoring_system_name = new_data["scoring_system"]
         self.save()
-        WebSocketClients.broadcast("competition_full_update", {
-            "competition_id": self.inner_competition.competition_id,
-        })
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id,
+        )
 
     def serialize_base(self):
         return {
-            "id": self.id,
             "active": self.active,
             "scoring_system": self.scoring_system_name,
             "finalized": self.finalized,
@@ -477,15 +441,19 @@ class Tour(BaseModel):
             "hope_tour": self.hope_tour,
         }
 
-    @tornado.gen.coroutine
     def get_serialized_results(self):
-        tour_results = yield self.scoring_system.get_tour_results(self)
+        tour_results = self.scoring_system.get_tour_results(self)
         for row in tour_results:
-            row["participant"] = yield row["participant"].serialize(recursive=True)
+            participant = row["participant"].serialize()
+            participant["club"] = row["participant"].club.serialize()
+            participant["sportsmen"] = [sp.serialize() for sp in row["participant"].sportsmen]
+            row["participant"] = participant
         result = self.serialize_base()
         judges = []
         for judge in self.judges:
-            judges.append((yield judge.serialize()))
+            judge_s = judge.serialize()
+            judge_s["id"] = judge.id
+            judges.append(judge_s)
         result.update({
             "inner_competition_name": self.inner_competition.name,
             "judges": judges,
@@ -493,23 +461,12 @@ class Tour(BaseModel):
         })
         return result
 
-    @tornado.gen.coroutine
-    def serialize(self, recursive=False):
+    def serialize(self, children={}):
         result = self.serialize_base()
-        result.update({
-            "inner_competition_name": self.inner_competition.name,
-        })
-        if recursive:
-            judges = []
-            for judge in self.judges:
-                judges.append((yield judge.serialize()))
-            runs = []
-            for run in self.runs:
-                runs.append((yield run.serialize(recursive=True, judges=list(self.judges))))
-            result.update({
-                "judges": judges,
-                "runs": runs,
-            })
+        result = self.serialize_upper_child(result, "inner_competition", children)
+        result = self.serialize_lower_child(result, "judges", children)
+        result = self.serialize_lower_child(result, "runs", children,
+            lambda x, c: x.serialize(judges=list(self.judges), children=c))
         return result
 
 
@@ -528,43 +485,37 @@ class Judge(BaseModel):
     number = peewee.CharField()
 
     @classmethod
-    @tornado.gen.coroutine
-    def create_model(cls, competition, data):
+    def create_model(cls, competition, data, ws_message):
         create_kwargs = {
             key: data[key]
             for key in ["name", "category", "role", "hide_from_results", "number"]
         }
         create_kwargs["competition"] = competition
         Judge.create(**create_kwargs)
-        WebSocketClients.broadcast("competition_full_update", {
-            "competition_id": competition.id,
-        })
+        ws_message.add_message("reload_data")
 
-    @tornado.gen.coroutine
-    def delete_model(self):
+    def delete_model(self, ws_message):
         # If this judge has any scores, than this judge can't be deleted
         if self.score_set.count() > 0:
             raise RuntimeError("Unable to judge that has scores")
-        competition_id = self.competition_id
         self.delete_instance()
-        WebSocketClients.broadcast("competition_full_update", {
-            "competition_id": competition_id,
-        })
+        ws_message.add_message("reload_data")
 
-    @tornado.gen.coroutine
-    def update_data(self, new_data):
+    def update_data(self, new_data, ws_message):
         for key in ["name", "category", "role", "hide_from_results", "number"]:
             if key in new_data:
                 setattr(self, key, new_data[key])
         self.save()
-        WebSocketClients.broadcast("competition_full_update", {
-            "competition_id": self.competition_id,
-        })
+        ws_message.add_model_update(
+            model_type=Competition,
+            model_id=self.competition_id,
+            schema={
+                "judges": {}
+            }
+        )
 
-    @tornado.gen.coroutine
-    def serialize(self, recursive=False):
+    def serialize(self, children={}):
         return {
-            "id": self.id,
             "name": self.name,
             "category": self.category,
             "role": self.role,
@@ -585,14 +536,6 @@ class Run(BaseModel):
     tour = peewee.ForeignKeyField(Tour, related_name="runs")
     heat = peewee.IntegerField()
 
-    def set_heat(self, new_value):
-        self.heat = new_value
-        self.save()
-        WebSocketClients.broadcast("run_update", {
-            "run_id": self.id,
-        })
-
-    @tornado.gen.coroutine
     def create_scores(self):
         scores_judge_ids = { score.judge_id for score in self.scores }
         for judge in self.tour.judges:
@@ -613,14 +556,17 @@ class Run(BaseModel):
         score_obj = self.get_score_obj(judge)
         return score_obj.get()
 
-    @tornado.gen.coroutine
-    def update_data(self, new_data):
+    def update_data(self, new_data, ws_message):
         if "heat" in new_data:
             self.heat = new_data["heat"]
         self.save()
-        WebSocketClients.broadcast("tour_full_update", {
-            "tour_id": self.tour.id,
-        })
+        ws_message.add_model_update(
+            model_type=Tour,
+            model_id=self.tour_id,
+            schema={
+                "runs": {},
+            }
+        )
 
     def get_acrobatic_override(self, acrobatic):
         for override in self.acrobatic_overrides:
@@ -628,8 +574,7 @@ class Run(BaseModel):
                 return override
         return None
 
-    @tornado.gen.coroutine
-    def set_acrobatic_override(self, acrobatic, score):
+    def set_acrobatic_override(self, acrobatic, score, ws_message):
         override = self.get_acrobatic_override(acrobatic)
         if override is None:
             if score is not None:
@@ -644,31 +589,39 @@ class Run(BaseModel):
                 override.save()
             else:
                 override.delete_instance()
-        WebSocketClients.broadcast("run_full_update", {
-            "run_id": self.id,
-        })
 
-    @tornado.gen.coroutine
-    def serialize(self, recursive=False, judges=None):
-        result = {
-            "id": self.id,
-            "participant": (yield self.participant.serialize(recursive=False)),
-            "heat": self.heat,
-            "tour_id": self.tour_id,
-        }
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id,
+            schema={
+                "acrobatics": {},
+                "scores": {},
+            },
+        )
+        ws_message.add_message("tour_results_changed", { "tour_id": self.tour_id } )
+
+    def serialize_acrobatics(self, children=None):
         acro_list = []
         for acro in self.participant.acrobatics:
-            serialized = yield acro.serialize()
+            serialized = acro.serialize()
+            serialized["id"] = acro.id
             override = self.get_acrobatic_override(acro)
             serialized["original_score"] = serialized["score"]
             if override is not None:
                 serialized["score"] = override.score
             acro_list.append(serialized)
-        if recursive:
-            result.update({
-                "scores": (yield self.tour.scoring_system.get_run_scores(self, judges=judges)),
-                "acrobatics": acro_list,
-            })
+        return acro_list
+
+    def serialize(self, children={}, judges=None):
+        scores_obj = self.tour.scoring_system.get_run_scores(self, judges=judges)
+        result = {
+            "heat": self.heat,
+            "total_score": scores_obj["total_run_score"]
+        }
+        result = self.serialize_upper_child(result, "participant", children)
+        result = self.serialize_lower_child(result, "scores", children)
+        if "acrobatics" in children:
+            result["acrobatics"] = self.serialize_acrobatics(children=children["acrobatics"])
         return result
 
 
@@ -695,23 +648,27 @@ class Score(BaseModel):
     def get_data(self):
         return json.loads(self.score_data)
 
-    @tornado.gen.coroutine
     def set_data(self, score_data):
         self.score_data = json.dumps(score_data)
         self.save()
-        WebSocketClients.broadcast("score_update", {
-            "score_id": self.id,
-        })
 
-    @tornado.gen.coroutine
-    def update_data(self, new_data):
-        yield self.run.tour.scoring_system.update_score(self, new_data)
+    def update_data(self, new_data, ws_message):
+        self.run.tour.scoring_system.update_score(self, new_data)
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id,
+        )
+        ws_message.add_model_update(
+            model_type=Run,
+            model_id=self.run_id,
+        )
+        ws_message.add_message("tour_results_changed", { "tour_id": self.run.tour_id } )
 
-    @tornado.gen.coroutine
-    def serialize(self, recursive=False, judge=None):
-        result = yield self.run.tour.scoring_system.serialize_score(self, judge=judge)
-        result["id"] = self.id
-        return result
+    def serialize(self, children={}, judge=None):
+        return {
+            "judge_id": self.judge_id,
+            "data": self.run.tour.scoring_system.serialize_score(self, judge=judge)
+        }
 
 
 competition_proxy.initialize(Competition)

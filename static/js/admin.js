@@ -58,7 +58,7 @@ var CompetitionLoadingUI = (function (_React$Component) {
         key: "onSubmit",
         value: function onSubmit(event) {
             event.preventDefault();
-            new Api("tournaments.competition.load", {
+            Api("tournaments.competition.load", {
                 competition_id: this.props.competition_id,
                 data: JSON.parse(this._input.getDOMNode().value)
             }).onSuccess(function () {
@@ -200,7 +200,7 @@ var ManagmentUI = (function (_React$Component2) {
             if (name === null) {
                 return;
             }
-            new Api("tournaments.inner_competition.create", {
+            Api("tournaments.inner_competition.create", {
                 name: name,
                 competition_id: this.props.competition_id
             }).send();
@@ -221,19 +221,30 @@ var AdminUI = (function (_React$Component3) {
         _get(Object.getPrototypeOf(AdminUI.prototype), "constructor", this).call(this, props);
         this.state = {
             active_app: "judging",
-            id: null
+            name: null
         };
-        window.message_dispatcher.addListener("competition_update inner_competition_update tour_update tour_full_update competition_full_update").setCallback(this.loadData.bind(this));
+        message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
+        message_dispatcher.addListener("reload_data", this.loadData.bind(this));
         this.loadData();
     }
 
     _createClass(AdminUI, [{
+        key: "reloadFromStorage",
+        value: function reloadFromStorage() {
+            this.setState(storage.get("Competition").by_id(this.props.competition_id).serialize());
+        }
+    }, {
         key: "loadData",
         value: function loadData() {
-            new Api("tournaments.competition.get", { competition_id: this.props.competition_id, recursive: true }).onSuccess((function (response) {
-                this.setState(response);
-                console.log(response);
-            }).bind(this)).send();
+            Api("tournaments.competition.get", {
+                competition_id: this.props.competition_id,
+                children: {
+                    judges: {},
+                    inner_competitions: {
+                        tours: {}
+                    }
+                }
+            }).updateDB("Competition", this.props.competition_id).onSuccess(this.reloadFromStorage.bind(this)).send();
         }
 
         // Listeners
@@ -251,6 +262,7 @@ var AdminUI = (function (_React$Component3) {
     }, {
         key: "renderActiveApp",
         value: function renderActiveApp() {
+            console.log(this.state);
             switch (this.state.active_app) {
                 case "judging":
                     return React.createElement(JudgingUI, {
@@ -265,7 +277,7 @@ var AdminUI = (function (_React$Component3) {
     }, {
         key: "render",
         value: function render() {
-            if (this.state.id === null) {
+            if (this.state.name === null) {
                 return React.createElement(
                     "span",
                     null,

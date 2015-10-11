@@ -1,26 +1,28 @@
 class TabletScoreInput extends React.Component {
     updateScores(type, value) {
-        var score = this.props.scores[this.props.judge_id];
-        var new_score = $.extend({}, score.raw_data);
+        let new_score = {};
         new_score[type] = value;
         this.props.onScoreUpdate(new_score);
     }
     updateAcroDeduction(idx, value) {
-        var score = this.props.scores[this.props.judge_id];
-        var new_score = $.extend({}, score.raw_data);
-        new_score["deductions"][idx] = value;
+        let score = this.props.scores[this.props.judge_id].data;
+        let deductions = score.map(() => null);
+        deductions[idx] = value;
+        let new_score = {
+            deductions: deductions,
+        }
         this.props.onScoreUpdate(new_score);
     }
     overrideAcroScore(acro_id, value) {
-        (new Api("tournaments.acrobatic_override.set", {
+        Api("tournaments.acrobatic_override.set", {
             run_id: this.props.run_id,
             acrobatic_id: acro_id,
             score: value,
-        })).send();
+        }).send();
     }
     getCurrentJudge() {
         for (var idx in this.props.judges) if (this.props.judges.hasOwnProperty(idx)) {
-            if (this.props.judges[idx].id == this.props.judge_id) {
+            if (this.props.judges[idx].id === this.props.judge_id) {
                 return this.props.judges[idx];
             }
         }
@@ -29,9 +31,9 @@ class TabletScoreInput extends React.Component {
         var tech_judges = this.props.judges.filter(function(judge) {
             return judge.role == "tech_judge";
         }).map(function(judge) {
-            var timing_data = (this.props.scores[judge.id].raw_data.timing_violation === null)
+            var timing_data = (this.props.scores[judge.id].data.raw_data.timing_violation === null)
                 ? ["-", ""]
-                : (this.props.scores[judge.id].raw_data.timing_violation ? ["X", " fail"] : ["OK", " ok"])
+                : (this.props.scores[judge.id].data.raw_data.timing_violation ? ["X", " fail"] : ["OK", " ok"])
             return <div>
                 <h3>{ judge.name }:</h3>
                 <div className="tech-judge-info">
@@ -39,7 +41,7 @@ class TabletScoreInput extends React.Component {
                         Jump steps:
                     </div>
                     <div className="value">
-                        { this.props.scores[judge.id].raw_data.jump_steps }
+                        { this.props.scores[judge.id].data.raw_data.jump_steps }
                     </div>
                 </div>
                 <div className="tech-judge-info">
@@ -52,7 +54,7 @@ class TabletScoreInput extends React.Component {
                 </div>
             </div>
         }.bind(this));
-        var score = this.props.scores[this.props.judge_id];
+        var score = this.props.scores[this.props.judge_id].data;
         return <div>
             <h3>Penalty type:</h3>
             <TabletSelectorInput
@@ -85,7 +87,7 @@ class TabletScoreInput extends React.Component {
         return <div>{ acrobatics }</div>;
     }
     renderTechJudgeInputDance() {
-        var score = this.props.scores[this.props.judge_id];
+        var score = this.props.scores[this.props.judge_id].data;
         return <div>
             <h3>Jump steps count:</h3>
             <TabletIntegerInput
@@ -109,7 +111,7 @@ class TabletScoreInput extends React.Component {
         }
     }
     renderDanceJudgeInput() {
-        var score = this.props.scores[this.props.judge_id];
+        var score = this.props.scores[this.props.judge_id].data;
         return <div>
             <h3>Footwork, woman (% reduction):</h3>
             <TabletSelectorInput
@@ -150,7 +152,7 @@ class TabletScoreInput extends React.Component {
         </div>
     }
     renderAcroJudgeInput() {
-        var score = this.props.scores[this.props.judge_id];
+        var score = this.props.scores[this.props.judge_id].data;
         var inputs = this.props.acrobatics.map(function(acro, idx) {
             return <div>
                 <h3>{ acro.description }</h3>

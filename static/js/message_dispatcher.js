@@ -4,46 +4,6 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Listener = (function () {
-    function Listener() {
-        _classCallCheck(this, Listener);
-
-        this.filter = function (message) {
-            return true;
-        };
-        this.postprocess = function (data, callback) {
-            callback(data);
-        };
-        this.callback = function () {};
-    }
-
-    _createClass(Listener, [{
-        key: "setFilter",
-        value: function setFilter(func) {
-            this.filter = func;
-            return this;
-        }
-    }, {
-        key: "fetchObject",
-        value: function fetchObject(api_method, recursive) {
-            this.postprocess = function (data, callback) {
-                var request = $.extend({}, data);
-                request.recursive = recursive;
-                new Api(api_method, request).onSuccess(callback).send();
-            };
-            return this;
-        }
-    }, {
-        key: "setCallback",
-        value: function setCallback(func) {
-            this.callback = func;
-            return this;
-        }
-    }]);
-
-    return Listener;
-})();
-
 var MessageDispatcher = (function () {
     function MessageDispatcher() {
         _classCallCheck(this, MessageDispatcher);
@@ -76,26 +36,37 @@ var MessageDispatcher = (function () {
         key: "onMessage",
         value: function onMessage(message) {
             var data = JSON.parse(message.data);
-            var msg_type = data.type;
-            var msg_data = data.data;
-            console.log("Incoming message", msg_type, msg_data);
-            var listeners = (this.listeners[msg_type] || []).filter(function (listener) {
-                return listener.filter(msg_data);
-            }).forEach(function (listener) {
-                listener.postprocess(msg_data, listener.callback);
+            console.log("Incoming message", data);
+            data.messages.forEach((function (data) {
+                var msg_type = data[0];
+                var msg_data = data[1];
+                (this.listeners[msg_type] || []).forEach(function (listener) {
+                    listener(msg_data);
+                });
+            }).bind(this));
+            var data_changed = false;
+            data.model_updates.forEach(function (data) {
+                var model = storage.get(data.model).by_id(data.id);
+                if (model) {
+                    model.update(data.data);
+                }
+                data_changed = true;
             });
+            if (data_changed) {
+                (this.listeners["db_update"] || []).forEach(function (listener) {
+                    listener();
+                });
+            }
         }
     }, {
         key: "addListener",
-        value: function addListener(msg_types) {
-            var listener = new Listener();
+        value: function addListener(msg_types, callback) {
             msg_types.split(" ").forEach((function (msg_type) {
                 if (!this.listeners[msg_type]) {
                     this.listeners[msg_type] = [];
                 }
-                this.listeners[msg_type].push(listener);
+                this.listeners[msg_type].push(callback);
             }).bind(this));
-            return listener;
         }
     }]);
 

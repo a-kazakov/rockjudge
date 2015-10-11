@@ -1,5 +1,3 @@
-import tornado.gen
-
 from .impl import (
     ScoreWrapper,
     RunScore,
@@ -7,24 +5,20 @@ from .impl import (
 )
 
 
-@tornado.gen.coroutine
 def get_tour_results(tour):
-    return (yield TourScores(tour, acro=False).get_results())
+    return TourScores(tour, acro=False).get_results()
 
 
-@tornado.gen.coroutine
 def get_run_scores(run, judges=None):
-    return (yield RunScore(run, judges=judges, acro=False).serialize())
+    return RunScore(run, judges=judges, acro=False).serialize()
 
 
-@tornado.gen.coroutine
 def serialize_score(score, judge=None):
-    return (yield ScoreWrapper(score, judge=judge, acro=False).serialize())
+    return ScoreWrapper(score, judge=judge, acro=False).serialize()
 
 
-@tornado.gen.coroutine
 def update_score(score, client_data):
-    yield ScoreWrapper(score, acro=False).update(client_data)
+    ScoreWrapper(score, acro=False).update(client_data)
 
 
 def get_tablet_css():
