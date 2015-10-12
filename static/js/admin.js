@@ -430,7 +430,6 @@ var AdminUI = (function (_React$Component4) {
     }, {
         key: "renderActiveApp",
         value: function renderActiveApp() {
-            console.log(this.state);
             switch (this.state.active_app) {
                 case "judging":
                     return React.createElement(JudgingUI, {

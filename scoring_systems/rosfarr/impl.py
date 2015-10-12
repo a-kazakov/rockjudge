@@ -313,7 +313,7 @@ class TourScores:
 
     def get_results(self):
         return [{
-            "participant": row["run_score"].run.participant,
+            "run": row["run_score"].run,
             "place": row["place"],
             "advances": row["advances"],
             "scores": row["scores"]

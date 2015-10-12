@@ -51,7 +51,6 @@ class TourResults extends React.Component {
             return !judge.hide_from_results;
         });
         var table = null;
-        console.log(this.state);
         if (this.state.verbose) {
             table = <TourResultsVerboseTable
                 judges={ active_judges }

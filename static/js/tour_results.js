@@ -87,7 +87,6 @@ var TourResults = (function (_React$Component) {
                 return !judge.hide_from_results;
             });
             var table = null;
-            console.log(this.state);
             if (this.state.verbose) {
                 table = React.createElement(TourResultsVerboseTable, {
                     judges: active_judges,

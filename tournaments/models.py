@@ -190,14 +190,14 @@ class Tour(BaseModel):
             prev_tour.full_prefetch()
             if self.hope_tour:
                 return [
-                    row["participant"]
+                    row["run"].participant
                     for row in  prev_tour.scoring_system.get_tour_results(prev_tour)
                     if not row["advances"]
                 ]
             result = []
             while True:
                 result += [
-                    row["participant"]
+                    row["run"].participant
                     for row in prev_tour.scoring_system.get_tour_results(prev_tour)
                     if row["advances"]
                 ]
@@ -464,10 +464,14 @@ class Tour(BaseModel):
     def get_serialized_results(self):
         tour_results = self.scoring_system.get_tour_results(self)
         for row in tour_results:
-            participant = row["participant"].serialize()
-            participant["club"] = row["participant"].club.serialize()
-            participant["sportsmen"] = [sp.serialize() for sp in row["participant"].sportsmen]
+            run = row["run"]
+            participant = run.participant.serialize()
+            participant["id"] = run.participant.id
+            participant["club"] = run.participant.club.serialize()
+            participant["sportsmen"] = [sp.serialize() for sp in run.participant.sportsmen]
             row["participant"] = participant
+            row["acrobatics"] = run.serialize_acrobatics()
+            del row["run"]
         result = self.serialize_base()
         judges = []
         for judge in self.judges:

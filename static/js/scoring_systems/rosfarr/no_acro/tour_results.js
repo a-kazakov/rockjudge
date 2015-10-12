@@ -24,105 +24,109 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                 "table",
                 { className: "score-breakdown" },
                 React.createElement(
-                    "tr",
+                    "tbody",
                     null,
                     React.createElement(
-                        "th",
+                        "tr",
                         null,
-                        "FW:"
+                        React.createElement(
+                            "th",
+                            null,
+                            "FW:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            "-",
+                            score.raw_data.fw_woman,
+                            "%"
+                        )
                     ),
                     React.createElement(
-                        "td",
+                        "tr",
                         null,
-                        "-",
-                        score.raw_data.fw_woman,
-                        "%"
-                    )
-                ),
-                React.createElement(
-                    "tr",
-                    null,
-                    React.createElement(
-                        "th",
-                        null,
-                        "FM:"
+                        React.createElement(
+                            "th",
+                            null,
+                            "FM:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            "-",
+                            score.raw_data.fw_man,
+                            "%"
+                        )
                     ),
                     React.createElement(
-                        "td",
+                        "tr",
                         null,
-                        "-",
-                        score.raw_data.fw_man,
-                        "%"
-                    )
-                ),
-                React.createElement(
-                    "tr",
-                    null,
-                    React.createElement(
-                        "th",
-                        null,
-                        "DF:"
+                        React.createElement(
+                            "th",
+                            null,
+                            "DF:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            score.raw_data.dance_figs
+                        )
                     ),
                     React.createElement(
-                        "td",
+                        "tr",
                         null,
-                        score.raw_data.dance_figs
-                    )
-                ),
-                React.createElement(
-                    "tr",
-                    null,
-                    React.createElement(
-                        "th",
-                        null,
-                        "C:"
+                        React.createElement(
+                            "th",
+                            null,
+                            "C:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            score.raw_data.composition
+                        )
                     ),
                     React.createElement(
-                        "td",
+                        "tr",
                         null,
-                        score.raw_data.composition
-                    )
-                ),
-                React.createElement(
-                    "tr",
-                    null,
-                    React.createElement(
-                        "th",
-                        null,
-                        "BM:"
+                        React.createElement(
+                            "th",
+                            null,
+                            "BM:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            score.raw_data.big_mistakes
+                        )
                     ),
                     React.createElement(
-                        "td",
+                        "tr",
                         null,
-                        score.raw_data.big_mistakes
-                    )
-                ),
-                React.createElement(
-                    "tr",
-                    null,
-                    React.createElement(
-                        "th",
-                        null,
-                        "SM:"
+                        React.createElement(
+                            "th",
+                            null,
+                            "SM:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            score.raw_data.small_mistakes
+                        )
                     ),
                     React.createElement(
-                        "td",
+                        "tr",
                         null,
-                        score.raw_data.small_mistakes
-                    )
-                ),
-                React.createElement(
-                    "tr",
-                    null,
-                    React.createElement(
-                        "th",
-                        null,
-                        "T:"
-                    ),
-                    React.createElement(
-                        "td",
-                        { className: "total-score" },
-                        score.total_score
+                        React.createElement(
+                            "th",
+                            null,
+                            "T:"
+                        ),
+                        React.createElement(
+                            "td",
+                            { className: "total-score" },
+                            score.total_score
+                        )
                     )
                 )
             );
@@ -153,33 +157,37 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
             return React.createElement(
                 "table",
                 { className: "score-breakdown" },
-                acro_scores,
                 React.createElement(
-                    "tr",
+                    "tbody",
                     null,
+                    acro_scores,
                     React.createElement(
-                        "th",
+                        "tr",
                         null,
-                        "FD:"
+                        React.createElement(
+                            "th",
+                            null,
+                            "FD:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            score.raw_data.mistakes
+                        )
                     ),
                     React.createElement(
-                        "td",
+                        "tr",
                         null,
-                        score.raw_data.mistakes
-                    )
-                ),
-                React.createElement(
-                    "tr",
-                    null,
-                    React.createElement(
-                        "th",
-                        null,
-                        "T:"
-                    ),
-                    React.createElement(
-                        "td",
-                        { className: "total-score" },
-                        score.total_score
+                        React.createElement(
+                            "th",
+                            null,
+                            "T:"
+                        ),
+                        React.createElement(
+                            "td",
+                            { className: "total-score" },
+                            score.total_score
+                        )
                     )
                 )
             );
@@ -220,6 +228,40 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                     this.renderScore(judge, score)
                 );
             }).bind(this));
+            var acro_scores_cell = null;
+            if (this.props.scoring_system == "rosfarr.acro") {
+                var acro_scores = this.props.row.acrobatics.map((function (acro, idx) {
+                    return React.createElement(
+                        "tr",
+                        { key: idx },
+                        React.createElement(
+                            "th",
+                            null,
+                            "A",
+                            idx + 1,
+                            ":"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            acro.score.toFixed(1)
+                        )
+                    );
+                }).bind(this));
+                acro_scores_cell = React.createElement(
+                    "td",
+                    { className: "acro_scores" },
+                    React.createElement(
+                        "table",
+                        { className: "score-breakdown" },
+                        React.createElement(
+                            "tbody",
+                            null,
+                            acro_scores
+                        )
+                    )
+                );
+            }
             return React.createElement(
                 "tr",
                 null,
@@ -243,6 +285,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                     { className: "score" },
                     this.props.row.scores.total_run_score
                 ),
+                acro_scores_cell,
                 judges_scores,
                 next_tour_cell
             );
@@ -276,13 +319,14 @@ var TourResultsVerboseTable = (function (_React$Component2) {
                 return React.createElement(
                     "th",
                     { key: judge.id },
-                    React.createElement(
-                        "div",
-                        null,
-                        judge.number
-                    )
+                    judge.number
                 );
             });
+            var acro_header = this.props.scoring_system == "rosfarr.acro" ? React.createElement(
+                "th",
+                { className: "acro" },
+                "Acrobatic"
+            ) : null;
             return React.createElement(
                 "table",
                 { className: "scores-table no-break" },
@@ -295,39 +339,24 @@ var TourResultsVerboseTable = (function (_React$Component2) {
                         React.createElement(
                             "th",
                             { className: "place" },
-                            React.createElement(
-                                "div",
-                                null,
-                                "Place"
-                            )
+                            "Place"
                         ),
                         React.createElement(
                             "th",
                             { className: "number" },
-                            React.createElement(
-                                "div",
-                                null,
-                                "Number"
-                            )
+                            "Number"
                         ),
                         React.createElement(
                             "th",
                             { className: "participant" },
-                            React.createElement(
-                                "div",
-                                null,
-                                "Participant"
-                            )
+                            "Participant"
                         ),
                         React.createElement(
                             "th",
                             { className: "score" },
-                            React.createElement(
-                                "div",
-                                null,
-                                "Score"
-                            )
+                            "Score"
                         ),
+                        acro_header,
                         judges_header,
                         this.props.has_next_tour ? React.createElement(
                             "th",

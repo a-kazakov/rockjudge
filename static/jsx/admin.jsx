@@ -262,7 +262,6 @@ class AdminUI extends React.Component {
     // Rendering
 
     renderActiveApp() {
-        console.log(this.state);
         switch (this.state.active_app) {
         case "judging":
             return <JudgingUI

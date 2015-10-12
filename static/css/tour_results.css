@@ -6832,6 +6832,9 @@ table.no-break th {
 .tour-results {
   margin: 10px;
 }
+.tour-results td {
+  vertical-align: top;
+}
 .tour-results .score-breakdown th,
 .tour-results .score-breakdown td {
   border: none;
