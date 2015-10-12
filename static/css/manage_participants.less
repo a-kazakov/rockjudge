@@ -1,0 +1,79 @@
+@import "base.less";
+
+html, body {
+  overflow-x: hidden;
+}
+
+.manage-participants {
+  margin: 10px;
+  table {
+    tr.viewer {
+      cursor: pointer;
+      .number {
+        width: 150px;
+        text-align: center;
+      }
+      .delete {
+        width: 50px;
+        text-align: center;
+        button {
+          padding: 0 7px;
+        }
+      }
+    }
+    tr.editor {
+      &.create {
+        background-color: @brand-warning;
+      }
+      padding: 15px;
+      background-color: @ui-light;
+      input, select {
+        height: 25px;
+        &, button {
+          vertical-align: middle;
+        }
+        border: 1px solid #ccc;
+      }
+      input {
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      .sportsman {
+        .first-name, .last-name {
+          width: 32.5%;
+        }
+        .yob, .gender {
+          width: 15%;
+        }
+      }
+      .acrobatic {
+        .description {
+          width: 85%;
+        }
+        .score {
+          text-align: right;
+          width: 10%;
+        }
+      }
+      .del {
+        .btn;
+        .btn-danger;
+        width: 5%;
+        padding: 0;
+        margin: 0;
+        height: 24px;
+        font-weight: bold;
+      }
+      .general-info {
+        .buttons {
+          button {
+            width: 50%;
+          }
+        }
+        input, select {
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
+}

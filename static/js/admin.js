@@ -92,13 +92,13 @@ var ManagmentUI = (function (_React$Component2) {
         }
     }, {
         key: "renderInnerCompetition",
-        value: function renderInnerCompetition(ic) {
+        value: function renderInnerCompetition(ic, page) {
             return React.createElement(
                 "div",
                 {
-                    className: "level-2" + (this.state.page == "manage_inner_competition" && this.state.page_props.inner_competition_id == ic.id ? " active" : ""),
+                    className: "level-2" + (this.state.page == page && this.state.page_props.inner_competition_id == ic.id ? " active" : ""),
                     key: ic.id,
-                    onClick: this.switchPage.bind(this, "manage_inner_competition", { inner_competition_id: ic.id }) },
+                    onClick: this.switchPage.bind(this, page, { inner_competition_id: ic.id }) },
                 ic.name
             );
         }
@@ -109,6 +109,7 @@ var ManagmentUI = (function (_React$Component2) {
                 case "load_competition":
                     return React.createElement(CompetitionLoadingUI, { competition_id: this.props.competition_id });
                 case "manage_inner_competition":
+                    // Seeking for inner competition with give ID
                     var ic = null;
                     this.props.inner_competitions.forEach((function (el) {
                         if (el.id == this.state.page_props.inner_competition_id) {
@@ -118,6 +119,8 @@ var ManagmentUI = (function (_React$Component2) {
                     return React.createElement(InnerCompetitionManagementUI, {
                         key: this.state.page_props.inner_competition_id,
                         inner_competition: ic });
+                case "manage_participants":
+                    return React.createElement("iframe", { src: "/participants/" + this.state.page_props.inner_competition_id.toString() });
                 case "manage_judges":
                     return React.createElement(JudgesManagementUI, {
                         judges: this.props.judges,
@@ -127,8 +130,11 @@ var ManagmentUI = (function (_React$Component2) {
     }, {
         key: "render",
         value: function render() {
-            var ics = this.props.inner_competitions.map((function (ic) {
-                return this.renderInnerCompetition(ic);
+            var ics_management = this.props.inner_competitions.map((function (ic) {
+                return this.renderInnerCompetition(ic, "manage_inner_competition");
+            }).bind(this));
+            var ics_participants = this.props.inner_competitions.map((function (ic) {
+                return this.renderInnerCompetition(ic, "manage_participants");
             }).bind(this));
             return React.createElement(
                 "table",
@@ -161,12 +167,22 @@ var ManagmentUI = (function (_React$Component2) {
                                     { className: "level-1" },
                                     "Manage categories"
                                 ),
-                                ics,
+                                ics_management,
                                 React.createElement(
                                     "div",
                                     { className: "level-2 new-ic", onClick: this.createInnerCommpetition.bind(this) },
                                     "Add new catagory"
                                 )
+                            ),
+                            React.createElement(
+                                "details",
+                                { open: "true", className: "block" },
+                                React.createElement(
+                                    "summary",
+                                    { className: "level-1" },
+                                    "Manage participants"
+                                ),
+                                ics_participants
                             ),
                             React.createElement(
                                 "div",

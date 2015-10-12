@@ -1,6 +1,9 @@
 from collections import deque
 
-from participants.models import Acrobatic
+from participants.models import (
+    Acrobatic,
+    Participant,
+)
 from tournaments.models import (
     Competition,
     InnerCompetition,
@@ -141,6 +144,12 @@ class Api:
         model.update_data(request["data"], ws_message=ws_message)
         return {}
 
+    @classmethod
+    def participant_set(cls, request, ws_message):
+        model = cls.get_model(Participant, "participant_id", request)
+        model.update_data(request["data"], ws_message=ws_message)
+        return {}
+
     # Creaters
 
     @classmethod
@@ -168,6 +177,15 @@ class Api:
             ws_message=ws_message)
         return {}
 
+    @classmethod
+    def participant_create(cls, request, ws_message):
+        inner_competition = cls.get_model(InnerCompetition, "inner_competition_id", request)
+        Participant.create_model(
+            inner_competition=inner_competition,
+            data=request["data"],
+            ws_message=ws_message)
+        return {}
+
     # Deleters
 
     @classmethod
@@ -180,6 +198,12 @@ class Api:
     def judge_delete(cls, request, ws_message):
         judge = cls.get_model(Judge, "judge_id", request)
         judge.delete_model(ws_message=ws_message)
+        return {}
+
+    @classmethod
+    def participant_delete(cls, request, ws_message):
+        participant = cls.get_model(Participant, "participant_id", request)
+        participant.delete_model(ws_message=ws_message)
         return {}
 
     # Custom actions

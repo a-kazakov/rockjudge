@@ -6830,155 +6830,192 @@ table.no-break th {
   page-break-inside: avoid;
 }
 html,
-body,
-#content {
-  overflow: hidden;
+body {
+  overflow-x: hidden;
 }
-table.outer-table {
-  width: 100%;
-  height: 100%;
+.manage-participants {
+  margin: 10px;
 }
-table.outer-table td {
-  vertical-align: top;
+.manage-participants table tr.viewer {
+  cursor: pointer;
 }
-table.outer-table th {
-  height: 30px;
+.manage-participants table tr.viewer .number {
+  width: 150px;
+  text-align: center;
+}
+.manage-participants table tr.viewer .delete {
+  width: 50px;
+  text-align: center;
+}
+.manage-participants table tr.viewer .delete button {
+  padding: 0 7px;
+}
+.manage-participants table tr.editor {
+  padding: 15px;
+  background-color: #bdd4de;
+}
+.manage-participants table tr.editor.create {
+  background-color: #f0ad4e;
+}
+.manage-participants table tr.editor input,
+.manage-participants table tr.editor select {
+  height: 25px;
+  border: 1px solid #ccc;
+}
+.manage-participants table tr.editor input,
+.manage-participants table tr.editor select,
+.manage-participants table tr.editor input button,
+.manage-participants table tr.editor select button {
   vertical-align: middle;
+}
+.manage-participants table tr.editor input {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.manage-participants table tr.editor .sportsman .first-name,
+.manage-participants table tr.editor .sportsman .last-name {
+  width: 32.5%;
+}
+.manage-participants table tr.editor .sportsman .yob,
+.manage-participants table tr.editor .sportsman .gender {
+  width: 15%;
+}
+.manage-participants table tr.editor .acrobatic .description {
+  width: 85%;
+}
+.manage-participants table tr.editor .acrobatic .score {
+  text-align: right;
+  width: 10%;
+}
+.manage-participants table tr.editor .del {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: normal;
   text-align: center;
-  background-color: #2b3a42;
-  color: #efefef;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  border-radius: 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  color: #ffffff;
+  background-color: #d9534f;
+  border-color: #d43f3a;
+  width: 5%;
+  padding: 0;
+  margin: 0;
+  height: 24px;
   font-weight: bold;
 }
-table.outer-table .left-col {
-  width: 100px;
-  background-color: #2b3a42;
+.manage-participants table tr.editor .del:focus,
+.manage-participants table tr.editor .del:active:focus,
+.manage-participants table tr.editor .del.active:focus,
+.manage-participants table tr.editor .del.focus,
+.manage-participants table tr.editor .del:active.focus,
+.manage-participants table tr.editor .del.active.focus {
+  outline: thin dotted;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
 }
-table.outer-table .left-col div.app {
-  width: 100px;
-  height: 100px;
-  cursor: pointer;
-  position: relative;
-  color: #bdd4de;
-  margin-bottom: 30px;
+.manage-participants table tr.editor .del:hover,
+.manage-participants table tr.editor .del:focus,
+.manage-participants table tr.editor .del.focus {
+  color: #333333;
+  text-decoration: none;
 }
-table.outer-table .left-col div.app .icon {
-  line-height: 1;
-  text-align: center;
-  font-size: 90px;
-  font-weight: 900;
+.manage-participants table tr.editor .del:active,
+.manage-participants table tr.editor .del.active {
+  outline: 0;
+  background-image: none;
+  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
-table.outer-table .left-col div.app .label {
-  text-align: center;
-  font-size: 12px;
-  font-weight: bold;
-  position: absolute;
-  bottom: 3px;
-  left: 0;
-  right: 0;
-  height: 15px;
+.manage-participants table tr.editor .del.disabled,
+.manage-participants table tr.editor .del[disabled],
+fieldset[disabled] .manage-participants table tr.editor .del {
+  cursor: not-allowed;
+  opacity: 0.65;
+  filter: alpha(opacity=65);
+  -webkit-box-shadow: none;
+  box-shadow: none;
 }
-table.outer-table .left-col div.app:hover {
-  background-color: #3f5561;
+a.manage-participants table tr.editor .del.disabled,
+fieldset[disabled] a.manage-participants table tr.editor .del {
+  pointer-events: none;
 }
-table.outer-table .left-col div.app.active,
-table.outer-table .left-col div.app.active:hover {
-  background-color: #171f23;
+.manage-participants table tr.editor .del:focus,
+.manage-participants table tr.editor .del.focus {
+  color: #ffffff;
+  background-color: #c9302c;
+  border-color: #761c19;
 }
-table.app-content {
-  width: 100%;
-  height: 100%;
+.manage-participants table tr.editor .del:hover {
+  color: #ffffff;
+  background-color: #c9302c;
+  border-color: #ac2925;
 }
-table.app-content .side-panel {
-  width: 350px;
-  background-color: #bdd4de;
-  overflow: auto;
+.manage-participants table tr.editor .del:active,
+.manage-participants table tr.editor .del.active,
+.open > .dropdown-toggle.manage-participants table tr.editor .del {
+  color: #ffffff;
+  background-color: #c9302c;
+  border-color: #ac2925;
 }
-table.app-content .side-panel .block {
+.manage-participants table tr.editor .del:active:hover,
+.manage-participants table tr.editor .del.active:hover,
+.open > .dropdown-toggle.manage-participants table tr.editor .del:hover,
+.manage-participants table tr.editor .del:active:focus,
+.manage-participants table tr.editor .del.active:focus,
+.open > .dropdown-toggle.manage-participants table tr.editor .del:focus,
+.manage-participants table tr.editor .del:active.focus,
+.manage-participants table tr.editor .del.active.focus,
+.open > .dropdown-toggle.manage-participants table tr.editor .del.focus {
+  color: #ffffff;
+  background-color: #ac2925;
+  border-color: #761c19;
+}
+.manage-participants table tr.editor .del:active,
+.manage-participants table tr.editor .del.active,
+.open > .dropdown-toggle.manage-participants table tr.editor .del {
+  background-image: none;
+}
+.manage-participants table tr.editor .del.disabled,
+.manage-participants table tr.editor .del[disabled],
+fieldset[disabled] .manage-participants table tr.editor .del,
+.manage-participants table tr.editor .del.disabled:hover,
+.manage-participants table tr.editor .del[disabled]:hover,
+fieldset[disabled] .manage-participants table tr.editor .del:hover,
+.manage-participants table tr.editor .del.disabled:focus,
+.manage-participants table tr.editor .del[disabled]:focus,
+fieldset[disabled] .manage-participants table tr.editor .del:focus,
+.manage-participants table tr.editor .del.disabled.focus,
+.manage-participants table tr.editor .del[disabled].focus,
+fieldset[disabled] .manage-participants table tr.editor .del.focus,
+.manage-participants table tr.editor .del.disabled:active,
+.manage-participants table tr.editor .del[disabled]:active,
+fieldset[disabled] .manage-participants table tr.editor .del:active,
+.manage-participants table tr.editor .del.disabled.active,
+.manage-participants table tr.editor .del[disabled].active,
+fieldset[disabled] .manage-participants table tr.editor .del.active {
+  background-color: #d9534f;
+  border-color: #d43f3a;
+}
+.manage-participants table tr.editor .del .badge {
+  color: #d9534f;
+  background-color: #ffffff;
+}
+.manage-participants table tr.editor .general-info .buttons button {
+  width: 50%;
+}
+.manage-participants table tr.editor .general-info input,
+.manage-participants table tr.editor .general-info select {
   margin-bottom: 10px;
-}
-table.app-content .side-panel .level-1 {
-  font-weight: bold;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-table.app-content .side-panel .level-2 {
-  padding: 2px 5px 3px 30px;
-  cursor: pointer;
-}
-table.app-content .side-panel .level-2.new-ic {
-  margin-top: 10px;
-  font-style: italic;
-}
-table.app-content .side-panel .level-1:hover,
-table.app-content .side-panel .level-2:hover {
-  background-color: #537284 !important;
-}
-table.app-content .side-panel .level-1.grey,
-table.app-content .side-panel .level-2.grey {
-  color: #999;
-}
-table.app-content .side-panel .level-1.active,
-table.app-content .side-panel .level-2.active {
-  background-color: #ff530d;
-}
-table.app-content .app-page {
-  overflow: scroll;
-  width: 100%;
-  height: 100%;
-}
-table.app-content iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-div.load-competition-page {
-  width: 100%;
-  height: 100%;
-}
-div.load-competition-page form.load-competition {
-  height: calc(100% - 60px);
-  text-align: center;
-}
-div.load-competition-page form.load-competition textarea {
-  width: 100%;
-  height: calc(100% - 60px);
-  margin-bottom: 10px;
-}
-div.load-competition-page form.load-competition button {
-  width: 200px;
-}
-.ic-management-ui {
-  padding: 10px;
-}
-.ic-management-ui .tour {
-  background-color: #bdd4de;
-  padding: 10px 10px 10px 10px;
-}
-.ic-management-ui .tour h3 {
-  margin-top: 0;
-}
-.ic-management-ui .tour.tour-create {
-  background-color: #f0ad4e;
-}
-.ic-management-ui .tour .buttons {
-  padding-top: 10px;
-  text-align: center;
-}
-.judges-management-ui {
-  padding: 10px;
-}
-.judges-management-ui .judge {
-  background-color: #bdd4de;
-  padding: 10px 10px 10px 10px;
-  margin-bottom: 10px;
-}
-.judges-management-ui .judge h3 {
-  margin-top: 0;
-}
-.judges-management-ui .judge.judge-create {
-  background-color: #f0ad4e;
-}
-.judges-management-ui .judge .buttons {
-  padding-top: 10px;
-  text-align: center;
 }

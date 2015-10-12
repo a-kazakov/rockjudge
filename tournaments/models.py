@@ -53,6 +53,7 @@ class Competition(BaseModel):
         }
         result = self.serialize_lower_child(result, "inner_competitions", children)
         result = self.serialize_lower_child(result, "judges", children)
+        result = self.serialize_lower_child(result, "clubs", children)
         result = self.serialize_lower_child(result, "participants", children)
         return result
 

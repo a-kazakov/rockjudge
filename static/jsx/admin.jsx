@@ -41,14 +41,14 @@ class ManagmentUI extends React.Component {
             page_props: props,
         });
     }
-    renderInnerCompetition(ic) {
+    renderInnerCompetition(ic, page) {
         return <div
                 className={ "level-2" + (
-                    this.state.page == "manage_inner_competition"
+                    this.state.page == page
                         && this.state.page_props.inner_competition_id == ic.id
                         ? " active" : "") }
                 key={ ic.id }
-                onClick={ this.switchPage.bind(this, "manage_inner_competition", { inner_competition_id: ic.id }) }>
+                onClick={ this.switchPage.bind(this, page, { inner_competition_id: ic.id }) }>
             { ic.name }
         </div>
     }
@@ -57,7 +57,8 @@ class ManagmentUI extends React.Component {
         case "load_competition":
             return <CompetitionLoadingUI competition_id={ this.props.competition_id } />
         case "manage_inner_competition":
-            var ic = null;
+            // Seeking for inner competition with give ID
+            let ic = null;
             this.props.inner_competitions.forEach(function(el) {
                 if (el.id == this.state.page_props.inner_competition_id) {
                     ic = el;
@@ -66,6 +67,8 @@ class ManagmentUI extends React.Component {
             return <InnerCompetitionManagementUI
                 key={ this.state.page_props.inner_competition_id }
                 inner_competition={ ic } />
+        case "manage_participants":
+            return <iframe src={ "/participants/" + this.state.page_props.inner_competition_id.toString() } />
         case "manage_judges":
             return <JudgesManagementUI
                 judges={ this.props.judges }
@@ -73,8 +76,11 @@ class ManagmentUI extends React.Component {
         }
     }
     render() {
-        var ics = this.props.inner_competitions.map(function(ic) {
-            return this.renderInnerCompetition(ic);
+        var ics_management = this.props.inner_competitions.map(function(ic) {
+            return this.renderInnerCompetition(ic, "manage_inner_competition");
+        }.bind(this));
+        var ics_participants = this.props.inner_competitions.map(function(ic) {
+            return this.renderInnerCompetition(ic, "manage_participants");
         }.bind(this));
         return <table className="app-content">
             <tbody><tr>
@@ -90,10 +96,16 @@ class ManagmentUI extends React.Component {
                         <summary className="level-1">
                             Manage categories
                         </summary>
-                        { ics }
+                        { ics_management }
                         <div className="level-2 new-ic" onClick={ this.createInnerCommpetition.bind(this) }>
                             Add new catagory
                         </div>
+                    </details>
+                    <details open="true" className="block">
+                        <summary className="level-1">
+                            Manage participants
+                        </summary>
+                        { ics_participants }
                     </details>
                     <div className="block">
                         <div

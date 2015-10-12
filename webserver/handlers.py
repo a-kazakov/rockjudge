@@ -18,6 +18,14 @@ class AdminHandler(tornado.web.RequestHandler):
         self.render("admin.html", competition_id=competition_id)
 
 
+class ManageParticipantsHandler(tornado.web.RequestHandler):
+    def get(self, inner_competition_id):
+        self.render(
+            "manage_participants.html",
+            inner_competition_id=inner_competition_id,
+        )
+
+
 class TourAdminHandler(tornado.web.RequestHandler):
     def get(self, tour_id):
         tour = Tour.select().where(Tour.id == tour_id).get()

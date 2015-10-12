@@ -7,10 +7,12 @@ competition_proxy = peewee.Proxy()
 inner_competition_proxy = peewee.Proxy()
 
 class Club(BaseModel):
-    indexes = (
-        (("competition", "external_id"), False),
-    )
-    competition = peewee.ForeignKeyField(competition_proxy)
+    class Meta:
+        indexes = (
+            (("competition", "external_id"), False),
+        )
+        order_by = ["name"]
+    competition = peewee.ForeignKeyField(competition_proxy, related_name="clubs")
     name = peewee.CharField()
     city = peewee.CharField()
     external_id = peewee.CharField(null=True, default=None)
@@ -47,7 +49,7 @@ class Participant(BaseModel):
         )
         order_by = ["number"]
 
-    inner_competition = peewee.ForeignKeyField(inner_competition_proxy, related_name="participants")
+    inner_competition = peewee.ForeignKeyField(inner_competition_proxy, null=True, related_name="participants")
     formation_name = peewee.CharField(default="")
     number = peewee.IntegerField()
     club = peewee.ForeignKeyField(Club)
@@ -75,16 +77,140 @@ class Participant(BaseModel):
     def is_solo(self):
         return self.num_sportsmen() == 1
 
+    def update_data(self, new_data, ws_message):
+        number_changed = "number" in new_data and new_data["number"] != self.number
+        for key in ["number", "external_id", "formation_name"]:
+            if key in new_data:
+                setattr(self, key, new_data[key])
+        if "club_id" in new_data:
+            club = Club.get((Club.id == new_data["club_id"]) & (Club.competition == self.inner_competition.competition_id))
+            self.club = club
+        if "acrobatics" in new_data:
+            current_acro = list(self.acrobatics)
+            new_acro = new_data["acrobatics"]
+            for idx, (current_item, new_item) in enumerate(zip(current_acro, new_acro)):
+                current_item.description = new_item["description"]
+                current_item.score = new_item["score"]
+                current_item.number = idx
+                current_item.save()
+            if len(new_acro) > len(current_acro):
+                for idx in range(len(current_acro), len(new_acro)):
+                    Acrobatic.create(
+                        participant=self,
+                        description=new_acro[idx]["description"],
+                        score=new_acro[idx]["score"],
+                        number=idx,
+                    )
+            elif len(new_acro) < len(current_acro):
+                for acro in current_acro[len(new_acro):]:
+                    acro.delete_instance()
+        if "sportsmen" in new_data:
+            current_sp = list(self.sportsmen)
+            new_sp = new_data["sportsmen"]
+            for current_item, new_item in zip(current_sp, new_sp):
+                current_item.last_name = new_item["last_name"]
+                current_item.first_name = new_item["first_name"]
+                current_item.year_of_birth = new_item["year_of_birth"]
+                current_item.gender = new_item["gender"]
+                current_item.save()
+            if len(new_sp) > len(current_sp):
+                for new_item in new_sp[len(current_sp):]:
+                    Sportsman.create(
+                        participant=self,
+                        last_name=new_item["last_name"],
+                        first_name=new_item["first_name"],
+                        year_of_birth=new_item["year_of_birth"],
+                        gender=new_item["gender"],
+                    )
+            elif len(new_sp) < len(current_sp):
+                for sp in current_sp[len(new_sp):]:
+                    sp.delete_instance()
+        self.save()
+        if number_changed:
+            ws_message.add_model_update(
+                model_type=inner_competition_proxy,
+                model_id=self.inner_competition_id,
+                schema={
+                    "participants": {}
+                }
+            )
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id,
+            schema={
+                "club": {},
+                "sportsmen": {},
+                "acrobatics": {},
+            }
+        )
+
+    @classmethod
+    def create_model(cls, inner_competition, data, ws_message):
+        create_kwargs = {
+            key: data[key]
+            for key in ["formation_name", "number"]
+        }
+        if "external_id" in data:
+            create_kwargs["external_id"] = data["external_id"]
+        club = Club.get((Club.id == data["club_id"]) & (Club.competition == inner_competition.competition_id))
+        create_kwargs["club"] = club
+        create_kwargs["inner_competition"] = inner_competition
+        model = cls.create(**create_kwargs)
+        for idx, acro in enumerate(data["acrobatics"]):
+            acro_kwargs = {
+                key: acro[key]
+                for key in ["description", "score"]
+            }
+            acro_kwargs["number"] = idx
+            acro_kwargs["participant"] = model
+            Acrobatic.create(**acro_kwargs)
+        for sp in data["sportsmen"]:
+            sp_kwargs = {
+                key: sp[key]
+                for key in ["last_name", "first_name", "year_of_birth", "gender"]
+            }
+            sp_kwargs["participant"] = model
+            Sportsman.create(**sp_kwargs)
+        ws_message.add_model_update(
+            model_type=inner_competition_proxy,
+            model_id=inner_competition.id,
+            schema={
+                "participants": {}
+            }
+        )
+        ws_message.add_model_update(
+            model_type=cls,
+            model_id=model.id,
+            schema={
+                "club": {},
+                "sportsmen": {},
+                "acrobatics": {},
+            }
+        )
+
+    def delete_model(self, ws_message):
+        inner_competition_id = self.inner_competition_id
+        self.inner_competition = None
+        self.save()
+        ws_message.add_model_update(
+            model_type=inner_competition_proxy,
+            model_id=inner_competition_id,
+            schema={
+                "participants": {}
+            }
+        )
+
     def serialize(self, children={}):
         result = {
             "name": self.get_name(),
-            "club": self.club.serialize(),
+            "formation_name": self.formation_name,
             "number": self.number,
         }
         if "acrobatics" in children:
             result["acrobatics"] = [
                 acro.serialize(children["acrobatics"]) for acro in self.acrobatics
             ]
+        result = self.serialize_upper_child(result, "club", children)
         result = self.serialize_lower_child(result, "sportsmen", children)
         return result
 
@@ -132,6 +258,7 @@ class Sportsman(BaseModel):
     participant = peewee.ForeignKeyField(Participant, related_name="sportsmen")
     first_name = peewee.CharField()
     last_name = peewee.CharField()
+    year_of_birth = peewee.IntegerField()
     gender = peewee.CharField(max_length=1, choices=(("F", "Female"), ("M", "Male"),))
 
     @property
@@ -148,6 +275,7 @@ class Sportsman(BaseModel):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "gender": self.gender,
+            "year_of_birth": self.year_of_birth,
         }
 
 

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% autoescape None %}
+
+{% block title %}
+  Manage participants
+{% end %}
+
+{% block styles %}
+  <link rel="stylesheet" href="/static/css/manage_participants.css">
+{% end %}
+
+{% block scripts %}
+  <script src="/static/js/manage_participants.js"></script>
+  <script>
+    React.render(
+      React.createElement(ParticipantsManager, { inner_competition_id: {{ inner_competition_id }} }),
+      document.getElementById("content")
+    );
+  </script>
+{% end %}
+
+{% block body %}
+  <div id="content"></div>
+{% end %}
