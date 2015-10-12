@@ -226,8 +226,72 @@ var ManagmentUI = (function (_React$Component2) {
     return ManagmentUI;
 })(React.Component);
 
-var AdminUI = (function (_React$Component3) {
-    _inherits(AdminUI, _React$Component3);
+var ServiceUI = (function (_React$Component3) {
+    _inherits(ServiceUI, _React$Component3);
+
+    function ServiceUI(props) {
+        _classCallCheck(this, ServiceUI);
+
+        _get(Object.getPrototypeOf(ServiceUI.prototype), "constructor", this).call(this, props);
+    }
+
+    _createClass(ServiceUI, [{
+        key: "reloadClients",
+        value: function reloadClients() {
+            if (confirm("Are you sure want to reload all clients?")) {
+                Api("tournaments.service.reload_clients", {}).send();
+            }
+        }
+    }, {
+        key: "refreshClients",
+        value: function refreshClients() {
+            if (confirm("Are you sure want to refresh all clients?")) {
+                Api("tournaments.service.refresh_clients", {}).send();
+            }
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(
+                    "header",
+                    null,
+                    React.createElement(
+                        "h1",
+                        null,
+                        "Service menu"
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "service-menu" },
+                    React.createElement(
+                        "h3",
+                        null,
+                        "Clients management"
+                    ),
+                    React.createElement(
+                        "button",
+                        { className: "btn btn-primary control-btn", onClick: this.reloadClients.bind(this) },
+                        "Reload data on all clients"
+                    ),
+                    React.createElement(
+                        "button",
+                        { className: "btn btn-primary control-btn", onClick: this.refreshClients.bind(this) },
+                        "Refresh all clients"
+                    )
+                )
+            );
+        }
+    }]);
+
+    return ServiceUI;
+})(React.Component);
+
+var AdminUI = (function (_React$Component4) {
+    _inherits(AdminUI, _React$Component4);
 
     // Intialization
 
@@ -236,7 +300,7 @@ var AdminUI = (function (_React$Component3) {
 
         _get(Object.getPrototypeOf(AdminUI.prototype), "constructor", this).call(this, props);
         this.state = {
-            active_app: "judging",
+            active_app: "management",
             name: null
         };
         message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
@@ -288,6 +352,9 @@ var AdminUI = (function (_React$Component3) {
                         inner_competitions: this.state.inner_competitions,
                         judges: this.state.judges,
                         competition_id: this.props.competition_id });
+                case "service":
+                    return React.createElement(ServiceUI, {
+                        inner_competitions: this.state.inner_competitions });
             }
         }
     }, {
@@ -365,7 +432,7 @@ var AdminUI = (function (_React$Component3) {
                             ),
                             React.createElement(
                                 "div",
-                                { className: "app" },
+                                { className: "app" + (this.state.active_app == "service" ? " active" : ""), onClick: this.setApp.bind(this, "service") },
                                 React.createElement(
                                     "div",
                                     { className: "icon" },

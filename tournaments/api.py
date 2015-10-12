@@ -265,6 +265,16 @@ class Api:
         competition.load(request["data"], ws_message=ws_message)
         return {}
 
+    @classmethod
+    def service_reload_clients(cls, request, ws_message):
+        ws_message.add_message("reload_data");
+        return {}
+
+    @classmethod
+    def service_refresh_clients(cls, request, ws_message):
+        ws_message.add_message("force_refresh");
+        return {}
+
     # Service
 
     @classmethod

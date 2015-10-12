@@ -135,6 +135,38 @@ class ManagmentUI extends React.Component {
     }
 }
 
+class ServiceUI extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    reloadClients() {
+        if (confirm("Are you sure want to reload all clients?")) {
+            Api("tournaments.service.reload_clients", {}).send();
+        }
+    }
+    refreshClients() {
+        if (confirm("Are you sure want to refresh all clients?")) {
+            Api("tournaments.service.refresh_clients", {}).send();
+        }
+    }
+    render() {
+        return <div>
+            <header>
+                <h1>Service menu</h1>
+            </header>
+            <div className="service-menu">
+                <h3>Clients management</h3>
+                <button className="btn btn-primary control-btn" onClick={ this.reloadClients.bind(this) } >
+                    Reload data on all clients
+                </button>
+                <button className="btn btn-primary control-btn" onClick={ this.refreshClients.bind(this) }>
+                    Refresh all clients
+                </button>
+            </div>
+        </div>;
+    }
+}
+
 class AdminUI extends React.Component {
 
     // Intialization
@@ -142,7 +174,7 @@ class AdminUI extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            active_app: "judging",
+            active_app: "management",
             name: null,
         };
         message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
@@ -191,6 +223,9 @@ class AdminUI extends React.Component {
                 inner_competitions={ this.state.inner_competitions }
                 judges={ this.state.judges }
                 competition_id={ this.props.competition_id } />;
+        case "service":
+            return <ServiceUI
+                inner_competitions={ this.state.inner_competitions } />
         }
     }
     render() {
@@ -216,7 +251,7 @@ class AdminUI extends React.Component {
                         <div className="icon">R</div>
                         <div className="label">Results</div>
                     </div>
-                    <div className="app">
+                    <div className={ "app" + (this.state.active_app == "service" ? " active" : "") } onClick={ this.setApp.bind(this, "service") }>
                         <div className="icon">S</div>
                         <div className="label">Service</div>
                     </div>

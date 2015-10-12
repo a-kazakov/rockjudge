@@ -10,7 +10,12 @@ class MessageDispatcher {
         this.ws.onopen = function() {
             console.log("Connected.");
             if (this.closed) {
-                window.location.reload(true);
+                this.onMessage({
+                    data: JSON.stringify({
+                        messages: [["reload_data", null]],
+                        model_updates: [],
+                    })
+                })
             }
         }.bind(this);
         this.ws.onclose = function() {
@@ -23,10 +28,12 @@ class MessageDispatcher {
     }
     onMessage(message) {
         let data = JSON.parse(message.data);
-        console.log("Incoming message", data);
         data.messages.forEach(function(data) {
             let msg_type = data[0];
             let msg_data = data[1];
+            if (msg_type == "force_refresh") {
+                window.location.reload(true);
+            }
             (this.listeners[msg_type] || []).forEach(function(listener) {
                 listener(msg_data);
             });

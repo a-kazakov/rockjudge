@@ -21,7 +21,12 @@ var MessageDispatcher = (function () {
             this.ws.onopen = (function () {
                 console.log("Connected.");
                 if (this.closed) {
-                    window.location.reload(true);
+                    this.onMessage({
+                        data: JSON.stringify({
+                            messages: [["reload_data", null]],
+                            model_updates: []
+                        })
+                    });
                 }
             }).bind(this);
             this.ws.onclose = (function () {
@@ -36,10 +41,12 @@ var MessageDispatcher = (function () {
         key: "onMessage",
         value: function onMessage(message) {
             var data = JSON.parse(message.data);
-            console.log("Incoming message", data);
             data.messages.forEach((function (data) {
                 var msg_type = data[0];
                 var msg_data = data[1];
+                if (msg_type == "force_refresh") {
+                    window.location.reload(true);
+                }
                 (this.listeners[msg_type] || []).forEach(function (listener) {
                     listener(msg_data);
                 });

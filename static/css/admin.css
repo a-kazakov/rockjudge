@@ -6982,3 +6982,10 @@ div.load-competition-page form.load-competition button {
   padding-top: 10px;
   text-align: center;
 }
+.service-menu {
+  padding: 10px;
+}
+.service-menu .control-btn {
+  width: 200px;
+  margin-right: 10px;
+}
