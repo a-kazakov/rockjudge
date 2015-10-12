@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% autoescape None %}
+
+{% block title %}
+  RockJudge
+{% end %}
+
+{% block styles %}
+  <link rel="stylesheet" href="/static/css/start_page.css">
+{% end %}
+
+{% block scripts %}
+  <script src="/static/js/start_page.js"></script>
+  <script>
+    React.render(
+      React.createElement(StartPage, {
+        competition_ids: {{ competition_ids }}
+      }),
+      document.getElementById("content")
+    );
+  </script>
+{% end %}
+
+{% block body %}
+  <div id="content"></div>
+{% end %}

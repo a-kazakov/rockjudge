@@ -7,6 +7,7 @@ import tornado.web
 from db import Database
 from tournaments.api import Api as TournamentsApi
 from tournaments.models import (
+    Competition,
     Judge,
     Tour,
 )
@@ -24,6 +25,12 @@ class ManageParticipantsHandler(tornado.web.RequestHandler):
             "manage_participants.html",
             inner_competition_id=inner_competition_id,
         )
+
+
+class StartPageHandler(tornado.web.RequestHandler):
+    def get(self):
+        competition_ids = [c.id for c in Competition.select()]
+        self.render("start_page.html", competition_ids=competition_ids)
 
 
 class TourAdminHandler(tornado.web.RequestHandler):

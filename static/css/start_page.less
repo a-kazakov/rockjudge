@@ -1,0 +1,34 @@
+@import "base.less";
+
+.start-screen {
+  padding: 20px;
+  .btn-default:hover {
+    background-color: @btn-default-bg;
+    border-color: @btn-default-border;
+  }
+  h3 {
+    text-align: center;
+  }
+  .role-selector {
+    h3 {
+      padding-bottom: 20px;
+    }
+  }
+  .competition-selector {
+    width: 100%;
+    max-width: 500px;
+    margin: 100px auto;
+    .list {
+      width: 100%;
+      .button {
+        cursor: pointer;
+        background-color: @ui-dark;
+        color: @ui-white;
+        font-size: 18px;
+        text-align: center;
+        margin: 20px 0;
+        padding: 15px;
+      }
+    }
+  }
+}

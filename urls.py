@@ -4,6 +4,7 @@ from webserver.handlers import (
     ApiHandler,
     AdminHandler,
     ManageParticipantsHandler,
+    StartPageHandler,
     TourAdminHandler,
     TourResultsHandler,
     TabletHandler,
@@ -14,6 +15,7 @@ from webserver.websocket import WebSocketClients
 ws_router = SockJSRouter(WebSocketClients, '/ws')
 
 handlers = [
+    (r"/$", StartPageHandler),
     (r"/admin/(\d+)$", AdminHandler),
     (r"/participants/(\d+)$", ManageParticipantsHandler),
     (r"/tour/(\d+)$", TourAdminHandler),
