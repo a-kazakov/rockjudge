@@ -6989,3 +6989,7 @@ div.load-competition-page form.load-competition button {
   width: 200px;
   margin-right: 10px;
 }
+.service-menu .unfinalization select {
+  max-width: 500px;
+  display: inline;
+}

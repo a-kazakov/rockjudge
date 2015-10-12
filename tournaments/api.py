@@ -248,6 +248,12 @@ class Api:
         return {}
 
     @classmethod
+    def tour_unfinalize(cls, request, ws_message):
+        tour = cls.get_model(Tour, "tour_id", request)
+        tour.unfinalize(ws_message=ws_message)
+        return {}
+
+    @classmethod
     def tour_shuffle_heats(cls, request, ws_message):
         tour = cls.get_model(Tour, "tour_id", request)
         tour.shuffle_heats(ws_message=ws_message)

@@ -250,6 +250,88 @@ var ServiceUI = (function (_React$Component3) {
             }
         }
     }, {
+        key: "unfinalizeTour",
+        value: function unfinalizeTour(event) {
+            event.preventDefault();
+            if (prompt("Are you sure want to unfinalize this tour? Type \"unfinalize\" below if you are") == "unfinalize") {
+                Api("tournaments.tour.unfinalize", {
+                    tour_id: this.refs.select_unfinalize.getDOMNode().value
+                }).onSuccess(function (event) {
+                    alert("Success.");
+                }).send();
+            } else {
+                alert("Incorrect passcode.");
+            }
+        }
+    }, {
+        key: "renderUnfinalize",
+        value: function renderUnfinalize() {
+            var eligible_tours = [];
+            this.props.inner_competitions.forEach(function (ic) {
+                for (var idx = ic.tours.length - 1; idx >= 0; --idx) {
+                    var tour = ic.tours[idx];
+                    if (tour.finalized) {
+                        eligible_tours.push(React.createElement(
+                            "option",
+                            { value: tour.id, key: tour.id },
+                            ic.name,
+                            " — ",
+                            tour.name
+                        ));
+                        break;
+                    }
+                }
+            });
+            if (eligible_tours.length == 0) {
+                return React.createElement(
+                    "div",
+                    { className: "alert alert-danger" },
+                    "No finalized rounds found."
+                );
+            }
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(
+                    "div",
+                    { className: "alert alert-danger" },
+                    React.createElement(
+                        "p",
+                        null,
+                        React.createElement(
+                            "strong",
+                            null,
+                            "Please note, that rounds should be unfinalized in exceptional cases only!"
+                        )
+                    ),
+                    React.createElement(
+                        "p",
+                        null,
+                        "Anyway, if you need to do that, keep track on participants that advance to the next round. After repeated finalization list of participants of the next round will be automatically recreated. If some participants advanced to the next round during first finalization are not advanced after repeated one theirs scores for the next round will be lost forever!"
+                    ),
+                    React.createElement(
+                        "p",
+                        null,
+                        "And don't forget to re-print all the tables of this and next rounds."
+                    )
+                ),
+                React.createElement(
+                    "form",
+                    { className: "unfinalization", onSubmit: this.unfinalizeTour.bind(this) },
+                    React.createElement(
+                        "select",
+                        { className: "form-control", ref: "select_unfinalize" },
+                        eligible_tours
+                    ),
+                    React.createElement(
+                        "button",
+                        { className: "btn btn-primary", type: "submit" },
+                        "Unfinalize"
+                    )
+                )
+            );
+        }
+    }, {
         key: "render",
         value: function render() {
             return React.createElement(
@@ -281,7 +363,13 @@ var ServiceUI = (function (_React$Component3) {
                         "button",
                         { className: "btn btn-primary control-btn", onClick: this.refreshClients.bind(this) },
                         "Refresh all clients"
-                    )
+                    ),
+                    React.createElement(
+                        "h3",
+                        null,
+                        "Unfinalize round"
+                    ),
+                    this.renderUnfinalize()
                 )
             );
         }

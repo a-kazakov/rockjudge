@@ -149,6 +149,53 @@ class ServiceUI extends React.Component {
             Api("tournaments.service.refresh_clients", {}).send();
         }
     }
+    unfinalizeTour(event) {
+        event.preventDefault();
+        if (prompt("Are you sure want to unfinalize this tour? Type \"unfinalize\" below if you are") == "unfinalize") {
+            Api("tournaments.tour.unfinalize", {
+                tour_id: this.refs.select_unfinalize.getDOMNode().value,
+            }).onSuccess(function(event) {
+                alert("Success.");
+            }).send();
+        } else {
+            alert("Incorrect passcode.");
+        }
+    }
+    renderUnfinalize() {
+        let eligible_tours = [];
+        this.props.inner_competitions.forEach(function(ic) {
+            for (var idx = ic.tours.length - 1; idx >= 0; --idx) {
+                let tour = ic.tours[idx];
+                if (tour.finalized) {
+                    eligible_tours.push(<option value={ tour.id } key={ tour.id }>
+                            { ic.name } &mdash; { tour.name }
+                        </option>);
+                    break;
+                }
+            }
+        });
+        if (eligible_tours.length == 0) {
+            return <div className="alert alert-danger">
+                No finalized rounds found.
+            </div>
+        }
+        return <div>
+            <div className="alert alert-danger">
+                <p><strong>Please note, that rounds should be unfinalized in exceptional cases only!</strong></p>
+                <p>Anyway, if you need to do that, keep track on participants that advance to the next round.
+                After repeated finalization list of participants of the next round will be automatically recreated.
+                If some participants advanced to the next round during first finalization are not advanced after
+                    repeated one theirs scores for the next round will be lost forever!</p>
+                <p>And don't forget to re-print all the tables of this and next rounds.</p>
+            </div>
+            <form className="unfinalization" onSubmit={ this.unfinalizeTour.bind(this) }>
+                <select className="form-control" ref="select_unfinalize">
+                    { eligible_tours }
+                </select>
+                <button className="btn btn-primary" type="submit">Unfinalize</button>
+            </form>
+        </div>
+    }
     render() {
         return <div>
             <header>
@@ -162,6 +209,8 @@ class ServiceUI extends React.Component {
                 <button className="btn btn-primary control-btn" onClick={ this.refreshClients.bind(this) }>
                     Refresh all clients
                 </button>
+                <h3>Unfinalize round</h3>
+                { this.renderUnfinalize() }
             </div>
         </div>;
     }

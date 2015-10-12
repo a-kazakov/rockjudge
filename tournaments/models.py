@@ -324,6 +324,12 @@ class Tour(BaseModel):
         if not prev_tour.finalized:
             raise RuntimeError("Previous tour should be finalized")
 
+    def check_next_tour_not_finalized(self):
+        if self.next_tour is None:
+            return
+        if self.next_tour.finalized:
+            raise RuntimeError("Next tour shouldn't be finalized")
+
     def init(self, ws_message):
         self.check_prev_tour_finalized()
         self.create_participant_runs()
@@ -359,6 +365,15 @@ class Tour(BaseModel):
             model_id=self.id
         )
 
+    def unfinalize(self, ws_message):
+        self.check_next_tour_not_finalized()
+        self.finalized = False
+        self.save()
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id
+        )
+
     @property
     def scoring_system(self):
         return get_scoring_system(self)
@@ -373,6 +388,8 @@ class Tour(BaseModel):
         create_kwargs["inner_competition"] = inner_competition
         tour = Tour.create(**create_kwargs)
         if add_after is None:
+            if inner_competition.first_tour is not None and inner_competition.first_tour.finalized:
+                raise RuntimeError("Unable to add tour before finalized one.");
             tour.next_tour = inner_competition.first_tour
             inner_competition.first_tour = tour
             inner_competition.save()
@@ -380,6 +397,8 @@ class Tour(BaseModel):
         else:
             for prev_tour in inner_competition.tours:
                 if prev_tour.id == add_after:
+                    if prev_tour.next_tour is not None and prev_tour.next_tour.finalized:
+                        raise RuntimeError("Unable to add tour before finalized one.");
                     tour.next_tour = prev_tour.next_tour
                     prev_tour.next_tour = tour
                     prev_tour.save()
