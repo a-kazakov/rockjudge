@@ -34,7 +34,7 @@ var CompetitionLoadingUI = (function (_React$Component) {
                     React.createElement(
                         "h1",
                         null,
-                        "Load competition data"
+                        _("admin.headers.load_competition")
                     )
                 ),
                 React.createElement(
@@ -49,7 +49,7 @@ var CompetitionLoadingUI = (function (_React$Component) {
                     React.createElement(
                         "button",
                         { className: "btn btn-primary", type: "submit" },
-                        "Apply"
+                        _("admin.buttons.import")
                     )
                 )
             );
@@ -62,7 +62,7 @@ var CompetitionLoadingUI = (function (_React$Component) {
                 competition_id: this.props.competition_id,
                 data: JSON.parse(this._input.getDOMNode().value)
             }).onSuccess(function () {
-                alert("Success.");
+                alert(_("global.messages.success"));
             }).send();
         }
     }]);
@@ -156,7 +156,7 @@ var ManagmentUI = (function (_React$Component2) {
                                     {
                                         className: "level-1" + (this.state.page == "load_competition" ? " active" : ""),
                                         onClick: this.switchPage.bind(this, "load_competition") },
-                                    "Load competition data"
+                                    _("admin.menu.load_competition")
                                 )
                             ),
                             React.createElement(
@@ -165,13 +165,13 @@ var ManagmentUI = (function (_React$Component2) {
                                 React.createElement(
                                     "summary",
                                     { className: "level-1" },
-                                    "Manage categories"
+                                    _("admin.menu.manage_inner_competitions")
                                 ),
                                 ics_management,
                                 React.createElement(
                                     "div",
                                     { className: "level-2 new-ic", onClick: this.createInnerCommpetition.bind(this) },
-                                    "Add new catagory"
+                                    _("admin.menu.add_inner_competition")
                                 )
                             ),
                             React.createElement(
@@ -180,7 +180,7 @@ var ManagmentUI = (function (_React$Component2) {
                                 React.createElement(
                                     "summary",
                                     { className: "level-1" },
-                                    "Manage participants"
+                                    _("admin.menu.manage_sportsmen")
                                 ),
                                 ics_participants
                             ),
@@ -192,7 +192,7 @@ var ManagmentUI = (function (_React$Component2) {
                                     {
                                         className: "level-1" + (this.state.page == "manage_judges" ? " active" : ""),
                                         onClick: this.switchPage.bind(this, "manage_judges") },
-                                    "Manage judges"
+                                    _("admin.menu.manage_judges")
                                 )
                             )
                         ),
@@ -212,7 +212,7 @@ var ManagmentUI = (function (_React$Component2) {
     }, {
         key: "createInnerCommpetition",
         value: function createInnerCommpetition() {
-            var name = prompt("Enter the name of new category:");
+            var name = prompt(_("admin.prompts.new_inner_competition_name"));
             if (name === null) {
                 return;
             }
@@ -238,14 +238,14 @@ var ServiceUI = (function (_React$Component3) {
     _createClass(ServiceUI, [{
         key: "reloadClients",
         value: function reloadClients() {
-            if (confirm("Are you sure want to reload all clients?")) {
+            if (confirm(_("admin.confirms.reload_clients"))) {
                 Api("tournaments.service.reload_clients", {}).send();
             }
         }
     }, {
         key: "refreshClients",
         value: function refreshClients() {
-            if (confirm("Are you sure want to refresh all clients?")) {
+            if (_("admin.confirms.refresh_clients")) {
                 Api("tournaments.service.refresh_clients", {}).send();
             }
         }
@@ -253,14 +253,14 @@ var ServiceUI = (function (_React$Component3) {
         key: "unfinalizeTour",
         value: function unfinalizeTour(event) {
             event.preventDefault();
-            if (prompt("Are you sure want to unfinalize this tour? Type \"unfinalize\" below if you are") == "unfinalize") {
+            if (prompt(_("admin.confirms.unfinalize_tour")) == "unfinalize") {
                 Api("tournaments.tour.unfinalize", {
                     tour_id: this.refs.select_unfinalize.getDOMNode().value
                 }).onSuccess(function (event) {
-                    alert("Success.");
+                    alert(_("global.messages.success"));
                 }).send();
             } else {
-                alert("Incorrect passcode.");
+                alert(_("admin.messages.invalid_passcode"));
             }
         }
     }, {
@@ -286,7 +286,7 @@ var ServiceUI = (function (_React$Component3) {
                 return React.createElement(
                     "div",
                     { className: "alert alert-danger" },
-                    "No finalized rounds found."
+                    _("admin.alerts.no_finalized")
                 );
             }
             return React.createElement(
@@ -295,25 +295,7 @@ var ServiceUI = (function (_React$Component3) {
                 React.createElement(
                     "div",
                     { className: "alert alert-danger" },
-                    React.createElement(
-                        "p",
-                        null,
-                        React.createElement(
-                            "strong",
-                            null,
-                            "Please note, that rounds should be unfinalized in exceptional cases only!"
-                        )
-                    ),
-                    React.createElement(
-                        "p",
-                        null,
-                        "Anyway, if you need to do that, keep track on participants that advance to the next round. After repeated finalization list of participants of the next round will be automatically recreated. If some participants advanced to the next round during first finalization are not advanced after repeated one theirs scores for the next round will be lost forever!"
-                    ),
-                    React.createElement(
-                        "p",
-                        null,
-                        "And don't forget to re-print all the tables of this and next rounds."
-                    )
+                    _("admin.alerts.unfinalize_warning")
                 ),
                 React.createElement(
                     "form",
@@ -326,7 +308,7 @@ var ServiceUI = (function (_React$Component3) {
                     React.createElement(
                         "button",
                         { className: "btn btn-primary", type: "submit" },
-                        "Unfinalize"
+                        _("admin.buttons.unfinalize")
                     )
                 )
             );
@@ -343,7 +325,7 @@ var ServiceUI = (function (_React$Component3) {
                     React.createElement(
                         "h1",
                         null,
-                        "Service menu"
+                        _("admin.headers.service_menu")
                     )
                 ),
                 React.createElement(
@@ -352,22 +334,22 @@ var ServiceUI = (function (_React$Component3) {
                     React.createElement(
                         "h3",
                         null,
-                        "Clients management"
+                        _("admin.headers.clients_management")
                     ),
                     React.createElement(
                         "button",
                         { className: "btn btn-primary control-btn", onClick: this.reloadClients.bind(this) },
-                        "Reload data on all clients"
+                        _("admin.buttons.reload_clients")
                     ),
                     React.createElement(
                         "button",
                         { className: "btn btn-primary control-btn", onClick: this.refreshClients.bind(this) },
-                        "Refresh all clients"
+                        _("admin.buttons.refresh_clients")
                     ),
                     React.createElement(
                         "h3",
                         null,
-                        "Unfinalize round"
+                        _("admin.headers.unfinalize_tour")
                     ),
                     this.renderUnfinalize()
                 )

@@ -152,21 +152,21 @@ var ParticipantEditorRow = (function (_React$Component) {
                         }).bind(this),
                         type: "text",
                         className: "last-name",
-                        placeholder: "Last name",
+                        placeholder: _("models.participant.last_name"),
                         value: sp.last_name,
                         onChange: this.onChange.bind(this, "sp", idx, "last_name", "any") }),
                     React.createElement("input", {
                         tabIndex: 1000 + 10 * idx + 2,
                         type: "text",
                         className: "first-name",
-                        placeholder: "First name",
+                        placeholder: _("models.participant.first_name"),
                         value: sp.first_name,
                         onChange: this.onChange.bind(this, "sp", idx, "first_name", "any") }),
                     React.createElement("input", {
                         tabIndex: 1000 + 10 * idx + 3,
                         type: "text",
                         className: "yob",
-                        placeholder: "YOB",
+                        placeholder: _("models.participant.yob"),
                         value: sp.year_of_birth,
                         onChange: this.onChange.bind(this, "sp", idx, "year_of_birth", "number") }),
                     React.createElement(
@@ -179,12 +179,12 @@ var ParticipantEditorRow = (function (_React$Component) {
                         React.createElement(
                             "option",
                             { value: "F" },
-                            "F"
+                            _("models.participant.gender_f")
                         ),
                         React.createElement(
                             "option",
                             { value: "M" },
-                            "M"
+                            _("models.participant.gender_m")
                         )
                     ),
                     React.createElement(
@@ -211,14 +211,14 @@ var ParticipantEditorRow = (function (_React$Component) {
                         }).bind(this),
                         type: "text",
                         className: "description",
-                        placeholder: "Description",
+                        placeholder: _("models.participant.acro_description"),
                         value: acro.description,
                         onChange: this.onChange.bind(this, "acro", idx, "description", "any") }),
                     React.createElement("input", {
                         tabIndex: 2000 + 10 * idx + 2,
                         type: "text",
                         className: "score",
-                        placeholder: "Score",
+                        placeholder: _("models.participant.acro_score"),
                         value: acro.score,
                         onChange: this.onChange.bind(this, "acro", idx, "score", "score") }),
                     React.createElement(
@@ -256,7 +256,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                 React.createElement(
                                     "h4",
                                     null,
-                                    "General info"
+                                    _("models.participant.general_info")
                                 ),
                                 React.createElement("input", {
                                     tabIndex: "1",
@@ -266,7 +266,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                             this.latest_added = null;
                                         };
                                     }).bind(this),
-                                    placeholder: "Number",
+                                    placeholder: _("models.participant.number"),
                                     className: "full-width",
                                     value: this.state.number,
                                     onChange: this.onChange.bind(this, "", null, "number", "number") }),
@@ -281,7 +281,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                 ),
                                 React.createElement("input", {
                                     tabIndex: "3",
-                                    placeholder: "Formation name",
+                                    placeholder: _("models.participant.formation_name"),
                                     className: "full-width",
                                     value: this.state.formation_name,
                                     onChange: this.onChange.bind(this, "", null, "formation_name", "any") }),
@@ -294,7 +294,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                             tabIndex: "10000",
                                             type: "submit",
                                             className: "btn btn-primary" },
-                                        "Submit"
+                                        _("global.buttons.submit")
                                     ),
                                     React.createElement(
                                         "button",
@@ -303,7 +303,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                             type: "button",
                                             className: "btn btn-danger",
                                             onClick: this.props.stopEditing },
-                                        "Discard"
+                                        _("global.buttons.discard")
                                     )
                                 )
                             ),
@@ -313,7 +313,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                 React.createElement(
                                     "h4",
                                     null,
-                                    "Sportsmen"
+                                    _("models.participant.sportsmen")
                                 ),
                                 sportsmen,
                                 React.createElement(
@@ -323,7 +323,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                         type: "button",
                                         className: "full-width btn btn-sm btn-default",
                                         onClick: this.addSportsman.bind(this) },
-                                    "Add"
+                                    _("global.buttons.add")
                                 )
                             ),
                             React.createElement(
@@ -332,7 +332,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                 React.createElement(
                                     "h4",
                                     null,
-                                    "Acrobatics"
+                                    _("models.participant.acrobatics")
                                 ),
                                 acrobatics,
                                 React.createElement(
@@ -342,7 +342,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                         type: "button",
                                         className: "full-width btn btn-sm btn-default",
                                         onClick: this.addAcrobatic.bind(this) },
-                                    "Add"
+                                    _("global.buttons.add")
                                 )
                             )
                         )
@@ -508,7 +508,7 @@ var CreationRow = (function (_React$Component3) {
                             type: "button",
                             className: "btn btn-default full-width",
                             onClick: this.startEditing.bind(this) },
-                        "Add new participant"
+                        _("admin.buttons.add_participant")
                     )
                 )
             );
@@ -585,28 +585,24 @@ var ParticipantsManager = (function (_React$Component4) {
                             React.createElement(
                                 "th",
                                 { className: "number" },
-                                "Number"
+                                _("models.participant.number")
                             ),
                             React.createElement(
                                 "th",
                                 { className: "name" },
-                                "Participant"
+                                _("models.participant.name")
                             ),
                             React.createElement(
                                 "th",
                                 { className: "club-name" },
-                                "Club"
+                                _("models.participant.club_name")
                             ),
                             React.createElement(
                                 "th",
                                 { className: "club-city" },
-                                "City"
+                                _("models.participant.club_city")
                             ),
-                            React.createElement(
-                                "th",
-                                { className: "delete" },
-                                "Delete"
-                            )
+                            React.createElement("th", { className: "delete" })
                         ),
                         rows,
                         React.createElement(CreationRow, {
@@ -640,7 +636,7 @@ var ParticipantsManager = (function (_React$Component4) {
                     React.createElement(
                         "h2",
                         null,
-                        "Participants management"
+                        _("admin.headers.participants_management")
                     )
                 ),
                 this.renderTable()

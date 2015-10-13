@@ -59,13 +59,13 @@ var TourResults = (function (_React$Component) {
                 return React.createElement(
                     "button",
                     { className: "btn btn-primary", onClick: this.toggleVerbose.bind(this) },
-                    "Simple view"
+                    _("results.buttons.simple_view")
                 );
             } else {
                 return React.createElement(
                     "button",
                     { className: "btn btn-primary", onClick: this.toggleVerbose.bind(this) },
-                    "Verbose view"
+                    _("results.buttons.verbose_view")
                 );
             }
         }
@@ -76,7 +76,7 @@ var TourResults = (function (_React$Component) {
                 return React.createElement(
                     "div",
                     { className: "alert alert-danger" },
-                    "These results are not yet finalized!"
+                    _("results.alerts.not_finalized")
                 );
             }
         }
@@ -113,7 +113,7 @@ var TourResults = (function (_React$Component) {
                             { className: "btn btn-primary", onClick: function () {
                                     window.print();
                                 } },
-                            "Print"
+                            _("results.buttons.print")
                         )
                     ),
                     React.createElement(

@@ -36,14 +36,14 @@ class TourResults extends React.Component {
 
     renderVerboseButton() {
         if (this.state.verbose) {
-            return <button className="btn btn-primary" onClick={ this.toggleVerbose.bind(this) }>Simple view</button>
+            return <button className="btn btn-primary" onClick={ this.toggleVerbose.bind(this) }>{ _("results.buttons.simple_view") }</button>
         } else {
-            return <button className="btn btn-primary" onClick={ this.toggleVerbose.bind(this) }>Verbose view</button>
+            return <button className="btn btn-primary" onClick={ this.toggleVerbose.bind(this) }>{ _("results.buttons.verbose_view") }</button>
         }
     }
     renderNonFinalizedWarning() {
         if (!this.state.finalized) {
-            return <div className="alert alert-danger">These results are not yet finalized!</div>
+            return <div className="alert alert-danger">{ _("results.alerts.not_finalized") }</div>
         }
     }
     render() {
@@ -66,7 +66,7 @@ class TourResults extends React.Component {
             <header>
                 <div className="controls">
                     { this.renderVerboseButton() }
-                    <button className="btn btn-primary" onClick={ function() { window.print(); } }>Print</button>
+                    <button className="btn btn-primary" onClick={ function() { window.print(); } }>{ _("results.buttons.print") }</button>
                 </div>
                 <h1>{ this.state.inner_competition_name }</h1>
                 <h2>{ this.state.name }</h2>

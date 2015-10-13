@@ -9,15 +9,15 @@ from fixtures import RockFixture
 class Fixture(RockFixture):
     def execute(self):
         # Competition
-        self.comp = Competition.create(name="Test competition")
-        self.jA = Judge.create(name="Ясюлевича Мария Святославовна",    category="1K",  competition=self.comp, number="A", role="dance_judge")
-        self.jB = Judge.create(name="Мащенко Оксана Тихоновна",         category="ВK",  competition=self.comp, number="B", role="acro_judge")
-        self.jC = Judge.create(name="Смолина Ксения Германовна",        category="2K",  competition=self.comp, number="C", role="dance_judge")
-        self.jD = Judge.create(name="Менде Николай Макарович",          category="1K",  competition=self.comp, number="D", role="acro_judge")
-        self.jE = Judge.create(name="Ёжов Анатолий Гаврилевич",         category="3K",  competition=self.comp, number="E", role="dance_judge")
-        self.jH = Judge.create(name="Цейдлерина Нина Степановна",       category="МK",  competition=self.comp, number="Head", role="head_judge")
-        self.jX = Judge.create(name="Амелин Давид Андреевич",           category="3K",  competition=self.comp, number="T1", role="tech_judge", hide_from_results=True)
-        self.jY = Judge.create(name="Тычкина Вероника Владиленовна",    category="2K",  competition=self.comp, number="T2", role="tech_judge", hide_from_results=True)
+        self.comp = Competition.create(name="Чемпионат и первенство Томской области по акробатическому рок-н-роллу, г. Томск, 11.11.2111")
+        self.jA = Judge.create(name="Ясюлевича Мария Святославовна",    category="1K",  competition=self.comp, number="1", role="dance_judge")
+        self.jB = Judge.create(name="Мащенко Оксана Тихоновна",         category="ВK",  competition=self.comp, number="2", role="acro_judge")
+        self.jC = Judge.create(name="Смолина Ксения Германовна",        category="2K",  competition=self.comp, number="3", role="dance_judge")
+        self.jD = Judge.create(name="Менде Николай Макарович",          category="1K",  competition=self.comp, number="4", role="acro_judge")
+        self.jE = Judge.create(name="Ёжов Анатолий Гаврилевич",         category="3K",  competition=self.comp, number="5", role="dance_judge")
+        self.jH = Judge.create(name="Цейдлерина Нина Степановна",       category="МK",  competition=self.comp, number="Гл.", role="head_judge")
+        self.jX = Judge.create(name="Амелин Давид Андреевич",           category="3K",  competition=self.comp, number="Т1", role="tech_judge", hide_from_results=True)
+        self.jY = Judge.create(name="Тычкина Вероника Владиленовна",    category="2K",  competition=self.comp, number="Т2", role="tech_judge", hide_from_results=True)
         return
 
         # Tours

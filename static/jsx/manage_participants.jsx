@@ -117,21 +117,21 @@ class ParticipantEditorRow extends React.Component {
                     }.bind(this)}
                     type="text"
                     className="last-name"
-                    placeholder="Last name"
+                    placeholder={ _("models.participant.last_name") }
                     value={ sp.last_name }
                     onChange={ this.onChange.bind(this, "sp", idx, "last_name", "any") } />
                 <input
                     tabIndex={ 1000 + 10 * idx + 2 }
                     type="text"
                     className="first-name"
-                    placeholder="First name"
+                    placeholder={ _("models.participant.first_name") }
                     value={ sp.first_name }
                     onChange={ this.onChange.bind(this, "sp", idx, "first_name", "any") } />
                 <input
                     tabIndex={ 1000 + 10 * idx + 3 }
                     type="text"
                     className="yob"
-                    placeholder="YOB"
+                    placeholder={ _("models.participant.yob") }
                     value={ sp.year_of_birth }
                     onChange={ this.onChange.bind(this, "sp", idx, "year_of_birth", "number") } />
                 <select
@@ -139,8 +139,8 @@ class ParticipantEditorRow extends React.Component {
                         className="gender"
                         value={ sp.gender }
                         onChange={ this.onChange.bind(this, "sp", idx, "gender", "any") }>
-                    <option value="F">F</option>
-                    <option value="M">M</option>
+                    <option value="F">{ _("models.participant.gender_f") }</option>
+                    <option value="M">{ _("models.participant.gender_m") }</option>
                 </select>
                 <button
                     type="button"
@@ -160,14 +160,14 @@ class ParticipantEditorRow extends React.Component {
                     }.bind(this)}
                     type="text"
                     className="description"
-                    placeholder="Description"
+                    placeholder={ _("models.participant.acro_description") }
                     value={ acro.description }
                     onChange={ this.onChange.bind(this, "acro", idx, "description", "any") } />
                 <input
                     tabIndex={ 2000 + 10 * idx + 2 }
                     type="text"
                     className="score"
-                    placeholder="Score"
+                    placeholder={ _("models.participant.acro_score") }
                     value={ acro.score }
                     onChange={ this.onChange.bind(this, "acro", idx, "score", "score") } />
                 <button
@@ -184,7 +184,7 @@ class ParticipantEditorRow extends React.Component {
                 <form onSubmit={ this.onSubmit.bind(this) }>
                     <div className="row">
                         <div className="col-md-3 general-info">
-                            <h4>General info</h4>
+                            <h4>{ _("models.participant.general_info") }</h4>
                             <input
                                 tabIndex="1"
                                 ref={ function(e) {
@@ -193,7 +193,7 @@ class ParticipantEditorRow extends React.Component {
                                         this.latest_added = null;
                                     };
                                 }.bind(this)}
-                                placeholder="Number"
+                                placeholder={ _("models.participant.number") }
                                 className="full-width"
                                 value={ this.state.number }
                                 onChange={ this.onChange.bind(this, "", null, "number", "number") } />
@@ -206,7 +206,7 @@ class ParticipantEditorRow extends React.Component {
                             </select>
                             <input
                                 tabIndex="3"
-                                placeholder="Formation name"
+                                placeholder={ _("models.participant.formation_name") }
                                 className="full-width"
                                 value={ this.state.formation_name }
                                 onChange={ this.onChange.bind(this, "", null, "formation_name", "any") } />
@@ -214,31 +214,31 @@ class ParticipantEditorRow extends React.Component {
                                 <button
                                     tabIndex="10000"
                                     type="submit"
-                                    className="btn btn-primary">Submit</button>
+                                    className="btn btn-primary">{ _("global.buttons.submit") }</button>
                                 <button
                                     tabIndex="10001"
                                     type="button"
                                     className="btn btn-danger"
-                                    onClick={ this.props.stopEditing }>Discard</button>
+                                    onClick={ this.props.stopEditing }>{ _("global.buttons.discard") }</button>
                             </div>
                         </div>
                         <div className="col-md-4">
-                            <h4>Sportsmen</h4>
+                            <h4>{ _("models.participant.sportsmen") }</h4>
                             { sportsmen }
                             <button
                                 tabIndex="1999"
                                 type="button"
                                 className="full-width btn btn-sm btn-default"
-                                onClick={ this.addSportsman.bind(this) }>Add</button>
+                                onClick={ this.addSportsman.bind(this) }>{ _("global.buttons.add") }</button>
                         </div>
                         <div className="col-md-5">
-                            <h4>Acrobatics</h4>
+                            <h4>{ _("models.participant.acrobatics") }</h4>
                             { acrobatics }
                             <button
                                 tabIndex="2999"
                                 type="button"
                                 className="full-width btn btn-sm btn-default"
-                                onClick={ this.addAcrobatic.bind(this) }>Add</button>
+                                onClick={ this.addAcrobatic.bind(this) }>{ _("global.buttons.add") }</button>
                         </div>
                     </div>
                 </form>
@@ -335,7 +335,7 @@ class CreationRow extends React.Component {
             <button
                 type="button"
                 className="btn btn-default full-width"
-                onClick={ this.startEditing.bind(this) }>Add new participant</button>
+                onClick={ this.startEditing.bind(this) }>{ _("admin.buttons.add_participant") }</button>
         </td></tr>
     }
     render() {
@@ -388,11 +388,11 @@ class ParticipantsManager extends React.Component {
             <table className="table table-striped">
                 <tbody>
                     <tr>
-                        <th className="number">Number</th>
-                        <th className="name">Participant</th>
-                        <th className="club-name">Club</th>
-                        <th className="club-city">City</th>
-                        <th className="delete">Delete</th>
+                        <th className="number">{ _("models.participant.number") }</th>
+                        <th className="name">{ _("models.participant.name") }</th>
+                        <th className="club-name">{ _("models.participant.club_name") }</th>
+                        <th className="club-city">{ _("models.participant.club_city") }</th>
+                        <th className="delete"></th>
                     </tr>
                     { rows }
                     <CreationRow
@@ -409,7 +409,7 @@ class ParticipantsManager extends React.Component {
         return <div>
             <header>
                 <h1>{ this.state.name }</h1>
-                <h2>Participants management</h2>
+                <h2>{ _("admin.headers.participants_management") }</h2>
             </header>
             { this.renderTable() }
         </div>;

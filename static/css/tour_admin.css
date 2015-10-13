@@ -6894,11 +6894,13 @@ table.no-break th {
 .tour-admin .scores-table .form-score-input td,
 .tour-admin .scores-table .form-score-input th {
   border: 0;
+  padding-left: 10px;
+  padding-right: 10px;
   text-align: left;
 }
 .tour-admin .scores-table .form-score-input td input,
 .tour-admin .scores-table .form-score-input th input {
-  width: 40px;
+  width: 50px;
 }
 .tour-admin .scores-table .input-heat {
   width: 100%;

@@ -24,8 +24,7 @@ var RoleSelector = (function (_React$Component) {
                 return React.createElement(
                     "a",
                     { href: "/tablet/" + judge.id.toString(), className: "btn btn-default btn-lg" },
-                    "Judge ",
-                    judge.number,
+                    _("global.phrases.judge_n", judge.number),
                     ": ",
                     judge.name
                 );
@@ -36,7 +35,7 @@ var RoleSelector = (function (_React$Component) {
                 React.createElement(
                     "h3",
                     null,
-                    "Please select your role"
+                    _("start_page.headers.select_role")
                 ),
                 React.createElement(
                     "div",
@@ -50,12 +49,12 @@ var RoleSelector = (function (_React$Component) {
                             React.createElement(
                                 "button",
                                 { className: "btn btn-default btn-lg" },
-                                "Presenter"
+                                _("start_page.roles.presenter")
                             ),
                             React.createElement(
                                 "a",
                                 { href: "/admin/" + this.props.competition.id.toString(), className: "btn btn-default btn-lg" },
-                                "Administrator"
+                                _("start_page.roles.administrator")
                             )
                         )
                     ),
@@ -138,7 +137,7 @@ var StartPage = (function (_React$Component2) {
                 return React.createElement(
                     "div",
                     { key: comp.id, className: "button", onClick: this.selectCompetition.bind(this, idx) },
-                    "Чемпионат и первенство Томской области по акробатическом рок-н-роллу"
+                    comp.name
                 );
             }).bind(this));
             return React.createElement(
@@ -147,7 +146,7 @@ var StartPage = (function (_React$Component2) {
                 React.createElement(
                     "h3",
                     null,
-                    "Please select competition"
+                    _("start_page.headers.select_competition")
                 ),
                 React.createElement(
                     "div",

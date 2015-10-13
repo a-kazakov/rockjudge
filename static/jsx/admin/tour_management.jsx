@@ -6,9 +6,10 @@ class TourInputForm extends React.Component {
             <div className="row">
                 <div className="col-md-6">
                     <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">Name</label>
+                        <label className="col-sm-4 control-label">{ _("models.tour.name") }</label>
                         <div className="col-sm-8">
                             <input
+                                list="dl_tours"
                                 type="text"
                                 className="form-control"
                                 ref="name"
@@ -16,7 +17,7 @@ class TourInputForm extends React.Component {
                         </div>
                     </div>
                     <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">Participants advances</label>
+                        <label className="col-sm-4 control-label">{ _("models.tour.num_advances") }</label>
                         <div className="col-sm-8">
                             <input
                                 type="text"
@@ -26,29 +27,30 @@ class TourInputForm extends React.Component {
                         </div>
                     </div>
                     <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">Participants per heat</label>
+                        <label className="col-sm-4 control-label">{ _("models.tour.participants_per_heat") }</label>
                         <div className="col-sm-8">
                             <input
                                 type="text"
                                 className="form-control"
                                 ref="participants_per_heat"
-                                defaultValue={ tour.participants_per_heat } />
+                                defaultValue={ tour.participants_per_heat || 2 } />
                         </div>
                     </div>
                 </div>
                 <div className="col-md-6">
                     <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">Scoring system</label>
+                        <label className="col-sm-4 control-label">{ _("models.tour.scoring_system") }</label>
                         <div className="col-sm-8">
-                            <input
-                                type="text"
+                            <select
                                 className="form-control"
                                 ref="scoring_system"
-                                defaultValue={ tour.scoring_system } />
+                                defaultValue={ tour.scoring_system || GL.scoring_systems[0] } >
+                                { GL.scoring_systems.map((sn) => <option key={ sn } value={ sn }>{ _("scoring_systems_names." + sn) }</option>) }
+                            </select>
                         </div>
                     </div>
                     <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">Is hope tour</label>
+                        <label className="col-sm-4 control-label">{ _("models.tour.is_hope_tour") }</label>
                         <div className="col-sm-8">
                             <div className="checkbox">
                                 <label>
@@ -62,8 +64,8 @@ class TourInputForm extends React.Component {
                     </div>
                     <div className="form-group form-group-sm">
                         <div className="col-sm-offset-4 col-sm-8">
-                            <button className="btn btn-primary btn-sm" type="submit">Submit</button>&nbsp;
-                            <button className="btn btn-primary btn-sm" type="button" onClick={ this.props.stopEditing }>Discard</button>
+                            <button className="btn btn-primary btn-sm" type="submit">{ _("global.buttons.submit") }</button>&nbsp;
+                            <button className="btn btn-primary btn-sm" type="button" onClick={ this.props.stopEditing }>{ _("global.buttons.discard") }</button>
                         </div>
                     </div>
                 </div>
@@ -113,16 +115,16 @@ class TourEditingUI extends React.Component {
             <h3>{ this.props.tour.name }</h3>
             <div className="row">
                 <div className="col-md-5">
-                    <p><strong>Participants advances:</strong> {this.props.tour.num_advances } </p>
-                    <p><strong>Participants per heat:</strong> {this.props.tour.participants_per_heat } </p>
+                    <p><strong>{ _("models.tour.num_advances") }</strong> { this.props.tour.num_advances } </p>
+                    <p><strong>{ _("models.tour.participants_per_heat") }</strong> { this.props.tour.participants_per_heat } </p>
                 </div>
                 <div className="col-md-5">
-                    <p><strong>Is hope tour:</strong> { this.props.tour.hope_tour ? "Yes" : "No" } </p>
-                    <p><strong>Scoring system:</strong> {this.props.tour.scoring_system } </p>
+                    <p><strong>{ _("models.tour.is_hope_tour") }</strong> { this.props.tour.hope_tour ? "Yes" : "No" } </p>
+                    <p><strong>{ _("models.tour.scoring_system") }</strong> { _("scoring_systems_names." + this.props.tour.scoring_system) } </p>
                 </div>
                 <div className="col-md-2">
-                    <button className="full-width btn btn-primary btn-sm" onClick={ this.startEditing.bind(this) }>Edit</button><br />
-                    <button className="full-width btn btn-danger btn-sm" onClick={ this.deleteTour.bind(this) }>Delete</button>
+                    <button className="full-width btn btn-primary btn-sm" onClick={ this.startEditing.bind(this) }>{ _("global.buttons.edit") }</button><br />
+                    <button className="full-width btn btn-danger btn-sm" onClick={ this.deleteTour.bind(this) }>{ _("global.buttons.delete") }</button>
                 </div>
             </div>
         </div>
@@ -139,7 +141,7 @@ class TourEditingUI extends React.Component {
         }.bind(this)).send();
     }
     deleteTour() {
-        if (!confirm("Are you sure want to delete this tour?")) {
+        if (!confirm(_("admin.confirms.delete_tour"))) {
             return false;
         }
         Api("tournaments.tour.delete", { tour_id: this.props.tour.id }).send();
@@ -182,7 +184,7 @@ class InnerCompetitionManagementUI extends React.Component {
                 external_id: this.refs.external_id.getDOMNode().value,
             }
         }).onSuccess(function() {
-            alert("Success.");
+            alert(_("global.messages.success"));
         }).send();
     }
     addTourAfter(tour_id) {
@@ -198,7 +200,7 @@ class InnerCompetitionManagementUI extends React.Component {
                 stopEditing={ this.addTourAfter.bind(this, -1) } />
         } else {
             return <button className="btn btn-default full-width" onClick={ this.addTourAfter.bind(this, after_id) }>
-                Add another tour here
+                { _("admin.buttons.add_tour") }
             </button>
         }
     }
@@ -216,30 +218,33 @@ class InnerCompetitionManagementUI extends React.Component {
                 <h1>{ this.props.inner_competition.name }</h1>
             </header>
             <div className="ic-management-ui">
-                <h2>Basic info</h2>
+                <h2>{ _("admin.headers.inner_competition_general_info") }</h2>
                 <form className="form-horizontal" onSubmit={ this.submitBaseData.bind(this) }>
                     <div className="form-group">
-                        <label className="col-sm-2 control-label">Name</label>
+                        <label className="col-sm-2 control-label">{ _("models.inner_competition.name") }</label>
                         <div className="col-sm-10">
                             <input type="text" ref="name" className="form-control" defaultValue={ this.props.inner_competition.name } />
                         </div>
                     </div>
                     <div className="form-group">
-                        <label className="col-sm-2 control-label">External ID</label>
+                        <label className="col-sm-2 control-label">{ _("models.inner_competition.external_id") }</label>
                         <div className="col-sm-10">
                             <input type="text" ref="external_id" className="form-control" defaultValue={ this.props.inner_competition.external_id } />
                         </div>
                     </div>
                     <div className="form-group">
                         <div className="col-sm-offset-2 col-sm-10">
-                            <button type="submit" className="btn btn-primary">Save</button>
+                            <button type="submit" className="btn btn-primary">{ _("global.buttons.save") }</button>
                         </div>
                     </div>
                 </form>
-                <h2>Tours</h2>
+                <h2>{ _("admin.headers.inner_competition_tours") }</h2>
                 { this.renderTourCreation(null) }
                 { this.renderTours() }
             </div>
+            <datalist id="dl_tours">
+                { _getPossibleTourNames().map((n, idx) => <option key={ idx } value={ n } />) }
+            </datalist>
         </div>
     }
 }

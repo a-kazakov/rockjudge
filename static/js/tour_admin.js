@@ -202,6 +202,7 @@ var TourAdminScoresRow = (function (_React$Component3) {
             });
             var scores = this.props.judges.map((function (judge) {
                 return React.createElement(TourAdminScoreCellWrapper, {
+                    key: scores_map[judge.id] && scores_map[judge.id].id,
                     judge: judge,
                     scoring_system: this.props.scoring_system,
                     score_id: scores_map[judge.id] && scores_map[judge.id].id,
@@ -294,53 +295,26 @@ var TourAdminScoresTable = (function (_React$Component4) {
             }).updateDB("Tour", this.props.tour_id).onSuccess(this.reloadFromStorage.bind(this)).send();
         }
 
-        // Helpers
-
-    }, {
-        key: "getRunIdx",
-        value: function getRunIdx(run_id) {
-            var result = null;
-            this.state.runs.forEach(function (run, run_idx) {
-                if (run.id == run_id) {
-                    result = run_idx;
-                }
-            });
-            return result;
-        }
-    }, {
-        key: "getScoreIdPath",
-        value: function getScoreIdPath(score_id) {
-            var result = null;
-            this.state.runs.forEach(function (run, run_idx) {
-                for (var score_idx in run.scores.scores) if (run.scores.scores.hasOwnProperty(score_idx)) {
-                    if (run.scores.scores[score_idx].id == score_id) {
-                        result = [run_idx, score_idx];
-                    }
-                }
-            });
-            return result;
-        }
-
         // Listeners
 
     }, {
         key: "onInitButtonClick",
         value: function onInitButtonClick() {
-            if (confirm("Are you sure want to recreate participants list for this tour?")) {
+            if (confirm(_("judging.confirms.init_tour"))) {
                 Api("tournaments.tour.init", { tour_id: this.props.tour_id }).send();
             }
         }
     }, {
         key: "onFinalizeButtonClick",
         value: function onFinalizeButtonClick() {
-            if (confirm("Are you sure want to finalize this tour?")) {
+            if (confirm(_("judging.confirms.finalize_tour"))) {
                 Api("tournaments.tour.finalize", { tour_id: this.props.tour_id }).send();
             }
         }
     }, {
         key: "onShuffleHeatsButtonClick",
         value: function onShuffleHeatsButtonClick() {
-            if (confirm("Are you sure want to shuffle heats?")) {
+            if (confirm(_("judging.confirms.shuffle_heats"))) {
                 Api("tournaments.tour.shuffle_heats", { tour_id: this.props.tour_id }).send();
             }
         }
@@ -364,7 +338,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
                 return React.createElement(
                     "button",
                     { className: "btn btn-success", onClick: this.onStartTourButtonClick.bind(this) },
-                    "Start tour"
+                    _("judging.buttons.start_tour")
                 );
             } else {
                 return React.createElement(
@@ -373,7 +347,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
                     React.createElement(
                         "button",
                         { className: "btn btn-danger", onClick: this.onStopTourButtonClick.bind(this) },
-                        "Stop tour"
+                        _("judging.buttons.stop_tour")
                     ),
                     React.createElement("br", null)
                 );
@@ -407,7 +381,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
             var judges_header = active_judges.map((function (judge) {
                 return React.createElement(
                     "th",
-                    { className: "judge" },
+                    { className: "judge", key: judge.id },
                     judge.number
                 );
             }).bind(this));
@@ -423,17 +397,17 @@ var TourAdminScoresTable = (function (_React$Component4) {
                         this.state.active ? null : React.createElement(
                             "button",
                             { className: "btn btn-primary", onClick: this.onInitButtonClick.bind(this) },
-                            "Recreate list"
+                            _("judging.buttons.init_tour")
                         ),
                         this.state.active ? null : React.createElement(
                             "button",
                             { className: "btn btn-primary", onClick: this.onFinalizeButtonClick.bind(this) },
-                            "Finalize"
+                            _("judging.buttons.finalize_tour")
                         ),
                         this.state.active ? null : React.createElement(
                             "button",
                             { className: "btn btn-primary", onClick: this.onShuffleHeatsButtonClick.bind(this) },
-                            "Shuffle heats"
+                            _("judging.buttons.shuffle_heats")
                         ),
                         this.renderActiveTourControls()
                     ),
@@ -460,27 +434,27 @@ var TourAdminScoresTable = (function (_React$Component4) {
                             React.createElement(
                                 "th",
                                 { className: "heat" },
-                                "Heat"
+                                _("judging.labels.heat")
                             ),
                             React.createElement(
                                 "th",
                                 { className: "number" },
-                                "#"
+                                _("judging.labels.number")
                             ),
                             React.createElement(
                                 "th",
                                 { className: "name" },
-                                "Name"
+                                _("judging.labels.participant_name")
                             ),
                             React.createElement(
                                 "th",
                                 { className: "club" },
-                                "Club"
+                                _("judging.labels.club")
                             ),
                             React.createElement(
                                 "th",
                                 { className: "total" },
-                                "Total"
+                                _("judging.labels.total_score")
                             ),
                             judges_header
                         ),

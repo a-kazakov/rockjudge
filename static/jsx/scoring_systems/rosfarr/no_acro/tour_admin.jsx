@@ -48,8 +48,8 @@ class TourAdminScoreInput extends React.Component {
                         onKeyUp={ this.onKeyUp.bind(this) } />
                 </td></tr>
             </table>
-            <button className="btn btn-primary" type="submit">Submit</button>&nbsp;
-            <button className="btn btn-primary" type="button" onClick={ this.props.stopEditing }>Discard</button>
+            <button className="btn btn-primary" type="submit">{ _("global.buttons.submit") }</button>&nbsp;
+            <button className="btn btn-primary" type="button" onClick={ this.props.stopEditing }>{ _("global.buttons.discard") }</button>
         </form>;
     }
     renderAcroJudgeInput() {
@@ -77,8 +77,8 @@ class TourAdminScoreInput extends React.Component {
             <table>
                 { rows }
             </table>
-            <button className="btn btn-primary" type="submit">Submit</button>&nbsp;
-            <button className="btn btn-primary" type="button" onClick={ this.props.stopEditing }>Discard</button>
+            <button className="btn btn-primary" type="submit">{ _("global.buttons.submit") }</button>&nbsp;
+            <button className="btn btn-primary" type="button" onClick={ this.props.stopEditing }>{ _("global.buttons.discard") }</button>
         </form>;
     }
     renderHeadJudgeInput() {
@@ -92,8 +92,8 @@ class TourAdminScoreInput extends React.Component {
                         onKeyUp={ this.onKeyUp.bind(this) } />
                 </td></tr>
             </table>
-            <button className="btn btn-primary" type="submit">Submit</button>
-            <button className="btn btn-primary" type="button" onClick={ this.props.stopEditing }>Discard</button>
+            <button className="btn btn-primary" type="submit">{ _("global.buttons.submit") }</button>
+            <button className="btn btn-primary" type="button" onClick={ this.props.stopEditing }>{ _("global.buttons.discard") }</button>
         </form>
     }
     render() {

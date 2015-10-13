@@ -93,6 +93,7 @@ var JudgeTablet = (function (_React$Component) {
                 storage.del("Run");
                 storage.del("Score");
                 storage.del("Participant");
+                storage.del("Sportsman");
                 this.setState({
                     tour: null,
                     current_heat: 1
@@ -101,7 +102,9 @@ var JudgeTablet = (function (_React$Component) {
             }
             Api("tournaments.tour.get", { tour_id: tour_id, children: {
                     runs: {
-                        participant: {},
+                        participant: {
+                            "sportsmen": {}
+                        },
                         scores: {},
                         acrobatics: {}
                     },
@@ -192,7 +195,8 @@ var JudgeTablet = (function (_React$Component) {
                 React.createElement(
                     "h2",
                     null,
-                    "Heat: ",
+                    _("tablet.headers.heat"),
+                    ": ",
                     this.state.current_heat,
                     " / ",
                     this.getHeatsCount()
@@ -238,6 +242,7 @@ var JudgeTablet = (function (_React$Component) {
                 run.scores.forEach(function (score_data) {
                     scores_map[score_data.judge_id] = score_data;
                 });
+                var header = _("global.phrases.participant_n", run.participant.number, run.participant.sportsmen.length);
                 if (typeof scores_map[this.props.judge_id] === "undefined") {
                     return React.createElement(
                         "td",
@@ -245,13 +250,12 @@ var JudgeTablet = (function (_React$Component) {
                         React.createElement(
                             "h2",
                             null,
-                            "Participant №",
-                            run.participant.number
+                            header
                         ),
                         React.createElement(
                             "h3",
                             { className: "text-center" },
-                            "You are not judging this participant"
+                            _("tablet.messages.not_judging")
                         )
                     );
                 }
@@ -261,8 +265,7 @@ var JudgeTablet = (function (_React$Component) {
                     React.createElement(
                         "h2",
                         null,
-                        "Participant №",
-                        run.participant.number
+                        header
                     ),
                     React.createElement(TabletScoreInput, {
                         acrobatics: run.acrobatics,
@@ -302,21 +305,21 @@ var JudgeTablet = (function (_React$Component) {
                 React.createElement(
                     "h3",
                     null,
-                    "Select page:"
+                    _("tablet.headers.select_page")
                 ),
                 React.createElement(
                     "button",
                     _extends({
                         className: "btn" + (this.state.page == "dance" ? " active" : "")
                     }, onTouchOrClick(this.switchPage.bind(this, "dance"))),
-                    "Dance"
+                    _("tablet.pages.dance")
                 ),
                 React.createElement(
                     "button",
                     _extends({
                         className: "btn" + (this.state.page == "acro" ? " active" : "")
                     }, onTouchOrClick(this.switchPage.bind(this, "acro"))),
-                    "Acrobaics"
+                    _("tablet.pages.acrobatics")
                 )
             );
         }

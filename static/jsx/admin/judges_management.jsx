@@ -6,7 +6,7 @@ class JudgeInputForm extends React.Component {
             <div className="row">
                 <div className="col-md-6">
                     <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">Name</label>
+                        <label className="col-sm-4 control-label">{ _("models.judge.name") }</label>
                         <div className="col-sm-8">
                             <input
                                 type="text"
@@ -16,7 +16,7 @@ class JudgeInputForm extends React.Component {
                         </div>
                     </div>
                     <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">Role</label>
+                        <label className="col-sm-4 control-label">{ _("models.judge.role") }</label>
                         <div className="col-sm-8">
                             <input
                                 type="text"
@@ -28,7 +28,7 @@ class JudgeInputForm extends React.Component {
                 </div>
                 <div className="col-md-3">
                     <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">Category</label>
+                        <label className="col-sm-4 control-label">{ _("models.judge.category") }</label>
                         <div className="col-sm-8">
                             <input
                                 type="text"
@@ -38,7 +38,7 @@ class JudgeInputForm extends React.Component {
                         </div>
                     </div>
                     <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">Number</label>
+                        <label className="col-sm-4 control-label">{ _("models.judge.number") }</label>
                         <div className="col-sm-8">
                             <input
                                 type="text"
@@ -50,7 +50,7 @@ class JudgeInputForm extends React.Component {
                 </div>
                 <div className="col-md-3">
                     <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">Hide from tables</label>
+                        <label className="col-sm-4 control-label">{ _("models.judge.hide_from_results") }</label>
                         <div className="col-sm-8">
                             <div className="checkbox">
                                 <label>
@@ -64,8 +64,8 @@ class JudgeInputForm extends React.Component {
                     </div>
                     <div className="form-group form-group-sm">
                         <div className="col-sm-offset-4 col-sm-8">
-                            <button className="btn btn-primary btn-sm" type="submit">Submit</button>&nbsp;
-                            <button className="btn btn-primary btn-sm" type="button" onClick={ this.props.stopEditing }>Discard</button>
+                            <button className="btn btn-primary btn-sm" type="submit">{ _("global.buttons.submit") }</button>&nbsp;
+                            <button className="btn btn-primary btn-sm" type="button" onClick={ this.props.stopEditing }>{ _("global.buttons.discard") }</button>
                         </div>
                     </div>
                 </div>
@@ -115,16 +115,16 @@ class JudgeEditingUI extends React.Component {
             <h3>{ this.props.judge.name }</h3>
             <div className="row">
                 <div className="col-md-5">
-                    <p><strong>Category:</strong> {this.props.judge.category } </p>
-                    <p><strong>Role:</strong> {this.props.judge.role } </p>
+                    <p><strong>{ _("models.judge.category") }:</strong> {this.props.judge.category } </p>
+                    <p><strong>{ _("models.judge.role") }:</strong> {this.props.judge.role } </p>
                 </div>
                 <div className="col-md-5">
-                    <p><strong>Number:</strong> {this.props.judge.number } </p>
-                    <p><strong>Hide from tables:</strong> { this.props.judge.hide_from_results ? "Yes" : "No" } </p>
+                    <p><strong>{ _("models.judge.number") }:</strong> {this.props.judge.number } </p>
+                    <p><strong>{ _("models.judge.hide_from_results") }:</strong> { this.props.judge.hide_from_results ? _("global.labels.yes") : _("global.labels.no") } </p>
                 </div>
                 <div className="col-md-2">
-                    <button className="full-width btn btn-primary btn-sm" onClick={ this.startEditing.bind(this) }>Edit</button><br />
-                    <button className="full-width btn btn-danger btn-sm" onClick={ this.deleteJudge.bind(this) }>Delete</button>
+                    <button className="full-width btn btn-primary btn-sm" onClick={ this.startEditing.bind(this) }>{ _("global.buttons.edit") }</button><br />
+                    <button className="full-width btn btn-danger btn-sm" onClick={ this.deleteJudge.bind(this) }>{ _("global.buttons.delete") }</button>
                 </div>
             </div>
         </div>
@@ -141,7 +141,7 @@ class JudgeEditingUI extends React.Component {
         }.bind(this)).send();
     }
     deleteJudge() {
-        if (!confirm("Are you sure want to delete this judge?")) {
+        if (!confirm(_("admin.confirms.delete_judge"))) {
             return false;
         }
         Api("tournaments.judge.delete", { judge_id: this.props.judge.id }).send();
@@ -190,7 +190,7 @@ class JudgesManagementUI extends React.Component {
                 stopEditing={ this.stopCreating.bind(this) } />
         } else {
             return <button className="btn btn-default full-width" onClick={ this.startCreating.bind(this) }>
-                Add judge
+                { _("global.buttons.add") }
             </button>
         }
     }
@@ -202,7 +202,7 @@ class JudgesManagementUI extends React.Component {
         }.bind(this));
         return <div>
             <header>
-                <h1>Judges management</h1>
+                <h1>{ _("admin.headers.judges_management") }</h1>
             </header>
             <div className="judges-management-ui">
                 { judges }

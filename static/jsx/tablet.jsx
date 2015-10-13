@@ -73,6 +73,7 @@ class JudgeTablet extends React.Component {
             storage.del("Run");
             storage.del("Score");
             storage.del("Participant");
+            storage.del("Sportsman");
             this.setState({
                 tour: null,
                 current_heat: 1,
@@ -81,7 +82,9 @@ class JudgeTablet extends React.Component {
         }
         Api("tournaments.tour.get", { tour_id: tour_id, children:{
             runs: {
-                participant: {},
+                participant: {
+                    "sportsmen": {},
+                },
                 scores: {},
                 acrobatics: {},
             },
@@ -145,7 +148,7 @@ class JudgeTablet extends React.Component {
         var current_tour = (this.state.tour === null) ? null :
             <div className="header">
                 <h1>{ this.state.tour.inner_competition.name }: { this.state.tour.name }</h1>
-                <h2>Heat: { this.state.current_heat } / { this.getHeatsCount() }</h2>
+                <h2>{ _("tablet.headers.heat") }: { this.state.current_heat } / { this.getHeatsCount() }</h2>
             </div>
         return <header>
             { btn_prev }
@@ -173,14 +176,15 @@ class JudgeTablet extends React.Component {
                 run.scores.forEach(function(score_data) {
                     scores_map[score_data.judge_id] = score_data;
                 });
+                let header = _("global.phrases.participant_n", run.participant.number, run.participant.sportsmen.length);
                 if (typeof scores_map[this.props.judge_id] === "undefined") {
                     return <td key={ run.id }>
-                        <h2>Participant №{ run.participant.number }</h2>
-                        <h3 className="text-center">You are not judging this participant</h3>
+                        <h2>{ header }</h2>
+                        <h3 className="text-center">{ _("tablet.messages.not_judging") }</h3>
                     </td>
                 }
                 return <td key={ run.id }>
-                    <h2>Participant №{ run.participant.number }</h2>
+                    <h2>{ header }</h2>
                     <TabletScoreInput
                         acrobatics={ run.acrobatics }
                         judge_id={ this.props.judge_id }
@@ -202,14 +206,14 @@ class JudgeTablet extends React.Component {
             return null;
         }
         return <div className="footer page-selector">
-            <h3>Select page:</h3>
+            <h3>{ _("tablet.headers.select_page") }</h3>
             <button
                 className={ "btn" + (this.state.page == "dance" ? " active" : "") }
-                {...onTouchOrClick(this.switchPage.bind(this, "dance"))}>Dance
+                {...onTouchOrClick(this.switchPage.bind(this, "dance"))}>{ _("tablet.pages.dance") }
             </button>
             <button
                 className={ "btn" + (this.state.page == "acro" ? " active" : "") }
-                {...onTouchOrClick(this.switchPage.bind(this, "acro"))}>Acrobaics
+                {...onTouchOrClick(this.switchPage.bind(this, "acro"))}>{ _("tablet.pages.acrobatics") }
             </button>
         </div>;
     }

@@ -8,14 +8,14 @@ class CompetitionLoadingUI extends React.Component {
     render() {
         return <div className="load-competition-page">
             <header>
-                <h1>Load competition data</h1>
+                <h1>{ _("admin.headers.load_competition") }</h1>
             </header>
             <form onSubmit={ this.onSubmit.bind(this) } className="load-competition">
                 <textarea
                     defaultValue=""
                     ref={(c) => this._input = c}
                     placeholder="Insert serialized data here ..." />
-                <button className="btn btn-primary" type="submit">Apply</button>
+                <button className="btn btn-primary" type="submit">{ _("admin.buttons.import") }</button>
             </form>
         </div>
     }
@@ -24,7 +24,7 @@ class CompetitionLoadingUI extends React.Component {
         Api("tournaments.competition.load", {
             competition_id: this.props.competition_id,
             data: JSON.parse(this._input.getDOMNode().value),
-        }).onSuccess(function() { alert("Success."); }).send();
+        }).onSuccess(function() { alert(_("global.messages.success")); }).send();
     }
 }
 
@@ -89,21 +89,21 @@ class ManagmentUI extends React.Component {
                         <div
                                 className={ "level-1" + (this.state.page == "load_competition" ? " active" : "") }
                                 onClick= { this.switchPage.bind(this, "load_competition") } >
-                            Load competition data
+                            { _("admin.menu.load_competition") }
                         </div>
                     </div>
                     <details open="true" className="block">
                         <summary className="level-1">
-                            Manage categories
+                            { _("admin.menu.manage_inner_competitions") }
                         </summary>
                         { ics_management }
                         <div className="level-2 new-ic" onClick={ this.createInnerCommpetition.bind(this) }>
-                            Add new catagory
+                            { _("admin.menu.add_inner_competition") }
                         </div>
                     </details>
                     <details open="true" className="block">
                         <summary className="level-1">
-                            Manage participants
+                            { _("admin.menu.manage_sportsmen") }
                         </summary>
                         { ics_participants }
                     </details>
@@ -111,7 +111,7 @@ class ManagmentUI extends React.Component {
                         <div
                                 className={ "level-1" + (this.state.page == "manage_judges" ? " active" : "") }
                                 onClick={ this.switchPage.bind(this, "manage_judges") }>
-                            Manage judges
+                            { _("admin.menu.manage_judges") }
                         </div>
                     </div>
                 </td>
@@ -124,7 +124,7 @@ class ManagmentUI extends React.Component {
         </table>;
     }
     createInnerCommpetition() {
-        var name = prompt("Enter the name of new category:");
+        var name = prompt(_("admin.prompts.new_inner_competition_name"));
         if (name === null) {
             return;
         }
@@ -140,25 +140,25 @@ class ServiceUI extends React.Component {
         super(props);
     }
     reloadClients() {
-        if (confirm("Are you sure want to reload all clients?")) {
+        if (confirm(_("admin.confirms.reload_clients"))) {
             Api("tournaments.service.reload_clients", {}).send();
         }
     }
     refreshClients() {
-        if (confirm("Are you sure want to refresh all clients?")) {
+        if (_("admin.confirms.refresh_clients")) {
             Api("tournaments.service.refresh_clients", {}).send();
         }
     }
     unfinalizeTour(event) {
         event.preventDefault();
-        if (prompt("Are you sure want to unfinalize this tour? Type \"unfinalize\" below if you are") == "unfinalize") {
+        if (prompt(_("admin.confirms.unfinalize_tour")) == "unfinalize") {
             Api("tournaments.tour.unfinalize", {
                 tour_id: this.refs.select_unfinalize.getDOMNode().value,
             }).onSuccess(function(event) {
-                alert("Success.");
+                alert(_("global.messages.success"));
             }).send();
         } else {
-            alert("Incorrect passcode.");
+            alert(_("admin.messages.invalid_passcode"));
         }
     }
     renderUnfinalize() {
@@ -176,40 +176,35 @@ class ServiceUI extends React.Component {
         });
         if (eligible_tours.length == 0) {
             return <div className="alert alert-danger">
-                No finalized rounds found.
+                { _("admin.alerts.no_finalized") }
             </div>
         }
         return <div>
             <div className="alert alert-danger">
-                <p><strong>Please note, that rounds should be unfinalized in exceptional cases only!</strong></p>
-                <p>Anyway, if you need to do that, keep track on participants that advance to the next round.
-                After repeated finalization list of participants of the next round will be automatically recreated.
-                If some participants advanced to the next round during first finalization are not advanced after
-                    repeated one theirs scores for the next round will be lost forever!</p>
-                <p>And don't forget to re-print all the tables of this and next rounds.</p>
+                { _("admin.alerts.unfinalize_warning") }
             </div>
             <form className="unfinalization" onSubmit={ this.unfinalizeTour.bind(this) }>
                 <select className="form-control" ref="select_unfinalize">
                     { eligible_tours }
                 </select>
-                <button className="btn btn-primary" type="submit">Unfinalize</button>
+                <button className="btn btn-primary" type="submit">{ _("admin.buttons.unfinalize") }</button>
             </form>
         </div>
     }
     render() {
         return <div>
             <header>
-                <h1>Service menu</h1>
+                <h1>{ _("admin.headers.service_menu") }</h1>
             </header>
             <div className="service-menu">
-                <h3>Clients management</h3>
+                <h3>{ _("admin.headers.clients_management") }</h3>
                 <button className="btn btn-primary control-btn" onClick={ this.reloadClients.bind(this) } >
-                    Reload data on all clients
+                    { _("admin.buttons.reload_clients") }
                 </button>
                 <button className="btn btn-primary control-btn" onClick={ this.refreshClients.bind(this) }>
-                    Refresh all clients
+                    { _("admin.buttons.refresh_clients") }
                 </button>
-                <h3>Unfinalize round</h3>
+                <h3>{ _("admin.headers.unfinalize_tour") }</h3>
                 { this.renderUnfinalize() }
             </div>
         </div>;

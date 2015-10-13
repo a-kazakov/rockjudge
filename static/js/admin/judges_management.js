@@ -37,7 +37,7 @@ var JudgeInputForm = (function (_React$Component) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-4 control-label" },
-                                "Name"
+                                _("models.judge.name")
                             ),
                             React.createElement(
                                 "div",
@@ -55,7 +55,7 @@ var JudgeInputForm = (function (_React$Component) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-4 control-label" },
-                                "Role"
+                                _("models.judge.role")
                             ),
                             React.createElement(
                                 "div",
@@ -77,7 +77,7 @@ var JudgeInputForm = (function (_React$Component) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-4 control-label" },
-                                "Category"
+                                _("models.judge.category")
                             ),
                             React.createElement(
                                 "div",
@@ -95,7 +95,7 @@ var JudgeInputForm = (function (_React$Component) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-4 control-label" },
-                                "Number"
+                                _("models.judge.number")
                             ),
                             React.createElement(
                                 "div",
@@ -117,7 +117,7 @@ var JudgeInputForm = (function (_React$Component) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-4 control-label" },
-                                "Hide from tables"
+                                _("models.judge.hide_from_results")
                             ),
                             React.createElement(
                                 "div",
@@ -145,13 +145,13 @@ var JudgeInputForm = (function (_React$Component) {
                                 React.createElement(
                                     "button",
                                     { className: "btn btn-primary btn-sm", type: "submit" },
-                                    "Submit"
+                                    _("global.buttons.submit")
                                 ),
                                 " ",
                                 React.createElement(
                                     "button",
                                     { className: "btn btn-primary btn-sm", type: "button", onClick: this.props.stopEditing },
-                                    "Discard"
+                                    _("global.buttons.discard")
                                 )
                             )
                         )
@@ -238,7 +238,8 @@ var JudgeEditingUI = (function (_React$Component2) {
                             React.createElement(
                                 "strong",
                                 null,
-                                "Category:"
+                                _("models.judge.category"),
+                                ":"
                             ),
                             " ",
                             this.props.judge.category,
@@ -250,7 +251,8 @@ var JudgeEditingUI = (function (_React$Component2) {
                             React.createElement(
                                 "strong",
                                 null,
-                                "Role:"
+                                _("models.judge.role"),
+                                ":"
                             ),
                             " ",
                             this.props.judge.role,
@@ -266,7 +268,8 @@ var JudgeEditingUI = (function (_React$Component2) {
                             React.createElement(
                                 "strong",
                                 null,
-                                "Number:"
+                                _("models.judge.number"),
+                                ":"
                             ),
                             " ",
                             this.props.judge.number,
@@ -278,10 +281,11 @@ var JudgeEditingUI = (function (_React$Component2) {
                             React.createElement(
                                 "strong",
                                 null,
-                                "Hide from tables:"
+                                _("models.judge.hide_from_results"),
+                                ":"
                             ),
                             " ",
-                            this.props.judge.hide_from_results ? "Yes" : "No",
+                            this.props.judge.hide_from_results ? _("global.labels.yes") : _("global.labels.no"),
                             " "
                         )
                     ),
@@ -291,13 +295,13 @@ var JudgeEditingUI = (function (_React$Component2) {
                         React.createElement(
                             "button",
                             { className: "full-width btn btn-primary btn-sm", onClick: this.startEditing.bind(this) },
-                            "Edit"
+                            _("global.buttons.edit")
                         ),
                         React.createElement("br", null),
                         React.createElement(
                             "button",
                             { className: "full-width btn btn-danger btn-sm", onClick: this.deleteJudge.bind(this) },
-                            "Delete"
+                            _("global.buttons.delete")
                         )
                     )
                 )
@@ -321,7 +325,7 @@ var JudgeEditingUI = (function (_React$Component2) {
     }, {
         key: "deleteJudge",
         value: function deleteJudge() {
-            if (!confirm("Are you sure want to delete this judge?")) {
+            if (!confirm(_("admin.confirms.delete_judge"))) {
                 return false;
             }
             Api("tournaments.judge.delete", { judge_id: this.props.judge.id }).send();
@@ -400,7 +404,7 @@ var JudgesManagementUI = (function (_React$Component4) {
                 return React.createElement(
                     "button",
                     { className: "btn btn-default full-width", onClick: this.startCreating.bind(this) },
-                    "Add judge"
+                    _("global.buttons.add")
                 );
             }
         }
@@ -421,7 +425,7 @@ var JudgesManagementUI = (function (_React$Component4) {
                     React.createElement(
                         "h1",
                         null,
-                        "Judges management"
+                        _("admin.headers.judges_management")
                     )
                 ),
                 React.createElement(

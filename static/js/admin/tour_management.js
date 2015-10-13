@@ -37,12 +37,13 @@ var TourInputForm = (function (_React$Component) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-4 control-label" },
-                                "Name"
+                                _("models.tour.name")
                             ),
                             React.createElement(
                                 "div",
                                 { className: "col-sm-8" },
                                 React.createElement("input", {
+                                    list: "dl_tours",
                                     type: "text",
                                     className: "form-control",
                                     ref: "name",
@@ -55,7 +56,7 @@ var TourInputForm = (function (_React$Component) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-4 control-label" },
-                                "Participants advances"
+                                _("models.tour.num_advances")
                             ),
                             React.createElement(
                                 "div",
@@ -73,7 +74,7 @@ var TourInputForm = (function (_React$Component) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-4 control-label" },
-                                "Participants per heat"
+                                _("models.tour.participants_per_heat")
                             ),
                             React.createElement(
                                 "div",
@@ -82,7 +83,7 @@ var TourInputForm = (function (_React$Component) {
                                     type: "text",
                                     className: "form-control",
                                     ref: "participants_per_heat",
-                                    defaultValue: tour.participants_per_heat })
+                                    defaultValue: tour.participants_per_heat || 2 })
                             )
                         )
                     ),
@@ -95,16 +96,25 @@ var TourInputForm = (function (_React$Component) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-4 control-label" },
-                                "Scoring system"
+                                _("models.tour.scoring_system")
                             ),
                             React.createElement(
                                 "div",
                                 { className: "col-sm-8" },
-                                React.createElement("input", {
-                                    type: "text",
-                                    className: "form-control",
-                                    ref: "scoring_system",
-                                    defaultValue: tour.scoring_system })
+                                React.createElement(
+                                    "select",
+                                    {
+                                        className: "form-control",
+                                        ref: "scoring_system",
+                                        defaultValue: tour.scoring_system || GL.scoring_systems[0] },
+                                    GL.scoring_systems.map(function (sn) {
+                                        return React.createElement(
+                                            "option",
+                                            { key: sn, value: sn },
+                                            _("scoring_systems_names." + sn)
+                                        );
+                                    })
+                                )
                             )
                         ),
                         React.createElement(
@@ -113,7 +123,7 @@ var TourInputForm = (function (_React$Component) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-4 control-label" },
-                                "Is hope tour"
+                                _("models.tour.is_hope_tour")
                             ),
                             React.createElement(
                                 "div",
@@ -141,13 +151,13 @@ var TourInputForm = (function (_React$Component) {
                                 React.createElement(
                                     "button",
                                     { className: "btn btn-primary btn-sm", type: "submit" },
-                                    "Submit"
+                                    _("global.buttons.submit")
                                 ),
                                 " ",
                                 React.createElement(
                                     "button",
                                     { className: "btn btn-primary btn-sm", type: "button", onClick: this.props.stopEditing },
-                                    "Discard"
+                                    _("global.buttons.discard")
                                 )
                             )
                         )
@@ -234,7 +244,7 @@ var TourEditingUI = (function (_React$Component2) {
                             React.createElement(
                                 "strong",
                                 null,
-                                "Participants advances:"
+                                _("models.tour.num_advances")
                             ),
                             " ",
                             this.props.tour.num_advances,
@@ -246,7 +256,7 @@ var TourEditingUI = (function (_React$Component2) {
                             React.createElement(
                                 "strong",
                                 null,
-                                "Participants per heat:"
+                                _("models.tour.participants_per_heat")
                             ),
                             " ",
                             this.props.tour.participants_per_heat,
@@ -262,7 +272,7 @@ var TourEditingUI = (function (_React$Component2) {
                             React.createElement(
                                 "strong",
                                 null,
-                                "Is hope tour:"
+                                _("models.tour.is_hope_tour")
                             ),
                             " ",
                             this.props.tour.hope_tour ? "Yes" : "No",
@@ -274,10 +284,10 @@ var TourEditingUI = (function (_React$Component2) {
                             React.createElement(
                                 "strong",
                                 null,
-                                "Scoring system:"
+                                _("models.tour.scoring_system")
                             ),
                             " ",
-                            this.props.tour.scoring_system,
+                            _("scoring_systems_names." + this.props.tour.scoring_system),
                             " "
                         )
                     ),
@@ -287,13 +297,13 @@ var TourEditingUI = (function (_React$Component2) {
                         React.createElement(
                             "button",
                             { className: "full-width btn btn-primary btn-sm", onClick: this.startEditing.bind(this) },
-                            "Edit"
+                            _("global.buttons.edit")
                         ),
                         React.createElement("br", null),
                         React.createElement(
                             "button",
                             { className: "full-width btn btn-danger btn-sm", onClick: this.deleteTour.bind(this) },
-                            "Delete"
+                            _("global.buttons.delete")
                         )
                     )
                 )
@@ -317,7 +327,7 @@ var TourEditingUI = (function (_React$Component2) {
     }, {
         key: "deleteTour",
         value: function deleteTour() {
-            if (!confirm("Are you sure want to delete this tour?")) {
+            if (!confirm(_("admin.confirms.delete_tour"))) {
                 return false;
             }
             Api("tournaments.tour.delete", { tour_id: this.props.tour.id }).send();
@@ -383,7 +393,7 @@ var InnerCompetitionManagementUI = (function (_React$Component4) {
                     external_id: this.refs.external_id.getDOMNode().value
                 }
             }).onSuccess(function () {
-                alert("Success.");
+                alert(_("global.messages.success"));
             }).send();
         }
     }, {
@@ -405,7 +415,7 @@ var InnerCompetitionManagementUI = (function (_React$Component4) {
                 return React.createElement(
                     "button",
                     { className: "btn btn-default full-width", onClick: this.addTourAfter.bind(this, after_id) },
-                    "Add another tour here"
+                    _("admin.buttons.add_tour")
                 );
             }
         }
@@ -437,7 +447,7 @@ var InnerCompetitionManagementUI = (function (_React$Component4) {
                     React.createElement(
                         "h2",
                         null,
-                        "Basic info"
+                        _("admin.headers.inner_competition_general_info")
                     ),
                     React.createElement(
                         "form",
@@ -448,7 +458,7 @@ var InnerCompetitionManagementUI = (function (_React$Component4) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-2 control-label" },
-                                "Name"
+                                _("models.inner_competition.name")
                             ),
                             React.createElement(
                                 "div",
@@ -462,7 +472,7 @@ var InnerCompetitionManagementUI = (function (_React$Component4) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-2 control-label" },
-                                "External ID"
+                                _("models.inner_competition.external_id")
                             ),
                             React.createElement(
                                 "div",
@@ -479,7 +489,7 @@ var InnerCompetitionManagementUI = (function (_React$Component4) {
                                 React.createElement(
                                     "button",
                                     { type: "submit", className: "btn btn-primary" },
-                                    "Save"
+                                    _("global.buttons.save")
                                 )
                             )
                         )
@@ -487,10 +497,17 @@ var InnerCompetitionManagementUI = (function (_React$Component4) {
                     React.createElement(
                         "h2",
                         null,
-                        "Tours"
+                        _("admin.headers.inner_competition_tours")
                     ),
                     this.renderTourCreation(null),
                     this.renderTours()
+                ),
+                React.createElement(
+                    "datalist",
+                    { id: "dl_tours" },
+                    _getPossibleTourNames().map(function (n, idx) {
+                        return React.createElement("option", { key: idx, value: n });
+                    })
                 )
             );
         }

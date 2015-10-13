@@ -128,9 +128,10 @@ class TourAdminScoresRow extends React.Component {
         });
         let scores = this.props.judges.map(function(judge) {
             return <TourAdminScoreCellWrapper
+                key={ scores_map[judge.id] && scores_map[judge.id].id }
                 judge={ judge }
                 scoring_system={ this.props.scoring_system }
-                score_id={ scores_map[judge.id] && scores_map[judge.id].id}
+                score_id={ scores_map[judge.id] && scores_map[judge.id].id }
                 value={ scores_map[judge.id] && scores_map[judge.id].data } />
         }.bind(this));
         return <tr className={ this.props.heat % 2 ? "odd-heat" : ""}>
@@ -194,43 +195,20 @@ class TourAdminScoresTable extends React.Component {
         .send();
     }
 
-    // Helpers
-
-    getRunIdx(run_id) {
-        var result = null;
-        this.state.runs.forEach(function(run, run_idx) {
-            if (run.id == run_id) {
-                result = run_idx;
-            }
-        });
-        return result;
-    }
-    getScoreIdPath(score_id) {
-        var result = null;
-        this.state.runs.forEach(function(run, run_idx) {
-            for (var score_idx in run.scores.scores) if (run.scores.scores.hasOwnProperty(score_idx)) {
-                if (run.scores.scores[score_idx].id == score_id) {
-                    result = [run_idx, score_idx];
-                }
-            }
-        });
-        return result;
-    }
-
     // Listeners
 
     onInitButtonClick() {
-        if (confirm("Are you sure want to recreate participants list for this tour?")) {
+        if (confirm(_("judging.confirms.init_tour"))) {
             Api("tournaments.tour.init", {tour_id: this.props.tour_id}).send();
         }
     }
     onFinalizeButtonClick() {
-        if (confirm("Are you sure want to finalize this tour?")) {
+        if (confirm(_("judging.confirms.finalize_tour"))) {
             Api("tournaments.tour.finalize", {tour_id: this.props.tour_id}).send();
         }
     }
     onShuffleHeatsButtonClick() {
-        if (confirm("Are you sure want to shuffle heats?")) {
+        if (confirm(_("judging.confirms.shuffle_heats"))) {
             Api("tournaments.tour.shuffle_heats", {tour_id: this.props.tour_id}).send();
         }
     }
@@ -245,10 +223,10 @@ class TourAdminScoresTable extends React.Component {
 
     renderActiveTourControls() {
         if (!this.state.active) {
-            return <button className="btn btn-success" onClick={ this.onStartTourButtonClick.bind(this) }>Start tour</button>
+            return <button className="btn btn-success" onClick={ this.onStartTourButtonClick.bind(this) }>{ _("judging.buttons.start_tour") }</button>
         } else {
             return <span>
-                <button className="btn btn-danger" onClick={ this.onStopTourButtonClick.bind(this) }>Stop tour</button><br />
+                <button className="btn btn-danger" onClick={ this.onStopTourButtonClick.bind(this) }>{ _("judging.buttons.stop_tour") }</button><br />
             </span>
         }
     }
@@ -272,14 +250,14 @@ class TourAdminScoresTable extends React.Component {
                 judges={ active_judges } />
         }.bind(this));
         let judges_header = active_judges.map(function(judge) {
-            return <th className="judge">{ judge.number }</th>;
+            return <th className="judge" key={ judge.id }>{ judge.number }</th>;
         }.bind(this));
         return <div className="tour-admin">
             <header>
                 <div className="controls">
-                    { this.state.active ? null : <button className="btn btn-primary" onClick={ this.onInitButtonClick.bind(this) }>Recreate list</button> }
-                    { this.state.active ? null : <button className="btn btn-primary" onClick={ this.onFinalizeButtonClick.bind(this) }>Finalize</button> }
-                    { this.state.active ? null : <button className="btn btn-primary" onClick={ this.onShuffleHeatsButtonClick.bind(this) }>Shuffle heats</button> }
+                    { this.state.active ? null : <button className="btn btn-primary" onClick={ this.onInitButtonClick.bind(this) }>{ _("judging.buttons.init_tour") }</button> }
+                    { this.state.active ? null : <button className="btn btn-primary" onClick={ this.onFinalizeButtonClick.bind(this) }>{ _("judging.buttons.finalize_tour") }</button> }
+                    { this.state.active ? null : <button className="btn btn-primary" onClick={ this.onShuffleHeatsButtonClick.bind(this) }>{ _("judging.buttons.shuffle_heats") }</button> }
                     { this.renderActiveTourControls() }
                 </div>
                 <h1>{ this.state.inner_competition.name }</h1>
@@ -288,11 +266,11 @@ class TourAdminScoresTable extends React.Component {
             <table className="scores-table">
                 <tbody>
                     <tr>
-                        <th className="heat">Heat</th>
-                        <th className="number">#</th>
-                        <th className="name">Name</th>
-                        <th className="club">Club</th>
-                        <th className="total">Total</th>
+                        <th className="heat">{ _("judging.labels.heat") }</th>
+                        <th className="number">{ _("judging.labels.number") }</th>
+                        <th className="name">{ _("judging.labels.participant_name") }</th>
+                        <th className="club">{ _("judging.labels.club") }</th>
+                        <th className="total">{ _("judging.labels.total_score") }</th>
                         { judges_header }
                     </tr>
                     { rows }

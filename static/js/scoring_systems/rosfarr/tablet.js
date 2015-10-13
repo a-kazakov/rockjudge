@@ -8,6 +8,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+function __() {
+    var args = [];
+    for (var idx = 1; idx < arguments.length; ++idx) {
+        args.push(arguments[idx]);
+    }
+    return _.apply(undefined, ["scoring_systems.rosfarr." + arguments[0]].concat(args));
+}
+
 var TabletScoreInput = (function (_React$Component) {
     _inherits(TabletScoreInput, _React$Component);
 
@@ -77,7 +85,8 @@ var TabletScoreInput = (function (_React$Component) {
                         React.createElement(
                             "div",
                             { className: "title" },
-                            "Jump steps:"
+                            __("tablet.tech_judge.jump_steps"),
+                            ":"
                         ),
                         React.createElement(
                             "div",
@@ -91,7 +100,8 @@ var TabletScoreInput = (function (_React$Component) {
                         React.createElement(
                             "div",
                             { className: "title" },
-                            "Timing:"
+                            __("tablet.tech_judge.timing"),
+                            ":"
                         ),
                         React.createElement(
                             "div",
@@ -108,10 +118,11 @@ var TabletScoreInput = (function (_React$Component) {
                 React.createElement(
                     "h3",
                     null,
-                    "Penalty type:"
+                    __("tablet.head_judge.penalty_type"),
+                    ":"
                 ),
                 React.createElement(TabletSelectorInput, {
-                    choices: [[0, "OK"], [-5, "Yellow card"], [-30, "Red card"], [-100, "-100"]],
+                    choices: [[0, __("tablet.head_judge.ok")], [-5, __("tablet.head_judge.yellow_card")], [-30, __("tablet.head_judge.red_card")], [-100, __("tablet.head_judge.black_card")]],
                     active: score.raw_data.penalty,
                     onValueUpdate: this.updateScores.bind(this, "penalty") }),
                 React.createElement("div", { className: "spacer" }),
@@ -136,8 +147,7 @@ var TabletScoreInput = (function (_React$Component) {
                         React.createElement(
                             "button",
                             { className: "tbtn btn-reset", onClick: this.overrideAcroScore.bind(this, acro.id, null) },
-                            "Reset to ",
-                            acro.original_score
+                            __("tablet.tech_judge.reset_to_n", acro.original_score)
                         ),
                         React.createElement(
                             "div",
@@ -166,7 +176,8 @@ var TabletScoreInput = (function (_React$Component) {
                 React.createElement(
                     "h3",
                     null,
-                    "Jump steps count:"
+                    __("tablet.tech_judge.jump_steps"),
+                    ":"
                 ),
                 React.createElement(TabletIntegerInput, {
                     value: score.raw_data.jump_steps,
@@ -175,7 +186,8 @@ var TabletScoreInput = (function (_React$Component) {
                 React.createElement(
                     "h3",
                     null,
-                    "Dancing time:"
+                    __("tablet.tech_judge.timing"),
+                    ":"
                 ),
                 React.createElement(StopWatch, null),
                 React.createElement(TabletSelectorInput, {
@@ -204,7 +216,7 @@ var TabletScoreInput = (function (_React$Component) {
                 React.createElement(
                     "h3",
                     null,
-                    "Footwork, woman (% reduction):"
+                    __("tablet.dance_judge.fw_woman")
                 ),
                 React.createElement(TabletSelectorInput, {
                     choices: [[100, "X"], [75, "75%"], [50, "50%"], [25, "25%"], [10, "10%"], [5, "5%"], [0, "OK"]],
@@ -213,7 +225,7 @@ var TabletScoreInput = (function (_React$Component) {
                 React.createElement(
                     "h3",
                     null,
-                    "Footwork, man (% reduction):"
+                    __("tablet.dance_judge.fw_man")
                 ),
                 React.createElement(TabletSelectorInput, {
                     choices: [[100, "X"], [75, "75%"], [50, "50%"], [25, "25%"], [10, "10%"], [5, "5%"], [0, "OK"]],
@@ -222,7 +234,7 @@ var TabletScoreInput = (function (_React$Component) {
                 React.createElement(
                     "h3",
                     null,
-                    "Dance figures:"
+                    __("tablet.dance_judge.dance_figs")
                 ),
                 React.createElement(TabletIntegerSelectInput, {
                     min: 0,
@@ -232,7 +244,7 @@ var TabletScoreInput = (function (_React$Component) {
                 React.createElement(
                     "h3",
                     null,
-                    "Composition:"
+                    __("tablet.dance_judge.composition")
                 ),
                 React.createElement(TabletIntegerSelectInput, {
                     min: 0,
@@ -254,7 +266,7 @@ var TabletScoreInput = (function (_React$Component) {
                                 React.createElement(
                                     "h3",
                                     null,
-                                    "Small mistakes (-5):"
+                                    __("tablet.dance_judge.small_mistakes")
                                 ),
                                 React.createElement(TabletIntegerInput, {
                                     value: score.raw_data.small_mistakes,
@@ -266,7 +278,7 @@ var TabletScoreInput = (function (_React$Component) {
                                 React.createElement(
                                     "h3",
                                     null,
-                                    "Big mistakes (-30):"
+                                    __("tablet.dance_judge.big_mistakes")
                                 ),
                                 React.createElement(TabletIntegerInput, {
                                     value: score.raw_data.big_mistakes,
@@ -278,7 +290,8 @@ var TabletScoreInput = (function (_React$Component) {
                 React.createElement(
                     "div",
                     { className: "total-score" },
-                    "Total score: ",
+                    __("tablet.global.total_score"),
+                    ": ",
                     score.total_score
                 )
             );
@@ -312,7 +325,7 @@ var TabletScoreInput = (function (_React$Component) {
                     React.createElement(
                         "h3",
                         null,
-                        "Fall down (-30):"
+                        __("tablet.acro_judge.fall_down")
                     ),
                     React.createElement(TabletIntegerInput, {
                         value: score.raw_data.mistakes,
@@ -321,7 +334,8 @@ var TabletScoreInput = (function (_React$Component) {
                 React.createElement(
                     "div",
                     { className: "total-score" },
-                    "Total score: ",
+                    __("tablet.global.total_score"),
+                    ": ",
                     score.total_score
                 )
             );

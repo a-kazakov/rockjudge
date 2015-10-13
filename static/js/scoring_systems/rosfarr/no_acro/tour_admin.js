@@ -126,13 +126,13 @@ var TourAdminScoreInput = (function (_React$Component) {
                 React.createElement(
                     "button",
                     { className: "btn btn-primary", type: "submit" },
-                    "Submit"
+                    _("global.buttons.submit")
                 ),
                 " ",
                 React.createElement(
                     "button",
                     { className: "btn btn-primary", type: "button", onClick: this.props.stopEditing },
-                    "Discard"
+                    _("global.buttons.discard")
                 )
             );
         }
@@ -188,13 +188,13 @@ var TourAdminScoreInput = (function (_React$Component) {
                 React.createElement(
                     "button",
                     { className: "btn btn-primary", type: "submit" },
-                    "Submit"
+                    _("global.buttons.submit")
                 ),
                 " ",
                 React.createElement(
                     "button",
                     { className: "btn btn-primary", type: "button", onClick: this.props.stopEditing },
-                    "Discard"
+                    _("global.buttons.discard")
                 )
             );
         }
@@ -229,12 +229,12 @@ var TourAdminScoreInput = (function (_React$Component) {
                 React.createElement(
                     "button",
                     { className: "btn btn-primary", type: "submit" },
-                    "Submit"
+                    _("global.buttons.submit")
                 ),
                 React.createElement(
                     "button",
                     { className: "btn btn-primary", type: "button", onClick: this.props.stopEditing },
-                    "Discard"
+                    _("global.buttons.discard")
                 )
             );
         }
