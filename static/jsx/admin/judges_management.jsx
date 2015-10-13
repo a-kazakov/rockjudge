@@ -50,16 +50,13 @@ class JudgeInputForm extends React.Component {
                 </div>
                 <div className="col-md-3">
                     <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">{ _("models.judge.hide_from_results") }</label>
+                        <label className="col-sm-4 control-label">{ _("models.judge.role_description") }</label>
                         <div className="col-sm-8">
-                            <div className="checkbox">
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        ref="hide_from_results"
-                                        defaultChecked={ judge.hide_from_results } />
-                                </label>
-                            </div>
+                            <input
+                                type="text"
+                                className="form-control"
+                                ref="role_description"
+                                defaultValue={ judge.role_description }  />
                         </div>
                     </div>
                     <div className="form-group form-group-sm">
@@ -80,9 +77,9 @@ class JudgeInputForm extends React.Component {
         return {
             name: this.refs.name.getDOMNode().value,
             role: this.refs.role.getDOMNode().value,
+            role_description: this.refs.role.getDOMNode().value,
             category: this.refs.category.getDOMNode().value,
             number: this.refs.number.getDOMNode().value,
-            hide_from_results: this.refs.hide_from_results.getDOMNode().checked,
         };
     }
 }
@@ -120,7 +117,7 @@ class JudgeEditingUI extends React.Component {
                 </div>
                 <div className="col-md-5">
                     <p><strong>{ _("models.judge.number") }:</strong> {this.props.judge.number } </p>
-                    <p><strong>{ _("models.judge.hide_from_results") }:</strong> { this.props.judge.hide_from_results ? _("global.labels.yes") : _("global.labels.no") } </p>
+                    <p><strong>{ _("models.judge.role_description") }:</strong> { this.props.judge.role_description } </p>
                 </div>
                 <div className="col-md-2">
                     <button className="full-width btn btn-primary btn-sm" onClick={ this.startEditing.bind(this) }>{ _("global.buttons.edit") }</button><br />

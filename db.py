@@ -101,6 +101,9 @@ class BaseModel(peewee.Model):
                 setattr(model, schema["ref"], rev_index[getattr(model, schema["ref"] + "_id")])
         return models
 
+    def get_sorting_key(self): # Default
+        return 0
+
     def serialize_as_child(self, children, serializer=None):
         if serializer is None:
             serializer = lambda x, c: x.serialize(children=c)
@@ -118,8 +121,9 @@ class BaseModel(peewee.Model):
 
     def serialize_lower_child(self, current_result, child_name, all_children, serializer=None):
         if child_name in all_children:
+            sorted_children = sorted(getattr(self, child_name), key=lambda x: x.get_sorting_key())
             current_result["*" + child_name] = [
                 child.serialize_as_child(all_children[child_name], serializer)
-                for child in getattr(self, child_name)
+                for child in sorted_children
             ]
         return current_result

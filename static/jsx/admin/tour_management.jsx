@@ -6,7 +6,7 @@ class TourInputForm extends React.Component {
             <div className="row">
                 <div className="col-md-6">
                     <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">{ _("models.tour.name") }</label>
+                        <label className="col-sm-4 control-label">{ _("models.tour.name") }:</label>
                         <div className="col-sm-8">
                             <input
                                 list="dl_tours"
@@ -17,7 +17,7 @@ class TourInputForm extends React.Component {
                         </div>
                     </div>
                     <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">{ _("models.tour.num_advances") }</label>
+                        <label className="col-sm-4 control-label">{ _("models.tour.num_advances") }:</label>
                         <div className="col-sm-8">
                             <input
                                 type="text"
@@ -27,7 +27,7 @@ class TourInputForm extends React.Component {
                         </div>
                     </div>
                     <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">{ _("models.tour.participants_per_heat") }</label>
+                        <label className="col-sm-4 control-label">{ _("models.tour.participants_per_heat") }:</label>
                         <div className="col-sm-8">
                             <input
                                 type="text"
@@ -39,7 +39,7 @@ class TourInputForm extends React.Component {
                 </div>
                 <div className="col-md-6">
                     <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">{ _("models.tour.scoring_system") }</label>
+                        <label className="col-sm-4 control-label">{ _("models.tour.scoring_system") }:</label>
                         <div className="col-sm-8">
                             <select
                                 className="form-control"
@@ -50,7 +50,7 @@ class TourInputForm extends React.Component {
                         </div>
                     </div>
                     <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">{ _("models.tour.is_hope_tour") }</label>
+                        <label className="col-sm-4 control-label">{ _("models.tour.is_hope_tour") }:</label>
                         <div className="col-sm-8">
                             <div className="checkbox">
                                 <label>
@@ -115,12 +115,12 @@ class TourEditingUI extends React.Component {
             <h3>{ this.props.tour.name }</h3>
             <div className="row">
                 <div className="col-md-5">
-                    <p><strong>{ _("models.tour.num_advances") }</strong> { this.props.tour.num_advances } </p>
-                    <p><strong>{ _("models.tour.participants_per_heat") }</strong> { this.props.tour.participants_per_heat } </p>
+                    <p><strong>{ _("models.tour.num_advances") }:</strong> { this.props.tour.num_advances } </p>
+                    <p><strong>{ _("models.tour.participants_per_heat") }:</strong> { this.props.tour.participants_per_heat } </p>
                 </div>
                 <div className="col-md-5">
-                    <p><strong>{ _("models.tour.is_hope_tour") }</strong> { this.props.tour.hope_tour ? "Yes" : "No" } </p>
-                    <p><strong>{ _("models.tour.scoring_system") }</strong> { _("scoring_systems_names." + this.props.tour.scoring_system) } </p>
+                    <p><strong>{ _("models.tour.is_hope_tour") }:</strong> { this.props.tour.hope_tour ? _("global.labels.yes") :  _("global.labels.no") } </p>
+                    <p><strong>{ _("models.tour.scoring_system") }:</strong> { _("scoring_systems_names." + this.props.tour.scoring_system) } </p>
                 </div>
                 <div className="col-md-2">
                     <button className="full-width btn btn-primary btn-sm" onClick={ this.startEditing.bind(this) }>{ _("global.buttons.edit") }</button><br />

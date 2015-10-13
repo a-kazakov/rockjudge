@@ -219,8 +219,7 @@ var JudgeTablet = (function (_React$Component) {
                 React.createElement(
                     "div",
                     { className: "judge-number" },
-                    "Judge ",
-                    this.state.judge.number
+                    _("global.phrases.judge_n", this.state.judge.number)
                 ),
                 React.createElement(
                     "div",

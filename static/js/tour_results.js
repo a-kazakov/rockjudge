@@ -84,7 +84,7 @@ var TourResults = (function (_React$Component) {
         key: "render",
         value: function render() {
             var active_judges = this.state.judges.filter(function (judge) {
-                return !judge.hide_from_results;
+                return judge.role !== "" && judge.role != "tech_judge"; // TODO: move this to scoring system
             });
             var table = null;
             if (this.state.verbose) {

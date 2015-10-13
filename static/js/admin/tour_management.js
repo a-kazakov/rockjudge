@@ -37,7 +37,8 @@ var TourInputForm = (function (_React$Component) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-4 control-label" },
-                                _("models.tour.name")
+                                _("models.tour.name"),
+                                ":"
                             ),
                             React.createElement(
                                 "div",
@@ -56,7 +57,8 @@ var TourInputForm = (function (_React$Component) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-4 control-label" },
-                                _("models.tour.num_advances")
+                                _("models.tour.num_advances"),
+                                ":"
                             ),
                             React.createElement(
                                 "div",
@@ -74,7 +76,8 @@ var TourInputForm = (function (_React$Component) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-4 control-label" },
-                                _("models.tour.participants_per_heat")
+                                _("models.tour.participants_per_heat"),
+                                ":"
                             ),
                             React.createElement(
                                 "div",
@@ -96,7 +99,8 @@ var TourInputForm = (function (_React$Component) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-4 control-label" },
-                                _("models.tour.scoring_system")
+                                _("models.tour.scoring_system"),
+                                ":"
                             ),
                             React.createElement(
                                 "div",
@@ -123,7 +127,8 @@ var TourInputForm = (function (_React$Component) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-4 control-label" },
-                                _("models.tour.is_hope_tour")
+                                _("models.tour.is_hope_tour"),
+                                ":"
                             ),
                             React.createElement(
                                 "div",
@@ -244,7 +249,8 @@ var TourEditingUI = (function (_React$Component2) {
                             React.createElement(
                                 "strong",
                                 null,
-                                _("models.tour.num_advances")
+                                _("models.tour.num_advances"),
+                                ":"
                             ),
                             " ",
                             this.props.tour.num_advances,
@@ -256,7 +262,8 @@ var TourEditingUI = (function (_React$Component2) {
                             React.createElement(
                                 "strong",
                                 null,
-                                _("models.tour.participants_per_heat")
+                                _("models.tour.participants_per_heat"),
+                                ":"
                             ),
                             " ",
                             this.props.tour.participants_per_heat,
@@ -272,10 +279,11 @@ var TourEditingUI = (function (_React$Component2) {
                             React.createElement(
                                 "strong",
                                 null,
-                                _("models.tour.is_hope_tour")
+                                _("models.tour.is_hope_tour"),
+                                ":"
                             ),
                             " ",
-                            this.props.tour.hope_tour ? "Yes" : "No",
+                            this.props.tour.hope_tour ? _("global.labels.yes") : _("global.labels.no"),
                             " "
                         ),
                         React.createElement(
@@ -284,7 +292,8 @@ var TourEditingUI = (function (_React$Component2) {
                             React.createElement(
                                 "strong",
                                 null,
-                                _("models.tour.scoring_system")
+                                _("models.tour.scoring_system"),
+                                ":"
                             ),
                             " ",
                             _("scoring_systems_names." + this.props.tour.scoring_system),

@@ -48,7 +48,7 @@ class TourResults extends React.Component {
     }
     render() {
         var active_judges = this.state.judges.filter(function(judge) {
-            return !judge.hide_from_results;
+            return judge.role !== "" && judge.role != "tech_judge"; // TODO: move this to scoring system
         });
         var table = null;
         if (this.state.verbose) {

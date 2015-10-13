@@ -474,7 +474,8 @@ class Tour(BaseModel):
             del row["run"]
         result = self.serialize_base()
         judges = []
-        for judge in self.judges:
+        sorted_judges = sorted(self.judges, key=lambda x: x.get_sorting_key())
+        for judge in sorted_judges:
             judge_s = judge.serialize()
             judge_s["id"] = judge.id
             judges.append(judge_s)
@@ -496,7 +497,7 @@ class Tour(BaseModel):
 
 class Judge(BaseModel):
     class Meta:
-        order_by = ["number"]
+        order_by = ["number", "role_description"]
         indexes = (
             (("competition", "judge"), True),
         )
@@ -504,9 +505,9 @@ class Judge(BaseModel):
     competition = peewee.ForeignKeyField(Competition, related_name="judges")
     name = peewee.CharField()
     category = peewee.CharField()
-    role = peewee.CharField()
-    hide_from_results = peewee.BooleanField(default=False)
-    number = peewee.CharField()
+    role = peewee.CharField(default="")
+    role_description = peewee.CharField(default="")
+    number = peewee.CharField(default="")
 
     @classmethod
     def create_model(cls, competition, data, ws_message):
@@ -538,12 +539,23 @@ class Judge(BaseModel):
             }
         )
 
+    def get_sorting_key(self): # TODO: move this logic to scoring system
+        if self.role == "head_judge":
+            primary_key = 0
+        elif self.role == "":
+            primary_key = 1
+        elif self.role in ["dance_judge", "acro_judge"]:
+            primary_key = 2
+        else:
+            primary_key = 3
+        return (primary_key, self.number, self.role_description, self.name)
+
     def serialize(self, children={}):
         return {
             "name": self.name,
             "category": self.category,
             "role": self.role,
-            "hide_from_results": self.hide_from_results,
+            "role_description": self.role_description,
             "number": self.number,
         }
 
@@ -564,10 +576,11 @@ class Run(BaseModel):
         scores_judge_ids = { score.judge_id for score in self.scores }
         for judge in self.tour.judges:
             if judge.id not in scores_judge_ids:
-                Score.create(
-                    run=self,
-                    judge=judge,
-                )
+                if judge.role != "":
+                    Score.create(
+                        run=self,
+                        judge=judge,
+                    )
 
     def get_score_obj(self, judge):
         return self.scores.select().where(Score.judge == judge).get()

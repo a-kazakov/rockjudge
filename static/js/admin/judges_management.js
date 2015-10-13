@@ -117,23 +117,16 @@ var JudgeInputForm = (function (_React$Component) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-4 control-label" },
-                                _("models.judge.hide_from_results")
+                                _("models.judge.role_description")
                             ),
                             React.createElement(
                                 "div",
                                 { className: "col-sm-8" },
-                                React.createElement(
-                                    "div",
-                                    { className: "checkbox" },
-                                    React.createElement(
-                                        "label",
-                                        null,
-                                        React.createElement("input", {
-                                            type: "checkbox",
-                                            ref: "hide_from_results",
-                                            defaultChecked: judge.hide_from_results })
-                                    )
-                                )
+                                React.createElement("input", {
+                                    type: "text",
+                                    className: "form-control",
+                                    ref: "role_description",
+                                    defaultValue: judge.role_description })
                             )
                         ),
                         React.createElement(
@@ -171,9 +164,9 @@ var JudgeInputForm = (function (_React$Component) {
             return {
                 name: this.refs.name.getDOMNode().value,
                 role: this.refs.role.getDOMNode().value,
+                role_description: this.refs.role.getDOMNode().value,
                 category: this.refs.category.getDOMNode().value,
-                number: this.refs.number.getDOMNode().value,
-                hide_from_results: this.refs.hide_from_results.getDOMNode().checked
+                number: this.refs.number.getDOMNode().value
             };
         }
     }]);
@@ -281,11 +274,11 @@ var JudgeEditingUI = (function (_React$Component2) {
                             React.createElement(
                                 "strong",
                                 null,
-                                _("models.judge.hide_from_results"),
+                                _("models.judge.role_description"),
                                 ":"
                             ),
                             " ",
-                            this.props.judge.hide_from_results ? _("global.labels.yes") : _("global.labels.no"),
+                            this.props.judge.role_description,
                             " "
                         )
                     ),

@@ -20,11 +20,13 @@ var RoleSelector = (function (_React$Component) {
     _createClass(RoleSelector, [{
         key: "render",
         value: function render() {
-            var judges = this.props.competition.judges.map(function (judge) {
+            var judges = this.props.competition.judges.filter(function (judge) {
+                return judge.role != "";
+            }).map(function (judge) {
                 return React.createElement(
                     "a",
                     { href: "/tablet/" + judge.id.toString(), className: "btn btn-default btn-lg" },
-                    _("global.phrases.judge_n", judge.number),
+                    judge.role_description || _("global.phrases.judge_n", judge.number),
                     ": ",
                     judge.name
                 );

@@ -235,8 +235,8 @@ class TourAdminScoresTable extends React.Component {
             return <span>Loading...</span>;
         }
         let judges = this.state.inner_competition.competition.judges;
-        let  active_judges = judges.filter(function(judge) {
-            return !judge.hide_from_results;
+        let active_judges = judges.filter(function(judge) {
+            return judge.role !== "" && judge.role != "tech_judge"; // TODO: move this to scoring system
         })
         let rows = this.state.runs.map(function(run) {
             return <TourAdminScoresRow

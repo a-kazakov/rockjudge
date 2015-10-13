@@ -1,8 +1,10 @@
 class RoleSelector extends React.Component {
     render() {
-        let judges = this.props.competition.judges.map(function(judge) {
+        let judges = this.props.competition.judges
+        .filter((judge) => judge.role != "")
+        .map(function(judge) {
             return <a href={ "/tablet/" + judge.id.toString() } className="btn btn-default btn-lg">
-                { _("global.phrases.judge_n", judge.number) }: { judge.name }
+                { judge.role_description || _("global.phrases.judge_n", judge.number) }: { judge.name }
             </a>
         });
         return <div className="role-selector">

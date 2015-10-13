@@ -365,7 +365,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
             }
             var judges = this.state.inner_competition.competition.judges;
             var active_judges = judges.filter(function (judge) {
-                return !judge.hide_from_results;
+                return judge.role !== "" && judge.role != "tech_judge"; // TODO: move this to scoring system
             });
             var rows = this.state.runs.map((function (run) {
                 return React.createElement(TourAdminScoresRow, {

@@ -116,10 +116,10 @@ function _(src, arg) {
             },
             "judge": {
                 "category": "Категория",
-                "hide_from_results": "Скрыть в таблице",
                 "name": "Ф. И. О.",
                 "number": "Номер",
-                "role": "Роль"
+                "role": "Роль в судействе",
+                "role_description": "Должность"
             },
             "participant": {
                 "acro_description": "Описание трюка",

@@ -158,7 +158,7 @@ class JudgeTablet extends React.Component {
     }
     renderJudgeInfo() {
         return <div>
-            <div className="judge-number">Judge { this.state.judge.number }</div>
+            <div className="judge-number">{ _("global.phrases.judge_n", this.state.judge.number) }</div>
             <div className="judge-name">{ this.state.judge.name }</div>
         </div>
 
