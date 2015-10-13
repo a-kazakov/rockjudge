@@ -483,7 +483,7 @@ var CreationRow = (function (_React$Component3) {
             var empty_data = {
                 "formation_name": "",
                 "number": "",
-                "club": { "id": null },
+                "club": { "id": this.props.clubs[0] ? this.props.clubs[0].id : null },
                 "sportsmen": [],
                 "acrobatics": []
             };
