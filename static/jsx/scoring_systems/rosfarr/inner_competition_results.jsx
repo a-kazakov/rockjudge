@@ -16,7 +16,6 @@ class InnerCompetitionResultsTable extends React.Component {
             { next_row.run.tour.name }
         </td></tr>;
     }
-    // <td>{ row.run.participant.coach.split(",").map((c) => [c.trim(), <br />]) }</td>
     renderRow(row) {
         let sp_name = row.run.participant.sportsmen.length > 2
             ? [<strong>{ row.run.participant.formation_name }</strong>, <br />]
@@ -26,7 +25,7 @@ class InnerCompetitionResultsTable extends React.Component {
             <td className="place">{ row.place === null ? "" : row.place }</td>
             <td className="number">{ row.run.participant.number }</td>
             <td className="sportsmen">{ sp_name }</td>
-            <td className="coaches">TBD</td>
+            <td className="coaches">{ row.run.participant.coaches.split(",").map((c) => [c.trim(), <br />]) }</td>
             <td className="club">{ row.run.participant.club.name }, { row.run.participant.club.city }</td>
         </tr>
     }

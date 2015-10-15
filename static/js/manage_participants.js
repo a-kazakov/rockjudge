@@ -102,6 +102,7 @@ var ParticipantEditorRow = (function (_React$Component) {
             return {
                 number: this.state.number,
                 club_id: this.state.club_id,
+                coaches: this.state.coaches,
                 formation_name: this.state.formation_name,
                 acrobatics: this.state.acrobatics.map(function (acro) {
                     return {
@@ -139,11 +140,12 @@ var ParticipantEditorRow = (function (_React$Component) {
         key: "render",
         value: function render() {
             var sportsmen = this.state.sportsmen.map((function (sp, idx) {
+                var bti = (this.state.number || 1000) * 10000;
                 return React.createElement(
                     "div",
                     { className: "sportsman", key: idx },
                     React.createElement("input", {
-                        tabIndex: 1000 + 10 * idx + 1,
+                        tabIndex: bti + 1000 + 10 * idx + 1,
                         ref: (function (e) {
                             if (e && this.latest_added == "sp" + idx.toString()) {
                                 e.getDOMNode().select();
@@ -156,14 +158,14 @@ var ParticipantEditorRow = (function (_React$Component) {
                         value: sp.last_name,
                         onChange: this.onChange.bind(this, "sp", idx, "last_name", "any") }),
                     React.createElement("input", {
-                        tabIndex: 1000 + 10 * idx + 2,
+                        tabIndex: bti + 1000 + 10 * idx + 2,
                         type: "text",
                         className: "first-name",
                         placeholder: _("models.participant.first_name"),
                         value: sp.first_name,
                         onChange: this.onChange.bind(this, "sp", idx, "first_name", "any") }),
                     React.createElement("input", {
-                        tabIndex: 1000 + 10 * idx + 3,
+                        tabIndex: bti + 1000 + 10 * idx + 3,
                         type: "text",
                         className: "yob",
                         placeholder: _("models.participant.yob"),
@@ -172,7 +174,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                     React.createElement(
                         "select",
                         {
-                            tabIndex: 1000 + 10 * idx + 3,
+                            tabIndex: bti + 1000 + 10 * idx + 3,
                             className: "gender",
                             value: sp.gender,
                             onChange: this.onChange.bind(this, "sp", idx, "gender", "any") },
@@ -202,7 +204,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                     "div",
                     { className: "acrobatic", key: idx },
                     React.createElement("input", {
-                        tabIndex: 2000 + 10 * idx + 1,
+                        tabIndex: bti + 2000 + 10 * idx + 1,
                         ref: (function (e) {
                             if (e && this.latest_added == "acro" + idx.toString()) {
                                 e.getDOMNode().select();
@@ -215,7 +217,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                         value: acro.description,
                         onChange: this.onChange.bind(this, "acro", idx, "description", "any") }),
                     React.createElement("input", {
-                        tabIndex: 2000 + 10 * idx + 2,
+                        tabIndex: bti + 2000 + 10 * idx + 2,
                         type: "text",
                         className: "score",
                         placeholder: _("models.participant.acro_score"),
@@ -259,7 +261,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                     _("models.participant.general_info")
                                 ),
                                 React.createElement("input", {
-                                    tabIndex: "1",
+                                    tabIndex: " bti + ",
                                     ref: (function (e) {
                                         if (e && this.latest_added == "base") {
                                             e.getDOMNode().select();
@@ -273,14 +275,20 @@ var ParticipantEditorRow = (function (_React$Component) {
                                 React.createElement(
                                     "select",
                                     {
-                                        tabIndex: "2",
+                                        tabIndex: " bti + ",
                                         className: "full-width",
                                         value: this.state.club_id,
                                         onChange: this.onChange.bind(this, "", null, "club_id", "any") },
                                     clubs
                                 ),
                                 React.createElement("input", {
-                                    tabIndex: "3",
+                                    tabIndex: " bti + ",
+                                    placeholder: _("models.participant.coaches"),
+                                    className: "full-width",
+                                    value: this.state.coaches,
+                                    onChange: this.onChange.bind(this, "", null, "coaches", "any") }),
+                                React.createElement("input", {
+                                    tabIndex: " bti + ",
                                     placeholder: _("models.participant.formation_name"),
                                     className: "full-width",
                                     value: this.state.formation_name,
@@ -291,7 +299,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         {
-                                            tabIndex: "10000",
+                                            tabIndex: " bti + 0000",
                                             type: "submit",
                                             className: "btn btn-primary" },
                                         _("global.buttons.submit")
@@ -299,7 +307,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         {
-                                            tabIndex: "10001",
+                                            tabIndex: " bti + 0001",
                                             type: "button",
                                             className: "btn btn-danger",
                                             onClick: this.props.stopEditing },
@@ -319,7 +327,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                 React.createElement(
                                     "button",
                                     {
-                                        tabIndex: "1999",
+                                        tabIndex: " bti + 999",
                                         type: "button",
                                         className: "full-width btn btn-sm btn-default",
                                         onClick: this.addSportsman.bind(this) },
@@ -338,7 +346,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                 React.createElement(
                                     "button",
                                     {
-                                        tabIndex: "2999",
+                                        tabIndex: " bti + 999",
                                         type: "button",
                                         className: "full-width btn btn-sm btn-default",
                                         onClick: this.addAcrobatic.bind(this) },
@@ -385,7 +393,7 @@ var ParticipantRow = (function (_React$Component2) {
         key: "onDelete",
         value: function onDelete(event) {
             event.stopPropagation();
-            if (confirm("Are you sure want to delete this participant?")) {
+            if (confirm(_("admin.confirms.delete_participant"))) {
                 Api("tournaments.participant.delete", {
                     participant_id: this.props.participant.id
                 }).send();
@@ -482,6 +490,7 @@ var CreationRow = (function (_React$Component3) {
         value: function renderEditor() {
             var empty_data = {
                 "formation_name": "",
+                "coaches": "",
                 "number": "",
                 "club": { "id": this.props.clubs[0] ? this.props.clubs[0].id : null },
                 "sportsmen": [],

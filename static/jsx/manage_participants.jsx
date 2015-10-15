@@ -73,6 +73,7 @@ class ParticipantEditorRow extends React.Component {
         return {
             number: this.state.number,
             club_id: this.state.club_id,
+            coaches: this.state.coaches,
             formation_name: this.state.formation_name,
             acrobatics: this.state.acrobatics.map(function(acro) {
                 return {
@@ -106,9 +107,10 @@ class ParticipantEditorRow extends React.Component {
     }
     render() {
         let sportsmen = this.state.sportsmen.map(function(sp, idx) {
+            let bti = (this.state.number || 1000) * 10000;
             return <div className="sportsman" key={ idx }>
                 <input
-                    tabIndex={ 1000 + 10 * idx + 1 }
+                    tabIndex={ bti + 1000 + 10 * idx + 1 }
                     ref={ function(e) {
                         if (e && this.latest_added == "sp" + idx.toString()) {
                             e.getDOMNode().select();
@@ -121,21 +123,21 @@ class ParticipantEditorRow extends React.Component {
                     value={ sp.last_name }
                     onChange={ this.onChange.bind(this, "sp", idx, "last_name", "any") } />
                 <input
-                    tabIndex={ 1000 + 10 * idx + 2 }
+                    tabIndex={ bti + 1000 + 10 * idx + 2 }
                     type="text"
                     className="first-name"
                     placeholder={ _("models.participant.first_name") }
                     value={ sp.first_name }
                     onChange={ this.onChange.bind(this, "sp", idx, "first_name", "any") } />
                 <input
-                    tabIndex={ 1000 + 10 * idx + 3 }
+                    tabIndex={ bti + 1000 + 10 * idx + 3 }
                     type="text"
                     className="yob"
                     placeholder={ _("models.participant.yob") }
                     value={ sp.year_of_birth }
                     onChange={ this.onChange.bind(this, "sp", idx, "year_of_birth", "number") } />
                 <select
-                        tabIndex={ 1000 + 10 * idx + 3 }
+                        tabIndex={ bti + 1000 + 10 * idx + 3 }
                         className="gender"
                         value={ sp.gender }
                         onChange={ this.onChange.bind(this, "sp", idx, "gender", "any") }>
@@ -151,7 +153,7 @@ class ParticipantEditorRow extends React.Component {
         let acrobatics = this.state.acrobatics.map(function(acro, idx) {
             return <div className="acrobatic" key={ idx }>
                 <input
-                    tabIndex={ 2000 + 10 * idx + 1 }
+                    tabIndex={ bti + 2000 + 10 * idx + 1 }
                     ref={ function(e) {
                         if (e && this.latest_added == "acro" + idx.toString()) {
                             e.getDOMNode().select();
@@ -164,7 +166,7 @@ class ParticipantEditorRow extends React.Component {
                     value={ acro.description }
                     onChange={ this.onChange.bind(this, "acro", idx, "description", "any") } />
                 <input
-                    tabIndex={ 2000 + 10 * idx + 2 }
+                    tabIndex={ bti + 2000 + 10 * idx + 2 }
                     type="text"
                     className="score"
                     placeholder={ _("models.participant.acro_score") }
@@ -186,7 +188,7 @@ class ParticipantEditorRow extends React.Component {
                         <div className="col-md-3 general-info">
                             <h4>{ _("models.participant.general_info") }</h4>
                             <input
-                                tabIndex="1"
+                                tabIndex=" bti + "
                                 ref={ function(e) {
                                     if (e && this.latest_added == "base") {
                                         e.getDOMNode().select();
@@ -198,25 +200,31 @@ class ParticipantEditorRow extends React.Component {
                                 value={ this.state.number }
                                 onChange={ this.onChange.bind(this, "", null, "number", "number") } />
                             <select
-                                    tabIndex="2"
+                                    tabIndex=" bti + "
                                     className="full-width"
                                     value={ this.state.club_id }
                                     onChange={ this.onChange.bind(this, "", null, "club_id", "any") }>
                                 { clubs }
                             </select>
                             <input
-                                tabIndex="3"
+                                tabIndex=" bti + "
+                                placeholder={ _("models.participant.coaches") }
+                                className="full-width"
+                                value={ this.state.coaches }
+                                onChange={ this.onChange.bind(this, "", null, "coaches", "any") } />
+                            <input
+                                tabIndex=" bti + "
                                 placeholder={ _("models.participant.formation_name") }
                                 className="full-width"
                                 value={ this.state.formation_name }
                                 onChange={ this.onChange.bind(this, "", null, "formation_name", "any") } />
                             <div className="buttons">
                                 <button
-                                    tabIndex="10000"
+                                    tabIndex=" bti + 0000"
                                     type="submit"
                                     className="btn btn-primary">{ _("global.buttons.submit") }</button>
                                 <button
-                                    tabIndex="10001"
+                                    tabIndex=" bti + 0001"
                                     type="button"
                                     className="btn btn-danger"
                                     onClick={ this.props.stopEditing }>{ _("global.buttons.discard") }</button>
@@ -226,7 +234,7 @@ class ParticipantEditorRow extends React.Component {
                             <h4>{ _("models.participant.sportsmen") }</h4>
                             { sportsmen }
                             <button
-                                tabIndex="1999"
+                                tabIndex=" bti + 999"
                                 type="button"
                                 className="full-width btn btn-sm btn-default"
                                 onClick={ this.addSportsman.bind(this) }>{ _("global.buttons.add") }</button>
@@ -235,7 +243,7 @@ class ParticipantEditorRow extends React.Component {
                             <h4>{ _("models.participant.acrobatics") }</h4>
                             { acrobatics }
                             <button
-                                tabIndex="2999"
+                                tabIndex=" bti + 999"
                                 type="button"
                                 className="full-width btn btn-sm btn-default"
                                 onClick={ this.addAcrobatic.bind(this) }>{ _("global.buttons.add") }</button>
@@ -266,7 +274,7 @@ class ParticipantRow extends React.Component {
     }
     onDelete(event) {
         event.stopPropagation();
-        if (confirm("Are you sure want to delete this participant?")) {
+        if (confirm(_("admin.confirms.delete_participant"))) {
             Api("tournaments.participant.delete", {
                 participant_id: this.props.participant.id,
             }).send();
@@ -319,6 +327,7 @@ class CreationRow extends React.Component {
     renderEditor() {
         let empty_data = {
             "formation_name": "",
+            "coaches": "",
             "number": "",
             "club": { "id": this.props.clubs[0] ? this.props.clubs[0].id : null },
             "sportsmen": [],

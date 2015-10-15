@@ -42,8 +42,6 @@ var InnerCompetitionResultsTable = (function (_React$Component) {
                 )
             );
         }
-
-        // <td>{ row.run.participant.coach.split(",").map((c) => [c.trim(), <br />]) }</td>
     }, {
         key: "renderRow",
         value: function renderRow(row) {
@@ -76,7 +74,9 @@ var InnerCompetitionResultsTable = (function (_React$Component) {
                 React.createElement(
                     "td",
                     { className: "coaches" },
-                    "TBD"
+                    row.run.participant.coaches.split(",").map(function (c) {
+                        return [c.trim(), React.createElement("br", null)];
+                    })
                 ),
                 React.createElement(
                     "td",

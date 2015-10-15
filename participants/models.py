@@ -52,6 +52,7 @@ class Participant(BaseModel):
 
     inner_competition = peewee.ForeignKeyField(inner_competition_proxy, null=True, related_name="participants")
     formation_name = peewee.CharField(default="")
+    coaches = peewee.CharField()
     number = peewee.IntegerField()
     club = peewee.ForeignKeyField(Club)
     external_id = peewee.CharField(null=True, default=None)
@@ -80,7 +81,7 @@ class Participant(BaseModel):
 
     def update_data(self, new_data, ws_message):
         number_changed = "number" in new_data and new_data["number"] != self.number
-        for key in ["number", "external_id", "formation_name"]:
+        for key in ["number", "external_id", "formation_name", "coaches"]:
             if key in new_data:
                 setattr(self, key, new_data[key])
         if "club_id" in new_data:
@@ -149,7 +150,7 @@ class Participant(BaseModel):
     def create_model(cls, inner_competition, data, ws_message):
         create_kwargs = {
             key: data[key]
-            for key in ["formation_name", "number"]
+            for key in ["formation_name", "number", "coaches"]
         }
         if "external_id" in data:
             create_kwargs["external_id"] = data["external_id"]
@@ -205,6 +206,7 @@ class Participant(BaseModel):
         result = {
             "name": self.get_name(),
             "formation_name": self.formation_name,
+            "coaches": self.coaches,
             "number": self.number,
         }
         if "acrobatics" in children:
@@ -220,7 +222,7 @@ class Participant(BaseModel):
         if obj["external_id"] is not None:
             try:
                 model = cls.get(cls.inner_competition == inner_competition and cls.external_id == obj["external_id"])
-                for key in ["formation_name"]:
+                for key in ["formation_name", "coaches"]:
                     setattr(model, key, obj["key"])
                 model.club = club
                 model.save()
@@ -230,6 +232,7 @@ class Participant(BaseModel):
         return cls.create(
             inner_competition=inner_competition,
             formation_name=(obj["formation_name"] if "formation_name" in obj else ""),
+            coaches=(obj["coaches"] if "coaches" in obj else ""),
             number=number,
             club=club
         ), True
