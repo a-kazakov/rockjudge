@@ -68,6 +68,7 @@ class BaseModel(peewee.Model):
         new_schema = self.create_prefetching_schema(self.__class__, schema)
         for child_schema in new_schema:
             self._prefetch_impl([self], child_schema)
+        return self
 
     @classmethod
     def _prefetch_impl(cls, models, schema):
@@ -104,6 +105,9 @@ class BaseModel(peewee.Model):
     def get_sorting_key(self): # Default
         return 0
 
+    def get_back_ref(self, field):
+        return None
+
     def serialize_as_child(self, children, serializer=None):
         if serializer is None:
             serializer = lambda x, c: x.serialize(children=c)
@@ -122,8 +126,14 @@ class BaseModel(peewee.Model):
     def serialize_lower_child(self, current_result, child_name, all_children, serializer=None):
         if child_name in all_children:
             sorted_children = sorted(getattr(self, child_name), key=lambda x: x.get_sorting_key())
-            current_result["*" + child_name] = [
-                child.serialize_as_child(all_children[child_name], serializer)
-                for child in sorted_children
-            ]
+            back_ref = self.get_back_ref(child_name)
+            if back_ref is None:
+                back_ref = getattr(self.__class__, child_name).field.name
+            current_result["*" + child_name] = {
+                "back_ref": back_ref,
+                "children": [
+                    child.serialize_as_child(all_children[child_name], serializer)
+                    for child in sorted_children
+                ]
+            }
         return current_result

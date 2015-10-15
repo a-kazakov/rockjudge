@@ -104,6 +104,17 @@ class Api:
     def inner_competition_get(cls, request, ws_message):
         inner_competition = cls.get_model(InnerCompetition, "inner_competition_id", request)
         inner_competition.full_prefetch()
+        inner_competition.prefetch_tours({
+            "runs": {
+                "scores": {},
+                "acrobatic_overrides": {},
+                "participant": {
+                    "acrobatics": {},
+                    "club": {},
+                    "sportsmen": {},
+                },
+            }
+        })
         return inner_competition.serialize(children=request["children"])
 
     # Setters
@@ -264,6 +275,21 @@ class Api:
         tour = cls.get_model(Tour, "tour_id", request)
         tour.full_prefetch()
         return tour.get_serialized_results()
+
+    @classmethod
+    def inner_competition_get_results(cls, request, ws_message):
+        inner_competition = cls.get_model(InnerCompetition, "inner_competition_id", request)
+        inner_competition.full_prefetch()
+        inner_competition.prefetch_tours({
+            "runs": {
+                "scores": {},
+                "acrobatic_overrides": {},
+                "participant": {
+                    "acrobatics": {},
+                }
+            },
+        })
+        return inner_competition.get_serialized_results()
 
     @classmethod
     def competition_load(cls, request, ws_message):

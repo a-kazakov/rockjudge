@@ -293,7 +293,26 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                 React.createElement(
                     "td",
                     { className: "participant" },
-                    this.props.row.participant.name
+                    React.createElement(
+                        "p",
+                        null,
+                        this.props.row.participant.name
+                    ),
+                    React.createElement(
+                        "p",
+                        null,
+                        React.createElement(
+                            "em",
+                            null,
+                            this.props.row.participant.club.name,
+                            ", ",
+                            React.createElement(
+                                "nobr",
+                                null,
+                                this.props.row.participant.club.city
+                            )
+                        )
+                    )
                 ),
                 React.createElement(
                     "td",
@@ -364,7 +383,9 @@ var TourResultsVerboseTable = (function (_React$Component2) {
                         React.createElement(
                             "th",
                             { className: "participant" },
-                            __("results.labels.participant_name")
+                            __("results.labels.participant_name"),
+                            ",",
+                            __("results.labels.participant_club")
                         ),
                         React.createElement(
                             "th",
@@ -433,6 +454,17 @@ var TourResultsTableRow = (function (_React$Component3) {
                 ),
                 React.createElement(
                     "td",
+                    { className: "club" },
+                    this.props.row.participant.club.name,
+                    ", ",
+                    React.createElement(
+                        "nobr",
+                        null,
+                        this.props.row.participant.club.city
+                    )
+                ),
+                React.createElement(
+                    "td",
                     { className: "score" },
                     this.props.row.scores.total_run_score
                 ),
@@ -485,6 +517,11 @@ var TourResultsTable = (function (_React$Component4) {
                             "th",
                             { className: "participant" },
                             __("results.labels.participant_name")
+                        ),
+                        React.createElement(
+                            "th",
+                            { className: "club" },
+                            __("results.labels.participant_club")
                         ),
                         React.createElement(
                             "th",

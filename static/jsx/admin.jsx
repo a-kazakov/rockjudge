@@ -32,7 +32,7 @@ class ManagmentUI extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            "page": "load_competition",
+            "page": null,
         };
     }
     switchPage(page, props) {
@@ -226,10 +226,16 @@ class AdminUI extends React.Component {
         this.loadData();
     }
     reloadFromStorage() {
+        var SCHEMA = {
+            judges: {},
+            inner_competitions: {
+                tours: {},
+            },
+        };
         this.setState(
             storage.get("Competition")
                 .by_id(this.props.competition_id)
-                .serialize());
+                .serialize(SCHEMA));
     }
     loadData() {
         Api("tournaments.competition.get", {
@@ -266,6 +272,9 @@ class AdminUI extends React.Component {
                 inner_competitions={ this.state.inner_competitions }
                 judges={ this.state.judges }
                 competition_id={ this.props.competition_id } />;
+        case "results":
+            return <ResultsUI
+                inner_competitions={ this.state.inner_competitions } />
         case "service":
             return <ServiceUI
                 inner_competitions={ this.state.inner_competitions } />
@@ -290,7 +299,7 @@ class AdminUI extends React.Component {
                         <div className="icon">J</div>
                         <div className="label">Judging</div>
                     </div>
-                    <div className="app">
+                    <div className={ "app" + (this.state.active_app == "results" ? " active" : "") } onClick={ this.setApp.bind(this, "results") }>
                         <div className="icon">R</div>
                         <div className="label">Results</div>
                     </div>

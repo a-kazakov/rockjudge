@@ -12,6 +12,7 @@ class Club(BaseModel):
             (("competition", "external_id"), False),
         )
         order_by = ["name"]
+
     competition = peewee.ForeignKeyField(competition_proxy, related_name="clubs")
     name = peewee.CharField()
     city = peewee.CharField()
@@ -252,9 +253,12 @@ class Participant(BaseModel):
 
 
 class Sportsman(BaseModel):
-    indexes = (
-        (("external_id"), False),
-    )
+    class Meta:
+        indexes = (
+            (("external_id"), False),
+        )
+        order_by = ["gender", "last_name", "first_name"]
+
     participant = peewee.ForeignKeyField(Participant, related_name="sportsmen")
     first_name = peewee.CharField()
     last_name = peewee.CharField()

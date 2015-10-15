@@ -33,6 +33,7 @@ class ApiImpl {
             data: {
                 method: this.method,
                 data: JSON.stringify(this.data),
+                client_id: window.client_id,
             },
             success: function(response) {
                 if (response.success) {

@@ -165,9 +165,22 @@ class TourAdminScoresTable extends React.Component {
         this.loadData();
     }
     reloadFromStorage() {
+        var SCHEMA = {
+            inner_competition: {
+                competition: {
+                    judges: {},
+                }
+            },
+            runs: {
+                scores: {},
+                participant: {
+                    club: {},
+                }
+            },
+        }
         let serialized = storage.get("Tour")
             .by_id(this.props.tour_id)
-            .serialize();
+            .serialize(SCHEMA);
         if (serialized.finalized) {
             window.location.reload(true);
         }

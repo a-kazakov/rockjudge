@@ -541,7 +541,17 @@ var ParticipantsManager = (function (_React$Component4) {
     _createClass(ParticipantsManager, [{
         key: "reloadFromStorage",
         value: function reloadFromStorage() {
-            var serialized = storage.get("InnerCompetition").by_id(this.props.inner_competition_id).serialize();
+            var SCHEMA = {
+                competition: {
+                    clubs: {}
+                },
+                participants: {
+                    acrobatics: {},
+                    club: {},
+                    sportsmen: {}
+                }
+            };
+            var serialized = storage.get("InnerCompetition").by_id(this.props.inner_competition_id).serialize(SCHEMA);
             this.setState(serialized);
         }
     }, {

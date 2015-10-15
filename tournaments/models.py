@@ -70,8 +70,18 @@ class InnerCompetition(BaseModel):
     first_tour = peewee.ForeignKeyField(tour_proxy, null=True)
     external_id = peewee.CharField(null=True, default=None)
 
+    pf_tours = None
+
+    def get_back_ref(self, field):
+        if field == "tours":
+            return "inner_competition"
+        return None
+
     @property
     def tours(self):
+        if self.pf_tours is not None:
+            yield from self.pf_tours
+            return
         tour = self.first_tour
         while tour is not None:
             yield tour
@@ -83,9 +93,14 @@ class InnerCompetition(BaseModel):
                 return tour
         return None
 
+    def prefetch_tours(self, schema={}):
+        self.pf_tours = [
+            tour.prefetch(schema)
+            for tour in self.tours
+        ]
+
     def full_prefetch(self):
         self.prefetch({
-            "tour_set": {},
             "participants": {
                 "acrobatics": {},
                 "club": {},
@@ -142,6 +157,26 @@ class InnerCompetition(BaseModel):
             model_type=self.__class__,
             model_id=self.id,
         )
+
+    def get_serialized_results(self):
+        result = []
+        participants_added = set()
+        tours = list(reversed(list(self.tours)))
+        for idx, tour in enumerate(tours):
+            skip_place = not tour.finalized or (idx > 0 and tours[idx - 1].hope_tour)
+            tour_results = tour.scoring_system.get_tour_results(tour)
+            place_offset = tours[idx + 1].total_advanced if idx < len(tours) - 1 and tour.hope_tour else 0
+            for row in tour_results:
+                p_id = row["run"].participant.id
+                if p_id in participants_added:
+                    continue
+                row = {
+                    "place": row["place"] + place_offset if not skip_place and not row["advances"] else None,
+                    "run_id": row["run"].id,
+                }
+                participants_added.add(p_id)
+                result.append(row)
+        return result
 
     def serialize(self, children={}):
         result = {
@@ -360,6 +395,7 @@ class Tour(BaseModel):
         self.save()
         if self.next_tour:
             self.next_tour.init(ws_message)
+        ws_message.add_message("tour_results_changed", { "tour_id": self.id } )
         ws_message.add_model_update(
             model_type=self.__class__,
             model_id=self.id

@@ -3,6 +3,7 @@ from sockjs.tornado import SockJSRouter
 from webserver.handlers import (
     ApiHandler,
     AdminHandler,
+    InnerCompetitionResultsHandler,
     ManageParticipantsHandler,
     StartPageHandler,
     TourAdminHandler,
@@ -17,6 +18,7 @@ ws_router = SockJSRouter(WebSocketClients, '/ws')
 handlers = [
     (r"/$", StartPageHandler),
     (r"/admin/(\d+)$", AdminHandler),
+    (r"/ic/(\d+)/results", InnerCompetitionResultsHandler),
     (r"/participants/(\d+)$", ManageParticipantsHandler),
     (r"/tour/(\d+)$", TourAdminHandler),
     (r"/tour/(\d+)/results$", TourResultsHandler),

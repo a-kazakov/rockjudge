@@ -268,7 +268,20 @@ var TourAdminScoresTable = (function (_React$Component4) {
     _createClass(TourAdminScoresTable, [{
         key: "reloadFromStorage",
         value: function reloadFromStorage() {
-            var serialized = storage.get("Tour").by_id(this.props.tour_id).serialize();
+            var SCHEMA = {
+                inner_competition: {
+                    competition: {
+                        judges: {}
+                    }
+                },
+                runs: {
+                    scores: {},
+                    participant: {
+                        club: {}
+                    }
+                }
+            };
+            var serialized = storage.get("Tour").by_id(this.props.tour_id).serialize(SCHEMA);
             if (serialized.finalized) {
                 window.location.reload(true);
             }

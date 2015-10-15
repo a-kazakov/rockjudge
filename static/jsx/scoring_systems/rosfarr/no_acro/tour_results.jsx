@@ -70,7 +70,10 @@ class TourResultsVerboseTableRow extends React.Component {
         return <tr>
             <td className="place">{ this.props.row.place }</td>
             <td className="number">{ this.props.row.participant.number }</td>
-            <td className="participant">{ this.props.row.participant.name }</td>
+            <td className="participant">
+                <p>{ this.props.row.participant.name }</p>
+            <p><em>{ this.props.row.participant.club.name }{", "}<nobr>{ this.props.row.participant.club.city }</nobr></em></p>
+            </td>
             <td className="score">{ this.props.row.scores.total_run_score }</td>
             { acro_scores_cell }
             { judges_scores }
@@ -99,7 +102,10 @@ class TourResultsVerboseTable extends React.Component {
                 <tr>
                     <th className="place">{ __("results.labels.place") }</th>
                     <th className="number">{ __("results.labels.number") }</th>
-                    <th className="participant">{ __("results.labels.participant_name") }</th>
+                    <th className="participant">
+                        { __("results.labels.participant_name") },
+                        { __("results.labels.participant_club") }
+                    </th>
                     <th className="score">{ __("results.labels.total_score") }</th>
                     { acro_header }
                     { judges_header }
@@ -122,6 +128,8 @@ class TourResultsTableRow extends React.Component {
             <td className="place">{ this.props.row.place }</td>
             <td className="number">{ this.props.row.participant.number }</td>
             <td className="participant">{ this.props.row.participant.name }</td>
+            <td className="club">{ this.props.row.participant.club.name }{", "}
+                <nobr>{ this.props.row.participant.club.city }</nobr></td>
             <td className="score">{ this.props.row.scores.total_run_score }</td>
             { next_tour_cell }
         </tr>
@@ -142,6 +150,7 @@ class TourResultsTable extends React.Component {
                     <th className="place">{ __("results.labels.place") }</th>
                     <th className="number">{ __("results.labels.number") }</th>
                     <th className="participant">{ __("results.labels.participant_name") }</th>
+                    <th className="club">{ __("results.labels.participant_club") }</th>
                     <th className="score">{ __("results.labels.total_score") }</th>
                     { this.props.has_next_tour ? <th className="next-tour">{ __("results.labels.next_tour") }</th> : null }
                 </tr>

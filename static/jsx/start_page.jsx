@@ -56,6 +56,9 @@ class StartPage extends React.Component {
         }.bind(this));
     }
     reloadFromStorage() {
+        var SCHEMA = {
+            judges: {},
+        }
         let all_loaded = true;
         let competitions = this.props.competition_ids.map(function(competition_id) {
             let st_obj = storage.get("Competition").by_id(competition_id);
@@ -63,7 +66,7 @@ class StartPage extends React.Component {
                 all_loaded = false;
                 return null;
             }
-            return st_obj.serialize();
+            return st_obj.serialize(SCHEMA);
         });
         this.setState({
             competitions: competitions,

@@ -19,6 +19,14 @@ class AdminHandler(tornado.web.RequestHandler):
         self.render("admin.html", competition_id=competition_id)
 
 
+class InnerCompetitionResultsHandler(tornado.web.RequestHandler):
+    def get(self, inner_competition_id):
+        self.render(
+            "inner_competition_results.html",
+            inner_competition_id=inner_competition_id,
+        )
+
+
 class ManageParticipantsHandler(tornado.web.RequestHandler):
     def get(self, inner_competition_id):
         self.render(
@@ -70,7 +78,11 @@ class ApiHandler(tornado.web.RequestHandler):
         method = self.get_argument("method")
         method_parts = method.split(".")
         inner_method = ".".join(method_parts[1:])
-        ws_message = WsMessage()
+        try:
+            client_id = self.get_argument("client_id")
+        except:
+            client_id = None
+        ws_message = WsMessage(client_id)
         with Database.instance().db.transaction():
             if method_parts[0] == "tournaments":
                 result = TournamentsApi.call(inner_method, data, ws_message=ws_message)

@@ -78,7 +78,7 @@ var ManagmentUI = (function (_React$Component2) {
 
         _get(Object.getPrototypeOf(ManagmentUI.prototype), "constructor", this).call(this, props);
         this.state = {
-            "page": "load_competition"
+            "page": null
         };
     }
 
@@ -381,7 +381,13 @@ var AdminUI = (function (_React$Component4) {
     _createClass(AdminUI, [{
         key: "reloadFromStorage",
         value: function reloadFromStorage() {
-            this.setState(storage.get("Competition").by_id(this.props.competition_id).serialize());
+            var SCHEMA = {
+                judges: {},
+                inner_competitions: {
+                    tours: {}
+                }
+            };
+            this.setState(storage.get("Competition").by_id(this.props.competition_id).serialize(SCHEMA));
         }
     }, {
         key: "loadData",
@@ -421,6 +427,9 @@ var AdminUI = (function (_React$Component4) {
                         inner_competitions: this.state.inner_competitions,
                         judges: this.state.judges,
                         competition_id: this.props.competition_id });
+                case "results":
+                    return React.createElement(ResultsUI, {
+                        inner_competitions: this.state.inner_competitions });
                 case "service":
                     return React.createElement(ServiceUI, {
                         inner_competitions: this.state.inner_competitions });
@@ -487,7 +496,7 @@ var AdminUI = (function (_React$Component4) {
                             ),
                             React.createElement(
                                 "div",
-                                { className: "app" },
+                                { className: "app" + (this.state.active_app == "results" ? " active" : ""), onClick: this.setApp.bind(this, "results") },
                                 React.createElement(
                                     "div",
                                     { className: "icon" },

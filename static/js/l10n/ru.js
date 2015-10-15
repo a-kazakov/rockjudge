@@ -52,7 +52,9 @@ function _(src, arg) {
                 "invalid_passcode": "Введён неверный код потверждения"
             },
             "menu": {
+                "all_inner_competition_results": "Сводная по категории",
                 "add_inner_competition": "Создать категорию",
+                "competition_report": "Отчет о турнире",
                 "load_competition": "Импорт данных",
                 "manage_inner_competitions": "Управление категориями",
                 "manage_judges": "Управление судьями",
@@ -219,8 +221,11 @@ function _(src, arg) {
                         "acrobatics": "Акробатика",
                         "next_tour": "След. тур",
                         "number": "№",
+                        "participant_club": "Клуб",
+                        "participant_coach": "Тренер",
                         "participant_name": "Участник",
                         "place": "Место",
+                        "sportsmen": "Спортсмены",
                         "total_score": "Сумма баллов"
                     },
                     "breakdown": {

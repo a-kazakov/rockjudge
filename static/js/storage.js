@@ -23,14 +23,21 @@ var Ref = (function () {
 })();
 
 var Model = (function () {
-    function Model(id) {
+    function Model(id, model_storage) {
         _classCallCheck(this, Model);
 
         this.id = id;
         this.__key_types = {};
+        this.__model_storage = model_storage;
     }
 
     _createClass(Model, [{
+        key: "addBackRef",
+        value: function addBackRef(key, ref) {
+            this[key] = ref;
+            this.__key_types[key] = "^";
+        }
+    }, {
         key: "update",
         value: function update(data) {
             var _this = this;
@@ -41,11 +48,15 @@ var Model = (function () {
                         (function () {
                             var key = idx.slice(1);
                             _this[key] = [];
-                            data[idx].forEach((function (nested_data) {
+                            var back_ref = new Ref(_this.__model_storage.model_name, _this.id);
+                            var back_ref_key = data[idx].back_ref;
+                            data[idx].children.forEach((function (nested_data) {
                                 if (typeof nested_data.data == "object") {
                                     storage.get(nested_data.model).add(nested_data.id, nested_data.data);
                                 }
-                                this[key].push(new Ref(nested_data.model, nested_data.id));
+                                var ref = new Ref(nested_data.model, nested_data.id);
+                                ref.get().addBackRef(back_ref_key, back_ref);
+                                this[key].push(ref);
                             }).bind(_this));
                             _this.__key_types[key] = "*";
                         })();
@@ -66,23 +77,34 @@ var Model = (function () {
         }
     }, {
         key: "serialize",
-        value: function serialize() {
+        value: function serialize(schema) {
+            var _this2 = this;
+
             var result = {};
-            for (var key in this.__key_types) {
-                if (this.__key_types.hasOwnProperty(key)) {
-                    switch (this.__key_types[key]) {
+
+            var _loop = function (key) {
+                if (_this2.__key_types.hasOwnProperty(key)) {
+                    switch (_this2.__key_types[key]) {
                         case "*":
-                            result[key] = this[key].map(function (ref) {
-                                return ref.get().serialize();
-                            });
+                            if (key in schema) {
+                                result[key] = _this2[key].map(function (ref) {
+                                    return ref.get().serialize(schema[key]);
+                                });
+                            }
                             break;
                         case "^":
-                            result[key] = this[key].get().serialize();
+                            if (key in schema) {
+                                result[key] = _this2[key].get().serialize(schema[key]);
+                            }
                             break;
                         default:
-                            result[key] = this[key];
+                            result[key] = _this2[key];
                     }
                 }
+            };
+
+            for (var key in this.__key_types) {
+                _loop(key);
             }result.id = this.id;
             return result;
         }
@@ -92,9 +114,10 @@ var Model = (function () {
 })();
 
 var ModelsStorage = (function () {
-    function ModelsStorage() {
+    function ModelsStorage(model_name) {
         _classCallCheck(this, ModelsStorage);
 
+        this.model_name = model_name;
         this.models = {};
     }
 
@@ -102,7 +125,7 @@ var ModelsStorage = (function () {
         key: "add",
         value: function add(id, data) {
             if (typeof this.models[id] === "undefined") {
-                this.models[id] = new Model(id);
+                this.models[id] = new Model(id, this);
             }
             this.models[id].update(data);
         }
@@ -126,7 +149,7 @@ var Storage = (function () {
     _createClass(Storage, [{
         key: "register_model",
         value: function register_model(model_name) {
-            this.model_storages[model_name] = new ModelsStorage();
+            this.model_storages[model_name] = new ModelsStorage(model_name);
         }
     }, {
         key: "get",

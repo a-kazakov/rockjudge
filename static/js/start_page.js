@@ -111,6 +111,9 @@ var StartPage = (function (_React$Component2) {
     }, {
         key: "reloadFromStorage",
         value: function reloadFromStorage() {
+            var SCHEMA = {
+                judges: {}
+            };
             var all_loaded = true;
             var competitions = this.props.competition_ids.map(function (competition_id) {
                 var st_obj = storage.get("Competition").by_id(competition_id);
@@ -118,7 +121,7 @@ var StartPage = (function (_React$Component2) {
                     all_loaded = false;
                     return null;
                 }
-                return st_obj.serialize();
+                return st_obj.serialize(SCHEMA);
             });
             this.setState({
                 competitions: competitions,

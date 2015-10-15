@@ -39,8 +39,8 @@ var JudgeTablet = (function (_React$Component) {
     _createClass(JudgeTablet, [{
         key: "reloadFromStorage",
         value: function reloadFromStorage() {
-            var judge = storage.get("Judge").by_id(this.props.judge_id).serialize();
-            var competition = storage.get("Competition").by_id(this.props.competition_id).serialize();
+            var judge = storage.get("Judge").by_id(this.props.judge_id).serialize({});
+            var competition = storage.get("Competition").by_id(this.props.competition_id).serialize({ judges: {} });
             var active_tour_id = this.state.active_tour_id;
             if (active_tour_id === null) {
                 this.setState({
@@ -62,7 +62,16 @@ var JudgeTablet = (function (_React$Component) {
             this.setState({
                 judge: judge,
                 competition: competition,
-                tour: active_tour_model.serialize()
+                tour: active_tour_model.serialize({
+                    runs: {
+                        participant: {
+                            "sportsmen": {}
+                        },
+                        scores: {},
+                        acrobatics: {}
+                    },
+                    inner_competition: {}
+                })
             });
         }
     }, {

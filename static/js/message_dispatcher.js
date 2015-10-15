@@ -41,6 +41,10 @@ var MessageDispatcher = (function () {
         key: "onMessage",
         value: function onMessage(message) {
             var data = JSON.parse(message.data);
+            if (data["client_id"]) {
+                window.client_id = data["client_id"];
+                return;
+            }
             data.messages.forEach((function (data) {
                 var msg_type = data[0];
                 var msg_data = data[1];

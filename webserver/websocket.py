@@ -1,4 +1,6 @@
+import copy
 import json
+import time
 
 from collections import OrderedDict
 
@@ -6,7 +8,7 @@ from sockjs.tornado import SockJSConnection
 
 
 class WebSocketClients(SockJSConnection):
-    clients = set()
+    clients = {}
     pending_messages = {}
     next_to_send = 1
     counter = 0
@@ -20,27 +22,39 @@ class WebSocketClients(SockJSConnection):
         pass
 
     def on_open(self, request):
-        self.clients.add(self)
+        client_id = str(int(10**6 * time.time()))
+        self.clients[client_id] = self
+        self.send(json.dumps({
+            "client_id": client_id
+        }))
 
     def on_close(self):
-        self.clients.discard(self)
+        for key, val in self.clients.items():
+            if val is self:
+                del self.clients[key]
 
     @classmethod
-    def broadcast(cls, counter_val, msg):
+    def broadcast(cls, counter_val, msg, client_id=None):
         if len(cls.clients) == 0:
             return
-        cls.pending_messages[counter_val] = msg
+        cls.pending_messages[counter_val] = (msg, client_id)
         while cls.next_to_send in cls.pending_messages:
-            message = cls.pending_messages[cls.next_to_send]
+            message, cl_id = cls.pending_messages[cls.next_to_send]
             if message is not None:
+                clients = copy.copy(cls.clients)
                 json_message = json.dumps(message)
-                super(WebSocketClients, next(iter(cls.clients))).broadcast(cls.clients, json_message)
+                if cl_id in cls.clients:
+                    cls.clients[cl_id].send(json_message)
+                    del clients[cl_id]
+                if len(clients) > 0:
+                    super(cls, list(clients.values())[0]).broadcast(clients.values(), json_message)
             del cls.pending_messages[cls.next_to_send]
             cls.next_to_send += 1
 
 
 class WsMessage:
-    def __init__(self):
+    def __init__(self, client_id=None):
+        self.client_id = client_id
         self.model_updates = []
         self.messages = []
 
@@ -82,7 +96,7 @@ class WsMessage:
     def send(self):
         counter_val = WebSocketClients.get_counter_val()
         try:
-            WebSocketClients.broadcast(counter_val, self.serialize())
+            WebSocketClients.broadcast(counter_val, self.serialize(), self.client_id)
         except Exception as ex:
             WebSocketClients.broadcast(counter_val, None)
             raise ex

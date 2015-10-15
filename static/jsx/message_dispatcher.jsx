@@ -28,6 +28,10 @@ class MessageDispatcher {
     }
     onMessage(message) {
         let data = JSON.parse(message.data);
+        if (data["client_id"]) {
+            window.client_id = data["client_id"];
+            return;
+        }
         data.messages.forEach(function(data) {
             let msg_type = data[0];
             let msg_data = data[1];

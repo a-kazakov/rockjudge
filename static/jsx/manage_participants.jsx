@@ -354,9 +354,19 @@ class ParticipantsManager extends React.Component {
         this.loadData();
     }
     reloadFromStorage() {
+        var SCHEMA = {
+            competition: {
+                clubs: {},
+            },
+            participants: {
+                acrobatics: {},
+                club: {},
+                sportsmen: {},
+            },
+        };
         let serialized = storage.get("InnerCompetition")
             .by_id(this.props.inner_competition_id)
-            .serialize();
+            .serialize(SCHEMA);
         this.setState(serialized);
     }
     loadData() {

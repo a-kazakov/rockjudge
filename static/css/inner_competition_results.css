@@ -6829,45 +6829,33 @@ table.no-break tr,
 table.no-break th {
   page-break-inside: avoid;
 }
-.tour-results {
+.ic-results {
   margin: 10px;
 }
-.tour-results td {
+.ic-results td {
   vertical-align: top;
 }
-.tour-results .score-breakdown th,
-.tour-results .score-breakdown td {
-  border: none;
-  padding: 0 3px;
+.ic-results .scores-table .place {
+  widht: 50px;
 }
-.tour-results .score-breakdown th {
-  text-align: right;
-}
-.tour-results .score-breakdown td {
-  text-align: left;
-}
-.tour-results .score-breakdown .total-score {
-  font-weight: bold;
-}
-.tour-results .scores-table .place {
+.ic-results .scores-table .number {
   width: 50px;
 }
-.tour-results .scores-table .number {
-  width: 50px;
+.ic-results .scores-table .sportsmen {
+  width: 200px;
 }
-.tour-results .scores-table .participant {
+.ic-results .scores-table .coaches {
+  width: 200px;
+}
+.ic-results .scores-table .club {
   width: 300px;
 }
-.tour-results .scores-table .club {
-  width: 300px;
-}
-.tour-results .scores-table .score {
-  width: 100px;
-}
-.tour-results .scores-table .next-tour {
-  width: 70px;
-}
-.tour-results .scores-table td.participant,
-.tour-results .scores-table td.club {
+.ic-results .scores-table td.sportsmen,
+.ic-results .scores-table td.coaches,
+.ic-results .scores-table td.club {
   text-align: left !important;
+}
+.ic-results .scores-table .tour-name {
+  font-weight: bold;
+  background-color: #ccc;
 }

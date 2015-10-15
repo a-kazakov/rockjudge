@@ -51,7 +51,8 @@ var ApiImpl = (function () {
                 dataType: "json",
                 data: {
                     method: this.method,
-                    data: JSON.stringify(this.data)
+                    data: JSON.stringify(this.data),
+                    client_id: window.client_id
                 },
                 success: (function (response) {
                     if (response.success) {
