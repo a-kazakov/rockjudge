@@ -41,13 +41,21 @@ function _(src, arg) {
             },
             "headers": {
                 "clients_management": "Управление подключенными устройствами",
+                "clubs": "Клубы-участники",
+                "competition_report": "Протокол соревнований",
+                "competition_results": "Результаты соревнования",
                 "inner_competition_general_info": "Основная информация",
                 "inner_competition_tours": "Список туров",
+                "judges": "Судейская бригада",
                 "judges_management": "Управление судьями",
                 "load_competition": "Импорт данных соревнования",
                 "participants_management": "Управление участниками",
                 "service_menu": "Сервисное меню",
                 "unfinalize_tour": "Отмена финализации тура"
+            },
+            "labels": {
+                "competition_name": "Наименование соревнования",
+                "competition_data": "Дата проведения"
             },
             "messages": {
                 "invalid_passcode": "Введён неверный код потверждения"
@@ -224,7 +232,7 @@ function _(src, arg) {
                         "next_tour": "След. тур",
                         "number": "№",
                         "participant_club": "Клуб",
-                        "participant_coach": "Тренер",
+                        "participant_coaches": "Тренеры",
                         "participant_name": "Участник",
                         "place": "Место",
                         "sportsmen": "Спортсмены",

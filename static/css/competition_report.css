@@ -6830,168 +6830,17 @@ header .controls button {
   margin-right: 0;
   margin-left: 10px;
 }
-html,
-body,
-#content {
-  overflow: hidden;
-}
-table.outer-table {
-  width: 100%;
-  height: 100%;
-}
-table.outer-table td {
-  vertical-align: top;
-}
-table.outer-table th {
-  height: 30px;
-  vertical-align: middle;
-  text-align: center;
-  background-color: #2b3a42;
-  color: #efefef;
-  font-weight: bold;
-}
-table.outer-table .left-col {
-  width: 100px;
-  background-color: #2b3a42;
-}
-table.outer-table .left-col div.app {
-  width: 100px;
-  height: 100px;
-  cursor: pointer;
-  position: relative;
-  color: #bdd4de;
-  margin-bottom: 30px;
-}
-table.outer-table .left-col div.app .icon {
-  line-height: 1;
-  text-align: center;
-  font-size: 90px;
-  font-weight: 900;
-}
-table.outer-table .left-col div.app .label {
-  text-align: center;
-  font-size: 12px;
-  font-weight: bold;
-  position: absolute;
-  bottom: 3px;
-  left: 0;
-  right: 0;
-  height: 15px;
-}
-table.outer-table .left-col div.app:hover {
-  background-color: #3f5561;
-}
-table.outer-table .left-col div.app.active,
-table.outer-table .left-col div.app.active:hover {
-  background-color: #171f23;
-}
-table.app-content {
-  width: 100%;
-  height: 100%;
-}
-table.app-content .side-panel {
-  width: 350px;
-  background-color: #bdd4de;
-  overflow: auto;
-}
-table.app-content .side-panel .block {
-  margin-bottom: 10px;
-}
-table.app-content .side-panel .level-1 {
-  font-weight: bold;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-table.app-content .side-panel .level-2 {
-  padding: 2px 5px 3px 30px;
-  cursor: pointer;
-}
-table.app-content .side-panel .level-2.new-ic {
-  margin-top: 10px;
-  font-style: italic;
-}
-table.app-content .side-panel .level-1:hover,
-table.app-content .side-panel .level-2:hover {
-  background-color: #537284 !important;
-}
-table.app-content .side-panel .level-1.grey,
-table.app-content .side-panel .level-2.grey {
-  color: #999;
-}
-table.app-content .side-panel .level-1.active,
-table.app-content .side-panel .level-2.active {
-  background-color: #ff530d;
-}
-table.app-content .app-page {
-  overflow: auto;
-  width: 100%;
-  height: 100%;
-}
-table.app-content iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  margin: 0;
-}
-div.load-competition-page {
-  width: 100%;
-  height: 100%;
-}
-div.load-competition-page form.load-competition {
-  height: calc(100% - 60px);
-  text-align: center;
-}
-div.load-competition-page form.load-competition textarea {
-  width: 100%;
-  height: calc(100% - 60px);
-  margin-bottom: 10px;
-}
-div.load-competition-page form.load-competition button {
-  width: 200px;
-}
-.ic-management-ui {
+.competition-report {
   padding: 10px;
 }
-.ic-management-ui .tour {
-  background-color: #bdd4de;
-  padding: 10px 10px 10px 10px;
-}
-.ic-management-ui .tour h3 {
-  margin-top: 0;
-}
-.ic-management-ui .tour.tour-create {
-  background-color: #f0ad4e;
-}
-.ic-management-ui .tour .buttons {
-  padding-top: 10px;
+.competition-report h2 {
   text-align: center;
 }
-.judges-management-ui {
-  padding: 10px;
-}
-.judges-management-ui .judge {
-  background-color: #bdd4de;
-  padding: 10px 10px 10px 10px;
-  margin-bottom: 10px;
-}
-.judges-management-ui .judge h3 {
-  margin-top: 0;
-}
-.judges-management-ui .judge.judge-create {
-  background-color: #f0ad4e;
-}
-.judges-management-ui .judge .buttons {
-  padding-top: 10px;
-  text-align: center;
-}
-.service-menu {
-  padding: 10px;
-}
-.service-menu .control-btn {
-  width: 300px;
-  margin-right: 10px;
-}
-.service-menu .unfinalization select {
-  max-width: 500px;
-  display: inline;
+.competition-report .info td,
+.competition-report .judges td,
+.competition-report .clubs td,
+.competition-report .info th,
+.competition-report .judges th,
+.competition-report .clubs th {
+  padding: 2px 20px 2px 0px;
 }

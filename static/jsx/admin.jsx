@@ -274,7 +274,8 @@ class AdminUI extends React.Component {
                 competition_id={ this.props.competition_id } />;
         case "results":
             return <ResultsUI
-                inner_competitions={ this.state.inner_competitions } />
+                inner_competitions={ this.state.inner_competitions }
+                competition_id={ this.props.competition_id } />;
         case "service":
             return <ServiceUI
                 inner_competitions={ this.state.inner_competitions } />
@@ -287,7 +288,7 @@ class AdminUI extends React.Component {
         return <table className="outer-table">
             <tbody><tr>
                 <th colSpan="2">
-                    { this.state.name }
+                    { this.state.name } ({this.state.date})
                 </th>
             </tr><tr>
                 <td className="left-col noselect">

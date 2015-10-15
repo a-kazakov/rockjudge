@@ -41,16 +41,20 @@ class InnerCompetitionResultsTable extends React.Component {
     }
     render() {
         return <div className="ic-results">
-                <table className="scores-table"><tbody>
-                <tr>
-                    <th className="place">{ __("results.labels.place") }</th>
-                    <th className="number">{ __("results.labels.number") }</th>
-                    <th className="sportsmen">{ __("results.labels.sportsmen") }</th>
-                    <th className="coaches">{ __("results.labels.participant_coach") }</th>
-                    <th className="club">{ __("results.labels.participant_club") }</th>
-                </tr>
-                { this.renderRows() }
-            </tbody></table>
+            <table className="scores-table">
+                <thead>
+                    <tr>
+                        <th className="place">{ __("results.labels.place") }</th>
+                        <th className="number">{ __("results.labels.number") }</th>
+                        <th className="sportsmen">{ __("results.labels.sportsmen") }</th>
+                        <th className="coaches">{ __("results.labels.participant_coaches") }</th>
+                        <th className="club">{ __("results.labels.participant_club") }</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    { this.renderRows() }
+                </tbody>
+            </table>
         </div>;
     }
 }

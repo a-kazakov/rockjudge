@@ -88,8 +88,14 @@ class InnerCompetitionResults extends React.Component {
         if (!this.state.loaded) {
             return <span>Loading...</span>;
         }
+        if (this.props.table_only) {
+            return <InnerCompetitionResultsTable table={ this.state.table } />
+        }
         return <div>
             <header>
+                <div className="controls">
+                    <button className="btn btn-primary" onClick={ function() { window.print(); } }>{ _("results.buttons.print") }</button>
+                </div>
                 <h1>{ this.state.inner_competition.name }</h1>
             </header>
             <InnerCompetitionResultsTable table={ this.state.table } />

@@ -109,7 +109,7 @@ var InnerCompetitionResultsTable = (function (_React$Component) {
                     "table",
                     { className: "scores-table" },
                     React.createElement(
-                        "tbody",
+                        "thead",
                         null,
                         React.createElement(
                             "tr",
@@ -132,14 +132,18 @@ var InnerCompetitionResultsTable = (function (_React$Component) {
                             React.createElement(
                                 "th",
                                 { className: "coaches" },
-                                __("results.labels.participant_coach")
+                                __("results.labels.participant_coaches")
                             ),
                             React.createElement(
                                 "th",
                                 { className: "club" },
                                 __("results.labels.participant_club")
                             )
-                        ),
+                        )
+                    ),
+                    React.createElement(
+                        "tbody",
+                        null,
                         this.renderRows()
                     )
                 )

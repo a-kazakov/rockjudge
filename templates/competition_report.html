@@ -3,19 +3,21 @@
 {% autoescape None %}
 
 {% block title %}
-  Category results
+  Tour results
 {% end %}
 
 {% block styles %}
   <link rel="stylesheet" href="/static/css/inner_competition_results.css">
+  <link rel="stylesheet" href="/static/css/competition_report.css">
 {% end %}
 
 {% block scripts %}
   <script src="/static/js/scoring_systems/rosfarr/inner_competition_results.js"></script>
   <script src="/static/js/results/inner_competition_results.js"></script>
+  <script src="/static/js/results/competition_report.js"></script>
   <script>
     React.render(
-      React.createElement(InnerCompetitionResults, { inner_competition_id: {{ inner_competition_id }} }),
+      React.createElement(CompetitionReport, { competition_id: {{ competition_id }} }),
       document.getElementById("content")
     );
   </script>

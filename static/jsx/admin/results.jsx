@@ -14,12 +14,11 @@ class ResultsUI extends React.Component {
     renderContent() {
         switch (this.state.page) {
         case "competition_report":
-            console.log("asdasdasd");
-            return <h1>TBD</h1>;
+            return <div className="ifw"><iframe src={ "/report/" + this.props.competition_id } /></div>
         case "inner_competition_results":
-            return <iframe src={ "/ic/" + this.state.page_props.inner_competition_id.toString() + "/results" } />
+            return <div className="ifw"><iframe src={ "/ic/" + this.state.page_props.inner_competition_id.toString() + "/results" } /></div>
         case "tour_results":
-            return <iframe src={ "/tour/" + this.state.page_props.tour_id.toString() + "/results" } />
+            return <div className="ifw"><iframe src={ "/tour/" + this.state.page_props.tour_id.toString() + "/results" } /></div>
         case "manage_judges":
             return <JudgesManagementUI
                 judges={ this.props.judges }

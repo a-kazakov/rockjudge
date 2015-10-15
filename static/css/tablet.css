@@ -6800,6 +6800,11 @@ body,
 .full-width {
   width: 100%;
 }
+.ifw {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
 .scores-table {
   font-size: 12px;
 }
@@ -6843,10 +6848,6 @@ header .controls .current-heat {
 header .controls button {
   margin-right: 0;
   margin-left: 10px;
-}
-table.no-break tr,
-table.no-break th {
-  page-break-inside: avoid;
 }
 html,
 body,

@@ -20,6 +20,8 @@ tour_proxy = peewee.Proxy()
 
 class Competition(BaseModel):
     name = peewee.CharField()
+    date = peewee.CharField()
+    info = peewee.TextField(default="[]")
 
     def full_prefetch(self):
         self.prefetch({
@@ -50,6 +52,8 @@ class Competition(BaseModel):
     def serialize(self, children={}):
         result = {
             "name": self.name,
+            "date": self.date,
+            "info": json.loads(self.info),
         }
         result = self.serialize_lower_child(result, "inner_competitions", children)
         result = self.serialize_lower_child(result, "judges", children)
@@ -270,7 +274,7 @@ class Tour(BaseModel):
         participant_ids_to_create = new_participant_ids - existing_participant_ids
         participant_ids_to_delete = existing_participant_ids - new_participant_ids
         if len(participant_ids_to_delete) > 0:
-            runs_to_delete = Run.select().where(Run.participant << list(participant_ids_to_delete))
+            runs_to_delete = Run.select().where((Run.tour == self) & (Run.participant << list(participant_ids_to_delete)))
             runs_to_delete = list(runs_to_delete)
             Score.delete().where(Score.run << runs_to_delete).execute()
             AcrobaticOverride.delete().where(AcrobaticOverride.run << runs_to_delete).execute()
@@ -368,6 +372,7 @@ class Tour(BaseModel):
     def init(self, ws_message):
         self.check_prev_tour_finalized()
         self.create_participant_runs()
+        ws_message.add_message("tour_results_changed", { "tour_id": self.id } )
         ws_message.add_model_update(
             model_type=self.__class__,
             model_id=self.id,

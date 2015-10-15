@@ -19,6 +19,14 @@ class AdminHandler(tornado.web.RequestHandler):
         self.render("admin.html", competition_id=competition_id)
 
 
+class CompetitionReportHandler(tornado.web.RequestHandler):
+    def get(self, competition_id):
+        self.render(
+            "competition_report.html",
+            competition_id=competition_id,
+        )
+
+
 class InnerCompetitionResultsHandler(tornado.web.RequestHandler):
     def get(self, inner_competition_id):
         self.render(

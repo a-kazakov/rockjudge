@@ -19,10 +19,12 @@ class Club(BaseModel):
     external_id = peewee.CharField(null=True, default=None)
 
     def serialize(self, children={}):
-        return {
+        result = {
             "name": self.name,
             "city": self.city,
         }
+        result = self.serialize_lower_child(result, "participants", children)
+        return result
 
     @classmethod
     def _load_one(cls, competition, obj):
@@ -54,7 +56,7 @@ class Participant(BaseModel):
     formation_name = peewee.CharField(default="")
     coaches = peewee.CharField()
     number = peewee.IntegerField()
-    club = peewee.ForeignKeyField(Club)
+    club = peewee.ForeignKeyField(Club, related_name="participants")
     external_id = peewee.CharField(null=True, default=None)
 
     def get_name(self):

@@ -9,7 +9,11 @@ from fixtures import RockFixture
 class Fixture(RockFixture):
     def execute(self):
         # Competition
-        self.comp = Competition.create(name="Чемпионат и первенство Томской области по акробатическому рок-н-роллу, г. Томск, 11.11.2111")
+        self.comp = Competition.create(
+            name="Чемпионат и первенство Томской области по акробатическому рок-н-роллу",
+            date="11.11.2011",
+            info='[["Город проведения", "Томск"]]'
+        )
         self.jA = Judge.create(name="Миров Степан Богданович",          category="1K",  competition=self.comp, number="1", role="dance_judge")
         self.jB = Judge.create(name="Устимович Леонид Артемович",       category="ВK",  competition=self.comp, number="2", role="acro_judge")
         self.jC = Judge.create(name="Чебыкина Владлена Святославовна",  category="2K",  competition=self.comp, number="3", role="dance_judge")

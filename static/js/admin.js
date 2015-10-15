@@ -429,7 +429,8 @@ var AdminUI = (function (_React$Component4) {
                         competition_id: this.props.competition_id });
                 case "results":
                     return React.createElement(ResultsUI, {
-                        inner_competitions: this.state.inner_competitions });
+                        inner_competitions: this.state.inner_competitions,
+                        competition_id: this.props.competition_id });
                 case "service":
                     return React.createElement(ServiceUI, {
                         inner_competitions: this.state.inner_competitions });
@@ -457,7 +458,10 @@ var AdminUI = (function (_React$Component4) {
                         React.createElement(
                             "th",
                             { colSpan: "2" },
-                            this.state.name
+                            this.state.name,
+                            " (",
+                            this.state.date,
+                            ")"
                         )
                     ),
                     React.createElement(

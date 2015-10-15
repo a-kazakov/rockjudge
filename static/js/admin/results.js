@@ -33,16 +33,23 @@ var ResultsUI = (function (_React$Component) {
         value: function renderContent() {
             switch (this.state.page) {
                 case "competition_report":
-                    console.log("asdasdasd");
                     return React.createElement(
-                        "h1",
-                        null,
-                        "TBD"
+                        "div",
+                        { className: "ifw" },
+                        React.createElement("iframe", { src: "/report/" + this.props.competition_id })
                     );
                 case "inner_competition_results":
-                    return React.createElement("iframe", { src: "/ic/" + this.state.page_props.inner_competition_id.toString() + "/results" });
+                    return React.createElement(
+                        "div",
+                        { className: "ifw" },
+                        React.createElement("iframe", { src: "/ic/" + this.state.page_props.inner_competition_id.toString() + "/results" })
+                    );
                 case "tour_results":
-                    return React.createElement("iframe", { src: "/tour/" + this.state.page_props.tour_id.toString() + "/results" });
+                    return React.createElement(
+                        "div",
+                        { className: "ifw" },
+                        React.createElement("iframe", { src: "/tour/" + this.state.page_props.tour_id.toString() + "/results" })
+                    );
                 case "manage_judges":
                     return React.createElement(JudgesManagementUI, {
                         judges: this.props.judges,

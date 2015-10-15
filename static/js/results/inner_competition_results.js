@@ -109,12 +109,26 @@ var InnerCompetitionResults = (function (_React$Component) {
                     "Loading..."
                 );
             }
+            if (this.props.table_only) {
+                return React.createElement(InnerCompetitionResultsTable, { table: this.state.table });
+            }
             return React.createElement(
                 "div",
                 null,
                 React.createElement(
                     "header",
                     null,
+                    React.createElement(
+                        "div",
+                        { className: "controls" },
+                        React.createElement(
+                            "button",
+                            { className: "btn btn-primary", onClick: function () {
+                                    window.print();
+                                } },
+                            _("results.buttons.print")
+                        )
+                    ),
                     React.createElement(
                         "h1",
                         null,
