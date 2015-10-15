@@ -101,12 +101,12 @@ class Couple:
                 })
         self.category = row[6]
         self.club = Club.storage[row[7]].external_id
-        self.coach = row[8]
+        self.coaches = row[8]
         self.external_id = None
         self.storage.append(self)
 
     def serialize(self):
-        return { k: getattr(self, k) for k in ["sportsmen", "acrobatics", "club", "coach", "external_id"] }
+        return { k: getattr(self, k) for k in ["sportsmen", "acrobatics", "club", "coaches", "external_id"] }
 
 
 class Formation:
@@ -119,7 +119,7 @@ class Formation:
         self.formation_name = form_data[0]
         self.category = form_data[1]
         self.club = Club.storage[form_data[2]].external_id
-        self.coach = form_data[3]
+        self.coaches = form_data[3]
         self.sportsmen = [
             {
                 "last_name": cols[0][idx],
@@ -134,7 +134,7 @@ class Formation:
         self.storage.append(self)
 
     def serialize(self):
-        return { k: getattr(self, k) for k in ["formation_name", "sportsmen", "acrobatics", "club", "coach", "external_id"] }
+        return { k: getattr(self, k) for k in ["formation_name", "sportsmen", "acrobatics", "club", "coaches", "external_id"] }
 
 
 @contextmanager
