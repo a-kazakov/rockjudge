@@ -122,7 +122,7 @@ var TabletScoreInput = (function (_React$Component) {
                     ":"
                 ),
                 React.createElement(TabletSelectorInput, {
-                    choices: [[0, __("tablet.head_judge.ok")], [-5, __("tablet.head_judge.yellow_card")], [-30, __("tablet.head_judge.red_card")], [-100, __("tablet.head_judge.black_card")]],
+                    choices: [[0, __("tablet.head_judge.ok")], [-3, __("tablet.head_judge.yellow_card")], [-30, __("tablet.head_judge.red_card")], [-100, __("tablet.head_judge.black_card")]],
                     active: score.raw_data.penalty,
                     onValueUpdate: this.updateScores.bind(this, "penalty") }),
                 React.createElement("div", { className: "spacer" }),

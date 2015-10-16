@@ -201,7 +201,7 @@ function _(src, arg) {
                         "ok": "OK",
                         "penalty_type": "Штрафные санкции",
                         "red_card": "Красная карточка (-30)",
-                        "yellow_card": "Жёлтая карточка (-5)",
+                        "yellow_card": "Жёлтая карточка (-3)",
                     },
                     "tech_judge": {
                         "jump_steps": "Основные ходы",
