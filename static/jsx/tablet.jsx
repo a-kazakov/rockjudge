@@ -217,7 +217,7 @@ class JudgeTablet extends React.Component {
         </tr></tbody></table>;
     }
     renderFooter() {
-        if (this.state.tour === null || this.state.judge.role != "tech_judge") {
+        if (this.state.tour === null || this.state.judge.role != "tech_judge" || this.state.tour.scoring_system != "rosfarr.acro") {
             return null;
         }
         return <div className="footer page-selector">

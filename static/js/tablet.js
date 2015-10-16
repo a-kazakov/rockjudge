@@ -306,7 +306,7 @@ var JudgeTablet = (function (_React$Component) {
     }, {
         key: "renderFooter",
         value: function renderFooter() {
-            if (this.state.tour === null || this.state.judge.role != "tech_judge") {
+            if (this.state.tour === null || this.state.judge.role != "tech_judge" || this.state.tour.scoring_system != "rosfarr.acro") {
                 return null;
             }
             return React.createElement(
