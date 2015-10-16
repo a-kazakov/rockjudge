@@ -419,6 +419,9 @@ class ParticipantsManager extends React.Component {
                         inner_competition_id={ this.props.inner_competition_id } />
                 </tbody>
             </table>
+            <div className="total-participants">
+                { _("admin.phrases.total_n_participants", this.state.participants.length) }
+            </div>
         </div>
     }
     render() {

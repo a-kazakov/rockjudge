@@ -1,4 +1,19 @@
+
 function _(src, arg) {
+    function chooseEnding(n, e1, e2, e5) {
+        let x = n % 100;
+        if (Math.floor(x / 10) == 1) {
+            return e5;
+        }
+        if (x % 10 == 1) {
+            return e1;
+        }
+        if (x % 10 >= 5 || x % 10 == 0) {
+            return e5;
+        }
+        return e2;
+    }
+
     let PHRASES = {
         "admin": {
             "alerts": {
@@ -57,6 +72,9 @@ function _(src, arg) {
                 "manage_judges": "Управление судьями",
                 "manage_sportsmen": "Управление спортсменами",
                 "start_list": "Стартовый лист",
+            },
+            "phrases": {
+                "total_n_participants": (n) => "Итого " + n + " участник" + chooseEnding(n, "", "а", "ов"),
             },
             "prompts": {
                 "new_inner_competition_name": "Введите название новой категории",

@@ -628,6 +628,11 @@ var ParticipantsManager = (function (_React$Component4) {
                             clubs: this.state.competition.clubs,
                             inner_competition_id: this.props.inner_competition_id })
                     )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "total-participants" },
+                    _("admin.phrases.total_n_participants", this.state.participants.length)
                 )
             );
         }

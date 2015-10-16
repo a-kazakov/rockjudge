@@ -6851,7 +6851,7 @@ header .controls button {
 .ic-results .bordered-table .coaches {
   width: 200px;
 }
-.ic-results .bordered-table td.name,
+.ic-results .bordered-table td.sportsmen,
 .ic-results .bordered-table td.club,
 .ic-results .bordered-table td.coaches {
   text-align: left !important;

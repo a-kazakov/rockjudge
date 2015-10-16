@@ -6837,6 +6837,10 @@ body {
 .manage-participants {
   margin: 10px;
 }
+.manage-participants .total-participants {
+  font-weight: bold;
+  text-align: right;
+}
 .manage-participants table tr.viewer {
   cursor: pointer;
 }
