@@ -6,19 +6,19 @@ from .impl import (
 
 
 def get_tour_results(tour):
-    return TourScores(tour, scoring_system="rosfarr.acro").get_results()
+    return TourScores(tour, scoring_system="rosfarr.formation").get_results()
 
 
 def get_run_scores(run, judges=None):
-    return RunScore(run, judges=judges, scoring_system="rosfarr.acro").serialize()
+    return RunScore(run, judges=judges, scoring_system="rosfarr.formation").serialize()
 
 
 def serialize_score(score, judge=None):
-    return ScoreWrapper(score, judge=judge, scoring_system="rosfarr.acro").serialize()
+    return ScoreWrapper(score, judge=judge, scoring_system="rosfarr.formation").serialize()
 
 
 def update_score(score, client_data):
-    ScoreWrapper(score, scoring_system="rosfarr.acro").update(client_data)
+    ScoreWrapper(score, scoring_system="rosfarr.formation").update(client_data)
 
 
 def get_tablet_css():

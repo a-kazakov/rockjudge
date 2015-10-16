@@ -37,14 +37,31 @@ class TabletSelectorInput extends React.Component {
 
 class TabletIntegerSelectInput extends React.Component {
     createArray(min, max) {
-        var result = [];
-        for (var idx = min; idx <= max; ++idx) {
+        let result = [];
+        for (let idx = min; idx <= max; ++idx) {
             result.push([idx, idx.toString()]);
         }
         return result;
     }
     render() {
-        var {min, max, ...other} = this.props;
+        let {min, max, ...other} = this.props;
+        return <TabletSelectorInput { ...other } choices={ this.createArray(min, max) } />
+    }
+    onClick(n) {
+        this.props.onValueUpdate(n);
+    }
+}
+
+class TabletPointFiveSelectInput extends React.Component {
+    createArray(min, max) {
+        let result = [];
+        for (let idx = 2 * min; idx <= 2 * max; ++idx) {
+            result.push([idx / 2, (idx % 2) ? (idx / 2).toFixed(1) : Math.floor(idx / 2).toString()]);
+        }
+        return result;
+    }
+    render() {
+        let {min, max, ...other} = this.props;
         return <TabletSelectorInput { ...other } choices={ this.createArray(min, max) } />
     }
     onClick(n) {

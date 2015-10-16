@@ -199,6 +199,115 @@ var TourAdminScoreInput = (function (_React$Component) {
             );
         }
     }, {
+        key: "renderFormationJudgeInput",
+        value: function renderFormationJudgeInput() {
+            return React.createElement(
+                "form",
+                { onSubmit: this.onSubmit.bind(this), className: "form-score-input" },
+                React.createElement(
+                    "table",
+                    null,
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement("th", null),
+                        React.createElement("td", null),
+                        React.createElement(
+                            "th",
+                            null,
+                            "DT:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement("input", {
+                                type: "text",
+                                value: this.props.score.dance_tech,
+                                onChange: this.onChange.bind(this, "dance_tech"),
+                                onKeyUp: this.onKeyUp.bind(this) })
+                        ),
+                        React.createElement("th", null),
+                        React.createElement("td", null)
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            "DF:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement("input", {
+                                type: "text",
+                                value: this.props.score.dance_figs,
+                                onChange: this.onChange.bind(this, "dance_figs"),
+                                onKeyUp: this.onKeyUp.bind(this) })
+                        ),
+                        React.createElement(
+                            "th",
+                            null,
+                            "I:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement("input", {
+                                type: "text",
+                                value: this.props.score.impression,
+                                onChange: this.onChange.bind(this, "impression"),
+                                onKeyUp: this.onKeyUp.bind(this) })
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            "SM:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement("input", {
+                                type: "text",
+                                value: this.props.score.small_mistakes,
+                                onChange: this.onChange.bind(this, "small_mistakes"),
+                                onKeyUp: this.onKeyUp.bind(this) })
+                        ),
+                        React.createElement(
+                            "th",
+                            null,
+                            "BM:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement("input", {
+                                type: "text",
+                                value: this.props.score.big_mistakes,
+                                onChange: this.onChange.bind(this, "big_mistakes"),
+                                onKeyUp: this.onKeyUp.bind(this) })
+                        )
+                    )
+                ),
+                React.createElement(
+                    "button",
+                    { className: "btn btn-primary", type: "submit" },
+                    _("global.buttons.submit")
+                ),
+                " ",
+                React.createElement(
+                    "button",
+                    { className: "btn btn-primary", type: "button", onClick: this.props.stopEditing },
+                    _("global.buttons.discard")
+                )
+            );
+        }
+    }, {
         key: "renderHeadJudgeInput",
         value: function renderHeadJudgeInput() {
             return React.createElement(
@@ -243,8 +352,14 @@ var TourAdminScoreInput = (function (_React$Component) {
         value: function render() {
             switch (this.props.judge.role) {
                 case "acro_judge":
+                    if (this.props.scoring_system == "rosfarr.formation") {
+                        return this.renderFormationJudgeInput();
+                    }
                     return this.props.scoring_system == "rosfarr.no_acro" ? this.renderDanceJudgeInput() : this.renderAcroJudgeInput();
                 case "dance_judge":
+                    if (this.props.scoring_system == "rosfarr.formation") {
+                        return this.renderFormationJudgeInput();
+                    }
                     return this.renderDanceJudgeInput();
                 case "head_judge":
                     return this.renderHeadJudgeInput();

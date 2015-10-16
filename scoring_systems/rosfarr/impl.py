@@ -8,6 +8,45 @@ def m100(score):
     return round(100 * score)
 
 
+class FormationScore:
+    def __init__(self, score):
+        self.score = score
+        raw_data = score.get_data()
+        self.data = {
+            "dance_tech":       raw_data.pop("dance_tech",      0),
+            "dance_figs":       raw_data.pop("dance_figs",      0),
+            "impression":       raw_data.pop("impression",      0),
+            "small_mistakes":   raw_data.pop("small_mistakes",  0),
+            "big_mistakes":     raw_data.pop("big_mistakes",    0),
+        }
+
+    @property
+    def total_score(self):
+        return max(0, sum([
+            m100(self.data["dance_tech"]),
+            m100(self.data["dance_figs"]),
+            m100(self.data["impression"]),
+             -5 * m100(self.data["small_mistakes"]),
+            -30 * m100(self.data["big_mistakes"]),
+        ]))
+
+    def update(self, new_data):
+        self.data = {
+            "dance_tech":       float(new_data.pop("dance_tech",      self.data["dance_tech"])),
+            "dance_figs":       float(new_data.pop("dance_figs",      self.data["dance_figs"])),
+            "impression":       float(new_data.pop("impression",      self.data["impression"])),
+            "small_mistakes":     int(new_data.pop("small_mistakes",  self.data["small_mistakes"])),
+            "big_mistakes":       int(new_data.pop("big_mistakes",    self.data["big_mistakes"])),
+        }
+        self.score.set_data(self.data)
+
+    def serialize(self):
+        return {
+            "total_score": self.total_score / 100,
+            "raw_data": self.data,
+        }
+
+
 class DanceScore:
     def __init__(self, score):
         self.score = score
@@ -142,19 +181,22 @@ class TechScore:
         }
 
 
-def ScoreWrapper(score, acro, judge=None):
-    CLASSES = {
-        "dance_judge": DanceScore,
-        "acro_judge": AcroScore,
-        "head_judge": HeadScore,
-        "tech_judge": TechScore,
-    }
+def ScoreWrapper(score, scoring_system, judge=None):
     if judge is None:
         judge = score.judge
     role = judge.role
-    if not acro and role == "acro_judge":
-        role = "dance_judge"
-    return CLASSES[role](score)
+    if role == "head_judge":
+        return HeadScore(score)
+    if role == "tech_judge":
+        return TechScore(score)
+    if role in ["acro_judge", "dance_judge"]:
+        if scoring_system == "rosfarr.no_acro":
+            return DanceScore(score)
+        if scoring_system == "rosfarr.acro":
+            return DanceScore(score) if role == "dance_judge" else AcroScore(score)
+        if scoring_system == "rosfarr.formation":
+            return FormationScore(score)
+    raise RuntimeError("Attempt to get score for invalid [judge role / scoring system] combination")
 
 
 class SmallScoresSet:
@@ -189,9 +231,9 @@ class LargeScoresSet:
 
 
 class RunScore:
-    def __init__(self, run, acro=False, judges=None):
+    def __init__(self, run, scoring_system, judges=None):
         self.run = run
-        self.acro = acro
+        self.scoring_system = scoring_system
         judges = run.tour.judges if judges is None else judges
         scores = run.scores
         self.judge_scores = []
@@ -201,19 +243,19 @@ class RunScore:
                     self.judge_scores.append((judge, score, ))
                     break
         self.dance_judges_total_scores = [
-            ScoreWrapper(score, acro, judge=judge).total_score
+            ScoreWrapper(score, scoring_system, judge=judge).total_score
             for judge, score
             in self.dance_judge_scores
         ]
         self.acro_judges_total_scores = [
-            ScoreWrapper(score, acro, judge=judge).total_score
+            ScoreWrapper(score, scoring_system, judge=judge).total_score
             for judge, score
             in self.acro_judge_scores
         ]
         if self.head_judge_score is not None:
             judge, score = self.head_judge_score
-            self.head_judge_total_score = ScoreWrapper(score, acro, judge=judge).total_score
-        if acro:
+            self.head_judge_total_score = ScoreWrapper(score, scoring_system, judge=judge).total_score
+        if scoring_system == "rosfarr.acro":
             self.acro_scores = SmallScoresSet(self.acro_judges_total_scores)
             self.dance_scores = SmallScoresSet(self.dance_judges_total_scores)
         else:
@@ -232,13 +274,13 @@ class RunScore:
         for judge, score in self.judge_scores:
             if judge.role == "dance_judge":
                 yield judge, score
-            elif judge.role == "acro_judge" and not self.acro:
+            elif judge.role == "acro_judge" and self.scoring_system != "rosfarr.acro":
                 yield judge, score
 
     @property
     def acro_judge_scores(self):
         for judge, score in self.judge_scores:
-            if judge.role == "acro_judge" and self.acro:
+            if judge.role == "acro_judge" and self.scoring_system == "rosfarr.acro":
                 yield judge, score
 
     @property
@@ -250,7 +292,7 @@ class RunScore:
 
     @property
     def sorting_score(self):
-        if self.acro:
+        if self.scoring_system == "rosfarr.acro":
             return (
                 -max(0, self.dance_scores.primary_score + self.acro_scores.primary_score + self.penalties),
                 -max(0, self.dance_scores.secondary_score + self.acro_scores.secondary_score + self.penalties),
@@ -275,12 +317,12 @@ class RunScore:
         }
 
 class TourScores:
-    def __init__(self, tour, acro=False):
+    def __init__(self, tour, scoring_system):
         self.tour = tour
         self.judges = list(tour.judges)
         self._table = None
         self.run_scores = [
-            RunScore(run, acro) for run in self.tour.runs
+            RunScore(run, scoring_system, judges=self.judges) for run in self.tour.runs
         ]
 
     def create_table(self):

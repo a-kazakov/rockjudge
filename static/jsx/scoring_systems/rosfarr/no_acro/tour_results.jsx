@@ -8,6 +8,16 @@ function __() {
 
 
 class TourResultsVerboseTableRow extends React.Component {
+    renderFormationScore(score) {
+        return <table className="score-breakdown"><tbody>
+            <tr><th>{ __("results.breakdown.dt") }:</th><td>{ score.raw_data.dance_tech }</td></tr>
+            <tr><th>{ __("results.breakdown.df") }:</th><td>{ score.raw_data.dance_figs }</td></tr>
+            <tr><th>{ __("results.breakdown.i")  }:</th><td>{ score.raw_data.impression }</td></tr>
+            <tr><th>{ __("results.breakdown.sm") }:</th><td>{ score.raw_data.small_mistakes }</td></tr>
+            <tr><th>{ __("results.breakdown.bm") }:</th><td>{ score.raw_data.big_mistakes }</td></tr>
+            <tr><th>{ __("results.breakdown.t")  }:</th><td className="total-score">{ score.total_score }</td></tr>
+        </tbody></table>
+    }
     renderDanceScore(score) {
         return <table className="score-breakdown"><tbody>
             <tr><th>{ __("results.breakdown.fw") }:</th><td>-{ score.raw_data.fw_woman }%</td></tr>
@@ -34,16 +44,21 @@ class TourResultsVerboseTableRow extends React.Component {
     }
     renderScore(judge, score) {
         if (judge.role == "dance_judge") {
+            if (this.props.scoring_system == "rosfarr.formation") {
+                return this.renderFormationScore(score)
+            }
             return this.renderDanceScore(score);
         }
         if (judge.role == "acro_judge") {
+            if (this.props.scoring_system == "rosfarr.formation") {
+                return this.renderFormationScore(score);
+            }
             if (this.props.scoring_system == "rosfarr.acro") {
                 return this.renderAcroScore(score);
-            } else {
-                return this.renderDanceScore(score);
             }
+            return this.renderDanceScore(score);
         }
-        return <span>{ score.total_score} </span>
+        return <span>{ score.total_score }</span>;
     }
     render() {
         let next_tour_cell = this.props.has_next_tour

@@ -181,13 +181,56 @@ class TabletScoreInput extends React.Component {
             <div className="total-score">{ __("tablet.global.total_score") }: { score.total_score }</div>
         </div>
     }
+    renderFormationInput() {
+        var score = this.props.scores[this.props.judge_id].data;
+        return <div>
+            <h3>{ __("tablet.dance_judge.dance_tech") }</h3>
+            <TabletPointFiveSelectInput
+                min={ 0 }
+                max={ 10 }
+                active={ score.raw_data.dance_tech }
+                onValueUpdate={ this.updateScores.bind(this, "dance_tech") } />
+            <h3>{ __("tablet.dance_judge.dance_figs") }</h3>
+            <TabletPointFiveSelectInput
+                min={ 0 }
+                max={ 10 }
+                active={ score.raw_data.dance_figs }
+                onValueUpdate={ this.updateScores.bind(this, "dance_figs") } />
+            <h3>{ __("tablet.dance_judge.impression") }</h3>
+            <TabletPointFiveSelectInput
+                min={ 0 }
+                max={ 10 }
+                active={ score.raw_data.impression }
+                onValueUpdate={ this.updateScores.bind(this, "impression") } />
+            <table className="mistakes full-width"><tbody><tr>
+                <td>
+                    <h3>{ __("tablet.dance_judge.small_mistakes") }</h3>
+                    <TabletIntegerInput
+                        value={ score.raw_data.small_mistakes }
+                        onValueUpdate={ this.updateScores.bind(this, "small_mistakes") } />
+                </td><td>
+                    <h3>{ __("tablet.dance_judge.big_mistakes") }</h3>
+                    <TabletIntegerInput
+                        value={ score.raw_data.big_mistakes }
+                        onValueUpdate={ this.updateScores.bind(this, "big_mistakes") } />
+                </td>
+            </tr></tbody></table>
+            <div className="total-score">{ __("tablet.global.total_score") }: { score.total_score }</div>
+        </div>
+    }
     render() {
         switch (this.getCurrentJudge().role) {
         case "acro_judge":
+            if (this.props.scoring_system == "rosfarr.formation") {
+                return this.renderFormationInput();
+            }
             return this.props.scoring_system == "rosfarr.no_acro"
                 ? this.renderDanceJudgeInput()
                 : this.renderAcroJudgeInput()
         case "dance_judge":
+            if (this.props.scoring_system == "rosfarr.formation") {
+                return this.renderFormationInput();
+            }
             return this.renderDanceJudgeInput();
         case "head_judge":
             return this.renderHeadJudgeInput();

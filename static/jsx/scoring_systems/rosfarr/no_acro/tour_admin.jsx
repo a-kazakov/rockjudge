@@ -81,6 +81,52 @@ class TourAdminScoreInput extends React.Component {
             <button className="btn btn-primary" type="button" onClick={ this.props.stopEditing }>{ _("global.buttons.discard") }</button>
         </form>;
     }
+    renderFormationJudgeInput() {
+        return <form onSubmit={ this.onSubmit.bind(this) } className="form-score-input">
+            <table>
+                <tr><th></th><td></td>
+                <th>DT:</th><td>
+                    <input
+                        type="text"
+                        value={ this.props.score.dance_tech }
+                        onChange={ this.onChange.bind(this, "dance_tech") }
+                        onKeyUp={ this.onKeyUp.bind(this) } />
+                </td>
+                <th></th><td>
+                </td></tr>
+                <tr><th>DF:</th><td>
+                    <input
+                        type="text"
+                        value={ this.props.score.dance_figs }
+                        onChange={ this.onChange.bind(this, "dance_figs") }
+                        onKeyUp={ this.onKeyUp.bind(this) } />
+                </td>
+                <th>I:</th><td>
+                    <input
+                        type="text"
+                        value={ this.props.score.impression }
+                        onChange={ this.onChange.bind(this, "impression") }
+                        onKeyUp={ this.onKeyUp.bind(this) } />
+                </td></tr>
+                <tr><th>SM:</th><td>
+                    <input
+                        type="text"
+                        value={ this.props.score.small_mistakes }
+                        onChange={ this.onChange.bind(this, "small_mistakes") }
+                        onKeyUp={ this.onKeyUp.bind(this) } />
+                </td>
+                <th>BM:</th><td>
+                    <input
+                        type="text"
+                        value={ this.props.score.big_mistakes }
+                        onChange={ this.onChange.bind(this, "big_mistakes") }
+                        onKeyUp={ this.onKeyUp.bind(this) } />
+                </td></tr>
+            </table>
+            <button className="btn btn-primary" type="submit">{ _("global.buttons.submit") }</button>&nbsp;
+            <button className="btn btn-primary" type="button" onClick={ this.props.stopEditing }>{ _("global.buttons.discard") }</button>
+        </form>;
+    }
     renderHeadJudgeInput() {
         return <form onSubmit={ this.onSubmit.bind(this) } className="form-score-input">
             <table>
@@ -99,10 +145,16 @@ class TourAdminScoreInput extends React.Component {
     render() {
         switch (this.props.judge.role) {
         case "acro_judge":
+            if (this.props.scoring_system == "rosfarr.formation") {
+                return this.renderFormationJudgeInput();
+            }
             return this.props.scoring_system == "rosfarr.no_acro"
                 ? this.renderDanceJudgeInput()
                 : this.renderAcroJudgeInput()
         case "dance_judge":
+            if (this.props.scoring_system == "rosfarr.formation") {
+                return this.renderFormationJudgeInput();
+            }
             return this.renderDanceJudgeInput();
         case "head_judge":
             return this.renderHeadJudgeInput();

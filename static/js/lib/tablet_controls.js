@@ -113,8 +113,47 @@ var TabletIntegerSelectInput = (function (_React$Component2) {
     return TabletIntegerSelectInput;
 })(React.Component);
 
-var TabletIntegerInput = (function (_React$Component3) {
-    _inherits(TabletIntegerInput, _React$Component3);
+var TabletPointFiveSelectInput = (function (_React$Component3) {
+    _inherits(TabletPointFiveSelectInput, _React$Component3);
+
+    function TabletPointFiveSelectInput() {
+        _classCallCheck(this, TabletPointFiveSelectInput);
+
+        _get(Object.getPrototypeOf(TabletPointFiveSelectInput.prototype), "constructor", this).apply(this, arguments);
+    }
+
+    _createClass(TabletPointFiveSelectInput, [{
+        key: "createArray",
+        value: function createArray(min, max) {
+            var result = [];
+            for (var idx = 2 * min; idx <= 2 * max; ++idx) {
+                result.push([idx / 2, idx % 2 ? (idx / 2).toFixed(1) : Math.floor(idx / 2).toString()]);
+            }
+            return result;
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _props2 = this.props;
+            var min = _props2.min;
+            var max = _props2.max;
+
+            var other = _objectWithoutProperties(_props2, ["min", "max"]);
+
+            return React.createElement(TabletSelectorInput, _extends({}, other, { choices: this.createArray(min, max) }));
+        }
+    }, {
+        key: "onClick",
+        value: function onClick(n) {
+            this.props.onValueUpdate(n);
+        }
+    }]);
+
+    return TabletPointFiveSelectInput;
+})(React.Component);
+
+var TabletIntegerInput = (function (_React$Component4) {
+    _inherits(TabletIntegerInput, _React$Component4);
 
     function TabletIntegerInput() {
         _classCallCheck(this, TabletIntegerInput);
@@ -162,8 +201,8 @@ var TabletIntegerInput = (function (_React$Component3) {
     return TabletIntegerInput;
 })(React.Component);
 
-var TabletPoint5Input = (function (_React$Component4) {
-    _inherits(TabletPoint5Input, _React$Component4);
+var TabletPoint5Input = (function (_React$Component5) {
+    _inherits(TabletPoint5Input, _React$Component5);
 
     function TabletPoint5Input() {
         _classCallCheck(this, TabletPoint5Input);
@@ -211,8 +250,8 @@ var TabletPoint5Input = (function (_React$Component4) {
     return TabletPoint5Input;
 })(React.Component);
 
-var StopWatch = (function (_React$Component5) {
-    _inherits(StopWatch, _React$Component5);
+var StopWatch = (function (_React$Component6) {
+    _inherits(StopWatch, _React$Component6);
 
     function StopWatch(props) {
         _classCallCheck(this, StopWatch);

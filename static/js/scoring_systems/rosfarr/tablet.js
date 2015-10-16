@@ -341,12 +341,100 @@ var TabletScoreInput = (function (_React$Component) {
             );
         }
     }, {
+        key: "renderFormationInput",
+        value: function renderFormationInput() {
+            var score = this.props.scores[this.props.judge_id].data;
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(
+                    "h3",
+                    null,
+                    __("tablet.dance_judge.dance_tech")
+                ),
+                React.createElement(TabletPointFiveSelectInput, {
+                    min: 0,
+                    max: 10,
+                    active: score.raw_data.dance_tech,
+                    onValueUpdate: this.updateScores.bind(this, "dance_tech") }),
+                React.createElement(
+                    "h3",
+                    null,
+                    __("tablet.dance_judge.dance_figs")
+                ),
+                React.createElement(TabletPointFiveSelectInput, {
+                    min: 0,
+                    max: 10,
+                    active: score.raw_data.dance_figs,
+                    onValueUpdate: this.updateScores.bind(this, "dance_figs") }),
+                React.createElement(
+                    "h3",
+                    null,
+                    __("tablet.dance_judge.impression")
+                ),
+                React.createElement(TabletPointFiveSelectInput, {
+                    min: 0,
+                    max: 10,
+                    active: score.raw_data.impression,
+                    onValueUpdate: this.updateScores.bind(this, "impression") }),
+                React.createElement(
+                    "table",
+                    { className: "mistakes full-width" },
+                    React.createElement(
+                        "tbody",
+                        null,
+                        React.createElement(
+                            "tr",
+                            null,
+                            React.createElement(
+                                "td",
+                                null,
+                                React.createElement(
+                                    "h3",
+                                    null,
+                                    __("tablet.dance_judge.small_mistakes")
+                                ),
+                                React.createElement(TabletIntegerInput, {
+                                    value: score.raw_data.small_mistakes,
+                                    onValueUpdate: this.updateScores.bind(this, "small_mistakes") })
+                            ),
+                            React.createElement(
+                                "td",
+                                null,
+                                React.createElement(
+                                    "h3",
+                                    null,
+                                    __("tablet.dance_judge.big_mistakes")
+                                ),
+                                React.createElement(TabletIntegerInput, {
+                                    value: score.raw_data.big_mistakes,
+                                    onValueUpdate: this.updateScores.bind(this, "big_mistakes") })
+                            )
+                        )
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "total-score" },
+                    __("tablet.global.total_score"),
+                    ": ",
+                    score.total_score
+                )
+            );
+        }
+    }, {
         key: "render",
         value: function render() {
             switch (this.getCurrentJudge().role) {
                 case "acro_judge":
+                    if (this.props.scoring_system == "rosfarr.formation") {
+                        return this.renderFormationInput();
+                    }
                     return this.props.scoring_system == "rosfarr.no_acro" ? this.renderDanceJudgeInput() : this.renderAcroJudgeInput();
                 case "dance_judge":
+                    if (this.props.scoring_system == "rosfarr.formation") {
+                        return this.renderFormationInput();
+                    }
                     return this.renderDanceJudgeInput();
                 case "head_judge":
                     return this.renderHeadJudgeInput();

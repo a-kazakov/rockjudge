@@ -26,6 +26,108 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
     }
 
     _createClass(TourResultsVerboseTableRow, [{
+        key: "renderFormationScore",
+        value: function renderFormationScore(score) {
+            return React.createElement(
+                "table",
+                { className: "score-breakdown" },
+                React.createElement(
+                    "tbody",
+                    null,
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            __("results.breakdown.dt"),
+                            ":"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            score.raw_data.dance_tech
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            __("results.breakdown.df"),
+                            ":"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            score.raw_data.dance_figs
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            __("results.breakdown.i"),
+                            ":"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            score.raw_data.impression
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            __("results.breakdown.sm"),
+                            ":"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            score.raw_data.small_mistakes
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            __("results.breakdown.bm"),
+                            ":"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            score.raw_data.big_mistakes
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            __("results.breakdown.t"),
+                            ":"
+                        ),
+                        React.createElement(
+                            "td",
+                            { className: "total-score" },
+                            score.total_score
+                        )
+                    )
+                )
+            );
+        }
+    }, {
         key: "renderDanceScore",
         value: function renderDanceScore(score) {
             return React.createElement(
@@ -212,20 +314,24 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
         key: "renderScore",
         value: function renderScore(judge, score) {
             if (judge.role == "dance_judge") {
+                if (this.props.scoring_system == "rosfarr.formation") {
+                    return this.renderFormationScore(score);
+                }
                 return this.renderDanceScore(score);
             }
             if (judge.role == "acro_judge") {
+                if (this.props.scoring_system == "rosfarr.formation") {
+                    return this.renderFormationScore(score);
+                }
                 if (this.props.scoring_system == "rosfarr.acro") {
                     return this.renderAcroScore(score);
-                } else {
-                    return this.renderDanceScore(score);
                 }
+                return this.renderDanceScore(score);
             }
             return React.createElement(
                 "span",
                 null,
-                score.total_score,
-                " "
+                score.total_score
             );
         }
     }, {
