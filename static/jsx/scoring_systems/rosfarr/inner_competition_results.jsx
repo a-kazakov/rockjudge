@@ -25,8 +25,8 @@ class InnerCompetitionResultsTable extends React.Component {
             <td className="place">{ row.place === null ? "" : row.place }</td>
             <td className="number">{ row.run.participant.number }</td>
             <td className="sportsmen">{ sp_name }</td>
-            <td className="coaches">{ row.run.participant.coaches.split(",").map((c) => [c.trim(), <br />]) }</td>
             <td className="club">{ row.run.participant.club.name }, { row.run.participant.club.city }</td>
+            <td className="coaches">{ row.run.participant.coaches.split(",").map((c) => [c.trim(), <br />]) }</td>
         </tr>
     }
     renderRows() {
@@ -41,14 +41,14 @@ class InnerCompetitionResultsTable extends React.Component {
     }
     render() {
         return <div className="ic-results">
-            <table className="scores-table">
+            <table className="bordered-table">
                 <thead>
                     <tr>
                         <th className="place">{ __("results.labels.place") }</th>
                         <th className="number">{ __("results.labels.number") }</th>
                         <th className="sportsmen">{ __("results.labels.sportsmen") }</th>
-                        <th className="coaches">{ __("results.labels.participant_coaches") }</th>
                         <th className="club">{ __("results.labels.participant_club") }</th>
+                        <th className="coaches">{ __("results.labels.participant_coaches") }</th>
                     </tr>
                 </thead>
                 <tbody>

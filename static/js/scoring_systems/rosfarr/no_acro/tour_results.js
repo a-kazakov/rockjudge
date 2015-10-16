@@ -469,7 +469,7 @@ var TourResultsVerboseTable = (function (_React$Component2) {
             ) : null;
             return React.createElement(
                 "table",
-                { className: "scores-table no-break" },
+                { className: "bordered-table no-break" },
                 React.createElement(
                     "thead",
                     null,
@@ -602,7 +602,7 @@ var TourResultsTable = (function (_React$Component4) {
             }).bind(this));
             return React.createElement(
                 "table",
-                { className: "scores-table" },
+                { className: "bordered-table" },
                 React.createElement(
                     "thead",
                     null,

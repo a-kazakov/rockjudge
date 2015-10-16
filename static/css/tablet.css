@@ -6805,19 +6805,19 @@ body,
   height: 100%;
   overflow: hidden;
 }
-.scores-table {
+.bordered-table {
   font-size: 12px;
 }
-.scores-table td,
-.scores-table th {
-  border: 2px solid #2b3a42;
+.bordered-table td,
+.bordered-table th {
+  border: 2px solid black;
   padding: 2px 5px;
 }
-.scores-table th {
+.bordered-table th {
   font-weight: bold;
 }
-.scores-table th,
-.scores-table td {
+.bordered-table th,
+.bordered-table td {
   text-align: center;
 }
 header {

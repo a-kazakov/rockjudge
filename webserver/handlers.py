@@ -42,6 +42,12 @@ class ManageParticipantsHandler(tornado.web.RequestHandler):
             inner_competition_id=inner_competition_id,
         )
 
+class StartListHandler(tornado.web.RequestHandler):
+    def get(self, competition_id):
+        self.render(
+            "start_list.html",
+            competition_id=competition_id,
+        )
 
 class StartPageHandler(tornado.web.RequestHandler):
     def get(self):

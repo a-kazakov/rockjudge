@@ -437,7 +437,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
                 ),
                 React.createElement(
                     "table",
-                    { className: "scores-table" },
+                    { className: "bordered-table" },
                     React.createElement(
                         "tbody",
                         null,

@@ -1,4 +1,4 @@
-class ResultsUI extends React.Component {
+class BrowsingUI extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -13,6 +13,8 @@ class ResultsUI extends React.Component {
     }
     renderContent() {
         switch (this.state.page) {
+        case "start_list":
+            return <div className="ifw"><iframe src={ "/start_list/" + this.props.competition_id } /></div>
         case "competition_report":
             return <div className="ifw"><iframe src={ "/report/" + this.props.competition_id } /></div>
         case "inner_competition_results":
@@ -54,6 +56,13 @@ class ResultsUI extends React.Component {
         return <table className="app-content">
             <tbody><tr>
                 <td className="side-panel">
+                    <div className="block">
+                        <div
+                                className={ "level-1" + (this.state.page == "start_list" ? " active" : "") }
+                                onClick= { this.switchPage.bind(this, "start_list") } >
+                            { _("admin.menu.start_list") }
+                        </div>
+                    </div>
                     <div className="block">
                         <div
                                 className={ "level-1" + (this.state.page == "competition_report" ? " active" : "") }

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% autoescape None %}
+
+{% block title %}
+  Tour results
+{% end %}
+
+{% block styles %}
+  <link rel="stylesheet" href="/static/css/start_list.css">
+{% end %}
+
+{% block scripts %}
+  <script src="/static/js/admin/start_list.js"></script>
+  <script>
+    React.render(
+      React.createElement(StartList, { competition_id: {{ competition_id }} }),
+      document.getElementById("content")
+    );
+  </script>
+{% end %}
+
+{% block body %}
+  <div id="content"></div>
+{% end %}

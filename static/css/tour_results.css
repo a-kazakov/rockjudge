@@ -6786,19 +6786,19 @@ body,
   height: 100%;
   overflow: hidden;
 }
-.scores-table {
+.bordered-table {
   font-size: 12px;
 }
-.scores-table td,
-.scores-table th {
-  border: 2px solid #2b3a42;
+.bordered-table td,
+.bordered-table th {
+  border: 2px solid black;
   padding: 2px 5px;
 }
-.scores-table th {
+.bordered-table th {
   font-weight: bold;
 }
-.scores-table th,
-.scores-table td {
+.bordered-table th,
+.bordered-table td {
   text-align: center;
 }
 header {
@@ -6850,25 +6850,25 @@ header .controls button {
 .tour-results .score-breakdown .total-score {
   font-weight: bold;
 }
-.tour-results .scores-table .place {
+.tour-results .bordered-table .place {
   width: 50px;
 }
-.tour-results .scores-table .number {
+.tour-results .bordered-table .number {
   width: 50px;
 }
-.tour-results .scores-table .participant {
+.tour-results .bordered-table .participant {
   width: 300px;
 }
-.tour-results .scores-table .club {
+.tour-results .bordered-table .club {
   width: 300px;
 }
-.tour-results .scores-table .score {
+.tour-results .bordered-table .score {
   width: 100px;
 }
-.tour-results .scores-table .next-tour {
+.tour-results .bordered-table .next-tour {
   width: 70px;
 }
-.tour-results .scores-table td.participant,
-.tour-results .scores-table td.club {
+.tour-results .bordered-table td.participant,
+.tour-results .bordered-table td.club {
   text-align: left !important;
 }

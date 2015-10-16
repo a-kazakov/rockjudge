@@ -6786,19 +6786,19 @@ body,
   height: 100%;
   overflow: hidden;
 }
-.scores-table {
+.bordered-table {
   font-size: 12px;
 }
-.scores-table td,
-.scores-table th {
-  border: 2px solid #2b3a42;
+.bordered-table td,
+.bordered-table th {
+  border: 2px solid black;
   padding: 2px 5px;
 }
-.scores-table th {
+.bordered-table th {
   font-weight: bold;
 }
-.scores-table th,
-.scores-table td {
+.bordered-table th,
+.bordered-table td {
   text-align: center;
 }
 header {
@@ -6836,27 +6836,27 @@ header .controls button {
 .ic-results td {
   vertical-align: top;
 }
-.ic-results .scores-table .place {
+.ic-results .bordered-table .place {
   widht: 50px;
 }
-.ic-results .scores-table .number {
+.ic-results .bordered-table .number {
   width: 50px;
 }
-.ic-results .scores-table .sportsmen {
+.ic-results .bordered-table .sportsmen {
   width: 200px;
 }
-.ic-results .scores-table .coaches {
+.ic-results .bordered-table .club {
+  width: 250px;
+}
+.ic-results .bordered-table .coaches {
   width: 200px;
 }
-.ic-results .scores-table .club {
-  width: 300px;
-}
-.ic-results .scores-table td.sportsmen,
-.ic-results .scores-table td.coaches,
-.ic-results .scores-table td.club {
+.ic-results .bordered-table td.name,
+.ic-results .bordered-table td.club,
+.ic-results .bordered-table td.coaches {
   text-align: left !important;
 }
-.ic-results .scores-table .tour-name {
+.ic-results .bordered-table .tour-name {
   font-weight: bold;
   background-color: #ccc;
 }

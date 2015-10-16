@@ -8,19 +8,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var ResultsUI = (function (_React$Component) {
-    _inherits(ResultsUI, _React$Component);
+var BrowsingUI = (function (_React$Component) {
+    _inherits(BrowsingUI, _React$Component);
 
-    function ResultsUI(props) {
-        _classCallCheck(this, ResultsUI);
+    function BrowsingUI(props) {
+        _classCallCheck(this, BrowsingUI);
 
-        _get(Object.getPrototypeOf(ResultsUI.prototype), "constructor", this).call(this, props);
+        _get(Object.getPrototypeOf(BrowsingUI.prototype), "constructor", this).call(this, props);
         this.state = {
             "page": null
         };
     }
 
-    _createClass(ResultsUI, [{
+    _createClass(BrowsingUI, [{
         key: "switchPage",
         value: function switchPage(page, props) {
             this.setState({
@@ -32,6 +32,12 @@ var ResultsUI = (function (_React$Component) {
         key: "renderContent",
         value: function renderContent() {
             switch (this.state.page) {
+                case "start_list":
+                    return React.createElement(
+                        "div",
+                        { className: "ifw" },
+                        React.createElement("iframe", { src: "/start_list/" + this.props.competition_id })
+                    );
                 case "competition_report":
                     return React.createElement(
                         "div",
@@ -105,6 +111,17 @@ var ResultsUI = (function (_React$Component) {
                                 React.createElement(
                                     "div",
                                     {
+                                        className: "level-1" + (this.state.page == "start_list" ? " active" : ""),
+                                        onClick: this.switchPage.bind(this, "start_list") },
+                                    _("admin.menu.start_list")
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "block" },
+                                React.createElement(
+                                    "div",
+                                    {
                                         className: "level-1" + (this.state.page == "competition_report" ? " active" : ""),
                                         onClick: this.switchPage.bind(this, "competition_report") },
                                     _("admin.menu.competition_report")
@@ -127,6 +144,6 @@ var ResultsUI = (function (_React$Component) {
         }
     }]);
 
-    return ResultsUI;
+    return BrowsingUI;
 })(React.Component);
-//# sourceMappingURL=results.js.map
+//# sourceMappingURL=browsing.js.map

@@ -276,7 +276,7 @@ class TourAdminScoresTable extends React.Component {
                 <h1>{ this.state.inner_competition.name }</h1>
                 <h2>{ this.state.name }</h2>
             </header>
-            <table className="scores-table">
+            <table className="bordered-table">
                 <tbody>
                     <tr>
                         <th className="heat">{ _("judging.labels.heat") }</th>

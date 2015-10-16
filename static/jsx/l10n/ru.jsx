@@ -38,6 +38,7 @@ function _(src, arg) {
                 "load_competition": "Импорт данных соревнования",
                 "participants_management": "Управление участниками",
                 "service_menu": "Сервисное меню",
+                "start_list": "Стартовый лист",
                 "unfinalize_tour": "Отмена финализации тура",
             },
             "labels": {
@@ -55,6 +56,7 @@ function _(src, arg) {
                 "manage_inner_competitions": "Управление категориями",
                 "manage_judges": "Управление судьями",
                 "manage_sportsmen": "Управление спортсменами",
+                "start_list": "Стартовый лист",
             },
             "prompts": {
                 "new_inner_competition_name": "Введите название новой категории",

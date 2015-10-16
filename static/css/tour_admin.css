@@ -6786,19 +6786,19 @@ body,
   height: 100%;
   overflow: hidden;
 }
-.scores-table {
+.bordered-table {
   font-size: 12px;
 }
-.scores-table td,
-.scores-table th {
-  border: 2px solid #2b3a42;
+.bordered-table td,
+.bordered-table th {
+  border: 2px solid black;
   padding: 2px 5px;
 }
-.scores-table th {
+.bordered-table th {
   font-weight: bold;
 }
-.scores-table th,
-.scores-table td {
+.bordered-table th,
+.bordered-table td {
   text-align: center;
 }
 header {
@@ -6830,55 +6830,55 @@ header .controls button {
   margin-right: 0;
   margin-left: 10px;
 }
-.tour-admin .scores-table {
+.tour-admin .bordered-table {
   margin: 10px;
 }
-.tour-admin .scores-table .number {
+.tour-admin .bordered-table .number {
   width: 50px;
 }
-.tour-admin .scores-table .name {
+.tour-admin .bordered-table .name {
   width: 320px;
 }
-.tour-admin .scores-table .club {
+.tour-admin .bordered-table .club {
   width: 200px;
 }
-.tour-admin .scores-table .heat {
+.tour-admin .bordered-table .heat {
   width: 40px;
 }
-.tour-admin .scores-table .judge {
+.tour-admin .bordered-table .judge {
   width: 50px;
 }
-.tour-admin .scores-table .total {
+.tour-admin .bordered-table .total {
   width: 100px;
 }
-.tour-admin .scores-table td {
+.tour-admin .bordered-table td {
   position: relative;
 }
-.tour-admin .scores-table td.judge,
-.tour-admin .scores-table td.heat {
+.tour-admin .bordered-table td.judge,
+.tour-admin .bordered-table td.heat {
   cursor: pointer;
 }
-.tour-admin .scores-table td.no-score {
+.tour-admin .bordered-table td.no-score {
   background-color: #999;
 }
-.tour-admin .scores-table tr.odd-heat {
+.tour-admin .bordered-table tr.odd-heat {
   background-color: #dfeaef;
 }
-.tour-admin .scores-table th,
-.tour-admin .scores-table td {
+.tour-admin .bordered-table th,
+.tour-admin .bordered-table td {
   text-align: center;
 }
-.tour-admin .scores-table td.editing {
+.tour-admin .bordered-table td.editing {
   background-color: #ff530d;
 }
-.tour-admin .scores-table td.name,
-.tour-admin .scores-table td.club {
+.tour-admin .bordered-table td.name,
+.tour-admin .bordered-table td.club {
   text-align: left !important;
 }
-.tour-admin .scores-table tr.active {
+.tour-admin .bordered-table tr.active {
   background-color: #bdd4de;
 }
-.tour-admin .scores-table .form-score-input {
+.tour-admin .bordered-table .form-score-input {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -6886,24 +6886,24 @@ header .controls button {
   z-index: 10;
   padding: 10px;
 }
-.tour-admin .scores-table .form-score-input table {
+.tour-admin .bordered-table .form-score-input table {
   margin-bottom: 10px;
 }
-.tour-admin .scores-table .form-score-input th {
+.tour-admin .bordered-table .form-score-input th {
   color: #efefef;
 }
-.tour-admin .scores-table .form-score-input td,
-.tour-admin .scores-table .form-score-input th {
+.tour-admin .bordered-table .form-score-input td,
+.tour-admin .bordered-table .form-score-input th {
   border: 0;
   padding-left: 10px;
   padding-right: 10px;
   text-align: left;
 }
-.tour-admin .scores-table .form-score-input td input,
-.tour-admin .scores-table .form-score-input th input {
+.tour-admin .bordered-table .form-score-input td input,
+.tour-admin .bordered-table .form-score-input th input {
   width: 50px;
 }
-.tour-admin .scores-table .input-heat {
+.tour-admin .bordered-table .input-heat {
   width: 100%;
   box-sizing: border-box;
   height: 22px;

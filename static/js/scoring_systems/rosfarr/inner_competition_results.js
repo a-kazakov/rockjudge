@@ -73,17 +73,17 @@ var InnerCompetitionResultsTable = (function (_React$Component) {
                 ),
                 React.createElement(
                     "td",
-                    { className: "coaches" },
-                    row.run.participant.coaches.split(",").map(function (c) {
-                        return [c.trim(), React.createElement("br", null)];
-                    })
-                ),
-                React.createElement(
-                    "td",
                     { className: "club" },
                     row.run.participant.club.name,
                     ", ",
                     row.run.participant.club.city
+                ),
+                React.createElement(
+                    "td",
+                    { className: "coaches" },
+                    row.run.participant.coaches.split(",").map(function (c) {
+                        return [c.trim(), React.createElement("br", null)];
+                    })
                 )
             );
         }
@@ -107,7 +107,7 @@ var InnerCompetitionResultsTable = (function (_React$Component) {
                 { className: "ic-results" },
                 React.createElement(
                     "table",
-                    { className: "scores-table" },
+                    { className: "bordered-table" },
                     React.createElement(
                         "thead",
                         null,
@@ -131,13 +131,13 @@ var InnerCompetitionResultsTable = (function (_React$Component) {
                             ),
                             React.createElement(
                                 "th",
-                                { className: "coaches" },
-                                __("results.labels.participant_coaches")
+                                { className: "club" },
+                                __("results.labels.participant_club")
                             ),
                             React.createElement(
                                 "th",
-                                { className: "club" },
-                                __("results.labels.participant_club")
+                                { className: "coaches" },
+                                __("results.labels.participant_coaches")
                             )
                         )
                     ),

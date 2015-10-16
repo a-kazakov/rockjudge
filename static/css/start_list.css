@@ -6830,193 +6830,47 @@ header .controls button {
   margin-right: 0;
   margin-left: 10px;
 }
-html,
-body {
-  overflow-x: hidden;
+.start-list {
+  padding: 10px;
 }
-.manage-participants {
-  margin: 10px;
-}
-.manage-participants table tr.viewer {
-  cursor: pointer;
-}
-.manage-participants table tr.viewer .number {
-  width: 150px;
+.start-list h2 {
   text-align: center;
 }
-.manage-participants table tr.viewer .delete {
-  width: 50px;
-  text-align: center;
+.start-list table.inner-competition {
+  font-size: 12px;
 }
-.manage-participants table tr.viewer .delete button {
-  padding: 0 7px;
+.start-list table.inner-competition td,
+.start-list table.inner-competition th {
+  border: 2px solid black;
+  padding: 2px 5px;
 }
-.manage-participants table tr.editor {
-  padding: 15px;
-  background-color: #bdd4de;
-}
-.manage-participants table tr.editor.create {
-  background-color: #f0ad4e;
-}
-.manage-participants table tr.editor input,
-.manage-participants table tr.editor select {
-  height: 25px;
-  border: 1px solid #ccc;
-}
-.manage-participants table tr.editor input,
-.manage-participants table tr.editor select,
-.manage-participants table tr.editor input button,
-.manage-participants table tr.editor select button {
-  vertical-align: middle;
-}
-.manage-participants table tr.editor input {
-  padding-left: 5px;
-  padding-right: 5px;
-}
-.manage-participants table tr.editor .sportsman .first-name,
-.manage-participants table tr.editor .sportsman .last-name {
-  width: 32.5%;
-}
-.manage-participants table tr.editor .sportsman .yob,
-.manage-participants table tr.editor .sportsman .gender {
-  width: 15%;
-}
-.manage-participants table tr.editor .acrobatic .description {
-  width: 85%;
-}
-.manage-participants table tr.editor .acrobatic .score {
-  text-align: right;
-  width: 10%;
-}
-.manage-participants table tr.editor .del {
-  display: inline-block;
-  margin-bottom: 0;
-  font-weight: normal;
-  text-align: center;
-  vertical-align: middle;
-  touch-action: manipulation;
-  cursor: pointer;
-  background-image: none;
-  border: 1px solid transparent;
-  white-space: nowrap;
-  padding: 6px 12px;
-  font-size: 14px;
-  line-height: 1.42857143;
-  border-radius: 0;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  color: #ffffff;
-  background-color: #d9534f;
-  border-color: #d43f3a;
-  width: 5%;
-  padding: 0;
-  margin: 0;
-  height: 24px;
+.start-list table.inner-competition th {
   font-weight: bold;
 }
-.manage-participants table tr.editor .del:focus,
-.manage-participants table tr.editor .del:active:focus,
-.manage-participants table tr.editor .del.active:focus,
-.manage-participants table tr.editor .del.focus,
-.manage-participants table tr.editor .del:active.focus,
-.manage-participants table tr.editor .del.active.focus {
-  outline: thin dotted;
-  outline: 5px auto -webkit-focus-ring-color;
-  outline-offset: -2px;
+.start-list table.inner-competition th,
+.start-list table.inner-competition td {
+  text-align: center;
 }
-.manage-participants table tr.editor .del:hover,
-.manage-participants table tr.editor .del:focus,
-.manage-participants table tr.editor .del.focus {
-  color: #333333;
-  text-decoration: none;
+.start-list table.inner-competition .number {
+  width: 50px;
 }
-.manage-participants table tr.editor .del:active,
-.manage-participants table tr.editor .del.active {
-  outline: 0;
-  background-image: none;
-  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+.start-list table.inner-competition .name {
+  width: 325px;
 }
-.manage-participants table tr.editor .del.disabled,
-.manage-participants table tr.editor .del[disabled],
-fieldset[disabled] .manage-participants table tr.editor .del {
-  cursor: not-allowed;
-  opacity: 0.65;
-  filter: alpha(opacity=65);
-  -webkit-box-shadow: none;
-  box-shadow: none;
+.start-list table.inner-competition .club {
+  width: 300px;
 }
-a.manage-participants table tr.editor .del.disabled,
-fieldset[disabled] a.manage-participants table tr.editor .del {
-  pointer-events: none;
+.start-list table.inner-competition .coaches {
+  width: 150px;
 }
-.manage-participants table tr.editor .del:focus,
-.manage-participants table tr.editor .del.focus {
-  color: #ffffff;
-  background-color: #c9302c;
-  border-color: #761c19;
+.start-list table.inner-competition td.name,
+.start-list table.inner-competition td.club,
+.start-list table.inner-competition td.coaches {
+  text-align: left !important;
 }
-.manage-participants table tr.editor .del:hover {
-  color: #ffffff;
-  background-color: #c9302c;
-  border-color: #ac2925;
-}
-.manage-participants table tr.editor .del:active,
-.manage-participants table tr.editor .del.active,
-.open > .dropdown-toggle.manage-participants table tr.editor .del {
-  color: #ffffff;
-  background-color: #c9302c;
-  border-color: #ac2925;
-}
-.manage-participants table tr.editor .del:active:hover,
-.manage-participants table tr.editor .del.active:hover,
-.open > .dropdown-toggle.manage-participants table tr.editor .del:hover,
-.manage-participants table tr.editor .del:active:focus,
-.manage-participants table tr.editor .del.active:focus,
-.open > .dropdown-toggle.manage-participants table tr.editor .del:focus,
-.manage-participants table tr.editor .del:active.focus,
-.manage-participants table tr.editor .del.active.focus,
-.open > .dropdown-toggle.manage-participants table tr.editor .del.focus {
-  color: #ffffff;
-  background-color: #ac2925;
-  border-color: #761c19;
-}
-.manage-participants table tr.editor .del:active,
-.manage-participants table tr.editor .del.active,
-.open > .dropdown-toggle.manage-participants table tr.editor .del {
-  background-image: none;
-}
-.manage-participants table tr.editor .del.disabled,
-.manage-participants table tr.editor .del[disabled],
-fieldset[disabled] .manage-participants table tr.editor .del,
-.manage-participants table tr.editor .del.disabled:hover,
-.manage-participants table tr.editor .del[disabled]:hover,
-fieldset[disabled] .manage-participants table tr.editor .del:hover,
-.manage-participants table tr.editor .del.disabled:focus,
-.manage-participants table tr.editor .del[disabled]:focus,
-fieldset[disabled] .manage-participants table tr.editor .del:focus,
-.manage-participants table tr.editor .del.disabled.focus,
-.manage-participants table tr.editor .del[disabled].focus,
-fieldset[disabled] .manage-participants table tr.editor .del.focus,
-.manage-participants table tr.editor .del.disabled:active,
-.manage-participants table tr.editor .del[disabled]:active,
-fieldset[disabled] .manage-participants table tr.editor .del:active,
-.manage-participants table tr.editor .del.disabled.active,
-.manage-participants table tr.editor .del[disabled].active,
-fieldset[disabled] .manage-participants table tr.editor .del.active {
-  background-color: #d9534f;
-  border-color: #d43f3a;
-}
-.manage-participants table tr.editor .del .badge {
-  color: #d9534f;
-  background-color: #ffffff;
-}
-.manage-participants table tr.editor .general-info .buttons button {
-  width: 50%;
-}
-.manage-participants table tr.editor .general-info input,
-.manage-participants table tr.editor .general-info select {
-  margin-bottom: 10px;
+.start-list table.inner-competition td,
+.start-list table.inner-competition th {
+  border: 2px solid black;
+  padding: 2px 5px;
+  vertical-align: top;
 }

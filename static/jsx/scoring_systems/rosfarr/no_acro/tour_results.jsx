@@ -112,7 +112,7 @@ class TourResultsVerboseTable extends React.Component {
         });
         let acro_header = this.props.scoring_system == "rosfarr.acro"
             ? <th className="acro">{ __("results.labels.acrobatics") }</th> : null;
-        return <table className="scores-table no-break">
+        return <table className="bordered-table no-break">
             <thead>
                 <tr>
                     <th className="place">{ __("results.labels.place") }</th>
@@ -159,7 +159,7 @@ class TourResultsTable extends React.Component {
                 key={ row.participant.id }
                 has_next_tour={ this.props.has_next_tour } />
         }.bind(this));
-        return <table className="scores-table">
+        return <table className="bordered-table">
             <thead>
                 <tr>
                     <th className="place">{ __("results.labels.place") }</th>
