@@ -347,12 +347,12 @@ var StopWatch = (function (_React$Component6) {
                 React.createElement(
                     "button",
                     _extends({ className: "tbtn btn-toggle" }, onTouchOrClick(this.toggle.bind(this))),
-                    this.state.active ? "Stop" : "Start"
+                    this.state.active ? _("tablet.buttons.stop_stopwatch") : _("tablet.buttons.start_stopwatch")
                 ),
                 React.createElement(
                     "button",
                     _extends({ className: "tbtn btn-reset" }, onTouchOrClick(this.reset.bind(this))),
-                    "Reset"
+                    _("tablet.buttons.reset_stopwatch")
                 ),
                 React.createElement(
                     "div",

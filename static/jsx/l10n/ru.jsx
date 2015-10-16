@@ -167,6 +167,9 @@ function _(src, arg) {
             "buttons": {
                 "next_heat": "След. заход",
                 "prev_heat": "Пред. заход",
+                "start_stopwatch": "Старт",
+                "stop_stopwatch": "Стоп",
+                "reset_stopwatch": "Сброс",
             },
             "headers": {
                 "select_page": "Страница",
