@@ -222,13 +222,15 @@ var JudgeTablet = (function (_React$Component) {
     }, {
         key: "renderJudgeInfo",
         value: function renderJudgeInfo() {
+            var judge = this.state.judge;
+            var judge_number = judge.role_description || _("global.phrases.judge_n", this.state.judge.number);
             return React.createElement(
                 "div",
                 null,
                 React.createElement(
                     "div",
                     { className: "judge-number" },
-                    _("global.phrases.judge_n", this.state.judge.number)
+                    judge_number
                 ),
                 React.createElement(
                     "div",
