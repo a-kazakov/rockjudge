@@ -148,10 +148,14 @@ class JudgeTablet extends React.Component {
         var btn_next = null;
         if (this.state.tour !== null) {
             if (this.state.current_heat > 1) {
-                btn_prev = <button className="btn btn-primary btn-prev-heat" {...onTouchOrClick(this.toPrevHeat.bind(this))}>Previous heat</button>;
+                btn_prev = <button className="btn btn-primary btn-prev-heat" {...onTouchOrClick(this.toPrevHeat.bind(this))}>
+                    { _("tablet.buttons.prev_heat") }
+                </button>;
             }
             if (this.state.current_heat < this.getHeatsCount()) {
-                btn_next = <button className="btn btn-primary btn-next-heat" {...onTouchOrClick(this.toNextHeat.bind(this))}>Next heat</button>;
+                btn_next = <button className="btn btn-primary btn-next-heat" {...onTouchOrClick(this.toNextHeat.bind(this))}>
+                    { _("tablet.buttons.next_heat") }
+                </button>;
             }
         }
         var current_tour = (this.state.tour === null) ? null :

@@ -180,14 +180,14 @@ var JudgeTablet = (function (_React$Component) {
                     btn_prev = React.createElement(
                         "button",
                         _extends({ className: "btn btn-primary btn-prev-heat" }, onTouchOrClick(this.toPrevHeat.bind(this))),
-                        "Previous heat"
+                        _("tablet.buttons.prev_heat")
                     );
                 }
                 if (this.state.current_heat < this.getHeatsCount()) {
                     btn_next = React.createElement(
                         "button",
                         _extends({ className: "btn btn-primary btn-next-heat" }, onTouchOrClick(this.toNextHeat.bind(this))),
-                        "Next heat"
+                        _("tablet.buttons.next_heat")
                     );
                 }
             }

@@ -42,7 +42,7 @@ class TabletScoreInput extends React.Component {
             var timing_data = (this.props.scores[judge.id].data.raw_data.timing_violation === null)
                 ? ["-", ""]
                 : (this.props.scores[judge.id].data.raw_data.timing_violation ? ["X", " fail"] : ["OK", " ok"])
-            return <div>
+            return <div key={ judge.id }>
                 <h3>{ judge.name }:</h3>
                 <div className="tech-judge-info">
                     <div className="title">

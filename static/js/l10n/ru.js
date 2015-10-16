@@ -181,6 +181,10 @@ function _(src, arg) {
             }
         },
         "tablet": {
+            "buttons": {
+                "next_heat": "След. заход",
+                "prev_heat": "Пред. заход"
+            },
             "headers": {
                 "select_page": "Страница",
                 "heat": "Заход"

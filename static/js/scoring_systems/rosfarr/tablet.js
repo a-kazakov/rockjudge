@@ -72,7 +72,7 @@ var TabletScoreInput = (function (_React$Component) {
                 var timing_data = this.props.scores[judge.id].data.raw_data.timing_violation === null ? ["-", ""] : this.props.scores[judge.id].data.raw_data.timing_violation ? ["X", " fail"] : ["OK", " ok"];
                 return React.createElement(
                     "div",
-                    null,
+                    { key: judge.id },
                     React.createElement(
                         "h3",
                         null,
