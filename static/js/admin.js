@@ -428,7 +428,7 @@ var AdminUI = (function (_React$Component4) {
                         judges: this.state.judges,
                         competition_id: this.props.competition_id });
                 case "results":
-                    return React.createElement(BrowsingUI, {
+                    return React.createElement(ReportsUI, {
                         inner_competitions: this.state.inner_competitions,
                         competition_id: this.props.competition_id });
                 case "service":
@@ -504,12 +504,12 @@ var AdminUI = (function (_React$Component4) {
                                 React.createElement(
                                     "div",
                                     { className: "icon" },
-                                    "B"
+                                    "R"
                                 ),
                                 React.createElement(
                                     "div",
                                     { className: "label" },
-                                    "Browsing"
+                                    "Reports"
                                 )
                             ),
                             React.createElement(

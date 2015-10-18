@@ -8,19 +8,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var BrowsingUI = (function (_React$Component) {
-    _inherits(BrowsingUI, _React$Component);
+var ReportsUI = (function (_React$Component) {
+    _inherits(ReportsUI, _React$Component);
 
-    function BrowsingUI(props) {
-        _classCallCheck(this, BrowsingUI);
+    function ReportsUI(props) {
+        _classCallCheck(this, ReportsUI);
 
-        _get(Object.getPrototypeOf(BrowsingUI.prototype), "constructor", this).call(this, props);
+        _get(Object.getPrototypeOf(ReportsUI.prototype), "constructor", this).call(this, props);
         this.state = {
             "page": null
         };
     }
 
-    _createClass(BrowsingUI, [{
+    _createClass(ReportsUI, [{
         key: "switchPage",
         value: function switchPage(page, props) {
             this.setState({
@@ -144,6 +144,6 @@ var BrowsingUI = (function (_React$Component) {
         }
     }]);
 
-    return BrowsingUI;
+    return ReportsUI;
 })(React.Component);
-//# sourceMappingURL=browsing.js.map
+//# sourceMappingURL=reports.js.map

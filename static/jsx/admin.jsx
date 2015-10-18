@@ -273,7 +273,7 @@ class AdminUI extends React.Component {
                 judges={ this.state.judges }
                 competition_id={ this.props.competition_id } />;
         case "results":
-            return <BrowsingUI
+            return <ReportsUI
                 inner_competitions={ this.state.inner_competitions }
                 competition_id={ this.props.competition_id } />;
         case "service":
@@ -301,8 +301,8 @@ class AdminUI extends React.Component {
                         <div className="label">Judging</div>
                     </div>
                     <div className={ "app" + (this.state.active_app == "results" ? " active" : "") } onClick={ this.setApp.bind(this, "results") }>
-                        <div className="icon">B</div>
-                        <div className="label">Browsing</div>
+                        <div className="icon">R</div>
+                        <div className="label">Reports</div>
                     </div>
                     <div className={ "app" + (this.state.active_app == "service" ? " active" : "") } onClick={ this.setApp.bind(this, "service") }>
                         <div className="icon">S</div>

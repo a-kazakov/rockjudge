@@ -1,4 +1,4 @@
-class BrowsingUI extends React.Component {
+class ReportsUI extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
