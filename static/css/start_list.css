@@ -4,25 +4,25 @@
 .start-list h2 {
   text-align: center;
 }
-.start-list table.inner-competition .number {
+.start-list .inner-competition table .number {
   width: 50px;
 }
-.start-list table.inner-competition .name {
+.start-list .inner-competition table .name {
   width: 325px;
 }
-.start-list table.inner-competition .club {
+.start-list .inner-competition table .club {
   width: 300px;
 }
-.start-list table.inner-competition .coaches {
+.start-list .inner-competition table .coaches {
   width: 150px;
 }
-.start-list table.inner-competition td.name,
-.start-list table.inner-competition td.club,
-.start-list table.inner-competition td.coaches {
+.start-list .inner-competition table td.name,
+.start-list .inner-competition table td.club,
+.start-list .inner-competition table td.coaches {
   text-align: left !important;
 }
-.start-list table.inner-competition td,
-.start-list table.inner-competition th {
+.start-list .inner-competition table td,
+.start-list .inner-competition table th {
   border: 2px solid black;
   padding: 2px 5px;
   vertical-align: top;
