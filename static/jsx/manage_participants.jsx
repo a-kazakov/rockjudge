@@ -188,7 +188,7 @@ class ParticipantEditorRow extends React.Component {
                         <div className="col-md-3 general-info">
                             <h4>{ _("models.participant.general_info") }</h4>
                             <input
-                                tabIndex=" bti + "
+                                tabIndex={ bti + 1}
                                 ref={ function(e) {
                                     if (e && this.latest_added == "base") {
                                         e.getDOMNode().select();
@@ -200,31 +200,31 @@ class ParticipantEditorRow extends React.Component {
                                 value={ this.state.number }
                                 onChange={ this.onChange.bind(this, "", null, "number", "number") } />
                             <select
-                                    tabIndex=" bti + "
+                                    tabIndex={ bti + 2}
                                     className="full-width"
                                     value={ this.state.club_id }
                                     onChange={ this.onChange.bind(this, "", null, "club_id", "any") }>
                                 { clubs }
                             </select>
                             <input
-                                tabIndex=" bti + "
+                                tabIndex={ bti + 3}
                                 placeholder={ _("models.participant.coaches") }
                                 className="full-width"
                                 value={ this.state.coaches }
                                 onChange={ this.onChange.bind(this, "", null, "coaches", "any") } />
                             <input
-                                tabIndex=" bti + "
+                                tabIndex={ bti + 4}
                                 placeholder={ _("models.participant.formation_name") }
                                 className="full-width"
                                 value={ this.state.formation_name }
                                 onChange={ this.onChange.bind(this, "", null, "formation_name", "any") } />
                             <div className="buttons">
                                 <button
-                                    tabIndex=" bti + 0000"
+                                    tabIndex={ bti + 10000}
                                     type="submit"
                                     className="btn btn-primary">{ _("global.buttons.submit") }</button>
                                 <button
-                                    tabIndex=" bti + 0001"
+                                    tabIndex={ bti + 10001}
                                     type="button"
                                     className="btn btn-danger"
                                     onClick={ this.props.stopEditing }>{ _("global.buttons.discard") }</button>
@@ -234,7 +234,7 @@ class ParticipantEditorRow extends React.Component {
                             <h4>{ _("models.participant.sportsmen") }</h4>
                             { sportsmen }
                             <button
-                                tabIndex=" bti + 999"
+                                tabIndex={ bti + 1999}
                                 type="button"
                                 className="full-width btn btn-sm btn-default"
                                 onClick={ this.addSportsman.bind(this) }>{ _("global.buttons.add") }</button>
@@ -243,7 +243,7 @@ class ParticipantEditorRow extends React.Component {
                             <h4>{ _("models.participant.acrobatics") }</h4>
                             { acrobatics }
                             <button
-                                tabIndex=" bti + 999"
+                                tabIndex={ bti + 2999}
                                 type="button"
                                 className="full-width btn btn-sm btn-default"
                                 onClick={ this.addAcrobatic.bind(this) }>{ _("global.buttons.add") }</button>

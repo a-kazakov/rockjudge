@@ -11,7 +11,7 @@ table.outer-table {
   td {
     vertical-align: top;
   }
-  th {
+  th.caption {
     height: 30px;
     vertical-align: middle;
     text-align: center;
@@ -145,21 +145,64 @@ div.load-competition-page {
   }
 }
 
-.judges-management-ui {
+.manage-judges {
   padding: 10px;
-  .judge {
-    background-color: @ui-light;
-    padding: 10px 10px 10px 10px;
-    margin-bottom: 10px;
-    h3 {
-      margin-top: 0;
+  table {
+    tr.viewer {
+      cursor: pointer;
+      .role-description {
+        width: 20%;;
+      }
+      .category {
+        width: 10%;
+      }
+      .role {
+        width: 25%;
+      }
+      .delete {
+        width: 50px;
+        text-align: center;
+        button {
+          padding: 0 7px;
+        }
+      }
     }
-    &.judge-create {
-      background-color: @brand-warning;
-    }
-    .buttons {
-      padding-top: 10px;
-      text-align: center;
+    tr.editor {
+      &.create {
+        background-color: @brand-warning;
+      }
+      padding: 15px;
+      background-color: @ui-light;
+      input, select {
+        height: 25px;
+        &, button {
+          vertical-align: middle;
+        }
+        border: 1px solid #ccc;
+      }
+      input {
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      input, select {
+        font-weight: normal;
+      }
+      .del {
+        width: 5%;
+        padding: 0;
+        margin: 0;
+        height: 24px;
+        font-weight: bold;
+      }
+      .buttons {
+        padding-top: 21px;
+        button {
+          width: 50%;
+        }
+      }
+      input, select {
+        margin-bottom: 10px;
+      }
     }
   }
 }

@@ -10,7 +10,7 @@ table.outer-table {
 table.outer-table td {
   vertical-align: top;
 }
-table.outer-table th {
+table.outer-table th.caption {
   height: 30px;
   vertical-align: middle;
   text-align: center;
@@ -134,23 +134,70 @@ div.load-competition-page form.load-competition button {
   padding-top: 10px;
   text-align: center;
 }
-.judges-management-ui {
+.manage-judges {
   padding: 10px;
 }
-.judges-management-ui .judge {
+.manage-judges table tr.viewer {
+  cursor: pointer;
+}
+.manage-judges table tr.viewer .role-description {
+  width: 20%;
+}
+.manage-judges table tr.viewer .category {
+  width: 10%;
+}
+.manage-judges table tr.viewer .role {
+  width: 25%;
+}
+.manage-judges table tr.viewer .delete {
+  width: 50px;
+  text-align: center;
+}
+.manage-judges table tr.viewer .delete button {
+  padding: 0 7px;
+}
+.manage-judges table tr.editor {
+  padding: 15px;
   background-color: #bdd4de;
-  padding: 10px 10px 10px 10px;
-  margin-bottom: 10px;
 }
-.judges-management-ui .judge h3 {
-  margin-top: 0;
-}
-.judges-management-ui .judge.judge-create {
+.manage-judges table tr.editor.create {
   background-color: #f0ad4e;
 }
-.judges-management-ui .judge .buttons {
-  padding-top: 10px;
-  text-align: center;
+.manage-judges table tr.editor input,
+.manage-judges table tr.editor select {
+  height: 25px;
+  border: 1px solid #ccc;
+}
+.manage-judges table tr.editor input,
+.manage-judges table tr.editor select,
+.manage-judges table tr.editor input button,
+.manage-judges table tr.editor select button {
+  vertical-align: middle;
+}
+.manage-judges table tr.editor input {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.manage-judges table tr.editor input,
+.manage-judges table tr.editor select {
+  font-weight: normal;
+}
+.manage-judges table tr.editor .del {
+  width: 5%;
+  padding: 0;
+  margin: 0;
+  height: 24px;
+  font-weight: bold;
+}
+.manage-judges table tr.editor .buttons {
+  padding-top: 21px;
+}
+.manage-judges table tr.editor .buttons button {
+  width: 50%;
+}
+.manage-judges table tr.editor input,
+.manage-judges table tr.editor select {
+  margin-bottom: 10px;
 }
 .service-menu {
   padding: 10px;

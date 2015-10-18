@@ -457,7 +457,7 @@ var AdminUI = (function (_React$Component4) {
                         null,
                         React.createElement(
                             "th",
-                            { colSpan: "2" },
+                            { colSpan: "2", className: "caption" },
                             this.state.name,
                             " (",
                             this.state.date,

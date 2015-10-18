@@ -1,90 +1,157 @@
-class JudgeInputForm extends React.Component {
-    render() {
-        var classes = ["judge", "form-horizontal"].concat(this.props.classes || []).join(" ");
-        var judge = this.props.judge || { id: "new" }
-        return <form className={ classes } key={ judge.id } onSubmit={ this.submitJudge.bind(this) }>
-            <div className="row">
-                <div className="col-md-6">
-                    <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">{ _("models.judge.name") }</label>
-                        <div className="col-sm-8">
-                            <input
-                                type="text"
-                                className="form-control"
-                                ref="name"
-                                defaultValue={ judge.name } />
-                        </div>
-                    </div>
-                    <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">{ _("models.judge.role") }</label>
-                        <div className="col-sm-8">
-                            <input
-                                type="text"
-                                className="form-control"
-                                ref="role"
-                                defaultValue={ judge.role }  />
-                        </div>
-                    </div>
-                </div>
-                <div className="col-md-3">
-                    <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">{ _("models.judge.category") }</label>
-                        <div className="col-sm-8">
-                            <input
-                                type="text"
-                                className="form-control"
-                                ref="category"
-                                defaultValue={ judge.category } />
-                        </div>
-                    </div>
-                    <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">{ _("models.judge.number") }</label>
-                        <div className="col-sm-8">
-                            <input
-                                type="text"
-                                className="form-control"
-                                ref="number"
-                                defaultValue={ judge.number } />
-                        </div>
-                    </div>
-                </div>
-                <div className="col-md-3">
-                    <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">{ _("models.judge.role_description") }</label>
-                        <div className="col-sm-8">
-                            <input
-                                type="text"
-                                className="form-control"
-                                ref="role_description"
-                                defaultValue={ judge.role_description }  />
-                        </div>
-                    </div>
-                    <div className="form-group form-group-sm">
-                        <div className="col-sm-offset-4 col-sm-8">
-                            <button className="btn btn-primary btn-sm" type="submit">{ _("global.buttons.submit") }</button>&nbsp;
-                            <button className="btn btn-primary btn-sm" type="button" onClick={ this.props.stopEditing }>{ _("global.buttons.discard") }</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>;
-    }
-    submitJudge(event) {
-        event.preventDefault();
-        this.props.submitJudge(this.serialize());
-    }
-    serialize() {
+class JudgeEditorRow extends React.Component {
+    sertialize() {
+        console.log(this);
         return {
-            name: this.refs.name.getDOMNode().value,
-            role: this.refs.role.getDOMNode().value,
-            role_description: this.refs.role.getDOMNode().value,
-            category: this.refs.category.getDOMNode().value,
-            number: this.refs.number.getDOMNode().value,
-        };
+            name: this._name.value,
+            number: this._number.value,
+            category: this._category.value,
+            role: this._role.value,
+            role_description: this._role_description.value,
+            hide_from_results: this._hide_from_results.value,
+        }
+    }
+    onSubmit(event) {
+        event.preventDefault();
+        if (!this.props.newJudge) {
+            Api("tournaments.judge.set", {
+                judge_id: this.props.judge.id,
+                data: this.sertialize(),
+            }).onSuccess(this.props.stopEditing).send();
+        } else {
+            Api("tournaments.judge.create", {
+                competition_id: this.props.competition_id,
+                data: this.sertialize(),
+            }).onSuccess(this.props.stopEditing).send();
+        }
+    }
+    render() {
+        let roles = GL.judge_roles.map(function(role) {
+            return <option value={ role } key={ role }>{ _("judge_roles." + role) }</option>
+        });
+        return <tr className={ "editor" + (this.props.newJudge ? " create" : "" ) }>
+            <td colSpan="5">
+                <form onSubmit={ this.onSubmit.bind(this) }>
+                    <div className="row">
+                        <div className="col-md-1">
+                            <label className="full-width">
+                                { _("models.judge.number") }
+                                <input
+                                    ref={ function(e) { if (e) { e.getDOMNode().select(); this._number = e.getDOMNode(); } }.bind(this) }
+                                    className="full-width"
+                                    defaultValue={ this.props.judge.number } />
+                            </label>
+                            <label className="full-width">
+                                { _("models.judge.category") }
+                                <input
+                                    ref={ (e) => e && (this._category = e.getDOMNode()) }
+                                    className="full-width"
+                                    defaultValue={ this.props.judge.category } />
+                            </label>
+                        </div>
+                        <div className="col-md-4">
+                            <label className="full-width">
+                                { _("models.judge.name") }
+                                <input
+                                    ref={ (e) => e && (this._name = e.getDOMNode()) }
+                                    className="full-width"
+                                    defaultValue={ this.props.judge.name } />
+                            </label>
+                            <label className="full-width">
+                                { _("models.judge.role_description") }
+                                <input
+                                    ref={ (e) => e && (this._role_description = e.getDOMNode()) }
+                                    className="full-width"
+                                    defaultValue={ this.props.judge.role_description } />
+                            </label>
+                        </div>
+                        <div className="col-md-4">
+                            <label className="full-width">
+                                { _("models.judge.role") }
+                                <select
+                                    ref={ (e) => e && (this._role = e.getDOMNode()) }
+                                    className="full-width"
+                                    defaultValue={ this.props.judge.role }>
+                                { roles }</select>
+                            </label>
+                            <label className="full-width">
+                                { _("models.judge.hide_from_results") }<br />
+                                <input
+                                    ref={ (e) => e && (this._hide_from_results = e.getDOMNode()) }
+                                    type="checkbox"
+                                    defaultValue={ this.props.hide_from_results } />
+                            </label>
+                        </div>
+                        <div className="col-md-3">
+                            <div className="buttons">
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary">{ _("global.buttons.submit") }</button>
+                                <button
+                                    type="button"
+                                    className="btn btn-danger"
+                                    onClick={ this.props.stopEditing }>{ _("global.buttons.discard") }</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </td>
+        </tr>
     }
 }
 
-class JudgeEditingUI extends React.Component {
+class JudgeRow extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            editing: false,
+        }
+    }
+    startEditing() {
+        this.setState({
+            editing: true,
+        });
+    }
+    stopEditing() {
+        this.setState({
+            editing: false,
+        });
+    }
+    onDelete(event) {
+        event.stopPropagation();
+        if (confirm(_("admin.confirms.delete_judge"))) {
+            Api("tournaments.judge.delete", {
+                judge_id: this.props.judge.id,
+            }).send();
+        }
+    }
+    renderEditor() {
+        return <JudgeEditorRow
+            newJudge={ false }
+            stopEditing={ this.stopEditing.bind(this) }
+            { ...this.props } />
+    }
+    renderViewer() {
+        let j = this.props.judge;
+        return <tr className="viewer" onClick={ this.startEditing.bind(this) }>
+            <td className="role-description">{ j.role_description || _("global.phrases.judge_n", j.number) }</td>
+            <td className="name">{ j.name }</td>
+            <td className="category">{ j.category }</td>
+            <td className="role">{ _("judge_roles." + j.role) }</td>
+            <td className="delete">
+                <button className="btn btn-danger" onClick={ this.onDelete.bind(this) }>X</button>
+            </td>
+        </tr>;
+    }
+    render() {
+        if (this.state.editing) {
+            return this.renderEditor();
+        } else {
+            return this.renderViewer();
+        }
+    }
+}
+
+class CreationRow extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -102,64 +169,29 @@ class JudgeEditingUI extends React.Component {
         });
     }
     renderEditor() {
-        return <JudgeInputForm
-            judge={ this.props.judge }
-            submitJudge={ this.submitJudge.bind(this) }
-            stopEditing={ this.stopEditing.bind(this) } />
-    }
-    renderViewer() {
-        return <div className="judge" key={ this.props.judge.id }>
-            <h3>{ this.props.judge.name }</h3>
-            <div className="row">
-                <div className="col-md-5">
-                    <p><strong>{ _("models.judge.category") }:</strong> {this.props.judge.category } </p>
-                    <p><strong>{ _("models.judge.role") }:</strong> {this.props.judge.role } </p>
-                </div>
-                <div className="col-md-5">
-                    <p><strong>{ _("models.judge.number") }:</strong> {this.props.judge.number } </p>
-                    <p><strong>{ _("models.judge.role_description") }:</strong> { this.props.judge.role_description } </p>
-                </div>
-                <div className="col-md-2">
-                    <button className="full-width btn btn-primary btn-sm" onClick={ this.startEditing.bind(this) }>{ _("global.buttons.edit") }</button><br />
-                    <button className="full-width btn btn-danger btn-sm" onClick={ this.deleteJudge.bind(this) }>{ _("global.buttons.delete") }</button>
-                </div>
-            </div>
-        </div>
-    }
-    render() {
-        return this.state.editing ? this.renderEditor() : this.renderViewer();
-    }
-    submitJudge(data) {
-        Api("tournaments.judge.set", {
-            judge_id: this.props.judge.id,
-            data: data,
-        }).onSuccess(function(response) {
-            this.stopEditing();
-        }.bind(this)).send();
-    }
-    deleteJudge() {
-        if (!confirm(_("admin.confirms.delete_judge"))) {
-            return false;
+        let empty_data = {
+            "name": "",
+            "number": "",
+            "role": "",
+            "role_description": "",
+            "category": "",
         }
-        Api("tournaments.judge.delete", { judge_id: this.props.judge.id }).send();
+        return <JudgeEditorRow
+            newJudge={ true }
+            stopEditing={ this.stopEditing.bind(this) }
+            judge={ empty_data }
+            { ...this.props } />;
     }
-}
-
-class JudgeCreatingUI extends React.Component {
+    renderButton() {
+        return <tr><td colSpan="5">
+            <button
+                type="button"
+                className="btn btn-default full-width"
+                onClick={ this.startEditing.bind(this) }>{ _("admin.buttons.add_judge") }</button>
+        </td></tr>
+    }
     render() {
-        return <JudgeInputForm
-            classes={ ["judge-create"] }
-            submitJudge={ this.submitJudge.bind(this) }
-            stopEditing={ this.props.stopEditing } />
-
-    }
-    submitJudge(data) {
-        Api("tournaments.judge.create", {
-            competition_id: this.props.competition_id,
-            data: data,
-        }).onSuccess(function(response) {
-            this.props.stopEditing();
-        }.bind(this)).send();
+        return this.state.editing ? this.renderEditor() : this.renderButton();
     }
 }
 
@@ -170,41 +202,34 @@ class JudgesManagementUI extends React.Component {
             creating: false,
         }
     }
-    startCreating() {
-        this.setState({
-            creating: true,
-        });
-    }
-    stopCreating() {
-        this.setState({
-            creating: false,
-        });
-    }
-    renderTourCreation() {
-        if (this.state.creating) {
-            return <JudgeCreatingUI
-                competition_id={ this.props.competition_id }
-                stopEditing={ this.stopCreating.bind(this) } />
-        } else {
-            return <button className="btn btn-default full-width" onClick={ this.startCreating.bind(this) }>
-                { _("global.buttons.add") }
-            </button>
-        }
+    renderTable() {
+        let rows = this.props.judges.map(function(judge) {
+            return <JudgeRow
+                key={ judge.id }
+                judge={ judge } />;
+        }.bind(this));
+        return <div className="manage-judges">
+            <table className="table table-striped">
+                <tbody>
+                    <tr>
+                        <th className="role_description">{ _("models.judge.role_description") }</th>
+                        <th className="name">{ _("models.judge.name") }</th>
+                        <th className="category">{ _("models.judge.category") }</th>
+                        <th className="role">{ _("models.judge.role") }</th>
+                        <th className="delete"></th>
+                    </tr>
+                    { rows }
+                    <CreationRow competition_id={ this.props.competition_id } />
+                </tbody>
+            </table>
+        </div>
     }
     render() {
-        var judges = this.props.judges.map(function(judge) {
-            return <JudgeEditingUI
-                judge={ judge }
-                key={ judge.id } />
-        }.bind(this));
         return <div>
             <header>
                 <h1>{ _("admin.headers.judges_management") }</h1>
             </header>
-            <div className="judges-management-ui">
-                { judges }
-                { this.renderTourCreation() }
-            </div>
-        </div>
+            { this.renderTable() }
+        </div>;
     }
 }

@@ -261,7 +261,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                     _("models.participant.general_info")
                                 ),
                                 React.createElement("input", {
-                                    tabIndex: " bti + ",
+                                    tabIndex: bti + 1,
                                     ref: (function (e) {
                                         if (e && this.latest_added == "base") {
                                             e.getDOMNode().select();
@@ -275,20 +275,20 @@ var ParticipantEditorRow = (function (_React$Component) {
                                 React.createElement(
                                     "select",
                                     {
-                                        tabIndex: " bti + ",
+                                        tabIndex: bti + 2,
                                         className: "full-width",
                                         value: this.state.club_id,
                                         onChange: this.onChange.bind(this, "", null, "club_id", "any") },
                                     clubs
                                 ),
                                 React.createElement("input", {
-                                    tabIndex: " bti + ",
+                                    tabIndex: bti + 3,
                                     placeholder: _("models.participant.coaches"),
                                     className: "full-width",
                                     value: this.state.coaches,
                                     onChange: this.onChange.bind(this, "", null, "coaches", "any") }),
                                 React.createElement("input", {
-                                    tabIndex: " bti + ",
+                                    tabIndex: bti + 4,
                                     placeholder: _("models.participant.formation_name"),
                                     className: "full-width",
                                     value: this.state.formation_name,
@@ -299,7 +299,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         {
-                                            tabIndex: " bti + 0000",
+                                            tabIndex: bti + 10000,
                                             type: "submit",
                                             className: "btn btn-primary" },
                                         _("global.buttons.submit")
@@ -307,7 +307,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                     React.createElement(
                                         "button",
                                         {
-                                            tabIndex: " bti + 0001",
+                                            tabIndex: bti + 10001,
                                             type: "button",
                                             className: "btn btn-danger",
                                             onClick: this.props.stopEditing },
@@ -327,7 +327,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                 React.createElement(
                                     "button",
                                     {
-                                        tabIndex: " bti + 999",
+                                        tabIndex: bti + 1999,
                                         type: "button",
                                         className: "full-width btn btn-sm btn-default",
                                         onClick: this.addSportsman.bind(this) },
@@ -346,7 +346,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                 React.createElement(
                                     "button",
                                     {
-                                        tabIndex: " bti + 999",
+                                        tabIndex: bti + 2999,
                                         type: "button",
                                         className: "full-width btn btn-sm btn-default",
                                         onClick: this.addAcrobatic.bind(this) },

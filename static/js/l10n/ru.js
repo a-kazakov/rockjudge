@@ -38,6 +38,7 @@ function _(src, arg) {
                 )]
             },
             "buttons": {
+                "add_judge": "Добавить судью",
                 "add_participant": "Добавить участника",
                 "add_tour": "Добавить тур",
                 "import": "Импортировать",
@@ -118,7 +119,7 @@ function _(src, arg) {
                     return "Заход №" + n.toString();
                 },
                 "judge_n": function judge_n(n) {
-                    return "Судья №" + n.toString();
+                    return "Линейный судья №" + n.toString();
                 },
                 "participant_n": function participant_n(n, n_sp) {
                     return (n_sp == 2 ? "Пара №" : n_sp > 2 ? "Формейшн №" : "Участник №") + n.toString();
@@ -156,7 +157,8 @@ function _(src, arg) {
                 "name": "Ф. И. О.",
                 "number": "Номер",
                 "role": "Роль в судействе",
-                "role_description": "Должность"
+                "role_description": "Должность",
+                "hide_from_results": "Не отображать в таблицах"
             },
             "participant": {
                 "acro_description": "Описание трюка",
@@ -299,6 +301,13 @@ function _(src, arg) {
                 "formation": "РосФАРР, формейшн без акробатики",
                 "no_acro": "РосФАРР, танцевальные программы"
             }
+        },
+        "judge_roles": {
+            "head_judge": "Главный судья",
+            "acro_judge": "Судья акробатики",
+            "dance_judge": "Судья танца",
+            "tech_judge": "Технический судья",
+            "": "-"
         }
     };
     var path = src.split(".");

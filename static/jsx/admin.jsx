@@ -287,7 +287,7 @@ class AdminUI extends React.Component {
         }
         return <table className="outer-table">
             <tbody><tr>
-                <th colSpan="2">
+                <th colSpan="2" className="caption">
                     { this.state.name } ({this.state.date})
                 </th>
             </tr><tr>

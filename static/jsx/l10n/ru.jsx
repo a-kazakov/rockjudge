@@ -25,6 +25,7 @@ function _(src, arg) {
                     <p>И не забудьте заново напечатать все тблицы.</p>],
             },
             "buttons": {
+                "add_judge": "Добавить судью",
                 "add_participant": "Добавить участника",
                 "add_tour": "Добавить тур",
                 "import": "Импортировать",
@@ -100,7 +101,7 @@ function _(src, arg) {
             },
             "phrases": {
                 "heat_n": (n) => "Заход №" + n.toString(),
-                "judge_n": (n) => "Судья №" + n.toString(),
+                "judge_n": (n) => "Линейный судья №" + n.toString(),
                 "participant_n": (n, n_sp) => (n_sp == 2 ? "Пара №" : (n_sp > 2 ? "Формейшн №" : "Участник №")) + n.toString(),
             }
         },
@@ -136,6 +137,7 @@ function _(src, arg) {
                 "number": "Номер",
                 "role": "Роль в судействе",
                 "role_description": "Должность",
+                "hide_from_results": "Не отображать в таблицах",
             },
             "participant": {
                 "acro_description": "Описание трюка",
@@ -274,7 +276,14 @@ function _(src, arg) {
                 "formation": "РосФАРР, формейшн без акробатики",
                 "no_acro": "РосФАРР, танцевальные программы",
             }
-        }
+        },
+        "judge_roles": {
+            "head_judge": "Главный судья",
+            "acro_judge": "Судья акробатики",
+            "dance_judge": "Судья танца",
+            "tech_judge": "Технический судья",
+            "": "-",
+        },
     }
     let path = src.split(".");
     let phrase_ptr = PHRASES;

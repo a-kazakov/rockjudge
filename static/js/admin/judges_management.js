@@ -1,5 +1,7 @@
 "use strict";
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
@@ -8,143 +10,174 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var JudgeInputForm = (function (_React$Component) {
-    _inherits(JudgeInputForm, _React$Component);
+var JudgeEditorRow = (function (_React$Component) {
+    _inherits(JudgeEditorRow, _React$Component);
 
-    function JudgeInputForm() {
-        _classCallCheck(this, JudgeInputForm);
+    function JudgeEditorRow() {
+        _classCallCheck(this, JudgeEditorRow);
 
-        _get(Object.getPrototypeOf(JudgeInputForm.prototype), "constructor", this).apply(this, arguments);
+        _get(Object.getPrototypeOf(JudgeEditorRow.prototype), "constructor", this).apply(this, arguments);
     }
 
-    _createClass(JudgeInputForm, [{
+    _createClass(JudgeEditorRow, [{
+        key: "sertialize",
+        value: function sertialize() {
+            console.log(this);
+            return {
+                name: this._name.value,
+                number: this._number.value,
+                category: this._category.value,
+                role: this._role.value,
+                role_description: this._role_description.value,
+                hide_from_results: this._hide_from_results.value
+            };
+        }
+    }, {
+        key: "onSubmit",
+        value: function onSubmit(event) {
+            event.preventDefault();
+            if (!this.props.newJudge) {
+                Api("tournaments.judge.set", {
+                    judge_id: this.props.judge.id,
+                    data: this.sertialize()
+                }).onSuccess(this.props.stopEditing).send();
+            } else {
+                Api("tournaments.judge.create", {
+                    competition_id: this.props.competition_id,
+                    data: this.sertialize()
+                }).onSuccess(this.props.stopEditing).send();
+            }
+        }
+    }, {
         key: "render",
         value: function render() {
-            var classes = ["judge", "form-horizontal"].concat(this.props.classes || []).join(" ");
-            var judge = this.props.judge || { id: "new" };
+            var _this = this;
+
+            var roles = GL.judge_roles.map(function (role) {
+                return React.createElement(
+                    "option",
+                    { value: role, key: role },
+                    _("judge_roles." + role)
+                );
+            });
             return React.createElement(
-                "form",
-                { className: classes, key: judge.id, onSubmit: this.submitJudge.bind(this) },
+                "tr",
+                { className: "editor" + (this.props.newJudge ? " create" : "") },
                 React.createElement(
-                    "div",
-                    { className: "row" },
+                    "td",
+                    { colSpan: "5" },
                     React.createElement(
-                        "div",
-                        { className: "col-md-6" },
+                        "form",
+                        { onSubmit: this.onSubmit.bind(this) },
                         React.createElement(
                             "div",
-                            { className: "form-group form-group-sm" },
-                            React.createElement(
-                                "label",
-                                { className: "col-sm-4 control-label" },
-                                _("models.judge.name")
-                            ),
+                            { className: "row" },
                             React.createElement(
                                 "div",
-                                { className: "col-sm-8" },
-                                React.createElement("input", {
-                                    type: "text",
-                                    className: "form-control",
-                                    ref: "name",
-                                    defaultValue: judge.name })
-                            )
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "form-group form-group-sm" },
-                            React.createElement(
-                                "label",
-                                { className: "col-sm-4 control-label" },
-                                _("models.judge.role")
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "col-sm-8" },
-                                React.createElement("input", {
-                                    type: "text",
-                                    className: "form-control",
-                                    ref: "role",
-                                    defaultValue: judge.role })
-                            )
-                        )
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "col-md-3" },
-                        React.createElement(
-                            "div",
-                            { className: "form-group form-group-sm" },
-                            React.createElement(
-                                "label",
-                                { className: "col-sm-4 control-label" },
-                                _("models.judge.category")
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "col-sm-8" },
-                                React.createElement("input", {
-                                    type: "text",
-                                    className: "form-control",
-                                    ref: "category",
-                                    defaultValue: judge.category })
-                            )
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "form-group form-group-sm" },
-                            React.createElement(
-                                "label",
-                                { className: "col-sm-4 control-label" },
-                                _("models.judge.number")
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "col-sm-8" },
-                                React.createElement("input", {
-                                    type: "text",
-                                    className: "form-control",
-                                    ref: "number",
-                                    defaultValue: judge.number })
-                            )
-                        )
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "col-md-3" },
-                        React.createElement(
-                            "div",
-                            { className: "form-group form-group-sm" },
-                            React.createElement(
-                                "label",
-                                { className: "col-sm-4 control-label" },
-                                _("models.judge.role_description")
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "col-sm-8" },
-                                React.createElement("input", {
-                                    type: "text",
-                                    className: "form-control",
-                                    ref: "role_description",
-                                    defaultValue: judge.role_description })
-                            )
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "form-group form-group-sm" },
-                            React.createElement(
-                                "div",
-                                { className: "col-sm-offset-4 col-sm-8" },
+                                { className: "col-md-1" },
                                 React.createElement(
-                                    "button",
-                                    { className: "btn btn-primary btn-sm", type: "submit" },
-                                    _("global.buttons.submit")
+                                    "label",
+                                    { className: "full-width" },
+                                    _("models.judge.number"),
+                                    React.createElement("input", {
+                                        ref: (function (e) {
+                                            if (e) {
+                                                e.getDOMNode().select();this._number = e.getDOMNode();
+                                            }
+                                        }).bind(this),
+                                        className: "full-width",
+                                        defaultValue: this.props.judge.number })
                                 ),
-                                " ",
                                 React.createElement(
-                                    "button",
-                                    { className: "btn btn-primary btn-sm", type: "button", onClick: this.props.stopEditing },
-                                    _("global.buttons.discard")
+                                    "label",
+                                    { className: "full-width" },
+                                    _("models.judge.category"),
+                                    React.createElement("input", {
+                                        ref: function (e) {
+                                            return e && (_this._category = e.getDOMNode());
+                                        },
+                                        className: "full-width",
+                                        defaultValue: this.props.judge.category })
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "col-md-4" },
+                                React.createElement(
+                                    "label",
+                                    { className: "full-width" },
+                                    _("models.judge.name"),
+                                    React.createElement("input", {
+                                        ref: function (e) {
+                                            return e && (_this._name = e.getDOMNode());
+                                        },
+                                        className: "full-width",
+                                        defaultValue: this.props.judge.name })
+                                ),
+                                React.createElement(
+                                    "label",
+                                    { className: "full-width" },
+                                    _("models.judge.role_description"),
+                                    React.createElement("input", {
+                                        ref: function (e) {
+                                            return e && (_this._role_description = e.getDOMNode());
+                                        },
+                                        className: "full-width",
+                                        defaultValue: this.props.judge.role_description })
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "col-md-4" },
+                                React.createElement(
+                                    "label",
+                                    { className: "full-width" },
+                                    _("models.judge.role"),
+                                    React.createElement(
+                                        "select",
+                                        {
+                                            ref: function (e) {
+                                                return e && (_this._role = e.getDOMNode());
+                                            },
+                                            className: "full-width",
+                                            defaultValue: this.props.judge.role },
+                                        roles
+                                    )
+                                ),
+                                React.createElement(
+                                    "label",
+                                    { className: "full-width" },
+                                    _("models.judge.hide_from_results"),
+                                    React.createElement("br", null),
+                                    React.createElement("input", {
+                                        ref: function (e) {
+                                            return e && (_this._hide_from_results = e.getDOMNode());
+                                        },
+                                        type: "checkbox",
+                                        defaultValue: this.props.hide_from_results })
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "col-md-3" },
+                                React.createElement(
+                                    "div",
+                                    { className: "buttons" },
+                                    React.createElement(
+                                        "button",
+                                        {
+                                            type: "submit",
+                                            className: "btn btn-primary" },
+                                        _("global.buttons.submit")
+                                    ),
+                                    React.createElement(
+                                        "button",
+                                        {
+                                            type: "button",
+                                            className: "btn btn-danger",
+                                            onClick: this.props.stopEditing },
+                                        _("global.buttons.discard")
+                                    )
                                 )
                             )
                         )
@@ -152,41 +185,120 @@ var JudgeInputForm = (function (_React$Component) {
                 )
             );
         }
-    }, {
-        key: "submitJudge",
-        value: function submitJudge(event) {
-            event.preventDefault();
-            this.props.submitJudge(this.serialize());
-        }
-    }, {
-        key: "serialize",
-        value: function serialize() {
-            return {
-                name: this.refs.name.getDOMNode().value,
-                role: this.refs.role.getDOMNode().value,
-                role_description: this.refs.role.getDOMNode().value,
-                category: this.refs.category.getDOMNode().value,
-                number: this.refs.number.getDOMNode().value
-            };
-        }
     }]);
 
-    return JudgeInputForm;
+    return JudgeEditorRow;
 })(React.Component);
 
-var JudgeEditingUI = (function (_React$Component2) {
-    _inherits(JudgeEditingUI, _React$Component2);
+var JudgeRow = (function (_React$Component2) {
+    _inherits(JudgeRow, _React$Component2);
 
-    function JudgeEditingUI(props) {
-        _classCallCheck(this, JudgeEditingUI);
+    function JudgeRow(props) {
+        _classCallCheck(this, JudgeRow);
 
-        _get(Object.getPrototypeOf(JudgeEditingUI.prototype), "constructor", this).call(this, props);
+        _get(Object.getPrototypeOf(JudgeRow.prototype), "constructor", this).call(this, props);
         this.state = {
             editing: false
         };
     }
 
-    _createClass(JudgeEditingUI, [{
+    _createClass(JudgeRow, [{
+        key: "startEditing",
+        value: function startEditing() {
+            this.setState({
+                editing: true
+            });
+        }
+    }, {
+        key: "stopEditing",
+        value: function stopEditing() {
+            this.setState({
+                editing: false
+            });
+        }
+    }, {
+        key: "onDelete",
+        value: function onDelete(event) {
+            event.stopPropagation();
+            if (confirm(_("admin.confirms.delete_judge"))) {
+                Api("tournaments.judge.delete", {
+                    judge_id: this.props.judge.id
+                }).send();
+            }
+        }
+    }, {
+        key: "renderEditor",
+        value: function renderEditor() {
+            return React.createElement(JudgeEditorRow, _extends({
+                newJudge: false,
+                stopEditing: this.stopEditing.bind(this)
+            }, this.props));
+        }
+    }, {
+        key: "renderViewer",
+        value: function renderViewer() {
+            var j = this.props.judge;
+            return React.createElement(
+                "tr",
+                { className: "viewer", onClick: this.startEditing.bind(this) },
+                React.createElement(
+                    "td",
+                    { className: "role-description" },
+                    j.role_description || _("global.phrases.judge_n", j.number)
+                ),
+                React.createElement(
+                    "td",
+                    { className: "name" },
+                    j.name
+                ),
+                React.createElement(
+                    "td",
+                    { className: "category" },
+                    j.category
+                ),
+                React.createElement(
+                    "td",
+                    { className: "role" },
+                    _("judge_roles." + j.role)
+                ),
+                React.createElement(
+                    "td",
+                    { className: "delete" },
+                    React.createElement(
+                        "button",
+                        { className: "btn btn-danger", onClick: this.onDelete.bind(this) },
+                        "X"
+                    )
+                )
+            );
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            if (this.state.editing) {
+                return this.renderEditor();
+            } else {
+                return this.renderViewer();
+            }
+        }
+    }]);
+
+    return JudgeRow;
+})(React.Component);
+
+var CreationRow = (function (_React$Component3) {
+    _inherits(CreationRow, _React$Component3);
+
+    function CreationRow(props) {
+        _classCallCheck(this, CreationRow);
+
+        _get(Object.getPrototypeOf(CreationRow.prototype), "constructor", this).call(this, props);
+        this.state = {
+            editing: false
+        };
+    }
+
+    _createClass(CreationRow, [{
         key: "startEditing",
         value: function startEditing() {
             this.setState({
@@ -203,99 +315,35 @@ var JudgeEditingUI = (function (_React$Component2) {
     }, {
         key: "renderEditor",
         value: function renderEditor() {
-            return React.createElement(JudgeInputForm, {
-                judge: this.props.judge,
-                submitJudge: this.submitJudge.bind(this),
-                stopEditing: this.stopEditing.bind(this) });
+            var empty_data = {
+                "name": "",
+                "number": "",
+                "role": "",
+                "role_description": "",
+                "category": ""
+            };
+            return React.createElement(JudgeEditorRow, _extends({
+                newJudge: true,
+                stopEditing: this.stopEditing.bind(this),
+                judge: empty_data
+            }, this.props));
         }
     }, {
-        key: "renderViewer",
-        value: function renderViewer() {
+        key: "renderButton",
+        value: function renderButton() {
             return React.createElement(
-                "div",
-                { className: "judge", key: this.props.judge.id },
+                "tr",
+                null,
                 React.createElement(
-                    "h3",
-                    null,
-                    this.props.judge.name
-                ),
-                React.createElement(
-                    "div",
-                    { className: "row" },
+                    "td",
+                    { colSpan: "5" },
                     React.createElement(
-                        "div",
-                        { className: "col-md-5" },
-                        React.createElement(
-                            "p",
-                            null,
-                            React.createElement(
-                                "strong",
-                                null,
-                                _("models.judge.category"),
-                                ":"
-                            ),
-                            " ",
-                            this.props.judge.category,
-                            " "
-                        ),
-                        React.createElement(
-                            "p",
-                            null,
-                            React.createElement(
-                                "strong",
-                                null,
-                                _("models.judge.role"),
-                                ":"
-                            ),
-                            " ",
-                            this.props.judge.role,
-                            " "
-                        )
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "col-md-5" },
-                        React.createElement(
-                            "p",
-                            null,
-                            React.createElement(
-                                "strong",
-                                null,
-                                _("models.judge.number"),
-                                ":"
-                            ),
-                            " ",
-                            this.props.judge.number,
-                            " "
-                        ),
-                        React.createElement(
-                            "p",
-                            null,
-                            React.createElement(
-                                "strong",
-                                null,
-                                _("models.judge.role_description"),
-                                ":"
-                            ),
-                            " ",
-                            this.props.judge.role_description,
-                            " "
-                        )
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "col-md-2" },
-                        React.createElement(
-                            "button",
-                            { className: "full-width btn btn-primary btn-sm", onClick: this.startEditing.bind(this) },
-                            _("global.buttons.edit")
-                        ),
-                        React.createElement("br", null),
-                        React.createElement(
-                            "button",
-                            { className: "full-width btn btn-danger btn-sm", onClick: this.deleteJudge.bind(this) },
-                            _("global.buttons.delete")
-                        )
+                        "button",
+                        {
+                            type: "button",
+                            className: "btn btn-default full-width",
+                            onClick: this.startEditing.bind(this) },
+                        _("admin.buttons.add_judge")
                     )
                 )
             );
@@ -303,61 +351,11 @@ var JudgeEditingUI = (function (_React$Component2) {
     }, {
         key: "render",
         value: function render() {
-            return this.state.editing ? this.renderEditor() : this.renderViewer();
-        }
-    }, {
-        key: "submitJudge",
-        value: function submitJudge(data) {
-            Api("tournaments.judge.set", {
-                judge_id: this.props.judge.id,
-                data: data
-            }).onSuccess((function (response) {
-                this.stopEditing();
-            }).bind(this)).send();
-        }
-    }, {
-        key: "deleteJudge",
-        value: function deleteJudge() {
-            if (!confirm(_("admin.confirms.delete_judge"))) {
-                return false;
-            }
-            Api("tournaments.judge.delete", { judge_id: this.props.judge.id }).send();
+            return this.state.editing ? this.renderEditor() : this.renderButton();
         }
     }]);
 
-    return JudgeEditingUI;
-})(React.Component);
-
-var JudgeCreatingUI = (function (_React$Component3) {
-    _inherits(JudgeCreatingUI, _React$Component3);
-
-    function JudgeCreatingUI() {
-        _classCallCheck(this, JudgeCreatingUI);
-
-        _get(Object.getPrototypeOf(JudgeCreatingUI.prototype), "constructor", this).apply(this, arguments);
-    }
-
-    _createClass(JudgeCreatingUI, [{
-        key: "render",
-        value: function render() {
-            return React.createElement(JudgeInputForm, {
-                classes: ["judge-create"],
-                submitJudge: this.submitJudge.bind(this),
-                stopEditing: this.props.stopEditing });
-        }
-    }, {
-        key: "submitJudge",
-        value: function submitJudge(data) {
-            Api("tournaments.judge.create", {
-                competition_id: this.props.competition_id,
-                data: data
-            }).onSuccess((function (response) {
-                this.props.stopEditing();
-            }).bind(this)).send();
-        }
-    }]);
-
-    return JudgeCreatingUI;
+    return CreationRow;
 })(React.Component);
 
 var JudgesManagementUI = (function (_React$Component4) {
@@ -373,42 +371,56 @@ var JudgesManagementUI = (function (_React$Component4) {
     }
 
     _createClass(JudgesManagementUI, [{
-        key: "startCreating",
-        value: function startCreating() {
-            this.setState({
-                creating: true
-            });
-        }
-    }, {
-        key: "stopCreating",
-        value: function stopCreating() {
-            this.setState({
-                creating: false
-            });
-        }
-    }, {
-        key: "renderTourCreation",
-        value: function renderTourCreation() {
-            if (this.state.creating) {
-                return React.createElement(JudgeCreatingUI, {
-                    competition_id: this.props.competition_id,
-                    stopEditing: this.stopCreating.bind(this) });
-            } else {
-                return React.createElement(
-                    "button",
-                    { className: "btn btn-default full-width", onClick: this.startCreating.bind(this) },
-                    _("global.buttons.add")
-                );
-            }
+        key: "renderTable",
+        value: function renderTable() {
+            var rows = this.props.judges.map((function (judge) {
+                return React.createElement(JudgeRow, {
+                    key: judge.id,
+                    judge: judge });
+            }).bind(this));
+            return React.createElement(
+                "div",
+                { className: "manage-judges" },
+                React.createElement(
+                    "table",
+                    { className: "table table-striped" },
+                    React.createElement(
+                        "tbody",
+                        null,
+                        React.createElement(
+                            "tr",
+                            null,
+                            React.createElement(
+                                "th",
+                                { className: "role_description" },
+                                _("models.judge.role_description")
+                            ),
+                            React.createElement(
+                                "th",
+                                { className: "name" },
+                                _("models.judge.name")
+                            ),
+                            React.createElement(
+                                "th",
+                                { className: "category" },
+                                _("models.judge.category")
+                            ),
+                            React.createElement(
+                                "th",
+                                { className: "role" },
+                                _("models.judge.role")
+                            ),
+                            React.createElement("th", { className: "delete" })
+                        ),
+                        rows,
+                        React.createElement(CreationRow, { competition_id: this.props.competition_id })
+                    )
+                )
+            );
         }
     }, {
         key: "render",
         value: function render() {
-            var judges = this.props.judges.map((function (judge) {
-                return React.createElement(JudgeEditingUI, {
-                    judge: judge,
-                    key: judge.id });
-            }).bind(this));
             return React.createElement(
                 "div",
                 null,
@@ -421,12 +433,7 @@ var JudgesManagementUI = (function (_React$Component4) {
                         _("admin.headers.judges_management")
                     )
                 ),
-                React.createElement(
-                    "div",
-                    { className: "judges-management-ui" },
-                    judges,
-                    this.renderTourCreation()
-                )
+                this.renderTable()
             );
         }
     }]);

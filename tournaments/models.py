@@ -554,7 +554,7 @@ class Judge(BaseModel):
     def create_model(cls, competition, data, ws_message):
         create_kwargs = {
             key: data[key]
-            for key in ["name", "category", "role", "hide_from_results", "number"]
+            for key in ["name", "category", "role", "role_description", "hide_from_results", "number"]
         }
         create_kwargs["competition"] = competition
         Judge.create(**create_kwargs)
@@ -568,7 +568,7 @@ class Judge(BaseModel):
         ws_message.add_message("reload_data")
 
     def update_data(self, new_data, ws_message):
-        for key in ["name", "category", "role", "hide_from_results", "number"]:
+        for key in ["name", "category", "role", "role_description", "hide_from_results", "number"]:
             if key in new_data:
                 setattr(self, key, new_data[key])
         self.save()
