@@ -1,6 +1,5 @@
 class JudgeEditorRow extends React.Component {
     sertialize() {
-        console.log(this);
         return {
             name: this._name.value,
             number: this._number.value,
@@ -151,7 +150,7 @@ class JudgeRow extends React.Component {
     }
 }
 
-class CreationRow extends React.Component {
+class JudgeCreationRow extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -219,7 +218,7 @@ class JudgesManagementUI extends React.Component {
                         <th className="delete"></th>
                     </tr>
                     { rows }
-                    <CreationRow competition_id={ this.props.competition_id } />
+                    <JudgeCreationRow competition_id={ this.props.competition_id } />
                 </tbody>
             </table>
         </div>

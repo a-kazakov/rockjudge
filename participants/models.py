@@ -11,17 +11,62 @@ class Club(BaseModel):
         indexes = (
             (("competition", "external_id"), False),
         )
-        order_by = ["name"]
+        order_by = ["city", "name"]
 
-    competition = peewee.ForeignKeyField(competition_proxy, related_name="clubs")
+    competition = peewee.ForeignKeyField(competition_proxy, null=True, related_name="clubs")
     name = peewee.CharField()
     city = peewee.CharField()
     external_id = peewee.CharField(null=True, default=None)
+
+    @classmethod
+    def create_model(cls, competition, data, ws_message):
+        create_kwargs = {
+            key: data[key]
+            for key in ["name", "city", "external_id"]
+        }
+        create_kwargs["competition"] = competition
+        cls.create(**create_kwargs)
+        ws_message.add_model_update(
+            model_type=competition_proxy,
+            model_id=competition.id,
+            schema={
+                "clubs": {},
+            }
+        )
+
+    def delete_model(self, ws_message):
+        # If this judge has any scores, than this judge can't be deleted
+        if self.participants.where(Participant.inner_competition != None).count() > 0:
+            raise RuntimeError("Unable to delete club that has participants")
+        competition_id = self.competition_id
+        self.competition = None
+        self.save()
+        ws_message.add_model_update(
+            model_type=competition_proxy,
+            model_id=competition_id,
+            schema={
+                "clubs": {},
+            }
+        )
+
+    def update_data(self, new_data, ws_message):
+        for key in ["name", "city", "external_id"]:
+            if key in new_data:
+                setattr(self, key, new_data[key])
+        self.save()
+        ws_message.add_model_update(
+            model_type=competition_proxy,
+            model_id=self.competition_id,
+            schema={
+                "clubs": {}
+            }
+        )
 
     def serialize(self, children={}):
         result = {
             "name": self.name,
             "city": self.city,
+            "external_id": self.external_id,
         }
         result = self.serialize_lower_child(result, "participants", children)
         return result

@@ -459,19 +459,19 @@ var ParticipantRow = (function (_React$Component2) {
     return ParticipantRow;
 })(React.Component);
 
-var CreationRow = (function (_React$Component3) {
-    _inherits(CreationRow, _React$Component3);
+var ParticipantCreationRow = (function (_React$Component3) {
+    _inherits(ParticipantCreationRow, _React$Component3);
 
-    function CreationRow(props) {
-        _classCallCheck(this, CreationRow);
+    function ParticipantCreationRow(props) {
+        _classCallCheck(this, ParticipantCreationRow);
 
-        _get(Object.getPrototypeOf(CreationRow.prototype), "constructor", this).call(this, props);
+        _get(Object.getPrototypeOf(ParticipantCreationRow.prototype), "constructor", this).call(this, props);
         this.state = {
             editing: false
         };
     }
 
-    _createClass(CreationRow, [{
+    _createClass(ParticipantCreationRow, [{
         key: "startEditing",
         value: function startEditing() {
             this.setState({
@@ -529,7 +529,7 @@ var CreationRow = (function (_React$Component3) {
         }
     }]);
 
-    return CreationRow;
+    return ParticipantCreationRow;
 })(React.Component);
 
 var ParticipantsManager = (function (_React$Component4) {
@@ -624,7 +624,7 @@ var ParticipantsManager = (function (_React$Component4) {
                             React.createElement("th", { className: "delete" })
                         ),
                         rows,
-                        React.createElement(CreationRow, {
+                        React.createElement(ParticipantCreationRow, {
                             clubs: this.state.competition.clubs,
                             inner_competition_id: this.props.inner_competition_id })
                     )

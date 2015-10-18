@@ -307,7 +307,7 @@ class ParticipantRow extends React.Component {
     }
 }
 
-class CreationRow extends React.Component {
+class ParticipantCreationRow extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -414,7 +414,7 @@ class ParticipantsManager extends React.Component {
                         <th className="delete"></th>
                     </tr>
                     { rows }
-                    <CreationRow
+                    <ParticipantCreationRow
                         clubs={ this.state.competition.clubs }
                         inner_competition_id={ this.props.inner_competition_id } />
                 </tbody>

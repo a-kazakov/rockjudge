@@ -109,7 +109,7 @@ var ManagmentUI = (function (_React$Component2) {
                 case "load_competition":
                     return React.createElement(CompetitionLoadingUI, { competition_id: this.props.competition_id });
                 case "manage_inner_competition":
-                    // Seeking for inner competition with give ID
+                    // Seeking for inner competition with given ID
                     var ic = null;
                     this.props.inner_competitions.forEach((function (el) {
                         if (el.id == this.state.page_props.inner_competition_id) {
@@ -124,6 +124,10 @@ var ManagmentUI = (function (_React$Component2) {
                 case "manage_judges":
                     return React.createElement(JudgesManagementUI, {
                         judges: this.props.judges,
+                        competition_id: this.props.competition_id });
+                case "manage_clubs":
+                    return React.createElement(ClubsManagementUI, {
+                        clubs: this.props.clubs,
                         competition_id: this.props.competition_id });
             }
         }
@@ -183,6 +187,17 @@ var ManagmentUI = (function (_React$Component2) {
                                     _("admin.menu.manage_sportsmen")
                                 ),
                                 ics_participants
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "block" },
+                                React.createElement(
+                                    "div",
+                                    {
+                                        className: "level-1" + (this.state.page == "manage_clubs" ? " active" : ""),
+                                        onClick: this.switchPage.bind(this, "manage_clubs") },
+                                    _("admin.menu.manage_clubs")
+                                )
                             ),
                             React.createElement(
                                 "div",
@@ -382,6 +397,7 @@ var AdminUI = (function (_React$Component4) {
         key: "reloadFromStorage",
         value: function reloadFromStorage() {
             var SCHEMA = {
+                clubs: {},
                 judges: {},
                 inner_competitions: {
                     tours: {}
@@ -395,6 +411,7 @@ var AdminUI = (function (_React$Component4) {
             Api("tournaments.competition.get", {
                 competition_id: this.props.competition_id,
                 children: {
+                    clubs: {},
                     judges: {},
                     inner_competitions: {
                         tours: {}
@@ -425,6 +442,7 @@ var AdminUI = (function (_React$Component4) {
                 case "management":
                     return React.createElement(ManagmentUI, {
                         inner_competitions: this.state.inner_competitions,
+                        clubs: this.state.clubs,
                         judges: this.state.judges,
                         competition_id: this.props.competition_id });
                 case "results":

@@ -10,38 +10,35 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var JudgeEditorRow = (function (_React$Component) {
-    _inherits(JudgeEditorRow, _React$Component);
+var ClubEditorRow = (function (_React$Component) {
+    _inherits(ClubEditorRow, _React$Component);
 
-    function JudgeEditorRow() {
-        _classCallCheck(this, JudgeEditorRow);
+    function ClubEditorRow() {
+        _classCallCheck(this, ClubEditorRow);
 
-        _get(Object.getPrototypeOf(JudgeEditorRow.prototype), "constructor", this).apply(this, arguments);
+        _get(Object.getPrototypeOf(ClubEditorRow.prototype), "constructor", this).apply(this, arguments);
     }
 
-    _createClass(JudgeEditorRow, [{
+    _createClass(ClubEditorRow, [{
         key: "sertialize",
         value: function sertialize() {
             return {
                 name: this._name.value,
-                number: this._number.value,
-                category: this._category.value,
-                role: this._role.value,
-                role_description: this._role_description.value,
-                hide_from_results: this._hide_from_results.value
+                city: this._city.value,
+                external_id: this._external_id.value
             };
         }
     }, {
         key: "onSubmit",
         value: function onSubmit(event) {
             event.preventDefault();
-            if (!this.props.newJudge) {
-                Api("tournaments.judge.set", {
-                    judge_id: this.props.judge.id,
+            if (!this.props.newClub) {
+                Api("tournaments.club.set", {
+                    club_id: this.props.club.id,
                     data: this.sertialize()
                 }).onSuccess(this.props.stopEditing).send();
             } else {
-                Api("tournaments.judge.create", {
+                Api("tournaments.club.create", {
                     competition_id: this.props.competition_id,
                     data: this.sertialize()
                 }).onSuccess(this.props.stopEditing).send();
@@ -52,16 +49,9 @@ var JudgeEditorRow = (function (_React$Component) {
         value: function render() {
             var _this = this;
 
-            var roles = GL.judge_roles.map(function (role) {
-                return React.createElement(
-                    "option",
-                    { value: role, key: role },
-                    _("judge_roles." + role)
-                );
-            });
             return React.createElement(
                 "tr",
-                { className: "editor" + (this.props.newJudge ? " create" : "") },
+                { className: "editor" + (this.props.newClub ? " create" : "") },
                 React.createElement(
                     "td",
                     { colSpan: "5" },
@@ -73,87 +63,49 @@ var JudgeEditorRow = (function (_React$Component) {
                             { className: "row" },
                             React.createElement(
                                 "div",
-                                { className: "col-md-1" },
+                                { className: "col-md-5" },
                                 React.createElement(
                                     "label",
                                     { className: "full-width" },
-                                    _("models.judge.number"),
+                                    _("models.club.name"),
                                     React.createElement("input", {
                                         ref: (function (e) {
                                             if (e) {
-                                                e.getDOMNode().select();this._number = e.getDOMNode();
+                                                e.getDOMNode().select();this._name = e.getDOMNode();
                                             }
                                         }).bind(this),
                                         className: "full-width",
-                                        defaultValue: this.props.judge.number })
-                                ),
-                                React.createElement(
-                                    "label",
-                                    { className: "full-width" },
-                                    _("models.judge.category"),
-                                    React.createElement("input", {
-                                        ref: function (e) {
-                                            return e && (_this._category = e.getDOMNode());
-                                        },
-                                        className: "full-width",
-                                        defaultValue: this.props.judge.category })
+                                        defaultValue: this.props.club.name })
                                 )
                             ),
                             React.createElement(
                                 "div",
-                                { className: "col-md-4" },
+                                { className: "col-md-2" },
                                 React.createElement(
                                     "label",
                                     { className: "full-width" },
-                                    _("models.judge.name"),
+                                    _("models.club.city"),
                                     React.createElement("input", {
                                         ref: function (e) {
-                                            return e && (_this._name = e.getDOMNode());
+                                            return e && (_this._city = e.getDOMNode());
                                         },
                                         className: "full-width",
-                                        defaultValue: this.props.judge.name })
-                                ),
-                                React.createElement(
-                                    "label",
-                                    { className: "full-width" },
-                                    _("models.judge.role_description"),
-                                    React.createElement("input", {
-                                        ref: function (e) {
-                                            return e && (_this._role_description = e.getDOMNode());
-                                        },
-                                        className: "full-width",
-                                        defaultValue: this.props.judge.role_description })
+                                        defaultValue: this.props.club.city })
                                 )
                             ),
                             React.createElement(
                                 "div",
-                                { className: "col-md-4" },
+                                { className: "col-md-2" },
                                 React.createElement(
                                     "label",
                                     { className: "full-width" },
-                                    _("models.judge.role"),
-                                    React.createElement(
-                                        "select",
-                                        {
-                                            ref: function (e) {
-                                                return e && (_this._role = e.getDOMNode());
-                                            },
-                                            className: "full-width",
-                                            defaultValue: this.props.judge.role },
-                                        roles
-                                    )
-                                ),
-                                React.createElement(
-                                    "label",
-                                    { className: "full-width" },
-                                    _("models.judge.hide_from_results"),
+                                    _("models.club.external_id"),
                                     React.createElement("br", null),
                                     React.createElement("input", {
                                         ref: function (e) {
-                                            return e && (_this._hide_from_results = e.getDOMNode());
+                                            return e && (_this._external_id = e.getDOMNode());
                                         },
-                                        type: "checkbox",
-                                        defaultValue: this.props.hide_from_results })
+                                        defaultValue: this.props.club.external_id })
                                 )
                             ),
                             React.createElement(
@@ -186,22 +138,22 @@ var JudgeEditorRow = (function (_React$Component) {
         }
     }]);
 
-    return JudgeEditorRow;
+    return ClubEditorRow;
 })(React.Component);
 
-var JudgeRow = (function (_React$Component2) {
-    _inherits(JudgeRow, _React$Component2);
+var ClubRow = (function (_React$Component2) {
+    _inherits(ClubRow, _React$Component2);
 
-    function JudgeRow(props) {
-        _classCallCheck(this, JudgeRow);
+    function ClubRow(props) {
+        _classCallCheck(this, ClubRow);
 
-        _get(Object.getPrototypeOf(JudgeRow.prototype), "constructor", this).call(this, props);
+        _get(Object.getPrototypeOf(ClubRow.prototype), "constructor", this).call(this, props);
         this.state = {
             editing: false
         };
     }
 
-    _createClass(JudgeRow, [{
+    _createClass(ClubRow, [{
         key: "startEditing",
         value: function startEditing() {
             this.setState({
@@ -219,46 +171,41 @@ var JudgeRow = (function (_React$Component2) {
         key: "onDelete",
         value: function onDelete(event) {
             event.stopPropagation();
-            if (confirm(_("admin.confirms.delete_judge"))) {
-                Api("tournaments.judge.delete", {
-                    judge_id: this.props.judge.id
+            if (confirm(_("admin.confirms.delete_club"))) {
+                Api("tournaments.club.delete", {
+                    club_id: this.props.club.id
                 }).send();
             }
         }
     }, {
         key: "renderEditor",
         value: function renderEditor() {
-            return React.createElement(JudgeEditorRow, _extends({
-                newJudge: false,
+            return React.createElement(ClubEditorRow, _extends({
+                newClub: false,
                 stopEditing: this.stopEditing.bind(this)
             }, this.props));
         }
     }, {
         key: "renderViewer",
         value: function renderViewer() {
-            var j = this.props.judge;
+            var c = this.props.club;
             return React.createElement(
                 "tr",
                 { className: "viewer", onClick: this.startEditing.bind(this) },
                 React.createElement(
                     "td",
-                    { className: "role-description" },
-                    j.role_description || _("global.phrases.judge_n", j.number)
-                ),
-                React.createElement(
-                    "td",
                     { className: "name" },
-                    j.name
+                    c.name
                 ),
                 React.createElement(
                     "td",
-                    { className: "category" },
-                    j.category
+                    { className: "city" },
+                    c.city
                 ),
                 React.createElement(
                     "td",
-                    { className: "role" },
-                    _("judge_roles." + j.role)
+                    { className: "external-id" },
+                    c.external_id
                 ),
                 React.createElement(
                     "td",
@@ -282,22 +229,22 @@ var JudgeRow = (function (_React$Component2) {
         }
     }]);
 
-    return JudgeRow;
+    return ClubRow;
 })(React.Component);
 
-var JudgeCreationRow = (function (_React$Component3) {
-    _inherits(JudgeCreationRow, _React$Component3);
+var ClubCreationRow = (function (_React$Component3) {
+    _inherits(ClubCreationRow, _React$Component3);
 
-    function JudgeCreationRow(props) {
-        _classCallCheck(this, JudgeCreationRow);
+    function ClubCreationRow(props) {
+        _classCallCheck(this, ClubCreationRow);
 
-        _get(Object.getPrototypeOf(JudgeCreationRow.prototype), "constructor", this).call(this, props);
+        _get(Object.getPrototypeOf(ClubCreationRow.prototype), "constructor", this).call(this, props);
         this.state = {
             editing: false
         };
     }
 
-    _createClass(JudgeCreationRow, [{
+    _createClass(ClubCreationRow, [{
         key: "startEditing",
         value: function startEditing() {
             this.setState({
@@ -316,15 +263,13 @@ var JudgeCreationRow = (function (_React$Component3) {
         value: function renderEditor() {
             var empty_data = {
                 "name": "",
-                "number": "",
-                "role": "",
-                "role_description": "",
-                "category": ""
+                "city": "",
+                "external_id": ""
             };
-            return React.createElement(JudgeEditorRow, _extends({
-                newJudge: true,
+            return React.createElement(ClubEditorRow, _extends({
+                newClub: true,
                 stopEditing: this.stopEditing.bind(this),
-                judge: empty_data
+                club: empty_data
             }, this.props));
         }
     }, {
@@ -342,7 +287,7 @@ var JudgeCreationRow = (function (_React$Component3) {
                             type: "button",
                             className: "btn btn-default full-width",
                             onClick: this.startEditing.bind(this) },
-                        _("admin.buttons.add_judge")
+                        _("admin.buttons.add_club")
                     )
                 )
             );
@@ -354,32 +299,32 @@ var JudgeCreationRow = (function (_React$Component3) {
         }
     }]);
 
-    return JudgeCreationRow;
+    return ClubCreationRow;
 })(React.Component);
 
-var JudgesManagementUI = (function (_React$Component4) {
-    _inherits(JudgesManagementUI, _React$Component4);
+var ClubsManagementUI = (function (_React$Component4) {
+    _inherits(ClubsManagementUI, _React$Component4);
 
-    function JudgesManagementUI(props) {
-        _classCallCheck(this, JudgesManagementUI);
+    function ClubsManagementUI(props) {
+        _classCallCheck(this, ClubsManagementUI);
 
-        _get(Object.getPrototypeOf(JudgesManagementUI.prototype), "constructor", this).call(this, props);
+        _get(Object.getPrototypeOf(ClubsManagementUI.prototype), "constructor", this).call(this, props);
         this.state = {
             creating: false
         };
     }
 
-    _createClass(JudgesManagementUI, [{
+    _createClass(ClubsManagementUI, [{
         key: "renderTable",
         value: function renderTable() {
-            var rows = this.props.judges.map((function (judge) {
-                return React.createElement(JudgeRow, {
-                    key: judge.id,
-                    judge: judge });
+            var rows = this.props.clubs.map((function (club) {
+                return React.createElement(ClubRow, {
+                    key: club.id,
+                    club: club });
             }).bind(this));
             return React.createElement(
                 "div",
-                { className: "manage-judges" },
+                { className: "manage-clubs" },
                 React.createElement(
                     "table",
                     { className: "table table-striped" },
@@ -391,28 +336,23 @@ var JudgesManagementUI = (function (_React$Component4) {
                             null,
                             React.createElement(
                                 "th",
-                                { className: "role_description" },
-                                _("models.judge.role_description")
-                            ),
-                            React.createElement(
-                                "th",
                                 { className: "name" },
-                                _("models.judge.name")
+                                _("models.club.name")
                             ),
                             React.createElement(
                                 "th",
-                                { className: "category" },
-                                _("models.judge.category")
+                                { className: "city" },
+                                _("models.club.city")
                             ),
                             React.createElement(
                                 "th",
-                                { className: "role" },
-                                _("models.judge.role")
+                                { className: "external-id" },
+                                _("models.club.external_id")
                             ),
                             React.createElement("th", { className: "delete" })
                         ),
                         rows,
-                        React.createElement(JudgeCreationRow, { competition_id: this.props.competition_id })
+                        React.createElement(ClubCreationRow, { competition_id: this.props.competition_id })
                     )
                 )
             );
@@ -429,7 +369,7 @@ var JudgesManagementUI = (function (_React$Component4) {
                     React.createElement(
                         "h1",
                         null,
-                        _("admin.headers.judges_management")
+                        _("admin.headers.clubs_management")
                     )
                 ),
                 this.renderTable()
@@ -437,6 +377,6 @@ var JudgesManagementUI = (function (_React$Component4) {
         }
     }]);
 
-    return JudgesManagementUI;
+    return ClubsManagementUI;
 })(React.Component);
-//# sourceMappingURL=judges_management.js.map
+//# sourceMappingURL=clubs_management.js.map

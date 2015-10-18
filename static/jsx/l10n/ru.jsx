@@ -25,6 +25,7 @@ function _(src, arg) {
                     <p>И не забудьте заново напечатать все тблицы.</p>],
             },
             "buttons": {
+                "add_club": "Добавить клуб",
                 "add_judge": "Добавить судью",
                 "add_participant": "Добавить участника",
                 "add_tour": "Добавить тур",
@@ -34,6 +35,7 @@ function _(src, arg) {
                 "unfinalize": "Отменить финализацию",
             },
             "confirms": {
+                "delete_club": "Вы действительно хотите удалить этот клуб?",
                 "delete_judge": "Вы действительно хотите удалить этого судью?",
                 "delete_participant": "Вы действительно хотите удалить этого участника?",
                 "delete_tour": "Вы действительно хотите удалить этот тур?",
@@ -44,6 +46,7 @@ function _(src, arg) {
             "headers": {
                 "clients_management": "Управление подключенными устройствами",
                 "clubs": "Клубы-участники",
+                "clubs_management": "Управление клубами",
                 "competition_report": "Протокол соревнований",
                 "competition_results": "Результаты соревнования",
                 "inner_competition_general_info": "Основная информация",
@@ -70,6 +73,7 @@ function _(src, arg) {
                 "add_inner_competition": "Создать категорию",
                 "competition_report": "Отчет о турнире",
                 "load_competition": "Импорт данных",
+                "manage_clubs": "Управление клубами",
                 "manage_inner_competitions": "Управление категориями",
                 "manage_judges": "Управление судьями",
                 "manage_sportsmen": "Управление спортсменами",
@@ -127,6 +131,11 @@ function _(src, arg) {
             },
         },
         "models": {
+            "club": {
+                "name": "Название клуба",
+                "city": "Город",
+                "external_id": "Внешний ID",
+            },
             "inner_competition": {
                 "name": "Название категории",
                 "external_id": "Внешний ID",

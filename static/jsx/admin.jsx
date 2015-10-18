@@ -57,7 +57,7 @@ class ManagmentUI extends React.Component {
         case "load_competition":
             return <CompetitionLoadingUI competition_id={ this.props.competition_id } />
         case "manage_inner_competition":
-            // Seeking for inner competition with give ID
+            // Seeking for inner competition with given ID
             let ic = null;
             this.props.inner_competitions.forEach(function(el) {
                 if (el.id == this.state.page_props.inner_competition_id) {
@@ -72,6 +72,10 @@ class ManagmentUI extends React.Component {
         case "manage_judges":
             return <JudgesManagementUI
                 judges={ this.props.judges }
+                competition_id={ this.props.competition_id } />
+        case "manage_clubs":
+            return <ClubsManagementUI
+                clubs={ this.props.clubs }
                 competition_id={ this.props.competition_id } />
         }
     }
@@ -107,6 +111,13 @@ class ManagmentUI extends React.Component {
                         </summary>
                         { ics_participants }
                     </details>
+                    <div className="block">
+                        <div
+                                className={ "level-1" + (this.state.page == "manage_clubs" ? " active" : "") }
+                                onClick={ this.switchPage.bind(this, "manage_clubs") }>
+                            { _("admin.menu.manage_clubs") }
+                        </div>
+                    </div>
                     <div className="block">
                         <div
                                 className={ "level-1" + (this.state.page == "manage_judges" ? " active" : "") }
@@ -227,6 +238,7 @@ class AdminUI extends React.Component {
     }
     reloadFromStorage() {
         var SCHEMA = {
+            clubs: {},
             judges: {},
             inner_competitions: {
                 tours: {},
@@ -241,6 +253,7 @@ class AdminUI extends React.Component {
         Api("tournaments.competition.get", {
             competition_id: this.props.competition_id,
             children: {
+                clubs: {},
                 judges: {},
                 inner_competitions: {
                     tours: {},
@@ -270,6 +283,7 @@ class AdminUI extends React.Component {
         case "management":
             return <ManagmentUI
                 inner_competitions={ this.state.inner_competitions }
+                clubs={ this.state.clubs }
                 judges={ this.state.judges }
                 competition_id={ this.props.competition_id } />;
         case "results":

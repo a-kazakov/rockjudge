@@ -2,6 +2,7 @@ from collections import deque
 
 from participants.models import (
     Acrobatic,
+    Club,
     Participant,
 )
 from tournaments.models import (
@@ -120,6 +121,12 @@ class Api:
     # Setters
 
     @classmethod
+    def club_set(cls, request, ws_message):
+        model = cls.get_model(Club, "club_id", request)
+        model.update_data(request["data"], ws_message=ws_message)
+        return {}
+
+    @classmethod
     def judge_set(cls, request, ws_message):
         model = cls.get_model(Judge, "judge_id", request)
         model.update_data(request["data"], ws_message=ws_message)
@@ -160,7 +167,6 @@ class Api:
         model = cls.get_model(Participant, "participant_id", request)
         model.update_data(request["data"], ws_message=ws_message)
         return {}
-
     # Creaters
 
     @classmethod
@@ -175,6 +181,15 @@ class Api:
         Tour.create_model(
             inner_competition=inner_competition,
             add_after=request["add_after"],
+            data=request["data"],
+            ws_message=ws_message)
+        return {}
+
+    @classmethod
+    def club_create(cls, request, ws_message):
+        competition = cls.get_model(Competition, "competition_id", request)
+        Club.create_model(
+            competition=competition,
             data=request["data"],
             ws_message=ws_message)
         return {}
@@ -203,6 +218,12 @@ class Api:
     def tour_delete(cls, request, ws_message):
         tour = cls.get_model(Tour, "tour_id", request)
         tour.delete_model(ws_message=ws_message)
+        return {}
+
+    @classmethod
+    def club_delete(cls, request, ws_message):
+        club = cls.get_model(Club, "club_id", request)
+        club.delete_model(ws_message=ws_message)
         return {}
 
     @classmethod
