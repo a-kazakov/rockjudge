@@ -215,8 +215,9 @@ function _(src, arg) {
                 "reset_stopwatch": "Сброс"
             },
             "headers": {
-                "select_page": "Страница",
-                "heat": "Заход"
+                "heat": "Заход",
+                "presenter": "Ведущий",
+                "select_page": "Страница"
             },
             "messages": {
                 "not_judging": "Вы не оцениваете этого спортсмена"

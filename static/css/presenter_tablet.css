@@ -1,0 +1,67 @@
+.btn-prev-heat {
+  float: left;
+}
+.btn-next-heat {
+  float: right;
+}
+header .header {
+  text-align: center;
+  margin-left: 150px;
+  margin-right: 150px;
+}
+header .header h1 {
+  font-size: 20px;
+}
+.presenter-splash {
+  margin-top: 200px;
+  font-weight: 400;
+  font-size: 40px;
+  text-align: center;
+}
+.heat {
+  margin: 20px auto;
+  text-align: center;
+  width: 85%;
+  height: 135px;
+  color: #777;
+  padding: 5px 20px 20px 20px;
+}
+.heat table {
+  width: 100%;
+}
+.heat table.outer {
+  height: 100%;
+  table-layout: fixed;
+}
+.heat .number {
+  font-size: 50px;
+  font-weight: light;
+}
+.heat .name {
+  font-size: 13px;
+  font-weight: bold;
+}
+.heat .club,
+.heat .city {
+  font-size: 12px;
+  font-weight: normal;
+}
+.heat.current-heat {
+  background-color: #2b3a42;
+  color: #efefef;
+  width: 100%;
+  height: 200px;
+}
+.heat.current-heat .number {
+  font-size: 60px;
+  font-weight: light;
+}
+.heat.current-heat .name {
+  font-size: 15px;
+  font-weight: bold;
+}
+.heat.current-heat .club,
+.heat.current-heat .city {
+  font-size: 14px;
+  font-weight: normal;
+}

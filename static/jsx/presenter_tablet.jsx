@@ -1,7 +1,7 @@
 React.initializeTouchEvents(true);
 
 
-class JudgeTablet extends React.Component {
+class PresenterTablet extends React.Component {
 
     // Intiialization
 
@@ -9,9 +9,7 @@ class JudgeTablet extends React.Component {
         super(props);
         this.state = {
             tour: null,
-            judge: null,
             current_heat: 1,
-            page: "dance",
             active_tour_id: null,
         };
         message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
@@ -20,13 +18,9 @@ class JudgeTablet extends React.Component {
         this.loadData();
     }
     reloadFromStorage() {
-        let judge = storage.get("Judge").by_id(this.props.judge_id).serialize({})
-        let competition = storage.get("Competition").by_id(this.props.competition_id).serialize({ judges: {} })
         let active_tour_id = this.state.active_tour_id;
         if (active_tour_id === null) {
             this.setState({
-                judge: judge,
-                competition: competition,
                 tour: null,
             });
             return;
@@ -34,34 +28,23 @@ class JudgeTablet extends React.Component {
         let active_tour_model = storage.get("Tour").by_id(active_tour_id);
         if (!active_tour_model) {
             this.setState({
-                judge: judge,
-                competition: competition,
                 tour: null,
             });
             return;
         }
         this.setState({
-            judge: judge,
-            competition: competition,
             tour: active_tour_model.serialize({
                 runs: {
                     participant: {
+                        "club": {},
                         "sportsmen": {},
                     },
-                    scores: {},
-                    acrobatics: {},
                 },
                 inner_competition: {},
             }),
         })
     }
     loadData() {
-        Api("tournaments.competition.get", {competition_id: this.props.competition_id, children: {
-            judges: {},
-        }})
-            .updateDB("Competition", this.props.competition_id)
-            .onSuccess(this.reloadFromStorage.bind(this))
-            .send();
         Api("tournaments.tour.find_active", {}).onSuccess(function(response) {
             this.dispatchActiveTourUpdate(response);
         }.bind(this)).send();
@@ -80,9 +63,9 @@ class JudgeTablet extends React.Component {
         if (tour_id === null) {
             storage.del("Tour");
             storage.del("Run");
-            storage.del("Score");
             storage.del("Participant");
             storage.del("Sportsman");
+            storage.del("Club");
             storage.del("InnerCompetition");
             this.setState({
                 tour: null,
@@ -93,10 +76,9 @@ class JudgeTablet extends React.Component {
         Api("tournaments.tour.get", { tour_id: tour_id, children:{
             runs: {
                 participant: {
+                    "club": {},
                     "sportsmen": {},
                 },
-                scores: {},
-                acrobatics: {},
             },
             inner_competition: {},
         }})
@@ -110,12 +92,6 @@ class JudgeTablet extends React.Component {
             .send();
     }
 
-    // Listeners
-
-    onScoreUpdate(score_id, new_score) {
-        Api("tournaments.score.set", {score_id: score_id, data: new_score}).send();
-    }
-
     // Actions
 
     toPrevHeat() {
@@ -126,11 +102,6 @@ class JudgeTablet extends React.Component {
     toNextHeat() {
         this.setState({
             current_heat: this.state.current_heat + 1,
-        });
-    }
-    switchPage(page) {
-        this.setState({
-            page: page,
         });
     }
 
@@ -168,68 +139,35 @@ class JudgeTablet extends React.Component {
             { current_tour }
         </header>
     }
-    renderJudgeInfo() {
-        let judge = this.state.judge;
-        let judge_number = judge.role_description || _("global.phrases.judge_n", this.state.judge.number);
+    renderSplashScreen() {
         return <div>
-            <div className="judge-number">{ judge_number }</div>
-            <div className="judge-name">{ this.state.judge.name }</div>
+            <div className="presenter-splash">{ _("tablet.headers.presenter") }</div>
         </div>
-
     }
-    renderScoringLayout() {
-        if (this.state.tour === null) {
-            return this.renderJudgeInfo();
-        }
-        var cells = this.state.tour.runs
-            .filter(function(run) {
-                return run.heat == this.state.current_heat;
-            }.bind(this))
-            .map(function(run) {
-                let scores_map = {}
-                run.scores.forEach(function(score_data) {
-                    scores_map[score_data.judge_id] = score_data;
-                });
-                let header = _("global.phrases.participant_n", run.participant.number, run.participant.sportsmen.length);
-                if (typeof scores_map[this.props.judge_id] === "undefined") {
-                    return <td key={ run.id }>
-                        <h2>{ header }</h2>
-                        <h3 className="text-center">{ _("tablet.messages.not_judging") }</h3>
-                    </td>
-                }
-                return <td key={ run.id }>
-                    <h2>{ header }</h2>
-                    <TabletScoreInput
-                        acrobatics={ run.acrobatics }
-                        judge_id={ this.props.judge_id }
-                        judges={ this.state.competition.judges }
-                        run_id={ run.id }
-                        page={ this.state.page }
-                        scores={ scores_map }
-                        scoring_system={ this.state.tour.scoring_system }
-                        onScoreUpdate={ this.onScoreUpdate.bind(this, scores_map[this.props.judge_id].id) } />
-                </td>
-            }.bind(this));
-        var one_run_class = cells.length == 1 ? " single-run" : "";
-        return <table className={ "tablet-main-table" + one_run_class }><tbody><tr>
-            { cells }
-        </tr></tbody></table>;
-    }
-    renderFooter() {
-        if (this.state.tour === null || this.state.judge.role != "tech_judge" || this.state.tour.scoring_system != "rosfarr.acro") {
-            return null;
-        }
-        return <div className="footer page-selector">
-            <h3>{ _("tablet.headers.select_page") }</h3>
-            <button
-                className={ "btn" + (this.state.page == "dance" ? " active" : "") }
-                {...onTouchOrClick(this.switchPage.bind(this, "dance"))}>{ _("tablet.pages.dance") }
-            </button>
-            <button
-                className={ "btn" + (this.state.page == "acro" ? " active" : "") }
-                {...onTouchOrClick(this.switchPage.bind(this, "acro"))}>{ _("tablet.pages.acrobatics") }
-            </button>
+    renderHeat(heat, is_current) {
+        let runs = this.state.tour.runs.filter((run) => run.heat == heat);
+        return <div className={ "heat" + (is_current ? " current-heat" : "") }>
+            <table className="outer"><tbody><tr>
+            { runs.map(function(run) {
+                return <td key={ run.id }><table><tbody>
+                    <tr><td className="number">{ run.participant.number }</td></tr>
+                    <tr><td className="name">{ run.participant.name }</td></tr>
+                    <tr><td className="club">{ run.participant.club.name }</td></tr>
+                    <tr><td className="city">{ run.participant.club.city }</td></tr>
+                </tbody></table></td>;
+            }) }
+            </tr></tbody></table>
         </div>;
+    }
+    renderBody() {
+        if (this.state.tour === null) {
+            return this.renderSplashScreen();
+        }
+        return <div>
+            { this.renderHeat(this.state.current_heat - 1, false) }
+            { this.renderHeat(this.state.current_heat, true) }
+            { this.renderHeat(this.state.current_heat + 1, false) }
+        </div>
     }
     render() {
         if (this.state.judge === null) {
@@ -237,8 +175,7 @@ class JudgeTablet extends React.Component {
         }
         return <div>
             { this.renderHeader() }
-            { this.renderScoringLayout() }
-            { this.renderFooter() }
+            { this.renderBody() }
         </div>
     }
 }

@@ -49,8 +49,8 @@ var RoleSelector = (function (_React$Component) {
                             "div",
                             { className: "btn-group-vertical full-width" },
                             React.createElement(
-                                "button",
-                                { className: "btn btn-default btn-lg" },
+                                "a",
+                                { href: "/presenter", className: "btn btn-default btn-lg" },
                                 _("start_page.roles.presenter")
                             ),
                             React.createElement(

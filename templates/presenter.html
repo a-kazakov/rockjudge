@@ -3,23 +3,19 @@
 {% autoescape None %}
 
 {% block title %}
-  Judge tablet
+  Presenter
 {% end %}
 
 {% block styles %}
-  <link rel="stylesheet" href="/static/css/tablet.css">
+  <link rel="stylesheet" href="/static/css/presenter_tablet.css">
 {% end %}
 
 {% block scripts %}
   <script src="/static/js/lib/tablet_controls.js"></script>
-  <script src="/static/js/tablet.js"></script>
-  <script src="/static/js/scoring_systems/rosfarr/tablet.js"></script>
+  <script src="/static/js/presenter_tablet.js"></script>
   <script>
     React.render(
-      React.createElement(JudgeTablet, {
-        judge_id: {{ judge_id }},
-        competition_id: {{ competition_id }}
-      }),
+      React.createElement(PresenterTablet, {}),
       document.getElementById("content")
     );
   </script>

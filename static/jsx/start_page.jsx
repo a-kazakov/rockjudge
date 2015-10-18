@@ -12,9 +12,9 @@ class RoleSelector extends React.Component {
             <div className="row">
                 <div className="col-sm-6">
                     <div className="btn-group-vertical full-width">
-                        <button className="btn btn-default btn-lg">
+                        <a href={ "/presenter" } className="btn btn-default btn-lg">
                             { _("start_page.roles.presenter") }
-                        </button>
+                        </a>
                         <a href={ "/admin/" + this.props.competition.id.toString() } className="btn btn-default btn-lg">
                             { _("start_page.roles.administrator") }
                         </a>

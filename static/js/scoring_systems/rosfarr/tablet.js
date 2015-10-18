@@ -36,7 +36,7 @@ var TabletScoreInput = (function (_React$Component) {
         key: "updateAcroDeduction",
         value: function updateAcroDeduction(idx, value) {
             var score = this.props.scores[this.props.judge_id].data;
-            var deductions = score.map(function () {
+            var deductions = score.raw_data.deductions.map(function () {
                 return null;
             });
             deductions[idx] = value;
@@ -303,7 +303,7 @@ var TabletScoreInput = (function (_React$Component) {
             var inputs = this.props.acrobatics.map((function (acro, idx) {
                 return React.createElement(
                     "div",
-                    null,
+                    { key: idx },
                     React.createElement(
                         "h3",
                         null,

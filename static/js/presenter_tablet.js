@@ -14,20 +14,18 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 React.initializeTouchEvents(true);
 
-var JudgeTablet = (function (_React$Component) {
-    _inherits(JudgeTablet, _React$Component);
+var PresenterTablet = (function (_React$Component) {
+    _inherits(PresenterTablet, _React$Component);
 
     // Intiialization
 
-    function JudgeTablet(props) {
-        _classCallCheck(this, JudgeTablet);
+    function PresenterTablet(props) {
+        _classCallCheck(this, PresenterTablet);
 
-        _get(Object.getPrototypeOf(JudgeTablet.prototype), "constructor", this).call(this, props);
+        _get(Object.getPrototypeOf(PresenterTablet.prototype), "constructor", this).call(this, props);
         this.state = {
             tour: null,
-            judge: null,
             current_heat: 1,
-            page: "dance",
             active_tour_id: null
         };
         message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
@@ -36,16 +34,12 @@ var JudgeTablet = (function (_React$Component) {
         this.loadData();
     }
 
-    _createClass(JudgeTablet, [{
+    _createClass(PresenterTablet, [{
         key: "reloadFromStorage",
         value: function reloadFromStorage() {
-            var judge = storage.get("Judge").by_id(this.props.judge_id).serialize({});
-            var competition = storage.get("Competition").by_id(this.props.competition_id).serialize({ judges: {} });
             var active_tour_id = this.state.active_tour_id;
             if (active_tour_id === null) {
                 this.setState({
-                    judge: judge,
-                    competition: competition,
                     tour: null
                 });
                 return;
@@ -53,22 +47,17 @@ var JudgeTablet = (function (_React$Component) {
             var active_tour_model = storage.get("Tour").by_id(active_tour_id);
             if (!active_tour_model) {
                 this.setState({
-                    judge: judge,
-                    competition: competition,
                     tour: null
                 });
                 return;
             }
             this.setState({
-                judge: judge,
-                competition: competition,
                 tour: active_tour_model.serialize({
                     runs: {
                         participant: {
+                            "club": {},
                             "sportsmen": {}
-                        },
-                        scores: {},
-                        acrobatics: {}
+                        }
                     },
                     inner_competition: {}
                 })
@@ -77,9 +66,6 @@ var JudgeTablet = (function (_React$Component) {
     }, {
         key: "loadData",
         value: function loadData() {
-            Api("tournaments.competition.get", { competition_id: this.props.competition_id, children: {
-                    judges: {}
-                } }).updateDB("Competition", this.props.competition_id).onSuccess(this.reloadFromStorage.bind(this)).send();
             Api("tournaments.tour.find_active", {}).onSuccess((function (response) {
                 this.dispatchActiveTourUpdate(response);
             }).bind(this)).send();
@@ -100,9 +86,9 @@ var JudgeTablet = (function (_React$Component) {
             if (tour_id === null) {
                 storage.del("Tour");
                 storage.del("Run");
-                storage.del("Score");
                 storage.del("Participant");
                 storage.del("Sportsman");
+                storage.del("Club");
                 storage.del("InnerCompetition");
                 this.setState({
                     tour: null,
@@ -113,10 +99,9 @@ var JudgeTablet = (function (_React$Component) {
             Api("tournaments.tour.get", { tour_id: tour_id, children: {
                     runs: {
                         participant: {
+                            "club": {},
                             "sportsmen": {}
-                        },
-                        scores: {},
-                        acrobatics: {}
+                        }
                     },
                     inner_competition: {}
                 } }).updateDB("Tour", tour_id).onSuccess((function () {
@@ -125,14 +110,6 @@ var JudgeTablet = (function (_React$Component) {
                     current_heat: 1
                 });
             }).bind(this)).send();
-        }
-
-        // Listeners
-
-    }, {
-        key: "onScoreUpdate",
-        value: function onScoreUpdate(score_id, new_score) {
-            Api("tournaments.score.set", { score_id: score_id, data: new_score }).send();
         }
 
         // Actions
@@ -149,13 +126,6 @@ var JudgeTablet = (function (_React$Component) {
         value: function toNextHeat() {
             this.setState({
                 current_heat: this.state.current_heat + 1
-            });
-        }
-    }, {
-        key: "switchPage",
-        value: function switchPage(page) {
-            this.setState({
-                page: page
             });
         }
 
@@ -221,117 +191,103 @@ var JudgeTablet = (function (_React$Component) {
             );
         }
     }, {
-        key: "renderJudgeInfo",
-        value: function renderJudgeInfo() {
-            var judge = this.state.judge;
-            var judge_number = judge.role_description || _("global.phrases.judge_n", this.state.judge.number);
+        key: "renderSplashScreen",
+        value: function renderSplashScreen() {
             return React.createElement(
                 "div",
                 null,
                 React.createElement(
                     "div",
-                    { className: "judge-number" },
-                    judge_number
-                ),
-                React.createElement(
-                    "div",
-                    { className: "judge-name" },
-                    this.state.judge.name
+                    { className: "presenter-splash" },
+                    _("tablet.headers.presenter")
                 )
             );
         }
     }, {
-        key: "renderScoringLayout",
-        value: function renderScoringLayout() {
-            if (this.state.tour === null) {
-                return this.renderJudgeInfo();
-            }
-            var cells = this.state.tour.runs.filter((function (run) {
-                return run.heat == this.state.current_heat;
-            }).bind(this)).map((function (run) {
-                var scores_map = {};
-                run.scores.forEach(function (score_data) {
-                    scores_map[score_data.judge_id] = score_data;
-                });
-                var header = _("global.phrases.participant_n", run.participant.number, run.participant.sportsmen.length);
-                if (typeof scores_map[this.props.judge_id] === "undefined") {
-                    return React.createElement(
-                        "td",
-                        { key: run.id },
-                        React.createElement(
-                            "h2",
-                            null,
-                            header
-                        ),
-                        React.createElement(
-                            "h3",
-                            { className: "text-center" },
-                            _("tablet.messages.not_judging")
-                        )
-                    );
-                }
-                return React.createElement(
-                    "td",
-                    { key: run.id },
-                    React.createElement(
-                        "h2",
-                        null,
-                        header
-                    ),
-                    React.createElement(TabletScoreInput, {
-                        acrobatics: run.acrobatics,
-                        judge_id: this.props.judge_id,
-                        judges: this.state.competition.judges,
-                        run_id: run.id,
-                        page: this.state.page,
-                        scores: scores_map,
-                        scoring_system: this.state.tour.scoring_system,
-                        onScoreUpdate: this.onScoreUpdate.bind(this, scores_map[this.props.judge_id].id) })
-                );
-            }).bind(this));
-            var one_run_class = cells.length == 1 ? " single-run" : "";
+        key: "renderHeat",
+        value: function renderHeat(heat, is_current) {
+            var runs = this.state.tour.runs.filter(function (run) {
+                return run.heat == heat;
+            });
             return React.createElement(
-                "table",
-                { className: "tablet-main-table" + one_run_class },
+                "div",
+                { className: "heat" + (is_current ? " current-heat" : "") },
                 React.createElement(
-                    "tbody",
-                    null,
+                    "table",
+                    { className: "outer" },
                     React.createElement(
-                        "tr",
+                        "tbody",
                         null,
-                        cells
+                        React.createElement(
+                            "tr",
+                            null,
+                            runs.map(function (run) {
+                                return React.createElement(
+                                    "td",
+                                    { key: run.id },
+                                    React.createElement(
+                                        "table",
+                                        null,
+                                        React.createElement(
+                                            "tbody",
+                                            null,
+                                            React.createElement(
+                                                "tr",
+                                                null,
+                                                React.createElement(
+                                                    "td",
+                                                    { className: "number" },
+                                                    run.participant.number
+                                                )
+                                            ),
+                                            React.createElement(
+                                                "tr",
+                                                null,
+                                                React.createElement(
+                                                    "td",
+                                                    { className: "name" },
+                                                    run.participant.name
+                                                )
+                                            ),
+                                            React.createElement(
+                                                "tr",
+                                                null,
+                                                React.createElement(
+                                                    "td",
+                                                    { className: "club" },
+                                                    run.participant.club.name
+                                                )
+                                            ),
+                                            React.createElement(
+                                                "tr",
+                                                null,
+                                                React.createElement(
+                                                    "td",
+                                                    { className: "city" },
+                                                    run.participant.club.city
+                                                )
+                                            )
+                                        )
+                                    )
+                                );
+                            })
+                        )
                     )
                 )
             );
         }
     }, {
-        key: "renderFooter",
-        value: function renderFooter() {
-            if (this.state.tour === null || this.state.judge.role != "tech_judge" || this.state.tour.scoring_system != "rosfarr.acro") {
-                return null;
+        key: "renderBody",
+        value: function renderBody() {
+            if (this.state.tour === null) {
+                return this.renderSplashScreen();
             }
             return React.createElement(
                 "div",
-                { className: "footer page-selector" },
-                React.createElement(
-                    "h3",
-                    null,
-                    _("tablet.headers.select_page")
-                ),
-                React.createElement(
-                    "button",
-                    _extends({
-                        className: "btn" + (this.state.page == "dance" ? " active" : "")
-                    }, onTouchOrClick(this.switchPage.bind(this, "dance"))),
-                    _("tablet.pages.dance")
-                ),
-                React.createElement(
-                    "button",
-                    _extends({
-                        className: "btn" + (this.state.page == "acro" ? " active" : "")
-                    }, onTouchOrClick(this.switchPage.bind(this, "acro"))),
-                    _("tablet.pages.acrobatics")
-                )
+                null,
+                this.renderHeat(this.state.current_heat - 1, false),
+                this.renderHeat(this.state.current_heat, true),
+                this.renderHeat(this.state.current_heat + 1, false)
             );
         }
     }, {
@@ -348,12 +304,11 @@ var JudgeTablet = (function (_React$Component) {
                 "div",
                 null,
                 this.renderHeader(),
-                this.renderScoringLayout(),
-                this.renderFooter()
+                this.renderBody()
             );
         }
     }]);
 
-    return JudgeTablet;
+    return PresenterTablet;
 })(React.Component);
-//# sourceMappingURL=tablet.js.map
+//# sourceMappingURL=presenter_tablet.js.map

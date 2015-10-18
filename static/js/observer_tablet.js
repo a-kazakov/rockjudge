@@ -25,9 +25,7 @@ var JudgeTablet = (function (_React$Component) {
         _get(Object.getPrototypeOf(JudgeTablet.prototype), "constructor", this).call(this, props);
         this.state = {
             tour: null,
-            judge: null,
             current_heat: 1,
-            page: "dance",
             active_tour_id: null
         };
         message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
@@ -39,13 +37,9 @@ var JudgeTablet = (function (_React$Component) {
     _createClass(JudgeTablet, [{
         key: "reloadFromStorage",
         value: function reloadFromStorage() {
-            var judge = storage.get("Judge").by_id(this.props.judge_id).serialize({});
-            var competition = storage.get("Competition").by_id(this.props.competition_id).serialize({ judges: {} });
             var active_tour_id = this.state.active_tour_id;
             if (active_tour_id === null) {
                 this.setState({
-                    judge: judge,
-                    competition: competition,
                     tour: null
                 });
                 return;
@@ -53,22 +47,17 @@ var JudgeTablet = (function (_React$Component) {
             var active_tour_model = storage.get("Tour").by_id(active_tour_id);
             if (!active_tour_model) {
                 this.setState({
-                    judge: judge,
-                    competition: competition,
                     tour: null
                 });
                 return;
             }
             this.setState({
-                judge: judge,
-                competition: competition,
                 tour: active_tour_model.serialize({
                     runs: {
                         participant: {
+                            "club": {},
                             "sportsmen": {}
-                        },
-                        scores: {},
-                        acrobatics: {}
+                        }
                     },
                     inner_competition: {}
                 })
@@ -77,9 +66,6 @@ var JudgeTablet = (function (_React$Component) {
     }, {
         key: "loadData",
         value: function loadData() {
-            Api("tournaments.competition.get", { competition_id: this.props.competition_id, children: {
-                    judges: {}
-                } }).updateDB("Competition", this.props.competition_id).onSuccess(this.reloadFromStorage.bind(this)).send();
             Api("tournaments.tour.find_active", {}).onSuccess((function (response) {
                 this.dispatchActiveTourUpdate(response);
             }).bind(this)).send();
@@ -100,9 +86,9 @@ var JudgeTablet = (function (_React$Component) {
             if (tour_id === null) {
                 storage.del("Tour");
                 storage.del("Run");
-                storage.del("Score");
                 storage.del("Participant");
                 storage.del("Sportsman");
+                storage.del("Club");
                 storage.del("InnerCompetition");
                 this.setState({
                     tour: null,
@@ -113,10 +99,9 @@ var JudgeTablet = (function (_React$Component) {
             Api("tournaments.tour.get", { tour_id: tour_id, children: {
                     runs: {
                         participant: {
+                            "club": {},
                             "sportsmen": {}
-                        },
-                        scores: {},
-                        acrobatics: {}
+                        }
                     },
                     inner_competition: {}
                 } }).updateDB("Tour", tour_id).onSuccess((function () {
@@ -125,14 +110,6 @@ var JudgeTablet = (function (_React$Component) {
                     current_heat: 1
                 });
             }).bind(this)).send();
-        }
-
-        // Listeners
-
-    }, {
-        key: "onScoreUpdate",
-        value: function onScoreUpdate(score_id, new_score) {
-            Api("tournaments.score.set", { score_id: score_id, data: new_score }).send();
         }
 
         // Actions
@@ -149,13 +126,6 @@ var JudgeTablet = (function (_React$Component) {
         value: function toNextHeat() {
             this.setState({
                 current_heat: this.state.current_heat + 1
-            });
-        }
-    }, {
-        key: "switchPage",
-        value: function switchPage(page) {
-            this.setState({
-                page: page
             });
         }
 
@@ -221,8 +191,8 @@ var JudgeTablet = (function (_React$Component) {
             );
         }
     }, {
-        key: "renderJudgeInfo",
-        value: function renderJudgeInfo() {
+        key: "renderSplachScreen",
+        value: function renderSplachScreen() {
             var judge = this.state.judge;
             var judge_number = judge.role_description || _("global.phrases.judge_n", this.state.judge.number);
             return React.createElement(
@@ -230,13 +200,8 @@ var JudgeTablet = (function (_React$Component) {
                 null,
                 React.createElement(
                     "div",
-                    { className: "judge-number" },
-                    judge_number
-                ),
-                React.createElement(
-                    "div",
-                    { className: "judge-name" },
-                    this.state.judge.name
+                    { className: "observer-splash" },
+                    _("tablet.headers.observer")
                 )
             );
         }
@@ -356,4 +321,4 @@ var JudgeTablet = (function (_React$Component) {
 
     return JudgeTablet;
 })(React.Component);
-//# sourceMappingURL=tablet.js.map
+//# sourceMappingURL=observer_tablet.js.map

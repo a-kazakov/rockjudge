@@ -14,7 +14,7 @@ class TabletScoreInput extends React.Component {
     }
     updateAcroDeduction(idx, value) {
         let score = this.props.scores[this.props.judge_id].data;
-        let deductions = score.map(() => null);
+        let deductions = score.raw_data.deductions.map(() => null);
         deductions[idx] = value;
         let new_score = {
             deductions: deductions,
@@ -162,7 +162,7 @@ class TabletScoreInput extends React.Component {
     renderAcroJudgeInput() {
         var score = this.props.scores[this.props.judge_id].data;
         var inputs = this.props.acrobatics.map(function(acro, idx) {
-            return <div>
+            return <div key={ idx }>
                 <h3>{ acro.description }</h3>
                 <TabletSelectorInput
                     choices={ [[100, "X"], [75, "75%"], [50, "50%"], [25, "25%"], [10, "10%"], [5, "5%"], [0, "OK"]] }
