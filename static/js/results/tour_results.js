@@ -22,7 +22,7 @@ var TourResults = (function (_React$Component) {
             results: [],
             finalized: true,
             judges: [],
-            show_verbose: false
+            verbose: false
         };
         message_dispatcher.addListener("tour_results_changed reload_data", (function (message) {
             if (message.tour_id == this.props.tour_id) {
@@ -110,10 +110,8 @@ var TourResults = (function (_React$Component) {
                         this.renderVerboseButton(),
                         React.createElement(
                             "button",
-                            { className: "btn btn-primary", onClick: function () {
-                                    window.print();
-                                } },
-                            _("results.buttons.print")
+                            { className: "btn btn-primary", onClick: this.createDocx.bind(this) },
+                            "DOCX"
                         )
                     ),
                     React.createElement(
@@ -129,11 +127,16 @@ var TourResults = (function (_React$Component) {
                 ),
                 React.createElement(
                     "div",
-                    { className: "tour-results" },
+                    { className: "tour-results", ref: "content" },
                     this.renderNonFinalizedWarning(),
                     table
                 )
             );
+        }
+    }, {
+        key: "createDocx",
+        value: function createDocx() {
+            Docx("tour-results").setOrientation(this.state.verbose ? "landscape" : "portrait").setHeader(this.state.inner_competition_name).setSubheader(this.state.name).setBody(React.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none").addStyle(".bordered-table .score-breakdown th", "padding", "0 1pt 0 0").addStyle(".bordered-table .score-breakdown td", "padding", "0 0 0 1pt").addStyle(".score-breakdown th", "text-align", "right").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown", "width", "50pt").addStyle(".total-score", "font-weight", "bold").save();
         }
     }]);
 

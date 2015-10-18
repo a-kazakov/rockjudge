@@ -106,8 +106,8 @@ class ParticipantEditorRow extends React.Component {
         }
     }
     render() {
+        let bti = (this.state.number || 1000) * 10000;
         let sportsmen = this.state.sportsmen.map(function(sp, idx) {
-            let bti = (this.state.number || 1000) * 10000;
             return <div className="sportsman" key={ idx }>
                 <input
                     tabIndex={ bti + 1000 + 10 * idx + 1 }

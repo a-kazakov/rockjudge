@@ -39,22 +39,25 @@ class StartList extends React.Component {
     renderInnerCompetition(ic) {
         return <div key={ ic.id }>
             <h4>{ ic.name }</h4>
-            <table className="inner-competition"><tbody>
-                <tr>
-                    <th className="number">{ _("models.participant.number") }</th>
-                    <th className="name">{ _("models.participant.name") }</th>
-                    <th className="club">{ _("models.participant.club_name") }</th>
-                    <th className="coaches">{ _("models.participant.coaches") }</th>
-                </tr>
-                { ic.participants.map((p) =>
-                    <tr key={ p.id }>
-                        <td className="number">{ p.number }</td>
-                        <td className="name">{ p.name }</td>
-                        <td className="club">{ p.club.name }{", "}{ p.club.city }</td>
-                        <td className="coaches">{ p.coaches.split(",").map((c) => [c.trim(), <br />]) }</td>
+            <div className="inner-competition">
+                <table className="bordered-table"><thead>
+                    <tr>
+                        <th className="w-8 number"><p>{ _("models.participant.number") }</p></th>
+                        <th className="w-40 name"><p>{ _("models.participant.name") }</p></th>
+                        <th className="w-32 club"><p>{ _("models.participant.club_name") }</p></th>
+                        <th className="w-20 coaches"><p>{ _("models.participant.coaches") }</p></th>
                     </tr>
-                ) }
-            </tbody></table>
+                </thead><tbody>
+                    { ic.participants.map((p) =>
+                        <tr key={ p.id }>
+                            <td className="w-8 number"><p className="text-center">{ p.number }</p></td>
+                            <td className="w-40 name"><p>{ p.name }</p></td>
+                            <td className="w-32 club"><p>{ p.club.name }{", "}{ p.club.city }</p></td>
+                            <td className="w-20 coaches"><p>{ p.coaches.split(",").map((c) => [c.trim(), <br />]) }</p></td>
+                        </tr>
+                    ) }
+                </tbody></table>
+            </div>
         </div>;
     }
     render() {
@@ -64,14 +67,22 @@ class StartList extends React.Component {
         return <div>
             <header>
                 <div className="controls">
-                    <button className="btn btn-primary" onClick={ () => print() }>{ _("results.buttons.print") }</button>
+                    <button className="btn btn-primary" onClick={ this.createDocx.bind(this) }>DOCX</button>
                 </div>
                 <h1>{ _("admin.headers.start_list") }</h1>
             </header>
             <div className="start-list">
                 <h3>{ this.state.name }, { this.state.date }</h3>
-                { this.state.inner_competitions.map((ic) => this.renderInnerCompetition(ic)) }
+                <div ref="content">
+                    { this.state.inner_competitions.map((ic) => this.renderInnerCompetition(ic)) }
+                </div>
             </div>
         </div>;
+    }
+    createDocx() {
+        Docx("start-list")
+            .setHeader(_("admin.headers.start_list"))
+            .setBody(React.findDOMNode(this.refs.content).innerHTML)
+            .save();
     }
 }

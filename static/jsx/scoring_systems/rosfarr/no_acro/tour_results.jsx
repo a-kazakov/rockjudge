@@ -10,36 +10,36 @@ function __() {
 class TourResultsVerboseTableRow extends React.Component {
     renderFormationScore(score) {
         return <table className="score-breakdown"><tbody>
-            <tr><th>{ __("results.breakdown.dt") }:</th><td>{ score.raw_data.dance_tech }</td></tr>
-            <tr><th>{ __("results.breakdown.df") }:</th><td>{ score.raw_data.dance_figs }</td></tr>
-            <tr><th>{ __("results.breakdown.i")  }:</th><td>{ score.raw_data.impression }</td></tr>
-            <tr><th>{ __("results.breakdown.sm") }:</th><td>{ score.raw_data.small_mistakes }</td></tr>
-            <tr><th>{ __("results.breakdown.bm") }:</th><td>{ score.raw_data.big_mistakes }</td></tr>
-            <tr><th>{ __("results.breakdown.t")  }:</th><td className="total-score">{ score.total_score }</td></tr>
+            <tr><th><p>{ __("results.breakdown.dt") }:</p></th><td><p>{ score.raw_data.dance_tech }</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.df") }:</p></th><td><p>{ score.raw_data.dance_figs }</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.i")  }:</p></th><td><p>{ score.raw_data.impression }</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.sm") }:</p></th><td><p>{ score.raw_data.small_mistakes }</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.bm") }:</p></th><td><p>{ score.raw_data.big_mistakes }</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.t")  }:</p></th><td className="total-score">{ score.total_score }</td></tr>
         </tbody></table>
     }
     renderDanceScore(score) {
         return <table className="score-breakdown"><tbody>
-            <tr><th>{ __("results.breakdown.fw") }:</th><td>-{ score.raw_data.fw_woman }%</td></tr>
-            <tr><th>{ __("results.breakdown.fm") }:</th><td>-{ score.raw_data.fw_man }%</td></tr>
-            <tr><th>{ __("results.breakdown.df") }:</th><td>{ score.raw_data.dance_figs }</td></tr>
-            <tr><th>{ __("results.breakdown.c")  }:</th><td>{ score.raw_data.composition }</td></tr>
-            <tr><th>{ __("results.breakdown.sm") }:</th><td>{ score.raw_data.small_mistakes }</td></tr>
-            <tr><th>{ __("results.breakdown.bm") }:</th><td>{ score.raw_data.big_mistakes }</td></tr>
-            <tr><th>{ __("results.breakdown.t")  }:</th><td className="total-score">{ score.total_score }</td></tr>
+            <tr><th><p>{ __("results.breakdown.fw") }:</p></th><td><p>-{ score.raw_data.fw_woman }%</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.fm") }:</p></th><td><p>-{ score.raw_data.fw_man }%</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.df") }:</p></th><td><p>{ score.raw_data.dance_figs }</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.c")  }:</p></th><td><p>{ score.raw_data.composition }</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.sm") }:</p></th><td><p>{ score.raw_data.small_mistakes }</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.bm") }:</p></th><td><p>{ score.raw_data.big_mistakes }</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.t")  }:</p></th><td className="total-score"><p>{ score.total_score }</p></td></tr>
         </tbody></table>
     }
     renderAcroScore(score) {
         let acro_scores = score.raw_data.deductions.map(function(score, idx) {
             return <tr key={ idx }>
-                <th>{ __("results.breakdown.acro_n", idx + 1) }:</th>
-                <td>-{ score }%</td>
+                <th><p>{ __("results.breakdown.acro_n", idx + 1) }:</p></th>
+                <td><p>-{ score }%</p></td>
             </tr>
         }.bind(this));
         return <table className="score-breakdown"><tbody>
             { acro_scores }
-            <tr><th>{ __("results.breakdown.fd")  }:</th><td className="total-score">{ score.raw_data.mistakes }</td></tr>
-            <tr><th>{ __("results.breakdown.t")  }:</th><td className="total-score">{ score.total_score }</td></tr>
+            <tr><th><p>{ __("results.breakdown.fd")  }:</p></th><td><p>{ score.raw_data.mistakes }</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.t")  }:</p></th><td className="total-score"><p>{ score.total_score }</p></td></tr>
         </tbody></table>
     }
     renderScore(judge, score) {
@@ -62,37 +62,38 @@ class TourResultsVerboseTableRow extends React.Component {
     }
     render() {
         let next_tour_cell = this.props.has_next_tour
-            ? <td className="next-tour">{ this.props.row.advances ? _("global.labels.yes") : _("global.labels.no") }</td>
+            ? <td className="w-3 next-tour"><p className="text-center">
+                { this.props.row.advances ? _("global.labels.yes") : _("global.labels.no") }</p></td>
             : null;
         let judges_scores = this.props.judges.map(function(judge) {
             let score = this.props.row.scores.scores[judge.id].data;
-            return <td key={ judge.id } >{ this.renderScore(judge, score) }</td>;
+            return <td key={ judge.id } ><p className="text-center">{ this.renderScore(judge, score) }</p></td>;
         }.bind(this));
         let acro_scores_cell = null;
         if (this.props.scoring_system == "rosfarr.acro") {
             let acro_scores = this.props.row.acrobatics.map(function(acro, idx) {
                 return <tr key={ idx }>
-                    <th>{ __("results.breakdown.acro_n", idx + 1) }:</th>
-                    <td>{ acro.score.toFixed(1) }</td>
+                    <th><p>{ __("results.breakdown.acro_n", idx + 1) }:</p></th>
+                    <td><p>{ acro.score.toFixed(1) }</p></td>
                 </tr>
             }.bind(this));
-            acro_scores_cell = <td className="acro_scores">
+            acro_scores_cell = <td className="w-4 acro_scores">
                 <table className="score-breakdown"><tbody>
                     { acro_scores }
                 </tbody></table>
             </td>;
         }
         return <tr>
-            <td className="place">{ this.props.row.place }</td>
-            <td className="number">{ this.props.row.participant.number }</td>
+            <td className="w-3 place"><p className="text-center">{ this.props.row.place }</p></td>
+            { next_tour_cell }
+            <td className="w-1 number"><p className="text-center">{ this.props.row.participant.number }</p></td>
             <td className="participant">
                 <p>{ this.props.row.participant.name }</p>
-            <p><em>{ this.props.row.participant.club.name }{", "}<nobr>{ this.props.row.participant.club.city }</nobr></em></p>
+                <p><em>{ this.props.row.participant.club.name }{", "}<nobr>{ this.props.row.participant.club.city }</nobr></em></p>
             </td>
-            <td className="score">{ this.props.row.scores.total_run_score }</td>
+            <td className="w-5 score"><p className="text-center">{ this.props.row.scores.total_run_score }</p></td>
             { acro_scores_cell }
             { judges_scores }
-            { next_tour_cell }
         </tr>
     }
 }
@@ -108,23 +109,23 @@ class TourResultsVerboseTable extends React.Component {
                 scoring_system={ this.props.scoring_system } />
         }.bind(this));
         let judges_header = this.props.judges.map(function(judge) {
-            return <th key={ judge.id }>{ judge.number }</th>
+            return <th key={ judge.id }><p>{ judge.number }</p></th>
         });
         let acro_header = this.props.scoring_system == "rosfarr.acro"
-            ? <th className="acro">{ __("results.labels.acrobatics") }</th> : null;
-        return <table className="bordered-table no-break">
+            ? <th className="w-4 acro"><p>{ __("results.labels.acrobatics") }</p></th> : null;
+        return <table className="bordered-table">
             <thead>
                 <tr>
-                    <th className="place">{ __("results.labels.place") }</th>
-                    <th className="number">{ __("results.labels.number") }</th>
-                    <th className="participant">
-                        { __("results.labels.participant_name") },
+                    <th className="w-3 place"><p>{ __("results.labels.place") }</p></th>
+                    { this.props.has_next_tour ? <th className="w-3 next-tour"><p>{ __("results.labels.next_tour") }</p></th> : null }
+                    <th className="w-1 number"><p>{ __("results.labels.number") }</p></th>
+                    <th className="participant"><p>
+                        { __("results.labels.participant_name") }{", "}
                         { __("results.labels.participant_club") }
-                    </th>
-                    <th className="score">{ __("results.labels.total_score") }</th>
+                    </p></th>
+                    <th className="w-5 score"><p>{ __("results.labels.total_score") }</p></th>
                     { acro_header }
                     { judges_header }
-                    { this.props.has_next_tour ? <th className="next-tour"><div>{ __("results.labels.next_tour") }</div></th> : null }
                 </tr>
             </thead>
             <tbody>
@@ -137,16 +138,18 @@ class TourResultsVerboseTable extends React.Component {
 class TourResultsTableRow extends React.Component {
     render() {
         var next_tour_cell = this.props.has_next_tour
-            ? <td className="next-tour">{ this.props.row.advances ? _("global.labels.yes") : _("global.labels.no") }</td>
+            ? <td className="w-7 next-tour"><p className="text-center">
+                    { this.props.row.advances ? _("global.labels.yes") : _("global.labels.no") }
+                </p></td>
             : null;
         return <tr>
-            <td className="place">{ this.props.row.place }</td>
-            <td className="number">{ this.props.row.participant.number }</td>
-            <td className="participant">{ this.props.row.participant.name }</td>
-            <td className="club">{ this.props.row.participant.club.name }{", "}
-                <nobr>{ this.props.row.participant.club.city }</nobr></td>
-            <td className="score">{ this.props.row.scores.total_run_score }</td>
+            <td className="w-7 place"><p className="text-center">{ this.props.row.place }</p></td>
             { next_tour_cell }
+            <td className="w-4 number"><p className="text-center">{ this.props.row.participant.number }</p></td>
+            <td className="participant"><p>{ this.props.row.participant.name }</p></td>
+            <td className="club"><p>{ this.props.row.participant.club.name }{", "}
+                <nobr>{ this.props.row.participant.club.city }</nobr></p></td>
+            <td className="w-13 score"><p className="text-center">{ this.props.row.scores.total_run_score }</p></td>
         </tr>
     }
 }
@@ -162,12 +165,12 @@ class TourResultsTable extends React.Component {
         return <table className="bordered-table">
             <thead>
                 <tr>
-                    <th className="place">{ __("results.labels.place") }</th>
-                    <th className="number">{ __("results.labels.number") }</th>
-                    <th className="participant">{ __("results.labels.participant_name") }</th>
-                    <th className="club">{ __("results.labels.participant_club") }</th>
-                    <th className="score">{ __("results.labels.total_score") }</th>
-                    { this.props.has_next_tour ? <th className="next-tour">{ __("results.labels.next_tour") }</th> : null }
+                    <th className="w-7 place"><p>{ __("results.labels.place") }</p></th>
+                    { this.props.has_next_tour ? <th className="next-tour"><p>{ __("results.labels.next_tour") }</p></th> : null }
+                    <th className="w-4 number"><p>{ __("results.labels.number") }</p></th>
+                    <th className="participant"><p>{ __("results.labels.participant_name") }</p></th>
+                    <th className="club"><p>{ __("results.labels.participant_club") }</p></th>
+                    <th className="w-13 score"><p>{ __("results.labels.total_score") }</p></th>
                 </tr>
             </thead>
             <tbody>

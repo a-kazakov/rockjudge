@@ -65,13 +65,21 @@ var CompetitionReport = (function (_React$Component) {
                         null,
                         React.createElement(
                             "th",
-                            null,
-                            _("admin.labels.competition_name")
+                            { className: "w-30" },
+                            React.createElement(
+                                "p",
+                                { className: "text-left" },
+                                _("admin.labels.competition_name")
+                            )
                         ),
                         React.createElement(
                             "td",
-                            null,
-                            this.state.competition.name
+                            { className: "w-70" },
+                            React.createElement(
+                                "p",
+                                null,
+                                this.state.competition.name
+                            )
                         )
                     ),
                     React.createElement(
@@ -79,13 +87,21 @@ var CompetitionReport = (function (_React$Component) {
                         null,
                         React.createElement(
                             "th",
-                            null,
-                            _("admin.labels.competition_data")
+                            { className: "w-30" },
+                            React.createElement(
+                                "p",
+                                { className: "text-left" },
+                                _("admin.labels.competition_date")
+                            )
                         ),
                         React.createElement(
                             "td",
-                            null,
-                            this.state.competition.date
+                            { className: "w-70" },
+                            React.createElement(
+                                "p",
+                                null,
+                                this.state.competition.date
+                            )
                         )
                     ),
                     this.state.competition.info.map(function (row) {
@@ -94,13 +110,21 @@ var CompetitionReport = (function (_React$Component) {
                             { key: row[0] },
                             React.createElement(
                                 "th",
-                                null,
-                                row[0]
+                                { className: "w-30" },
+                                React.createElement(
+                                    "p",
+                                    { className: "text-left" },
+                                    row[0]
+                                )
                             ),
                             React.createElement(
                                 "td",
-                                null,
-                                row[1]
+                                { className: "w-70" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    row[1]
+                                )
                             )
                         );
                     })
@@ -124,7 +148,7 @@ var CompetitionReport = (function (_React$Component) {
             clubs.forEach(function (club) {
                 return clubs_dict[club.city].sort;
             });
-            Object.keys(clubs_dict).forEach(function (city) {
+            Object.getOwnPropertyNames(clubs_dict).forEach(function (city) {
                 return cities.push(city);
             });
             cities.sort();
@@ -141,13 +165,21 @@ var CompetitionReport = (function (_React$Component) {
                             { key: city },
                             React.createElement(
                                 "th",
-                                null,
-                                city
+                                { className: "w-30" },
+                                React.createElement(
+                                    "p",
+                                    { className: "text-left" },
+                                    city
+                                )
                             ),
                             React.createElement(
                                 "td",
-                                null,
-                                clubs_dict[city].join(", ")
+                                { className: "w-70" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    clubs_dict[city].join(", ")
+                                )
                             )
                         );
                     }),
@@ -177,15 +209,23 @@ var CompetitionReport = (function (_React$Component) {
                             { key: judge.id },
                             React.createElement(
                                 "th",
-                                null,
-                                _("global.phrases.judge_n", judge.number)
+                                { className: "w-30" },
+                                React.createElement(
+                                    "p",
+                                    { className: "text-left" },
+                                    _("global.phrases.judge_n", judge.number)
+                                )
                             ),
                             React.createElement(
                                 "td",
-                                null,
-                                judge.name,
-                                " — ",
-                                judge.category
+                                { className: "w-70" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    judge.name,
+                                    " — ",
+                                    judge.category
+                                )
                             )
                         );
                     }),
@@ -201,15 +241,23 @@ var CompetitionReport = (function (_React$Component) {
                             { key: judge.id },
                             React.createElement(
                                 "th",
-                                null,
-                                judge.role_description
+                                { className: "w-30" },
+                                React.createElement(
+                                    "p",
+                                    { className: "text-left" },
+                                    judge.role_description
+                                )
                             ),
                             React.createElement(
                                 "td",
-                                null,
-                                judge.name,
-                                " — ",
-                                judge.category
+                                { className: "w-70" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    judge.name,
+                                    " — ",
+                                    judge.category
+                                )
                             )
                         );
                     })
@@ -255,10 +303,8 @@ var CompetitionReport = (function (_React$Component) {
                         { className: "controls" },
                         React.createElement(
                             "button",
-                            { className: "btn btn-primary", onClick: function () {
-                                    window.print();
-                                } },
-                            _("results.buttons.print")
+                            { className: "btn btn-primary", onClick: this.createDocx.bind(this) },
+                            "DOCX"
                         )
                     ),
                     React.createElement(
@@ -269,7 +315,7 @@ var CompetitionReport = (function (_React$Component) {
                 ),
                 React.createElement(
                     "div",
-                    { className: "competition-report" },
+                    { className: "competition-report", ref: "main_table" },
                     this.renderInfoTable(),
                     React.createElement(
                         "h3",
@@ -291,6 +337,11 @@ var CompetitionReport = (function (_React$Component) {
                     this.renderResults()
                 )
             );
+        }
+    }, {
+        key: "createDocx",
+        value: function createDocx() {
+            Docx("report").setHeader(_("admin.headers.competition_report")).setBody(this.refs.main_table.getDOMNode().innerHTML).addStyle(".spacer td", "height", "5pt").addStyle(".tour-name", "background", "#bbb").save();
         }
     }]);
 

@@ -3,7 +3,7 @@
 {% autoescape None %}
 
 {% block title %}
-  Tour results
+  Competition report
 {% end %}
 
 {% block styles %}
@@ -12,6 +12,9 @@
 {% end %}
 
 {% block scripts %}
+  <script src="/static/thirdparty/html-docx-js/filesaver.js"></script>
+  <script src="/static/thirdparty/html-docx-js/html-docx.js"></script>
+  <script src="/static/js/docx.js"></script>
   <script src="/static/js/scoring_systems/rosfarr/inner_competition_results.js"></script>
   <script src="/static/js/results/inner_competition_results.js"></script>
   <script src="/static/js/results/competition_report.js"></script>

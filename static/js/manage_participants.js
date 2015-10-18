@@ -139,8 +139,8 @@ var ParticipantEditorRow = (function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
+            var bti = (this.state.number || 1000) * 10000;
             var sportsmen = this.state.sportsmen.map((function (sp, idx) {
-                var bti = (this.state.number || 1000) * 10000;
                 return React.createElement(
                     "div",
                     { className: "sportsman", key: idx },

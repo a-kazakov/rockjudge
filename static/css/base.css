@@ -6801,6 +6801,10 @@ body,
 .bordered-table td {
   text-align: center;
 }
+p {
+  margin: 0;
+  padding: 0;
+}
 header {
   background-color: #3f5765;
   padding: 10px;

@@ -61,65 +61,105 @@ var StartList = (function (_React$Component) {
                     ic.name
                 ),
                 React.createElement(
-                    "table",
+                    "div",
                     { className: "inner-competition" },
                     React.createElement(
-                        "tbody",
-                        null,
+                        "table",
+                        { className: "bordered-table" },
                         React.createElement(
-                            "tr",
+                            "thead",
                             null,
                             React.createElement(
-                                "th",
-                                { className: "number" },
-                                _("models.participant.number")
-                            ),
-                            React.createElement(
-                                "th",
-                                { className: "name" },
-                                _("models.participant.name")
-                            ),
-                            React.createElement(
-                                "th",
-                                { className: "club" },
-                                _("models.participant.club_name")
-                            ),
-                            React.createElement(
-                                "th",
-                                { className: "coaches" },
-                                _("models.participant.coaches")
+                                "tr",
+                                null,
+                                React.createElement(
+                                    "th",
+                                    { className: "w-8 number" },
+                                    React.createElement(
+                                        "p",
+                                        null,
+                                        _("models.participant.number")
+                                    )
+                                ),
+                                React.createElement(
+                                    "th",
+                                    { className: "w-40 name" },
+                                    React.createElement(
+                                        "p",
+                                        null,
+                                        _("models.participant.name")
+                                    )
+                                ),
+                                React.createElement(
+                                    "th",
+                                    { className: "w-32 club" },
+                                    React.createElement(
+                                        "p",
+                                        null,
+                                        _("models.participant.club_name")
+                                    )
+                                ),
+                                React.createElement(
+                                    "th",
+                                    { className: "w-20 coaches" },
+                                    React.createElement(
+                                        "p",
+                                        null,
+                                        _("models.participant.coaches")
+                                    )
+                                )
                             )
                         ),
-                        ic.participants.map(function (p) {
-                            return React.createElement(
-                                "tr",
-                                { key: p.id },
-                                React.createElement(
-                                    "td",
-                                    { className: "number" },
-                                    p.number
-                                ),
-                                React.createElement(
-                                    "td",
-                                    { className: "name" },
-                                    p.name
-                                ),
-                                React.createElement(
-                                    "td",
-                                    { className: "club" },
-                                    p.club.name,
-                                    ", ",
-                                    p.club.city
-                                ),
-                                React.createElement(
-                                    "td",
-                                    { className: "coaches" },
-                                    p.coaches.split(",").map(function (c) {
-                                        return [c.trim(), React.createElement("br", null)];
-                                    })
-                                )
-                            );
-                        })
+                        React.createElement(
+                            "tbody",
+                            null,
+                            ic.participants.map(function (p) {
+                                return React.createElement(
+                                    "tr",
+                                    { key: p.id },
+                                    React.createElement(
+                                        "td",
+                                        { className: "w-8 number" },
+                                        React.createElement(
+                                            "p",
+                                            { className: "text-center" },
+                                            p.number
+                                        )
+                                    ),
+                                    React.createElement(
+                                        "td",
+                                        { className: "w-40 name" },
+                                        React.createElement(
+                                            "p",
+                                            null,
+                                            p.name
+                                        )
+                                    ),
+                                    React.createElement(
+                                        "td",
+                                        { className: "w-32 club" },
+                                        React.createElement(
+                                            "p",
+                                            null,
+                                            p.club.name,
+                                            ", ",
+                                            p.club.city
+                                        )
+                                    ),
+                                    React.createElement(
+                                        "td",
+                                        { className: "w-20 coaches" },
+                                        React.createElement(
+                                            "p",
+                                            null,
+                                            p.coaches.split(",").map(function (c) {
+                                                return [c.trim(), React.createElement("br", null)];
+                                            })
+                                        )
+                                    )
+                                );
+                            })
+                        )
                     )
                 )
             );
@@ -147,10 +187,8 @@ var StartList = (function (_React$Component) {
                         { className: "controls" },
                         React.createElement(
                             "button",
-                            { className: "btn btn-primary", onClick: function () {
-                                    return print();
-                                } },
-                            _("results.buttons.print")
+                            { className: "btn btn-primary", onClick: this.createDocx.bind(this) },
+                            "DOCX"
                         )
                     ),
                     React.createElement(
@@ -169,11 +207,20 @@ var StartList = (function (_React$Component) {
                         ", ",
                         this.state.date
                     ),
-                    this.state.inner_competitions.map(function (ic) {
-                        return _this.renderInnerCompetition(ic);
-                    })
+                    React.createElement(
+                        "div",
+                        { ref: "content" },
+                        this.state.inner_competitions.map(function (ic) {
+                            return _this.renderInnerCompetition(ic);
+                        })
+                    )
                 )
             );
+        }
+    }, {
+        key: "createDocx",
+        value: function createDocx() {
+            Docx("start-list").setHeader(_("admin.headers.start_list")).setBody(React.findDOMNode(this.refs.content).innerHTML).save();
         }
     }]);
 

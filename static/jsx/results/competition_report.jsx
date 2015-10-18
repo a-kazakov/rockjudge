@@ -38,18 +38,18 @@ class CompetitionReport extends React.Component {
     renderInfoTable() {
         return <table className="info"><tbody>
             <tr>
-                <th>{ _("admin.labels.competition_name") }</th>
-                <td>{ this.state.competition.name }</td>
+                <th className="w-30"><p className="text-left">{ _("admin.labels.competition_name") }</p></th>
+                <td className="w-70"><p>{ this.state.competition.name }</p></td>
             </tr>
             <tr>
-                <th>{ _("admin.labels.competition_data") }</th>
-                <td>{ this.state.competition.date }</td>
+                <th className="w-30"><p className="text-left">{ _("admin.labels.competition_date") }</p></th>
+                <td className="w-70"><p>{ this.state.competition.date }</p></td>
             </tr>
             {
                 this.state.competition.info.map((row) =>
                     <tr key={ row[0] }>
-                        <th>{ row[0] }</th>
-                        <td>{ row[1] }</td>
+                        <th className="w-30"><p className="text-left">{ row[0] }</p></th>
+                        <td className="w-70"><p>{ row[1] }</p></td>
                     </tr>
                 )
             }
@@ -62,13 +62,13 @@ class CompetitionReport extends React.Component {
         clubs.forEach((club) => clubs_dict[club.city] = [] )
         clubs.forEach((club) => clubs_dict[club.city].push(club.name) )
         clubs.forEach((club) => clubs_dict[club.city].sort )
-        Object.keys(clubs_dict).forEach((city) => cities.push(city))
+        Object.getOwnPropertyNames(clubs_dict).forEach((city) => cities.push(city))
         cities.sort()
         return <table className="clubs"><tbody> {
             cities.map((city) =>
                 <tr key={ city }>
-                    <th>{ city }</th>
-                    <td>{ clubs_dict[city].join(", ") }</td>
+                    <th className="w-30"><p className="text-left">{ city }</p></th>
+                    <td className="w-70"><p>{ clubs_dict[city].join(", ") }</p></td>
                 </tr>
             )
         } </tbody></table>;
@@ -79,8 +79,8 @@ class CompetitionReport extends React.Component {
         return <table className="judges"><tbody> {
             judges.map((judge) =>
                 <tr key={ judge.id }>
-                    <th>{ _("global.phrases.judge_n", judge.number) }</th>
-                    <td>{ judge.name } &mdash; { judge.category }</td>
+                    <th className="w-30"><p className="text-left">{ _("global.phrases.judge_n", judge.number) }</p></th>
+                    <td className="w-70"><p>{ judge.name } &mdash; { judge.category }</p></td>
                 </tr>
             )
         }
@@ -88,8 +88,8 @@ class CompetitionReport extends React.Component {
         {
             staff.map((judge) =>
                 <tr key={ judge.id }>
-                    <th>{ judge.role_description }</th>
-                    <td>{ judge.name } &mdash; { judge.category }</td>
+                    <th className="w-30"><p className="text-left">{ judge.role_description }</p></th>
+                    <td className="w-70"><p>{ judge.name } &mdash; { judge.category }</p></td>
                 </tr>
             )
         }
@@ -112,11 +112,11 @@ class CompetitionReport extends React.Component {
         return <div>
             <header>
                 <div className="controls">
-                    <button className="btn btn-primary" onClick={ function() { window.print(); } }>{ _("results.buttons.print") }</button>
+                    <button className="btn btn-primary" onClick={ this.createDocx.bind(this) }>DOCX</button>
                 </div>
                 <h1>{ _("admin.headers.competition_report") }</h1>
             </header>
-            <div className="competition-report">
+            <div className="competition-report" ref="main_table">
                 { this.renderInfoTable() }
                 <h3>{ _("admin.headers.clubs") }</h3>
                 { this.renderClubs() }
@@ -126,5 +126,13 @@ class CompetitionReport extends React.Component {
                 { this.renderResults() }
             </div>
         </div>
+    }
+    createDocx() {
+        Docx("report")
+            .setHeader(_("admin.headers.competition_report"))
+            .setBody(this.refs.main_table.getDOMNode().innerHTML)
+            .addStyle(".spacer td", "height", "5pt")
+            .addStyle(".tour-name", "background", "#bbb")
+            .save();
     }
 }

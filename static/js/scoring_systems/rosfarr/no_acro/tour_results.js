@@ -40,13 +40,21 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         React.createElement(
                             "th",
                             null,
-                            __("results.breakdown.dt"),
-                            ":"
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.dt"),
+                                ":"
+                            )
                         ),
                         React.createElement(
                             "td",
                             null,
-                            score.raw_data.dance_tech
+                            React.createElement(
+                                "p",
+                                null,
+                                score.raw_data.dance_tech
+                            )
                         )
                     ),
                     React.createElement(
@@ -55,13 +63,21 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         React.createElement(
                             "th",
                             null,
-                            __("results.breakdown.df"),
-                            ":"
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.df"),
+                                ":"
+                            )
                         ),
                         React.createElement(
                             "td",
                             null,
-                            score.raw_data.dance_figs
+                            React.createElement(
+                                "p",
+                                null,
+                                score.raw_data.dance_figs
+                            )
                         )
                     ),
                     React.createElement(
@@ -70,13 +86,21 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         React.createElement(
                             "th",
                             null,
-                            __("results.breakdown.i"),
-                            ":"
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.i"),
+                                ":"
+                            )
                         ),
                         React.createElement(
                             "td",
                             null,
-                            score.raw_data.impression
+                            React.createElement(
+                                "p",
+                                null,
+                                score.raw_data.impression
+                            )
                         )
                     ),
                     React.createElement(
@@ -85,13 +109,21 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         React.createElement(
                             "th",
                             null,
-                            __("results.breakdown.sm"),
-                            ":"
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.sm"),
+                                ":"
+                            )
                         ),
                         React.createElement(
                             "td",
                             null,
-                            score.raw_data.small_mistakes
+                            React.createElement(
+                                "p",
+                                null,
+                                score.raw_data.small_mistakes
+                            )
                         )
                     ),
                     React.createElement(
@@ -100,13 +132,21 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         React.createElement(
                             "th",
                             null,
-                            __("results.breakdown.bm"),
-                            ":"
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.bm"),
+                                ":"
+                            )
                         ),
                         React.createElement(
                             "td",
                             null,
-                            score.raw_data.big_mistakes
+                            React.createElement(
+                                "p",
+                                null,
+                                score.raw_data.big_mistakes
+                            )
                         )
                     ),
                     React.createElement(
@@ -115,8 +155,12 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         React.createElement(
                             "th",
                             null,
-                            __("results.breakdown.t"),
-                            ":"
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.t"),
+                                ":"
+                            )
                         ),
                         React.createElement(
                             "td",
@@ -142,15 +186,23 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         React.createElement(
                             "th",
                             null,
-                            __("results.breakdown.fw"),
-                            ":"
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.fw"),
+                                ":"
+                            )
                         ),
                         React.createElement(
                             "td",
                             null,
-                            "-",
-                            score.raw_data.fw_woman,
-                            "%"
+                            React.createElement(
+                                "p",
+                                null,
+                                "-",
+                                score.raw_data.fw_woman,
+                                "%"
+                            )
                         )
                     ),
                     React.createElement(
@@ -159,15 +211,23 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         React.createElement(
                             "th",
                             null,
-                            __("results.breakdown.fm"),
-                            ":"
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.fm"),
+                                ":"
+                            )
                         ),
                         React.createElement(
                             "td",
                             null,
-                            "-",
-                            score.raw_data.fw_man,
-                            "%"
+                            React.createElement(
+                                "p",
+                                null,
+                                "-",
+                                score.raw_data.fw_man,
+                                "%"
+                            )
                         )
                     ),
                     React.createElement(
@@ -176,13 +236,21 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         React.createElement(
                             "th",
                             null,
-                            __("results.breakdown.df"),
-                            ":"
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.df"),
+                                ":"
+                            )
                         ),
                         React.createElement(
                             "td",
                             null,
-                            score.raw_data.dance_figs
+                            React.createElement(
+                                "p",
+                                null,
+                                score.raw_data.dance_figs
+                            )
                         )
                     ),
                     React.createElement(
@@ -191,13 +259,21 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         React.createElement(
                             "th",
                             null,
-                            __("results.breakdown.c"),
-                            ":"
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.c"),
+                                ":"
+                            )
                         ),
                         React.createElement(
                             "td",
                             null,
-                            score.raw_data.composition
+                            React.createElement(
+                                "p",
+                                null,
+                                score.raw_data.composition
+                            )
                         )
                     ),
                     React.createElement(
@@ -206,13 +282,21 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         React.createElement(
                             "th",
                             null,
-                            __("results.breakdown.sm"),
-                            ":"
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.sm"),
+                                ":"
+                            )
                         ),
                         React.createElement(
                             "td",
                             null,
-                            score.raw_data.small_mistakes
+                            React.createElement(
+                                "p",
+                                null,
+                                score.raw_data.small_mistakes
+                            )
                         )
                     ),
                     React.createElement(
@@ -221,13 +305,21 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         React.createElement(
                             "th",
                             null,
-                            __("results.breakdown.bm"),
-                            ":"
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.bm"),
+                                ":"
+                            )
                         ),
                         React.createElement(
                             "td",
                             null,
-                            score.raw_data.big_mistakes
+                            React.createElement(
+                                "p",
+                                null,
+                                score.raw_data.big_mistakes
+                            )
                         )
                     ),
                     React.createElement(
@@ -236,13 +328,21 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         React.createElement(
                             "th",
                             null,
-                            __("results.breakdown.t"),
-                            ":"
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.t"),
+                                ":"
+                            )
                         ),
                         React.createElement(
                             "td",
                             { className: "total-score" },
-                            score.total_score
+                            React.createElement(
+                                "p",
+                                null,
+                                score.total_score
+                            )
                         )
                     )
                 )
@@ -258,15 +358,23 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                     React.createElement(
                         "th",
                         null,
-                        __("results.breakdown.acro_n", idx + 1),
-                        ":"
+                        React.createElement(
+                            "p",
+                            null,
+                            __("results.breakdown.acro_n", idx + 1),
+                            ":"
+                        )
                     ),
                     React.createElement(
                         "td",
                         null,
-                        "-",
-                        score,
-                        "%"
+                        React.createElement(
+                            "p",
+                            null,
+                            "-",
+                            score,
+                            "%"
+                        )
                     )
                 );
             }).bind(this));
@@ -283,13 +391,21 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         React.createElement(
                             "th",
                             null,
-                            __("results.breakdown.fd"),
-                            ":"
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.fd"),
+                                ":"
+                            )
                         ),
                         React.createElement(
                             "td",
-                            { className: "total-score" },
-                            score.raw_data.mistakes
+                            null,
+                            React.createElement(
+                                "p",
+                                null,
+                                score.raw_data.mistakes
+                            )
                         )
                     ),
                     React.createElement(
@@ -298,13 +414,21 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         React.createElement(
                             "th",
                             null,
-                            __("results.breakdown.t"),
-                            ":"
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.t"),
+                                ":"
+                            )
                         ),
                         React.createElement(
                             "td",
                             { className: "total-score" },
-                            score.total_score
+                            React.createElement(
+                                "p",
+                                null,
+                                score.total_score
+                            )
                         )
                     )
                 )
@@ -339,15 +463,23 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
         value: function render() {
             var next_tour_cell = this.props.has_next_tour ? React.createElement(
                 "td",
-                { className: "next-tour" },
-                this.props.row.advances ? _("global.labels.yes") : _("global.labels.no")
+                { className: "w-3 next-tour" },
+                React.createElement(
+                    "p",
+                    { className: "text-center" },
+                    this.props.row.advances ? _("global.labels.yes") : _("global.labels.no")
+                )
             ) : null;
             var judges_scores = this.props.judges.map((function (judge) {
                 var score = this.props.row.scores.scores[judge.id].data;
                 return React.createElement(
                     "td",
                     { key: judge.id },
-                    this.renderScore(judge, score)
+                    React.createElement(
+                        "p",
+                        { className: "text-center" },
+                        this.renderScore(judge, score)
+                    )
                 );
             }).bind(this));
             var acro_scores_cell = null;
@@ -359,19 +491,27 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         React.createElement(
                             "th",
                             null,
-                            __("results.breakdown.acro_n", idx + 1),
-                            ":"
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.acro_n", idx + 1),
+                                ":"
+                            )
                         ),
                         React.createElement(
                             "td",
                             null,
-                            acro.score.toFixed(1)
+                            React.createElement(
+                                "p",
+                                null,
+                                acro.score.toFixed(1)
+                            )
                         )
                     );
                 }).bind(this));
                 acro_scores_cell = React.createElement(
                     "td",
-                    { className: "acro_scores" },
+                    { className: "w-4 acro_scores" },
                     React.createElement(
                         "table",
                         { className: "score-breakdown" },
@@ -388,13 +528,22 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                 null,
                 React.createElement(
                     "td",
-                    { className: "place" },
-                    this.props.row.place
+                    { className: "w-3 place" },
+                    React.createElement(
+                        "p",
+                        { className: "text-center" },
+                        this.props.row.place
+                    )
                 ),
+                next_tour_cell,
                 React.createElement(
                     "td",
-                    { className: "number" },
-                    this.props.row.participant.number
+                    { className: "w-1 number" },
+                    React.createElement(
+                        "p",
+                        { className: "text-center" },
+                        this.props.row.participant.number
+                    )
                 ),
                 React.createElement(
                     "td",
@@ -422,12 +571,15 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                 ),
                 React.createElement(
                     "td",
-                    { className: "score" },
-                    this.props.row.scores.total_run_score
+                    { className: "w-5 score" },
+                    React.createElement(
+                        "p",
+                        { className: "text-center" },
+                        this.props.row.scores.total_run_score
+                    )
                 ),
                 acro_scores_cell,
-                judges_scores,
-                next_tour_cell
+                judges_scores
             );
         }
     }]);
@@ -459,17 +611,25 @@ var TourResultsVerboseTable = (function (_React$Component2) {
                 return React.createElement(
                     "th",
                     { key: judge.id },
-                    judge.number
+                    React.createElement(
+                        "p",
+                        null,
+                        judge.number
+                    )
                 );
             });
             var acro_header = this.props.scoring_system == "rosfarr.acro" ? React.createElement(
                 "th",
-                { className: "acro" },
-                __("results.labels.acrobatics")
+                { className: "w-4 acro" },
+                React.createElement(
+                    "p",
+                    null,
+                    __("results.labels.acrobatics")
+                )
             ) : null;
             return React.createElement(
                 "table",
-                { className: "bordered-table no-break" },
+                { className: "bordered-table" },
                 React.createElement(
                     "thead",
                     null,
@@ -478,37 +638,53 @@ var TourResultsVerboseTable = (function (_React$Component2) {
                         null,
                         React.createElement(
                             "th",
-                            { className: "place" },
-                            __("results.labels.place")
+                            { className: "w-3 place" },
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.labels.place")
+                            )
                         ),
+                        this.props.has_next_tour ? React.createElement(
+                            "th",
+                            { className: "w-3 next-tour" },
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.labels.next_tour")
+                            )
+                        ) : null,
                         React.createElement(
                             "th",
-                            { className: "number" },
-                            __("results.labels.number")
+                            { className: "w-1 number" },
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.labels.number")
+                            )
                         ),
                         React.createElement(
                             "th",
                             { className: "participant" },
-                            __("results.labels.participant_name"),
-                            ",",
-                            __("results.labels.participant_club")
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.labels.participant_name"),
+                                ", ",
+                                __("results.labels.participant_club")
+                            )
                         ),
                         React.createElement(
                             "th",
-                            { className: "score" },
-                            __("results.labels.total_score")
+                            { className: "w-5 score" },
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.labels.total_score")
+                            )
                         ),
                         acro_header,
-                        judges_header,
-                        this.props.has_next_tour ? React.createElement(
-                            "th",
-                            { className: "next-tour" },
-                            React.createElement(
-                                "div",
-                                null,
-                                __("results.labels.next_tour")
-                            )
-                        ) : null
+                        judges_header
                     )
                 ),
                 React.createElement(
@@ -537,44 +713,68 @@ var TourResultsTableRow = (function (_React$Component3) {
         value: function render() {
             var next_tour_cell = this.props.has_next_tour ? React.createElement(
                 "td",
-                { className: "next-tour" },
-                this.props.row.advances ? _("global.labels.yes") : _("global.labels.no")
+                { className: "w-7 next-tour" },
+                React.createElement(
+                    "p",
+                    { className: "text-center" },
+                    this.props.row.advances ? _("global.labels.yes") : _("global.labels.no")
+                )
             ) : null;
             return React.createElement(
                 "tr",
                 null,
                 React.createElement(
                     "td",
-                    { className: "place" },
-                    this.props.row.place
-                ),
-                React.createElement(
-                    "td",
-                    { className: "number" },
-                    this.props.row.participant.number
-                ),
-                React.createElement(
-                    "td",
-                    { className: "participant" },
-                    this.props.row.participant.name
-                ),
-                React.createElement(
-                    "td",
-                    { className: "club" },
-                    this.props.row.participant.club.name,
-                    ", ",
+                    { className: "w-7 place" },
                     React.createElement(
-                        "nobr",
-                        null,
-                        this.props.row.participant.club.city
+                        "p",
+                        { className: "text-center" },
+                        this.props.row.place
+                    )
+                ),
+                next_tour_cell,
+                React.createElement(
+                    "td",
+                    { className: "w-4 number" },
+                    React.createElement(
+                        "p",
+                        { className: "text-center" },
+                        this.props.row.participant.number
                     )
                 ),
                 React.createElement(
                     "td",
-                    { className: "score" },
-                    this.props.row.scores.total_run_score
+                    { className: "participant" },
+                    React.createElement(
+                        "p",
+                        null,
+                        this.props.row.participant.name
+                    )
                 ),
-                next_tour_cell
+                React.createElement(
+                    "td",
+                    { className: "club" },
+                    React.createElement(
+                        "p",
+                        null,
+                        this.props.row.participant.club.name,
+                        ", ",
+                        React.createElement(
+                            "nobr",
+                            null,
+                            this.props.row.participant.club.city
+                        )
+                    )
+                ),
+                React.createElement(
+                    "td",
+                    { className: "w-13 score" },
+                    React.createElement(
+                        "p",
+                        { className: "text-center" },
+                        this.props.row.scores.total_run_score
+                    )
+                )
             );
         }
     }]);
@@ -611,34 +811,58 @@ var TourResultsTable = (function (_React$Component4) {
                         null,
                         React.createElement(
                             "th",
-                            { className: "place" },
-                            __("results.labels.place")
-                        ),
-                        React.createElement(
-                            "th",
-                            { className: "number" },
-                            __("results.labels.number")
-                        ),
-                        React.createElement(
-                            "th",
-                            { className: "participant" },
-                            __("results.labels.participant_name")
-                        ),
-                        React.createElement(
-                            "th",
-                            { className: "club" },
-                            __("results.labels.participant_club")
-                        ),
-                        React.createElement(
-                            "th",
-                            { className: "score" },
-                            __("results.labels.total_score")
+                            { className: "w-7 place" },
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.labels.place")
+                            )
                         ),
                         this.props.has_next_tour ? React.createElement(
                             "th",
                             { className: "next-tour" },
-                            __("results.labels.next_tour")
-                        ) : null
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.labels.next_tour")
+                            )
+                        ) : null,
+                        React.createElement(
+                            "th",
+                            { className: "w-4 number" },
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.labels.number")
+                            )
+                        ),
+                        React.createElement(
+                            "th",
+                            { className: "participant" },
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.labels.participant_name")
+                            )
+                        ),
+                        React.createElement(
+                            "th",
+                            { className: "club" },
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.labels.participant_club")
+                            )
+                        ),
+                        React.createElement(
+                            "th",
+                            { className: "w-13 score" },
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.labels.total_score")
+                            )
+                        )
                     )
                 ),
                 React.createElement(

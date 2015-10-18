@@ -367,6 +367,125 @@ var TourAdminScoresTable = (function (_React$Component4) {
             }
         }
     }, {
+        key: "renderHeatHeader",
+        value: function renderHeatHeader(prew_row, next_row) {
+            var need_render = typeof prev_row == "undefined" || prev_row.run.tour.id != next_row.run.tour.id;
+            if (!need_render) {
+                return null;
+            }
+            return React.createElement(
+                "tr",
+                { key: "H" + next_row.heat },
+                React.createElement(
+                    "th",
+                    { className: "heat-number", colSpan: "3" },
+                    React.createElement(
+                        "p",
+                        null,
+                        _("global.phrases.heat_n", next_row.heat),
+                        ":"
+                    )
+                )
+            );
+        }
+    }, {
+        key: "renderHeatRow",
+        value: function renderHeatRow(row) {
+            return React.createElement(
+                "tr",
+                { key: "R" + row.id },
+                React.createElement(
+                    "td",
+                    { className: "w-8" },
+                    React.createElement(
+                        "p",
+                        { className: "text-center" },
+                        row.participant.number
+                    )
+                ),
+                React.createElement(
+                    "td",
+                    { className: "w-46" },
+                    React.createElement(
+                        "p",
+                        null,
+                        row.participant.name
+                    )
+                ),
+                React.createElement(
+                    "td",
+                    { className: "w-46" },
+                    React.createElement(
+                        "p",
+                        null,
+                        row.participant.club.name,
+                        ", ",
+                        row.participant.club.city
+                    )
+                )
+            );
+        }
+    }, {
+        key: "renderHeatRows",
+        value: function renderHeatRows() {
+            var result = [];
+            var runs = this.state.runs;
+            for (var i = 0; i < runs.length; ++i) {
+                var header = this.renderHeatHeader(runs[i - 1], runs[i]);
+                header && result.push(header);
+                result.push(this.renderHeatRow(runs[i]));
+            }
+            return result;
+        }
+    }, {
+        key: "renderPrintableHeats",
+        value: function renderPrintableHeats() {
+            return React.createElement(
+                "div",
+                { className: "print-only", ref: "printable_heats" },
+                React.createElement(
+                    "table",
+                    { className: "bordered-table" },
+                    React.createElement(
+                        "thead",
+                        null,
+                        React.createElement(
+                            "th",
+                            { className: "w-8" },
+                            React.createElement(
+                                "p",
+                                null,
+                                _("judging.labels.number")
+                            )
+                        ),
+                        React.createElement(
+                            "th",
+                            { className: "w-46" },
+                            React.createElement(
+                                "p",
+                                null,
+                                _("judging.labels.participant_name")
+                            )
+                        ),
+                        React.createElement(
+                            "th",
+                            { className: "w-46" },
+                            React.createElement(
+                                "p",
+                                null,
+                                _("judging.labels.club")
+                            )
+                        )
+                    ),
+                    React.createElement(
+                        "tbody",
+                        null,
+                        this.renderHeatRows()
+                    )
+                )
+            );
+        }
+    }, {
         key: "render",
         value: function render() {
             if (this.state.name === null) {
@@ -422,6 +541,11 @@ var TourAdminScoresTable = (function (_React$Component4) {
                             { className: "btn btn-primary", onClick: this.onShuffleHeatsButtonClick.bind(this) },
                             _("judging.buttons.shuffle_heats")
                         ),
+                        React.createElement(
+                            "button",
+                            { className: "btn btn-primary", onClick: this.createDocx.bind(this) },
+                            "DOCX"
+                        ),
                         this.renderActiveTourControls()
                     ),
                     React.createElement(
@@ -447,34 +571,60 @@ var TourAdminScoresTable = (function (_React$Component4) {
                             React.createElement(
                                 "th",
                                 { className: "heat" },
-                                _("judging.labels.heat")
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    _("judging.labels.heat")
+                                )
                             ),
                             React.createElement(
                                 "th",
                                 { className: "number" },
-                                _("judging.labels.number")
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    _("judging.labels.number")
+                                )
                             ),
                             React.createElement(
                                 "th",
                                 { className: "name" },
-                                _("judging.labels.participant_name")
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    _("judging.labels.participant_name")
+                                )
                             ),
                             React.createElement(
                                 "th",
                                 { className: "club" },
-                                _("judging.labels.club")
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    _("judging.labels.club")
+                                )
                             ),
                             React.createElement(
                                 "th",
                                 { className: "total" },
-                                _("judging.labels.total_score")
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    _("judging.labels.total_score")
+                                )
                             ),
                             judges_header
                         ),
                         rows
                     )
-                )
+                ),
+                this.renderPrintableHeats()
             );
+        }
+    }, {
+        key: "createDocx",
+        value: function createDocx() {
+            Docx("tour-heats").setHeader(this.state.inner_competition.name).setSubheader(this.state.name).setBody(React.findDOMNode(this.refs.printable_heats).innerHTML).addStyle(".heat-number", "background", "#ccc").addStyle(".heat-number", "text-align", "left").save();
         }
     }]);
 

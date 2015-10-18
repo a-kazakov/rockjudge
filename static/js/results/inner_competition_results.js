@@ -123,10 +123,8 @@ var InnerCompetitionResults = (function (_React$Component) {
                         { className: "controls" },
                         React.createElement(
                             "button",
-                            { className: "btn btn-primary", onClick: function () {
-                                    window.print();
-                                } },
-                            _("results.buttons.print")
+                            { className: "btn btn-primary", onClick: this.createDocx.bind(this) },
+                            "DOCX"
                         )
                     ),
                     React.createElement(
@@ -135,8 +133,13 @@ var InnerCompetitionResults = (function (_React$Component) {
                         this.state.inner_competition.name
                     )
                 ),
-                React.createElement(InnerCompetitionResultsTable, { table: this.state.table })
+                React.createElement(InnerCompetitionResultsTable, { table: this.state.table, ref: "main_table" })
             );
+        }
+    }, {
+        key: "createDocx",
+        value: function createDocx() {
+            Docx("discipline-results").setHeader(this.state.inner_competition.name).setSubheader(_("admin.headers.inner_competition_results")).setBody(React.findDOMNode(this.refs.main_table).innerHTML).addStyle(".tour-name", "background", "#ccc").save();
         }
     }]);
 

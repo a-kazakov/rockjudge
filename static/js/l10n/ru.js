@@ -59,6 +59,7 @@ function _(src, arg) {
                 "competition_report": "Протокол соревнований",
                 "competition_results": "Результаты соревнования",
                 "inner_competition_general_info": "Основная информация",
+                "inner_competition_results": "Сводная таблица по категории",
                 "inner_competition_tours": "Список туров",
                 "judges": "Судейская бригада",
                 "judges_management": "Управление судьями",
@@ -66,11 +67,12 @@ function _(src, arg) {
                 "participants_management": "Управление участниками",
                 "service_menu": "Сервисное меню",
                 "start_list": "Стартовый лист",
+                "tour_results": "Результаты тура",
                 "unfinalize_tour": "Отмена финализации тура"
             },
             "labels": {
                 "competition_name": "Наименование соревнования",
-                "competition_data": "Дата проведения"
+                "competition_date": "Дата проведения"
             },
             "messages": {
                 "invalid_passcode": "Введён неверный код потверждения"
@@ -112,6 +114,9 @@ function _(src, arg) {
                 "success": "Операция успешно завершена"
             },
             "phrases": {
+                "heat_n": function heat_n(n) {
+                    return "Заход №" + n.toString();
+                },
                 "judge_n": function judge_n(n) {
                     return "Судья №" + n.toString();
                 },

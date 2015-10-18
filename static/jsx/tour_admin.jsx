@@ -243,6 +243,44 @@ class TourAdminScoresTable extends React.Component {
             </span>
         }
     }
+    renderHeatHeader(prew_row, next_row) {
+        let need_render = (typeof prev_row == "undefined") || (prev_row.run.tour.id != next_row.run.tour.id)
+        if (!need_render) {
+            return null;
+        }
+        return <tr key={ "H" + next_row.heat }><th className="heat-number" colSpan="3">
+            <p>{ _("global.phrases.heat_n", next_row.heat) }:</p>
+        </th></tr>;
+
+    }
+    renderHeatRow(row) {
+        return <tr key={ "R" + row.id }>
+            <td className="w-8"><p className="text-center">{ row.participant.number }</p></td>
+            <td className="w-46"><p>{ row.participant.name }</p></td>
+            <td className="w-46"><p>{ row.participant.club.name }, { row.participant.club.city }</p></td>
+        </tr>;
+    }
+    renderHeatRows() {
+        let result = [];
+        let runs = this.state.runs;
+        for (let i = 0; i < runs.length; ++i) {
+            let header = this.renderHeatHeader(runs[i - 1], runs[i]);
+            header && result.push(header);
+            result.push(this.renderHeatRow(runs[i]));
+        }
+        return result;
+    }
+    renderPrintableHeats() {
+        return <div className="print-only" ref="printable_heats">
+            <table className="bordered-table"><thead>
+                <th className="w-8"><p>{ _("judging.labels.number") }</p></th>
+                <th className="w-46"><p>{ _("judging.labels.participant_name") }</p></th>
+                <th className="w-46"><p>{ _("judging.labels.club") }</p></th>
+            </thead><tbody>
+                { this.renderHeatRows() }
+            </tbody></table>
+        </div>
+    }
     render() {
         if (this.state.name === null) {
             return <span>Loading...</span>;
@@ -271,6 +309,7 @@ class TourAdminScoresTable extends React.Component {
                     { this.state.active ? null : <button className="btn btn-primary" onClick={ this.onInitButtonClick.bind(this) }>{ _("judging.buttons.init_tour") }</button> }
                     { this.state.active ? null : <button className="btn btn-primary" onClick={ this.onFinalizeButtonClick.bind(this) }>{ _("judging.buttons.finalize_tour") }</button> }
                     { this.state.active ? null : <button className="btn btn-primary" onClick={ this.onShuffleHeatsButtonClick.bind(this) }>{ _("judging.buttons.shuffle_heats") }</button> }
+                    <button className="btn btn-primary" onClick={ this.createDocx.bind(this) }>DOCX</button>
                     { this.renderActiveTourControls() }
                 </div>
                 <h1>{ this.state.inner_competition.name }</h1>
@@ -279,16 +318,26 @@ class TourAdminScoresTable extends React.Component {
             <table className="bordered-table">
                 <tbody>
                     <tr>
-                        <th className="heat">{ _("judging.labels.heat") }</th>
-                        <th className="number">{ _("judging.labels.number") }</th>
-                        <th className="name">{ _("judging.labels.participant_name") }</th>
-                        <th className="club">{ _("judging.labels.club") }</th>
-                        <th className="total">{ _("judging.labels.total_score") }</th>
+                        <th className="heat"><p>{ _("judging.labels.heat") }</p></th>
+                        <th className="number"><p>{ _("judging.labels.number") }</p></th>
+                        <th className="name"><p>{ _("judging.labels.participant_name") }</p></th>
+                        <th className="club"><p>{ _("judging.labels.club") }</p></th>
+                        <th className="total"><p>{ _("judging.labels.total_score") }</p></th>
                         { judges_header }
                     </tr>
                     { rows }
                 </tbody>
             </table>
+            { this.renderPrintableHeats() }
         </div>;
+    }
+    createDocx() {
+        Docx("tour-heats")
+            .setHeader(this.state.inner_competition.name)
+            .setSubheader(this.state.name)
+            .setBody(React.findDOMNode(this.refs.printable_heats).innerHTML)
+            .addStyle(".heat-number", "background", "#ccc")
+            .addStyle(".heat-number", "text-align", "left")
+            .save();
     }
 }

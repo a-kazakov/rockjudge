@@ -28,17 +28,21 @@ var InnerCompetitionResultsTable = (function (_React$Component) {
     _createClass(InnerCompetitionResultsTable, [{
         key: "renderRowHeader",
         value: function renderRowHeader(prev_row, next_row) {
-            var render = typeof prev_row == "undefined" || prev_row.run.tour.id != next_row.run.tour.id;
-            if (!render) {
+            var need_render = typeof prev_row == "undefined" || prev_row.run.tour.id != next_row.run.tour.id;
+            if (!need_render) {
                 return null;
             }
             return React.createElement(
                 "tr",
                 { key: "H" + next_row.run.id },
                 React.createElement(
-                    "td",
+                    "th",
                     { className: "tour-name", colSpan: "5" },
-                    next_row.run.tour.name
+                    React.createElement(
+                        "p",
+                        { className: "text-center" },
+                        next_row.run.tour.name
+                    )
                 )
             );
         }
@@ -58,32 +62,52 @@ var InnerCompetitionResultsTable = (function (_React$Component) {
                 { key: "R" + row.run.id },
                 React.createElement(
                     "td",
-                    { className: "place" },
-                    row.place === null ? "" : row.place
+                    { className: "w-8 place" },
+                    React.createElement(
+                        "p",
+                        { className: "text-center" },
+                        row.place === null ? "" : row.place
+                    )
                 ),
                 React.createElement(
                     "td",
-                    { className: "number" },
-                    row.run.participant.number
+                    { className: "w-8 number" },
+                    React.createElement(
+                        "p",
+                        { className: "text-center" },
+                        row.run.participant.number
+                    )
                 ),
                 React.createElement(
                     "td",
-                    { className: "sportsmen" },
-                    sp_name
+                    { className: "w-25 sportsmen" },
+                    React.createElement(
+                        "p",
+                        null,
+                        sp_name
+                    )
                 ),
                 React.createElement(
                     "td",
-                    { className: "club" },
-                    row.run.participant.club.name,
-                    ", ",
-                    row.run.participant.club.city
+                    { className: "w-34 club" },
+                    React.createElement(
+                        "p",
+                        null,
+                        row.run.participant.club.name,
+                        ", ",
+                        row.run.participant.club.city
+                    )
                 ),
                 React.createElement(
                     "td",
-                    { className: "coaches" },
-                    row.run.participant.coaches.split(",").map(function (c) {
-                        return [c.trim(), React.createElement("br", null)];
-                    })
+                    { className: "w-25 coaches" },
+                    React.createElement(
+                        "p",
+                        null,
+                        row.run.participant.coaches.split(",").map(function (c) {
+                            return [c.trim(), React.createElement("br", null)];
+                        })
+                    )
                 )
             );
         }
@@ -116,28 +140,48 @@ var InnerCompetitionResultsTable = (function (_React$Component) {
                             null,
                             React.createElement(
                                 "th",
-                                { className: "place" },
-                                __("results.labels.place")
+                                { className: "w-8 place" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    __("results.labels.place")
+                                )
                             ),
                             React.createElement(
                                 "th",
-                                { className: "number" },
-                                __("results.labels.number")
+                                { className: "w-8 number" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    __("results.labels.number")
+                                )
                             ),
                             React.createElement(
                                 "th",
-                                { className: "sportsmen" },
-                                __("results.labels.sportsmen")
+                                { className: "w-25 sportsmen" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    __("results.labels.sportsmen")
+                                )
                             ),
                             React.createElement(
                                 "th",
-                                { className: "club" },
-                                __("results.labels.participant_club")
+                                { className: "w-34 club" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    __("results.labels.participant_club")
+                                )
                             ),
                             React.createElement(
                                 "th",
-                                { className: "coaches" },
-                                __("results.labels.participant_coaches")
+                                { className: "w-25 coaches" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    __("results.labels.participant_coaches")
+                                )
                             )
                         )
                     ),

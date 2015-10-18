@@ -94,11 +94,19 @@ class InnerCompetitionResults extends React.Component {
         return <div>
             <header>
                 <div className="controls">
-                    <button className="btn btn-primary" onClick={ function() { window.print(); } }>{ _("results.buttons.print") }</button>
+                    <button className="btn btn-primary" onClick={ this.createDocx.bind(this) }>DOCX</button>
                 </div>
                 <h1>{ this.state.inner_competition.name }</h1>
             </header>
-            <InnerCompetitionResultsTable table={ this.state.table } />
+            <InnerCompetitionResultsTable table={ this.state.table } ref="main_table" />
         </div>
+    }
+    createDocx() {
+        Docx("discipline-results")
+            .setHeader(this.state.inner_competition.name)
+            .setSubheader(_("admin.headers.inner_competition_results"))
+            .setBody(React.findDOMNode(this.refs.main_table).innerHTML)
+            .addStyle(".tour-name", "background", "#ccc")
+            .save();
     }
 }
