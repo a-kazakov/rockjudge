@@ -6801,6 +6801,11 @@ body,
 .bordered-table td {
   text-align: center;
 }
+@media screen {
+  .print-only {
+    display: none;
+  }
+}
 p {
   margin: 0;
   padding: 0;

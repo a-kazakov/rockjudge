@@ -146,7 +146,7 @@ class ParticipantEditorRow extends React.Component {
                 </select>
                 <button
                     type="button"
-                    className="del"
+                    className="del btn btn-danger"
                     onClick={ this.removeSportsman.bind(this, idx) }>X</button>
             </div>;
         }.bind(this));
@@ -174,7 +174,7 @@ class ParticipantEditorRow extends React.Component {
                     onChange={ this.onChange.bind(this, "acro", idx, "score", "score") } />
                 <button
                     type="button"
-                    className="del"
+                    className="del btn btn-danger"
                     onClick={ this.removeAcrobatic.bind(this, idx) }>X</button>
             </div>;
         }.bind(this));

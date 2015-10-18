@@ -193,7 +193,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                         "button",
                         {
                             type: "button",
-                            className: "del",
+                            className: "del btn btn-danger",
                             onClick: this.removeSportsman.bind(this, idx) },
                         "X"
                     )
@@ -227,7 +227,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                         "button",
                         {
                             type: "button",
-                            className: "del",
+                            className: "del btn btn-danger",
                             onClick: this.removeAcrobatic.bind(this, idx) },
                         "X"
                     )
