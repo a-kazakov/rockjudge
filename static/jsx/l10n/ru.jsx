@@ -49,7 +49,7 @@ function _(src, arg) {
                 "clients_management": "Управление подключенными устройствами",
                 "clubs": "Клубы-участники",
                 "clubs_management": "Управление клубами",
-                "competition_report": "Протокол соревнований",
+                "competition_report": "Протокол соревнования",
                 "competition_results": "Результаты соревнования",
                 "inner_competition_general_info": "Основная информация",
                 "inner_competition_results": "Сводная таблица по категории",
@@ -73,7 +73,7 @@ function _(src, arg) {
             },
             "menu": {
                 "all_inner_competition_results": "Сводная по категории",
-                "competition_report": "Отчет о турнире",
+                "competition_report": "Протокол соревнования",
                 "load_competition": "Импорт данных",
                 "manage_clubs": "Управление клубами",
                 "manage_tours": "Управление турами",
@@ -169,6 +169,7 @@ function _(src, arg) {
                 "name": "Участник",
                 "number": "Номер",
                 "sportsmen": "Спортсмены",
+                "sportsmen_year_of_birth": "Г.р.",
                 "year_of_birth": "Год рождения",
                 "yob": "Г.р.",
             },
@@ -264,6 +265,7 @@ function _(src, arg) {
                         "participant_name": "Участник",
                         "place": "Место",
                         "sportsmen": "Спортсмены",
+                        "sportsmen_year_of_birth": "Г.р.",
                         "total_score": "Сумма баллов",
                     },
                     "breakdown": {

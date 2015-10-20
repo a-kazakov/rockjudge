@@ -79,3 +79,12 @@ header {
     }
   }
 }
+
+.loop-width(@counter) when (@counter >= 1) {
+  .loop-width((@counter - 1));
+  .w-@{counter} {
+    width: 1% * @counter;
+  }
+}
+
+.loop-width(100);

@@ -139,7 +139,7 @@ var InnerCompetitionResults = (function (_React$Component) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("discipline-results").setHeader(this.state.inner_competition.name).setSubheader(_("admin.headers.inner_competition_results")).setBody(React.findDOMNode(this.refs.main_table).innerHTML).addStyle(".tour-name", "background", "#ccc").save();
+            Docx("discipline-results").setHeader(this.state.inner_competition.name).setSubheader(_("admin.headers.inner_competition_results")).setBody(React.findDOMNode(this.refs.main_table).innerHTML).addStyle(".tour-name", "background", "#ccc").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0").addStyle(".sportsmen", "width", "100%").save();
         }
     }]);
 

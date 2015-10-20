@@ -124,6 +124,7 @@ var DocxImpl = (function () {
         key: "save",
         value: function save() {
             var html = this.renderHTML();
+            console.log(html);
             var margins = this.orientation.portrait ? [10, 7, 15, 7] : [7, 10, 7, 10];
             var converted = htmlDocx.asBlob(html, {
                 orientation: this.orientation,

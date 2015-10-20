@@ -405,7 +405,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
                 ),
                 React.createElement(
                     "td",
-                    { className: "w-46" },
+                    { className: "w-50" },
                     React.createElement(
                         "p",
                         null,
@@ -414,13 +414,11 @@ var TourAdminScoresTable = (function (_React$Component4) {
                 ),
                 React.createElement(
                     "td",
-                    { className: "w-46" },
+                    { className: "w-42" },
                     React.createElement(
                         "p",
                         null,
-                        row.participant.club.name,
-                        ", ",
-                        row.participant.club.city
+                        row.participant.club.name
                     )
                 )
             );
@@ -624,7 +622,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("tour-heats").setHeader(this.state.inner_competition.name).setSubheader(this.state.name).setBody(React.findDOMNode(this.refs.printable_heats).innerHTML).addStyle(".heat-number", "background", "#ccc").addStyle(".heat-number", "text-align", "left").save();
+            Docx("tour-heats").setHeader(this.state.inner_competition.name).setSubheader(this.state.name).setBody(React.findDOMNode(this.refs.printable_heats).innerHTML).addStyle(".heat-number", "background", "#ccc").addStyle(".heat-number", "text-align", "left").addStyle("td, th", "font-size", "14pt").save();
         }
     }]);
 

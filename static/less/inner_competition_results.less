@@ -6,13 +6,17 @@
     vertical-align: top;
   }
   .bordered-table {
-    .place        { widht: 50px;}
-    .number       { width: 50px;  }
-    .sportsmen    { width: 200px;  }
-    .club         { width: 250px; }
-    .coaches      { width: 200px; }
-    td.sportsmen, td.club, td.coaches {
+    width: @print-width;
+    table td {
+      border: none;
+      padding: 0;
+      text-align: left;
+    }
+    td.name, td.club, td.coaches {
       text-align: left !important;
+    }
+    table.sportsmen {
+      width: 100%;
     }
     .tour-name {
       font-weight: bold;

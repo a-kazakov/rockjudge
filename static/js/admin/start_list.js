@@ -29,7 +29,8 @@ var StartList = (function (_React$Component) {
             var SCHEMA = {
                 inner_competitions: {
                     participants: {
-                        club: {}
+                        club: {},
+                        sportsmen: {}
                     }
                 }
             };
@@ -43,7 +44,8 @@ var StartList = (function (_React$Component) {
                 children: {
                     inner_competitions: {
                         participants: {
-                            club: {}
+                            club: {},
+                            sportsmen: {}
                         }
                     }
                 }
@@ -83,16 +85,25 @@ var StartList = (function (_React$Component) {
                                 ),
                                 React.createElement(
                                     "th",
-                                    { className: "w-40 name" },
+                                    { className: "w-21 name" },
                                     React.createElement(
                                         "p",
                                         null,
-                                        _("models.participant.name")
+                                        _("models.participant.sportsmen")
                                     )
                                 ),
                                 React.createElement(
                                     "th",
-                                    { className: "w-32 club" },
+                                    { className: "w-9 year-of-birth" },
+                                    React.createElement(
+                                        "p",
+                                        null,
+                                        _("models.participant.sportsmen_year_of_birth")
+                                    )
+                                ),
+                                React.createElement(
+                                    "th",
+                                    { className: "w-37 club" },
                                     React.createElement(
                                         "p",
                                         null,
@@ -101,7 +112,7 @@ var StartList = (function (_React$Component) {
                                 ),
                                 React.createElement(
                                     "th",
-                                    { className: "w-20 coaches" },
+                                    { className: "w-25 coaches" },
                                     React.createElement(
                                         "p",
                                         null,
@@ -128,16 +139,56 @@ var StartList = (function (_React$Component) {
                                     ),
                                     React.createElement(
                                         "td",
-                                        { className: "w-40 name" },
+                                        { className: "w-30 name", colSpan: "2" },
                                         React.createElement(
                                             "p",
                                             null,
-                                            p.name
+                                            React.createElement(
+                                                "table",
+                                                { className: "sportsmen" },
+                                                React.createElement(
+                                                    "tbody",
+                                                    null,
+                                                    p.formation_name ? React.createElement(
+                                                        "th",
+                                                        { colSpan: "2" },
+                                                        React.createElement(
+                                                            "p",
+                                                            { className: "text-left" },
+                                                            p.formation_name
+                                                        )
+                                                    ) : null,
+                                                    p.sportsmen.map(function (s, idx) {
+                                                        return React.createElement(
+                                                            "tr",
+                                                            { key: idx },
+                                                            React.createElement(
+                                                                "td",
+                                                                { className: "w-70" },
+                                                                React.createElement(
+                                                                    "p",
+                                                                    null,
+                                                                    s.last_name + " " + s.first_name
+                                                                )
+                                                            ),
+                                                            React.createElement(
+                                                                "td",
+                                                                { className: "w-30" },
+                                                                React.createElement(
+                                                                    "p",
+                                                                    { className: "text-center" },
+                                                                    s.year_of_birth
+                                                                )
+                                                            )
+                                                        );
+                                                    })
+                                                )
+                                            )
                                         )
                                     ),
                                     React.createElement(
                                         "td",
-                                        { className: "w-32 club" },
+                                        { className: "w-37 club" },
                                         React.createElement(
                                             "p",
                                             null,
@@ -148,7 +199,7 @@ var StartList = (function (_React$Component) {
                                     ),
                                     React.createElement(
                                         "td",
-                                        { className: "w-20 coaches" },
+                                        { className: "w-25 coaches" },
                                         React.createElement(
                                             "p",
                                             null,
@@ -220,7 +271,7 @@ var StartList = (function (_React$Component) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("start-list").setHeader(_("admin.headers.start_list")).setBody(React.findDOMNode(this.refs.content).innerHTML).save();
+            Docx("start-list").setHeader(_("admin.headers.start_list")).setBody(React.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0").addStyle(".sportsmen", "width", "100%").save();
         }
     }]);
 

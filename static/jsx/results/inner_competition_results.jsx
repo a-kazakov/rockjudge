@@ -107,6 +107,9 @@ class InnerCompetitionResults extends React.Component {
             .setSubheader(_("admin.headers.inner_competition_results"))
             .setBody(React.findDOMNode(this.refs.main_table).innerHTML)
             .addStyle(".tour-name", "background", "#ccc")
+            .addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none")
+            .addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0")
+            .addStyle(".sportsmen", "width", "100%")
             .save();
     }
 }

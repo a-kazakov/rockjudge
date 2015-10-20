@@ -6,11 +6,15 @@
     text-align: center;
   }
   .inner-competition {
-    table {
-      .number       { width: 50px;  }
-      .name         { width: 325px;  }
-      .club         { width: 300px; }
-      .coaches      { width: 150px; }
+    > table {
+      .sportsmen {
+        td, th {
+          border: none;
+          padding: 0;
+          text-align: left;
+        }
+      }
+      width: @print-width;
       td.name, td.club, td.coaches {
         text-align: left !important;
       }
@@ -21,4 +25,8 @@
       }
     }
   }
+}
+
+table.sportsmen {
+  width: 100%;
 }

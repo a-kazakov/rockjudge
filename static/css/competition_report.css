@@ -12,3 +12,12 @@
 .competition-report .clubs th {
   padding: 2px 20px 2px 0px;
 }
+.competition-report .info,
+.competition-report .clubs,
+.competition-report .judges {
+  width: 750px;
+  font-size: 12px;
+}
+table.sportsmen {
+  width: 100%;
+}

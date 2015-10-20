@@ -341,7 +341,7 @@ var CompetitionReport = (function (_React$Component) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("report").setHeader(_("admin.headers.competition_report")).setBody(this.refs.main_table.getDOMNode().innerHTML).addStyle(".spacer td", "height", "5pt").addStyle(".tour-name", "background", "#bbb").save();
+            Docx("report").setHeader(_("admin.headers.competition_report")).setBody(this.refs.main_table.getDOMNode().innerHTML).addStyle(".spacer td", "height", "5pt").addStyle(".tour-name", "background", "#bbb").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0").addStyle(".sportsmen", "width", "100%").save();
         }
     }]);
 

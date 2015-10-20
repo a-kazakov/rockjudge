@@ -256,8 +256,8 @@ class TourAdminScoresTable extends React.Component {
     renderHeatRow(row) {
         return <tr key={ "R" + row.id }>
             <td className="w-8"><p className="text-center">{ row.participant.number }</p></td>
-            <td className="w-46"><p>{ row.participant.name }</p></td>
-            <td className="w-46"><p>{ row.participant.club.name }, { row.participant.club.city }</p></td>
+            <td className="w-50"><p>{ row.participant.name }</p></td>
+            <td className="w-42"><p>{ row.participant.club.name }</p></td>
         </tr>;
     }
     renderHeatRows() {
@@ -338,6 +338,7 @@ class TourAdminScoresTable extends React.Component {
             .setBody(React.findDOMNode(this.refs.printable_heats).innerHTML)
             .addStyle(".heat-number", "background", "#ccc")
             .addStyle(".heat-number", "text-align", "left")
+            .addStyle("td, th", "font-size", "14pt")
             .save();
     }
 }
