@@ -27,7 +27,7 @@ var CompetitionReport = (function (_React$Component) {
         key: "reloadFromStorage",
         value: function reloadFromStorage() {
             var data = storage.get("Competition").by_id(this.props.competition_id).serialize({
-                inner_competitions: {},
+                disciplines: {},
                 judges: {},
                 clubs: {
                     participants: {}
@@ -46,7 +46,7 @@ var CompetitionReport = (function (_React$Component) {
                     clubs: {
                         participants: {}
                     },
-                    inner_competitions: {},
+                    disciplines: {},
                     judges: {}
                 }
             }).updateDB("Competition", this.props.competition_id).onSuccess(this.reloadFromStorage.bind(this)).send();
@@ -267,7 +267,7 @@ var CompetitionReport = (function (_React$Component) {
     }, {
         key: "renderResults",
         value: function renderResults() {
-            return this.state.competition.inner_competitions.map(function (ic) {
+            return this.state.competition.disciplines.map(function (ic) {
                 return React.createElement(
                     "div",
                     { key: ic.id },
@@ -276,8 +276,8 @@ var CompetitionReport = (function (_React$Component) {
                         null,
                         ic.name
                     ),
-                    React.createElement(InnerCompetitionResults, {
-                        inner_competition_id: ic.id,
+                    React.createElement(DisciplineResults, {
+                        discipline_id: ic.id,
                         table_only: true })
                 );
             });

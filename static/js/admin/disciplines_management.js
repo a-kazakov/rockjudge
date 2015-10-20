@@ -10,16 +10,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var InnerCompetitionEditorRow = (function (_React$Component) {
-    _inherits(InnerCompetitionEditorRow, _React$Component);
+var DisciplineEditorRow = (function (_React$Component) {
+    _inherits(DisciplineEditorRow, _React$Component);
 
-    function InnerCompetitionEditorRow() {
-        _classCallCheck(this, InnerCompetitionEditorRow);
+    function DisciplineEditorRow() {
+        _classCallCheck(this, DisciplineEditorRow);
 
-        _get(Object.getPrototypeOf(InnerCompetitionEditorRow.prototype), "constructor", this).apply(this, arguments);
+        _get(Object.getPrototypeOf(DisciplineEditorRow.prototype), "constructor", this).apply(this, arguments);
     }
 
-    _createClass(InnerCompetitionEditorRow, [{
+    _createClass(DisciplineEditorRow, [{
         key: "sertialize",
         value: function sertialize() {
             return {
@@ -32,13 +32,13 @@ var InnerCompetitionEditorRow = (function (_React$Component) {
         key: "onSubmit",
         value: function onSubmit(event) {
             event.preventDefault();
-            if (!this.props.newInnerCompetition) {
-                Api("tournaments.inner_competition.set", {
-                    inner_competition_id: this.props.inner_competition.id,
+            if (!this.props.newDiscipline) {
+                Api("tournaments.discipline.set", {
+                    discipline_id: this.props.discipline.id,
                     data: this.sertialize()
                 }).onSuccess(this.props.stopEditing).send();
             } else {
-                Api("tournaments.inner_competition.create", {
+                Api("tournaments.discipline.create", {
                     competition_id: this.props.competition_id,
                     data: this.sertialize()
                 }).onSuccess(this.props.stopEditing).send();
@@ -51,7 +51,7 @@ var InnerCompetitionEditorRow = (function (_React$Component) {
 
             return React.createElement(
                 "tr",
-                { className: "editor" + (this.props.newInnerCompetition ? " create" : "") },
+                { className: "editor" + (this.props.newDiscipline ? " create" : "") },
                 React.createElement(
                     "td",
                     { colSpan: "5" },
@@ -67,7 +67,7 @@ var InnerCompetitionEditorRow = (function (_React$Component) {
                                 React.createElement(
                                     "label",
                                     { className: "full-width" },
-                                    _("models.inner_competition.name"),
+                                    _("models.discipline.name"),
                                     React.createElement("input", {
                                         ref: (function (e) {
                                             if (e) {
@@ -75,7 +75,7 @@ var InnerCompetitionEditorRow = (function (_React$Component) {
                                             }
                                         }).bind(this),
                                         className: "full-width",
-                                        defaultValue: this.props.inner_competition.name })
+                                        defaultValue: this.props.discipline.name })
                                 )
                             ),
                             React.createElement(
@@ -84,13 +84,13 @@ var InnerCompetitionEditorRow = (function (_React$Component) {
                                 React.createElement(
                                     "label",
                                     { className: "full-width" },
-                                    _("models.inner_competition.sp"),
+                                    _("models.discipline.sp"),
                                     React.createElement("input", {
                                         ref: function (e) {
                                             return e && (_this._sp = e.getDOMNode());
                                         },
                                         className: "full-width",
-                                        defaultValue: this.props.inner_competition.sp })
+                                        defaultValue: this.props.discipline.sp })
                                 )
                             ),
                             React.createElement(
@@ -99,13 +99,13 @@ var InnerCompetitionEditorRow = (function (_React$Component) {
                                 React.createElement(
                                     "label",
                                     { className: "full-width" },
-                                    _("models.inner_competition.external_id"),
+                                    _("models.discipline.external_id"),
                                     React.createElement("br", null),
                                     React.createElement("input", {
                                         ref: function (e) {
                                             return e && (_this._external_id = e.getDOMNode());
                                         },
-                                        defaultValue: this.props.inner_competition.external_id })
+                                        defaultValue: this.props.discipline.external_id })
                                 )
                             ),
                             React.createElement(
@@ -138,22 +138,22 @@ var InnerCompetitionEditorRow = (function (_React$Component) {
         }
     }]);
 
-    return InnerCompetitionEditorRow;
+    return DisciplineEditorRow;
 })(React.Component);
 
-var InnerCompetitionRow = (function (_React$Component2) {
-    _inherits(InnerCompetitionRow, _React$Component2);
+var DisciplineRow = (function (_React$Component2) {
+    _inherits(DisciplineRow, _React$Component2);
 
-    function InnerCompetitionRow(props) {
-        _classCallCheck(this, InnerCompetitionRow);
+    function DisciplineRow(props) {
+        _classCallCheck(this, DisciplineRow);
 
-        _get(Object.getPrototypeOf(InnerCompetitionRow.prototype), "constructor", this).call(this, props);
+        _get(Object.getPrototypeOf(DisciplineRow.prototype), "constructor", this).call(this, props);
         this.state = {
             editing: false
         };
     }
 
-    _createClass(InnerCompetitionRow, [{
+    _createClass(DisciplineRow, [{
         key: "startEditing",
         value: function startEditing() {
             this.setState({
@@ -171,24 +171,24 @@ var InnerCompetitionRow = (function (_React$Component2) {
         key: "onDelete",
         value: function onDelete(event) {
             event.stopPropagation();
-            if (confirm(_("admin.confirms.delete_inner_competition"))) {
-                Api("tournaments.inner_competition.delete", {
-                    inner_competition_id: this.props.inner_competition.id
+            if (confirm(_("admin.confirms.delete_discipline"))) {
+                Api("tournaments.discipline.delete", {
+                    discipline_id: this.props.discipline.id
                 }).send();
             }
         }
     }, {
         key: "renderEditor",
         value: function renderEditor() {
-            return React.createElement(InnerCompetitionEditorRow, _extends({
-                newInnerCompetition: false,
+            return React.createElement(DisciplineEditorRow, _extends({
+                newDiscipline: false,
                 stopEditing: this.stopEditing.bind(this)
             }, this.props));
         }
     }, {
         key: "renderViewer",
         value: function renderViewer() {
-            var c = this.props.inner_competition;
+            var c = this.props.discipline;
             return React.createElement(
                 "tr",
                 { className: "viewer", onClick: this.startEditing.bind(this) },
@@ -229,22 +229,22 @@ var InnerCompetitionRow = (function (_React$Component2) {
         }
     }]);
 
-    return InnerCompetitionRow;
+    return DisciplineRow;
 })(React.Component);
 
-var InnerCompetitionCreationRow = (function (_React$Component3) {
-    _inherits(InnerCompetitionCreationRow, _React$Component3);
+var DisciplineCreationRow = (function (_React$Component3) {
+    _inherits(DisciplineCreationRow, _React$Component3);
 
-    function InnerCompetitionCreationRow(props) {
-        _classCallCheck(this, InnerCompetitionCreationRow);
+    function DisciplineCreationRow(props) {
+        _classCallCheck(this, DisciplineCreationRow);
 
-        _get(Object.getPrototypeOf(InnerCompetitionCreationRow.prototype), "constructor", this).call(this, props);
+        _get(Object.getPrototypeOf(DisciplineCreationRow.prototype), "constructor", this).call(this, props);
         this.state = {
             editing: false
         };
     }
 
-    _createClass(InnerCompetitionCreationRow, [{
+    _createClass(DisciplineCreationRow, [{
         key: "startEditing",
         value: function startEditing() {
             this.setState({
@@ -266,10 +266,10 @@ var InnerCompetitionCreationRow = (function (_React$Component3) {
                 "sp": "0",
                 "external_id": ""
             };
-            return React.createElement(InnerCompetitionEditorRow, _extends({
-                newInnerCompetition: true,
+            return React.createElement(DisciplineEditorRow, _extends({
+                newDiscipline: true,
                 stopEditing: this.stopEditing.bind(this),
-                inner_competition: empty_data
+                discipline: empty_data
             }, this.props));
         }
     }, {
@@ -287,7 +287,7 @@ var InnerCompetitionCreationRow = (function (_React$Component3) {
                             type: "button",
                             className: "btn btn-default full-width",
                             onClick: this.startEditing.bind(this) },
-                        _("admin.buttons.add_inner_competition")
+                        _("admin.buttons.add_discipline")
                     )
                 )
             );
@@ -299,32 +299,32 @@ var InnerCompetitionCreationRow = (function (_React$Component3) {
         }
     }]);
 
-    return InnerCompetitionCreationRow;
+    return DisciplineCreationRow;
 })(React.Component);
 
-var InnerCompetitionsManagementUI = (function (_React$Component4) {
-    _inherits(InnerCompetitionsManagementUI, _React$Component4);
+var DisciplinesManagementUI = (function (_React$Component4) {
+    _inherits(DisciplinesManagementUI, _React$Component4);
 
-    function InnerCompetitionsManagementUI(props) {
-        _classCallCheck(this, InnerCompetitionsManagementUI);
+    function DisciplinesManagementUI(props) {
+        _classCallCheck(this, DisciplinesManagementUI);
 
-        _get(Object.getPrototypeOf(InnerCompetitionsManagementUI.prototype), "constructor", this).call(this, props);
+        _get(Object.getPrototypeOf(DisciplinesManagementUI.prototype), "constructor", this).call(this, props);
         this.state = {
             creating: false
         };
     }
 
-    _createClass(InnerCompetitionsManagementUI, [{
+    _createClass(DisciplinesManagementUI, [{
         key: "renderTable",
         value: function renderTable() {
-            var rows = this.props.inner_competitions.map((function (inner_competition) {
-                return React.createElement(InnerCompetitionRow, {
-                    key: inner_competition.id,
-                    inner_competition: inner_competition });
+            var rows = this.props.disciplines.map((function (discipline) {
+                return React.createElement(DisciplineRow, {
+                    key: discipline.id,
+                    discipline: discipline });
             }).bind(this));
             return React.createElement(
                 "div",
-                { className: "manage-inner-competitions" },
+                { className: "manage-disciplines" },
                 React.createElement(
                     "table",
                     { className: "table table-striped" },
@@ -337,22 +337,22 @@ var InnerCompetitionsManagementUI = (function (_React$Component4) {
                             React.createElement(
                                 "th",
                                 { className: "name" },
-                                _("models.inner_competition.name")
+                                _("models.discipline.name")
                             ),
                             React.createElement(
                                 "th",
                                 { className: "sp" },
-                                _("models.inner_competition.sp")
+                                _("models.discipline.sp")
                             ),
                             React.createElement(
                                 "th",
                                 { className: "external-id" },
-                                _("models.inner_competition.external_id")
+                                _("models.discipline.external_id")
                             ),
                             React.createElement("th", { className: "delete" })
                         ),
                         rows,
-                        React.createElement(InnerCompetitionCreationRow, { competition_id: this.props.competition_id })
+                        React.createElement(DisciplineCreationRow, { competition_id: this.props.competition_id })
                     )
                 )
             );
@@ -369,7 +369,7 @@ var InnerCompetitionsManagementUI = (function (_React$Component4) {
                     React.createElement(
                         "h1",
                         null,
-                        _("admin.headers.inner_competitions_management")
+                        _("admin.headers.disciplines_management")
                     )
                 ),
                 this.renderTable()
@@ -377,6 +377,6 @@ var InnerCompetitionsManagementUI = (function (_React$Component4) {
         }
     }]);
 
-    return InnerCompetitionsManagementUI;
+    return DisciplinesManagementUI;
 })(React.Component);
-//# sourceMappingURL=inner_competitions_management.js.map
+//# sourceMappingURL=disciplines_management.js.map

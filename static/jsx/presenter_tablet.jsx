@@ -40,7 +40,7 @@ class PresenterTablet extends React.Component {
                         "sportsmen": {},
                     },
                 },
-                inner_competition: {},
+                discipline: {},
             }),
         })
     }
@@ -66,7 +66,7 @@ class PresenterTablet extends React.Component {
             storage.del("Participant");
             storage.del("Sportsman");
             storage.del("Club");
-            storage.del("InnerCompetition");
+            storage.del("Discipline");
             this.setState({
                 tour: null,
                 current_heat: 1,
@@ -80,7 +80,7 @@ class PresenterTablet extends React.Component {
                     "sportsmen": {},
                 },
             },
-            inner_competition: {},
+            discipline: {},
         }})
             .updateDB("Tour", tour_id)
             .onSuccess(function() {
@@ -130,7 +130,7 @@ class PresenterTablet extends React.Component {
         }
         var current_tour = (this.state.tour === null) ? null :
             <div className="header">
-                <h1>{ this.state.tour.inner_competition.name }: { this.state.tour.name }</h1>
+                <h1>{ this.state.tour.discipline.name }: { this.state.tour.name }</h1>
                 <h2>{ _("tablet.headers.heat") }: { this.state.current_heat } / { this.getHeatsCount() }</h2>
             </div>
         return <header>

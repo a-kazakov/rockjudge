@@ -367,7 +367,7 @@ var TourCreatingUI = (function (_React$Component3) {
         key: "submitTour",
         value: function submitTour(data) {
             Api("tournaments.tour.create", {
-                inner_competition_id: this.props.inner_competition_id,
+                discipline_id: this.props.discipline_id,
                 add_after: this.props.add_after,
                 data: data
             }).onSuccess((function (response) {
@@ -395,8 +395,8 @@ var ToursManagementUI = (function (_React$Component4) {
         key: "submitBaseData",
         value: function submitBaseData(event) {
             event.preventDefault();
-            Api("tournaments.inner_competition.set", {
-                inner_competition_id: this.props.inner_competition.id,
+            Api("tournaments.discipline.set", {
+                discipline_id: this.props.discipline.id,
                 data: {
                     name: this.refs.name.getDOMNode().value,
                     external_id: this.refs.external_id.getDOMNode().value
@@ -417,7 +417,7 @@ var ToursManagementUI = (function (_React$Component4) {
         value: function renderTourCreation(after_id) {
             if (after_id === this.state.new_tour_after_id) {
                 return React.createElement(TourCreatingUI, {
-                    inner_competition_id: this.props.inner_competition.id,
+                    discipline_id: this.props.discipline.id,
                     add_after: after_id,
                     stopEditing: this.addTourAfter.bind(this, -1) });
             } else {
@@ -431,7 +431,7 @@ var ToursManagementUI = (function (_React$Component4) {
     }, {
         key: "renderTours",
         value: function renderTours() {
-            return this.props.inner_competition.tours.map((function (tour) {
+            return this.props.discipline.tours.map((function (tour) {
                 return [React.createElement(TourEditingUI, { tour: tour, key: tour.id }), this.renderTourCreation(tour.id)];
             }).bind(this));
         }
@@ -447,7 +447,7 @@ var ToursManagementUI = (function (_React$Component4) {
                     React.createElement(
                         "h1",
                         null,
-                        this.props.inner_competition.name
+                        this.props.discipline.name
                     )
                 ),
                 React.createElement(

@@ -117,7 +117,7 @@ var TourResults = (function (_React$Component) {
                     React.createElement(
                         "h1",
                         null,
-                        this.state.inner_competition_name
+                        this.state.discipline_name
                     ),
                     React.createElement(
                         "h2",
@@ -136,7 +136,7 @@ var TourResults = (function (_React$Component) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("tour-results").setOrientation(this.state.verbose ? "landscape" : "portrait").setHeader(this.state.inner_competition_name).setSubheader(this.state.name).setBody(React.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none").addStyle(".bordered-table .score-breakdown th", "padding", "0 1pt 0 0").addStyle(".bordered-table .score-breakdown td", "padding", "0 0 0 1pt").addStyle(".score-breakdown th", "text-align", "right").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown", "width", "50pt").addStyle(".total-score", "font-weight", "bold").save();
+            Docx("tour-results").setOrientation(this.state.verbose ? "landscape" : "portrait").setHeader(this.state.discipline_name).setSubheader(this.state.name).setBody(React.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none").addStyle(".bordered-table .score-breakdown th", "padding", "0 1pt 0 0").addStyle(".bordered-table .score-breakdown td", "padding", "0 0 0 1pt").addStyle(".score-breakdown th", "text-align", "right").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown", "width", "50pt").addStyle(".total-score", "font-weight", "bold").save();
         }
     }]);
 

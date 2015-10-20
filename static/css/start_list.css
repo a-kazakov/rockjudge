@@ -4,22 +4,22 @@
 .start-list h2 {
   text-align: center;
 }
-.start-list .inner-competition > table {
+.start-list .discipline > table {
   width: 750px;
 }
-.start-list .inner-competition > table .sportsmen td,
-.start-list .inner-competition > table .sportsmen th {
+.start-list .discipline > table .sportsmen td,
+.start-list .discipline > table .sportsmen th {
   border: none;
   padding: 0;
   text-align: left;
 }
-.start-list .inner-competition > table td.name,
-.start-list .inner-competition > table td.club,
-.start-list .inner-competition > table td.coaches {
+.start-list .discipline > table td.name,
+.start-list .discipline > table td.club,
+.start-list .discipline > table td.coaches {
   text-align: left !important;
 }
-.start-list .inner-competition > table td,
-.start-list .inner-competition > table th {
+.start-list .discipline > table td,
+.start-list .discipline > table th {
   border: 2px solid black;
   padding: 2px 5px;
   vertical-align: top;

@@ -10,7 +10,7 @@ class CompetitionReport extends React.Component {
     }
     reloadFromStorage() {
         let data = storage.get("Competition").by_id(this.props.competition_id).serialize({
-            inner_competitions: {},
+            disciplines: {},
             judges: {},
             clubs: {
                 participants: {},
@@ -27,7 +27,7 @@ class CompetitionReport extends React.Component {
                 clubs: {
                     participants: {},
                 },
-                inner_competitions: {},
+                disciplines: {},
                 judges: {},
             }
         })
@@ -96,11 +96,11 @@ class CompetitionReport extends React.Component {
         </tbody></table>
     }
     renderResults() {
-        return this.state.competition.inner_competitions.map((ic) =>
+        return this.state.competition.disciplines.map((ic) =>
             <div key={ ic.id }>
                 <h4>{ ic.name }</h4>
-                <InnerCompetitionResults
-                    inner_competition_id={ ic.id }
+                <DisciplineResults
+                    discipline_id={ ic.id }
                     table_only={ true } />
             </div>
         );

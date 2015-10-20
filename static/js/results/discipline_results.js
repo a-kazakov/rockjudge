@@ -8,15 +8,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var InnerCompetitionResults = (function (_React$Component) {
-    _inherits(InnerCompetitionResults, _React$Component);
+var DisciplineResults = (function (_React$Component) {
+    _inherits(DisciplineResults, _React$Component);
 
     // Initialization
 
-    function InnerCompetitionResults(props) {
-        _classCallCheck(this, InnerCompetitionResults);
+    function DisciplineResults(props) {
+        _classCallCheck(this, DisciplineResults);
 
-        _get(Object.getPrototypeOf(InnerCompetitionResults.prototype), "constructor", this).call(this, props);
+        _get(Object.getPrototypeOf(DisciplineResults.prototype), "constructor", this).call(this, props);
         this.state = {
             loaded: false
         };
@@ -28,24 +28,24 @@ var InnerCompetitionResults = (function (_React$Component) {
             if (!tour_storage) {
                 return;
             }
-            if (tour_storage.inner_competition.id == this.props.inner_competition_id) {
+            if (tour_storage.discipline.id == this.props.discipline_id) {
                 this.loadResults();
             }
         }).bind(this));
         this.loadData();
     }
 
-    _createClass(InnerCompetitionResults, [{
+    _createClass(DisciplineResults, [{
         key: "reloadState",
         value: function reloadState() {
-            if (!this.state.inner_competition_results) {
+            if (!this.state.discipline_results) {
                 return;
             }
             if (!this.runs_loaded) {
                 return;
             }
             var storage_runs = storage.get("Run");
-            var results = this.state.inner_competition_results;
+            var results = this.state.discipline_results;
             var new_state = [];
             var SCHEMA = {
                 tour: {},
@@ -63,17 +63,17 @@ var InnerCompetitionResults = (function (_React$Component) {
             this.setState({
                 loaded: true,
                 table: new_state,
-                inner_competition: storage.get("InnerCompetition").by_id(this.props.inner_competition_id).serialize({})
+                discipline: storage.get("Discipline").by_id(this.props.discipline_id).serialize({})
             });
         }
     }, {
         key: "loadResults",
         value: function loadResults() {
-            Api("tournaments.inner_competition.get_results", {
-                inner_competition_id: this.props.inner_competition_id
+            Api("tournaments.discipline.get_results", {
+                discipline_id: this.props.discipline_id
             }).onSuccess((function (response) {
                 this.setState({
-                    inner_competition_results: response
+                    discipline_results: response
                 });
                 this.reloadState();
             }).bind(this)).send();
@@ -81,8 +81,8 @@ var InnerCompetitionResults = (function (_React$Component) {
     }, {
         key: "loadData",
         value: function loadData() {
-            Api("tournaments.inner_competition.get", {
-                inner_competition_id: this.props.inner_competition_id,
+            Api("tournaments.discipline.get", {
+                discipline_id: this.props.discipline_id,
                 children: {
                     tours: {
                         runs: {
@@ -93,7 +93,7 @@ var InnerCompetitionResults = (function (_React$Component) {
                         }
                     }
                 }
-            }).updateDB("InnerCompetition", this.props.inner_competition_id).onSuccess((function () {
+            }).updateDB("Discipline", this.props.discipline_id).onSuccess((function () {
                 this.runs_loaded = true;
                 this.reloadState(this);
             }).bind(this)).send();
@@ -110,7 +110,7 @@ var InnerCompetitionResults = (function (_React$Component) {
                 );
             }
             if (this.props.table_only) {
-                return React.createElement(InnerCompetitionResultsTable, { table: this.state.table });
+                return React.createElement(DisciplineResultsTable, { table: this.state.table });
             }
             return React.createElement(
                 "div",
@@ -130,19 +130,19 @@ var InnerCompetitionResults = (function (_React$Component) {
                     React.createElement(
                         "h1",
                         null,
-                        this.state.inner_competition.name
+                        this.state.discipline.name
                     )
                 ),
-                React.createElement(InnerCompetitionResultsTable, { table: this.state.table, ref: "main_table" })
+                React.createElement(DisciplineResultsTable, { table: this.state.table, ref: "main_table" })
             );
         }
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("discipline-results").setHeader(this.state.inner_competition.name).setSubheader(_("admin.headers.inner_competition_results")).setBody(React.findDOMNode(this.refs.main_table).innerHTML).addStyle(".tour-name", "background", "#ccc").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0").addStyle(".sportsmen", "width", "100%").save();
+            Docx("discipline-results").setHeader(this.state.discipline.name).setSubheader(_("admin.headers.discipline_results")).setBody(React.findDOMNode(this.refs.main_table).innerHTML).addStyle(".tour-name", "background", "#ccc").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0").addStyle(".sportsmen", "width", "100%").save();
         }
     }]);
 
-    return InnerCompetitionResults;
+    return DisciplineResults;
 })(React.Component);
-//# sourceMappingURL=inner_competition_results.js.map
+//# sourceMappingURL=discipline_results.js.map

@@ -166,7 +166,7 @@ class TourAdminScoresTable extends React.Component {
     }
     reloadFromStorage() {
         var SCHEMA = {
-            inner_competition: {
+            discipline: {
                 competition: {
                     judges: {},
                 }
@@ -190,7 +190,7 @@ class TourAdminScoresTable extends React.Component {
         Api("tournaments.tour.get", {
             tour_id: this.props.tour_id,
             children: {
-                inner_competition: {
+                discipline: {
                     competition: {
                         judges: {},
                     }
@@ -285,7 +285,7 @@ class TourAdminScoresTable extends React.Component {
         if (this.state.name === null) {
             return <span>Loading...</span>;
         }
-        let judges = this.state.inner_competition.competition.judges;
+        let judges = this.state.discipline.competition.judges;
         let active_judges = judges.filter(function(judge) {
             return judge.role !== "" && judge.role != "tech_judge"; // TODO: move this to scoring system
         })
@@ -312,7 +312,7 @@ class TourAdminScoresTable extends React.Component {
                     <button className="btn btn-primary" onClick={ this.createDocx.bind(this) }>DOCX</button>
                     { this.renderActiveTourControls() }
                 </div>
-                <h1>{ this.state.inner_competition.name }</h1>
+                <h1>{ this.state.discipline.name }</h1>
                 <h2>{ this.state.name }</h2>
             </header>
             <table className="bordered-table">
@@ -333,7 +333,7 @@ class TourAdminScoresTable extends React.Component {
     }
     createDocx() {
         Docx("tour-heats")
-            .setHeader(this.state.inner_competition.name)
+            .setHeader(this.state.discipline.name)
             .setSubheader(this.state.name)
             .setBody(React.findDOMNode(this.refs.printable_heats).innerHTML)
             .addStyle(".heat-number", "background", "#ccc")

@@ -44,11 +44,11 @@ var ReportsUI = (function (_React$Component) {
                         { className: "ifw" },
                         React.createElement("iframe", { src: "/report/" + this.props.competition_id })
                     );
-                case "inner_competition_results":
+                case "discipline_results":
                     return React.createElement(
                         "div",
                         { className: "ifw" },
-                        React.createElement("iframe", { src: "/ic/" + this.state.page_props.inner_competition_id.toString() + "/results" })
+                        React.createElement("iframe", { src: "/ic/" + this.state.page_props.discipline_id.toString() + "/results" })
                     );
                 case "tour_results":
                     return React.createElement(
@@ -65,7 +65,7 @@ var ReportsUI = (function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var ics = this.props.inner_competitions.map((function (ic) {
+            var ics = this.props.disciplines.map((function (ic) {
                 var tours = ic.tours.map((function (tour) {
                     return React.createElement(
                         "div",
@@ -87,9 +87,9 @@ var ReportsUI = (function (_React$Component) {
                     React.createElement(
                         "div",
                         {
-                            className: "level-2 new-ic" + (this.state.page == "inner_competition_results" && this.state.page_props.inner_competition_id == ic.id ? " active" : ""),
-                            onClick: this.switchPage.bind(this, "inner_competition_results", { inner_competition_id: ic.id }) },
-                        _("admin.menu.inner_competition_results")
+                            className: "level-2 new-ic" + (this.state.page == "discipline_results" && this.state.page_props.discipline_id == ic.id ? " active" : ""),
+                            onClick: this.switchPage.bind(this, "discipline_results", { discipline_id: ic.id }) },
+                        _("admin.menu.discipline_results")
                     )
                 );
             }).bind(this));

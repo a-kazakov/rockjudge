@@ -17,8 +17,8 @@ class ReportsUI extends React.Component {
             return <div className="ifw"><iframe src={ "/start_list/" + this.props.competition_id } /></div>
         case "competition_report":
             return <div className="ifw"><iframe src={ "/report/" + this.props.competition_id } /></div>
-        case "inner_competition_results":
-            return <div className="ifw"><iframe src={ "/ic/" + this.state.page_props.inner_competition_id.toString() + "/results" } /></div>
+        case "discipline_results":
+            return <div className="ifw"><iframe src={ "/ic/" + this.state.page_props.discipline_id.toString() + "/results" } /></div>
         case "tour_results":
             return <div className="ifw"><iframe src={ "/tour/" + this.state.page_props.tour_id.toString() + "/results" } /></div>
         case "manage_judges":
@@ -28,7 +28,7 @@ class ReportsUI extends React.Component {
         }
     }
     render() {
-        let ics = this.props.inner_competitions.map(function(ic) {
+        let ics = this.props.disciplines.map(function(ic) {
             let tours = ic.tours.map(function(tour) {
                 return <div key={ tour.id }
                         className={ "level-2" + (
@@ -45,10 +45,10 @@ class ReportsUI extends React.Component {
                 { tours }
                 <div
                         className={ "level-2 new-ic" + (
-                            (this.state.page == "inner_competition_results" && this.state.page_props.inner_competition_id == ic.id )
+                            (this.state.page == "discipline_results" && this.state.page_props.discipline_id == ic.id )
                                 ? " active" : "") }
-                        onClick={ this.switchPage.bind(this, "inner_competition_results", { inner_competition_id: ic.id }) }>
-                    { _("admin.menu.inner_competition_results") }
+                        onClick={ this.switchPage.bind(this, "discipline_results", { discipline_id: ic.id }) }>
+                    { _("admin.menu.discipline_results") }
                 </div>
             </details>;
 

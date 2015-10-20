@@ -7,7 +7,7 @@ from participants.models import (
 )
 from tournaments.models import (
     Competition,
-    InnerCompetition,
+    Discipline,
     Judge,
     Run,
     Score,
@@ -29,11 +29,11 @@ class IdTransformer:
             "participant_id": lambda run_id: Run.get(Run.id == run_id).participant_id,
         },
         "tour_id": {
-            "inner_competition_id": lambda tour_id: Tour.get(Tour.id == tour_id).inner_competition_id,
+            "discipline_id": lambda tour_id: Tour.get(Tour.id == tour_id).discipline_id,
         },
-        "inner_competition_id": {
-            "competition_id": lambda inner_competition_id: \
-                InnerCompetition.get(InnerCompetition.id == inner_competition_id).competition_id,
+        "discipline_id": {
+            "competition_id": lambda discipline_id: \
+                Discipline.get(Discipline.id == discipline_id).competition_id,
         },
         "acrobatic_id": {
             "participant_id": lambda acrobatic_id: Acrobatic.get(Acrobatic.id == acrobatic_id).participant_id,
@@ -110,10 +110,10 @@ class Api:
         } for c in competitions]
 
     @classmethod
-    def inner_competition_get(cls, request, ws_message):
-        inner_competition = cls.get_model(InnerCompetition, "inner_competition_id", request)
-        inner_competition.full_prefetch()
-        inner_competition.prefetch_tours({
+    def discipline_get(cls, request, ws_message):
+        discipline = cls.get_model(Discipline, "discipline_id", request)
+        discipline.full_prefetch()
+        discipline.prefetch_tours({
             "runs": {
                 "scores": {},
                 "acrobatic_overrides": {},
@@ -124,7 +124,7 @@ class Api:
                 },
             }
         })
-        return inner_competition.serialize(children=request["children"])
+        return discipline.serialize(children=request["children"])
 
     # Setters
 
@@ -159,8 +159,8 @@ class Api:
         return {}
 
     @classmethod
-    def inner_competition_set(cls, request, ws_message):
-        model = cls.get_model(InnerCompetition, "inner_competition_id", request)
+    def discipline_set(cls, request, ws_message):
+        model = cls.get_model(Discipline, "discipline_id", request)
         model.update_data(request["data"], ws_message=ws_message)
         return {}
 
@@ -184,16 +184,16 @@ class Api:
         return {}
 
     @classmethod
-    def inner_competition_create(cls, request, ws_message):
+    def discipline_create(cls, request, ws_message):
         competition = cls.get_model(Competition, "competition_id", request)
-        InnerCompetition.create_model(competition=competition, data=request["data"], ws_message=ws_message)
+        Discipline.create_model(competition=competition, data=request["data"], ws_message=ws_message)
         return {}
 
     @classmethod
     def tour_create(cls, request, ws_message):
-        inner_competition = cls.get_model(InnerCompetition, "inner_competition_id", request)
+        discipline = cls.get_model(Discipline, "discipline_id", request)
         Tour.create_model(
-            inner_competition=inner_competition,
+            discipline=discipline,
             add_after=request["add_after"],
             data=request["data"],
             ws_message=ws_message)
@@ -219,9 +219,9 @@ class Api:
 
     @classmethod
     def participant_create(cls, request, ws_message):
-        inner_competition = cls.get_model(InnerCompetition, "inner_competition_id", request)
+        discipline = cls.get_model(Discipline, "discipline_id", request)
         Participant.create_model(
-            inner_competition=inner_competition,
+            discipline=discipline,
             data=request["data"],
             ws_message=ws_message)
         return {}
@@ -230,7 +230,7 @@ class Api:
 
     @classmethod
     def competition_delete(cls, request, ws_message):
-        competition = cls.get_model(InnerCompetition, "competition_id", request)
+        competition = cls.get_model(Discipline, "competition_id", request)
         competition.delete_model(ws_message=ws_message)
         return {}
 
@@ -241,9 +241,9 @@ class Api:
         return {}
 
     @classmethod
-    def inner_competition_delete(cls, request, ws_message):
-        inner_competition = cls.get_model(InnerCompetition, "inner_competition_id", request)
-        inner_competition.delete_model(ws_message=ws_message)
+    def discipline_delete(cls, request, ws_message):
+        discipline = cls.get_model(Discipline, "discipline_id", request)
+        discipline.delete_model(ws_message=ws_message)
         return {}
 
     @classmethod
@@ -324,10 +324,10 @@ class Api:
         return tour.get_serialized_results()
 
     @classmethod
-    def inner_competition_get_results(cls, request, ws_message):
-        inner_competition = cls.get_model(InnerCompetition, "inner_competition_id", request)
-        inner_competition.full_prefetch()
-        inner_competition.prefetch_tours({
+    def discipline_get_results(cls, request, ws_message):
+        discipline = cls.get_model(Discipline, "discipline_id", request)
+        discipline.full_prefetch()
+        discipline.prefetch_tours({
             "runs": {
                 "scores": {},
                 "acrobatic_overrides": {},
@@ -336,7 +336,7 @@ class Api:
                 }
             },
         })
-        return inner_competition.get_serialized_results()
+        return discipline.get_serialized_results()
 
     @classmethod
     def competition_load(cls, request, ws_message):

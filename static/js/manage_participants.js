@@ -131,7 +131,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                 }).onSuccess(this.props.stopEditing).send();
             } else {
                 Api("tournaments.participant.create", {
-                    inner_competition_id: this.props.inner_competition_id,
+                    discipline_id: this.props.discipline_id,
                     data: this.sertialize()
                 }).onSuccess(this.props.stopEditing).send();
             }
@@ -560,14 +560,14 @@ var ParticipantsManager = (function (_React$Component4) {
                     sportsmen: {}
                 }
             };
-            var serialized = storage.get("InnerCompetition").by_id(this.props.inner_competition_id).serialize(SCHEMA);
+            var serialized = storage.get("Discipline").by_id(this.props.discipline_id).serialize(SCHEMA);
             this.setState(serialized);
         }
     }, {
         key: "loadData",
         value: function loadData() {
-            Api("tournaments.inner_competition.get", {
-                inner_competition_id: this.props.inner_competition_id,
+            Api("tournaments.discipline.get", {
+                discipline_id: this.props.discipline_id,
                 children: {
                     competition: {
                         clubs: {}
@@ -578,7 +578,7 @@ var ParticipantsManager = (function (_React$Component4) {
                         sportsmen: {}
                     }
                 }
-            }).updateDB("InnerCompetition", this.props.inner_competition_id).onSuccess(this.reloadFromStorage.bind(this)).send();
+            }).updateDB("Discipline", this.props.discipline_id).onSuccess(this.reloadFromStorage.bind(this)).send();
         }
     }, {
         key: "renderTable",
@@ -626,7 +626,7 @@ var ParticipantsManager = (function (_React$Component4) {
                         rows,
                         React.createElement(ParticipantCreationRow, {
                             clubs: this.state.competition.clubs,
-                            inner_competition_id: this.props.inner_competition_id })
+                            discipline_id: this.props.discipline_id })
                     )
                 ),
                 React.createElement(

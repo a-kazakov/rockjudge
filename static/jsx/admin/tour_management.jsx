@@ -159,7 +159,7 @@ class TourCreatingUI extends React.Component {
     }
     submitTour(data) {
         Api("tournaments.tour.create", {
-            inner_competition_id: this.props.inner_competition_id,
+            discipline_id: this.props.discipline_id,
             add_after: this.props.add_after,
             data: data,
         }).onSuccess(function(response) {
@@ -177,8 +177,8 @@ class ToursManagementUI extends React.Component {
     }
     submitBaseData(event) {
         event.preventDefault();
-        Api("tournaments.inner_competition.set", {
-            inner_competition_id: this.props.inner_competition.id,
+        Api("tournaments.discipline.set", {
+            discipline_id: this.props.discipline.id,
             data: {
                 name: this.refs.name.getDOMNode().value,
                 external_id: this.refs.external_id.getDOMNode().value,
@@ -195,7 +195,7 @@ class ToursManagementUI extends React.Component {
     renderTourCreation(after_id) {
         if (after_id === this.state.new_tour_after_id) {
             return <TourCreatingUI
-                inner_competition_id={ this.props.inner_competition.id }
+                discipline_id={ this.props.discipline.id }
                 add_after={ after_id }
                 stopEditing={ this.addTourAfter.bind(this, -1) } />
         } else {
@@ -205,7 +205,7 @@ class ToursManagementUI extends React.Component {
         }
     }
     renderTours() {
-        return this.props.inner_competition.tours.map(function(tour) {
+        return this.props.discipline.tours.map(function(tour) {
             return [
                 <TourEditingUI tour={ tour } key={ tour.id } />,
                 this.renderTourCreation(tour.id)
@@ -215,7 +215,7 @@ class ToursManagementUI extends React.Component {
     render() {
         return <div>
             <header>
-                <h1>{ this.props.inner_competition.name }</h1>
+                <h1>{ this.props.discipline.name }</h1>
             </header>
             <div className="ic-management-ui">
                 { this.renderTourCreation(null) }

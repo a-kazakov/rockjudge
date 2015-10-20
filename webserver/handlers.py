@@ -35,19 +35,19 @@ class CompetitionsHandler(tornado.web.RequestHandler):
         self.render("competitions.html")
 
 
-class InnerCompetitionResultsHandler(tornado.web.RequestHandler):
-    def get(self, inner_competition_id):
+class DisciplineResultsHandler(tornado.web.RequestHandler):
+    def get(self, discipline_id):
         self.render(
-            "inner_competition_results.html",
-            inner_competition_id=inner_competition_id,
+            "discipline_results.html",
+            discipline_id=discipline_id,
         )
 
 
 class ManageParticipantsHandler(tornado.web.RequestHandler):
-    def get(self, inner_competition_id):
+    def get(self, discipline_id):
         self.render(
             "manage_participants.html",
-            inner_competition_id=inner_competition_id,
+            discipline_id=discipline_id,
         )
 
 

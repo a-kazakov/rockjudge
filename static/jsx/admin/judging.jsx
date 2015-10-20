@@ -13,15 +13,15 @@ class CompetitionSchema extends React.Component {
             { tour.name }
         </div>
     }
-    renderInnerCompetition(ic) {
+    renderDiscipline(ic) {
         return <details open="true" className="block" key={ ic.id }>
             <summary className="level-1">{ ic.name }</summary>
             { ic.tours.map(this.renderTour.bind(this)) }
         </details>
     }
     render() {
-        var data = this.props.inner_competitions.map(function(ic) {
-            return this.renderInnerCompetition(ic);
+        var data = this.props.disciplines.map(function(ic) {
+            return this.renderDiscipline(ic);
         }.bind(this));
         return <div className="noselect">{ data }</div>;
     }
@@ -45,7 +45,7 @@ class JudgingUI extends React.Component {
                 <td className="side-panel">
                     <div className="scroller">
                         <CompetitionSchema
-                            inner_competitions={ this.props.inner_competitions }
+                            disciplines={ this.props.disciplines }
                             updateTourId={ this.updateTourId.bind(this) }
                             current_tour_id={ this.state.tour_id } />
                     </div>

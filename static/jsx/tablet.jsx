@@ -51,7 +51,7 @@ class JudgeTablet extends React.Component {
                     scores: {},
                     acrobatics: {},
                 },
-                inner_competition: {},
+                discipline: {},
             }),
         })
     }
@@ -83,7 +83,7 @@ class JudgeTablet extends React.Component {
             storage.del("Score");
             storage.del("Participant");
             storage.del("Sportsman");
-            storage.del("InnerCompetition");
+            storage.del("Discipline");
             this.setState({
                 tour: null,
                 current_heat: 1,
@@ -98,7 +98,7 @@ class JudgeTablet extends React.Component {
                 scores: {},
                 acrobatics: {},
             },
-            inner_competition: {},
+            discipline: {},
         }})
             .updateDB("Tour", tour_id)
             .onSuccess(function() {
@@ -156,7 +156,7 @@ class JudgeTablet extends React.Component {
             </button>;
         }
         var current_tour = <div className="header">
-            <h1>{ this.state.tour.inner_competition.name }: { this.state.tour.name }</h1>
+            <h1>{ this.state.tour.discipline.name }: { this.state.tour.name }</h1>
             <h2>{ _("tablet.headers.heat") }: { this.state.current_heat } / { this.getHeatsCount() }</h2>
         </div>;
         return <header>

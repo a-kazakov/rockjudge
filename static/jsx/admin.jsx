@@ -41,14 +41,14 @@ class ManagementUI extends React.Component {
             page_props: props,
         });
     }
-    renderInnerCompetition(ic, page) {
+    renderDiscipline(ic, page) {
         return <div
                 className={ "level-2" + (
                     this.state.page == page
-                        && this.state.page_props.inner_competition_id == ic.id
+                        && this.state.page_props.discipline_id == ic.id
                         ? " active" : "") }
                 key={ ic.id }
-                onClick={ this.switchPage.bind(this, page, { inner_competition_id: ic.id }) }>
+                onClick={ this.switchPage.bind(this, page, { discipline_id: ic.id }) }>
             { ic.name }
         </div>
     }
@@ -57,18 +57,18 @@ class ManagementUI extends React.Component {
         case "load_competition":
             return <CompetitionLoadingUI competition_id={ this.props.competition_id } />
         case "manage_tours":
-            // Seeking for inner competition with given ID
+            // Seeking for discipline with given ID
             let ic = null;
-            this.props.inner_competitions.forEach(function(el) {
-                if (el.id == this.state.page_props.inner_competition_id) {
+            this.props.disciplines.forEach(function(el) {
+                if (el.id == this.state.page_props.discipline_id) {
                     ic = el;
                 }
             }.bind(this));
             return <ToursManagementUI
-                key={ this.state.page_props.inner_competition_id }
-                inner_competition={ ic } />
+                key={ this.state.page_props.discipline_id }
+                discipline={ ic } />
         case "manage_participants":
-            return <iframe src={ "/participants/" + this.state.page_props.inner_competition_id.toString() } />
+            return <iframe src={ "/participants/" + this.state.page_props.discipline_id.toString() } />
         case "manage_judges":
             return <JudgesManagementUI
                 judges={ this.props.judges }
@@ -77,18 +77,18 @@ class ManagementUI extends React.Component {
             return <ClubsManagementUI
                 clubs={ this.props.clubs }
                 competition_id={ this.props.competition_id } />
-        case "manage_inner_competitions":
-            return <InnerCompetitionsManagementUI
-                inner_competitions={ this.props.inner_competitions }
+        case "manage_disciplines":
+            return <DisciplinesManagementUI
+                disciplines={ this.props.disciplines }
                 competition_id={ this.props.competition_id } />
         }
     }
     render() {
-        var ics_tours = this.props.inner_competitions.map(function(ic) {
-            return this.renderInnerCompetition(ic, "manage_tours");
+        var ics_tours = this.props.disciplines.map(function(ic) {
+            return this.renderDiscipline(ic, "manage_tours");
         }.bind(this));
-        var ics_participants = this.props.inner_competitions.map(function(ic) {
-            return this.renderInnerCompetition(ic, "manage_participants");
+        var ics_participants = this.props.disciplines.map(function(ic) {
+            return this.renderDiscipline(ic, "manage_participants");
         }.bind(this));
         return <table className="app-content">
             <tbody><tr>
@@ -103,9 +103,9 @@ class ManagementUI extends React.Component {
                         </div>
                         <div className="block">
                             <div
-                                    className={ "level-1" + (this.state.page == "manage_inner_competitions" ? " active" : "") }
-                                    onClick={ this.switchPage.bind(this, "manage_inner_competitions") }>
-                                { _("admin.menu.manage_inner_competitions") }
+                                    className={ "level-1" + (this.state.page == "manage_disciplines" ? " active" : "") }
+                                    onClick={ this.switchPage.bind(this, "manage_disciplines") }>
+                                { _("admin.menu.manage_disciplines") }
                             </div>
                         </div>
                         <details className="block">
@@ -144,16 +144,6 @@ class ManagementUI extends React.Component {
             </tr></tbody>
         </table>;
     }
-    createInnerCommpetition() {
-        var name = prompt(_("admin.prompts.new_inner_competition_name"));
-        if (name === null) {
-            return;
-        }
-        Api("tournaments.inner_competition.create", {
-            name: name,
-            competition_id: this.props.competition_id,
-        }).send();
-    }
 }
 
 class ServiceUI extends React.Component {
@@ -184,7 +174,7 @@ class ServiceUI extends React.Component {
     }
     renderUnfinalize() {
         let eligible_tours = [];
-        this.props.inner_competitions.forEach(function(ic) {
+        this.props.disciplines.forEach(function(ic) {
             for (var idx = ic.tours.length - 1; idx >= 0; --idx) {
                 let tour = ic.tours[idx];
                 if (tour.finalized) {
@@ -250,7 +240,7 @@ class AdminUI extends React.Component {
         var SCHEMA = {
             clubs: {},
             judges: {},
-            inner_competitions: {
+            disciplines: {
                 tours: {},
             },
         };
@@ -265,7 +255,7 @@ class AdminUI extends React.Component {
             children: {
                 clubs: {},
                 judges: {},
-                inner_competitions: {
+                disciplines: {
                     tours: {},
                 }
             }
@@ -289,20 +279,20 @@ class AdminUI extends React.Component {
         switch (this.state.active_app) {
         case "judging":
             return <JudgingUI
-                inner_competitions={ this.state.inner_competitions } />;
+                disciplines={ this.state.disciplines } />;
         case "management":
             return <ManagementUI
-                inner_competitions={ this.state.inner_competitions }
+                disciplines={ this.state.disciplines }
                 clubs={ this.state.clubs }
                 judges={ this.state.judges }
                 competition_id={ this.props.competition_id } />;
         case "results":
             return <ReportsUI
-                inner_competitions={ this.state.inner_competitions }
+                disciplines={ this.state.disciplines }
                 competition_id={ this.props.competition_id } />;
         case "service":
             return <ServiceUI
-                inner_competitions={ this.state.inner_competitions } />
+                disciplines={ this.state.disciplines } />
         }
     }
     render() {

@@ -154,15 +154,15 @@ div.load-competition-page form.load-competition button {
   text-align: center;
 }
 .manage-clubs .city,
-.manage-inner-competitions .city {
+.manage-disciplines .city {
   width: 25%;
 }
 .manage-clubs .external-id,
-.manage-inner-competitions .external-id {
+.manage-disciplines .external-id {
   width: 20%;
 }
 .manage-clubs .buttons,
-.manage-inner-competitions .buttons {
+.manage-disciplines .buttons {
   padding-top: 16px;
 }
 .manage-judges .role-description {
@@ -179,76 +179,76 @@ div.load-competition-page form.load-competition button {
 }
 .manage-judges,
 .manage-clubs,
-.manage-inner-competitions {
+.manage-disciplines {
   padding: 10px;
 }
 .manage-judges table tr.viewer,
 .manage-clubs table tr.viewer,
-.manage-inner-competitions table tr.viewer {
+.manage-disciplines table tr.viewer {
   cursor: pointer;
 }
 .manage-judges table tr.viewer .delete,
 .manage-clubs table tr.viewer .delete,
-.manage-inner-competitions table tr.viewer .delete {
+.manage-disciplines table tr.viewer .delete {
   width: 50px;
   text-align: center;
 }
 .manage-judges table tr.viewer .delete button,
 .manage-clubs table tr.viewer .delete button,
-.manage-inner-competitions table tr.viewer .delete button {
+.manage-disciplines table tr.viewer .delete button {
   padding: 0 7px;
 }
 .manage-judges table tr.editor,
 .manage-clubs table tr.editor,
-.manage-inner-competitions table tr.editor {
+.manage-disciplines table tr.editor {
   padding: 15px;
   background-color: #bdd4de;
 }
 .manage-judges table tr.editor.create,
 .manage-clubs table tr.editor.create,
-.manage-inner-competitions table tr.editor.create {
+.manage-disciplines table tr.editor.create {
   background-color: #f0ad4e;
 }
 .manage-judges table tr.editor input,
 .manage-clubs table tr.editor input,
-.manage-inner-competitions table tr.editor input,
+.manage-disciplines table tr.editor input,
 .manage-judges table tr.editor select,
 .manage-clubs table tr.editor select,
-.manage-inner-competitions table tr.editor select {
+.manage-disciplines table tr.editor select {
   height: 25px;
   border: 1px solid #ccc;
 }
 .manage-judges table tr.editor input,
 .manage-clubs table tr.editor input,
-.manage-inner-competitions table tr.editor input,
+.manage-disciplines table tr.editor input,
 .manage-judges table tr.editor select,
 .manage-clubs table tr.editor select,
-.manage-inner-competitions table tr.editor select,
+.manage-disciplines table tr.editor select,
 .manage-judges table tr.editor input button,
 .manage-clubs table tr.editor input button,
-.manage-inner-competitions table tr.editor input button,
+.manage-disciplines table tr.editor input button,
 .manage-judges table tr.editor select button,
 .manage-clubs table tr.editor select button,
-.manage-inner-competitions table tr.editor select button {
+.manage-disciplines table tr.editor select button {
   vertical-align: middle;
 }
 .manage-judges table tr.editor input,
 .manage-clubs table tr.editor input,
-.manage-inner-competitions table tr.editor input {
+.manage-disciplines table tr.editor input {
   padding-left: 5px;
   padding-right: 5px;
 }
 .manage-judges table tr.editor input,
 .manage-clubs table tr.editor input,
-.manage-inner-competitions table tr.editor input,
+.manage-disciplines table tr.editor input,
 .manage-judges table tr.editor select,
 .manage-clubs table tr.editor select,
-.manage-inner-competitions table tr.editor select {
+.manage-disciplines table tr.editor select {
   font-weight: normal;
 }
 .manage-judges table tr.editor .del,
 .manage-clubs table tr.editor .del,
-.manage-inner-competitions table tr.editor .del {
+.manage-disciplines table tr.editor .del {
   width: 5%;
   padding: 0;
   margin: 0;
@@ -257,15 +257,15 @@ div.load-competition-page form.load-competition button {
 }
 .manage-judges table tr.editor .buttons button,
 .manage-clubs table tr.editor .buttons button,
-.manage-inner-competitions table tr.editor .buttons button {
+.manage-disciplines table tr.editor .buttons button {
   width: 50%;
 }
 .manage-judges table tr.editor input,
 .manage-clubs table tr.editor input,
-.manage-inner-competitions table tr.editor input,
+.manage-disciplines table tr.editor input,
 .manage-judges table tr.editor select,
 .manage-clubs table tr.editor select,
-.manage-inner-competitions table tr.editor select {
+.manage-disciplines table tr.editor select {
   margin-bottom: 10px;
 }
 .service-menu {

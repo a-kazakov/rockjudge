@@ -27,7 +27,7 @@ var StartList = (function (_React$Component) {
         key: "reloadFromStorage",
         value: function reloadFromStorage() {
             var SCHEMA = {
-                inner_competitions: {
+                disciplines: {
                     participants: {
                         club: {},
                         sportsmen: {}
@@ -42,7 +42,7 @@ var StartList = (function (_React$Component) {
             Api("tournaments.competition.get", {
                 competition_id: this.props.competition_id,
                 children: {
-                    inner_competitions: {
+                    disciplines: {
                         participants: {
                             club: {},
                             sportsmen: {}
@@ -52,8 +52,8 @@ var StartList = (function (_React$Component) {
             }).updateDB("Competition", this.props.competition_id).onSuccess(this.reloadFromStorage.bind(this)).send();
         }
     }, {
-        key: "renderInnerCompetition",
-        value: function renderInnerCompetition(ic) {
+        key: "renderDiscipline",
+        value: function renderDiscipline(ic) {
             return React.createElement(
                 "div",
                 { key: ic.id },
@@ -64,7 +64,7 @@ var StartList = (function (_React$Component) {
                 ),
                 React.createElement(
                     "div",
-                    { className: "inner-competition" },
+                    { className: "discipline" },
                     React.createElement(
                         "table",
                         { className: "bordered-table" },
@@ -261,8 +261,8 @@ var StartList = (function (_React$Component) {
                     React.createElement(
                         "div",
                         { ref: "content" },
-                        this.state.inner_competitions.map(function (ic) {
-                            return _this.renderInnerCompetition(ic);
+                        this.state.disciplines.map(function (ic) {
+                            return _this.renderDiscipline(ic);
                         })
                     )
                 )

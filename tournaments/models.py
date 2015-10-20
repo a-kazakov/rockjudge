@@ -10,7 +10,7 @@ from participants.models import (
     Club,
     Participant,
     competition_proxy,
-    inner_competition_proxy,
+    discipline_proxy,
 )
 from scoring_systems import get_scoring_system
 
@@ -29,16 +29,16 @@ class Competition(BaseModel):
 
     def full_prefetch(self):
         self.prefetch({
-            "inner_competitions": {
+            "disciplines": {
                 "tour_set": {},
             },
             "judges": {},
         })
 
     def get_max_number(self):
-        result = (Participant.select(InnerCompetition, Participant)
-            .join(InnerCompetition)
-            .where(InnerCompetition.competition == self)
+        result = (Participant.select(Discipline, Participant)
+            .join(Discipline)
+            .where(Discipline.competition == self)
             .order_by(Participant.number.desc())
             .limit(1))
         result = list(result)
@@ -50,7 +50,7 @@ class Competition(BaseModel):
         if "clubs" in data:
             Club.load(self, data["clubs"])
         if "categories" in data:
-            InnerCompetition.load(self, data["categories"])
+            Discipline.load(self, data["categories"])
         ws_message.add_message("reload_data")
 
     @classmethod
@@ -77,7 +77,7 @@ class Competition(BaseModel):
         ws_message.add_message("competition_list_update")
 
     def delete_model(self, ws_message):
-        if self.inner_competitions.count() > 0:
+        if self.disciplines.count() > 0:
             raise ApiError("errors.competition.delete_non_empty")
         if self.clubs.count() > 0:
             raise ApiError("errors.competition.delete_non_empty")
@@ -92,14 +92,14 @@ class Competition(BaseModel):
             "active": self.active,
             "info": json.loads(self.info),
         }
-        result = self.serialize_lower_child(result, "inner_competitions", children)
+        result = self.serialize_lower_child(result, "disciplines", children)
         result = self.serialize_lower_child(result, "judges", children)
         result = self.serialize_lower_child(result, "clubs", children)
         result = self.serialize_lower_child(result, "participants", children)
         return result
 
 
-class InnerCompetition(BaseModel):
+class Discipline(BaseModel):
     class Meta:
         indexes = (
             (("competition", "external_id"), False),
@@ -108,7 +108,7 @@ class InnerCompetition(BaseModel):
 
     name = peewee.CharField()
     sp = peewee.IntegerField(default=0)
-    competition = peewee.ForeignKeyField(Competition, null=True, related_name="inner_competitions")
+    competition = peewee.ForeignKeyField(Competition, null=True, related_name="disciplines")
     first_tour = peewee.ForeignKeyField(tour_proxy, null=True)
     external_id = peewee.CharField(null=True, default=None)
 
@@ -116,7 +116,7 @@ class InnerCompetition(BaseModel):
 
     def get_back_ref(self, field):
         if field == "tours":
-            return "inner_competition"
+            return "discipline"
         return None
 
     @property
@@ -181,7 +181,7 @@ class InnerCompetition(BaseModel):
             model_type=Competition,
             model_id=competition.id,
             schema={
-                "inner_competitions": {},
+                "disciplines": {},
             }
         )
         ws_message.add_model_update(
@@ -200,7 +200,7 @@ class InnerCompetition(BaseModel):
             model_type=Competition,
             model_id=self.competition_id,
             schema={
-                "inner_competitions": {}
+                "disciplines": {}
             }
         )
         ws_message.add_model_update(
@@ -210,9 +210,9 @@ class InnerCompetition(BaseModel):
 
     def delete_model(self, ws_message):
         if self.participants.count() > 0:
-            raise ApiError("errors.inner_competition.delete_with_participants")
+            raise ApiError("errors.discipline.delete_with_participants")
         if self.first_tour is not None:
-            raise ApiError("errors.inner_competition.delete_with_tours")
+            raise ApiError("errors.discipline.delete_with_tours")
         competition_id = self.competition_id
         self.competition = None
         self.save()
@@ -220,7 +220,7 @@ class InnerCompetition(BaseModel):
             model_type=competition_proxy,
             model_id=competition_id,
             schema={
-                "inner_competitions": {},
+                "disciplines": {},
             }
         )
 
@@ -265,7 +265,7 @@ class Tour(BaseModel):
     active = peewee.BooleanField(default=False)
     hope_tour = peewee.BooleanField(default=False)
     total_advanced = peewee.IntegerField(default=0)
-    inner_competition = peewee.ForeignKeyField(InnerCompetition)
+    discipline = peewee.ForeignKeyField(Discipline)
     scoring_system_name = peewee.CharField()
 
     def full_prefetch(self):
@@ -279,7 +279,7 @@ class Tour(BaseModel):
                     "sportsmen": {},
                 },
             },
-            "inner_competition": {
+            "discipline": {
                 "competition": {
                     "judges": {},
                 },
@@ -310,8 +310,8 @@ class Tour(BaseModel):
                     break
             return result
         except self.DoesNotExist:
-            self.inner_competition.prefetch_child("participants")
-            return self.inner_competition.participants
+            self.discipline.prefetch_child("participants")
+            return self.discipline.participants
 
     def get_actual_num_advances(self):
         base_value = self.num_advances
@@ -409,7 +409,7 @@ class Tour(BaseModel):
 
     @property
     def judges(self):
-        return list(self.inner_competition.competition.judges)
+        return list(self.discipline.competition.judges)
 
     def get_prev_tour(self, throw=False):
         prev_tours_list = list(self.prev_tour)
@@ -483,23 +483,23 @@ class Tour(BaseModel):
         return get_scoring_system(self)
 
     @classmethod
-    def create_model(cls, inner_competition, add_after, data, ws_message):
+    def create_model(cls, discipline, add_after, data, ws_message):
         create_kwargs = {
             key: data[key]
             for key in ["name", "num_advances", "participants_per_heat", "hope_tour"]
         }
         create_kwargs["scoring_system_name"] = data["scoring_system"]
-        create_kwargs["inner_competition"] = inner_competition
+        create_kwargs["discipline"] = discipline
         tour = Tour.create(**create_kwargs)
         if add_after is None:
-            if inner_competition.first_tour is not None and inner_competition.first_tour.finalized:
+            if discipline.first_tour is not None and discipline.first_tour.finalized:
                 raise ApiError("errors.tour.add_before_finalized");
-            tour.next_tour = inner_competition.first_tour
-            inner_competition.first_tour = tour
-            inner_competition.save()
+            tour.next_tour = discipline.first_tour
+            discipline.first_tour = tour
+            discipline.save()
             tour.save()
         else:
-            for prev_tour in inner_competition.tours:
+            for prev_tour in discipline.tours:
                 if prev_tour.id == add_after:
                     if prev_tour.next_tour is not None and prev_tour.next_tour.finalized:
                         raise ApiError("errors.tour.add_before_finalized");
@@ -511,8 +511,8 @@ class Tour(BaseModel):
             else:
                 raise ApiError("errors.tour.invalid_add_after_id")
         ws_message.add_model_update(
-            model_type=InnerCompetition,
-            model_id=inner_competition.id,
+            model_type=Discipline,
+            model_id=discipline.id,
             schema={
                 "tours": {},
             }
@@ -522,19 +522,19 @@ class Tour(BaseModel):
         if self.finalized:
             raise ApiError("errors.tour.delete_finalized")
         # We don't actually delete the tour. Just removing it from linked list.
-        inner_competition = self.inner_competition
+        discipline = self.discipline
         prev_tour = self.get_prev_tour()
         if prev_tour is None: # This is the first_tour
-            inner_competition.first_tour = self.next_tour
-            inner_competition.save()
+            discipline.first_tour = self.next_tour
+            discipline.save()
         else:
             prev_tour.next_tour = self.next_tour
             prev_tour.save()
         self.next_tour = None
         self.save()
         ws_message.add_model_update(
-            model_type=InnerCompetition,
-            model_id=inner_competition.id,
+            model_type=Discipline,
+            model_id=discipline.id,
             schema={
                 "tours": {},
             }
@@ -584,7 +584,7 @@ class Tour(BaseModel):
             judge_s["id"] = judge.id
             judges.append(judge_s)
         result.update({
-            "inner_competition_name": self.inner_competition.name,
+            "discipline_name": self.discipline.name,
             "judges": judges,
             "results": tour_results,
         })
@@ -592,7 +592,7 @@ class Tour(BaseModel):
 
     def serialize(self, children={}):
         result = self.serialize_base()
-        result = self.serialize_upper_child(result, "inner_competition", children)
+        result = self.serialize_upper_child(result, "discipline", children)
         result = self.serialize_lower_child(result, "judges", children)
         result = self.serialize_lower_child(result, "runs", children,
             lambda x, c: x.serialize(judges=list(self.judges), children=c))
@@ -813,5 +813,5 @@ class Score(BaseModel):
 
 
 competition_proxy.initialize(Competition)
-inner_competition_proxy.initialize(InnerCompetition)
+discipline_proxy.initialize(Discipline)
 tour_proxy.initialize(Tour)

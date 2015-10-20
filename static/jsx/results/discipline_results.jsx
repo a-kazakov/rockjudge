@@ -1,4 +1,4 @@
-class InnerCompetitionResults extends React.Component {
+class DisciplineResults extends React.Component {
 
     // Initialization
 
@@ -15,21 +15,21 @@ class InnerCompetitionResults extends React.Component {
             if (!tour_storage) {
                 return;
             }
-            if (tour_storage.inner_competition.id == this.props.inner_competition_id) {
+            if (tour_storage.discipline.id == this.props.discipline_id) {
                 this.loadResults();
             }
         }.bind(this));
         this.loadData();
     }
     reloadState() {
-        if (!this.state.inner_competition_results) {
+        if (!this.state.discipline_results) {
             return;
         }
         if (!this.runs_loaded) {
             return;
         }
         let storage_runs = storage.get("Run")
-        let results = this.state.inner_competition_results;
+        let results = this.state.discipline_results;
         let new_state = []
         var SCHEMA = {
             tour: {},
@@ -47,24 +47,24 @@ class InnerCompetitionResults extends React.Component {
         this.setState({
             loaded: true,
             table: new_state,
-            inner_competition: storage.get("InnerCompetition").by_id(this.props.inner_competition_id).serialize({}),
+            discipline: storage.get("Discipline").by_id(this.props.discipline_id).serialize({}),
         });
     }
     loadResults() {
-        Api("tournaments.inner_competition.get_results", {
-            inner_competition_id: this.props.inner_competition_id,
+        Api("tournaments.discipline.get_results", {
+            discipline_id: this.props.discipline_id,
         })
         .onSuccess(function(response) {
             this.setState({
-                inner_competition_results: response,
+                discipline_results: response,
             });
             this.reloadState();
         }.bind(this))
         .send();
     }
     loadData() {
-        Api("tournaments.inner_competition.get", {
-            inner_competition_id: this.props.inner_competition_id,
+        Api("tournaments.discipline.get", {
+            discipline_id: this.props.discipline_id,
             children: {
                 tours: {
                     runs: {
@@ -76,7 +76,7 @@ class InnerCompetitionResults extends React.Component {
                 }
             }
         })
-        .updateDB("InnerCompetition", this.props.inner_competition_id)
+        .updateDB("Discipline", this.props.discipline_id)
         .onSuccess(function() {
             this.runs_loaded = true;
             this.reloadState(this)
@@ -89,22 +89,22 @@ class InnerCompetitionResults extends React.Component {
             return <span>Loading...</span>;
         }
         if (this.props.table_only) {
-            return <InnerCompetitionResultsTable table={ this.state.table } />
+            return <DisciplineResultsTable table={ this.state.table } />
         }
         return <div>
             <header>
                 <div className="controls">
                     <button className="btn btn-primary" onClick={ this.createDocx.bind(this) }>DOCX</button>
                 </div>
-                <h1>{ this.state.inner_competition.name }</h1>
+                <h1>{ this.state.discipline.name }</h1>
             </header>
-            <InnerCompetitionResultsTable table={ this.state.table } ref="main_table" />
+            <DisciplineResultsTable table={ this.state.table } ref="main_table" />
         </div>
     }
     createDocx() {
         Docx("discipline-results")
-            .setHeader(this.state.inner_competition.name)
-            .setSubheader(_("admin.headers.inner_competition_results"))
+            .setHeader(this.state.discipline.name)
+            .setSubheader(_("admin.headers.discipline_results"))
             .setBody(React.findDOMNode(this.refs.main_table).innerHTML)
             .addStyle(".tour-name", "background", "#ccc")
             .addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none")

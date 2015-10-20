@@ -313,7 +313,7 @@ class CompetitionsManager extends React.Component {
                     </tr>
                     { rows }
                     <CompetitionCreationRow
-                        inner_competition_id={ this.props.inner_competition_id } />
+                        discipline_id={ this.props.discipline_id } />
                 </tbody>
             </table>
         </div>

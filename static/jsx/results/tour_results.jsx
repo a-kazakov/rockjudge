@@ -68,7 +68,7 @@ class TourResults extends React.Component {
                     { this.renderVerboseButton() }
                     <button className="btn btn-primary" onClick={ this.createDocx.bind(this) }>DOCX</button>
                 </div>
-                <h1>{ this.state.inner_competition_name }</h1>
+                <h1>{ this.state.discipline_name }</h1>
                 <h2>{ this.state.name }</h2>
             </header>
             <div className="tour-results" ref="content">
@@ -80,7 +80,7 @@ class TourResults extends React.Component {
     createDocx() {
         Docx("tour-results")
             .setOrientation(this.state.verbose ? "landscape" : "portrait")
-            .setHeader(this.state.inner_competition_name)
+            .setHeader(this.state.discipline_name)
             .setSubheader(this.state.name)
             .setBody(React.findDOMNode(this.refs.content).innerHTML)
             .addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none")

@@ -6,7 +6,7 @@ function __() {
     return _("scoring_systems.rosfarr." + arguments[0], ...args);
 }
 
-class InnerCompetitionResultsTable extends React.Component {
+class DisciplineResultsTable extends React.Component {
     renderRowHeader(prev_row, next_row) {
         let need_render = (typeof prev_row == "undefined") || (prev_row.run.tour.id != next_row.run.tour.id)
         if (!need_render) {

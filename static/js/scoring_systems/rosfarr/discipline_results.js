@@ -16,16 +16,16 @@ function __() {
     return _.apply(undefined, ["scoring_systems.rosfarr." + arguments[0]].concat(args));
 }
 
-var InnerCompetitionResultsTable = (function (_React$Component) {
-    _inherits(InnerCompetitionResultsTable, _React$Component);
+var DisciplineResultsTable = (function (_React$Component) {
+    _inherits(DisciplineResultsTable, _React$Component);
 
-    function InnerCompetitionResultsTable() {
-        _classCallCheck(this, InnerCompetitionResultsTable);
+    function DisciplineResultsTable() {
+        _classCallCheck(this, DisciplineResultsTable);
 
-        _get(Object.getPrototypeOf(InnerCompetitionResultsTable.prototype), "constructor", this).apply(this, arguments);
+        _get(Object.getPrototypeOf(DisciplineResultsTable.prototype), "constructor", this).apply(this, arguments);
     }
 
-    _createClass(InnerCompetitionResultsTable, [{
+    _createClass(DisciplineResultsTable, [{
         key: "renderRowHeader",
         value: function renderRowHeader(prev_row, next_row) {
             var need_render = typeof prev_row == "undefined" || prev_row.run.tour.id != next_row.run.tour.id;
@@ -237,6 +237,6 @@ var InnerCompetitionResultsTable = (function (_React$Component) {
         }
     }]);
 
-    return InnerCompetitionResultsTable;
+    return DisciplineResultsTable;
 })(React.Component);
-//# sourceMappingURL=inner_competition_results.js.map
+//# sourceMappingURL=discipline_results.js.map

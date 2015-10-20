@@ -5,7 +5,7 @@ from exceptions import ApiError
 
 
 competition_proxy = peewee.Proxy()
-inner_competition_proxy = peewee.Proxy()
+discipline_proxy = peewee.Proxy()
 
 class Club(BaseModel):
     class Meta:
@@ -37,7 +37,7 @@ class Club(BaseModel):
 
     def delete_model(self, ws_message):
         # If this judge has any scores, than this judge can't be deleted
-        if self.participants.where(Participant.inner_competition != None).count() > 0:
+        if self.participants.where(Participant.discipline != None).count() > 0:
             raise ApiError("errors.club.delete_with_participants")
         competition_id = self.competition_id
         self.competition = None
@@ -94,11 +94,11 @@ class Club(BaseModel):
 class Participant(BaseModel):
     class Meta:
         indexes = (
-            (("inner_competition", "external_id"), False),
+            (("discipline", "external_id"), False),
         )
         order_by = ["number"]
 
-    inner_competition = peewee.ForeignKeyField(inner_competition_proxy, null=True, related_name="participants")
+    discipline = peewee.ForeignKeyField(discipline_proxy, null=True, related_name="participants")
     formation_name = peewee.CharField(default="")
     coaches = peewee.CharField()
     number = peewee.IntegerField()
@@ -133,7 +133,7 @@ class Participant(BaseModel):
             if key in new_data:
                 setattr(self, key, new_data[key])
         if "club_id" in new_data:
-            club = Club.get((Club.id == new_data["club_id"]) & (Club.competition == self.inner_competition.competition_id))
+            club = Club.get((Club.id == new_data["club_id"]) & (Club.competition == self.discipline.competition_id))
             self.club = club
         if "acrobatics" in new_data:
             current_acro = list(self.acrobatics)
@@ -178,8 +178,8 @@ class Participant(BaseModel):
         self.save()
         if number_changed:
             ws_message.add_model_update(
-                model_type=inner_competition_proxy,
-                model_id=self.inner_competition_id,
+                model_type=discipline_proxy,
+                model_id=self.discipline_id,
                 schema={
                     "participants": {}
                 }
@@ -195,16 +195,16 @@ class Participant(BaseModel):
         )
 
     @classmethod
-    def create_model(cls, inner_competition, data, ws_message):
+    def create_model(cls, discipline, data, ws_message):
         create_kwargs = {
             key: data[key]
             for key in ["formation_name", "number", "coaches"]
         }
         if "external_id" in data:
             create_kwargs["external_id"] = data["external_id"]
-        club = Club.get((Club.id == data["club_id"]) & (Club.competition == inner_competition.competition_id))
+        club = Club.get((Club.id == data["club_id"]) & (Club.competition == discipline.competition_id))
         create_kwargs["club"] = club
-        create_kwargs["inner_competition"] = inner_competition
+        create_kwargs["discipline"] = discipline
         model = cls.create(**create_kwargs)
         for idx, acro in enumerate(data["acrobatics"]):
             acro_kwargs = {
@@ -222,8 +222,8 @@ class Participant(BaseModel):
             sp_kwargs["participant"] = model
             Sportsman.create(**sp_kwargs)
         ws_message.add_model_update(
-            model_type=inner_competition_proxy,
-            model_id=inner_competition.id,
+            model_type=discipline_proxy,
+            model_id=discipline.id,
             schema={
                 "participants": {}
             }
@@ -239,12 +239,12 @@ class Participant(BaseModel):
         )
 
     def delete_model(self, ws_message):
-        inner_competition_id = self.inner_competition_id
-        self.inner_competition = None
+        discipline_id = self.discipline_id
+        self.discipline = None
         self.save()
         ws_message.add_model_update(
-            model_type=inner_competition_proxy,
-            model_id=inner_competition_id,
+            model_type=discipline_proxy,
+            model_id=discipline_id,
             schema={
                 "participants": {}
             }
@@ -266,10 +266,10 @@ class Participant(BaseModel):
         return result
 
     @classmethod
-    def _load_one(cls, inner_competition, club, number, obj):
+    def _load_one(cls, discipline, club, number, obj):
         if obj["external_id"] is not None:
             try:
-                model = cls.get(cls.inner_competition == inner_competition and cls.external_id == obj["external_id"])
+                model = cls.get(cls.discipline == discipline and cls.external_id == obj["external_id"])
                 for key in ["formation_name", "coaches"]:
                     setattr(model, key, obj["key"])
                 model.club = club
@@ -278,7 +278,7 @@ class Participant(BaseModel):
             except cls.DoesNotExist:
                 pass
         return cls.create(
-            inner_competition=inner_competition,
+            discipline=discipline,
             formation_name=(obj["formation_name"] if "formation_name" in obj else ""),
             coaches=(obj["coaches"] if "coaches" in obj else ""),
             number=number,
@@ -286,12 +286,12 @@ class Participant(BaseModel):
         ), True
 
     @classmethod
-    def load(cls, inner_competition, objects):
-        next_number = inner_competition.competition.get_max_number()
+    def load(cls, discipline, objects):
+        next_number = discipline.competition.get_max_number()
         next_number += 1
         for obj in objects:
             club = Club.get(Club.external_id == obj["club"])
-            model, created = cls._load_one(inner_competition, club, next_number, obj)
+            model, created = cls._load_one(discipline, club, next_number, obj)
             if created:
                 next_number += 1
             Sportsman.delete().where(Sportsman.participant == model).execute()

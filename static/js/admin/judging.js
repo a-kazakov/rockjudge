@@ -33,8 +33,8 @@ var CompetitionSchema = (function (_React$Component) {
             );
         }
     }, {
-        key: "renderInnerCompetition",
-        value: function renderInnerCompetition(ic) {
+        key: "renderDiscipline",
+        value: function renderDiscipline(ic) {
             return React.createElement(
                 "details",
                 { open: "true", className: "block", key: ic.id },
@@ -49,8 +49,8 @@ var CompetitionSchema = (function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var data = this.props.inner_competitions.map((function (ic) {
-                return this.renderInnerCompetition(ic);
+            var data = this.props.disciplines.map((function (ic) {
+                return this.renderDiscipline(ic);
             }).bind(this));
             return React.createElement(
                 "div",
@@ -101,7 +101,7 @@ var JudgingUI = (function (_React$Component2) {
                                 "div",
                                 { className: "scroller" },
                                 React.createElement(CompetitionSchema, {
-                                    inner_competitions: this.props.inner_competitions,
+                                    disciplines: this.props.disciplines,
                                     updateTourId: this.updateTourId.bind(this),
                                     current_tour_id: this.state.tour_id })
                             )

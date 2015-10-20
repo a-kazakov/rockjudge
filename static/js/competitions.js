@@ -504,7 +504,7 @@ var CompetitionsManager = (function (_React$Component4) {
                         ),
                         rows,
                         React.createElement(CompetitionCreationRow, {
-                            inner_competition_id: this.props.inner_competition_id })
+                            discipline_id: this.props.discipline_id })
                     )
                 )
             );

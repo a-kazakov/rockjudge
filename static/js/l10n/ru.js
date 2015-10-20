@@ -39,8 +39,8 @@ function _(src, arg) {
             },
             "buttons": {
                 "add_club": "Добавить клуб",
-                "add_competition": "Добавить соревнование",
-                "add_inner_competition": "Добавить категорию",
+                "add_competition": "Создать соревнование",
+                "add_discipline": "Добавить дисциплину",
                 "add_judge": "Добавить судью",
                 "add_participant": "Добавить участника",
                 "add_tour": "Добавить тур",
@@ -53,7 +53,7 @@ function _(src, arg) {
             "confirms": {
                 "delete_club": "Вы действительно хотите удалить этот клуб?",
                 "delete_competition": "Вы действительно хотите удалить это соревнование?",
-                "delete_inner_competition": "Вы действительно хотите удалить эту категорию?",
+                "delete_discipline": "Вы действительно хотите удалить эту дисциплину?",
                 "delete_judge": "Вы действительно хотите удалить этого судью?",
                 "delete_participant": "Вы действительно хотите удалить этого участника?",
                 "delete_tour": "Вы действительно хотите удалить этот тур?",
@@ -68,8 +68,8 @@ function _(src, arg) {
                 "competitions_management": "Управление соревнованиями",
                 "competition_report": "Протокол соревнования",
                 "competition_results": "Результаты соревнования",
-                "inner_competition_results": "Результаты дисциплины",
-                "inner_competitions_management": "Управление категориями",
+                "discipline_results": "Результаты дисциплины",
+                "disciplines_management": "Управление дисциплинами",
                 "judges": "Судейская бригада",
                 "judges_management": "Управление судьями",
                 "load_competition": "Импорт данных соревнования",
@@ -88,10 +88,10 @@ function _(src, arg) {
             },
             "menu": {
                 "competition_report": "Протокол соревнования",
-                "inner_competition_results": "Результаты дисциплины",
+                "discipline_results": "Результаты дисциплины",
                 "load_competition": "Импорт данных",
                 "manage_clubs": "Управление клубами",
-                "manage_inner_competitions": "Управление категориями",
+                "manage_disciplines": "Управление дисциплинами",
                 "manage_judges": "Управление судьями",
                 "manage_sportsmen": "Управление спортсменами",
                 "manage_tours": "Управление турами",
@@ -101,9 +101,6 @@ function _(src, arg) {
                 "total_n_participants": function total_n_participants(n) {
                     return "Итого " + n + " участник" + chooseEnding(n, "", "а", "ов");
                 }
-            },
-            "prompts": {
-                "new_inner_competition_name": "Введите название новой категории"
             }
         },
         "errors": {
@@ -113,7 +110,7 @@ function _(src, arg) {
             "competition": {
                 "delete_non_empty": "Невозможно удалить соревнование, содержащее дисциплины, клубы или судей"
             },
-            "inner_competition": {
+            "discipline": {
                 "delete_with_participants": "Невозможно удалить дисциплину, содержащую участников",
                 "delete_with_tours": "Невозможно удалить дисциплину, содержащую туры"
             },
@@ -195,8 +192,8 @@ function _(src, arg) {
                 "info_item_value": "Значение",
                 "name": "Название"
             },
-            "inner_competition": {
-                "name": "Название категории",
+            "discipline": {
+                "name": "Название дисциплины",
                 "sp": "Приоритет",
                 "external_id": "Внешний ID"
             },

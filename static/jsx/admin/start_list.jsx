@@ -10,7 +10,7 @@ class StartList extends React.Component {
     }
     reloadFromStorage() {
         var SCHEMA = {
-            inner_competitions: {
+            disciplines: {
                 participants: {
                     club: {},
                     sportsmen: {},
@@ -26,7 +26,7 @@ class StartList extends React.Component {
         Api("tournaments.competition.get", {
             competition_id: this.props.competition_id,
             children: {
-                inner_competitions: {
+                disciplines: {
                     participants: {
                         club: {},
                         sportsmen: {},
@@ -38,10 +38,10 @@ class StartList extends React.Component {
         .onSuccess(this.reloadFromStorage.bind(this))
         .send();
     }
-    renderInnerCompetition(ic) {
+    renderDiscipline(ic) {
         return <div key={ ic.id }>
             <h4>{ ic.name }</h4>
-            <div className="inner-competition">
+            <div className="discipline">
                 <table className="bordered-table"><thead>
                     <tr>
                         <th className="w-8 number"><p>{ _("models.participant.number") }</p></th>
@@ -85,7 +85,7 @@ class StartList extends React.Component {
             <div className="start-list">
                 <h3>{ this.state.name }, { this.state.date }</h3>
                 <div ref="content">
-                    { this.state.inner_competitions.map((ic) => this.renderInnerCompetition(ic)) }
+                    { this.state.disciplines.map((ic) => this.renderDiscipline(ic)) }
                 </div>
             </div>
         </div>;

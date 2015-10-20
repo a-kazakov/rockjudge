@@ -269,7 +269,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
         key: "reloadFromStorage",
         value: function reloadFromStorage() {
             var SCHEMA = {
-                inner_competition: {
+                discipline: {
                     competition: {
                         judges: {}
                     }
@@ -293,7 +293,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
             Api("tournaments.tour.get", {
                 tour_id: this.props.tour_id,
                 children: {
-                    inner_competition: {
+                    discipline: {
                         competition: {
                             judges: {}
                         }
@@ -493,7 +493,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
                     "Loading..."
                 );
             }
-            var judges = this.state.inner_competition.competition.judges;
+            var judges = this.state.discipline.competition.judges;
             var active_judges = judges.filter(function (judge) {
                 return judge.role !== "" && judge.role != "tech_judge"; // TODO: move this to scoring system
             });
@@ -549,7 +549,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
                     React.createElement(
                         "h1",
                         null,
-                        this.state.inner_competition.name
+                        this.state.discipline.name
                     ),
                     React.createElement(
                         "h2",
@@ -622,7 +622,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("tour-heats").setHeader(this.state.inner_competition.name).setSubheader(this.state.name).setBody(React.findDOMNode(this.refs.printable_heats).innerHTML).addStyle(".heat-number", "background", "#ccc").addStyle(".heat-number", "text-align", "left").addStyle("td, th", "font-size", "14pt").save();
+            Docx("tour-heats").setHeader(this.state.discipline.name).setSubheader(this.state.name).setBody(React.findDOMNode(this.refs.printable_heats).innerHTML).addStyle(".heat-number", "background", "#ccc").addStyle(".heat-number", "text-align", "left").addStyle("td, th", "font-size", "14pt").save();
         }
     }]);
 
