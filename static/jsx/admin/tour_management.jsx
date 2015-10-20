@@ -218,27 +218,6 @@ class ToursManagementUI extends React.Component {
                 <h1>{ this.props.inner_competition.name }</h1>
             </header>
             <div className="ic-management-ui">
-                <h2>{ _("admin.headers.inner_competition_general_info") }</h2>
-                <form className="form-horizontal" onSubmit={ this.submitBaseData.bind(this) }>
-                    <div className="form-group">
-                        <label className="col-sm-2 control-label">{ _("models.inner_competition.name") }</label>
-                        <div className="col-sm-10">
-                            <input type="text" ref="name" className="form-control" defaultValue={ this.props.inner_competition.name } />
-                        </div>
-                    </div>
-                    <div className="form-group">
-                        <label className="col-sm-2 control-label">{ _("models.inner_competition.external_id") }</label>
-                        <div className="col-sm-10">
-                            <input type="text" ref="external_id" className="form-control" defaultValue={ this.props.inner_competition.external_id } />
-                        </div>
-                    </div>
-                    <div className="form-group">
-                        <div className="col-sm-offset-2 col-sm-10">
-                            <button type="submit" className="btn btn-primary">{ _("global.buttons.save") }</button>
-                        </div>
-                    </div>
-                </form>
-                <h2>{ _("admin.headers.inner_competition_tours") }</h2>
                 { this.renderTourCreation(null) }
                 { this.renderTours() }
             </div>

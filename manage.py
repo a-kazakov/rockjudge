@@ -39,6 +39,10 @@ class Commands:
         ModelManager.instance().reset("simple")
 
     @staticmethod
+    def reset():
+        ModelManager.instance().reset()
+
+    @staticmethod
     def test():
         AsyncIOMainLoop().install()
         loader = unittest.TestLoader()

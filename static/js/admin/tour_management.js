@@ -453,61 +453,6 @@ var ToursManagementUI = (function (_React$Component4) {
                 React.createElement(
                     "div",
                     { className: "ic-management-ui" },
-                    React.createElement(
-                        "h2",
-                        null,
-                        _("admin.headers.inner_competition_general_info")
-                    ),
-                    React.createElement(
-                        "form",
-                        { className: "form-horizontal", onSubmit: this.submitBaseData.bind(this) },
-                        React.createElement(
-                            "div",
-                            { className: "form-group" },
-                            React.createElement(
-                                "label",
-                                { className: "col-sm-2 control-label" },
-                                _("models.inner_competition.name")
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "col-sm-10" },
-                                React.createElement("input", { type: "text", ref: "name", className: "form-control", defaultValue: this.props.inner_competition.name })
-                            )
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "form-group" },
-                            React.createElement(
-                                "label",
-                                { className: "col-sm-2 control-label" },
-                                _("models.inner_competition.external_id")
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "col-sm-10" },
-                                React.createElement("input", { type: "text", ref: "external_id", className: "form-control", defaultValue: this.props.inner_competition.external_id })
-                            )
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "form-group" },
-                            React.createElement(
-                                "div",
-                                { className: "col-sm-offset-2 col-sm-10" },
-                                React.createElement(
-                                    "button",
-                                    { type: "submit", className: "btn btn-primary" },
-                                    _("global.buttons.save")
-                                )
-                            )
-                        )
-                    ),
-                    React.createElement(
-                        "h2",
-                        null,
-                        _("admin.headers.inner_competition_tours")
-                    ),
                     this.renderTourCreation(null),
                     this.renderTours()
                 ),
