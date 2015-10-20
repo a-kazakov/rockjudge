@@ -43,10 +43,12 @@ class JudgingUI extends React.Component {
         return <table className="app-content">
             <tbody><tr>
                 <td className="side-panel">
-                    <CompetitionSchema
-                        inner_competitions={ this.props.inner_competitions }
-                        updateTourId={ this.updateTourId.bind(this) }
-                        current_tour_id={ this.state.tour_id } />
+                    <div className="scroller">
+                        <CompetitionSchema
+                            inner_competitions={ this.props.inner_competitions }
+                            updateTourId={ this.updateTourId.bind(this) }
+                            current_tour_id={ this.state.tour_id } />
+                    </div>
                 </td>
                 <td>
                     { this.state.tour_id === null ? <br />

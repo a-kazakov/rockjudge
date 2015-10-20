@@ -97,10 +97,14 @@ var JudgingUI = (function (_React$Component2) {
                         React.createElement(
                             "td",
                             { className: "side-panel" },
-                            React.createElement(CompetitionSchema, {
-                                inner_competitions: this.props.inner_competitions,
-                                updateTourId: this.updateTourId.bind(this),
-                                current_tour_id: this.state.tour_id })
+                            React.createElement(
+                                "div",
+                                { className: "scroller" },
+                                React.createElement(CompetitionSchema, {
+                                    inner_competitions: this.props.inner_competitions,
+                                    updateTourId: this.updateTourId.bind(this),
+                                    current_tour_id: this.state.tour_id })
+                            )
                         ),
                         React.createElement(
                             "td",

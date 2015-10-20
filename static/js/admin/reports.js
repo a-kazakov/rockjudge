@@ -107,27 +107,31 @@ var ReportsUI = (function (_React$Component) {
                             { className: "side-panel" },
                             React.createElement(
                                 "div",
-                                { className: "block" },
+                                { className: "scroller" },
                                 React.createElement(
                                     "div",
-                                    {
-                                        className: "level-1" + (this.state.page == "start_list" ? " active" : ""),
-                                        onClick: this.switchPage.bind(this, "start_list") },
-                                    _("admin.menu.start_list")
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "block" },
+                                    { className: "block" },
+                                    React.createElement(
+                                        "div",
+                                        {
+                                            className: "level-1" + (this.state.page == "start_list" ? " active" : ""),
+                                            onClick: this.switchPage.bind(this, "start_list") },
+                                        _("admin.menu.start_list")
+                                    )
+                                ),
                                 React.createElement(
                                     "div",
-                                    {
-                                        className: "level-1" + (this.state.page == "competition_report" ? " active" : ""),
-                                        onClick: this.switchPage.bind(this, "competition_report") },
-                                    _("admin.menu.competition_report")
-                                )
-                            ),
-                            ics
+                                    { className: "block" },
+                                    React.createElement(
+                                        "div",
+                                        {
+                                            className: "level-1" + (this.state.page == "competition_report" ? " active" : ""),
+                                            onClick: this.switchPage.bind(this, "competition_report") },
+                                        _("admin.menu.competition_report")
+                                    )
+                                ),
+                                ics
+                            )
                         ),
                         React.createElement(
                             "td",

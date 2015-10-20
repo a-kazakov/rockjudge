@@ -56,21 +56,23 @@ class ReportsUI extends React.Component {
         return <table className="app-content">
             <tbody><tr>
                 <td className="side-panel">
-                    <div className="block">
-                        <div
-                                className={ "level-1" + (this.state.page == "start_list" ? " active" : "") }
-                                onClick= { this.switchPage.bind(this, "start_list") } >
-                            { _("admin.menu.start_list") }
+                    <div className="scroller">
+                        <div className="block">
+                            <div
+                                    className={ "level-1" + (this.state.page == "start_list" ? " active" : "") }
+                                    onClick= { this.switchPage.bind(this, "start_list") } >
+                                { _("admin.menu.start_list") }
+                            </div>
                         </div>
-                    </div>
-                    <div className="block">
-                        <div
-                                className={ "level-1" + (this.state.page == "competition_report" ? " active" : "") }
-                                onClick= { this.switchPage.bind(this, "competition_report") } >
-                            { _("admin.menu.competition_report") }
+                        <div className="block">
+                            <div
+                                    className={ "level-1" + (this.state.page == "competition_report" ? " active" : "") }
+                                    onClick= { this.switchPage.bind(this, "competition_report") } >
+                                { _("admin.menu.competition_report") }
+                            </div>
                         </div>
+                        { ics }
                     </div>
-                    { ics }
                 </td>
                 <td>
                     <div className="app-page">
