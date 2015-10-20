@@ -73,7 +73,7 @@ class IdTransformer:
                 id_value = cls.TRANSFORMATIONS[current_id_type][id_type](id_value)
                 current_id_type = id_type
             return id_value
-        raise RuntimeError("Unable to get {} from request".format(wanted_id_type))
+        raise ApiError("errors.api.unable_to_get", wanted_id_type)
 
 
 class Api:

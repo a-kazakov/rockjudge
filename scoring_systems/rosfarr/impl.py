@@ -1,5 +1,7 @@
 from fractions import Fraction as frac
 
+from exceptions import ApiError
+
 
 def apply_deduction(base_score, deduction):
     return base_score * (100 - deduction) // 100;
@@ -196,7 +198,7 @@ def ScoreWrapper(score, scoring_system, judge=None):
             return DanceScore(score) if role == "dance_judge" else AcroScore(score)
         if scoring_system == "rosfarr.formation":
             return FormationScore(score)
-    raise RuntimeError("Attempt to get score for invalid [judge role / scoring system] combination")
+    raise ApiError("errors.score.score_not_exist")
 
 
 class SmallScoresSet:

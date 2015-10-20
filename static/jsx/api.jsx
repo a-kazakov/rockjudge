@@ -3,7 +3,7 @@ class ApiImpl {
         this.method = method;
         this.data = data;
         this.cb_success = null;
-        this.cb_error = null;
+        this.cb_error = (msg, code, args) => alert(code ? _(code, ...args) : msg);
         this.cb_fail = null;
         this.update_db = null;
     }
@@ -41,7 +41,7 @@ class ApiImpl {
                     this.cb_success && this.cb_success(response.response);
                 } else {
                     console.error("Api error:", response.message);
-                    this.cb_error && this.cb_error(response.message);
+                    this.cb_error && this.cb_error(response.message, response.code, response.args);
                 }
             }.bind(this),
             error: function(xhr, status, err) {

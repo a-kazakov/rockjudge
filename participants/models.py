@@ -1,6 +1,7 @@
 import peewee
 
 from db import BaseModel
+from exceptions import ApiError
 
 
 competition_proxy = peewee.Proxy()
@@ -37,7 +38,7 @@ class Club(BaseModel):
     def delete_model(self, ws_message):
         # If this judge has any scores, than this judge can't be deleted
         if self.participants.where(Participant.inner_competition != None).count() > 0:
-            raise RuntimeError("Unable to delete club that has participants")
+            raise ApiError("errors.club.delete_with_participants")
         competition_id = self.competition_id
         self.competition = None
         self.save()

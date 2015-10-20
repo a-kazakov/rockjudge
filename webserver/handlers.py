@@ -6,6 +6,7 @@ import tornado.gen
 import tornado.web
 
 from db import Database
+from exceptions import ApiError
 from logger import log_api
 from tournaments.api import Api as TournamentsApi
 from tournaments.models import (
@@ -100,6 +101,7 @@ class TabletHandler(tornado.web.RequestHandler):
 
 class ApiHandler(tornado.web.RequestHandler):
     def post(self):
+        ex_str = None
         try:
             begin = time.time()
             data = None
@@ -127,9 +129,21 @@ class ApiHandler(tornado.web.RequestHandler):
                 with Database.instance().db.transaction():
                     ws_message.send()
             self.write(response)
-            ex_str = None
+        except ApiError as ex:
+            ex_str = traceback.format_exc()
+            response = json.dumps({
+                "success": False,
+                "code": ex.code,
+                "args": ex.args,
+            })
+            self.write(response)
         except Exception as ex:
             ex_str = traceback.format_exc()
+            response = json.dumps({
+                "success": False,
+                "code": "errors.global.internal_server_error",
+                "args": [],
+            })
             raise ex
         finally:
             total_time = time.time() - begin

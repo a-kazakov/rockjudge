@@ -4,7 +4,7 @@ import random
 import peewee
 
 from db import BaseModel
-
+from exceptions import ApiError
 from participants.models import (
     Acrobatic,
     Club,
@@ -78,11 +78,11 @@ class Competition(BaseModel):
 
     def delete_model(self, ws_message):
         if self.inner_competitions.count() > 0:
-            raise RuntimeError("Unable to delete non-empty competition")
+            raise ApiError("errors.competition.delete_non_empty")
         if self.clubs.count() > 0:
-            raise RuntimeError("Unable to delete non-empty competition")
+            raise ApiError("errors.competition.delete_non_empty")
         if self.judges.count() > 0:
-            raise RuntimeError("Unable to delete non-empty competition")
+            raise ApiError("errors.competition.delete_non_empty")
         self.delete_instance()
 
     def serialize(self, children={}):
@@ -210,9 +210,9 @@ class InnerCompetition(BaseModel):
 
     def delete_model(self, ws_message):
         if self.participants.count() > 0:
-            raise RuntimeError("Unable to delete discipline that has participants")
+            raise ApiError("errors.inner_competition.delete_with_participants")
         if self.first_tour is not None:
-            raise RuntimeError("Unable to delete discipline that has tours")
+            raise ApiError("errors.inner_competition.delete_with_tours")
         competition_id = self.competition_id
         self.competition = None
         self.save()
@@ -424,13 +424,13 @@ class Tour(BaseModel):
         if prev_tour is None:
             return
         if not prev_tour.finalized:
-            raise RuntimeError("Previous tour should be finalized")
+            raise ApiError("errors.tour.prev_not_finailzed")
 
     def check_next_tour_not_finalized(self):
         if self.next_tour is None:
             return
         if self.next_tour.finalized:
-            raise RuntimeError("Next tour shouldn't be finalized")
+            raise ApiError("errors.tour.next_is_finailzed")
 
     def init(self, ws_message):
         self.check_prev_tour_finalized()
@@ -493,7 +493,7 @@ class Tour(BaseModel):
         tour = Tour.create(**create_kwargs)
         if add_after is None:
             if inner_competition.first_tour is not None and inner_competition.first_tour.finalized:
-                raise RuntimeError("Unable to add tour before finalized one.");
+                raise ApiError("errors.tour.add_before_finalized");
             tour.next_tour = inner_competition.first_tour
             inner_competition.first_tour = tour
             inner_competition.save()
@@ -502,14 +502,14 @@ class Tour(BaseModel):
             for prev_tour in inner_competition.tours:
                 if prev_tour.id == add_after:
                     if prev_tour.next_tour is not None and prev_tour.next_tour.finalized:
-                        raise RuntimeError("Unable to add tour before finalized one.");
+                        raise ApiError("errors.tour.add_before_finalized");
                     tour.next_tour = prev_tour.next_tour
                     prev_tour.next_tour = tour
                     prev_tour.save()
                     tour.save()
                     break
             else:
-                raise RuntimeError("Invalid add_after ID passed")
+                raise ApiError("errors.tour.invalid_add_after_id")
         ws_message.add_model_update(
             model_type=InnerCompetition,
             model_id=inner_competition.id,
@@ -520,7 +520,7 @@ class Tour(BaseModel):
 
     def delete_model(self, ws_message):
         if self.finalized:
-            raise RuntimeError("Unable to delete finalized tour")
+            raise ApiError("errors.tour.delete_finalized")
         # We don't actually delete the tour. Just removing it from linked list.
         inner_competition = self.inner_competition
         prev_tour = self.get_prev_tour()
@@ -626,7 +626,7 @@ class Judge(BaseModel):
     def delete_model(self, ws_message):
         # If this judge has any scores, than this judge can't be deleted
         if self.score_set.count() > 0:
-            raise RuntimeError("Unable to judge that has scores")
+            raise ApiError("errors.judge.delete_with_scores")
         self.delete_instance()
         ws_message.add_message("reload_data")
 
