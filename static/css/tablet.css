@@ -7,7 +7,7 @@ body,
   background-color: #2b3a42;
   color: #efefef;
   border: none;
-  padding: 5px 10px;
+  padding: 10px 0;
   margin: 1px 5px;
   cursor: pointer;
   font-size: 14px;
@@ -40,12 +40,14 @@ body,
   text-align: center;
   font-size: 20px;
   font-weight: 500;
-  margin-bottom: 20px;
+  margin: 5px 0 15px 0;
 }
 h3 {
   font-weight: bold;
   font-size: 13px;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
+  margin-top: 5px;
+  line-height: 1.2;
 }
 .tablet-integer-input {
   display: inline-block;
@@ -67,8 +69,8 @@ h3 {
   text-align: center;
   font-weight: bold;
   font-size: 14px;
-  height: 29px;
-  line-height: 29px;
+  height: 39px;
+  line-height: 39px;
   vertical-align: middle;
 }
 .judge-number {
@@ -102,7 +104,7 @@ div.mistakes {
 }
 .mistakes td {
   width: 50%;
-  padding: 10px;
+  padding: 0 10px;
 }
 .tech-judge-info {
   font-weight: bold;
@@ -143,8 +145,7 @@ div.mistakes {
 button.score-btn {
   vertical-align: top;
   margin: 0.5%;
-  padding-left: 0;
-  padding-right: 0;
+  padding: 10px 0;
   box-sizing: border-box;
   font-weight: bold;
   font-size: 12px;
@@ -232,151 +233,151 @@ button.score-btn.active {
   width: 65.6%;
 }
 .selector-layout-2rows.n-2 button:nth-child(2n) {
-  margin: 40px -32.8% 0 -32.8% !important;
+  margin: 50px -32.8% 0 -32.8% !important;
 }
 .selector-layout-2rows.n-3 button {
   width: 48.95%;
 }
 .selector-layout-2rows.n-3 button:nth-child(2n) {
-  margin: 40px -24.475% 0 -24.475% !important;
+  margin: 50px -24.475% 0 -24.475% !important;
 }
 .selector-layout-2rows.n-4 button {
   width: 38.96%;
 }
 .selector-layout-2rows.n-4 button:nth-child(2n) {
-  margin: 40px -19.48% 0 -19.48% !important;
+  margin: 50px -19.48% 0 -19.48% !important;
 }
 .selector-layout-2rows.n-5 button {
   width: 32.3%;
 }
 .selector-layout-2rows.n-5 button:nth-child(2n) {
-  margin: 40px -16.15% 0 -16.15% !important;
+  margin: 50px -16.15% 0 -16.15% !important;
 }
 .selector-layout-2rows.n-6 button {
   width: 27.54285714%;
 }
 .selector-layout-2rows.n-6 button:nth-child(2n) {
-  margin: 40px -13.77142857% 0 -13.77142857% !important;
+  margin: 50px -13.77142857% 0 -13.77142857% !important;
 }
 .selector-layout-2rows.n-7 button {
   width: 23.975%;
 }
 .selector-layout-2rows.n-7 button:nth-child(2n) {
-  margin: 40px -11.9875% 0 -11.9875% !important;
+  margin: 50px -11.9875% 0 -11.9875% !important;
 }
 .selector-layout-2rows.n-8 button {
   width: 21.2%;
 }
 .selector-layout-2rows.n-8 button:nth-child(2n) {
-  margin: 40px -10.6% 0 -10.6% !important;
+  margin: 50px -10.6% 0 -10.6% !important;
 }
 .selector-layout-2rows.n-9 button {
   width: 18.98%;
 }
 .selector-layout-2rows.n-9 button:nth-child(2n) {
-  margin: 40px -9.49% 0 -9.49% !important;
+  margin: 50px -9.49% 0 -9.49% !important;
 }
 .selector-layout-2rows.n-10 button {
   width: 17.16363636%;
 }
 .selector-layout-2rows.n-10 button:nth-child(2n) {
-  margin: 40px -8.58181818% 0 -8.58181818% !important;
+  margin: 50px -8.58181818% 0 -8.58181818% !important;
 }
 .selector-layout-2rows.n-11 button {
   width: 15.65%;
 }
 .selector-layout-2rows.n-11 button:nth-child(2n) {
-  margin: 40px -7.825% 0 -7.825% !important;
+  margin: 50px -7.825% 0 -7.825% !important;
 }
 .selector-layout-2rows.n-12 button {
   width: 14.36923077%;
 }
 .selector-layout-2rows.n-12 button:nth-child(2n) {
-  margin: 40px -7.18461538% 0 -7.18461538% !important;
+  margin: 50px -7.18461538% 0 -7.18461538% !important;
 }
 .selector-layout-2rows.n-13 button {
   width: 13.27142857%;
 }
 .selector-layout-2rows.n-13 button:nth-child(2n) {
-  margin: 40px -6.63571429% 0 -6.63571429% !important;
+  margin: 50px -6.63571429% 0 -6.63571429% !important;
 }
 .selector-layout-2rows.n-14 button {
   width: 12.32%;
 }
 .selector-layout-2rows.n-14 button:nth-child(2n) {
-  margin: 40px -6.16% 0 -6.16% !important;
+  margin: 50px -6.16% 0 -6.16% !important;
 }
 .selector-layout-2rows.n-15 button {
   width: 11.4875%;
 }
 .selector-layout-2rows.n-15 button:nth-child(2n) {
-  margin: 40px -5.74375% 0 -5.74375% !important;
+  margin: 50px -5.74375% 0 -5.74375% !important;
 }
 .selector-layout-2rows.n-16 button {
   width: 10.75294118%;
 }
 .selector-layout-2rows.n-16 button:nth-child(2n) {
-  margin: 40px -5.37647059% 0 -5.37647059% !important;
+  margin: 50px -5.37647059% 0 -5.37647059% !important;
 }
 .selector-layout-2rows.n-17 button {
   width: 10.1%;
 }
 .selector-layout-2rows.n-17 button:nth-child(2n) {
-  margin: 40px -5.05% 0 -5.05% !important;
+  margin: 50px -5.05% 0 -5.05% !important;
 }
 .selector-layout-2rows.n-18 button {
   width: 9.51578947%;
 }
 .selector-layout-2rows.n-18 button:nth-child(2n) {
-  margin: 40px -4.75789474% 0 -4.75789474% !important;
+  margin: 50px -4.75789474% 0 -4.75789474% !important;
 }
 .selector-layout-2rows.n-19 button {
   width: 8.99%;
 }
 .selector-layout-2rows.n-19 button:nth-child(2n) {
-  margin: 40px -4.495% 0 -4.495% !important;
+  margin: 50px -4.495% 0 -4.495% !important;
 }
 .selector-layout-2rows.n-20 button {
   width: 8.51428571%;
 }
 .selector-layout-2rows.n-20 button:nth-child(2n) {
-  margin: 40px -4.25714286% 0 -4.25714286% !important;
+  margin: 50px -4.25714286% 0 -4.25714286% !important;
 }
 .selector-layout-2rows.n-21 button {
   width: 8.08181818%;
 }
 .selector-layout-2rows.n-21 button:nth-child(2n) {
-  margin: 40px -4.04090909% 0 -4.04090909% !important;
+  margin: 50px -4.04090909% 0 -4.04090909% !important;
 }
 .selector-layout-2rows.n-22 button {
   width: 7.68695652%;
 }
 .selector-layout-2rows.n-22 button:nth-child(2n) {
-  margin: 40px -3.84347826% 0 -3.84347826% !important;
+  margin: 50px -3.84347826% 0 -3.84347826% !important;
 }
 .selector-layout-2rows.n-23 button {
   width: 7.325%;
 }
 .selector-layout-2rows.n-23 button:nth-child(2n) {
-  margin: 40px -3.6625% 0 -3.6625% !important;
+  margin: 50px -3.6625% 0 -3.6625% !important;
 }
 .selector-layout-2rows.n-24 button {
   width: 6.992%;
 }
 .selector-layout-2rows.n-24 button:nth-child(2n) {
-  margin: 40px -3.496% 0 -3.496% !important;
+  margin: 50px -3.496% 0 -3.496% !important;
 }
 .selector-layout-2rows.n-25 button {
   width: 6.68461538%;
 }
 .selector-layout-2rows.n-25 button:nth-child(2n) {
-  margin: 40px -3.34230769% 0 -3.34230769% !important;
+  margin: 50px -3.34230769% 0 -3.34230769% !important;
 }
 .selector-layout-2rows.n-26 button {
   width: 6.4%;
 }
 .selector-layout-2rows.n-26 button:nth-child(2n) {
-  margin: 40px -3.2% 0 -3.2% !important;
+  margin: 50px -3.2% 0 -3.2% !important;
 }
 .stopwatch {
   width: 100%;
