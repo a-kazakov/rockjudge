@@ -19,8 +19,10 @@ class Grid:
     @staticmethod
     def formatCol(col):
         res = ""
-        col -= 1
-        while col > 0 or res == "":
+        if col <= 26:
+            return string.ascii_uppercase[col - 1]
+        col -= 27
+        while col > 0 or len(res) < 2:
             res = string.ascii_uppercase[col % 26] + res
             col //= 26
         return res
