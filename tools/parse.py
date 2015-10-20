@@ -6,7 +6,9 @@ import string
 import time
 
 from contextlib import contextmanager
+from hashlib import md5
 from sys import argv, stdout
+
 
 class Grid:
     def __init__(self, sheet, first_row=1, first_col=1):
@@ -45,7 +47,7 @@ class Club:
         row = grid.getRow(idx, 3)
         if row[0] is None:
             raise StopIteration
-        self.name, self.city, self.external_id = row
+        self.name, self.city, self.external_id = map(str, row)
         self.storage[self.name] = self
 
     def serialize(self):
@@ -58,7 +60,7 @@ class Category:
         row = grid.getRow(idx, 2)
         if row[0] is None:
             raise StopIteration
-        self.name, self.external_id = row
+        self.name, self.external_id = map(str, row)
         self.storage[self.name] = self
 
     def serialize(self):
@@ -80,15 +82,15 @@ class Couple:
         self.sportsmen = []
         if row[0] is not None:
             self.sportsmen.append({
-                "last_name": row[0],
-                "first_name": row[1],
+                "last_name": str(row[0]),
+                "first_name": str(row[1]),
                 "year_of_birth": int(row[2]),
                 "gender": "F",
             })
         if row[3] is not None:
             self.sportsmen.append({
-                "last_name": row[3],
-                "first_name": row[4],
+                "last_name": str(row[3]),
+                "first_name": str(row[4]),
                 "year_of_birth": int(row[5]),
                 "gender": "M",
             })
@@ -96,13 +98,16 @@ class Couple:
         for idx in range(9, 9 + 6 * 2, 2):
             if row[idx] is not None:
                 self.acrobatics.append({
-                    "description": row[idx],
+                    "description": str(row[idx]),
                     "score": float(row[idx + 1])
                 })
-        self.category = row[6]
+        self.category = str(row[6])
         self.club = Club.storage[row[7]].external_id
-        self.coaches = row[8]
-        self.external_id = None
+        self.coaches = str(row[8])
+        self.external_id = md5((
+            self.club + "|" +
+            "|".join([s["first_name"] + "$" + s["last_name"] for s in self.sportsmen])
+        ).encode("utf-8")).hexdigest()
         self.storage.append(self)
 
     def serialize(self):
@@ -116,10 +121,10 @@ class Formation:
         form_data = cols[0][:4]
         if form_data[0] is None:
             raise StopIteration
-        self.formation_name = form_data[0]
-        self.category = form_data[1]
+        self.formation_name = str(form_data[0])
+        self.category = str(form_data[1])
         self.club = Club.storage[form_data[2]].external_id
-        self.coaches = form_data[3]
+        self.coaches = str(form_data[3])
         self.sportsmen = [
             {
                 "last_name": cols[0][idx],
@@ -130,7 +135,10 @@ class Formation:
             if cols[0][idx] is not None
         ]
         self.acrobatics = []
-        self.external_id = None
+        self.external_id = md5((
+            self.club + "|" +
+            "|".join([s["first_name"] + "$" + s["last_name"] for s in self.sportsmen])
+        ).encode("utf-8")).hexdigest()
         self.storage.append(self)
 
     def serialize(self):
