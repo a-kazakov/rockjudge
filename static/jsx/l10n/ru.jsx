@@ -26,6 +26,7 @@ function _(src, arg) {
             },
             "buttons": {
                 "add_club": "Добавить клуб",
+                "add_competition": "Добавить соревнование",
                 "add_inner_competition": "Добавить категорию",
                 "add_judge": "Добавить судью",
                 "add_participant": "Добавить участника",
@@ -37,6 +38,7 @@ function _(src, arg) {
             },
             "confirms": {
                 "delete_club": "Вы действительно хотите удалить этот клуб?",
+                "delete_competition": "Вы действительно хотите удалить это соревнование?",
                 "delete_inner_competition": "Вы действительно хотите удалить эту категорию?",
                 "delete_judge": "Вы действительно хотите удалить этого судью?",
                 "delete_participant": "Вы действительно хотите удалить этого участника?",
@@ -49,6 +51,7 @@ function _(src, arg) {
                 "clients_management": "Управление подключенными устройствами",
                 "clubs": "Клубы-участники",
                 "clubs_management": "Управление клубами",
+                "competitions_management": "Управление соревнованиями",
                 "competition_report": "Протокол соревнования",
                 "competition_results": "Результаты соревнования",
                 "inner_competition_general_info": "Основная информация",
@@ -139,6 +142,14 @@ function _(src, arg) {
                 "city": "Город",
                 "external_id": "Внешний ID",
             },
+            "competition": {
+                "active": "Активно",
+                "date": "Дата",
+                "info": "Дополнительная информация для протокола",
+                "info_item_title": "Заголовок",
+                "info_item_value": "Значение",
+                "name": "Название",
+            },
             "inner_competition": {
                 "name": "Название категории",
                 "sp": "Приоритет",
@@ -195,6 +206,13 @@ function _(src, arg) {
             "headers": {
                 "select_competition": "Выберите соревнование для продолжения",
                 "select_role": "Выберите свою роль",
+            },
+            "messages": {
+                "no_competitions": "Нет активных соревнований",
+                "competitions_management_link": (link) => <span>
+                    Управление соревнованиями находится по адресу&nbsp;
+                    <a href={ link }>{ link }</a>
+                </span>,
             },
             "roles": {
                 "presenter": "Ведущий",

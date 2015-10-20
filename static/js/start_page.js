@@ -163,6 +163,27 @@ var StartPage = (function (_React$Component2) {
     }, {
         key: "render",
         value: function render() {
+            if (this.props.competition_ids.length == 0) {
+                var link = window.location.origin + "/c";
+                return React.createElement(
+                    "div",
+                    { className: "start-screen" },
+                    React.createElement(
+                        "div",
+                        { className: "no-competitions" },
+                        React.createElement(
+                            "h3",
+                            null,
+                            _("start_page.messages.no_competitions")
+                        ),
+                        React.createElement(
+                            "h4",
+                            null,
+                            _("start_page.messages.competitions_management_link", link)
+                        )
+                    )
+                );
+            }
             if (!this.state.all_loaded) {
                 return React.createElement(
                     "span",

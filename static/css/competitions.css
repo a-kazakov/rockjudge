@@ -1,0 +1,67 @@
+html,
+body {
+  overflow-x: hidden;
+}
+.manage-competitions {
+  margin: 10px;
+}
+.manage-competitions table tr.viewer {
+  cursor: pointer;
+}
+.manage-competitions table tr.viewer .delete {
+  width: 50px;
+  text-align: center;
+}
+.manage-competitions table tr.viewer .delete button {
+  padding: 0 7px;
+}
+.manage-competitions table .is-active {
+  text-align: center;
+  width: 100px;
+}
+.manage-competitions table .date {
+  width: 20%;
+}
+.manage-competitions table tr.editor {
+  padding: 15px;
+  background-color: #bdd4de;
+}
+.manage-competitions table tr.editor.create {
+  background-color: #f0ad4e;
+}
+.manage-competitions table tr.editor input {
+  height: 25px;
+  border: 1px solid #ccc;
+}
+.manage-competitions table tr.editor input,
+.manage-competitions table tr.editor input button {
+  vertical-align: middle;
+}
+.manage-competitions table tr.editor input {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.manage-competitions table tr.editor .info-item .title {
+  width: 20%;
+}
+.manage-competitions table tr.editor .info-item .value {
+  width: 65%;
+}
+.manage-competitions table tr.editor .del,
+.manage-competitions table tr.editor .up,
+.manage-competitions table tr.editor .down {
+  width: 5%;
+  padding: 0;
+  margin: 0;
+  height: 24px;
+  font-weight: bold;
+}
+.manage-competitions table tr.editor .buttons button {
+  width: 50%;
+}
+.manage-competitions table tr.editor .buttons input {
+  margin-bottom: 10px;
+}
+input {
+  font-weight: normal;
+}

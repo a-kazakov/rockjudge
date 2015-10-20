@@ -54,7 +54,7 @@ var ClubEditorRow = (function (_React$Component) {
                 { className: "editor" + (this.props.newClub ? " create" : "") },
                 React.createElement(
                     "td",
-                    { colSpan: "5" },
+                    { colSpan: "4" },
                     React.createElement(
                         "form",
                         { onSubmit: this.onSubmit.bind(this) },

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% autoescape None %}
+
+{% block title %}
+  Competitions management
+{% end %}
+
+{% block styles %}
+  <link rel="stylesheet" href="/static/css/competitions.css">
+{% end %}
+
+{% block scripts %}
+  <script src="/static/js/competitions.js"></script>
+  <script>
+    React.render(
+      React.createElement(CompetitionsManager, {}),
+      document.getElementById("content")
+    );
+  </script>
+{% end %}
+
+{% block body %}
+  <div id="content"></div>
+{% end %}

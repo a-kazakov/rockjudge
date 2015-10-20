@@ -100,7 +100,6 @@ class DocxImpl {
 
     save() {
         let html = this.renderHTML();
-        console.log(html);
         let margins = this.orientation.portrait ? [10, 7, 15, 7] : [7, 10, 7, 10];
         let converted = htmlDocx.asBlob(html, {
             orientation: this.orientation,

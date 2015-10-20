@@ -29,6 +29,11 @@ class CompetitionReportHandler(tornado.web.RequestHandler):
         )
 
 
+class CompetitionsHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render("competitions.html")
+
+
 class InnerCompetitionResultsHandler(tornado.web.RequestHandler):
     def get(self, inner_competition_id):
         self.render(
@@ -59,7 +64,7 @@ class StartListHandler(tornado.web.RequestHandler):
 
 class StartPageHandler(tornado.web.RequestHandler):
     def get(self):
-        competition_ids = [c.id for c in Competition.select()]
+        competition_ids = [c.id for c in Competition.select().where(Competition.active == True)]
         self.render("start_page.html", competition_ids=competition_ids)
 
 

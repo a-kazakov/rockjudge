@@ -134,6 +134,14 @@ var ModelsStorage = (function () {
         value: function by_id(id) {
             return this.models[id];
         }
+    }, {
+        key: "all",
+        value: function all() {
+            var keys = Object.getOwnPropertyNames(this.models);
+            return keys.map((function (key) {
+                return this.models[key];
+            }).bind(this));
+        }
     }]);
 
     return ModelsStorage;

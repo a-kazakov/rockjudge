@@ -87,6 +87,12 @@ class ModelsStorage {
     by_id(id) {
         return this.models[id];
     }
+    all() {
+        let keys = Object.getOwnPropertyNames(this.models);
+        return keys.map(function(key) {
+            return this.models[key];
+        }.bind(this))
+    }
 }
 
 class Storage {

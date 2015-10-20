@@ -92,6 +92,15 @@ class StartPage extends React.Component {
         </div>
     }
     render() {
+        if (this.props.competition_ids.length == 0) {
+            let link = window.location.origin + "/c";
+            return <div className="start-screen">
+                <div className="no-competitions">
+                    <h3>{ _("start_page.messages.no_competitions") }</h3>
+                    <h4>{ _("start_page.messages.competitions_management_link", link) }</h4>
+                </div>
+            </div>;
+        }
         if (!this.state.all_loaded) {
             return <span>Loading ...</span>;
         }

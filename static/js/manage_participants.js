@@ -543,7 +543,7 @@ var ParticipantsManager = (function (_React$Component4) {
             name: null
         };
         message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
-        message_dispatcher.addListener("reload_data", this.loadData.bind(this));
+        message_dispatcher.addListener("reload_data competition_list_update", this.loadData.bind(this));
         this.loadData();
     }
 

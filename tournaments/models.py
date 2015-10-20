@@ -19,14 +19,18 @@ tour_proxy = peewee.Proxy()
 
 
 class Competition(BaseModel):
+    class Meta:
+        order_by = ["-active", "date"]
+
     name = peewee.CharField()
     date = peewee.CharField()
     info = peewee.TextField(default="[]")
+    active = peewee.BooleanField(default=True)
 
     def full_prefetch(self):
         self.prefetch({
             "inner_competitions": {
-                "tour_set": {}
+                "tour_set": {},
             },
             "judges": {},
         })
@@ -49,10 +53,43 @@ class Competition(BaseModel):
             InnerCompetition.load(self, data["categories"])
         ws_message.add_message("reload_data")
 
+    @classmethod
+    def create_model(cls, data, ws_message):
+        create_kwargs = {
+            key: data[key]
+            for key in ["name", "date", "active"]
+        }
+        create_kwargs["info"] = json.dumps(data["info"])
+        cls.create(**create_kwargs)
+        ws_message.add_message("competition_list_update")
+
+    def update_data(self, new_data, ws_message):
+        for key in ["name", "date", "active"]:
+            if key in new_data:
+                setattr(self, key, new_data[key])
+        self.info = json.dumps(new_data["info"])
+        self.save()
+        ws_message.add_model_update(
+            model_type=Competition,
+            model_id=self.id,
+            schema={}
+        )
+        ws_message.add_message("competition_list_update")
+
+    def delete_model(self, ws_message):
+        if self.inner_competitions.count() > 0:
+            raise RuntimeError("Unable to delete non-empty competition")
+        if self.clubs.count() > 0:
+            raise RuntimeError("Unable to delete non-empty competition")
+        if self.judges.count() > 0:
+            raise RuntimeError("Unable to delete non-empty competition")
+        self.delete_instance()
+
     def serialize(self, children={}):
         result = {
             "name": self.name,
             "date": self.date,
+            "active": self.active,
             "info": json.loads(self.info),
         }
         result = self.serialize_lower_child(result, "inner_competitions", children)

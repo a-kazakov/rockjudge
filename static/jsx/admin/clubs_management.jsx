@@ -22,7 +22,7 @@ class ClubEditorRow extends React.Component {
     }
     render() {
         return <tr className={ "editor" + (this.props.newClub ? " create" : "" ) }>
-            <td colSpan="5">
+            <td colSpan="4">
                 <form onSubmit={ this.onSubmit.bind(this) }>
                     <div className="row">
                         <div className="col-md-5">

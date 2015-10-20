@@ -102,6 +102,14 @@ class Api:
         return competition.serialize(children=request["children"])
 
     @classmethod
+    def competition_get_all(cls, request, ws_message):
+        competitions = Competition.select()
+        return [{
+            "id": c.id,
+            "data": c.serialize(children=request["children"])
+        } for c in competitions]
+
+    @classmethod
     def inner_competition_get(cls, request, ws_message):
         inner_competition = cls.get_model(InnerCompetition, "inner_competition_id", request)
         inner_competition.full_prefetch()
@@ -167,7 +175,13 @@ class Api:
         model = cls.get_model(Participant, "participant_id", request)
         model.update_data(request["data"], ws_message=ws_message)
         return {}
+
     # Creaters
+
+    @classmethod
+    def competition_create(cls, request, ws_message):
+        Competition.create_model(data=request["data"], ws_message=ws_message)
+        return {}
 
     @classmethod
     def inner_competition_create(cls, request, ws_message):
@@ -213,6 +227,12 @@ class Api:
         return {}
 
     # Deleters
+
+    @classmethod
+    def competition_delete(cls, request, ws_message):
+        competition = cls.get_model(InnerCompetition, "competition_id", request)
+        competition.delete_model(ws_message=ws_message)
+        return {}
 
     @classmethod
     def tour_delete(cls, request, ws_message):
