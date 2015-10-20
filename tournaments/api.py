@@ -339,14 +339,8 @@ class Api:
                 "message": "Invalid method name: {}".format(method),
             }
         internal_name = "_".join(parts)
-#        try:
         result = getattr(cls, internal_name)(request, ws_message=ws_message)
         return {
             "success": True,
             "response": result
         }
-        # except AttributeError:
-        #     return {
-        #         "success": False,
-        #         "message": "Unknown method name: {}".format(method),
-        #     }

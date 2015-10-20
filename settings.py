@@ -12,6 +12,7 @@ DB_CONFIG = {
 }
 
 APPS = [
+    "logger",
     "participants",
     "tournaments",
 ]

@@ -1,10 +1,12 @@
 import json
 import time
+import traceback
 
 import tornado.gen
 import tornado.web
 
 from db import Database
+from logger import log_api
 from tournaments.api import Api as TournamentsApi
 from tournaments.models import (
     Competition,
@@ -93,29 +95,47 @@ class TabletHandler(tornado.web.RequestHandler):
 
 class ApiHandler(tornado.web.RequestHandler):
     def post(self):
-        begin = time.time()
-        data = json.loads(self.get_argument("data"))
-        method = self.get_argument("method")
-        method_parts = method.split(".")
-        inner_method = ".".join(method_parts[1:])
         try:
-            client_id = self.get_argument("client_id")
-        except:
-            client_id = None
-        ws_message = WsMessage(client_id)
-        with Database.instance().db.transaction():
-            if method_parts[0] == "tournaments":
-                result = TournamentsApi.call(inner_method, data, ws_message=ws_message)
-                self.write(json.dumps(result))
-            else:
-                self.write(json.dumps({
-                    "success": False,
-                    "message": "Unknown method name: {}".format(method)
-                }))
-        if not ws_message.empty():
+            begin = time.time()
+            data = None
+            response = None
+            data = json.loads(self.get_argument("data"))
+            method = self.get_argument("method")
+            method_parts = method.split(".")
+            inner_method = ".".join(method_parts[1:])
+            try:
+                client_id = self.get_argument("client_id")
+            except:
+                # TODO: add logging here
+                client_id = None
+            ws_message = WsMessage(client_id)
             with Database.instance().db.transaction():
-                ws_message.send()
-        print("Api call: {} ({:.3f}s)".format(method, time.time() - begin))
+                if method_parts[0] == "tournaments":
+                    result = TournamentsApi.call(inner_method, data, ws_message=ws_message)
+                    response = json.dumps(result)
+                else:
+                    response = json.dumps({
+                        "success": False,
+                        "message": "Unknown method name: {}".format(method)
+                    })
+            if not ws_message.empty():
+                with Database.instance().db.transaction():
+                    ws_message.send()
+            self.write(response)
+            ex_str = None
+        except Exception as ex:
+            ex_str = traceback.format_exc()
+            raise ex
+        finally:
+            total_time = time.time() - begin
+            log_api(
+                time=begin,
+                latency=total_time,
+                method=method,
+                request=data,
+                exception=ex_str,
+                response=response)
+            print("Api call: {} ({:.3f}s)".format(method, total_time))
 
     def get(self):
         self.post()
