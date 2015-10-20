@@ -333,8 +333,14 @@ class AdminUI extends React.Component {
                         <div className="label">Service</div>
                     </div>
                 </td>
-                <td>
+                <td rowSpan="2">
                     { this.renderActiveApp() }
+                </td>
+            </tr><tr>
+                <td className="bottom-cell">
+                    <a className="btn-back" href="/">
+                        { _("admin.buttons.to_start_page") }
+                    </a>
                 </td>
             </tr></tbody>
         </table>;

@@ -150,14 +150,14 @@ var PresenterTablet = (function (_React$Component) {
                 if (this.state.current_heat > 1) {
                     btn_prev = React.createElement(
                         "button",
-                        _extends({ className: "btn btn-primary btn-prev-heat" }, onTouchOrClick(this.toPrevHeat.bind(this))),
+                        _extends({ className: "btn btn-primary pull-left" }, onTouchOrClick(this.toPrevHeat.bind(this))),
                         _("tablet.buttons.prev_heat")
                     );
                 }
                 if (this.state.current_heat < this.getHeatsCount()) {
                     btn_next = React.createElement(
                         "button",
-                        _extends({ className: "btn btn-primary btn-next-heat" }, onTouchOrClick(this.toNextHeat.bind(this))),
+                        _extends({ className: "btn btn-primary pull-right" }, onTouchOrClick(this.toNextHeat.bind(this))),
                         _("tablet.buttons.next_heat")
                     );
                 }
@@ -196,6 +196,16 @@ var PresenterTablet = (function (_React$Component) {
             return React.createElement(
                 "div",
                 null,
+                React.createElement(
+                    "header",
+                    null,
+                    React.createElement(
+                        "a",
+                        { className: "btn btn-primary pull-left", href: "/" },
+                        _("tablet.buttons.to_start_page")
+                    ),
+                    React.createElement("div", { className: "clearfix" })
+                ),
                 React.createElement(
                     "div",
                     { className: "presenter-splash" },
@@ -279,9 +289,6 @@ var PresenterTablet = (function (_React$Component) {
     }, {
         key: "renderBody",
         value: function renderBody() {
-            if (this.state.tour === null) {
-                return this.renderSplashScreen();
-            }
             return React.createElement(
                 "div",
                 null,
@@ -299,6 +306,9 @@ var PresenterTablet = (function (_React$Component) {
                     null,
                     "Loading ..."
                 );
+            }
+            if (this.state.tour === null) {
+                return this.renderSplashScreen();
             }
             return React.createElement(
                 "div",

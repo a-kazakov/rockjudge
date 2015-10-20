@@ -176,23 +176,21 @@ var JudgeTablet = (function (_React$Component) {
         value: function renderHeader() {
             var btn_prev = null;
             var btn_next = null;
-            if (this.state.tour !== null) {
-                if (this.state.current_heat > 1) {
-                    btn_prev = React.createElement(
-                        "button",
-                        _extends({ className: "btn btn-primary btn-prev-heat" }, onTouchOrClick(this.toPrevHeat.bind(this))),
-                        _("tablet.buttons.prev_heat")
-                    );
-                }
-                if (this.state.current_heat < this.getHeatsCount()) {
-                    btn_next = React.createElement(
-                        "button",
-                        _extends({ className: "btn btn-primary btn-next-heat" }, onTouchOrClick(this.toNextHeat.bind(this))),
-                        _("tablet.buttons.next_heat")
-                    );
-                }
+            if (this.state.current_heat > 1) {
+                btn_prev = React.createElement(
+                    "button",
+                    _extends({ className: "btn btn-primary pull-left" }, onTouchOrClick(this.toPrevHeat.bind(this))),
+                    _("tablet.buttons.prev_heat")
+                );
             }
-            var current_tour = this.state.tour === null ? null : React.createElement(
+            if (this.state.current_heat < this.getHeatsCount()) {
+                btn_next = React.createElement(
+                    "button",
+                    _extends({ className: "btn btn-primary pull-right" }, onTouchOrClick(this.toNextHeat.bind(this))),
+                    _("tablet.buttons.next_heat")
+                );
+            }
+            var current_tour = React.createElement(
                 "div",
                 { className: "header" },
                 React.createElement(
@@ -221,13 +219,32 @@ var JudgeTablet = (function (_React$Component) {
             );
         }
     }, {
-        key: "renderJudgeInfo",
-        value: function renderJudgeInfo() {
+        key: "renderSplashScreen",
+        value: function renderSplashScreen() {
             var judge = this.state.judge;
             var judge_number = judge.role_description || _("global.phrases.judge_n", this.state.judge.number);
             return React.createElement(
                 "div",
                 null,
+                React.createElement(
+                    "header",
+                    null,
+                    React.createElement(
+                        "a",
+                        { className: "btn btn-primary pull-left", href: "/" },
+                        _("tablet.buttons.to_start_page")
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "header" },
+                        React.createElement(
+                            "h1",
+                            null,
+                            this.state.competition.name
+                        )
+                    ),
+                    React.createElement("div", { className: "clearfix" })
+                ),
                 React.createElement(
                     "div",
                     { className: "judge-number" },
@@ -243,9 +260,6 @@ var JudgeTablet = (function (_React$Component) {
     }, {
         key: "renderScoringLayout",
         value: function renderScoringLayout() {
-            if (this.state.tour === null) {
-                return this.renderJudgeInfo();
-            }
             var cells = this.state.tour.runs.filter((function (run) {
                 return run.heat == this.state.current_heat;
             }).bind(this)).map((function (run) {
@@ -307,7 +321,7 @@ var JudgeTablet = (function (_React$Component) {
     }, {
         key: "renderFooter",
         value: function renderFooter() {
-            if (this.state.tour === null || this.state.judge.role != "tech_judge" || this.state.tour.scoring_system != "rosfarr.acro") {
+            if (this.state.judge.role != "tech_judge" || this.state.tour.scoring_system != "rosfarr.acro") {
                 return null;
             }
             return React.createElement(
@@ -343,6 +357,9 @@ var JudgeTablet = (function (_React$Component) {
                     null,
                     "Loading ..."
                 );
+            }
+            if (this.state.tour === null) {
+                return this.renderSplashScreen();
             }
             return React.createElement(
                 "div",

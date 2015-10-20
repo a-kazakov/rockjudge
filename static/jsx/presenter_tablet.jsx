@@ -118,12 +118,12 @@ class PresenterTablet extends React.Component {
         var btn_next = null;
         if (this.state.tour !== null) {
             if (this.state.current_heat > 1) {
-                btn_prev = <button className="btn btn-primary btn-prev-heat" {...onTouchOrClick(this.toPrevHeat.bind(this))}>
+                btn_prev = <button className="btn btn-primary pull-left" {...onTouchOrClick(this.toPrevHeat.bind(this))}>
                     { _("tablet.buttons.prev_heat") }
                 </button>;
             }
             if (this.state.current_heat < this.getHeatsCount()) {
-                btn_next = <button className="btn btn-primary btn-next-heat" {...onTouchOrClick(this.toNextHeat.bind(this))}>
+                btn_next = <button className="btn btn-primary pull-right" {...onTouchOrClick(this.toNextHeat.bind(this))}>
                     { _("tablet.buttons.next_heat") }
                 </button>;
             }
@@ -141,8 +141,14 @@ class PresenterTablet extends React.Component {
     }
     renderSplashScreen() {
         return <div>
+            <header>
+                <a className="btn btn-primary pull-left" href="/">
+                    { _("tablet.buttons.to_start_page") }
+                </a>
+                <div className="clearfix"></div>
+            </header>
             <div className="presenter-splash">{ _("tablet.headers.presenter") }</div>
-        </div>
+        </div>;
     }
     renderHeat(heat, is_current) {
         let runs = this.state.tour.runs.filter((run) => run.heat == heat);
@@ -160,9 +166,6 @@ class PresenterTablet extends React.Component {
         </div>;
     }
     renderBody() {
-        if (this.state.tour === null) {
-            return this.renderSplashScreen();
-        }
         return <div>
             { this.renderHeat(this.state.current_heat - 1, false) }
             { this.renderHeat(this.state.current_heat, true) }
@@ -172,6 +175,9 @@ class PresenterTablet extends React.Component {
     render() {
         if (this.state.judge === null) {
             return <p>Loading ...</p>;
+        }
+        if (this.state.tour === null) {
+            return this.renderSplashScreen();
         }
         return <div>
             { this.renderHeader() }

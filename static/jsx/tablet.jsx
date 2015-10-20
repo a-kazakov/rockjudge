@@ -145,42 +145,44 @@ class JudgeTablet extends React.Component {
     renderHeader() {
         var btn_prev = null;
         var btn_next = null;
-        if (this.state.tour !== null) {
-            if (this.state.current_heat > 1) {
-                btn_prev = <button className="btn btn-primary btn-prev-heat" {...onTouchOrClick(this.toPrevHeat.bind(this))}>
-                    { _("tablet.buttons.prev_heat") }
-                </button>;
-            }
-            if (this.state.current_heat < this.getHeatsCount()) {
-                btn_next = <button className="btn btn-primary btn-next-heat" {...onTouchOrClick(this.toNextHeat.bind(this))}>
-                    { _("tablet.buttons.next_heat") }
-                </button>;
-            }
+        if (this.state.current_heat > 1) {
+            btn_prev = <button className="btn btn-primary pull-left" {...onTouchOrClick(this.toPrevHeat.bind(this))}>
+                { _("tablet.buttons.prev_heat") }
+            </button>;
         }
-        var current_tour = (this.state.tour === null) ? null :
-            <div className="header">
-                <h1>{ this.state.tour.inner_competition.name }: { this.state.tour.name }</h1>
-                <h2>{ _("tablet.headers.heat") }: { this.state.current_heat } / { this.getHeatsCount() }</h2>
-            </div>
+        if (this.state.current_heat < this.getHeatsCount()) {
+            btn_next = <button className="btn btn-primary pull-right" {...onTouchOrClick(this.toNextHeat.bind(this))}>
+                { _("tablet.buttons.next_heat") }
+            </button>;
+        }
+        var current_tour = <div className="header">
+            <h1>{ this.state.tour.inner_competition.name }: { this.state.tour.name }</h1>
+            <h2>{ _("tablet.headers.heat") }: { this.state.current_heat } / { this.getHeatsCount() }</h2>
+        </div>;
         return <header>
             { btn_prev }
             { btn_next }
             { current_tour }
         </header>
     }
-    renderJudgeInfo() {
+    renderSplashScreen() {
         let judge = this.state.judge;
         let judge_number = judge.role_description || _("global.phrases.judge_n", this.state.judge.number);
         return <div>
+            <header>
+                <a className="btn btn-primary pull-left" href="/">
+                    { _("tablet.buttons.to_start_page") }
+                </a>
+                <div className="header">
+                    <h1>{ this.state.competition.name }</h1>
+                </div>
+                <div className="clearfix"></div>
+            </header>
             <div className="judge-number">{ judge_number }</div>
             <div className="judge-name">{ this.state.judge.name }</div>
-        </div>
-
+        </div>;
     }
     renderScoringLayout() {
-        if (this.state.tour === null) {
-            return this.renderJudgeInfo();
-        }
         var cells = this.state.tour.runs
             .filter(function(run) {
                 return run.heat == this.state.current_heat;
@@ -216,7 +218,7 @@ class JudgeTablet extends React.Component {
         </tr></tbody></table>;
     }
     renderFooter() {
-        if (this.state.tour === null || this.state.judge.role != "tech_judge" || this.state.tour.scoring_system != "rosfarr.acro") {
+        if (this.state.judge.role != "tech_judge" || this.state.tour.scoring_system != "rosfarr.acro") {
             return null;
         }
         return <div className="footer page-selector">
@@ -234,6 +236,9 @@ class JudgeTablet extends React.Component {
     render() {
         if (this.state.judge === null) {
             return <p>Loading ...</p>;
+        }
+        if (this.state.tour === null) {
+            return this.renderSplashScreen();
         }
         return <div>
             { this.renderHeader() }

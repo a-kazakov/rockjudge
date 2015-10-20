@@ -47,6 +47,7 @@ function _(src, arg) {
                 "import": "Импортировать",
                 "refresh_clients": "Перезагрузить все устройства",
                 "reload_clients": "Обновить данные на всех устройствах",
+                "to_start_page": "На главную",
                 "unfinalize": "Отменить финализацию"
             },
             "confirms": {
@@ -250,9 +251,10 @@ function _(src, arg) {
             "buttons": {
                 "next_heat": "След. заход",
                 "prev_heat": "Пред. заход",
+                "reset_stopwatch": "Сброс",
                 "start_stopwatch": "Старт",
                 "stop_stopwatch": "Стоп",
-                "reset_stopwatch": "Сброс"
+                "to_start_page": "На главную"
             },
             "headers": {
                 "heat": "Заход",

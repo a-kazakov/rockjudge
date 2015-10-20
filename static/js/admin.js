@@ -561,8 +561,21 @@ var AdminUI = (function (_React$Component4) {
                         ),
                         React.createElement(
                             "td",
-                            null,
+                            { rowSpan: "2" },
                             this.renderActiveApp()
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "td",
+                            { className: "bottom-cell" },
+                            React.createElement(
+                                "a",
+                                { className: "btn-back", href: "/" },
+                                _("admin.buttons.to_start_page")
+                            )
                         )
                     )
                 )
