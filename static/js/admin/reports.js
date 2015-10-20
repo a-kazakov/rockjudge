@@ -89,7 +89,7 @@ var ReportsUI = (function (_React$Component) {
                         {
                             className: "level-2 new-ic" + (this.state.page == "inner_competition_results" && this.state.page_props.inner_competition_id == ic.id ? " active" : ""),
                             onClick: this.switchPage.bind(this, "inner_competition_results", { inner_competition_id: ic.id }) },
-                        _("admin.menu.all_inner_competition_results")
+                        _("admin.menu.inner_competition_results")
                     )
                 );
             }).bind(this));
