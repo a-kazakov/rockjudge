@@ -9,12 +9,12 @@ body {
   font-weight: bold;
   text-align: right;
 }
+.manage-participants table .number {
+  width: 100px;
+  text-align: center;
+}
 .manage-participants table tr.viewer {
   cursor: pointer;
-}
-.manage-participants table tr.viewer .number {
-  width: 150px;
-  text-align: center;
 }
 .manage-participants table tr.viewer .delete {
   width: 50px;
