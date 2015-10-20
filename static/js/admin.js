@@ -70,19 +70,19 @@ var CompetitionLoadingUI = (function (_React$Component) {
     return CompetitionLoadingUI;
 })(React.Component);
 
-var ManagmentUI = (function (_React$Component2) {
-    _inherits(ManagmentUI, _React$Component2);
+var ManagementUI = (function (_React$Component2) {
+    _inherits(ManagementUI, _React$Component2);
 
-    function ManagmentUI(props) {
-        _classCallCheck(this, ManagmentUI);
+    function ManagementUI(props) {
+        _classCallCheck(this, ManagementUI);
 
-        _get(Object.getPrototypeOf(ManagmentUI.prototype), "constructor", this).call(this, props);
+        _get(Object.getPrototypeOf(ManagementUI.prototype), "constructor", this).call(this, props);
         this.state = {
             "page": null
         };
     }
 
-    _createClass(ManagmentUI, [{
+    _createClass(ManagementUI, [{
         key: "switchPage",
         value: function switchPage(page, props) {
             this.setState({
@@ -154,60 +154,64 @@ var ManagmentUI = (function (_React$Component2) {
                             { className: "side-panel" },
                             React.createElement(
                                 "div",
-                                { className: "block" },
+                                { className: "scroller" },
                                 React.createElement(
                                     "div",
-                                    {
-                                        className: "level-1" + (this.state.page == "load_competition" ? " active" : ""),
-                                        onClick: this.switchPage.bind(this, "load_competition") },
-                                    _("admin.menu.load_competition")
-                                )
-                            ),
-                            React.createElement(
-                                "details",
-                                { open: "true", className: "block" },
-                                React.createElement(
-                                    "summary",
-                                    { className: "level-1" },
-                                    _("admin.menu.manage_inner_competitions")
+                                    { className: "block" },
+                                    React.createElement(
+                                        "div",
+                                        {
+                                            className: "level-1" + (this.state.page == "load_competition" ? " active" : ""),
+                                            onClick: this.switchPage.bind(this, "load_competition") },
+                                        _("admin.menu.load_competition")
+                                    )
                                 ),
-                                ics_management,
                                 React.createElement(
-                                    "div",
-                                    { className: "level-2 new-ic", onClick: this.createInnerCommpetition.bind(this) },
-                                    _("admin.menu.add_inner_competition")
-                                )
-                            ),
-                            React.createElement(
-                                "details",
-                                { open: "true", className: "block" },
-                                React.createElement(
-                                    "summary",
-                                    { className: "level-1" },
-                                    _("admin.menu.manage_sportsmen")
+                                    "details",
+                                    { className: "block" },
+                                    React.createElement(
+                                        "summary",
+                                        { className: "level-1" },
+                                        _("admin.menu.manage_inner_competitions")
+                                    ),
+                                    ics_management,
+                                    React.createElement(
+                                        "div",
+                                        { className: "level-2 new-ic", onClick: this.createInnerCommpetition.bind(this) },
+                                        _("admin.menu.add_inner_competition")
+                                    )
                                 ),
-                                ics_participants
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "block" },
+                                React.createElement(
+                                    "details",
+                                    { className: "block" },
+                                    React.createElement(
+                                        "summary",
+                                        { className: "level-1" },
+                                        _("admin.menu.manage_sportsmen")
+                                    ),
+                                    ics_participants
+                                ),
                                 React.createElement(
                                     "div",
-                                    {
-                                        className: "level-1" + (this.state.page == "manage_clubs" ? " active" : ""),
-                                        onClick: this.switchPage.bind(this, "manage_clubs") },
-                                    _("admin.menu.manage_clubs")
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "block" },
+                                    { className: "block" },
+                                    React.createElement(
+                                        "div",
+                                        {
+                                            className: "level-1" + (this.state.page == "manage_clubs" ? " active" : ""),
+                                            onClick: this.switchPage.bind(this, "manage_clubs") },
+                                        _("admin.menu.manage_clubs")
+                                    )
+                                ),
                                 React.createElement(
                                     "div",
-                                    {
-                                        className: "level-1" + (this.state.page == "manage_judges" ? " active" : ""),
-                                        onClick: this.switchPage.bind(this, "manage_judges") },
-                                    _("admin.menu.manage_judges")
+                                    { className: "block" },
+                                    React.createElement(
+                                        "div",
+                                        {
+                                            className: "level-1" + (this.state.page == "manage_judges" ? " active" : ""),
+                                            onClick: this.switchPage.bind(this, "manage_judges") },
+                                        _("admin.menu.manage_judges")
+                                    )
                                 )
                             )
                         ),
@@ -238,7 +242,7 @@ var ManagmentUI = (function (_React$Component2) {
         }
     }]);
 
-    return ManagmentUI;
+    return ManagementUI;
 })(React.Component);
 
 var ServiceUI = (function (_React$Component3) {
@@ -440,7 +444,7 @@ var AdminUI = (function (_React$Component4) {
                     return React.createElement(JudgingUI, {
                         inner_competitions: this.state.inner_competitions });
                 case "management":
-                    return React.createElement(ManagmentUI, {
+                    return React.createElement(ManagementUI, {
                         inner_competitions: this.state.inner_competitions,
                         clubs: this.state.clubs,
                         judges: this.state.judges,

@@ -60,7 +60,11 @@ table.app-content {
 table.app-content .side-panel {
   width: 350px;
   background-color: #bdd4de;
-  overflow: auto;
+  overflow: hidden;
+}
+table.app-content .side-panel .scroller {
+  height: 100%;
+  overflow-x: auto;
 }
 table.app-content .side-panel .block {
   margin-bottom: 10px;

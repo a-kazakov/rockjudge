@@ -66,7 +66,11 @@ table.app-content {
   .side-panel {
     width: 350px;
     background-color: @ui-light;
-    overflow: auto;
+    overflow: hidden;
+    .scroller {
+      height: 100%;
+      overflow-x: auto;
+    }
     .block {
       margin-bottom: 10px;
     }
