@@ -108,7 +108,7 @@ var ManagementUI = (function (_React$Component2) {
             switch (this.state.page) {
                 case "load_competition":
                     return React.createElement(CompetitionLoadingUI, { competition_id: this.props.competition_id });
-                case "manage_inner_competition":
+                case "manage_tours":
                     // Seeking for inner competition with given ID
                     var ic = null;
                     this.props.inner_competitions.forEach((function (el) {
@@ -116,7 +116,7 @@ var ManagementUI = (function (_React$Component2) {
                             ic = el;
                         }
                     }).bind(this));
-                    return React.createElement(InnerCompetitionManagementUI, {
+                    return React.createElement(ToursManagementUI, {
                         key: this.state.page_props.inner_competition_id,
                         inner_competition: ic });
                 case "manage_participants":
@@ -129,13 +129,17 @@ var ManagementUI = (function (_React$Component2) {
                     return React.createElement(ClubsManagementUI, {
                         clubs: this.props.clubs,
                         competition_id: this.props.competition_id });
+                case "manage_inner_competitions":
+                    return React.createElement(InnerCompetitionsManagementUI, {
+                        inner_competitions: this.props.inner_competitions,
+                        competition_id: this.props.competition_id });
             }
         }
     }, {
         key: "render",
         value: function render() {
-            var ics_management = this.props.inner_competitions.map((function (ic) {
-                return this.renderInnerCompetition(ic, "manage_inner_competition");
+            var ics_tours = this.props.inner_competitions.map((function (ic) {
+                return this.renderInnerCompetition(ic, "manage_tours");
             }).bind(this));
             var ics_participants = this.props.inner_competitions.map((function (ic) {
                 return this.renderInnerCompetition(ic, "manage_participants");
@@ -167,19 +171,25 @@ var ManagementUI = (function (_React$Component2) {
                                     )
                                 ),
                                 React.createElement(
+                                    "div",
+                                    { className: "block" },
+                                    React.createElement(
+                                        "div",
+                                        {
+                                            className: "level-1" + (this.state.page == "manage_inner_competitions" ? " active" : ""),
+                                            onClick: this.switchPage.bind(this, "manage_inner_competitions") },
+                                        _("admin.menu.manage_inner_competitions")
+                                    )
+                                ),
+                                React.createElement(
                                     "details",
                                     { className: "block" },
                                     React.createElement(
                                         "summary",
                                         { className: "level-1" },
-                                        _("admin.menu.manage_inner_competitions")
+                                        _("admin.menu.manage_tours")
                                     ),
-                                    ics_management,
-                                    React.createElement(
-                                        "div",
-                                        { className: "level-2 new-ic", onClick: this.createInnerCommpetition.bind(this) },
-                                        _("admin.menu.add_inner_competition")
-                                    )
+                                    ics_tours
                                 ),
                                 React.createElement(
                                     "details",

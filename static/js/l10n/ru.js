@@ -39,6 +39,7 @@ function _(src, arg) {
             },
             "buttons": {
                 "add_club": "Добавить клуб",
+                "add_inner_competition": "Добавить категорию",
                 "add_judge": "Добавить судью",
                 "add_participant": "Добавить участника",
                 "add_tour": "Добавить тур",
@@ -49,6 +50,7 @@ function _(src, arg) {
             },
             "confirms": {
                 "delete_club": "Вы действительно хотите удалить этот клуб?",
+                "delete_inner_competition": "Вы действительно хотите удалить эту категорию?",
                 "delete_judge": "Вы действительно хотите удалить этого судью?",
                 "delete_participant": "Вы действительно хотите удалить этого участника?",
                 "delete_tour": "Вы действительно хотите удалить этот тур?",
@@ -65,6 +67,7 @@ function _(src, arg) {
                 "inner_competition_general_info": "Основная информация",
                 "inner_competition_results": "Сводная таблица по категории",
                 "inner_competition_tours": "Список туров",
+                "inner_competitions_management": "Управление категориями",
                 "judges": "Судейская бригада",
                 "judges_management": "Управление судьями",
                 "load_competition": "Импорт данных соревнования",
@@ -83,10 +86,10 @@ function _(src, arg) {
             },
             "menu": {
                 "all_inner_competition_results": "Сводная по категории",
-                "add_inner_competition": "Создать категорию",
                 "competition_report": "Отчет о турнире",
                 "load_competition": "Импорт данных",
                 "manage_clubs": "Управление клубами",
+                "manage_tours": "Управление турами",
                 "manage_inner_competitions": "Управление категориями",
                 "manage_judges": "Управление судьями",
                 "manage_sportsmen": "Управление спортсменами",
@@ -159,6 +162,7 @@ function _(src, arg) {
             },
             "inner_competition": {
                 "name": "Название категории",
+                "sp": "Приоритет",
                 "external_id": "Внешний ID"
             },
             "judge": {

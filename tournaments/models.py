@@ -67,10 +67,11 @@ class InnerCompetition(BaseModel):
         indexes = (
             (("competition", "external_id"), False),
         )
-        order_by = ["name"]
+        order_by = ["sp", "name"]
 
     name = peewee.CharField()
-    competition = peewee.ForeignKeyField(Competition, related_name="inner_competitions")
+    sp = peewee.IntegerField(default=0)
+    competition = peewee.ForeignKeyField(Competition, null=True, related_name="inner_competitions")
     first_tour = peewee.ForeignKeyField(tour_proxy, null=True)
     external_id = peewee.CharField(null=True, default=None)
 
@@ -132,34 +133,58 @@ class InnerCompetition(BaseModel):
             cls._load_one(competition, obj)
 
     @classmethod
-    def create_model(cls, competition, name, ws_message):
-        new_model = cls.create(
-            name=name,
-            competition=competition
-        )
+    def create_model(cls, competition, data, ws_message):
+        create_kwargs = {
+            key: data[key]
+            for key in ["name", "sp", "external_id"]
+        }
+        create_kwargs["competition"] = competition
+        new_model = cls.create(**create_kwargs)
         ws_message.add_model_update(
             model_type=Competition,
             model_id=competition.id,
+            schema={
+                "inner_competitions": {},
+            }
+        )
+        ws_message.add_model_update(
+            model_type=cls,
+            model_id=new_model.id,
+            schema={
+                "tours": {},
+            })
+
+    def update_data(self, new_data, ws_message):
+        for key in ["name", "sp", "external_id"]:
+            if key in new_data:
+                setattr(self, key, new_data[key])
+        self.save()
+        ws_message.add_model_update(
+            model_type=Competition,
+            model_id=self.competition_id,
             schema={
                 "inner_competitions": {}
             }
         )
         ws_message.add_model_update(
-            model_type=InnerCompetition,
-            model_id=new_model.id,
-            schema={
-                "tours": {}
-            }
-        )
-
-    def update_data(self, new_data, ws_message):
-        for key in ["name", "external_id"]:
-            if key in new_data:
-                setattr(self, key, new_data[key])
-        self.save()
-        ws_message.add_model_update(
             model_type=self.__class__,
             model_id=self.id,
+        )
+
+    def delete_model(self, ws_message):
+        if self.participants.count() > 0:
+            raise RuntimeError("Unable to delete discipline that has participants")
+        if self.first_tour is not None:
+            raise RuntimeError("Unable to delete discipline that has tours")
+        competition_id = self.competition_id
+        self.competition = None
+        self.save()
+        ws_message.add_model_update(
+            model_type=competition_proxy,
+            model_id=competition_id,
+            schema={
+                "inner_competitions": {},
+            }
         )
 
     def get_serialized_results(self):
@@ -185,6 +210,7 @@ class InnerCompetition(BaseModel):
     def serialize(self, children={}):
         result = {
             "name": self.name,
+            "sp": self.sp,
             "external_id": self.external_id,
         }
         result = self.serialize_upper_child(result, "competition", children)

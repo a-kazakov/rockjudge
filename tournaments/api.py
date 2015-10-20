@@ -172,7 +172,7 @@ class Api:
     @classmethod
     def inner_competition_create(cls, request, ws_message):
         competition = cls.get_model(Competition, "competition_id", request)
-        InnerCompetition.create_model(competition=competition, name=request["name"], ws_message=ws_message)
+        InnerCompetition.create_model(competition=competition, data=request["data"], ws_message=ws_message)
         return {}
 
     @classmethod
@@ -218,6 +218,12 @@ class Api:
     def tour_delete(cls, request, ws_message):
         tour = cls.get_model(Tour, "tour_id", request)
         tour.delete_model(ws_message=ws_message)
+        return {}
+
+    @classmethod
+    def inner_competition_delete(cls, request, ws_message):
+        inner_competition = cls.get_model(InnerCompetition, "inner_competition_id", request)
+        inner_competition.delete_model(ws_message=ws_message)
         return {}
 
     @classmethod

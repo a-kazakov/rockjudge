@@ -379,19 +379,19 @@ var TourCreatingUI = (function (_React$Component3) {
     return TourCreatingUI;
 })(React.Component);
 
-var InnerCompetitionManagementUI = (function (_React$Component4) {
-    _inherits(InnerCompetitionManagementUI, _React$Component4);
+var ToursManagementUI = (function (_React$Component4) {
+    _inherits(ToursManagementUI, _React$Component4);
 
-    function InnerCompetitionManagementUI(props) {
-        _classCallCheck(this, InnerCompetitionManagementUI);
+    function ToursManagementUI(props) {
+        _classCallCheck(this, ToursManagementUI);
 
-        _get(Object.getPrototypeOf(InnerCompetitionManagementUI.prototype), "constructor", this).call(this, props);
+        _get(Object.getPrototypeOf(ToursManagementUI.prototype), "constructor", this).call(this, props);
         this.state = {
             new_tour_after_id: -1
         };
     }
 
-    _createClass(InnerCompetitionManagementUI, [{
+    _createClass(ToursManagementUI, [{
         key: "submitBaseData",
         value: function submitBaseData(event) {
             event.preventDefault();
@@ -522,6 +522,6 @@ var InnerCompetitionManagementUI = (function (_React$Component4) {
         }
     }]);
 
-    return InnerCompetitionManagementUI;
+    return ToursManagementUI;
 })(React.Component);
 //# sourceMappingURL=tour_management.js.map

@@ -56,7 +56,7 @@ class ManagementUI extends React.Component {
         switch (this.state.page) {
         case "load_competition":
             return <CompetitionLoadingUI competition_id={ this.props.competition_id } />
-        case "manage_inner_competition":
+        case "manage_tours":
             // Seeking for inner competition with given ID
             let ic = null;
             this.props.inner_competitions.forEach(function(el) {
@@ -64,7 +64,7 @@ class ManagementUI extends React.Component {
                     ic = el;
                 }
             }.bind(this));
-            return <InnerCompetitionManagementUI
+            return <ToursManagementUI
                 key={ this.state.page_props.inner_competition_id }
                 inner_competition={ ic } />
         case "manage_participants":
@@ -77,11 +77,15 @@ class ManagementUI extends React.Component {
             return <ClubsManagementUI
                 clubs={ this.props.clubs }
                 competition_id={ this.props.competition_id } />
+        case "manage_inner_competitions":
+            return <InnerCompetitionsManagementUI
+                inner_competitions={ this.props.inner_competitions }
+                competition_id={ this.props.competition_id } />
         }
     }
     render() {
-        var ics_management = this.props.inner_competitions.map(function(ic) {
-            return this.renderInnerCompetition(ic, "manage_inner_competition");
+        var ics_tours = this.props.inner_competitions.map(function(ic) {
+            return this.renderInnerCompetition(ic, "manage_tours");
         }.bind(this));
         var ics_participants = this.props.inner_competitions.map(function(ic) {
             return this.renderInnerCompetition(ic, "manage_participants");
@@ -97,14 +101,18 @@ class ManagementUI extends React.Component {
                                 { _("admin.menu.load_competition") }
                             </div>
                         </div>
+                        <div className="block">
+                            <div
+                                    className={ "level-1" + (this.state.page == "manage_inner_competitions" ? " active" : "") }
+                                    onClick={ this.switchPage.bind(this, "manage_inner_competitions") }>
+                                { _("admin.menu.manage_inner_competitions") }
+                            </div>
+                        </div>
                         <details className="block">
                             <summary className="level-1">
-                                { _("admin.menu.manage_inner_competitions") }
+                                { _("admin.menu.manage_tours") }
                             </summary>
-                            { ics_management }
-                            <div className="level-2 new-ic" onClick={ this.createInnerCommpetition.bind(this) }>
-                                { _("admin.menu.add_inner_competition") }
-                            </div>
+                            { ics_tours }
                         </details>
                         <details className="block">
                             <summary className="level-1">

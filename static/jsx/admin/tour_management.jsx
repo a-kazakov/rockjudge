@@ -168,7 +168,7 @@ class TourCreatingUI extends React.Component {
     }
 }
 
-class InnerCompetitionManagementUI extends React.Component {
+class ToursManagementUI extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
