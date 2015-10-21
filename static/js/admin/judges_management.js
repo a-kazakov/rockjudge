@@ -27,8 +27,7 @@ var JudgeEditorRow = (function (_React$Component) {
                 number: this._number.value,
                 category: this._category.value,
                 role: this._role.value,
-                role_description: this._role_description.value,
-                hide_from_results: this._hide_from_results.value
+                role_description: this._role_description.value
             };
         }
     }, {
@@ -142,18 +141,6 @@ var JudgeEditorRow = (function (_React$Component) {
                                             defaultValue: this.props.judge.role },
                                         roles
                                     )
-                                ),
-                                React.createElement(
-                                    "label",
-                                    { className: "full-width" },
-                                    _("models.judge.hide_from_results"),
-                                    React.createElement("br", null),
-                                    React.createElement("input", {
-                                        ref: function (e) {
-                                            return e && (_this._hide_from_results = e.getDOMNode());
-                                        },
-                                        type: "checkbox",
-                                        defaultValue: this.props.hide_from_results })
                                 )
                             ),
                             React.createElement(

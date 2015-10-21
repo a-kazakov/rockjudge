@@ -6,7 +6,6 @@ class JudgeEditorRow extends React.Component {
             category: this._category.value,
             role: this._role.value,
             role_description: this._role_description.value,
-            hide_from_results: this._hide_from_results.value,
         }
     }
     onSubmit(event) {
@@ -71,13 +70,6 @@ class JudgeEditorRow extends React.Component {
                                     className="full-width"
                                     defaultValue={ this.props.judge.role }>
                                 { roles }</select>
-                            </label>
-                            <label className="full-width">
-                                { _("models.judge.hide_from_results") }<br />
-                                <input
-                                    ref={ (e) => e && (this._hide_from_results = e.getDOMNode()) }
-                                    type="checkbox"
-                                    defaultValue={ this.props.hide_from_results } />
                             </label>
                         </div>
                         <div className="col-md-3">

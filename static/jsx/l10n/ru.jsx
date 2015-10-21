@@ -182,7 +182,6 @@ function _(src, arg) {
                 "number": "Номер",
                 "role": "Роль в судействе",
                 "role_description": "Должность",
-                "hide_from_results": "Не отображать в таблицах",
             },
             "participant": {
                 "acro_description": "Описание трюка",
