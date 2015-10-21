@@ -2,7 +2,8 @@ class ReportsUI extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            "page": null,
+            "page": this.getPageFromHash(),
+            "page_props": this.getPagePropsFromHash(),
         };
     }
     switchPage(page, props) {
@@ -10,6 +11,30 @@ class ReportsUI extends React.Component {
             page: page,
             page_props: props,
         });
+        let props_pairs = [];
+        Object.getOwnPropertyNames(props).forEach((key) => {
+            props_pairs.push([key, props[key]]);
+        });
+        window.location.hash = "#reports/" + page + "/" + props_pairs.map((p) => p.join("=")).join("$");
+    }
+    getPageFromHash() {
+        let chunks = window.location.hash.substr(1).split("/");
+        if (chunks[1] && ["start_list", "competition_report", "discipline_results", "tour_results"].indexOf(chunks[1]) >= 0) {
+            return chunks[1];
+        }
+        return null;
+    }
+    getPagePropsFromHash() {
+        let chunks = window.location.hash.substr(1).split("/");
+        if (chunks[2]) {
+            let result = {};
+            chunks[2].split("$").forEach(function(pair_str) {
+                let pair = pair_str.split("=");
+                result[pair[0]] = pair[1];
+            });
+            return result;
+        }
+        return {};
     }
     renderContent() {
         switch (this.state.page) {
@@ -21,10 +46,6 @@ class ReportsUI extends React.Component {
             return <div className="ifw"><iframe src={ "/ic/" + this.state.page_props.discipline_id.toString() + "/results" } /></div>
         case "tour_results":
             return <div className="ifw"><iframe src={ "/tour/" + this.state.page_props.tour_id.toString() + "/results" } /></div>
-        case "manage_judges":
-            return <JudgesManagementUI
-                judges={ this.props.judges }
-                competition_id={ this.props.competition_id } />
         }
     }
     render() {
@@ -60,14 +81,14 @@ class ReportsUI extends React.Component {
                         <div className="block">
                             <div
                                     className={ "level-1" + (this.state.page == "start_list" ? " active" : "") }
-                                    onClick= { this.switchPage.bind(this, "start_list") } >
+                                    onClick= { this.switchPage.bind(this, "start_list", {}) } >
                                 { _("admin.menu.start_list") }
                             </div>
                         </div>
                         <div className="block">
                             <div
                                     className={ "level-1" + (this.state.page == "competition_report" ? " active" : "") }
-                                    onClick= { this.switchPage.bind(this, "competition_report") } >
+                                    onClick= { this.switchPage.bind(this, "competition_report", {}) } >
                                 { _("admin.menu.competition_report") }
                             </div>
                         </div>

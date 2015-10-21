@@ -78,7 +78,8 @@ var ManagementUI = (function (_React$Component2) {
 
         _get(Object.getPrototypeOf(ManagementUI.prototype), "constructor", this).call(this, props);
         this.state = {
-            "page": null
+            "page": this.getPageFromHash(),
+            "page_props": this.getPagePropsFromHash()
         };
     }
 
@@ -89,6 +90,42 @@ var ManagementUI = (function (_React$Component2) {
                 page: page,
                 page_props: props
             });
+            var props_pairs = [];
+            Object.getOwnPropertyNames(props).forEach(function (key) {
+                props_pairs.push([key, props[key]]);
+            });
+            window.location.hash = "#management/" + page + "/" + props_pairs.map(function (p) {
+                return p.join("=");
+            }).join("$");
+        }
+    }, {
+        key: "getPageFromHash",
+        value: function getPageFromHash() {
+            var chunks = window.location.hash.substr(1).split("/");
+            if (chunks[1] && ["load_competition", "manage_tours", "manage_participants", "manage_judges", "manage_clubs", "manage_disciplines"].indexOf(chunks[1]) >= 0) {
+                return chunks[1];
+            }
+            return null;
+        }
+    }, {
+        key: "getPagePropsFromHash",
+        value: function getPagePropsFromHash() {
+            var chunks = window.location.hash.substr(1).split("/");
+            if (chunks[2]) {
+                var _ret = (function () {
+                    var result = {};
+                    chunks[2].split("$").forEach(function (pair_str) {
+                        var pair = pair_str.split("=");
+                        result[pair[0]] = pair[1];
+                    });
+                    return {
+                        v: result
+                    };
+                })();
+
+                if (typeof _ret === "object") return _ret.v;
+            }
+            return {};
         }
     }, {
         key: "renderDiscipline",
@@ -166,7 +203,7 @@ var ManagementUI = (function (_React$Component2) {
                                         "div",
                                         {
                                             className: "level-1" + (this.state.page == "load_competition" ? " active" : ""),
-                                            onClick: this.switchPage.bind(this, "load_competition") },
+                                            onClick: this.switchPage.bind(this, "load_competition", {}) },
                                         _("admin.menu.load_competition")
                                     )
                                 ),
@@ -177,7 +214,7 @@ var ManagementUI = (function (_React$Component2) {
                                         "div",
                                         {
                                             className: "level-1" + (this.state.page == "manage_disciplines" ? " active" : ""),
-                                            onClick: this.switchPage.bind(this, "manage_disciplines") },
+                                            onClick: this.switchPage.bind(this, "manage_disciplines", {}) },
                                         _("admin.menu.manage_disciplines")
                                     )
                                 ),
@@ -208,7 +245,7 @@ var ManagementUI = (function (_React$Component2) {
                                         "div",
                                         {
                                             className: "level-1" + (this.state.page == "manage_clubs" ? " active" : ""),
-                                            onClick: this.switchPage.bind(this, "manage_clubs") },
+                                            onClick: this.switchPage.bind(this, "manage_clubs", {}) },
                                         _("admin.menu.manage_clubs")
                                     )
                                 ),
@@ -219,7 +256,7 @@ var ManagementUI = (function (_React$Component2) {
                                         "div",
                                         {
                                             className: "level-1" + (this.state.page == "manage_judges" ? " active" : ""),
-                                            onClick: this.switchPage.bind(this, "manage_judges") },
+                                            onClick: this.switchPage.bind(this, "manage_judges", {}) },
                                         _("admin.menu.manage_judges")
                                     )
                                 )
@@ -387,7 +424,7 @@ var AdminUI = (function (_React$Component4) {
 
         _get(Object.getPrototypeOf(AdminUI.prototype), "constructor", this).call(this, props);
         this.state = {
-            active_app: "management",
+            active_app: this.getActiveAppFromHash(),
             name: null
         };
         message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
@@ -422,7 +459,7 @@ var AdminUI = (function (_React$Component4) {
             }).updateDB("Competition", this.props.competition_id).onSuccess(this.reloadFromStorage.bind(this)).send();
         }
 
-        // Listeners
+        // Navigation
 
     }, {
         key: "setApp",
@@ -430,6 +467,16 @@ var AdminUI = (function (_React$Component4) {
             this.setState({
                 active_app: app
             });
+            window.location.hash = "#" + app;
+        }
+    }, {
+        key: "getActiveAppFromHash",
+        value: function getActiveAppFromHash(app) {
+            var chunks = window.location.hash.substr(1).split("/");
+            if (chunks[0] && ["judging", "management", "reports", "service"].indexOf(chunks[0]) >= 0) {
+                return chunks[0];
+            }
+            return "management";
         }
 
         // Rendering
@@ -447,7 +494,7 @@ var AdminUI = (function (_React$Component4) {
                         clubs: this.state.clubs,
                         judges: this.state.judges,
                         competition_id: this.props.competition_id });
-                case "results":
+                case "reports":
                     return React.createElement(ReportsUI, {
                         disciplines: this.state.disciplines,
                         competition_id: this.props.competition_id });
@@ -520,7 +567,7 @@ var AdminUI = (function (_React$Component4) {
                             ),
                             React.createElement(
                                 "div",
-                                { className: "app" + (this.state.active_app == "results" ? " active" : ""), onClick: this.setApp.bind(this, "results") },
+                                { className: "app" + (this.state.active_app == "reports" ? " active" : ""), onClick: this.setApp.bind(this, "reports") },
                                 React.createElement(
                                     "div",
                                     { className: "icon" },

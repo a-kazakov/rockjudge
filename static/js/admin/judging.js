@@ -71,7 +71,7 @@ var JudgingUI = (function (_React$Component2) {
 
         _get(Object.getPrototypeOf(JudgingUI.prototype), "constructor", this).call(this, props);
         this.state = {
-            tour_id: null
+            tour_id: this.getTourIdFromHash()
         };
     }
 
@@ -81,6 +81,16 @@ var JudgingUI = (function (_React$Component2) {
             this.setState({
                 tour_id: new_tour_id
             });
+            window.location.hash = "#judging/" + new_tour_id;
+        }
+    }, {
+        key: "getTourIdFromHash",
+        value: function getTourIdFromHash(app) {
+            var chunks = window.location.hash.substr(1).split("/");
+            if (chunks[1] && /^\d$/.test(chunks[1])) {
+                return parseInt(chunks[1]);
+            }
+            return null;
         }
     }, {
         key: "render",

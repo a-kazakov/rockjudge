@@ -32,7 +32,8 @@ class ManagementUI extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            "page": null,
+            "page": this.getPageFromHash(),
+            "page_props": this.getPagePropsFromHash(),
         };
     }
     switchPage(page, props) {
@@ -40,6 +41,30 @@ class ManagementUI extends React.Component {
             page: page,
             page_props: props,
         });
+        let props_pairs = [];
+        Object.getOwnPropertyNames(props).forEach((key) => {
+            props_pairs.push([key, props[key]]);
+        });
+        window.location.hash = "#management/" + page + "/" + props_pairs.map((p) => p.join("=")).join("$");
+    }
+    getPageFromHash() {
+        let chunks = window.location.hash.substr(1).split("/");
+        if (chunks[1] && ["load_competition", "manage_tours", "manage_participants", "manage_judges", "manage_clubs", "manage_disciplines"].indexOf(chunks[1]) >= 0) {
+            return chunks[1];
+        }
+        return null;
+    }
+    getPagePropsFromHash() {
+        let chunks = window.location.hash.substr(1).split("/");
+        if (chunks[2]) {
+            let result = {};
+            chunks[2].split("$").forEach(function(pair_str) {
+                let pair = pair_str.split("=");
+                result[pair[0]] = pair[1];
+            });
+            return result;
+        }
+        return {};
     }
     renderDiscipline(ic, page) {
         return <div
@@ -97,14 +122,14 @@ class ManagementUI extends React.Component {
                         <div className="block">
                             <div
                                     className={ "level-1" + (this.state.page == "load_competition" ? " active" : "") }
-                                    onClick= { this.switchPage.bind(this, "load_competition") } >
+                                    onClick= { this.switchPage.bind(this, "load_competition", {}) } >
                                 { _("admin.menu.load_competition") }
                             </div>
                         </div>
                         <div className="block">
                             <div
                                     className={ "level-1" + (this.state.page == "manage_disciplines" ? " active" : "") }
-                                    onClick={ this.switchPage.bind(this, "manage_disciplines") }>
+                                    onClick={ this.switchPage.bind(this, "manage_disciplines", {}) }>
                                 { _("admin.menu.manage_disciplines") }
                             </div>
                         </div>
@@ -123,14 +148,14 @@ class ManagementUI extends React.Component {
                         <div className="block">
                             <div
                                     className={ "level-1" + (this.state.page == "manage_clubs" ? " active" : "") }
-                                    onClick={ this.switchPage.bind(this, "manage_clubs") }>
+                                    onClick={ this.switchPage.bind(this, "manage_clubs", {}) }>
                                 { _("admin.menu.manage_clubs") }
                             </div>
                         </div>
                         <div className="block">
                             <div
                                     className={ "level-1" + (this.state.page == "manage_judges" ? " active" : "") }
-                                    onClick={ this.switchPage.bind(this, "manage_judges") }>
+                                    onClick={ this.switchPage.bind(this, "manage_judges", {}) }>
                                 { _("admin.menu.manage_judges") }
                             </div>
                         </div>
@@ -229,7 +254,7 @@ class AdminUI extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            active_app: "management",
+            active_app: this.getActiveAppFromHash(),
             name: null,
         };
         message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
@@ -265,12 +290,20 @@ class AdminUI extends React.Component {
         .send();
     }
 
-    // Listeners
+    // Navigation
 
     setApp(app) {
         this.setState({
             active_app: app,
         });
+        window.location.hash = "#" + app;
+    }
+    getActiveAppFromHash(app) {
+        let chunks = window.location.hash.substr(1).split("/");
+        if (chunks[0] && ["judging", "management", "reports", "service"].indexOf(chunks[0]) >= 0) {
+            return chunks[0];
+        }
+        return "management";
     }
 
     // Rendering
@@ -286,7 +319,7 @@ class AdminUI extends React.Component {
                 clubs={ this.state.clubs }
                 judges={ this.state.judges }
                 competition_id={ this.props.competition_id } />;
-        case "results":
+        case "reports":
             return <ReportsUI
                 disciplines={ this.state.disciplines }
                 competition_id={ this.props.competition_id } />;
@@ -314,7 +347,7 @@ class AdminUI extends React.Component {
                         <div className="icon">J</div>
                         <div className="label">Judging</div>
                     </div>
-                    <div className={ "app" + (this.state.active_app == "results" ? " active" : "") } onClick={ this.setApp.bind(this, "results") }>
+                    <div className={ "app" + (this.state.active_app == "reports" ? " active" : "") } onClick={ this.setApp.bind(this, "reports") }>
                         <div className="icon">R</div>
                         <div className="label">Reports</div>
                     </div>

@@ -16,7 +16,8 @@ var ReportsUI = (function (_React$Component) {
 
         _get(Object.getPrototypeOf(ReportsUI.prototype), "constructor", this).call(this, props);
         this.state = {
-            "page": null
+            "page": this.getPageFromHash(),
+            "page_props": this.getPagePropsFromHash()
         };
     }
 
@@ -27,6 +28,42 @@ var ReportsUI = (function (_React$Component) {
                 page: page,
                 page_props: props
             });
+            var props_pairs = [];
+            Object.getOwnPropertyNames(props).forEach(function (key) {
+                props_pairs.push([key, props[key]]);
+            });
+            window.location.hash = "#reports/" + page + "/" + props_pairs.map(function (p) {
+                return p.join("=");
+            }).join("$");
+        }
+    }, {
+        key: "getPageFromHash",
+        value: function getPageFromHash() {
+            var chunks = window.location.hash.substr(1).split("/");
+            if (chunks[1] && ["start_list", "competition_report", "discipline_results", "tour_results"].indexOf(chunks[1]) >= 0) {
+                return chunks[1];
+            }
+            return null;
+        }
+    }, {
+        key: "getPagePropsFromHash",
+        value: function getPagePropsFromHash() {
+            var chunks = window.location.hash.substr(1).split("/");
+            if (chunks[2]) {
+                var _ret = (function () {
+                    var result = {};
+                    chunks[2].split("$").forEach(function (pair_str) {
+                        var pair = pair_str.split("=");
+                        result[pair[0]] = pair[1];
+                    });
+                    return {
+                        v: result
+                    };
+                })();
+
+                if (typeof _ret === "object") return _ret.v;
+            }
+            return {};
         }
     }, {
         key: "renderContent",
@@ -56,10 +93,6 @@ var ReportsUI = (function (_React$Component) {
                         { className: "ifw" },
                         React.createElement("iframe", { src: "/tour/" + this.state.page_props.tour_id.toString() + "/results" })
                     );
-                case "manage_judges":
-                    return React.createElement(JudgesManagementUI, {
-                        judges: this.props.judges,
-                        competition_id: this.props.competition_id });
             }
         }
     }, {
@@ -115,7 +148,7 @@ var ReportsUI = (function (_React$Component) {
                                         "div",
                                         {
                                             className: "level-1" + (this.state.page == "start_list" ? " active" : ""),
-                                            onClick: this.switchPage.bind(this, "start_list") },
+                                            onClick: this.switchPage.bind(this, "start_list", {}) },
                                         _("admin.menu.start_list")
                                     )
                                 ),
@@ -126,7 +159,7 @@ var ReportsUI = (function (_React$Component) {
                                         "div",
                                         {
                                             className: "level-1" + (this.state.page == "competition_report" ? " active" : ""),
-                                            onClick: this.switchPage.bind(this, "competition_report") },
+                                            onClick: this.switchPage.bind(this, "competition_report", {}) },
                                         _("admin.menu.competition_report")
                                     )
                                 ),

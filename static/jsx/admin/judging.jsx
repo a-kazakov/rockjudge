@@ -31,13 +31,21 @@ class JudgingUI extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tour_id: null,
+            tour_id: this.getTourIdFromHash(),
         };
     }
     updateTourId(new_tour_id) {
         this.setState({
             tour_id: new_tour_id,
         });
+        window.location.hash = "#judging/" + new_tour_id;
+    }
+    getTourIdFromHash(app) {
+        let chunks = window.location.hash.substr(1).split("/");
+        if (chunks[1] && /^\d$/.test(chunks[1])) {
+            return parseInt(chunks[1]);
+        }
+        return null;
     }
     render() {
         return <table className="app-content">
