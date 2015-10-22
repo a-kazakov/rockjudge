@@ -193,16 +193,18 @@ function _(src, arg) {
                 "name": "Название"
             },
             "discipline": {
+                "external_id": "Внешний ID",
                 "name": "Название дисциплины",
-                "sp": "Приоритет",
-                "external_id": "Внешний ID"
+                "sp": "Приоритет"
             },
             "judge": {
                 "category": "Категория",
+                "external_id": "Внешний ID",
                 "name": "Ф. И. О.",
                 "number": "Номер",
                 "role": "Роль в судействе",
-                "role_description": "Должность"
+                "role_description": "Должность",
+                "sp": "Приоритет"
             },
             "participant": {
                 "acro_description": "Описание трюка",
@@ -230,7 +232,7 @@ function _(src, arg) {
                 "is_hope_tour": "Тур «Надежды»",
                 "num_advances": "Квота выхода в следующий тур",
                 "participants_per_heat": "Кол-во участников на площадке",
-                "scoring_system": "Система судейства"
+                "scoring_system_name": "Система судейства"
             }
         },
         "results": {

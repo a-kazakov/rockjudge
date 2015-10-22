@@ -40,7 +40,7 @@ var CompetitionReport = (function (_React$Component) {
     }, {
         key: "loadData",
         value: function loadData() {
-            Api("tournaments.competition.get", {
+            Api("competition.get", {
                 competition_id: this.props.competition_id,
                 children: {
                     clubs: {

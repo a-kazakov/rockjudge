@@ -99,7 +99,7 @@ var TourInputForm = (function (_React$Component) {
                             React.createElement(
                                 "label",
                                 { className: "col-sm-4 control-label" },
-                                _("models.tour.scoring_system"),
+                                _("models.tour.scoring_system_name"),
                                 ":"
                             ),
                             React.createElement(
@@ -109,8 +109,8 @@ var TourInputForm = (function (_React$Component) {
                                     "select",
                                     {
                                         className: "form-control",
-                                        ref: "scoring_system",
-                                        defaultValue: tour.scoring_system || GL.scoring_systems[0] },
+                                        ref: "scoring_system_name",
+                                        defaultValue: tour.scoring_system_name || GL.scoring_systems[0] },
                                     GL.scoring_systems.map(function (sn) {
                                         return React.createElement(
                                             "option",
@@ -183,7 +183,7 @@ var TourInputForm = (function (_React$Component) {
                 name: this.refs.name.getDOMNode().value,
                 num_advances: this.refs.num_advances.getDOMNode().value,
                 participants_per_heat: this.refs.participants_per_heat.getDOMNode().value,
-                scoring_system: this.refs.scoring_system.getDOMNode().value,
+                scoring_system_name: this.refs.scoring_system_name.getDOMNode().value,
                 hope_tour: this.refs.hope_tour.getDOMNode().checked
             };
         }
@@ -292,11 +292,11 @@ var TourEditingUI = (function (_React$Component2) {
                             React.createElement(
                                 "strong",
                                 null,
-                                _("models.tour.scoring_system"),
+                                _("models.tour.scoring_system_name"),
                                 ":"
                             ),
                             " ",
-                            _("scoring_systems_names." + this.props.tour.scoring_system),
+                            _("scoring_systems_names." + this.props.tour.scoring_system_name),
                             " "
                         )
                     ),
@@ -326,7 +326,7 @@ var TourEditingUI = (function (_React$Component2) {
     }, {
         key: "submitTour",
         value: function submitTour(data) {
-            Api("tournaments.tour.set", {
+            Api("tour.set", {
                 tour_id: this.props.tour.id,
                 data: data
             }).onSuccess((function (response) {
@@ -339,7 +339,7 @@ var TourEditingUI = (function (_React$Component2) {
             if (!confirm(_("admin.confirms.delete_tour"))) {
                 return false;
             }
-            Api("tournaments.tour.delete", { tour_id: this.props.tour.id }).send();
+            Api("tour.delete", { tour_id: this.props.tour.id }).send();
         }
     }]);
 
@@ -366,7 +366,7 @@ var TourCreatingUI = (function (_React$Component3) {
     }, {
         key: "submitTour",
         value: function submitTour(data) {
-            Api("tournaments.tour.create", {
+            Api("tour.create", {
                 discipline_id: this.props.discipline_id,
                 add_after: this.props.add_after,
                 data: data
@@ -395,7 +395,7 @@ var ToursManagementUI = (function (_React$Component4) {
         key: "submitBaseData",
         value: function submitBaseData(event) {
             event.preventDefault();
-            Api("tournaments.discipline.set", {
+            Api("discipline.set", {
                 discipline_id: this.props.discipline.id,
                 data: {
                     name: this.refs.name.getDOMNode().value,

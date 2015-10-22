@@ -94,12 +94,12 @@ class ParticipantEditorRow extends React.Component {
     onSubmit(event) {
         event.preventDefault();
         if (!this.props.newParticipant) {
-            Api("tournaments.participant.set", {
+            Api("participant.set", {
                 participant_id: this.state.id,
                 data: this.sertialize(),
             }).onSuccess(this.props.stopEditing).send();
         } else {
-            Api("tournaments.participant.create", {
+            Api("participant.create", {
                 discipline_id: this.props.discipline_id,
                 data: this.sertialize(),
             }).onSuccess(this.props.stopEditing).send();
@@ -275,7 +275,7 @@ class ParticipantRow extends React.Component {
     onDelete(event) {
         event.stopPropagation();
         if (confirm(_("admin.confirms.delete_participant"))) {
-            Api("tournaments.participant.delete", {
+            Api("participant.delete", {
                 participant_id: this.props.participant.id,
             }).send();
         }
@@ -379,7 +379,7 @@ class ParticipantsManager extends React.Component {
         this.setState(serialized);
     }
     loadData() {
-        Api("tournaments.discipline.get", {
+        Api("discipline.get", {
             discipline_id: this.props.discipline_id,
             children: {
                 competition: {

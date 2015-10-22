@@ -88,12 +88,12 @@ var CompetitionEditorRow = (function (_React$Component) {
         value: function onSubmit(event) {
             event.preventDefault();
             if (!this.props.newCompetition) {
-                Api("tournaments.competition.set", {
+                Api("competition.set", {
                     competition_id: this.state.id,
                     data: this.sertialize()
                 }).onSuccess(this.props.stopEditing).send();
             } else {
-                Api("tournaments.competition.create", {
+                Api("competition.create", {
                     data: this.sertialize()
                 }).onSuccess(this.props.stopEditing).send();
             }
@@ -297,7 +297,7 @@ var CompetitionRow = (function (_React$Component2) {
         value: function onDelete(event) {
             event.stopPropagation();
             if (confirm(_("admin.confirms.delete_competition"))) {
-                Api("tournaments.competition.delete", {
+                Api("competition.delete", {
                     competition_id: this.props.competition.id
                 }).send();
             }
@@ -389,6 +389,7 @@ var CompetitionCreationRow = (function (_React$Component3) {
             var empty_data = {
                 "name": "",
                 "date": "",
+                "active": true,
                 "info": []
             };
             return React.createElement(CompetitionEditorRow, _extends({
@@ -456,7 +457,7 @@ var CompetitionsManager = (function (_React$Component4) {
     }, {
         key: "loadData",
         value: function loadData() {
-            Api("tournaments.competition.get_all", {
+            Api("competition.get_all", {
                 children: {}
             }).onSuccess((function (response) {
                 response.forEach(function (c) {

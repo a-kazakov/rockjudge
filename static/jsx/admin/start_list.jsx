@@ -23,7 +23,7 @@ class StartList extends React.Component {
                 .serialize(SCHEMA));
     }
     loadData() {
-        Api("tournaments.competition.get", {
+        Api("competition.get", {
             competition_id: this.props.competition_id,
             children: {
                 disciplines: {

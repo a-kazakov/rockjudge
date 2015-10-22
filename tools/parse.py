@@ -45,6 +45,7 @@ class Grid:
 
 class Club:
     storage = {}
+
     def __init__(self, grid, idx):
         row = grid.getRow(idx, 3)
         if row[0] is None:
@@ -53,11 +54,12 @@ class Club:
         self.storage[self.name] = self
 
     def serialize(self):
-        return { k: getattr(self, k) for k in ["name", "city", "external_id"] }
+        return {k: getattr(self, k) for k in ["name", "city", "external_id"]}
 
 
-class Category:
+class Discipline:
     storage = {}
+
     def __init__(self, grid, idx):
         row = grid.getRow(idx, 2)
         if row[0] is None:
@@ -65,47 +67,77 @@ class Category:
         self.name, self.external_id = map(str, row)
         self.storage[self.name] = self
 
+    @property
+    def has_participants(self):
+        return len([
+            None
+            for p in Couple.storage + Formation.storage
+            if p.discipline == self.name
+        ]) > 0
+
     def serialize(self):
-        result = { k: getattr(self, k) for k in ["name", "external_id"] }
+        result = {k: getattr(self, k) for k in ["name", "external_id"]}
         result["participants"] = [
             p.serialize()
             for p in Couple.storage + Formation.storage
-            if p.category == self.name
+            if p.discipline == self.name
         ]
         return result
 
 
+class Judge:
+    storage = {}
+
+    def __init__(self, grid, idx):
+        row = grid.getRow(idx, 6)
+        if row[0] is None:
+            raise StopIteration
+        self.name, self.category, self.number, self.role_description, self.role, self.priority = row
+        self.external_id = md5(self.name.encode("utf-8")).hexdigest()
+        self.storage[self.name] = self
+
+
+    def serialize(self):
+        return {
+            k: str(getattr(self, k))
+            for k in ["name", "category", "number", "role_description", "role", "priority", "external_id"]
+            if getattr(self, k) is not None
+        }
+
+
 class Couple:
     storage = []
+
     def __init__(self, grid, idx):
         row = grid.getRow(idx, 9 + 6 * 2)
-        if row[0] is None and row[3] is None:
+        if row[1] is None and row[4] is None:
             raise StopIteration
         self.sportsmen = []
-        if row[0] is not None:
+        if row[1] is not None:
             self.sportsmen.append({
-                "last_name": str(row[0]),
-                "first_name": str(row[1]),
-                "year_of_birth": int(row[2]),
+                "last_name": str(row[1]),
+                "first_name": str(row[2]),
+                "year_of_birth": int(row[3]),
                 "gender": "F",
             })
-        if row[3] is not None:
+        if row[4] is not None:
             self.sportsmen.append({
-                "last_name": str(row[3]),
-                "first_name": str(row[4]),
-                "year_of_birth": int(row[5]),
+                "last_name": str(row[4]),
+                "first_name": str(row[5]),
+                "year_of_birth": int(row[6]),
                 "gender": "M",
             })
         self.acrobatics = []
-        for idx in range(9, 9 + 6 * 2, 2):
+        for idx in range(10, 9 + 6 * 2, 2):
             if row[idx] is not None:
                 self.acrobatics.append({
                     "description": str(row[idx]),
                     "score": float(row[idx + 1])
                 })
-        self.category = str(row[6])
-        self.club = Club.storage[row[7]].external_id
-        self.coaches = str(row[8])
+        self.number = row[0]
+        self.discipline = str(row[7])
+        self.club = Club.storage[row[8]].external_id
+        self.coaches = str(row[9])
         self.external_id = md5((
             self.club + "|" +
             "|".join([s["first_name"] + "$" + s["last_name"] for s in self.sportsmen])
@@ -113,38 +145,45 @@ class Couple:
         self.storage.append(self)
 
     def serialize(self):
-        return { k: getattr(self, k) for k in ["sportsmen", "acrobatics", "club", "coaches", "external_id"] }
+        return {
+            k: getattr(self, k)
+            for k in ["sportsmen", "acrobatics", "club", "coaches", "number", "external_id"]
+            if getattr(self, k) is not None
+        }
 
 
 class Formation:
     storage = []
-    def __init__(self, grid, idx):
-        cols = [grid.getCol(4 * idx + i, 100) for i in range(4)]
-        form_data = cols[0][:4]
-        if form_data[0] is None:
-            raise StopIteration
-        self.formation_name = str(form_data[0])
-        self.category = str(form_data[1])
-        self.club = Club.storage[form_data[2]].external_id
-        self.coaches = str(form_data[3])
+
+    def __init__(self, grid, first_row, num_rows):
+        rows = [grid.getRow(i, 9) for i in range(first_row, first_row + num_rows)]
+        form_data = rows[0][:5]
+        self.number = form_data[0]
+        self.discipline = str(form_data[1])
+        self.formation_name = str(form_data[2])
+        self.club = Club.storage[form_data[3]].external_id
+        self.coaches = str(form_data[4])
         self.sportsmen = [
             {
-                "last_name": cols[0][idx],
-                "first_name": cols[1][idx],
-                "year_of_birth": cols[2][idx],
-                "gender": cols[3][idx],
-            } for idx in range(5, 100)
-            if cols[0][idx] is not None
+                "last_name": row[5],
+                "first_name": row[6],
+                "year_of_birth": row[7],
+                "gender": row[8],
+            } for row in rows
+            if row[5] is not None
         ]
         self.acrobatics = []
         self.external_id = md5((
-            self.club + "|" +
-            "|".join([s["first_name"] + "$" + s["last_name"] for s in self.sportsmen])
+            self.club + "|" + self.formation_name
         ).encode("utf-8")).hexdigest()
         self.storage.append(self)
 
     def serialize(self):
-        return { k: getattr(self, k) for k in ["formation_name", "sportsmen", "acrobatics", "club", "coaches", "external_id"] }
+        return {
+            k: getattr(self, k)
+            for k in ["formation_name", "sportsmen", "acrobatics", "club", "coaches", "number", "external_id"]
+            if getattr(self, k) is not None
+        }
 
 
 @contextmanager
@@ -163,9 +202,10 @@ with step("Opening document"):
 
 with step("Loading data"):
     grid_clubs = Grid(wb["Clubs"], first_row=2)
-    grid_categoriess = Grid(wb["Categories"], first_row=2)
+    grid_disciplines = Grid(wb["Disciplines"], first_row=2)
+    grid_judges = Grid(wb["Judges"], first_row=2)
     grid_couples = Grid(wb["Couples, solo"], first_row=3)
-    grid_forms = Grid(wb["Formations"], first_col=2)
+    grid_forms = Grid(wb["Formations"], first_row=3)
 
 
 with step("Parsing clubs"):
@@ -176,10 +216,18 @@ with step("Parsing clubs"):
             break
 
 
-with step("Parsing category"):
+with step("Parsing discipline"):
     for idx in range(1000):
         try:
-            Category(grid_categoriess, idx)
+            Discipline(grid_disciplines, idx)
+        except StopIteration:
+            break
+
+
+with step("Parsing judges"):
+    for idx in range(1000):
+        try:
+            Judge(grid_judges, idx)
         except StopIteration:
             break
 
@@ -193,17 +241,22 @@ with step("Parsing couples"):
 
 
 with step("Parsing formations"):
+    formation_names = grid_forms.getCol(2, 1000)
+    latest_row = None
     for idx in range(1000):
-        try:
-            Formation(grid_forms, idx)
-        except StopIteration:
-            break
+        if formation_names[idx] is None:
+            continue
+        if latest_row is not None:
+            Formation(grid_forms, latest_row, idx - latest_row)
+        latest_row = idx
+    if latest_row is not None:
+        Formation(grid_forms, latest_row, 1000 - latest_row)
 
 
 with step("Saving"):
     with open(argv[2], "wt", encoding="utf-8") as f:
         f.write(json.dumps({
+            "judges": [x.serialize() for x in Judge.storage.values()],
             "clubs": [x.serialize() for x in Club.storage.values()],
-            "categories": [x.serialize() for x in Category.storage.values()],
+            "disciplines": [x.serialize() for x in Discipline.storage.values() if x.has_participants],
         }, sort_keys=True, indent=4, ensure_ascii=False))
-

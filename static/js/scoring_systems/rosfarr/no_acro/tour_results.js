@@ -438,16 +438,16 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
         key: "renderScore",
         value: function renderScore(judge, score) {
             if (judge.role == "dance_judge") {
-                if (this.props.scoring_system == "rosfarr.formation") {
+                if (this.props.scoring_system_name == "rosfarr.formation") {
                     return this.renderFormationScore(score);
                 }
                 return this.renderDanceScore(score);
             }
             if (judge.role == "acro_judge") {
-                if (this.props.scoring_system == "rosfarr.formation") {
+                if (this.props.scoring_system_name == "rosfarr.formation") {
                     return this.renderFormationScore(score);
                 }
-                if (this.props.scoring_system == "rosfarr.acro") {
+                if (this.props.scoring_system_name == "rosfarr.acro") {
                     return this.renderAcroScore(score);
                 }
                 return this.renderDanceScore(score);
@@ -483,7 +483,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                 );
             }).bind(this));
             var acro_scores_cell = null;
-            if (this.props.scoring_system == "rosfarr.acro") {
+            if (this.props.scoring_system_name == "rosfarr.acro") {
                 var acro_scores = this.props.row.acrobatics.map((function (acro, idx) {
                     return React.createElement(
                         "tr",
@@ -605,7 +605,7 @@ var TourResultsVerboseTable = (function (_React$Component2) {
                     key: row.participant.id,
                     has_next_tour: this.props.has_next_tour,
                     judges: this.props.judges,
-                    scoring_system: this.props.scoring_system });
+                    scoring_system_name: this.props.scoring_system_name });
             }).bind(this));
             var judges_header = this.props.judges.map(function (judge) {
                 return React.createElement(
@@ -618,7 +618,7 @@ var TourResultsVerboseTable = (function (_React$Component2) {
                     )
                 );
             });
-            var acro_header = this.props.scoring_system == "rosfarr.acro" ? React.createElement(
+            var acro_header = this.props.scoring_system_name == "rosfarr.acro" ? React.createElement(
                 "th",
                 { className: "w-4 acro" },
                 React.createElement(

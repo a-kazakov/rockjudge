@@ -69,7 +69,7 @@ var DisciplineResults = (function (_React$Component) {
     }, {
         key: "loadResults",
         value: function loadResults() {
-            Api("tournaments.discipline.get_results", {
+            Api("discipline.get_results", {
                 discipline_id: this.props.discipline_id
             }).onSuccess((function (response) {
                 this.setState({
@@ -81,7 +81,7 @@ var DisciplineResults = (function (_React$Component) {
     }, {
         key: "loadData",
         value: function loadData() {
-            Api("tournaments.discipline.get", {
+            Api("discipline.get", {
                 discipline_id: this.props.discipline_id,
                 children: {
                     tours: {

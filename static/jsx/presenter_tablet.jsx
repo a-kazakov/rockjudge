@@ -45,7 +45,7 @@ class PresenterTablet extends React.Component {
         })
     }
     loadData() {
-        Api("tournaments.tour.find_active", {}).onSuccess(function(response) {
+        Api("tour.find_active", {}).onSuccess(function(response) {
             this.dispatchActiveTourUpdate(response);
         }.bind(this)).send();
     }
@@ -73,7 +73,7 @@ class PresenterTablet extends React.Component {
             });
             return;
         }
-        Api("tournaments.tour.get", { tour_id: tour_id, children:{
+        Api("tour.get", { tour_id: tour_id, children:{
             runs: {
                 participant: {
                     "club": {},

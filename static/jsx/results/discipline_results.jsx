@@ -51,7 +51,7 @@ class DisciplineResults extends React.Component {
         });
     }
     loadResults() {
-        Api("tournaments.discipline.get_results", {
+        Api("discipline.get_results", {
             discipline_id: this.props.discipline_id,
         })
         .onSuccess(function(response) {
@@ -63,7 +63,7 @@ class DisciplineResults extends React.Component {
         .send();
     }
     loadData() {
-        Api("tournaments.discipline.get", {
+        Api("discipline.get", {
             discipline_id: this.props.discipline_id,
             children: {
                 tours: {

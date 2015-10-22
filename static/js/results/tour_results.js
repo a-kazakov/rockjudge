@@ -35,7 +35,7 @@ var TourResults = (function (_React$Component) {
     _createClass(TourResults, [{
         key: "loadData",
         value: function loadData() {
-            Api("tournaments.tour.get_results", { tour_id: this.props.tour_id }).onSuccess((function (new_results) {
+            Api("tour.get_results", { tour_id: this.props.tour_id }).onSuccess((function (new_results) {
                 this.setState(new_results);
             }).bind(this)).send();
         }
@@ -92,7 +92,7 @@ var TourResults = (function (_React$Component) {
                     judges: active_judges,
                     data: this.state.results,
                     has_next_tour: this.state.next_tour_id != null,
-                    scoring_system: this.state.scoring_system });
+                    scoring_system_name: this.state.scoring_system_name });
             } else {
                 table = React.createElement(TourResultsTable, {
                     data: this.state.results,

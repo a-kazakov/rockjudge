@@ -6,17 +6,19 @@ class JudgeEditorRow extends React.Component {
             category: this._category.value,
             role: this._role.value,
             role_description: this._role_description.value,
+            sp: this._sp.value,
+            external_id: this._external_id.value,
         }
     }
     onSubmit(event) {
         event.preventDefault();
         if (!this.props.newJudge) {
-            Api("tournaments.judge.set", {
+            Api("judge.set", {
                 judge_id: this.props.judge.id,
                 data: this.sertialize(),
             }).onSuccess(this.props.stopEditing).send();
         } else {
-            Api("tournaments.judge.create", {
+            Api("judge.create", {
                 competition_id: this.props.competition_id,
                 data: this.sertialize(),
             }).onSuccess(this.props.stopEditing).send();
@@ -71,8 +73,22 @@ class JudgeEditorRow extends React.Component {
                                     defaultValue={ this.props.judge.role }>
                                 { roles }</select>
                             </label>
+                            <label className="full-width">
+                                { _("models.judge.external_id") }
+                                <input
+                                    ref={ (e) => e && (this._external_id = e.getDOMNode()) }
+                                    className="full-width"
+                                    defaultValue={ this.props.judge.external_id } />
+                            </label>
                         </div>
                         <div className="col-md-3">
+                            <label className="full-width">
+                                { _("models.judge.sp") }
+                                <input
+                                    ref={ (e) => e && (this._sp = e.getDOMNode()) }
+                                    className="full-width"
+                                    defaultValue={ this.props.judge.sp } />
+                            </label>
                             <div className="buttons">
                                 <button
                                     type="submit"
@@ -110,7 +126,7 @@ class JudgeRow extends React.Component {
     onDelete(event) {
         event.stopPropagation();
         if (confirm(_("admin.confirms.delete_judge"))) {
-            Api("tournaments.judge.delete", {
+            Api("judge.delete", {
                 judge_id: this.props.judge.id,
             }).send();
         }

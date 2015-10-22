@@ -39,12 +39,12 @@ class TourInputForm extends React.Component {
                 </div>
                 <div className="col-md-6">
                     <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">{ _("models.tour.scoring_system") }:</label>
+                        <label className="col-sm-4 control-label">{ _("models.tour.scoring_system_name") }:</label>
                         <div className="col-sm-8">
                             <select
                                 className="form-control"
-                                ref="scoring_system"
-                                defaultValue={ tour.scoring_system || GL.scoring_systems[0] } >
+                                ref="scoring_system_name"
+                                defaultValue={ tour.scoring_system_name || GL.scoring_systems[0] } >
                                 { GL.scoring_systems.map((sn) => <option key={ sn } value={ sn }>{ _("scoring_systems_names." + sn) }</option>) }
                             </select>
                         </div>
@@ -81,7 +81,7 @@ class TourInputForm extends React.Component {
             name: this.refs.name.getDOMNode().value,
             num_advances: this.refs.num_advances.getDOMNode().value,
             participants_per_heat: this.refs.participants_per_heat.getDOMNode().value,
-            scoring_system: this.refs.scoring_system.getDOMNode().value,
+            scoring_system_name: this.refs.scoring_system_name.getDOMNode().value,
             hope_tour: this.refs.hope_tour.getDOMNode().checked,
         };
     }
@@ -120,7 +120,7 @@ class TourEditingUI extends React.Component {
                 </div>
                 <div className="col-md-5">
                     <p><strong>{ _("models.tour.is_hope_tour") }:</strong> { this.props.tour.hope_tour ? _("global.labels.yes") :  _("global.labels.no") } </p>
-                    <p><strong>{ _("models.tour.scoring_system") }:</strong> { _("scoring_systems_names." + this.props.tour.scoring_system) } </p>
+                    <p><strong>{ _("models.tour.scoring_system_name") }:</strong> { _("scoring_systems_names." + this.props.tour.scoring_system_name) } </p>
                 </div>
                 <div className="col-md-2">
                     <button className="full-width btn btn-primary btn-sm" onClick={ this.startEditing.bind(this) }>{ _("global.buttons.edit") }</button><br />
@@ -133,7 +133,7 @@ class TourEditingUI extends React.Component {
         return this.state.editing ? this.renderEditor() : this.renderViewer();
     }
     submitTour(data) {
-        Api("tournaments.tour.set", {
+        Api("tour.set", {
             tour_id: this.props.tour.id,
             data: data,
         }).onSuccess(function(response) {
@@ -144,7 +144,7 @@ class TourEditingUI extends React.Component {
         if (!confirm(_("admin.confirms.delete_tour"))) {
             return false;
         }
-        Api("tournaments.tour.delete", { tour_id: this.props.tour.id }).send();
+        Api("tour.delete", { tour_id: this.props.tour.id }).send();
     }
 
 }
@@ -158,7 +158,7 @@ class TourCreatingUI extends React.Component {
 
     }
     submitTour(data) {
-        Api("tournaments.tour.create", {
+        Api("tour.create", {
             discipline_id: this.props.discipline_id,
             add_after: this.props.add_after,
             data: data,
@@ -177,7 +177,7 @@ class ToursManagementUI extends React.Component {
     }
     submitBaseData(event) {
         event.preventDefault();
-        Api("tournaments.discipline.set", {
+        Api("discipline.set", {
             discipline_id: this.props.discipline.id,
             data: {
                 name: this.refs.name.getDOMNode().value,

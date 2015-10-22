@@ -352,12 +352,12 @@ var TourAdminScoreInput = (function (_React$Component) {
         value: function render() {
             switch (this.props.judge.role) {
                 case "acro_judge":
-                    if (this.props.scoring_system == "rosfarr.formation") {
+                    if (this.props.scoring_system_name == "rosfarr.formation") {
                         return this.renderFormationJudgeInput();
                     }
-                    return this.props.scoring_system == "rosfarr.no_acro" ? this.renderDanceJudgeInput() : this.renderAcroJudgeInput();
+                    return this.props.scoring_system_name == "rosfarr.no_acro" ? this.renderDanceJudgeInput() : this.renderAcroJudgeInput();
                 case "dance_judge":
-                    if (this.props.scoring_system == "rosfarr.formation") {
+                    if (this.props.scoring_system_name == "rosfarr.formation") {
                         return this.renderFormationJudgeInput();
                     }
                     return this.renderDanceJudgeInput();
@@ -429,7 +429,7 @@ var TourAdminScoreInput = (function (_React$Component) {
         value: function serializeScore() {
             switch (this.props.judge.role) {
                 case "acro_judge":
-                    return this.props.scoring_system == "rosfarr.no_acro" ? this.serializeDanceScore() : this.serializeAcroScore();
+                    return this.props.scoring_system_name == "rosfarr.no_acro" ? this.serializeDanceScore() : this.serializeAcroScore();
                 case "dance_judge":
                     return this.serializeDanceScore();
                 case "head_judge":
@@ -472,7 +472,7 @@ var TourAdminScoreCell = (function (_React$Component2) {
                 return React.createElement(TourAdminScoreInput, {
                     score: this.props.value.raw_data,
                     judge: this.props.judge,
-                    scoring_system: this.props.scoring_system,
+                    scoring_system_name: this.props.scoring_system_name,
                     stopEditing: this.props.stopEditing,
                     updateValue: this.props.updateValue,
                     submitValue: this.props.submitValue });

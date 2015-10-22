@@ -94,7 +94,7 @@ var StartPage = (function (_React$Component2) {
     _createClass(StartPage, [{
         key: "loadCompetitionData",
         value: function loadCompetitionData(competition_id) {
-            Api("tournaments.competition.get", {
+            Api("competition.get", {
                 competition_id: competition_id,
                 children: {
                     judges: {}

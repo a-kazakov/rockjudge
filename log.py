@@ -1,6 +1,6 @@
 import json
 
-from logger.models import ApiLogItem
+from models import ApiLogItem
 
 
 def log_api(time, latency, method, request, exception, response):

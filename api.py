@@ -1,14 +1,13 @@
 from collections import deque
 
-from participants.models import (
+from exceptions import ApiError
+from models import (
     Acrobatic,
     Club,
-    Participant,
-)
-from tournaments.models import (
     Competition,
     Discipline,
     Judge,
+    Participant,
     Run,
     Score,
     Tour,
@@ -32,7 +31,7 @@ class IdTransformer:
             "discipline_id": lambda tour_id: Tour.get(Tour.id == tour_id).discipline_id,
         },
         "discipline_id": {
-            "competition_id": lambda discipline_id: \
+            "competition_id": lambda discipline_id:
                 Discipline.get(Discipline.id == discipline_id).competition_id,
         },
         "acrobatic_id": {
@@ -131,49 +130,49 @@ class Api:
     @classmethod
     def club_set(cls, request, ws_message):
         model = cls.get_model(Club, "club_id", request)
-        model.update_data(request["data"], ws_message=ws_message)
+        model.update_model(request["data"], ws_message=ws_message)
         return {}
 
     @classmethod
     def judge_set(cls, request, ws_message):
         model = cls.get_model(Judge, "judge_id", request)
-        model.update_data(request["data"], ws_message=ws_message)
+        model.update_model(request["data"], ws_message=ws_message)
         return {}
 
     @classmethod
     def score_set(cls, request, ws_message):
         model = cls.get_model(Score, "score_id", request)
-        model.update_data(request["data"], ws_message=ws_message)
+        model.update_model(request["data"], ws_message=ws_message)
         return {}
 
     @classmethod
     def run_set(cls, request, ws_message):
         model = cls.get_model(Run, "run_id", request)
-        model.update_data(request["data"], ws_message=ws_message)
+        model.update_model(request["data"], ws_message=ws_message)
         return {}
 
     @classmethod
     def tour_set(cls, request, ws_message):
         model = cls.get_model(Tour, "tour_id", request)
-        model.update_data(request["data"], ws_message=ws_message)
+        model.update_model(request["data"], ws_message=ws_message)
         return {}
 
     @classmethod
     def discipline_set(cls, request, ws_message):
         model = cls.get_model(Discipline, "discipline_id", request)
-        model.update_data(request["data"], ws_message=ws_message)
+        model.update_model(request["data"], ws_message=ws_message)
         return {}
 
     @classmethod
     def competition_set(cls, request, ws_message):
         model = cls.get_model(Competition, "competition_id", request)
-        model.update_data(request["data"], ws_message=ws_message)
+        model.update_model(request["data"], ws_message=ws_message)
         return {}
 
     @classmethod
     def participant_set(cls, request, ws_message):
         model = cls.get_model(Participant, "participant_id", request)
-        model.update_data(request["data"], ws_message=ws_message)
+        model.update_model(request["data"], ws_message=ws_message)
         return {}
 
     # Creaters
@@ -346,12 +345,12 @@ class Api:
 
     @classmethod
     def service_reload_clients(cls, request, ws_message):
-        ws_message.add_message("reload_data");
+        ws_message.add_message("reload_data")
         return {}
 
     @classmethod
     def service_refresh_clients(cls, request, ws_message):
-        ws_message.add_message("force_refresh");
+        ws_message.add_message("force_refresh")
         return {}
 
     # Service

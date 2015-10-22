@@ -125,12 +125,12 @@ var ParticipantEditorRow = (function (_React$Component) {
         value: function onSubmit(event) {
             event.preventDefault();
             if (!this.props.newParticipant) {
-                Api("tournaments.participant.set", {
+                Api("participant.set", {
                     participant_id: this.state.id,
                     data: this.sertialize()
                 }).onSuccess(this.props.stopEditing).send();
             } else {
-                Api("tournaments.participant.create", {
+                Api("participant.create", {
                     discipline_id: this.props.discipline_id,
                     data: this.sertialize()
                 }).onSuccess(this.props.stopEditing).send();
@@ -394,7 +394,7 @@ var ParticipantRow = (function (_React$Component2) {
         value: function onDelete(event) {
             event.stopPropagation();
             if (confirm(_("admin.confirms.delete_participant"))) {
-                Api("tournaments.participant.delete", {
+                Api("participant.delete", {
                     participant_id: this.props.participant.id
                 }).send();
             }
@@ -566,7 +566,7 @@ var ParticipantsManager = (function (_React$Component4) {
     }, {
         key: "loadData",
         value: function loadData() {
-            Api("tournaments.discipline.get", {
+            Api("discipline.get", {
                 discipline_id: this.props.discipline_id,
                 children: {
                     competition: {

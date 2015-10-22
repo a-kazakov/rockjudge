@@ -19,7 +19,7 @@ class ReportsUI extends React.Component {
     }
     getPageFromHash() {
         let chunks = window.location.hash.substr(1).split("/");
-        if (chunks[1] && ["start_list", "competition_report", "discipline_results", "tour_results"].indexOf(chunks[1]) >= 0) {
+        if (chunks[1] && ["start_list", "competition_report", "discipline_results", "tour_results" ].indexOf(chunks[1]) >= 0) {
             return chunks[1];
         }
         return null;

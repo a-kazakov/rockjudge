@@ -145,14 +145,14 @@ class TourAdminScoreInput extends React.Component {
     render() {
         switch (this.props.judge.role) {
         case "acro_judge":
-            if (this.props.scoring_system == "rosfarr.formation") {
+            if (this.props.scoring_system_name == "rosfarr.formation") {
                 return this.renderFormationJudgeInput();
             }
-            return this.props.scoring_system == "rosfarr.no_acro"
+            return this.props.scoring_system_name == "rosfarr.no_acro"
                 ? this.renderDanceJudgeInput()
                 : this.renderAcroJudgeInput()
         case "dance_judge":
-            if (this.props.scoring_system == "rosfarr.formation") {
+            if (this.props.scoring_system_name == "rosfarr.formation") {
                 return this.renderFormationJudgeInput();
             }
             return this.renderDanceJudgeInput();
@@ -209,7 +209,7 @@ class TourAdminScoreInput extends React.Component {
     serializeScore() {
         switch (this.props.judge.role) {
         case "acro_judge":
-            return this.props.scoring_system == "rosfarr.no_acro"
+            return this.props.scoring_system_name == "rosfarr.no_acro"
                 ? this.serializeDanceScore()
                 : this.serializeAcroScore()
         case "dance_judge":
@@ -235,7 +235,7 @@ class TourAdminScoreCell extends React.Component {
             return <TourAdminScoreInput
                 score={ this.props.value.raw_data }
                 judge={ this.props.judge }
-                scoring_system={ this.props.scoring_system }
+                scoring_system_name={ this.props.scoring_system_name }
                 stopEditing={ this.props.stopEditing }
                 updateValue={ this.props.updateValue }
                 submitValue={ this.props.submitValue } />

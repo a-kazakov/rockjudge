@@ -5,15 +5,15 @@ import traceback
 import tornado.gen
 import tornado.web
 
+from api import Api
 from db import Database
 from exceptions import ApiError
-from logger import log_api
-from tournaments.api import Api as TournamentsApi
-from tournaments.models import (
+from models import (
     Competition,
     Judge,
     Tour,
 )
+from log import log_api
 from webserver.websocket import WsMessage
 
 
@@ -63,9 +63,10 @@ class StartListHandler(tornado.web.RequestHandler):
             competition_id=competition_id,
         )
 
+
 class StartPageHandler(tornado.web.RequestHandler):
     def get(self):
-        competition_ids = [c.id for c in Competition.select().where(Competition.active == True)]
+        competition_ids = [c.id for c in Competition.select().where(Competition.active == True)]  # NOQA
         self.render("start_page.html", competition_ids=competition_ids)
 
 
@@ -108,8 +109,6 @@ class ApiHandler(tornado.web.RequestHandler):
             response = None
             data = json.loads(self.get_argument("data"))
             method = self.get_argument("method")
-            method_parts = method.split(".")
-            inner_method = ".".join(method_parts[1:])
             try:
                 client_id = self.get_argument("client_id")
             except:
@@ -117,14 +116,8 @@ class ApiHandler(tornado.web.RequestHandler):
                 client_id = None
             ws_message = WsMessage(client_id)
             with Database.instance().db.transaction():
-                if method_parts[0] == "tournaments":
-                    result = TournamentsApi.call(inner_method, data, ws_message=ws_message)
-                    response = json.dumps(result)
-                else:
-                    response = json.dumps({
-                        "success": False,
-                        "message": "Unknown method name: {}".format(method)
-                    })
+                result = Api.call(method, data, ws_message=ws_message)
+                response = json.dumps(result)
             if not ws_message.empty():
                 with Database.instance().db.transaction():
                     ws_message.send()

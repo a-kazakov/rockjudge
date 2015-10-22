@@ -1,6 +1,6 @@
 import peewee
 
-from db import BaseModel
+from models.base_model import BaseModel
 
 
 class ApiLogItem(BaseModel):
@@ -29,7 +29,7 @@ class ApiLogItem(BaseModel):
 
     @classmethod
     def fetch_all(cls, limit=None, start_time=0):
-        query = cls.select().where(LogItem.time > start_time)
+        query = cls.select().where(cls.time > start_time)
         if limit is not None:
             query = query.limit(limit)
         return [

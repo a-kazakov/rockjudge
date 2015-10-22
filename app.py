@@ -1,4 +1,3 @@
-import importlib
 import inspect
 import os.path
 
@@ -46,14 +45,12 @@ class ModelManager:
 
     @property
     def all_models(self):
-        result = set()
-        for app_name in settings.APPS:
-            models = importlib.import_module("{}.models".format(app_name))
-            result.update(
-                pair[1]
-                for pair in inspect.getmembers(models, predicate=inspect.isclass)
-                if issubclass(pair[1], peewee.Model)
-            )
+        import models
+        result = [
+            pair[1]
+            for pair in inspect.getmembers(models, predicate=inspect.isclass)
+            if issubclass(pair[1], peewee.Model)
+        ]
         yield from result
 
     def create_models(self):

@@ -44,16 +44,16 @@ class TourResultsVerboseTableRow extends React.Component {
     }
     renderScore(judge, score) {
         if (judge.role == "dance_judge") {
-            if (this.props.scoring_system == "rosfarr.formation") {
+            if (this.props.scoring_system_name == "rosfarr.formation") {
                 return this.renderFormationScore(score)
             }
             return this.renderDanceScore(score);
         }
         if (judge.role == "acro_judge") {
-            if (this.props.scoring_system == "rosfarr.formation") {
+            if (this.props.scoring_system_name == "rosfarr.formation") {
                 return this.renderFormationScore(score);
             }
-            if (this.props.scoring_system == "rosfarr.acro") {
+            if (this.props.scoring_system_name == "rosfarr.acro") {
                 return this.renderAcroScore(score);
             }
             return this.renderDanceScore(score);
@@ -70,7 +70,7 @@ class TourResultsVerboseTableRow extends React.Component {
             return <td key={ judge.id } ><p className="text-center">{ this.renderScore(judge, score) }</p></td>;
         }.bind(this));
         let acro_scores_cell = null;
-        if (this.props.scoring_system == "rosfarr.acro") {
+        if (this.props.scoring_system_name == "rosfarr.acro") {
             let acro_scores = this.props.row.acrobatics.map(function(acro, idx) {
                 return <tr key={ idx }>
                     <th><p>{ __("results.breakdown.acro_n", idx + 1) }:</p></th>
@@ -106,12 +106,12 @@ class TourResultsVerboseTable extends React.Component {
                 key={ row.participant.id }
                 has_next_tour={ this.props.has_next_tour }
                 judges={ this.props.judges }
-                scoring_system={ this.props.scoring_system } />
+                scoring_system_name={ this.props.scoring_system_name } />
         }.bind(this));
         let judges_header = this.props.judges.map(function(judge) {
             return <th key={ judge.id }><p>{ judge.number }</p></th>
         });
-        let acro_header = this.props.scoring_system == "rosfarr.acro"
+        let acro_header = this.props.scoring_system_name == "rosfarr.acro"
             ? <th className="w-4 acro"><p>{ __("results.labels.acrobatics") }</p></th> : null;
         return <table className="bordered-table">
             <thead>

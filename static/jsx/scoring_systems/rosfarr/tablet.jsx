@@ -22,7 +22,7 @@ class TabletScoreInput extends React.Component {
         this.props.onScoreUpdate(new_score);
     }
     overrideAcroScore(acro_id, value) {
-        Api("tournaments.acrobatic_override.set", {
+        Api("acrobatic_override.set", {
             run_id: this.props.run_id,
             acrobatic_id: acro_id,
             score: value,
@@ -221,14 +221,14 @@ class TabletScoreInput extends React.Component {
     render() {
         switch (this.getCurrentJudge().role) {
         case "acro_judge":
-            if (this.props.scoring_system == "rosfarr.formation") {
+            if (this.props.scoring_system_name == "rosfarr.formation") {
                 return this.renderFormationInput();
             }
-            return this.props.scoring_system == "rosfarr.no_acro"
+            return this.props.scoring_system_name == "rosfarr.no_acro"
                 ? this.renderDanceJudgeInput()
                 : this.renderAcroJudgeInput()
         case "dance_judge":
-            if (this.props.scoring_system == "rosfarr.formation") {
+            if (this.props.scoring_system_name == "rosfarr.formation") {
                 return this.renderFormationInput();
             }
             return this.renderDanceJudgeInput();

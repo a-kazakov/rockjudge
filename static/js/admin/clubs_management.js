@@ -33,12 +33,12 @@ var ClubEditorRow = (function (_React$Component) {
         value: function onSubmit(event) {
             event.preventDefault();
             if (!this.props.newClub) {
-                Api("tournaments.club.set", {
+                Api("club.set", {
                     club_id: this.props.club.id,
                     data: this.sertialize()
                 }).onSuccess(this.props.stopEditing).send();
             } else {
-                Api("tournaments.club.create", {
+                Api("club.create", {
                     competition_id: this.props.competition_id,
                     data: this.sertialize()
                 }).onSuccess(this.props.stopEditing).send();
@@ -172,7 +172,7 @@ var ClubRow = (function (_React$Component2) {
         value: function onDelete(event) {
             event.stopPropagation();
             if (confirm(_("admin.confirms.delete_club"))) {
-                Api("tournaments.club.delete", {
+                Api("club.delete", {
                     club_id: this.props.club.id
                 }).send();
             }

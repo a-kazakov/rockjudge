@@ -86,7 +86,7 @@ var TourAdminHeatValue = (function (_React$Component) {
     }, {
         key: "submitValue",
         value: function submitValue() {
-            Api("tournaments.run.set", { run_id: this.props.run_id, data: { heat: this.state.current_value } }).onSuccess((function () {
+            Api("run.set", { run_id: this.props.run_id, data: { heat: this.state.current_value } }).onSuccess((function () {
                 this.stopEditing();
             }).bind(this)).send();
         }
@@ -134,7 +134,7 @@ var TourAdminScoreCellWrapper = (function (_React$Component2) {
                 { className: "judge" + (this.state.editing ? " editing" : "") },
                 React.createElement(TourAdminScoreCell, {
                     judge: this.props.judge,
-                    scoring_system: this.props.scoring_system,
+                    scoring_system_name: this.props.scoring_system_name,
                     startEditing: this.startEditing.bind(this),
                     stopEditing: this.stopEditing.bind(this),
                     updateValue: this.updateValue.bind(this),
@@ -175,7 +175,7 @@ var TourAdminScoreCellWrapper = (function (_React$Component2) {
     }, {
         key: "submitValue",
         value: function submitValue(new_value) {
-            Api("tournaments.score.set", { score_id: this.props.score_id, data: new_value }).onSuccess((function () {
+            Api("score.set", { score_id: this.props.score_id, data: new_value }).onSuccess((function () {
                 this.stopEditing();
             }).bind(this)).send();
         }
@@ -204,7 +204,7 @@ var TourAdminScoresRow = (function (_React$Component3) {
                 return React.createElement(TourAdminScoreCellWrapper, {
                     key: scores_map[judge.id] && scores_map[judge.id].id,
                     judge: judge,
-                    scoring_system: this.props.scoring_system,
+                    scoring_system_name: this.props.scoring_system_name,
                     score_id: scores_map[judge.id] && scores_map[judge.id].id,
                     value: scores_map[judge.id] && scores_map[judge.id].data });
             }).bind(this));
@@ -290,7 +290,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
     }, {
         key: "loadData",
         value: function loadData() {
-            Api("tournaments.tour.get", {
+            Api("tour.get", {
                 tour_id: this.props.tour_id,
                 children: {
                     discipline: {
@@ -314,32 +314,32 @@ var TourAdminScoresTable = (function (_React$Component4) {
         key: "onInitButtonClick",
         value: function onInitButtonClick() {
             if (confirm(_("judging.confirms.init_tour"))) {
-                Api("tournaments.tour.init", { tour_id: this.props.tour_id }).send();
+                Api("tour.init", { tour_id: this.props.tour_id }).send();
             }
         }
     }, {
         key: "onFinalizeButtonClick",
         value: function onFinalizeButtonClick() {
             if (confirm(_("judging.confirms.finalize_tour"))) {
-                Api("tournaments.tour.finalize", { tour_id: this.props.tour_id }).send();
+                Api("tour.finalize", { tour_id: this.props.tour_id }).send();
             }
         }
     }, {
         key: "onShuffleHeatsButtonClick",
         value: function onShuffleHeatsButtonClick() {
             if (confirm(_("judging.confirms.shuffle_heats"))) {
-                Api("tournaments.tour.shuffle_heats", { tour_id: this.props.tour_id }).send();
+                Api("tour.shuffle_heats", { tour_id: this.props.tour_id }).send();
             }
         }
     }, {
         key: "onStartTourButtonClick",
         value: function onStartTourButtonClick() {
-            Api("tournaments.tour.start", { tour_id: this.props.tour_id }).send();
+            Api("tour.start", { tour_id: this.props.tour_id }).send();
         }
     }, {
         key: "onStopTourButtonClick",
         value: function onStopTourButtonClick() {
-            Api("tournaments.tour.stop", { tour_id: this.props.tour_id }).send();
+            Api("tour.stop", { tour_id: this.props.tour_id }).send();
         }
 
         // Rendering
@@ -504,7 +504,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
                     heat: run.heat,
                     participant: run.participant,
                     scores: run.scores,
-                    scoring_system: this.state.scoring_system,
+                    scoring_system_name: this.state.scoring_system_name,
                     total_score: run.total_score,
                     judges: active_judges });
             }).bind(this));

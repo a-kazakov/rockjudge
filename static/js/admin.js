@@ -58,7 +58,7 @@ var CompetitionLoadingUI = (function (_React$Component) {
         key: "onSubmit",
         value: function onSubmit(event) {
             event.preventDefault();
-            Api("tournaments.competition.load", {
+            Api("competition.load", {
                 competition_id: this.props.competition_id,
                 data: JSON.parse(this._input.getDOMNode().value)
             }).onSuccess(function () {
@@ -293,14 +293,14 @@ var ServiceUI = (function (_React$Component3) {
         key: "reloadClients",
         value: function reloadClients() {
             if (confirm(_("admin.confirms.reload_clients"))) {
-                Api("tournaments.service.reload_clients", {}).send();
+                Api("service.reload_clients", {}).send();
             }
         }
     }, {
         key: "refreshClients",
         value: function refreshClients() {
             if (_("admin.confirms.refresh_clients")) {
-                Api("tournaments.service.refresh_clients", {}).send();
+                Api("service.refresh_clients", {}).send();
             }
         }
     }, {
@@ -308,7 +308,7 @@ var ServiceUI = (function (_React$Component3) {
         value: function unfinalizeTour(event) {
             event.preventDefault();
             if (prompt(_("admin.confirms.unfinalize_tour")) == "unfinalize") {
-                Api("tournaments.tour.unfinalize", {
+                Api("tour.unfinalize", {
                     tour_id: this.refs.select_unfinalize.getDOMNode().value
                 }).onSuccess(function (event) {
                     alert(_("global.messages.success"));
@@ -447,7 +447,7 @@ var AdminUI = (function (_React$Component4) {
     }, {
         key: "loadData",
         value: function loadData() {
-            Api("tournaments.competition.get", {
+            Api("competition.get", {
                 competition_id: this.props.competition_id,
                 children: {
                     clubs: {},

@@ -56,13 +56,13 @@ class JudgeTablet extends React.Component {
         })
     }
     loadData() {
-        Api("tournaments.competition.get", {competition_id: this.props.competition_id, children: {
+        Api("competition.get", {competition_id: this.props.competition_id, children: {
             judges: {},
         }})
             .updateDB("Competition", this.props.competition_id)
             .onSuccess(this.reloadFromStorage.bind(this))
             .send();
-        Api("tournaments.tour.find_active", {}).onSuccess(function(response) {
+        Api("tour.find_active", {}).onSuccess(function(response) {
             this.dispatchActiveTourUpdate(response);
         }.bind(this)).send();
     }
@@ -90,7 +90,7 @@ class JudgeTablet extends React.Component {
             });
             return;
         }
-        Api("tournaments.tour.get", { tour_id: tour_id, children:{
+        Api("tour.get", { tour_id: tour_id, children:{
             runs: {
                 participant: {
                     "sportsmen": {},
@@ -113,7 +113,7 @@ class JudgeTablet extends React.Component {
     // Listeners
 
     onScoreUpdate(score_id, new_score) {
-        Api("tournaments.score.set", {score_id: score_id, data: new_score}).send();
+        Api("score.set", {score_id: score_id, data: new_score}).send();
     }
 
     // Actions
@@ -208,7 +208,7 @@ class JudgeTablet extends React.Component {
                         run_id={ run.id }
                         page={ this.state.page }
                         scores={ scores_map }
-                        scoring_system={ this.state.tour.scoring_system }
+                        scoring_system_name={ this.state.tour.scoring_system_name }
                         onScoreUpdate={ this.onScoreUpdate.bind(this, scores_map[this.props.judge_id].id) } />
                 </td>
             }.bind(this));
@@ -218,7 +218,7 @@ class JudgeTablet extends React.Component {
         </tr></tbody></table>;
     }
     renderFooter() {
-        if (this.state.judge.role != "tech_judge" || this.state.tour.scoring_system != "rosfarr.acro") {
+        if (this.state.judge.role != "tech_judge" || this.state.tour.scoring_system_name != "rosfarr.acro") {
             return null;
         }
         return <div className="footer page-selector">

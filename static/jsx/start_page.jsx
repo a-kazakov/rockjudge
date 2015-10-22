@@ -40,7 +40,7 @@ class StartPage extends React.Component {
         }
     }
     loadCompetitionData(competition_id) {
-        Api("tournaments.competition.get", {
+        Api("competition.get", {
             competition_id: competition_id,
             children: {
                 judges: {},

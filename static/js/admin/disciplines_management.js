@@ -33,12 +33,12 @@ var DisciplineEditorRow = (function (_React$Component) {
         value: function onSubmit(event) {
             event.preventDefault();
             if (!this.props.newDiscipline) {
-                Api("tournaments.discipline.set", {
+                Api("discipline.set", {
                     discipline_id: this.props.discipline.id,
                     data: this.sertialize()
                 }).onSuccess(this.props.stopEditing).send();
             } else {
-                Api("tournaments.discipline.create", {
+                Api("discipline.create", {
                     competition_id: this.props.competition_id,
                     data: this.sertialize()
                 }).onSuccess(this.props.stopEditing).send();
@@ -172,7 +172,7 @@ var DisciplineRow = (function (_React$Component2) {
         value: function onDelete(event) {
             event.stopPropagation();
             if (confirm(_("admin.confirms.delete_discipline"))) {
-                Api("tournaments.discipline.delete", {
+                Api("discipline.delete", {
                     discipline_id: this.props.discipline.id
                 }).send();
             }

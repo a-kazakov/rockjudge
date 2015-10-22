@@ -1,4 +1,4 @@
-from tournaments.models import (
+from models import (
     Competition,
     Judge,
     Tour,
