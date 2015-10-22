@@ -4,7 +4,8 @@ from exceptions import ApiError
 
 
 def apply_deduction(base_score, deduction):
-    return base_score * (100 - deduction) // 100;
+    return base_score * (100 - deduction) // 100
+
 
 def m100(score):
     return round(100 * score)
@@ -24,13 +25,13 @@ class FormationScore:
 
     @property
     def total_score(self):
-        return max(0, sum([
+        return sum([
             m100(self.data["dance_tech"]),
             m100(self.data["dance_figs"]),
             m100(self.data["impression"]),
-             -5 * m100(self.data["small_mistakes"]),
+             -5 * m100(self.data["small_mistakes"]),  # NOQA
             -30 * m100(self.data["big_mistakes"]),
-        ]))
+        ])
 
     def update(self, new_data):
         self.data = {
@@ -64,14 +65,14 @@ class DanceScore:
 
     @property
     def total_score(self):
-        return max(0, sum([
+        return sum([
             apply_deduction(m100(10), self.data["fw_man"]),
             apply_deduction(m100(10), self.data["fw_woman"]),
             m100(self.data["dance_figs"]),
             m100(self.data["composition"]),
-             -5 * m100(self.data["small_mistakes"]),
+             -5 * m100(self.data["small_mistakes"]),  # NOQA
             -30 * m100(self.data["big_mistakes"]),
-        ]))
+        ])
 
     def update(self, new_data):
         self.data = {
@@ -110,9 +111,9 @@ class AcroScore:
         for acro, deduction in zip(self.score.run.participant.acrobatics, self.data["deductions"]):
             override = self.score.run.get_acrobatic_override(acro)
             base_score = override.score if override is not None else acro.score
-            result += max(0, min(1200, apply_deduction(m100(base_score), deduction)))
+            result += apply_deduction(m100(base_score), deduction)
         result -= 30 * m100(self.data["mistakes"])
-        return max(0, result)
+        return result
 
     def update(self, new_data):
         self.data.update({
@@ -261,8 +262,9 @@ class RunScore:
             self.acro_scores = SmallScoresSet(self.acro_judges_total_scores)
             self.dance_scores = SmallScoresSet(self.dance_judges_total_scores)
         else:
-            self.dance_scores = SmallScoresSet(self.dance_judges_total_scores) if len(self.dance_judges_total_scores) < 5 else LargeScoresSet(self.dance_judges_total_scores)
-
+            self.dance_scores = SmallScoresSet(self.dance_judges_total_scores) \
+                if len(self.dance_judges_total_scores) < 5 \
+                else LargeScoresSet(self.dance_judges_total_scores)
 
     @property
     def head_judge_score(self):
@@ -296,13 +298,13 @@ class RunScore:
     def sorting_score(self):
         if self.scoring_system == "rosfarr.acro":
             return (
-                -max(0, self.dance_scores.primary_score + self.acro_scores.primary_score + self.penalties),
-                -max(0, self.dance_scores.secondary_score + self.acro_scores.secondary_score + self.penalties),
+                -self.dance_scores.primary_score + self.acro_scores.primary_score + self.penalties,
+                -self.dance_scores.secondary_score + self.acro_scores.secondary_score + self.penalties,
             )
         else:
             return (
-                -max(0, self.dance_scores.primary_score + self.penalties),
-                -max(0, self.dance_scores.secondary_score + self.penalties),
+                -self.dance_scores.primary_score + self.penalties,
+                -self.dance_scores.secondary_score + self.penalties,
             )
 
     @property
@@ -317,6 +319,7 @@ class RunScore:
             "total_run_score": self.display_score,
             "scores": scores
         }
+
 
 class TourScores:
     def __init__(self, tour, scoring_system):
