@@ -17,11 +17,24 @@ class Tour(BaseModel):
     active = peewee.BooleanField(default=False)
     hope_tour = peewee.BooleanField(default=False)
     total_advanced = peewee.IntegerField(default=0)
-    discipline = peewee.ForeignKeyField(Discipline)
+    discipline = peewee.ForeignKeyField(Discipline, related_name="raw_tours")
     scoring_system_name = peewee.CharField()
 
     RW_PROPS = ["name", "num_advances", "participants_per_heat", "hope_tour", "scoring_system_name"]
     RO_PROPS = ["finalized", "active"]
+
+    PF_CHILDREN = {
+        "discipline": None,
+        "judges": None,
+        "runs": {
+            "runs": None,
+            "discipline": {
+                "competition": {
+                    "judges": {},
+                }
+            },
+        }
+    }
 
     def full_prefetch(self):
         self.prefetch({
@@ -65,7 +78,9 @@ class Tour(BaseModel):
                     break
             return result
         except self.DoesNotExist:
-            self.discipline.prefetch_child("participants")
+            self.discipline.smart_prefetch({
+                "participants": {},
+            })
             return self.discipline.participants
 
     def get_actual_num_advances(self):
@@ -90,7 +105,9 @@ class Tour(BaseModel):
             Run,
             Score,
         )
-        self.prefetch_child("runs")
+        self.smart_prefetch({
+            "runs": {},
+        })
         estimated_participants = self.estimate_participants()
         existing_participant_ids = {run.participant_id for run in self.runs}
         new_participant_ids = {participant.id for participant in estimated_participants}
@@ -326,6 +343,7 @@ class Tour(BaseModel):
         result.update({
             "discipline_name": self.discipline.name,
             "judges": judges,
+            "next_tour_id": self.next_tour_id,
             "results": tour_results,
         })
         return result

@@ -1,3 +1,4 @@
+import copy
 import peewee
 
 from db import Database
@@ -11,6 +12,9 @@ class BaseModel(peewee.Model):
     RW_PROPS = []
     RO_PROPS = []
 
+    PF_SCHEMA = {}
+    PF_CHILDREN = {}
+
     def prefetch_child(self, name):
         child = getattr(self, name)
         if type(child) == list:
@@ -18,7 +22,7 @@ class BaseModel(peewee.Model):
         setattr(self, name, list(child))
 
     @classmethod
-    def create_prefetching_schema(cls, model_type, schema):
+    def expand_prefetch_schema(cls, model_type, schema):
         result = []
         for child_name, nested_schema in schema.items():
             rel_manager = getattr(model_type, child_name)
@@ -28,19 +32,19 @@ class BaseModel(peewee.Model):
                     "model": rel_model,
                     "ref": child_name,
                     "ref_dir": "down",
-                    "children": cls.create_prefetching_schema(rel_model, nested_schema)
+                    "children": cls.expand_prefetch_schema(rel_model, nested_schema)
                 })
             else:
                 result.append({
                     "model": rel_model,
                     "ref": rel_manager.field.name,
                     "ref_dir": "up",
-                    "children": cls.create_prefetching_schema(rel_model, nested_schema)
+                    "children": cls.expand_prefetch_schema(rel_model, nested_schema)
                 })
         return result
 
     def prefetch(self, schema):
-        new_schema = self.create_prefetching_schema(self.__class__, schema)
+        new_schema = self.expand_prefetch_schema(self.__class__, schema)
         for child_schema in new_schema:
             self._prefetch_impl([self], child_schema)
         return self
@@ -76,6 +80,42 @@ class BaseModel(peewee.Model):
             for model in models:
                 setattr(model, schema["ref"], rev_index[getattr(model, schema["ref"] + "_id")])
         return models
+
+    @classmethod
+    def gen_prefetch_schema(cls, s_schema):
+        def update_schema(base, delta):
+            for key in delta:
+                if key not in base:
+                    base[key] = delta[key]
+                else:
+                    base[key] = update_schema(base[key], delta[key])
+            return base
+
+        def replace_none(base, model, next_s_schema):
+            for key in base:
+                child_model = getattr(model, key).rel_model
+                if base[key] is None:
+                    base[key] = child_model.gen_prefetch_schema(next_s_schema)
+                else:
+                    base[key] = replace_none(base[key], child_model, next_s_schema)
+            return base
+
+        pf_schema = copy.deepcopy(cls.PF_SCHEMA)
+        pf_children = copy.deepcopy(cls.PF_CHILDREN)
+        for key in pf_children:
+            if pf_children[key] is None:
+                pf_children[key] = {
+                    key: None
+                }
+            if key in s_schema:
+                buf = pf_children[key]
+                buf = replace_none(buf, cls, s_schema[key])
+                pf_schema = update_schema(pf_schema, buf)
+        return pf_schema
+
+    def smart_prefetch(self, schema):
+        pf_schema = self.gen_prefetch_schema(schema)
+        self.prefetch(pf_schema)
 
     def get_sorting_key(self):  # Default
         return 0

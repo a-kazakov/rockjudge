@@ -23,6 +23,15 @@ class Participant(BaseModel):
 
     RW_PROPS = ["formation_name", "coaches", "number", "external_id"]
 
+    PF_SCHEMA = {
+        "sportsmen": {},
+    }
+    PF_CHILDREN = {
+        "club": None,
+        "sportsmen": None,
+        "acrobatics": None,
+    }
+
     def get_name(self):
         if self.is_couple():
             sportsmen = sorted(

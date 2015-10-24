@@ -18,6 +18,31 @@ class Run(BaseModel):
 
     RW_PROPS = ["heat"]
 
+    PF_SCHEMA = {
+        "scores": {},
+        "participant": {
+            "acrobatics": {},
+        },
+        "acrobatic_overrides": {},
+        "tour": {
+            "discipline": {
+                "competition": {
+                    "judges": {}
+                }
+            }
+        }
+    }
+    PF_CHILDREN = {
+        "acrobatics": {
+            "participant": {
+                "acrobatics": None,
+            },
+            "acrobatic_overrides": {},
+        },
+        "participant": None,
+        "scores": None,
+    }
+
     # Controls
 
     def create_scores(self):
@@ -103,7 +128,14 @@ class Run(BaseModel):
         result = self.serialize_props()
         result["total_score"] = scores_obj["total_run_score"]
         result = self.serialize_upper_child(result, "participant", children)
-        result = self.serialize_lower_child(result, "scores", children)
+        if judges is not None:
+            rev_judges = {
+                judge.id: judge
+                for judge in judges
+            }
+        result = self.serialize_lower_child(result, "scores", children,
+                                            lambda x, c: x.serialize(judge=(rev_judges[x.judge_id] if judges else None),
+                                                                     children=c))
         if "acrobatics" in children:
             result["acrobatics"] = self.serialize_acrobatics(children=children["acrobatics"])
         return result

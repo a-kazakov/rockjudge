@@ -17,10 +17,17 @@ class Competition(BaseModel):
 
     RW_PROPS = ["name", "date", "active"]
 
+    PF_CHILDREN = {
+        "disciplines": None,
+        "judges": None,
+        "clubs": None,
+        "participants": None
+    }
+
     def full_prefetch(self):
         self.prefetch({
             "disciplines": {
-                "tour_set": {},
+                "raw_tours": {},
             },
             "judges": {},
         })

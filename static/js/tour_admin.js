@@ -368,8 +368,8 @@ var TourAdminScoresTable = (function (_React$Component4) {
         }
     }, {
         key: "renderHeatHeader",
-        value: function renderHeatHeader(prew_row, next_row) {
-            var need_render = typeof prev_row == "undefined" || prev_row.run.tour.id != next_row.run.tour.id;
+        value: function renderHeatHeader(prev_row, next_row) {
+            var need_render = typeof prev_row == "undefined" || prev_row.heat != next_row.heat;
             if (!need_render) {
                 return null;
             }

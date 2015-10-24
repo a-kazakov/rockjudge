@@ -87,7 +87,9 @@ class WsMessage:
             self.merge_schemas(schemas[key], x["schema"])
         updates = []
         for (model_type, model_id), schema in schemas.items():
-            updates.append(model_type.get(model_type.id == model_id).serialize_as_child(schema))
+            model = model_type.get(model_type.id == model_id)
+            model.smart_prefetch(schema)
+            updates.append(model.serialize_as_child(schema))
         return {
             "model_updates": updates,
             "messages": self.messages,

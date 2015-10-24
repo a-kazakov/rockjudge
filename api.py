@@ -77,9 +77,15 @@ class IdTransformer:
 
 class Api:
     @staticmethod
-    def get_model(model_type, id_name, request):
+    def get_model(model_type, id_name, request, pf_children=None):
         model_id = IdTransformer.execute(request, id_name)
-        return model_type.get(model_type.id == model_id)
+        model = model_type.get(model_type.id == model_id)
+        if pf_children is None:
+            if "children" in request:
+                model.smart_prefetch(request["children"])
+        else:
+            model.smart_prefetch(pf_children)
+        return model
 
     # Single models getters
 
@@ -91,13 +97,11 @@ class Api:
     @classmethod
     def tour_get(cls, request, ws_message):
         tour = cls.get_model(Tour, "tour_id", request)
-        tour.full_prefetch()
         return tour.serialize(children=request["children"])
 
     @classmethod
     def competition_get(cls, request, ws_message):
         competition = cls.get_model(Competition, "competition_id", request)
-        competition.full_prefetch()
         return competition.serialize(children=request["children"])
 
     @classmethod
@@ -111,18 +115,6 @@ class Api:
     @classmethod
     def discipline_get(cls, request, ws_message):
         discipline = cls.get_model(Discipline, "discipline_id", request)
-        discipline.full_prefetch()
-        discipline.prefetch_tours({
-            "runs": {
-                "scores": {},
-                "acrobatic_overrides": {},
-                "participant": {
-                    "acrobatics": {},
-                    "club": {},
-                    "sportsmen": {},
-                },
-            }
-        })
         return discipline.serialize(children=request["children"])
 
     # Setters
@@ -324,16 +316,20 @@ class Api:
 
     @classmethod
     def discipline_get_results(cls, request, ws_message):
-        discipline = cls.get_model(Discipline, "discipline_id", request)
-        discipline.full_prefetch()
-        discipline.prefetch_tours({
-            "runs": {
-                "scores": {},
-                "acrobatic_overrides": {},
-                "participant": {
-                    "acrobatics": {},
-                }
+        discipline = cls.get_model(Discipline, "discipline_id", request, pf_children={
+            "competition": {
+                "judges": {},
             },
+            "tours": {
+                "runs": {
+                    "scores": {},
+                    "acrobatics": {},
+                    "participant": {
+                        "sportsmen": {},
+                        "club": {},
+                    },
+                },
+            }
         })
         return discipline.get_serialized_results()
 

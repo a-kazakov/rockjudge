@@ -1,4 +1,5 @@
 import json
+import logging
 import time
 import traceback
 
@@ -100,9 +101,27 @@ class TabletHandler(tornado.web.RequestHandler):
         )
 
 
+class LoggingCounterHandler(logging.StreamHandler):
+    def __init__(self):
+        super().__init__()
+        self.cnt = 0
+
+    def emit(self, record):
+        import re
+        record = record.msg[0]
+        record = re.sub(r'SELECT.+?FROM', 'SELECT * FROM', record)
+        record = re.sub(r'(%s, )+%s', '...', record)
+        # print(record)
+        self.cnt += 1
+
+
 class ApiHandler(tornado.web.RequestHandler):
     def post(self):
         ex_str = None
+        hdlr = LoggingCounterHandler()
+        logger = logging.getLogger('peewee')
+        logger.setLevel(logging.DEBUG)
+        logger.addHandler(hdlr)
         try:
             begin = time.time()
             data = None
@@ -147,7 +166,8 @@ class ApiHandler(tornado.web.RequestHandler):
                 request=data,
                 exception=ex_str,
                 response=response)
-            print("Api call: {} ({:.3f}s)".format(method, total_time))
+            logger.removeHandler(hdlr)
+            print("Api call: {} ({:.3f}s), {} queries".format(method, total_time, hdlr.cnt))
 
     def get(self):
         self.post()

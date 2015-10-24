@@ -25,6 +25,14 @@ class Discipline(BaseModel):
 
     RW_PROPS = ["name", "sp", "external_id"]
 
+    PF_CHILDREN = {
+        "competition": None,
+        "tours": {
+            "raw_tours": None,
+        },
+        "participants": None,
+    }
+
     pf_tours = None
 
     def get_back_ref(self, field):
@@ -35,12 +43,20 @@ class Discipline(BaseModel):
     @property
     def tours(self):
         if self.pf_tours is not None:
-            yield from self.pf_tours
-            return
-        tour = self.first_tour
-        while tour is not None:
-            yield tour
-            tour = tour.next_tour
+            return self.pf_tours
+        tours = list(self.raw_tours)
+        rev_tours = {
+            tour.id: tour
+            for tour in tours
+        }
+        current_tour_id = self.first_tour_id
+        result = []
+        while current_tour_id is not None:
+            current_tour = rev_tours[current_tour_id]
+            result.append(current_tour)
+            current_tour_id = current_tour.next_tour_id
+        self.pf_tours = result
+        return result
 
     def get_current_tour(self):
         for tour in self.tours:
@@ -48,18 +64,23 @@ class Discipline(BaseModel):
                 return tour
         return None
 
-    def prefetch_tours(self, schema={}):
-        self.pf_tours = [
-            tour.prefetch(schema)
-            for tour in self.tours
-        ]
-
     def full_prefetch(self):
         self.prefetch({
             "participants": {
                 "acrobatics": {},
                 "club": {},
-            }
+            },
+            "raw_tours": {
+                "runs": {
+                    "scores": {},
+                    "acrobatic_overrides": {},
+                    "participant": {
+                        "acrobatics": {},
+                        "club": {},
+                        "sportsmen": {},
+                    },
+                },
+            },
         })
 
     @classmethod

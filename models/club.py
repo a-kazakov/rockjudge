@@ -19,6 +19,10 @@ class Club(BaseModel):
 
     RW_PROPS = ["name", "city", "external_id"]
 
+    PF_CHILDREN = {
+        "participants": None,
+    }
+
     @classmethod
     def load_models(cls, competition, objects):
         list(cls.load_models_base(objects, competition=competition))

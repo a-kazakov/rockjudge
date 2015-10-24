@@ -10,6 +10,13 @@ class Score(BaseModel):
     class Meta:
         order_by = ["judge"]
 
+    PF_SCHEMA = {
+        "judge": {},
+        "run": {
+            "tour": {},
+        }
+    }
+
     run = peewee.ForeignKeyField(Run, related_name="scores")
     judge = peewee.ForeignKeyField(Judge)
     score_data = peewee.TextField(default="{}")

@@ -243,8 +243,8 @@ class TourAdminScoresTable extends React.Component {
             </span>
         }
     }
-    renderHeatHeader(prew_row, next_row) {
-        let need_render = (typeof prev_row == "undefined") || (prev_row.run.tour.id != next_row.run.tour.id)
+    renderHeatHeader(prev_row, next_row) {
+        let need_render = (typeof prev_row == "undefined") || (prev_row.heat != next_row.heat)
         if (!need_render) {
             return null;
         }
