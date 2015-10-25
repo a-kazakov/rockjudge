@@ -301,7 +301,10 @@ class TourAdminScoresTable extends React.Component {
                 judges={ active_judges } />
         }.bind(this));
         let judges_header = active_judges.map(function(judge) {
-            return <th className="judge" key={ judge.id }>{ judge.number }</th>;
+            // TODO: move role staff to scoring system logic
+            return <th className="judge" key={ judge.id }>
+                { judge.number + (judge.role == "acro_judge" ? "*" : "") }
+            </th>;
         }.bind(this));
         return <div className="tour-admin">
             <header>

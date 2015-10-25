@@ -509,10 +509,11 @@ var TourAdminScoresTable = (function (_React$Component4) {
                     judges: active_judges });
             }).bind(this));
             var judges_header = active_judges.map((function (judge) {
+                // TODO: move role staff to scoring system logic
                 return React.createElement(
                     "th",
                     { className: "judge", key: judge.id },
-                    judge.number
+                    judge.number + (judge.role == "acro_judge" ? "*" : "")
                 );
             }).bind(this));
             return React.createElement(
