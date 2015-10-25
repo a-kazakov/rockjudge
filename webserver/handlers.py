@@ -167,7 +167,7 @@ class ApiHandler(tornado.web.RequestHandler):
                 exception=ex_str,
                 response=response)
             logger.removeHandler(hdlr)
-            print("Api call: {} ({:.3f}s), {} queries".format(method, total_time, hdlr.cnt))
+            print("Api call: {:<25s} {:4d}ms {:4d} queries".format(method, int(1000 * total_time), hdlr.cnt))
 
     def get(self):
         self.post()
