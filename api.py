@@ -1,6 +1,10 @@
+import logging
+import time
+import traceback
 from collections import deque
 
 from exceptions import ApiError
+from log import log_api
 from models import (
     Acrobatic,
     Club,
@@ -73,6 +77,20 @@ class IdTransformer:
                 current_id_type = id_type
             return id_value
         raise ApiError("errors.api.unable_to_get", wanted_id_type)
+
+
+class SqlLoggingHandler(logging.StreamHandler):
+    def __init__(self):
+        super().__init__()
+        self.cnt = 0
+
+    def emit(self, record):
+        import re
+        record = record.msg[0]
+        record = re.sub(r'SELECT.+?FROM', 'SELECT * FROM', record)
+        record = re.sub(r'(%s, )+%s', '...', record)
+        # print(record)
+        self.cnt += 1
 
 
 class Api:
@@ -353,15 +371,53 @@ class Api:
 
     @classmethod
     def call(cls, method, request, ws_message):
-        parts = method.split(".")
-        if len(parts) != 2:
-            return {
+        ex_str = None
+        hdlr = SqlLoggingHandler()
+        logger = logging.getLogger('peewee')
+        logger.setLevel(logging.DEBUG)
+        logger.addHandler(hdlr)
+        try:
+            begin = time.time()
+            data = None
+            response = None
+
+            parts = method.split(".")
+            if len(parts) != 2:
+                response = {
+                    "success": False,
+                    "message": "Invalid method name: {}".format(method),
+                }
+            else:
+                internal_name = "_".join(parts)
+                result = getattr(cls, internal_name)(request, ws_message=ws_message)
+                response = {
+                    "success": True,
+                    "response": result
+                }
+        except ApiError as ex:
+            ex_str = traceback.format_exc()
+            response = {
                 "success": False,
-                "message": "Invalid method name: {}".format(method),
+                "code": ex.code,
+                "args": ex.args,
             }
-        internal_name = "_".join(parts)
-        result = getattr(cls, internal_name)(request, ws_message=ws_message)
-        return {
-            "success": True,
-            "response": result
-        }
+        except Exception as ex:
+            ex_str = traceback.format_exc()
+            response = {
+                "success": False,
+                "code": "errors.global.internal_server_error",
+                "args": [],
+            }
+        finally:
+            total_time = time.time() - begin
+            log_api(
+                time=begin,
+                latency=total_time,
+                queries=hdlr.cnt,
+                method=method,
+                request=request,
+                exception=ex_str,
+                response=response)
+            logger.removeHandler(hdlr)
+            print("Api call: {:<25s} {:4d}ms {:4d} queries".format(method, int(1000 * total_time), hdlr.cnt))
+            return response

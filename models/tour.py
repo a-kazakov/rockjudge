@@ -136,7 +136,9 @@ class Tour(BaseModel):
         self.shuffle_heats(ws_message=None, broadcast=False, shuffle=(len(existing_participant_ids) == 0))
 
     def shuffle_heats(self, ws_message, shuffle=True, broadcast=True):
-        self.prefetch_child("runs")
+        self.smart_prefetch({
+            "runs": {},
+        })
         if shuffle:
             random.shuffle(self.runs)
         last_heat = len(self.runs) % self.participants_per_heat

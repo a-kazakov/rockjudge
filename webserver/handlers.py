@@ -101,73 +101,23 @@ class TabletHandler(tornado.web.RequestHandler):
         )
 
 
-class LoggingCounterHandler(logging.StreamHandler):
-    def __init__(self):
-        super().__init__()
-        self.cnt = 0
-
-    def emit(self, record):
-        import re
-        record = record.msg[0]
-        record = re.sub(r'SELECT.+?FROM', 'SELECT * FROM', record)
-        record = re.sub(r'(%s, )+%s', '...', record)
-        # print(record)
-        self.cnt += 1
-
-
 class ApiHandler(tornado.web.RequestHandler):
     def post(self):
-        ex_str = None
-        hdlr = LoggingCounterHandler()
-        logger = logging.getLogger('peewee')
-        logger.setLevel(logging.DEBUG)
-        logger.addHandler(hdlr)
+        data = json.loads(self.get_argument("data"))
+        method = self.get_argument("method")
         try:
-            begin = time.time()
-            data = None
-            response = None
-            data = json.loads(self.get_argument("data"))
-            method = self.get_argument("method")
-            try:
-                client_id = self.get_argument("client_id")
-            except:
-                # TODO: add logging here
-                client_id = None
-            ws_message = WsMessage(client_id)
+            client_id = self.get_argument("client_id")
+        except:
+            # TODO: add logging here
+            client_id = None
+        ws_message = WsMessage(client_id)
+        with Database.instance().db.transaction():
+            result = Api.call(method, data, ws_message=ws_message)
+            response = json.dumps(result)
+        if not ws_message.empty():
             with Database.instance().db.transaction():
-                result = Api.call(method, data, ws_message=ws_message)
-                response = json.dumps(result)
-            if not ws_message.empty():
-                with Database.instance().db.transaction():
-                    ws_message.send()
-            self.write(response)
-        except ApiError as ex:
-            ex_str = traceback.format_exc()
-            response = json.dumps({
-                "success": False,
-                "code": ex.code,
-                "args": ex.args,
-            })
-            self.write(response)
-        except Exception as ex:
-            ex_str = traceback.format_exc()
-            response = json.dumps({
-                "success": False,
-                "code": "errors.global.internal_server_error",
-                "args": [],
-            })
-            raise ex
-        finally:
-            total_time = time.time() - begin
-            log_api(
-                time=begin,
-                latency=total_time,
-                method=method,
-                request=data,
-                exception=ex_str,
-                response=response)
-            logger.removeHandler(hdlr)
-            print("Api call: {:<25s} {:4d}ms {:4d} queries".format(method, int(1000 * total_time), hdlr.cnt))
+                ws_message.send()
+        self.write(response)
 
     def get(self):
         self.post()

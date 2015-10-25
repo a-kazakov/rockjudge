@@ -8,7 +8,7 @@ from models.proxies import competition_proxy
 class Club(BaseModel):
     class Meta:
         indexes = (
-            (("competition", "external_id"), False),
+            (("competition", "external_id"), True),
         )
         order_by = ["city", "name"]
 

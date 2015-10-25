@@ -1,3 +1,4 @@
+import json
 import peewee
 
 from models.base_model import BaseModel
@@ -12,6 +13,7 @@ class ApiLogItem(BaseModel):
         )
     time = peewee.DoubleField()
     latency = peewee.DoubleField()
+    queries = peewee.IntegerField()
     method = peewee.CharField()
     request = peewee.TextField(null=True)
     exception = peewee.TextField(null=True)
@@ -21,10 +23,11 @@ class ApiLogItem(BaseModel):
         return {
             "time": self.time,
             "latency": self.latency,
+            "queries": self.queries,
             "method": self.method,
-            "request": self.request,
+            "request": json.loads(self.request),
             "exception": self.exception,
-            "response": self.response,
+            "response": json.loads(self.response),
         }
 
     @classmethod
