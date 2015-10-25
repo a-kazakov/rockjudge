@@ -1,4 +1,3 @@
-from models.acrobatic import Acrobatic  # NOQA
 from models.acrobatic_override import AcrobaticOverride  # NOQA
 from models.api_log_item import ApiLogItem  # NOQA
 from models.club import Club  # NOQA
@@ -8,5 +7,4 @@ from models.judge import Judge  # NOQA
 from models.participant import Participant  # NOQA
 from models.run import Run  # NOQA
 from models.score import Score  # NOQA
-from models.sportsman import Sportsman  # NOQA
 from models.tour import Tour  # NOQA

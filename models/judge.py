@@ -34,7 +34,7 @@ class Judge(BaseModel):
         ws_message.add_message("reload_data")
 
     def update_model(self, new_data, ws_message):
-        super().update_model(new_data)
+        self.update_model_base(new_data)
         ws_message.add_model_update(
             model_type=Competition,
             model_id=self.competition_id,

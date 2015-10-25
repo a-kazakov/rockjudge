@@ -93,7 +93,9 @@ class ManagementUI extends React.Component {
                 key={ this.state.page_props.discipline_id }
                 discipline={ ic } />
         case "manage_participants":
-            return <iframe src={ "/participants/" + this.state.page_props.discipline_id.toString() } />
+            return <div className="ifw">
+                <iframe src={ "/participants/" + this.state.page_props.discipline_id.toString() } />
+            </div>
         case "manage_judges":
             return <JudgesManagementUI
                 judges={ this.props.judges }

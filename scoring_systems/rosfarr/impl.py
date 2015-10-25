@@ -96,10 +96,7 @@ class AcroScore:
     def __init__(self, score):
         self.score = score
         raw_data = score.get_data()
-        if isinstance(score.run.participant.acrobatics, list):
-            num_acros = len(score.run.participant.acrobatics)
-        else:
-            num_acros = score.run.participant.acrobatics.count()
+        num_acros = len(score.run.participant.acrobatics)
         self.data = {
             "deductions": raw_data.pop("deductions", [100] * num_acros),
             "mistakes": raw_data.pop("mistakes", 0),
@@ -108,9 +105,10 @@ class AcroScore:
     @property
     def total_score(self):
         result = 0
-        for acro, deduction in zip(self.score.run.participant.acrobatics, self.data["deductions"]):
-            override = self.score.run.get_acrobatic_override(acro)
-            base_score = override.score if override is not None else acro.score
+        acro_data = enumerate(zip(self.score.run.acrobatics, self.data["deductions"]))
+        for acro_idx, (acro, deduction) in acro_data:
+            override = self.score.run.get_acrobatic_override(acro_idx)
+            base_score = override.score if override is not None else acro["score"]
             result += apply_deduction(m100(base_score), deduction)
         result -= 30 * m100(self.data["mistakes"])
         return result
@@ -298,8 +296,8 @@ class RunScore:
     def sorting_score(self):
         if self.scoring_system == "rosfarr.acro":
             return (
-                -self.dance_scores.primary_score + self.acro_scores.primary_score + self.penalties,
-                -self.dance_scores.secondary_score + self.acro_scores.secondary_score + self.penalties,
+                -self.dance_scores.primary_score - self.acro_scores.primary_score + self.penalties,
+                -self.dance_scores.secondary_score - self.acro_scores.secondary_score + self.penalties,
             )
         else:
             return (

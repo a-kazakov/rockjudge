@@ -197,11 +197,12 @@ class BaseModel(peewee.Model, PrefetchedModel):
         return value.count()
 
     @classmethod
-    def load_models_base(cls, objects, **kwargs):
-        prepared = [
-            cls.gen_model_kwargs(obj, **kwargs)
-            for obj in objects
-        ]
+    def load_models_base(cls, objects, prepared=None, **kwargs):
+        if prepared is None:
+            prepared = [
+                cls.gen_model_kwargs(obj, **kwargs)
+                for obj in objects
+            ]
         external_ids = [
             data["external_id"]
             for data in prepared
@@ -221,7 +222,8 @@ class BaseModel(peewee.Model, PrefetchedModel):
         for obj, data in zip(objects, prepared):
             external_id = data["external_id"] if "external_id" in data else None
             if external_id in models_to_update:
-                yield models_to_update[external_id].update_model(data, WsMessage()), False, obj
+                models_to_update[external_id].update_model(data, WsMessage())
+                yield models_to_update[external_id], False, obj
             else:
                 yield cls.create(**data), True, obj
 
@@ -235,7 +237,7 @@ class BaseModel(peewee.Model, PrefetchedModel):
         result.update(kwargs)
         return result
 
-    def update_model(self, data, **kwargs):
+    def update_model_base(self, data, **kwargs):
         for key, value in self.gen_model_kwargs(data, **kwargs).items():
             if key == "external_id" and value == "":
                 value = None

@@ -1,3 +1,4 @@
+import json
 import peewee
 
 from models.base_model import BaseModel
@@ -20,94 +21,98 @@ class Participant(BaseModel):
     number = peewee.IntegerField(default=0)
     club = peewee.ForeignKeyField(Club, related_name="participants")
     external_id = peewee.CharField(null=True, default=None)
+    sportsmen_json = peewee.TextField(default="[]")
+    acrobatics_json = peewee.TextField(default="[]")
 
     RW_PROPS = ["formation_name", "coaches", "number", "external_id"]
 
-    PF_SCHEMA = {
-        "sportsmen": {},
-    }
     PF_CHILDREN = {
         "club": None,
-        "sportsmen": None,
-        "acrobatics": None,
     }
+
+    @staticmethod
+    def serialize_sportsmen(raw_data):
+        return json.dumps([
+            {
+                "first_name": str(sp["first_name"]),
+                "last_name": str(sp["last_name"]),
+                "year_of_birth": int(sp["year_of_birth"]),
+                "gender": "M" if sp["gender"] == "M" else "F"
+            } for sp in raw_data
+        ], ensure_ascii=False, check_circular=False)
+
+    @property
+    def sportsmen(self):
+        return json.loads(self.sportsmen_json)
+
+    @sportsmen.setter
+    def sportsmen(self, value):
+        self.sportsmen_json = self.serialize_sportsmen(value)
+
+    @staticmethod
+    def serialize_acrobatics(raw_data):
+        return json.dumps([
+            {
+                "description": str(sp["description"]),
+                "score": float(sp["score"]),
+            } for sp in raw_data
+        ], ensure_ascii=False, check_circular=False)
+
+    @property
+    def acrobatics(self):
+        return json.loads(self.acrobatics_json)
+
+    @acrobatics.setter
+    def acrobatics(self, value):
+        self.acrobatics_json = self.serialize_acrobatics(value)
 
     def get_name(self):
         if self.is_couple():
             sportsmen = sorted(
                 self.sportsmen,
-                key=lambda s: (s.gender, s.last_name))
-            return " – ".join([s.full_name for s in sportsmen])
+                key=lambda s: (s["gender"], s["last_name"]))
+            return " – ".join(["{last_name} {first_name}".format(**s) for s in sportsmen])
         if self.is_solo():
-            return self.sportsmen[0].full_name
+            return "{last_name} {first_name}".format(**self.sportsmen[0])
         return self.formation_name
 
-    def num_sportsmen(self):
-        if type(self.sportsmen) == list:
-            return len(self.sportsmen)
-        result = self.sportsmen.count()
-        return result
-
     def is_couple(self):
-        return self.num_sportsmen() == 2
+        return len(self.sportsmen) == 2
 
     def is_solo(self):
-        return self.num_sportsmen() == 1
-
-    @classmethod
-    def _load_one(cls, discipline, club, obj):
-        if obj["external_id"] is not None:
-            try:
-                model = cls.get(cls.discipline == discipline and cls.external_id == obj["external_id"])
-                update_data = cls.gen_model_kwargs(obj, club=club)
-                model.update_model(update_data, ws_message=WsMessage())
-                return model, False
-            except cls.DoesNotExist:
-                pass
-        create_kwargs = cls.gen_model_kwargs(obj, discipline=discipline, club=club)
-        return cls.create(**create_kwargs), True
+        return len(self.sportsmen) == 1
 
     @classmethod
     def load_models(cls, discipline, objects):
-        from models import (
-            Acrobatic,
-            Sportsman,
-        )
-        for obj in objects:
-            club = Club.get(Club.external_id == obj["club"])
-            model, created = cls._load_one(discipline, club, obj)
-            Sportsman.delete().where(Sportsman.participant == model).execute()
-            Acrobatic.delete().where(Acrobatic.participant == model).execute()
-            Sportsman.load_models(
-                participant=model,
-                objects=obj["sportsmen"],
+        clubs_ids = [obj["club"] for obj in objects]
+        clubs = {
+            club.external_id: club
+            for club in Club.select().where(
+                (Club.external_id << clubs_ids) &
+                (Club.competition == discipline.competition_id)
             )
-            Acrobatic.load_models(model, obj["acrobatics"])
+        }
+        prepared = [
+            cls.gen_model_kwargs(
+                obj,
+                discipline=discipline,
+                sportsmen=obj["sportsmen"],
+                acrobatics=obj["acrobatics"],
+                club=clubs[obj["club"]]
+            ) for obj in objects
+        ]
+        list(cls.load_models_base(objects, prepared=prepared, discipline=discipline))
 
     @classmethod
     def create_model(cls, discipline, data, ws_message):
-        from models import (
-            Acrobatic,
-            Sportsman,
-        )
         club = Club.get((Club.id == data["club_id"]) & (Club.competition == discipline.competition_id))
-        create_kwargs = cls.gen_model_kwargs(data, discipline=discipline, club=club)
+        create_kwargs = cls.gen_model_kwargs(
+            data,
+            discipline=discipline,
+            club=club,
+            acrobatics_json=cls.serialize_acrobatics(data["acrobatics"]),
+            sportsmen_json=cls.serialize_sportsmen(data["sportsmen"]))
         model = cls.create(**create_kwargs)
-        for idx, acro in enumerate(data["acrobatics"]):
-            acro_kwargs = {
-                key: acro[key]
-                for key in ["description", "score"]
-            }
-            acro_kwargs["number"] = idx
-            acro_kwargs["participant"] = model
-            Acrobatic.create(**acro_kwargs)
-        for sp in data["sportsmen"]:
-            sp_kwargs = {
-                key: sp[key]
-                for key in ["last_name", "first_name", "year_of_birth", "gender"]
-            }
-            sp_kwargs["participant"] = model
-            Sportsman.create(**sp_kwargs)
         ws_message.add_model_update(
             model_type=discipline_proxy,
             model_id=discipline.id,
@@ -120,64 +125,17 @@ class Participant(BaseModel):
             model_id=model.id,
             schema={
                 "club": {},
-                "sportsmen": {},
-                "acrobatics": {},
             }
         )
 
     def update_model(self, new_data, ws_message):
-        from models import (
-            Acrobatic,
-            Sportsman,
-        )
         number_changed = "number" in new_data and new_data["number"] != self.number
-        for key in ["number", "external_id", "formation_name", "coaches"]:
-            if key in new_data:
-                setattr(self, key, new_data[key])
+        self.sportsmen = new_data["sportsmen"]
+        self.acrobatics = new_data["acrobatics"]
         if "club_id" in new_data:
             club = Club.get((Club.id == new_data["club_id"]) & (Club.competition == self.discipline.competition_id))
             self.club = club
-        if "acrobatics" in new_data:
-            current_acro = list(self.acrobatics)
-            new_acro = new_data["acrobatics"]
-            for idx, (current_item, new_item) in enumerate(zip(current_acro, new_acro)):
-                current_item.description = new_item["description"]
-                current_item.score = new_item["score"]
-                current_item.number = idx
-                current_item.save()
-            if len(new_acro) > len(current_acro):
-                for idx in range(len(current_acro), len(new_acro)):
-                    Acrobatic.create(
-                        participant=self,
-                        description=new_acro[idx]["description"],
-                        score=new_acro[idx]["score"],
-                        number=idx,
-                    )
-            elif len(new_acro) < len(current_acro):
-                for acro in current_acro[len(new_acro):]:
-                    acro.delete_instance()
-        if "sportsmen" in new_data:
-            current_sp = list(self.sportsmen)
-            new_sp = new_data["sportsmen"]
-            for current_item, new_item in zip(current_sp, new_sp):
-                current_item.last_name = new_item["last_name"]
-                current_item.first_name = new_item["first_name"]
-                current_item.year_of_birth = new_item["year_of_birth"]
-                current_item.gender = new_item["gender"]
-                current_item.save()
-            if len(new_sp) > len(current_sp):
-                for new_item in new_sp[len(current_sp):]:
-                    Sportsman.create(
-                        participant=self,
-                        last_name=new_item["last_name"],
-                        first_name=new_item["first_name"],
-                        year_of_birth=new_item["year_of_birth"],
-                        gender=new_item["gender"],
-                    )
-            elif len(new_sp) < len(current_sp):
-                for sp in current_sp[len(new_sp):]:
-                    sp.delete_instance()
-        self.save()
+        self.update_model_base(new_data)
         if number_changed:
             ws_message.add_model_update(
                 model_type=discipline_proxy,
@@ -198,8 +156,6 @@ class Participant(BaseModel):
             model_id=self.id,
             schema={
                 "club": {},
-                "sportsmen": {},
-                "acrobatics": {},
             }
         )
 
@@ -218,10 +174,7 @@ class Participant(BaseModel):
     def serialize(self, children={}):
         result = self.serialize_props()
         result["name"] = self.get_name()
-        if "acrobatics" in children:
-            result["acrobatics"] = [
-                acro.serialize(children["acrobatics"]) for acro in self.acrobatics
-            ]
+        result["sportsmen"] = self.sportsmen
+        result["acrobatics"] = self.acrobatics
         result = self.serialize_upper_child(result, "club", children)
-        result = self.serialize_lower_child(result, "sportsmen", children)
         return result

@@ -29,7 +29,6 @@ class StartList extends React.Component {
                 disciplines: {
                     participants: {
                         club: {},
-                        sportsmen: {},
                     },
                 },
             }

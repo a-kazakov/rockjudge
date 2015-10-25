@@ -1,3 +1,4 @@
+import json
 import peewee
 
 from models.base_model import BaseModel
@@ -15,14 +16,13 @@ class Run(BaseModel):
     participant = peewee.ForeignKeyField(Participant)
     tour = peewee.ForeignKeyField(Tour, related_name="runs")
     heat = peewee.IntegerField()
+    acrobatics_json = peewee.TextField(default="[]")
 
     RW_PROPS = ["heat"]
 
     PF_SCHEMA = {
         "scores": {},
-        "participant": {
-            "acrobatics": {},
-        },
+        "participant": {},
         "acrobatic_overrides": {},
         "tour": {
             "discipline": {
@@ -34,14 +34,19 @@ class Run(BaseModel):
     }
     PF_CHILDREN = {
         "acrobatics": {
-            "participant": {
-                "acrobatics": None,
-            },
             "acrobatic_overrides": {},
         },
         "participant": None,
         "scores": None,
     }
+
+    @property
+    def acrobatics(self):
+        return json.loads(self.acrobatics_json)
+
+    @acrobatics.setter
+    def acrobatics(self, value):
+        self.acrobatics_json = json.dumps(value)
 
     # Controls
 
@@ -68,20 +73,20 @@ class Run(BaseModel):
         score_obj = self.get_score_obj(judge)
         return score_obj.get()
 
-    def get_acrobatic_override(self, acrobatic):
+    def get_acrobatic_override(self, acrobatic_idx):
         for override in self.acrobatic_overrides:
-            if override.acrobatic_id == acrobatic.id:
+            if override.acrobatic_idx == acrobatic_idx:
                 return override
         return None
 
-    def set_acrobatic_override(self, acrobatic, score, ws_message):
+    def set_acrobatic_override(self, acrobatic_idx, score, ws_message):
         from models import AcrobaticOverride
-        override = self.get_acrobatic_override(acrobatic)
+        override = self.get_acrobatic_override(acrobatic_idx)
         if override is None:
             if score is not None:
                 AcrobaticOverride.create(
                     run=self,
-                    acrobatic=acrobatic,
+                    acrobatic_idx=acrobatic_idx,
                     score=score,
                 )
         else:
@@ -102,7 +107,7 @@ class Run(BaseModel):
         ws_message.add_message("tour_results_changed", {"tour_id": self.tour_id})
 
     def update_model(self, new_data, ws_message):
-        super().update_model(new_data)
+        self.update_model_base(new_data)
         ws_message.add_model_update(
             model_type=Tour,
             model_id=self.tour_id,
@@ -113,14 +118,12 @@ class Run(BaseModel):
 
     def serialize_acrobatics(self, children=None):
         acro_list = []
-        for acro in self.participant.acrobatics:
-            serialized = acro.serialize()
-            serialized["id"] = acro.id
-            override = self.get_acrobatic_override(acro)
-            serialized["original_score"] = serialized["score"]
+        for idx, acro in enumerate(self.acrobatics):
+            acro["original_score"] = acro["score"]
+            override = self.get_acrobatic_override(idx)
             if override is not None:
-                serialized["score"] = override.score
-            acro_list.append(serialized)
+                acro["score"] = override.score
+            acro_list.append(acro)
         return acro_list
 
     def serialize(self, children={}, judges=None):

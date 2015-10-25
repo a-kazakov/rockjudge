@@ -157,7 +157,11 @@ var ManagementUI = (function (_React$Component2) {
                         key: this.state.page_props.discipline_id,
                         discipline: ic });
                 case "manage_participants":
-                    return React.createElement("iframe", { src: "/participants/" + this.state.page_props.discipline_id.toString() });
+                    return React.createElement(
+                        "div",
+                        { className: "ifw" },
+                        React.createElement("iframe", { src: "/participants/" + this.state.page_props.discipline_id.toString() })
+                    );
                 case "manage_judges":
                     return React.createElement(JudgesManagementUI, {
                         judges: this.props.judges,

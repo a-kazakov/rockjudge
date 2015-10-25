@@ -47,10 +47,10 @@ var TabletScoreInput = (function (_React$Component) {
         }
     }, {
         key: "overrideAcroScore",
-        value: function overrideAcroScore(acro_id, value) {
+        value: function overrideAcroScore(acro_idx, value) {
             Api("acrobatic_override.set", {
                 run_id: this.props.run_id,
-                acrobatic_id: acro_id,
+                acrobatic_idx: acro_idx,
                 score: value
             }).send();
         }
@@ -132,7 +132,7 @@ var TabletScoreInput = (function (_React$Component) {
     }, {
         key: "renderTechJudgeInputAcro",
         value: function renderTechJudgeInputAcro() {
-            var acrobatics = this.props.acrobatics.map((function (acro) {
+            var acrobatics = this.props.acrobatics.map((function (acro, idx) {
                 return React.createElement(
                     "div",
                     { className: "tech-judge-acro", key: acro.id },
@@ -146,7 +146,7 @@ var TabletScoreInput = (function (_React$Component) {
                         { className: "controls" },
                         React.createElement(
                             "button",
-                            { className: "tbtn btn-reset", onClick: this.overrideAcroScore.bind(this, acro.id, null) },
+                            { className: "tbtn btn-reset", onClick: this.overrideAcroScore.bind(this, idx, null) },
                             __("tablet.tech_judge.reset_to_n", acro.original_score)
                         ),
                         React.createElement(
@@ -154,7 +154,7 @@ var TabletScoreInput = (function (_React$Component) {
                             { className: "setter" },
                             React.createElement(TabletPoint5Input, {
                                 value: acro.score,
-                                onValueUpdate: this.overrideAcroScore.bind(this, acro.id) })
+                                onValueUpdate: this.overrideAcroScore.bind(this, idx) })
                         )
                     ),
                     React.createElement("div", { className: "clearfix" })

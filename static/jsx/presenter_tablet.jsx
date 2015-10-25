@@ -77,7 +77,6 @@ class PresenterTablet extends React.Component {
             runs: {
                 participant: {
                     "club": {},
-                    "sportsmen": {},
                 },
             },
             discipline: {},

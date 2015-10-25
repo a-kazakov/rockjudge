@@ -182,7 +182,7 @@ class ParticipantEditorRow extends React.Component {
             return <option value={ club.id } key={ club.id }>{ club.name }</option>
         });
         return <tr className={ "editor" + (this.props.newParticipant ? " create" : "" ) }>
-            <td colSpan="5">
+            <td colSpan="6">
                 <form onSubmit={ this.onSubmit.bind(this) }>
                     <div className="row">
                         <div className="col-md-3 general-info">
@@ -293,6 +293,10 @@ class ParticipantRow extends React.Component {
             <td className="name">{ p.name }</td>
             <td className="club-name">{ p.club.name }</td>
             <td className="club-city">{ p.club.city }</td>
+            <td className="acrobatics">
+                { p.acrobatics.length }&nbsp;
+                ({ p.acrobatics.reduce((a, b) => a + b.score, 0)})
+            </td>
             <td className="delete">
                 <button className="btn btn-danger" onClick={ this.onDelete.bind(this) }>X</button>
             </td>
@@ -340,7 +344,7 @@ class ParticipantCreationRow extends React.Component {
             { ...this.props } />;
     }
     renderButton() {
-        return <tr><td colSpan="5">
+        return <tr><td colSpan="6">
             <button
                 type="button"
                 className="btn btn-default full-width"
@@ -368,9 +372,7 @@ class ParticipantsManager extends React.Component {
                 clubs: {},
             },
             participants: {
-                acrobatics: {},
                 club: {},
-                sportsmen: {},
             },
         };
         let serialized = storage.get("Discipline")
@@ -386,9 +388,7 @@ class ParticipantsManager extends React.Component {
                     clubs: {},
                 },
                 participants: {
-                    acrobatics: {},
                     club: {},
-                    sportsmen: {},
                 },
             }
         })
@@ -411,6 +411,7 @@ class ParticipantsManager extends React.Component {
                         <th className="name">{ _("models.participant.name") }</th>
                         <th className="club-name">{ _("models.participant.club_name") }</th>
                         <th className="club-city">{ _("models.participant.club_city") }</th>
+                        <th className="acrobatics">{ _("models.participant.acrobatics") }</th>
                         <th className="delete"></th>
                     </tr>
                     { rows }

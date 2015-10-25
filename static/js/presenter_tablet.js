@@ -99,8 +99,7 @@ var PresenterTablet = (function (_React$Component) {
             Api("tour.get", { tour_id: tour_id, children: {
                     runs: {
                         participant: {
-                            "club": {},
-                            "sportsmen": {}
+                            "club": {}
                         }
                     },
                     discipline: {}

@@ -69,7 +69,6 @@ class DisciplineResults extends React.Component {
                 tours: {
                     runs: {
                         participant: {
-                            sportsmen: {},
                             club: {},
                         },
                     }

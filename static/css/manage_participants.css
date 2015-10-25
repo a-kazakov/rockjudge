@@ -13,6 +13,9 @@ body {
   width: 100px;
   text-align: center;
 }
+.manage-participants table .acrobatics {
+  width: 100px;
+}
 .manage-participants table tr.viewer {
   cursor: pointer;
 }

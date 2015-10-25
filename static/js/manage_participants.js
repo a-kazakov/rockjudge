@@ -245,7 +245,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                 { className: "editor" + (this.props.newParticipant ? " create" : "") },
                 React.createElement(
                     "td",
-                    { colSpan: "5" },
+                    { colSpan: "6" },
                     React.createElement(
                         "form",
                         { onSubmit: this.onSubmit.bind(this) },
@@ -436,6 +436,16 @@ var ParticipantRow = (function (_React$Component2) {
                 ),
                 React.createElement(
                     "td",
+                    { className: "acrobatics" },
+                    p.acrobatics.length,
+                    "  (",
+                    p.acrobatics.reduce(function (a, b) {
+                        return a + b.score;
+                    }, 0),
+                    ")"
+                ),
+                React.createElement(
+                    "td",
                     { className: "delete" },
                     React.createElement(
                         "button",
@@ -510,7 +520,7 @@ var ParticipantCreationRow = (function (_React$Component3) {
                 null,
                 React.createElement(
                     "td",
-                    { colSpan: "5" },
+                    { colSpan: "6" },
                     React.createElement(
                         "button",
                         {
@@ -555,9 +565,7 @@ var ParticipantsManager = (function (_React$Component4) {
                     clubs: {}
                 },
                 participants: {
-                    acrobatics: {},
-                    club: {},
-                    sportsmen: {}
+                    club: {}
                 }
             };
             var serialized = storage.get("Discipline").by_id(this.props.discipline_id).serialize(SCHEMA);
@@ -573,9 +581,7 @@ var ParticipantsManager = (function (_React$Component4) {
                         clubs: {}
                     },
                     participants: {
-                        acrobatics: {},
-                        club: {},
-                        sportsmen: {}
+                        club: {}
                     }
                 }
             }).updateDB("Discipline", this.props.discipline_id).onSuccess(this.reloadFromStorage.bind(this)).send();
@@ -620,6 +626,11 @@ var ParticipantsManager = (function (_React$Component4) {
                                 "th",
                                 { className: "club-city" },
                                 _("models.participant.club_city")
+                            ),
+                            React.createElement(
+                                "th",
+                                { className: "acrobatics" },
+                                _("models.participant.acrobatics")
                             ),
                             React.createElement("th", { className: "delete" })
                         ),

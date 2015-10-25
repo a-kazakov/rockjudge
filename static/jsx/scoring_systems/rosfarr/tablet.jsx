@@ -21,10 +21,10 @@ class TabletScoreInput extends React.Component {
         }
         this.props.onScoreUpdate(new_score);
     }
-    overrideAcroScore(acro_id, value) {
+    overrideAcroScore(acro_idx, value) {
         Api("acrobatic_override.set", {
             run_id: this.props.run_id,
-            acrobatic_id: acro_id,
+            acrobatic_idx: acro_idx,
             score: value,
         }).send();
     }
@@ -74,19 +74,19 @@ class TabletScoreInput extends React.Component {
         </div>
     }
     renderTechJudgeInputAcro() {
-        var acrobatics = this.props.acrobatics.map(function(acro) {
+        var acrobatics = this.props.acrobatics.map(function(acro, idx) {
             return <div className="tech-judge-acro" key={ acro.id }>
                 <h3>
                     { acro.description }
                 </h3>
                 <div className="controls">
-                    <button className="tbtn btn-reset" onClick={ this.overrideAcroScore.bind(this, acro.id, null) }>
+                    <button className="tbtn btn-reset" onClick={ this.overrideAcroScore.bind(this, idx, null) }>
                         { __("tablet.tech_judge.reset_to_n", acro.original_score) }
                     </button>
                     <div className="setter">
                         <TabletPoint5Input
                             value={ acro.score }
-                            onValueUpdate={ this.overrideAcroScore.bind(this, acro.id) } />
+                            onValueUpdate={ this.overrideAcroScore.bind(this, idx) } />
                     </div>
                 </div>
                 <div className="clearfix"></div>

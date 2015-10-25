@@ -56,15 +56,17 @@ class ModelManager:
     def create_models(self):
         q = deque(self.all_models)
         to_kill = len(q)
+        latest_ex = None
         while len(q) > 0:
             model = q.popleft()
             try:
                 model.create_table(True)
                 to_kill = len(q)
-            except:
+            except Exception as ex:
+                latest_ex = ex
                 q.append(model)
             if to_kill == 0 and len(q) > 0:
-                raise RuntimeError("Unable to create all tables requested.")
+                raise latest_ex
             to_kill -= 1
 
     def reset(self, fixture_name=None):

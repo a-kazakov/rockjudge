@@ -44,8 +44,7 @@ var StartList = (function (_React$Component) {
                 children: {
                     disciplines: {
                         participants: {
-                            club: {},
-                            sportsmen: {}
+                            club: {}
                         }
                     }
                 }

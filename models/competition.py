@@ -68,7 +68,7 @@ class Competition(BaseModel):
         ws_message.add_message("competition_list_update")
 
     def update_model(self, new_data, ws_message):
-        super().update_model(new_data, info=json.dumps(new_data["info"]))
+        self.update_model_base(new_data, info=json.dumps(new_data["info"]))
         ws_message.add_model_update(
             model_type=Competition,
             model_id=self.id,

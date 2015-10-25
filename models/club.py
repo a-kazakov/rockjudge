@@ -40,7 +40,7 @@ class Club(BaseModel):
         )
 
     def update_model(self, new_data, ws_message):
-        super().update_model(new_data)
+        self.update_model_base(new_data)
         ws_message.add_model_update(
             model_type=competition_proxy,
             model_id=self.competition_id,

@@ -63,16 +63,18 @@ class JudgeTablet extends React.Component {
             .onSuccess(this.reloadFromStorage.bind(this))
             .send();
         Api("tour.find_active", {}).onSuccess(function(response) {
-            this.dispatchActiveTourUpdate(response);
+            this.dispatchActiveTourUpdate(response, true);
         }.bind(this)).send();
     }
 
     // Dispatchers
 
-    dispatchActiveTourUpdate(response) {
+    dispatchActiveTourUpdate(response, force) {
         var tour_id = response.tour_id;
-        if ((this.state.tour === null && tour_id === null) || (this.state.tour !== null && this.state.tour.id == tour_id)) {
-            return;
+        if (!force) {
+            if ((this.state.tour === null && tour_id === null) || (this.state.tour !== null && this.state.tour.id == tour_id)) {
+                return;
+            }
         }
         this.setState({
             "active_tour_id": tour_id,
@@ -90,11 +92,9 @@ class JudgeTablet extends React.Component {
             });
             return;
         }
-        Api("tour.get", { tour_id: tour_id, children:{
+        Api("tour.get", { tour_id: tour_id, children: {
             runs: {
-                participant: {
-                    "sportsmen": {},
-                },
+                participant: {},
                 scores: {},
                 acrobatics: {},
             },

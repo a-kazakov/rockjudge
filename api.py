@@ -7,7 +7,6 @@ from db import Database
 from exceptions import ApiError
 from log import log_api
 from models import (
-    Acrobatic,
     Club,
     Competition,
     Discipline,
@@ -38,9 +37,6 @@ class IdTransformer:
         "discipline_id": {
             "competition_id": lambda discipline_id:
                 Discipline.get(Discipline.id == discipline_id).competition_id,
-        },
-        "acrobatic_id": {
-            "participant_id": lambda acrobatic_id: Acrobatic.get(Acrobatic.id == acrobatic_id).participant_id,
         },
         "participant_id": {},
         "competition_id": {},
@@ -279,8 +275,7 @@ class Api:
     @classmethod
     def acrobatic_override_set(cls, request, ws_message):
         run = cls.get_model(Run, "run_id", request)
-        acrobatic = cls.get_model(Acrobatic, "acrobatic_id", request)
-        run.set_acrobatic_override(acrobatic, request["score"], ws_message=ws_message)
+        run.set_acrobatic_override(request["acrobatic_idx"], request["score"], ws_message=ws_message)
         return {}
 
     @classmethod
@@ -344,7 +339,6 @@ class Api:
                     "scores": {},
                     "acrobatics": {},
                     "participant": {
-                        "sportsmen": {},
                         "club": {},
                     },
                 },

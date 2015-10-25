@@ -1,6 +1,5 @@
 import peewee
 
-from models.acrobatic import Acrobatic
 from models.base_model import BaseModel
 from models.run import Run
 
@@ -8,10 +7,10 @@ from models.run import Run
 class AcrobaticOverride(BaseModel):
     class Meta:
         indexes = (
-            (("run", "acrobatic"), True),
+            (("run", "acrobatic_idx"), True),
         )
-        order_by = ["run", "acrobatic"]
+        order_by = ["run", "acrobatic_idx"]
 
     run = peewee.ForeignKeyField(Run, related_name="acrobatic_overrides")
-    acrobatic = peewee.ForeignKeyField(Acrobatic)
+    acrobatic_idx = peewee.IntegerField()
     score = peewee.DoubleField()

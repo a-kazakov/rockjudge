@@ -67,7 +67,6 @@ class Discipline(BaseModel):
     def full_prefetch(self):
         self.prefetch({
             "participants": {
-                "acrobatics": {},
                 "club": {},
             },
             "raw_tours": {
@@ -75,9 +74,7 @@ class Discipline(BaseModel):
                     "scores": {},
                     "acrobatic_overrides": {},
                     "participant": {
-                        "acrobatics": {},
                         "club": {},
-                        "sportsmen": {},
                     },
                 },
             },
@@ -108,7 +105,7 @@ class Discipline(BaseModel):
             })
 
     def update_model(self, new_data, ws_message):
-        super().update_model(new_data)
+        self.update_model_base(new_data)
         ws_message.add_model_update(
             model_type=Competition,
             model_id=self.competition_id,

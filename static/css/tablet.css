@@ -33,6 +33,7 @@ body,
   width: 65%;
 }
 .tablet-main-table > tbody > tr > td {
+  vertical-align: top;
   padding: 15px;
   max-width: 75%;
 }

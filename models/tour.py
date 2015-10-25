@@ -42,9 +42,7 @@ class Tour(BaseModel):
                 "scores": {},
                 "acrobatic_overrides": {},
                 "participant": {
-                    "acrobatics": {},
                     "club": {},
-                    "sportsmen": {},
                 },
             },
             "discipline": {
@@ -131,8 +129,14 @@ class Tour(BaseModel):
                 tour=self,
             )
             self.runs.append(run)
+        participants_rev = {
+            p.id: p
+            for p in estimated_participants
+        }
         for run in self.runs:
             run.create_scores()
+            run.acrobatics_json = participants_rev[run.participant_id].acrobatics_json
+            run.save()
         self.shuffle_heats(ws_message=None, broadcast=False, shuffle=(len(existing_participant_ids) == 0))
 
     def shuffle_heats(self, ws_message, shuffle=True, broadcast=True):
@@ -214,6 +218,8 @@ class Tour(BaseModel):
             raise ApiError("errors.tour.next_is_finailzed")
 
     def init(self, ws_message):
+        if self.finalized:
+            raise ApiError("error.tour.init_finalized")
         self.check_prev_tour_finalized()
         self.create_participant_runs()
         ws_message.add_message("tour_results_changed", {"tour_id": self.id})
@@ -295,7 +301,7 @@ class Tour(BaseModel):
         )
 
     def update_model(self, new_data, ws_message):
-        super().update_model(new_data)
+        self.update_model_base(new_data)
         ws_message.add_model_update(
             model_type=self.__class__,
             model_id=self.id,
@@ -331,7 +337,6 @@ class Tour(BaseModel):
             participant = run.participant.serialize()
             participant["id"] = run.participant.id
             participant["club"] = run.participant.club.serialize()
-            participant["sportsmen"] = [sp.serialize() for sp in run.participant.sportsmen]
             row["participant"] = participant
             row["acrobatics"] = run.serialize_acrobatics()
             del row["run"]

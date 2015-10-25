@@ -87,7 +87,6 @@ var DisciplineResults = (function (_React$Component) {
                     tours: {
                         runs: {
                             participant: {
-                                sportsmen: {},
                                 club: {}
                             }
                         }
