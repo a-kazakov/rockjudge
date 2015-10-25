@@ -64,8 +64,8 @@ class Discipline:
         row = grid.getRow(idx, 3)
         if row[0] is None:
             raise StopIteration
-        self.name, self.external_id = map(str, row[:2])
-        self.sp = int(row[2])
+        self.name, self.external_id = map(str, row[1:3])
+        self.sp = int(row[0])
         self.storage[self.name] = self
 
     @property
@@ -93,8 +93,8 @@ class Judge:
         row = grid.getRow(idx, 6)
         if row[0] is None:
             raise StopIteration
-        self.name, self.category, self.number, self.role_description, self.role = row[:5]
-        self.sp = int(row[5])
+        self.role_description, self.number, self.name, self.category, self.role = row[1:6]
+        self.sp = int(row[0])
         self.external_id = md5(self.name.lower().encode("utf-8")).hexdigest()
         self.storage[self.name] = self
 
