@@ -3,3 +3,4 @@
 *.db
 **/*.map
 no-sharing/**
+settings_prod.py
