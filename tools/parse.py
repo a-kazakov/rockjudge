@@ -61,10 +61,11 @@ class Discipline:
     storage = {}
 
     def __init__(self, grid, idx):
-        row = grid.getRow(idx, 2)
+        row = grid.getRow(idx, 3)
         if row[0] is None:
             raise StopIteration
-        self.name, self.external_id = map(str, row)
+        self.name, self.external_id = map(str, row[:2])
+        self.sp = int(row[2])
         self.storage[self.name] = self
 
     @property
@@ -76,7 +77,7 @@ class Discipline:
         ]) > 0
 
     def serialize(self):
-        result = {k: getattr(self, k) for k in ["name", "external_id"]}
+        result = {k: getattr(self, k) for k in ["name", "external_id", "sp"]}
         result["participants"] = [
             p.serialize()
             for p in Couple.storage + Formation.storage
@@ -92,16 +93,15 @@ class Judge:
         row = grid.getRow(idx, 6)
         if row[0] is None:
             raise StopIteration
-        self.name, self.category, self.number, self.role_description, self.role, self.priority = row
-        self.external_id = md5(self.name.encode("utf-8")).hexdigest()
+        self.name, self.category, self.number, self.role_description, self.role = row[:5]
+        self.sp = int(row[5])
+        self.external_id = md5(self.name.lower().encode("utf-8")).hexdigest()
         self.storage[self.name] = self
-
 
     def serialize(self):
         return {
-            k: str(getattr(self, k))
-            for k in ["name", "category", "number", "role_description", "role", "priority", "external_id"]
-            if getattr(self, k) is not None
+            k: getattr(self, k) if getattr(self, k) is not None else ""
+            for k in ["name", "category", "number", "role_description", "role", "sp", "external_id"]
         }
 
 

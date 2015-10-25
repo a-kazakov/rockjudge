@@ -111,9 +111,8 @@ class ApiHandler(tornado.web.RequestHandler):
             # TODO: add logging here
             client_id = None
         ws_message = WsMessage(client_id)
-        with Database.instance().db.transaction():
-            result = Api.call(method, data, ws_message=ws_message)
-            response = json.dumps(result)
+        result = Api.call(method, data, ws_message=ws_message)
+        response = json.dumps(result)
         if not ws_message.empty():
             with Database.instance().db.transaction():
                 ws_message.send()

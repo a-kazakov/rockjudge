@@ -3,6 +3,7 @@ import time
 import traceback
 from collections import deque
 
+from db import Database
 from exceptions import ApiError
 from log import log_api
 from models import (
@@ -378,7 +379,6 @@ class Api:
         logger.addHandler(hdlr)
         try:
             begin = time.time()
-            data = None
             response = None
 
             parts = method.split(".")
@@ -389,7 +389,8 @@ class Api:
                 }
             else:
                 internal_name = "_".join(parts)
-                result = getattr(cls, internal_name)(request, ws_message=ws_message)
+                with Database.instance().db.transaction():
+                    result = getattr(cls, internal_name)(request, ws_message=ws_message)
                 response = {
                     "success": True,
                     "response": result
@@ -408,6 +409,7 @@ class Api:
                 "code": "errors.global.internal_server_error",
                 "args": [],
             }
+            print(ex_str)
         finally:
             total_time = time.time() - begin
             log_api(
