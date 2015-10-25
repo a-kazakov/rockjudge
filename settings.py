@@ -11,14 +11,7 @@ DB_CONFIG = {
     "host": "127.0.0.1",
 }
 
-APPS = [
-    "logger",
-    "participants",
-    "tournaments",
-]
-
-
 try:
-    from settings_prod import *
+    from settings_prod import *  # NOQA
 except ImportError:
     pass
