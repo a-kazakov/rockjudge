@@ -23,6 +23,7 @@ class TourInputForm extends React.Component {
                                 type="text"
                                 className="form-control"
                                 ref="num_advances"
+                                disabled={ tour.finalized }
                                 defaultValue={ tour.num_advances }  />
                         </div>
                     </div>
@@ -44,6 +45,7 @@ class TourInputForm extends React.Component {
                             <select
                                 className="form-control"
                                 ref="scoring_system_name"
+                                disabled={ tour.finalized }
                                 defaultValue={ tour.scoring_system_name || GL.scoring_systems[0] } >
                                 { GL.scoring_systems.map((sn) => <option key={ sn } value={ sn }>{ _("scoring_systems_names." + sn) }</option>) }
                             </select>
@@ -57,6 +59,7 @@ class TourInputForm extends React.Component {
                                     <input
                                         type="checkbox"
                                         ref="hope_tour"
+                                        disabled={ tour.finalized }
                                         defaultChecked={ tour.hope_tour } />
                                 </label>
                             </div>
@@ -192,7 +195,10 @@ class ToursManagementUI extends React.Component {
             new_tour_after_id: tour_id,
         });
     }
-    renderTourCreation(after_id) {
+    renderTourCreation(after_id, next_tour) {
+        if (next_tour && next_tour.finalized) {
+            return null;
+        }
         if (after_id === this.state.new_tour_after_id) {
             return <TourCreatingUI
                 discipline_id={ this.props.discipline.id }
@@ -205,10 +211,10 @@ class ToursManagementUI extends React.Component {
         }
     }
     renderTours() {
-        return this.props.discipline.tours.map(function(tour) {
+        return this.props.discipline.tours.map(function(tour, idx, arr) {
             return [
                 <TourEditingUI tour={ tour } key={ tour.id } />,
-                this.renderTourCreation(tour.id)
+                this.renderTourCreation(tour.id, arr[idx + 1])
             ];
         }.bind(this));
     }
@@ -218,7 +224,7 @@ class ToursManagementUI extends React.Component {
                 <h1>{ this.props.discipline.name }</h1>
             </header>
             <div className="ic-management-ui">
-                { this.renderTourCreation(null) }
+                { this.renderTourCreation(null, this.props.discipline.tours[0]) }
                 { this.renderTours() }
             </div>
             <datalist id="dl_tours">

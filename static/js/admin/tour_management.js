@@ -67,6 +67,7 @@ var TourInputForm = (function (_React$Component) {
                                     type: "text",
                                     className: "form-control",
                                     ref: "num_advances",
+                                    disabled: tour.finalized,
                                     defaultValue: tour.num_advances })
                             )
                         ),
@@ -110,6 +111,7 @@ var TourInputForm = (function (_React$Component) {
                                     {
                                         className: "form-control",
                                         ref: "scoring_system_name",
+                                        disabled: tour.finalized,
                                         defaultValue: tour.scoring_system_name || GL.scoring_systems[0] },
                                     GL.scoring_systems.map(function (sn) {
                                         return React.createElement(
@@ -142,6 +144,7 @@ var TourInputForm = (function (_React$Component) {
                                         React.createElement("input", {
                                             type: "checkbox",
                                             ref: "hope_tour",
+                                            disabled: tour.finalized,
                                             defaultChecked: tour.hope_tour })
                                     )
                                 )
@@ -414,7 +417,10 @@ var ToursManagementUI = (function (_React$Component4) {
         }
     }, {
         key: "renderTourCreation",
-        value: function renderTourCreation(after_id) {
+        value: function renderTourCreation(after_id, next_tour) {
+            if (next_tour && next_tour.finalized) {
+                return null;
+            }
             if (after_id === this.state.new_tour_after_id) {
                 return React.createElement(TourCreatingUI, {
                     discipline_id: this.props.discipline.id,
@@ -431,8 +437,8 @@ var ToursManagementUI = (function (_React$Component4) {
     }, {
         key: "renderTours",
         value: function renderTours() {
-            return this.props.discipline.tours.map((function (tour) {
-                return [React.createElement(TourEditingUI, { tour: tour, key: tour.id }), this.renderTourCreation(tour.id)];
+            return this.props.discipline.tours.map((function (tour, idx, arr) {
+                return [React.createElement(TourEditingUI, { tour: tour, key: tour.id }), this.renderTourCreation(tour.id, arr[idx + 1])];
             }).bind(this));
         }
     }, {
@@ -453,7 +459,7 @@ var ToursManagementUI = (function (_React$Component4) {
                 React.createElement(
                     "div",
                     { className: "ic-management-ui" },
-                    this.renderTourCreation(null),
+                    this.renderTourCreation(null, this.props.discipline.tours[0]),
                     this.renderTours()
                 ),
                 React.createElement(

@@ -301,6 +301,10 @@ class Tour(BaseModel):
         )
 
     def update_model(self, new_data, ws_message):
+        if self.finalized:
+            for key in ["num_advances", "hope_tour", "scoring_system_name"]:
+                if key in new_data:
+                    raise ApiError("errors.tour.update_finalized")
         self.update_model_base(new_data)
         ws_message.add_model_update(
             model_type=self.__class__,
