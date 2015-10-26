@@ -69,6 +69,8 @@ function _(src, arg) {
             "labels": {
                 "competition_name": "Наименование соревнования",
                 "competition_date": "Дата проведения",
+                "include_acrobatics": "Включить акробатику",
+                "include_formation_sportsmen": "Включить состав формейшнов",
             },
             "messages": {
                 "invalid_passcode": "Введён неверный код потверждения",

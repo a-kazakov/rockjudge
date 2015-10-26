@@ -7,7 +7,7 @@
   }
   .discipline {
     > table {
-      .sportsmen {
+      .inner {
         td, th {
           border: none;
           padding: 0;
@@ -25,8 +25,22 @@
       }
     }
   }
+  td.acro {
+    border-top: none !important;
+  }
+  .has-acro > td {
+    border-bottom: 1px solid #555 !important;
+  }
+  .switch {
+    input {
+      margin: 0 10px 0 0;
+    }
+    span, input {
+      vertical-align: middle
+    }
+  }
 }
 
-table.sportsmen {
+table.inner {
   width: 100%;
 }

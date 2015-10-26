@@ -16,7 +16,9 @@ var StartList = (function (_React$Component) {
 
         _get(Object.getPrototypeOf(StartList.prototype), "constructor", this).call(this, props);
         this.state = {
-            name: null
+            name: null,
+            include_formation_sportsmen: false,
+            include_acrobatics: false
         };
         message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
         message_dispatcher.addListener("reload_data", this.loadData.bind(this));
@@ -51,8 +53,18 @@ var StartList = (function (_React$Component) {
             }).updateDB("Competition", this.props.competition_id).onSuccess(this.reloadFromStorage.bind(this)).send();
         }
     }, {
+        key: "onCbChange",
+        value: function onCbChange() {
+            this.setState({
+                include_acrobatics: this.refs.cb_acro.getDOMNode().checked,
+                include_formation_sportsmen: this.refs.cb_forms.getDOMNode().checked
+            });
+        }
+    }, {
         key: "renderDiscipline",
         value: function renderDiscipline(ic) {
+            var _this = this;
+
             return React.createElement(
                 "div",
                 { key: ic.id },
@@ -124,9 +136,9 @@ var StartList = (function (_React$Component) {
                             "tbody",
                             null,
                             ic.participants.map(function (p) {
-                                return React.createElement(
+                                return [React.createElement(
                                     "tr",
-                                    { key: p.id },
+                                    { key: p.id, className: p.acrobatics.length == 0 ? "" : "has-acro" },
                                     React.createElement(
                                         "td",
                                         { className: "w-8 number" },
@@ -144,7 +156,7 @@ var StartList = (function (_React$Component) {
                                             null,
                                             React.createElement(
                                                 "table",
-                                                { className: "sportsmen" },
+                                                { className: "inner" },
                                                 React.createElement(
                                                     "tbody",
                                                     null,
@@ -157,7 +169,7 @@ var StartList = (function (_React$Component) {
                                                             p.formation_name
                                                         )
                                                     ) : null,
-                                                    p.sportsmen.map(function (s, idx) {
+                                                    _this.state.include_formation_sportsmen || !p.formation_name ? p.sportsmen.map(function (s, idx) {
                                                         return React.createElement(
                                                             "tr",
                                                             { key: idx },
@@ -180,7 +192,7 @@ var StartList = (function (_React$Component) {
                                                                 )
                                                             )
                                                         );
-                                                    })
+                                                    }) : null
                                                 )
                                             )
                                         )
@@ -207,7 +219,68 @@ var StartList = (function (_React$Component) {
                                             })
                                         )
                                     )
-                                );
+                                ), !_this.state.include_acrobatics || p.acrobatics.length == 0 ? null : React.createElement(
+                                    "tr",
+                                    { key: "Acro" + p.id },
+                                    React.createElement(
+                                        "td",
+                                        { className: "acro", colSpan: "5" },
+                                        React.createElement(
+                                            "table",
+                                            { className: "inner" },
+                                            React.createElement(
+                                                "tbody",
+                                                null,
+                                                React.createElement(
+                                                    "tr",
+                                                    null,
+                                                    React.createElement(
+                                                        "th",
+                                                        { className: "w-93" },
+                                                        React.createElement(
+                                                            "p",
+                                                            { className: "text-left" },
+                                                            _("models.participant.acro_description")
+                                                        )
+                                                    ),
+                                                    React.createElement(
+                                                        "th",
+                                                        { className: "w-7" },
+                                                        React.createElement(
+                                                            "p",
+                                                            { className: "text-right" },
+                                                            _("models.participant.acro_score")
+                                                        )
+                                                    )
+                                                ),
+                                                p.acrobatics.map(function (a, idx) {
+                                                    return React.createElement(
+                                                        "tr",
+                                                        { key: idx },
+                                                        React.createElement(
+                                                            "td",
+                                                            { className: "w-93" },
+                                                            React.createElement(
+                                                                "p",
+                                                                { className: "text-left" },
+                                                                a.description
+                                                            )
+                                                        ),
+                                                        React.createElement(
+                                                            "td",
+                                                            { className: "w-7" },
+                                                            React.createElement(
+                                                                "p",
+                                                                { className: "text-right" },
+                                                                a.score.toFixed(1)
+                                                            )
+                                                        )
+                                                    );
+                                                })
+                                            )
+                                        )
+                                    )
+                                )];
                             })
                         )
                     )
@@ -217,7 +290,7 @@ var StartList = (function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var _this = this;
+            var _this2 = this;
 
             if (this.state.name === null) {
                 return React.createElement(
@@ -259,9 +332,29 @@ var StartList = (function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
+                        { className: "switch" },
+                        React.createElement(
+                            "label",
+                            null,
+                            React.createElement("input", { type: "checkbox", ref: "cb_acro", onChange: this.onCbChange.bind(this) }),
+                            _("admin.labels.include_acrobatics")
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "switch" },
+                        React.createElement(
+                            "label",
+                            null,
+                            React.createElement("input", { type: "checkbox", ref: "cb_forms", onChange: this.onCbChange.bind(this) }),
+                            _("admin.labels.include_formation_sportsmen")
+                        )
+                    ),
+                    React.createElement(
+                        "div",
                         { ref: "content" },
                         this.state.disciplines.map(function (ic) {
-                            return _this.renderDiscipline(ic);
+                            return _this2.renderDiscipline(ic);
                         })
                     )
                 )
@@ -270,7 +363,7 @@ var StartList = (function (_React$Component) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("start-list").setHeader(_("admin.headers.start_list")).setBody(React.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0").addStyle(".sportsmen", "width", "100%").save();
+            Docx("start-list").setHeader(_("admin.headers.start_list")).setBody(React.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table .inner td, .bordered-table .inner th", "border", "none").addStyle(".bordered-table .inner td, .bordered-table .inner th", "padding", "0").addStyle(".inner", "width", "100%").addStyle(".acro", "border-top", "none !important").addStyle(".has-acro td", "border-bottom", "1px solid #555 !important").addStyle(".has-acro td td", "border-bottom", "none !important").save();
         }
     }]);
 

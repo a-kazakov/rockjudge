@@ -7,8 +7,8 @@
 .start-list .discipline > table {
   width: 750px;
 }
-.start-list .discipline > table .sportsmen td,
-.start-list .discipline > table .sportsmen th {
+.start-list .discipline > table .inner td,
+.start-list .discipline > table .inner th {
   border: none;
   padding: 0;
   text-align: left;
@@ -24,6 +24,19 @@
   padding: 2px 5px;
   vertical-align: top;
 }
-table.sportsmen {
+.start-list td.acro {
+  border-top: none !important;
+}
+.start-list .has-acro > td {
+  border-bottom: 1px solid #555 !important;
+}
+.start-list .switch input {
+  margin: 0 10px 0 0;
+}
+.start-list .switch span,
+.start-list .switch input {
+  vertical-align: middle;
+}
+table.inner {
   width: 100%;
 }
