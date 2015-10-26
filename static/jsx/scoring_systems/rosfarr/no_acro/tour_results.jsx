@@ -58,6 +58,9 @@ class TourResultsVerboseTableRow extends React.Component {
             }
             return this.renderDanceScore(score);
         }
+        if (judge.role == "head_judge" && score.raw_data.wildcard) {
+            return <span>{ score.total_score } (WC)</span>;
+        }
         return <span>{ score.total_score }</span>;
     }
     render() {

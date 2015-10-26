@@ -136,6 +136,12 @@ class TourAdminScoreInput extends React.Component {
                         value={ this.props.score.penalty }
                         onChange={ this.onChange.bind(this, "penalty") }
                         onKeyUp={ this.onKeyUp.bind(this) } />
+                </td><th>WC:</th><td>
+                    <input
+                        type="checkbox"
+                        checked={ this.props.score.wildcard }
+                        onChange={ this.onChange.bind(this, "wildcard") }
+                        onKeyUp={ this.onKeyUp.bind(this) } />
                 </td></tr>
             </table>
             <button className="btn btn-primary" type="submit">{ _("global.buttons.submit") }</button>
@@ -172,7 +178,7 @@ class TourAdminScoreInput extends React.Component {
         for (var idx = 0; idx < key.length - 1; ++idx) {
             score_inner = score_inner[key[idx]];
         }
-        score_inner[key[key.length - 1]] = event.target.value;
+        score_inner[key[key.length - 1]] = event.target.type == "checkbox" ? event.target.checked : event.target.value;
         this.props.updateValue(score);
     }
     componentDidMount() {
@@ -204,6 +210,7 @@ class TourAdminScoreInput extends React.Component {
     serializeHeadScore() {
         return {
             penalty: parseInt(this.props.score.penalty) || 0,
+            wildcard: this.props.score.wildcard,
         }
     }
     serializeScore() {
@@ -230,6 +237,9 @@ class TourAdminScoreInput extends React.Component {
 class TourAdminScoreCell extends React.Component {
     render() {
         if (!this.props.editing) {
+            if (this.props.judge.role == "head_judge" && this.props.value.raw_data.wildcard) {
+                return <div onClick={ this.props.startEditing }>[{ this.props.value.total_score.toFixed(1) }]</div>
+            }
             return <div onClick={ this.props.startEditing }>{ this.props.value.total_score.toFixed(1) }</div>
         } else {
             return <TourAdminScoreInput

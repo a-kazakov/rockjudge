@@ -332,6 +332,20 @@ var TourAdminScoreInput = (function (_React$Component) {
                                 value: this.props.score.penalty,
                                 onChange: this.onChange.bind(this, "penalty"),
                                 onKeyUp: this.onKeyUp.bind(this) })
+                        ),
+                        React.createElement(
+                            "th",
+                            null,
+                            "WC:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement("input", {
+                                type: "checkbox",
+                                checked: this.props.score.wildcard,
+                                onChange: this.onChange.bind(this, "wildcard"),
+                                onKeyUp: this.onKeyUp.bind(this) })
                         )
                     )
                 ),
@@ -379,7 +393,7 @@ var TourAdminScoreInput = (function (_React$Component) {
             for (var idx = 0; idx < key.length - 1; ++idx) {
                 score_inner = score_inner[key[idx]];
             }
-            score_inner[key[key.length - 1]] = event.target.value;
+            score_inner[key[key.length - 1]] = event.target.type == "checkbox" ? event.target.checked : event.target.value;
             this.props.updateValue(score);
         }
     }, {
@@ -421,7 +435,8 @@ var TourAdminScoreInput = (function (_React$Component) {
         key: "serializeHeadScore",
         value: function serializeHeadScore() {
             return {
-                penalty: parseInt(this.props.score.penalty) || 0
+                penalty: parseInt(this.props.score.penalty) || 0,
+                wildcard: this.props.score.wildcard
             };
         }
     }, {
@@ -463,6 +478,15 @@ var TourAdminScoreCell = (function (_React$Component2) {
         key: "render",
         value: function render() {
             if (!this.props.editing) {
+                if (this.props.judge.role == "head_judge" && this.props.value.raw_data.wildcard) {
+                    return React.createElement(
+                        "div",
+                        { onClick: this.props.startEditing },
+                        "[",
+                        this.props.value.total_score.toFixed(1),
+                        "]"
+                    );
+                }
                 return React.createElement(
                     "div",
                     { onClick: this.props.startEditing },

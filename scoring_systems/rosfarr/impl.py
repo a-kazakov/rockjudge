@@ -136,6 +136,7 @@ class HeadScore:
         raw_data = score.get_data()
         self.data = {
             "penalty": raw_data.pop("penalty", 0),
+            "wildcard": raw_data.pop("wildcard", False),
         }
 
     @property
@@ -144,7 +145,8 @@ class HeadScore:
 
     def update(self, new_data):
         self.data = {
-            "penalty": int(new_data["penalty"])
+            "penalty": int(new_data.pop("penalty", self.data["penalty"])),
+            "wildcard": bool(new_data.pop("wildcard", self.data["wildcard"])),
         }
         self.score.set_data(self.data)
 
@@ -255,7 +257,9 @@ class RunScore:
         ]
         if self.head_judge_score is not None:
             judge, score = self.head_judge_score
-            self.head_judge_total_score = ScoreWrapper(score, scoring_system, judge=judge).total_score
+            score_wrapper = ScoreWrapper(score, scoring_system, judge=judge)
+            self.head_judge_total_score = score_wrapper.total_score
+            self.has_wild_card = score_wrapper.data["wildcard"]
         if scoring_system == "rosfarr.acro":
             self.acro_scores = SmallScoresSet(self.acro_judges_total_scores)
             self.dance_scores = SmallScoresSet(self.dance_judges_total_scores)
@@ -293,16 +297,24 @@ class RunScore:
         return frac(penalty)
 
     @property
+    def wildcard_score(self):
+        if self.head_judge_score is None:
+            return 0
+        return -1 if self.has_wild_card else 1
+
+    @property
     def sorting_score(self):
         if self.scoring_system == "rosfarr.acro":
             return (
                 -self.dance_scores.primary_score - self.acro_scores.primary_score + self.penalties,
                 -self.dance_scores.secondary_score - self.acro_scores.secondary_score + self.penalties,
+                self.wildcard_score,
             )
         else:
             return (
                 -self.dance_scores.primary_score + self.penalties,
                 -self.dance_scores.secondary_score + self.penalties,
+                self.wildcard_score,
             )
 
     @property
