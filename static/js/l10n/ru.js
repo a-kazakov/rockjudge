@@ -138,10 +138,12 @@ function _(src, arg) {
         "global": {
             "buttons": {
                 "add": "Добавить",
+                "deselect_all": "Снять все",
                 "edit": "Редактировать",
                 "delete": "Удалить",
                 "discard": "Отменить",
                 "save": "Сохранить",
+                "select_all": "Выбрать все",
                 "submit": "Сохранить"
             },
             "labels": {

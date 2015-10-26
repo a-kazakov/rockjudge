@@ -45,7 +45,21 @@ class StartList extends React.Component {
             include_formation_sportsmen: this.refs.cb_forms.getDOMNode().checked,
         });
     }
+    onDisciplineCbChange(discipline_id, event) {
+        let upd = {}
+        upd["hide_" + discipline_id] = !event.target.checked;
+        this.setState(upd);
+    }
+    setAllDisciplines(selected, event) {
+        event.preventDefault();
+        let upd = {}
+        this.state.disciplines.forEach((d) => upd["hide_" + d.id] = selected);
+        this.setState(upd);
+    }
     renderDiscipline(ic) {
+        if (this.state["hide_" + ic.id]) {
+            return null;
+        }
         return <div key={ ic.id }>
             <h4>{ ic.name }</h4>
             <div className="discipline">
@@ -59,7 +73,7 @@ class StartList extends React.Component {
                     </tr>
                 </thead><tbody>
                     { ic.participants.map((p) => [
-                        <tr key={ p.id } className={ p.acrobatics.length == 0 ? "" : "has-acro" }>
+                        <tr key={ p.id } className={ !this.state.include_acrobatics || p.acrobatics.length == 0 ? "" : "has-acro" }>
                             <td className="w-8 number"><p className="text-center">{ p.number }</p></td>
                             <td className="w-30 name" colSpan="2"><p>
                                 <table className="inner"><tbody>
@@ -106,17 +120,37 @@ class StartList extends React.Component {
             </header>
             <div className="start-list">
                 <h3>{ this.state.name }, { this.state.date }</h3>
-                <div className="switch">
-                    <label>
-                        <input type="checkbox" ref="cb_acro" onChange={ this.onCbChange.bind(this) } />
-                        { _("admin.labels.include_acrobatics") }
-                    </label>
-                </div>
-                <div className="switch">
-                    <label>
-                        <input type="checkbox" ref="cb_forms" onChange={ this.onCbChange.bind(this) } />
-                        { _("admin.labels.include_formation_sportsmen") }
-                    </label>
+                <div className="row" style={{ width: "900px" }}>
+                    <div className="col-md-6">
+                        { this.state.disciplines.map((d) =>
+                            <div className="switch" key={ d.id }>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        checked={ !this.state["hide_" + d.id] }
+                                        onChange={ this.onDisciplineCbChange.bind(this, d.id) } />
+                                    { d.name }
+                                </label>
+                            </div>
+                        ) }
+                        <a href="#" onClick={ this.setAllDisciplines.bind(this, false) }>{ _("global.buttons.select_all") }</a>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="#" onClick={ this.setAllDisciplines.bind(this, true) }>{ _("global.buttons.deselect_all") }</a>
+                    </div>
+                    <div className="col-md-6">
+                        <div className="switch">
+                            <label>
+                                <input type="checkbox" ref="cb_acro" onChange={ this.onCbChange.bind(this) } />
+                                { _("admin.labels.include_acrobatics") }
+                            </label>
+                        </div>
+                        <div className="switch">
+                            <label>
+                                <input type="checkbox" ref="cb_forms" onChange={ this.onCbChange.bind(this) } />
+                                { _("admin.labels.include_formation_sportsmen") }
+                            </label>
+                        </div>
+                    </div>
                 </div>
                 <div ref="content">
                     { this.state.disciplines.map((ic) => this.renderDiscipline(ic)) }

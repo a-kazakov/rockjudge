@@ -61,10 +61,30 @@ var StartList = (function (_React$Component) {
             });
         }
     }, {
+        key: "onDisciplineCbChange",
+        value: function onDisciplineCbChange(discipline_id, event) {
+            var upd = {};
+            upd["hide_" + discipline_id] = !event.target.checked;
+            this.setState(upd);
+        }
+    }, {
+        key: "setAllDisciplines",
+        value: function setAllDisciplines(selected, event) {
+            event.preventDefault();
+            var upd = {};
+            this.state.disciplines.forEach(function (d) {
+                return upd["hide_" + d.id] = selected;
+            });
+            this.setState(upd);
+        }
+    }, {
         key: "renderDiscipline",
         value: function renderDiscipline(ic) {
             var _this = this;
 
+            if (this.state["hide_" + ic.id]) {
+                return null;
+            }
             return React.createElement(
                 "div",
                 { key: ic.id },
@@ -138,7 +158,7 @@ var StartList = (function (_React$Component) {
                             ic.participants.map(function (p) {
                                 return [React.createElement(
                                     "tr",
-                                    { key: p.id, className: p.acrobatics.length == 0 ? "" : "has-acro" },
+                                    { key: p.id, className: !_this.state.include_acrobatics || p.acrobatics.length == 0 ? "" : "has-acro" },
                                     React.createElement(
                                         "td",
                                         { className: "w-8 number" },
@@ -332,22 +352,60 @@ var StartList = (function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "switch" },
+                        { className: "row", style: { width: "900px" } },
                         React.createElement(
-                            "label",
-                            null,
-                            React.createElement("input", { type: "checkbox", ref: "cb_acro", onChange: this.onCbChange.bind(this) }),
-                            _("admin.labels.include_acrobatics")
-                        )
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "switch" },
+                            "div",
+                            { className: "col-md-6" },
+                            this.state.disciplines.map(function (d) {
+                                return React.createElement(
+                                    "div",
+                                    { className: "switch", key: d.id },
+                                    React.createElement(
+                                        "label",
+                                        null,
+                                        React.createElement("input", {
+                                            type: "checkbox",
+                                            checked: !_this2.state["hide_" + d.id],
+                                            onChange: _this2.onDisciplineCbChange.bind(_this2, d.id) }),
+                                        d.name
+                                    )
+                                );
+                            }),
+                            React.createElement(
+                                "a",
+                                { href: "#", onClick: this.setAllDisciplines.bind(this, false) },
+                                _("global.buttons.select_all")
+                            ),
+                            "    ",
+                            React.createElement(
+                                "a",
+                                { href: "#", onClick: this.setAllDisciplines.bind(this, true) },
+                                _("global.buttons.deselect_all")
+                            )
+                        ),
                         React.createElement(
-                            "label",
-                            null,
-                            React.createElement("input", { type: "checkbox", ref: "cb_forms", onChange: this.onCbChange.bind(this) }),
-                            _("admin.labels.include_formation_sportsmen")
+                            "div",
+                            { className: "col-md-6" },
+                            React.createElement(
+                                "div",
+                                { className: "switch" },
+                                React.createElement(
+                                    "label",
+                                    null,
+                                    React.createElement("input", { type: "checkbox", ref: "cb_acro", onChange: this.onCbChange.bind(this) }),
+                                    _("admin.labels.include_acrobatics")
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "switch" },
+                                React.createElement(
+                                    "label",
+                                    null,
+                                    React.createElement("input", { type: "checkbox", ref: "cb_forms", onChange: this.onCbChange.bind(this) }),
+                                    _("admin.labels.include_formation_sportsmen")
+                                )
+                            )
                         )
                     ),
                     React.createElement(
