@@ -137,18 +137,8 @@ var TabletScoreInput = (function (_React$Component) {
                     "div",
                     { className: "tech-judge-acro", key: acro.id },
                     React.createElement(
-                        "h3",
-                        null,
-                        acro.description
-                    ),
-                    React.createElement(
                         "div",
-                        { className: "controls" },
-                        React.createElement(
-                            "button",
-                            { className: "tbtn btn-reset", onClick: this.overrideAcroScore.bind(this, idx, null) },
-                            __("tablet.tech_judge.reset_to_n", acro.original_score)
-                        ),
+                        { className: "controls pull-right" },
                         React.createElement(
                             "div",
                             { className: "setter" },
@@ -156,6 +146,14 @@ var TabletScoreInput = (function (_React$Component) {
                                 value: acro.score,
                                 onValueUpdate: this.overrideAcroScore.bind(this, idx) })
                         )
+                    ),
+                    React.createElement(
+                        "h3",
+                        null,
+                        acro.description,
+                        " (=",
+                        acro.original_score,
+                        ")"
                     ),
                     React.createElement("div", { className: "clearfix" })
                 );

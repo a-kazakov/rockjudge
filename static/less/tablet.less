@@ -40,6 +40,10 @@ html, body, #content {
     vertical-align: top;
     padding: 15px;
     max-width: 75%;
+    border-left: 2px solid @ui-medium;
+    &:first-child {
+      border-left: none;
+    }
   }
   h2 {
     text-align: center;
@@ -221,11 +225,20 @@ button.score-btn {
     width: 32.3333%;
     display: inline-block;
   }
+  .tbtn.btn-toggle {
+    background-color: @btn-success-bg;
+    &.active {
+      background-color: @btn-danger-bg;
+    }
+    color: @btn-success-color;
+  }
 }
 
 .tech-judge-acro {
-  padding-bottom: 10px;
+  padding: 5px 0;
+  border-top: 2px solid @ui-dark;
   .controls {
+    margin-bottom: -7px;
     float: right;
     .btn-reset {
       width: 110px;
@@ -236,6 +249,7 @@ button.score-btn {
       width: 150px;
       display: inline-block;
       vertical-align: top;
+      margin-bottom: 0;
     }
   }
 }

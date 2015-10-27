@@ -173,7 +173,7 @@ class StopWatch extends React.Component {
     }
     render() {
         return <div className="stopwatch">
-            <button className="tbtn btn-toggle" {...onTouchOrClick(this.toggle.bind(this))}>
+            <button className={ "tbtn btn-toggle" + (this.state.active ? " active" : "") } {...onTouchOrClick(this.toggle.bind(this))}>
                 { this.state.active ? _("tablet.buttons.stop_stopwatch") : _("tablet.buttons.start_stopwatch") }
             </button>
             <button className="tbtn btn-reset" {...onTouchOrClick(this.reset.bind(this))}>

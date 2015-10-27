@@ -36,6 +36,10 @@ body,
   vertical-align: top;
   padding: 15px;
   max-width: 75%;
+  border-left: 2px solid #3f5765;
+}
+.tablet-main-table > tbody > tr > td:first-child {
+  border-left: none;
 }
 .tablet-main-table h2 {
   text-align: center;
@@ -402,10 +406,19 @@ button.score-btn.active {
   width: 32.3333%;
   display: inline-block;
 }
+.stopwatch .tbtn.btn-toggle {
+  background-color: #5cb85c;
+  color: #ffffff;
+}
+.stopwatch .tbtn.btn-toggle.active {
+  background-color: #d9534f;
+}
 .tech-judge-acro {
-  padding-bottom: 10px;
+  padding: 5px 0;
+  border-top: 2px solid #2b3a42;
 }
 .tech-judge-acro .controls {
+  margin-bottom: -7px;
   float: right;
 }
 .tech-judge-acro .controls .btn-reset {
@@ -417,6 +430,7 @@ button.score-btn.active {
   width: 150px;
   display: inline-block;
   vertical-align: top;
+  margin-bottom: 0;
 }
 .footer.page-selector {
   text-align: center;

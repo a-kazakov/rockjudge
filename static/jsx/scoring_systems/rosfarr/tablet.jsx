@@ -76,19 +76,16 @@ class TabletScoreInput extends React.Component {
     renderTechJudgeInputAcro() {
         var acrobatics = this.props.acrobatics.map(function(acro, idx) {
             return <div className="tech-judge-acro" key={ acro.id }>
-                <h3>
-                    { acro.description }
-                </h3>
-                <div className="controls">
-                    <button className="tbtn btn-reset" onClick={ this.overrideAcroScore.bind(this, idx, null) }>
-                        { __("tablet.tech_judge.reset_to_n", acro.original_score) }
-                    </button>
+                <div className="controls pull-right">
                     <div className="setter">
                         <TabletPoint5Input
                             value={ acro.score }
                             onValueUpdate={ this.overrideAcroScore.bind(this, idx) } />
                     </div>
                 </div>
+                <h3>
+                    { acro.description } (={ acro.original_score })
+                </h3>
                 <div className="clearfix"></div>
             </div>;
         }.bind(this));

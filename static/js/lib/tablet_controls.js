@@ -346,7 +346,7 @@ var StopWatch = (function (_React$Component6) {
                 { className: "stopwatch" },
                 React.createElement(
                     "button",
-                    _extends({ className: "tbtn btn-toggle" }, onTouchOrClick(this.toggle.bind(this))),
+                    _extends({ className: "tbtn btn-toggle" + (this.state.active ? " active" : "") }, onTouchOrClick(this.toggle.bind(this))),
                     this.state.active ? _("tablet.buttons.stop_stopwatch") : _("tablet.buttons.start_stopwatch")
                 ),
                 React.createElement(
