@@ -303,6 +303,15 @@ var StartList = (function (_React$Component) {
                                 )];
                             })
                         )
+                    ),
+                    React.createElement(
+                        "p",
+                        { className: "text-right" },
+                        React.createElement(
+                            "strong",
+                            null,
+                            _("admin.phrases.total_n_participants", ic.participants.length)
+                        )
                     )
                 )
             );
@@ -352,7 +361,7 @@ var StartList = (function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "row", style: { width: "900px" } },
+                        { className: "row" },
                         React.createElement(
                             "div",
                             { className: "col-md-6" },

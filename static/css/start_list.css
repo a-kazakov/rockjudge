@@ -1,11 +1,12 @@
 .start-list {
   padding: 10px;
+  width: 750px;
 }
 .start-list h2 {
   text-align: center;
 }
 .start-list .discipline > table {
-  width: 750px;
+  width: 100%;
 }
 .start-list .discipline > table .inner td,
 .start-list .discipline > table .inner th {

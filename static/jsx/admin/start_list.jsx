@@ -104,6 +104,9 @@ class StartList extends React.Component {
                             </td></tr>
                     ] ) }
                 </tbody></table>
+                <p className="text-right">
+                    <strong>{ _("admin.phrases.total_n_participants", ic.participants.length) }</strong>
+                </p>
             </div>
         </div>;
     }
@@ -120,7 +123,7 @@ class StartList extends React.Component {
             </header>
             <div className="start-list">
                 <h3>{ this.state.name }, { this.state.date }</h3>
-                <div className="row" style={{ width: "900px" }}>
+                <div className="row">
                     <div className="col-md-6">
                         { this.state.disciplines.map((d) =>
                             <div className="switch" key={ d.id }>

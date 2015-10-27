@@ -2,11 +2,13 @@
 
 .start-list {
   padding: 10px;
+  width: @print-width;
   h2 {
     text-align: center;
   }
   .discipline {
     > table {
+      width: 100%;
       .inner {
         td, th {
           border: none;
@@ -14,7 +16,6 @@
           text-align: left;
         }
       }
-      width: @print-width;
       td.name, td.club, td.coaches {
         text-align: left !important;
       }
