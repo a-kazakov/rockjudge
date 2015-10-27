@@ -20,13 +20,25 @@ var RoleSelector = (function (_React$Component) {
     _createClass(RoleSelector, [{
         key: "render",
         value: function render() {
-            var judges = this.props.competition.judges.filter(function (judge) {
-                return judge.role != "";
+            var all_judges = this.props.competition.judges;
+            var line_judges = all_judges.filter(function (judge) {
+                return judge.role_description == "";
             }).map(function (judge) {
                 return React.createElement(
                     "a",
-                    { href: "/tablet/" + judge.id.toString(), className: "btn btn-default btn-lg" },
-                    judge.role_description || _("global.phrases.judge_n", judge.number),
+                    { href: "/tablet/" + judge.id.toString(), className: "btn btn-default btn-lg", key: judge.id },
+                    _("global.phrases.judge_n", judge.number),
+                    ": ",
+                    judge.name
+                );
+            });
+            var staff = all_judges.filter(function (judge) {
+                return judge.role_description != "";
+            }).map(function (judge) {
+                return React.createElement(
+                    "a",
+                    { href: "/tablet/" + judge.id.toString(), className: "btn btn-default btn-lg", key: judge.id },
+                    judge.role_description,
                     ": ",
                     judge.name
                 );
@@ -48,6 +60,14 @@ var RoleSelector = (function (_React$Component) {
                         React.createElement(
                             "div",
                             { className: "btn-group-vertical full-width" },
+                            line_judges
+                        ),
+                        React.createElement("br", null),
+                        React.createElement("br", null),
+                        React.createElement("br", null),
+                        React.createElement(
+                            "div",
+                            { className: "btn-group-vertical full-width" },
                             React.createElement(
                                 "a",
                                 { href: "/presenter", className: "btn btn-default btn-lg" },
@@ -66,7 +86,7 @@ var RoleSelector = (function (_React$Component) {
                         React.createElement(
                             "div",
                             { className: "btn-group-vertical full-width" },
-                            judges
+                            staff
                         )
                     )
                 )

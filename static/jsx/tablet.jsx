@@ -1,113 +1,96 @@
 React.initializeTouchEvents(true);
 
-
 class JudgeTablet extends React.Component {
-
-    // Intiialization
-
     constructor(props) {
         super(props);
-        this.state = {
-            tour: null,
-            judge: null,
-            current_heat: 1,
-            page: "dance",
-            active_tour_id: null,
-        };
-        message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
-        message_dispatcher.addListener("reload_data", this.loadData.bind(this));
-        message_dispatcher.addListener("active_tour_update", this.dispatchActiveTourUpdate.bind(this));
-        this.loadData();
-    }
-    reloadFromStorage() {
-        let judge = storage.get("Judge").by_id(this.props.judge_id).serialize({})
-        let competition = storage.get("Competition").by_id(this.props.competition_id).serialize({ judges: {} })
-        let active_tour_id = this.state.active_tour_id;
-        if (active_tour_id === null) {
-            this.setState({
-                judge: judge,
-                competition: competition,
-                tour: null,
-            });
-            return;
-        }
-        let active_tour_model = storage.get("Tour").by_id(active_tour_id);
-        if (!active_tour_model) {
-            this.setState({
-                judge: judge,
-                competition: competition,
-                tour: null,
-            });
-            return;
-        }
-        this.setState({
-            judge: judge,
-            competition: competition,
-            tour: active_tour_model.serialize({
-                runs: {
-                    participant: {
-                        "sportsmen": {},
-                    },
-                    scores: {},
-                    acrobatics: {},
-                },
-                discipline: {},
-            }),
-        })
-    }
-    loadData() {
-        Api("competition.get", {competition_id: this.props.competition_id, children: {
-            judges: {},
-        }})
-            .updateDB("Competition", this.props.competition_id)
-            .onSuccess(this.reloadFromStorage.bind(this))
-            .send();
-        Api("tour.find_active", {}).onSuccess(function(response) {
-            this.dispatchActiveTourUpdate(response, true);
-        }.bind(this)).send();
-    }
-
-    // Dispatchers
-
-    dispatchActiveTourUpdate(response, force) {
-        var tour_id = response.tour_id;
-        if (!force) {
-            if ((this.state.tour === null && tour_id === null) || (this.state.tour !== null && this.state.tour.id == tour_id)) {
-                return;
-            }
-        }
-        this.setState({
-            "active_tour_id": tour_id,
-        });
-        if (tour_id === null) {
-            storage.del("Tour");
-            storage.del("Run");
-            storage.del("Score");
-            storage.del("Participant");
-            storage.del("Sportsman");
-            storage.del("Discipline");
-            this.setState({
-                tour: null,
-                current_heat: 1,
-            });
-            return;
-        }
-        Api("tour.get", { tour_id: tour_id, children: {
+        this.TOUR_SCHEMA = {
             runs: {
                 participant: {},
                 scores: {},
                 acrobatics: {},
             },
-            discipline: {},
-        }})
-            .updateDB("Tour", tour_id)
-            .onSuccess(function() {
-                this.reloadFromStorage(tour_id);
-                this.setState({
-                    current_heat: 1,
-                });
-            }.bind(this))
+            discipline: {
+                discipline_judges: {
+                    judge: {},
+                },
+            },
+        };
+        this.state = {
+            tour: null,
+            judge: null,
+            discipline_judge: null,
+            current_heat: 1,
+            page: "dance",
+        };
+        this.active_tour_id = null;
+        message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
+        message_dispatcher.addListener("reload_data", this.loadData.bind(this));
+        message_dispatcher.addListener("active_tour_update", this.dispatchActiveTourUpdate.bind(this));
+        this.loadData();
+    }
+
+    // Loaders
+
+    reloadFromStorage(reset_heat) {
+        let st_judge = storage.get("Judge").by_id(this.props.judge_id)
+        if (!st_judge) {
+            return;
+        }
+        let state_upd = {}
+        state_upd["judge"] = st_judge.serialize({
+            competition: {}
+        })
+        state_upd["competition"] = state_upd["judge"].competition;
+        if (this.active_tour_id !== null) {
+            let st_tour = storage.get("Tour").by_id(this.active_tour_id);
+            if (st_tour) {
+                let tour = st_tour.serialize(this.TOUR_SCHEMA);
+                state_upd["tour"] = tour;
+                // Set find discipline judge
+                state_upd["discipline_judge"] = null;
+                tour.discipline.discipline_judges.forEach(function(dj) {
+                    if (dj.judge.id == this.props.judge_id) {
+                        state_upd["discipline_judge"] = dj;
+                    }
+                }.bind(this));
+                if (reset_heat) {
+                    state_upd["current_heat"] = 1;
+                }
+            }
+        }
+        this.setState(state_upd);
+    }
+    updateActiveTour(new_active_tour_id) {
+        if (new_active_tour_id === null) {
+            this.setState({
+                tour: null,
+                discipline_judge: null,
+            });
+            this.active_tour_id = new_active_tour_id;
+            return;
+        }
+        if (new_active_tour_id !== this.active_tour_id) {
+            this.active_tour_id = new_active_tour_id;
+            Api("tour.get", { tour_id: this.active_tour_id, children: this.TOUR_SCHEMA })
+                .updateDB("Tour", this.active_tour_id)
+                .onSuccess(this.reloadFromStorage.bind(this, true))
+                .send()
+        }
+    }
+    loadData() {
+        Api("judge.get", { judge_id: this.props.judge_id, children: { competition: {} } })
+            .updateDB("Judge", this.props.judge_id)
+            .onSuccess(this.reloadFromStorage.bind(this))
             .send();
+        Api("tour.find_active", {})
+            .onSuccess(this.dispatchActiveTourUpdate.bind(this))
+            .send();
+    }
+
+    // Dispatchers
+
+    dispatchActiveTourUpdate(data) {
+        this.updateActiveTour(data["tour_id"]);
     }
 
     // Listeners
@@ -167,7 +150,7 @@ class JudgeTablet extends React.Component {
     }
     renderSplashScreen() {
         let judge = this.state.judge;
-        let judge_number = judge.role_description || _("global.phrases.judge_n", this.state.judge.number);
+        let judge_number = judge.role_description || _("global.phrases.judge_n", judge.number);
         return <div>
             <header>
                 <a className="btn btn-primary pull-left" href="/">
@@ -180,45 +163,57 @@ class JudgeTablet extends React.Component {
             </header>
             <div className="judge-number">{ judge_number }</div>
             <div className="judge-name">{ this.state.judge.name }</div>
+            {
+                this.state.tour ? <div>
+                    <div className="not-judging-discipline">{ this.state.tour.discipline.name }</div>
+                    <div className="not-judging-tour">{ this.state.tour.name }</div>
+                    <div className="not-judging-message">{ _("tablet.messages.not_judging_discipline") }</div>
+                </div> : null
+            }
         </div>;
     }
     renderScoringLayout() {
-        var cells = this.state.tour.runs
+        let cells = this.state.tour.runs
             .filter(function(run) {
                 return run.heat == this.state.current_heat;
             }.bind(this))
             .map(function(run) {
                 let scores_map = {}
                 run.scores.forEach(function(score_data) {
-                    scores_map[score_data.judge_id] = score_data;
+                    scores_map[score_data.discipline_judge_id] = score_data;
                 });
+                let current_score = scores_map[this.state.discipline_judge.id];
                 let header = _("global.phrases.participant_n", run.participant.number, run.participant.sportsmen.length);
-                if (typeof scores_map[this.props.judge_id] === "undefined") {
+                if (typeof scores_map[this.state.discipline_judge.id] === "undefined") {
                     return <td key={ run.id }>
                         <h2>{ header }</h2>
-                        <h3 className="text-center">{ _("tablet.messages.not_judging") }</h3>
+                        <h3 className="text-center">{ _("tablet.messages.not_judging_participant") }</h3>
                     </td>
                 }
                 return <td key={ run.id }>
                     <h2>{ header }</h2>
                     <TabletScoreInput
                         acrobatics={ run.acrobatics }
-                        judge_id={ this.props.judge_id }
-                        judges={ this.state.competition.judges }
+                        discipline_judge={ this.state.discipline_judge }
+                        all_discipline_judges={ this.state.tour.discipline.discipline_judges }
+                        score={ current_score }
+                        all_scores={ scores_map }
                         run_id={ run.id }
                         page={ this.state.page }
-                        scores={ scores_map }
                         scoring_system_name={ this.state.tour.scoring_system_name }
-                        onScoreUpdate={ this.onScoreUpdate.bind(this, scores_map[this.props.judge_id].id) } />
+                        onScoreUpdate={ this.onScoreUpdate.bind(this, current_score.id) } />
                 </td>
             }.bind(this));
-        var one_run_class = cells.length == 1 ? " single-run" : "";
-        return <table className={ "tablet-main-table" + one_run_class }><tbody><tr>
+        var single_run_class = cells.length == 1 ? " single-run" : "";
+        return <table className={ "tablet-main-table" + single_run_class }><tbody><tr>
             { cells }
         </tr></tbody></table>;
     }
     renderFooter() {
-        if (this.state.judge.role != "tech_judge" || this.state.tour.scoring_system_name != "rosfarr.acro") {
+        if (this.state.discipline_judge === null) {
+            return null;
+        }
+        if (this.state.discipline_judge.role != "tech_judge" || this.state.tour.scoring_system_name != "rosfarr.acro") {
             return null;
         }
         return <div className="footer page-selector">
@@ -238,6 +233,9 @@ class JudgeTablet extends React.Component {
             return <p>Loading ...</p>;
         }
         if (this.state.tour === null) {
+            return this.renderSplashScreen();
+        }
+        if (this.state.discipline_judge === null) {
             return this.renderSplashScreen();
         }
         return <div>

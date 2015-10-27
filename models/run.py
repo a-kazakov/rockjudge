@@ -26,9 +26,7 @@ class Run(BaseModel):
         "acrobatic_overrides": {},
         "tour": {
             "discipline": {
-                "competition": {
-                    "judges": {}
-                }
+                "discipline_judges": {},
             }
         }
     }
@@ -52,14 +50,13 @@ class Run(BaseModel):
 
     def create_scores(self):
         from models import Score
-        scores_judge_ids = {score.judge_id for score in self.scores}
-        for judge in self.tour.judges:
-            if judge.id not in scores_judge_ids:
-                if judge.role != "":
-                    Score.create(
-                        run=self,
-                        judge=judge,
-                    )
+        scores_judge_ids = {score.discipline_judge_id for score in self.scores}
+        for discipline_judge in self.tour.discipline_judges:
+            if discipline_judge.id not in scores_judge_ids:
+                Score.create(
+                    run=self,
+                    discipline_judge=discipline_judge,
+                )
 
     def get_score_obj(self, judge):
         from models import Score
@@ -126,19 +123,21 @@ class Run(BaseModel):
             acro_list.append(acro)
         return acro_list
 
-    def serialize(self, children={}, judges=None):
-        scores_obj = self.tour.scoring_system.get_run_scores(self, judges=judges)
+    def serialize(self, children={}, discipline_judges=None):
+        scores_obj = self.tour.scoring_system.get_run_scores(self, discipline_judges=discipline_judges)
         result = self.serialize_props()
         result["total_score"] = scores_obj["total_run_score"]
         result = self.serialize_upper_child(result, "participant", children)
-        if judges is not None:
-            rev_judges = {
-                judge.id: judge
-                for judge in judges
+        if discipline_judges is not None:
+            rev_discipline_judges = {
+                discipline_judge.id: discipline_judge
+                for discipline_judge in discipline_judges
             }
-        result = self.serialize_lower_child(result, "scores", children,
-                                            lambda x, c: x.serialize(judge=(rev_judges[x.judge_id] if judges else None),
-                                                                     children=c))
+        result = self.serialize_lower_child(
+            result, "scores", children,
+            lambda x, c: x.serialize(
+                discipline_judge=(rev_discipline_judges[x.discipline_judge_id] if discipline_judges else None),
+                children=c))
         if "acrobatics" in children:
             result["acrobatics"] = self.serialize_acrobatics(children=children["acrobatics"])
         return result

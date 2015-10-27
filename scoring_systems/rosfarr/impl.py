@@ -136,7 +136,7 @@ class HeadScore:
         raw_data = score.get_data()
         self.data = {
             "penalty": raw_data.pop("penalty", 0),
-            "wildcard": raw_data.pop("wildcard", False),
+            "nexttour": raw_data.pop("nexttour", False),
         }
 
     @property
@@ -146,7 +146,7 @@ class HeadScore:
     def update(self, new_data):
         self.data = {
             "penalty": int(new_data.pop("penalty", self.data["penalty"])),
-            "wildcard": bool(new_data.pop("wildcard", self.data["wildcard"])),
+            "nexttour": bool(new_data.pop("nexttour", self.data["nexttour"])),
         }
         self.score.set_data(self.data)
 
@@ -184,10 +184,10 @@ class TechScore:
         }
 
 
-def ScoreWrapper(score, scoring_system, judge=None):
-    if judge is None:
-        judge = score.judge
-    role = judge.role
+def ScoreWrapper(score, scoring_system, discipline_judge=None):
+    if discipline_judge is None:
+        discipline_judge = score.discipline_judge
+    role = discipline_judge.role
     if role == "head_judge":
         return HeadScore(score)
     if role == "tech_judge":
@@ -234,32 +234,32 @@ class LargeScoresSet:
 
 
 class RunScore:
-    def __init__(self, run, scoring_system, judges=None):
+    def __init__(self, run, scoring_system, discipline_judges=None):
         self.run = run
         self.scoring_system = scoring_system
-        judges = run.tour.judges if judges is None else judges
+        discipline_judges = run.tour.discipline_judges if discipline_judges is None else discipline_judges
         scores = run.scores
         self.judge_scores = []
-        for judge in judges:
+        for discipline_judge in discipline_judges:
             for score in scores:
-                if judge.id == score.judge_id:
-                    self.judge_scores.append((judge, score, ))
+                if discipline_judge.id == score.discipline_judge_id:
+                    self.judge_scores.append((discipline_judge, score, ))
                     break
         self.dance_judges_total_scores = [
-            ScoreWrapper(score, scoring_system, judge=judge).total_score
-            for judge, score
+            ScoreWrapper(score, scoring_system, discipline_judge=discipline_judge).total_score
+            for discipline_judge, score
             in self.dance_judge_scores
         ]
         self.acro_judges_total_scores = [
-            ScoreWrapper(score, scoring_system, judge=judge).total_score
-            for judge, score
+            ScoreWrapper(score, scoring_system, discipline_judge=discipline_judge).total_score
+            for discipline_judge, score
             in self.acro_judge_scores
         ]
         if self.head_judge_score is not None:
-            judge, score = self.head_judge_score
-            score_wrapper = ScoreWrapper(score, scoring_system, judge=judge)
+            discipline_judge, score = self.head_judge_score
+            score_wrapper = ScoreWrapper(score, scoring_system, discipline_judge=discipline_judge)
             self.head_judge_total_score = score_wrapper.total_score
-            self.has_wild_card = score_wrapper.data["wildcard"]
+            self.has_next_tour = score_wrapper.data["nexttour"]
         if scoring_system == "rosfarr.acro":
             self.acro_scores = SmallScoresSet(self.acro_judges_total_scores)
             self.dance_scores = SmallScoresSet(self.dance_judges_total_scores)
@@ -270,24 +270,24 @@ class RunScore:
 
     @property
     def head_judge_score(self):
-        for judge, score in self.judge_scores:
-            if judge.role == "head_judge":
-                return judge, score
+        for discipline_judge, score in self.judge_scores:
+            if discipline_judge.role == "head_judge":
+                return discipline_judge, score
         return None
 
     @property
     def dance_judge_scores(self):
-        for judge, score in self.judge_scores:
-            if judge.role == "dance_judge":
-                yield judge, score
-            elif judge.role == "acro_judge" and self.scoring_system != "rosfarr.acro":
-                yield judge, score
+        for discipline_judge, score in self.judge_scores:
+            if discipline_judge.role == "dance_judge":
+                yield discipline_judge, score
+            elif discipline_judge.role == "acro_judge" and self.scoring_system != "rosfarr.acro":
+                yield discipline_judge, score
 
     @property
     def acro_judge_scores(self):
-        for judge, score in self.judge_scores:
-            if judge.role == "acro_judge" and self.scoring_system == "rosfarr.acro":
-                yield judge, score
+        for discipline_judge, score in self.judge_scores:
+            if discipline_judge.role == "acro_judge" and self.scoring_system == "rosfarr.acro":
+                yield discipline_judge, score
 
     @property
     def penalties(self):
@@ -297,10 +297,10 @@ class RunScore:
         return frac(penalty)
 
     @property
-    def wildcard_score(self):
+    def nexttour_score(self):
         if self.head_judge_score is None:
             return 0
-        return -1 if self.has_wild_card else 1
+        return -1 if self.has_next_tour else 1
 
     @property
     def sorting_score(self):
@@ -308,13 +308,13 @@ class RunScore:
             return (
                 -self.dance_scores.primary_score - self.acro_scores.primary_score + self.penalties,
                 -self.dance_scores.secondary_score - self.acro_scores.secondary_score + self.penalties,
-                self.wildcard_score,
+                self.nexttour_score,
             )
         else:
             return (
                 -self.dance_scores.primary_score + self.penalties,
                 -self.dance_scores.secondary_score + self.penalties,
-                self.wildcard_score,
+                self.nexttour_score,
             )
 
     @property
@@ -323,8 +323,8 @@ class RunScore:
 
     def serialize(self):
         scores = {}
-        for judge, score in self.judge_scores:
-            scores[str(judge.id)] = score.serialize(judge=judge)
+        for discipline_judge, score in self.judge_scores:
+            scores[str(discipline_judge.id)] = score.serialize(discipline_judge=discipline_judge)
         return {
             "total_run_score": self.display_score,
             "scores": scores
@@ -334,10 +334,10 @@ class RunScore:
 class TourScores:
     def __init__(self, tour, scoring_system):
         self.tour = tour
-        self.judges = list(tour.judges)
+        self.discipline_judges = list(tour.discipline_judges)
         self._table = None
         self.run_scores = [
-            RunScore(run, scoring_system, judges=self.judges) for run in self.tour.runs
+            RunScore(run, scoring_system, discipline_judges=self.discipline_judges) for run in self.tour.runs
         ]
 
     def create_table(self):

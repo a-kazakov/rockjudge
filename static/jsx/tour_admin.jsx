@@ -80,7 +80,7 @@ class TourAdminScoreCellWrapper extends React.Component {
         }
         return <td className={ "judge" + (this.state.editing ? " editing" : "") } >
             <TourAdminScoreCell
-                judge={ this.props.judge }
+                discipline_judge={ this.props.discipline_judge }
                 scoring_system_name={ this.props.scoring_system_name }
                 startEditing={ this.startEditing.bind(this) }
                 stopEditing={ this.stopEditing.bind(this) }
@@ -124,15 +124,16 @@ class TourAdminScoresRow extends React.Component {
     render() {
         let scores_map = {}
         this.props.scores.forEach(function(score_data) {
-            scores_map[score_data.judge_id] = score_data;
+            scores_map[score_data.discipline_judge_id] = score_data;
         });
-        let scores = this.props.judges.map(function(judge) {
+        let scores = this.props.discipline_judges.map(function(discipline_judge, idx) {
+            let score = scores_map[discipline_judge.id];
             return <TourAdminScoreCellWrapper
-                key={ scores_map[judge.id] && scores_map[judge.id].id }
-                judge={ judge }
+                key={ (score && score.id) ||  ("I" + idx)}
+                discipline_judge={ discipline_judge }
                 scoring_system_name={ this.props.scoring_system_name }
-                score_id={ scores_map[judge.id] && scores_map[judge.id].id }
-                value={ scores_map[judge.id] && scores_map[judge.id].data } />
+                score_id={ score && score.id }
+                value={ score && score.data } />
         }.bind(this));
         return <tr className={ this.props.heat % 2 ? "odd-heat" : ""}>
             <TourAdminHeatValue
@@ -167,8 +168,9 @@ class TourAdminScoresTable extends React.Component {
     reloadFromStorage() {
         var SCHEMA = {
             discipline: {
-                competition: {
-                    judges: {},
+                competition: {},
+                discipline_judges: {
+                    judge: {},
                 }
             },
             runs: {
@@ -191,8 +193,9 @@ class TourAdminScoresTable extends React.Component {
             tour_id: this.props.tour_id,
             children: {
                 discipline: {
-                    competition: {
-                        judges: {},
+                    competition: {},
+                    discipline_judges: {
+                        judge: {},
                     }
                 },
                 runs: {
@@ -285,10 +288,10 @@ class TourAdminScoresTable extends React.Component {
         if (this.state.name === null) {
             return <span>Loading...</span>;
         }
-        let judges = this.state.discipline.competition.judges;
-        let active_judges = judges.filter(function(judge) {
-            return judge.role !== "" && judge.role != "tech_judge"; // TODO: move this to scoring system
-        })
+        let discipline_judges = this.state.discipline.discipline_judges;
+        let active_discipline_judges = discipline_judges.filter(
+            (discipline_judge) => discipline_judge.role !== "" && discipline_judge.role != "tech_judge" // TODO: move this to scoring system
+        )
         let rows = this.state.runs.map(function(run) {
             return <TourAdminScoresRow
                 key={ run.id }
@@ -298,12 +301,12 @@ class TourAdminScoresTable extends React.Component {
                 scores={ run.scores }
                 scoring_system_name={ this.state.scoring_system_name }
                 total_score={ run.total_score }
-                judges={ active_judges } />
+                discipline_judges={ active_discipline_judges } />
         }.bind(this));
-        let judges_header = active_judges.map(function(judge) {
+        let judges_header = active_discipline_judges.map(function(discipline_judge) {
             // TODO: move role staff to scoring system logic
-            return <th className="judge" key={ judge.id }>
-                { judge.number + (judge.role == "acro_judge" ? "*" : "") }
+            return <th className="judge" key={ discipline_judge.id }>
+                { discipline_judge.judge.number + (discipline_judge.role == "acro_judge" ? "*" : "") }
             </th>;
         }.bind(this));
         return <div className="tour-admin">

@@ -2,24 +2,24 @@ import json
 import peewee
 
 from models.base_model import BaseModel
-from models.judge import Judge
+from models.discipline_judge import DisciplineJudge
 from models.run import Run
 
 
 class Score(BaseModel):
-    class Meta:
-        order_by = ["judge"]
-
     PF_SCHEMA = {
-        "judge": {},
+        "discipline_judge": {},
         "run": {
             "tour": {},
         }
     }
 
     run = peewee.ForeignKeyField(Run, related_name="scores")
-    judge = peewee.ForeignKeyField(Judge)
+    discipline_judge = peewee.ForeignKeyField(DisciplineJudge)
     score_data = peewee.TextField(default="{}")
+
+    def get_sorting_key(self):
+        return self.discipline_judge.get_sorting_key()
 
     def get_data(self):
         return json.loads(self.score_data)
@@ -40,8 +40,8 @@ class Score(BaseModel):
         )
         ws_message.add_message("tour_results_changed", {"tour_id": self.run.tour_id})
 
-    def serialize(self, children={}, judge=None):
+    def serialize(self, children={}, discipline_judge=None):
         return {
-            "judge_id": self.judge_id,
-            "data": self.run.tour.scoring_system.serialize_score(self, judge=judge)
+            "discipline_judge_id": self.discipline_judge_id,
+            "data": self.run.tour.scoring_system.serialize_score(self, discipline_judge=discipline_judge)
         }

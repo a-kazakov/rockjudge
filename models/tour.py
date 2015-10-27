@@ -29,9 +29,7 @@ class Tour(BaseModel):
         "runs": {
             "runs": None,
             "discipline": {
-                "competition": {
-                    "judges": {},
-                }
+                "discipline_judges": {},
             },
         }
     }
@@ -193,8 +191,8 @@ class Tour(BaseModel):
             ws_message.add_message("active_tour_update", {"tour_id": None})
 
     @property
-    def judges(self):
-        return list(self.discipline.competition.judges)
+    def discipline_judges(self):
+        return list(self.discipline.discipline_judges)
 
     def get_prev_tour(self, throw=False):
         prev_tours_list = list(self.prev_tour)
@@ -346,11 +344,12 @@ class Tour(BaseModel):
             del row["run"]
         result = self.serialize_props()
         judges = []
-        sorted_judges = sorted(self.judges, key=lambda x: x.get_sorting_key())
-        for judge in sorted_judges:
-            judge_s = judge.serialize()
-            judge_s["id"] = judge.id
-            judges.append(judge_s)
+        sorted_discipline_judges = sorted(self.discipline_judges, key=lambda x: x.get_sorting_key())
+        for discipline_judge in sorted_discipline_judges:
+            discipline_judge_s = discipline_judge.judge.serialize()
+            discipline_judge_s["id"] = discipline_judge.id
+            discipline_judge_s["role"] = discipline_judge.role
+            judges.append(discipline_judge_s)
         result.update({
             "discipline_name": self.discipline.name,
             "judges": judges,
@@ -363,8 +362,9 @@ class Tour(BaseModel):
         result = self.serialize_props()
         result = self.serialize_upper_child(result, "discipline", children)
         result = self.serialize_lower_child(result, "judges", children)
-        result = self.serialize_lower_child(result, "runs", children,
-                                            lambda x, c: x.serialize(judges=list(self.judges), children=c))
+        result = self.serialize_lower_child(
+            result, "runs", children,
+            lambda x, c: x.serialize(discipline_judges=list(self.discipline_judges), children=c))
         return result
 
 

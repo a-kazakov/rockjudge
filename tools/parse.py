@@ -76,12 +76,25 @@ class Discipline:
             if p.discipline == self.name
         ]) > 0
 
+    @property
+    def has_judges(self):
+        return len([
+            None
+            for p in DisciplineJudge.storage
+            if p.discipline == self.name
+        ]) > 0
+
     def serialize(self):
         result = {k: getattr(self, k) for k in ["name", "external_id", "sp"]}
         result["participants"] = [
             p.serialize()
             for p in Couple.storage + Formation.storage
             if p.discipline == self.name
+        ]
+        result["discipline_judges"] = [
+            dj.serialize()
+            for dj in DisciplineJudge.storage
+            if dj.discipline == self.name
         ]
         return result
 
@@ -90,10 +103,10 @@ class Judge:
     storage = {}
 
     def __init__(self, grid, idx):
-        row = grid.getRow(idx, 6)
+        row = grid.getRow(idx, 5)
         if row[0] is None:
             raise StopIteration
-        self.role_description, self.number, self.name, self.category, self.role = row[1:6]
+        self.role_description, self.number, self.name, self.category = row[1:5]
         self.sp = int(row[0])
         self.external_id = md5(self.name.lower().encode("utf-8")).hexdigest()
         self.storage[self.name] = self
@@ -101,7 +114,26 @@ class Judge:
     def serialize(self):
         return {
             k: getattr(self, k) if getattr(self, k) is not None else ""
-            for k in ["name", "category", "number", "role_description", "role", "sp", "external_id"]
+            for k in ["name", "category", "number", "role_description", "sp", "external_id"]
+        }
+
+
+class DisciplineJudge:
+    storage = []
+
+    def __init__(self, grid, idx):
+        row = grid.getRow(idx, 3)
+        if row[0] is None:
+            return
+        self.discipline = row[0]
+        self.judge = Judge.storage[row[1]].external_id
+        self.role = row[2]
+        self.storage.append(self)
+
+    def serialize(self):
+        return {
+            k: getattr(self, k) if getattr(self, k) is not None else ""
+            for k in ["judge", "role"]
         }
 
 
@@ -203,6 +235,7 @@ with step("Opening document"):
 with step("Loading data"):
     grid_clubs = Grid(wb["Clubs"], first_row=2)
     grid_disciplines = Grid(wb["Disciplines"], first_row=2)
+    grid_discipline_judges = Grid(wb["Discipline judges"], first_row=2)
     grid_judges = Grid(wb["Judges"], first_row=2)
     grid_couples = Grid(wb["Couples, solo"], first_row=3)
     grid_forms = Grid(wb["Formations"], first_row=3)
@@ -216,7 +249,7 @@ with step("Parsing clubs"):
             break
 
 
-with step("Parsing discipline"):
+with step("Parsing disciplines"):
     for idx in range(1000):
         try:
             Discipline(grid_disciplines, idx)
@@ -230,6 +263,11 @@ with step("Parsing judges"):
             Judge(grid_judges, idx)
         except StopIteration:
             break
+
+
+with step("Parsing discipline judges"):
+    for idx in range(1000):
+        DisciplineJudge(grid_discipline_judges, idx)
 
 
 with step("Parsing couples"):
@@ -258,5 +296,9 @@ with step("Saving"):
         f.write(json.dumps({
             "judges": [x.serialize() for x in Judge.storage.values()],
             "clubs": [x.serialize() for x in Club.storage.values()],
-            "disciplines": [x.serialize() for x in Discipline.storage.values() if x.has_participants],
+            "disciplines": [
+                x.serialize()
+                for x in Discipline.storage.values()
+                if x.has_participants or x.has_judges
+            ],
         }, sort_keys=True, indent=4, ensure_ascii=False))

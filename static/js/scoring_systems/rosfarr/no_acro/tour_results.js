@@ -452,12 +452,12 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                 }
                 return this.renderDanceScore(score);
             }
-            if (judge.role == "head_judge" && score.raw_data.wildcard) {
+            if (judge.role == "head_judge" && score.raw_data.nexttour) {
                 return React.createElement(
                     "span",
                     null,
                     score.total_score,
-                    " (WC)"
+                    " (+)"
                 );
             }
             return React.createElement(

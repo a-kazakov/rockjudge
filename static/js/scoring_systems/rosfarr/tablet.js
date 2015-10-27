@@ -35,8 +35,7 @@ var TabletScoreInput = (function (_React$Component) {
     }, {
         key: "updateAcroDeduction",
         value: function updateAcroDeduction(idx, value) {
-            var score = this.props.scores[this.props.judge_id].data;
-            var deductions = score.raw_data.deductions.map(function () {
+            var deductions = this.props.score.data.raw_data.deductions.map(function () {
                 return null;
             });
             deductions[idx] = value;
@@ -55,28 +54,20 @@ var TabletScoreInput = (function (_React$Component) {
             }).send();
         }
     }, {
-        key: "getCurrentJudge",
-        value: function getCurrentJudge() {
-            for (var idx in this.props.judges) if (this.props.judges.hasOwnProperty(idx)) {
-                if (this.props.judges[idx].id === this.props.judge_id) {
-                    return this.props.judges[idx];
-                }
-            }
-        }
-    }, {
         key: "renderHeadJudgeInput",
         value: function renderHeadJudgeInput() {
-            var tech_judges = this.props.judges.filter(function (judge) {
-                return judge.role == "tech_judge";
-            }).map((function (judge) {
-                var timing_data = this.props.scores[judge.id].data.raw_data.timing_violation === null ? ["-", ""] : this.props.scores[judge.id].data.raw_data.timing_violation ? ["X", " fail"] : ["OK", " ok"];
+            var tech_judges = this.props.all_discipline_judges.filter(function (discipline_judge) {
+                return discipline_judge.role == "tech_judge";
+            }).map((function (tech_judge) {
+                var tech_score = this.props.all_scores[tech_judge.id].data;
+                var timing_data = tech_score.raw_data.timing_violation === null ? ["-", ""] : tech_score.raw_data.timing_violation ? ["X", " fail"] : ["OK", " ok"];
                 return React.createElement(
                     "div",
-                    { key: judge.id },
+                    { key: tech_judge.id },
                     React.createElement(
                         "h3",
                         null,
-                        judge.name,
+                        tech_judge.judge.name,
                         ":"
                     ),
                     React.createElement(
@@ -91,7 +82,7 @@ var TabletScoreInput = (function (_React$Component) {
                         React.createElement(
                             "div",
                             { className: "value" },
-                            this.props.scores[judge.id].data.raw_data.jump_steps
+                            tech_score.raw_data.jump_steps
                         )
                     ),
                     React.createElement(
@@ -111,7 +102,6 @@ var TabletScoreInput = (function (_React$Component) {
                     )
                 );
             }).bind(this));
-            var score = this.props.scores[this.props.judge_id].data;
             return React.createElement(
                 "div",
                 null,
@@ -123,7 +113,7 @@ var TabletScoreInput = (function (_React$Component) {
                 ),
                 React.createElement(TabletSelectorInput, {
                     choices: [[0, __("tablet.head_judge.ok")], [-3, __("tablet.head_judge.yellow_card")], [-30, __("tablet.head_judge.red_card")], [-100, __("tablet.head_judge.black_card")]],
-                    active: score.raw_data.penalty,
+                    active: this.props.score.data.raw_data.penalty,
                     onValueUpdate: this.updateScores.bind(this, "penalty") }),
                 React.createElement("div", { className: "spacer" }),
                 tech_judges
@@ -167,7 +157,7 @@ var TabletScoreInput = (function (_React$Component) {
     }, {
         key: "renderTechJudgeInputDance",
         value: function renderTechJudgeInputDance() {
-            var score = this.props.scores[this.props.judge_id].data;
+            var score = this.props.score.data;
             return React.createElement(
                 "div",
                 null,
@@ -207,7 +197,7 @@ var TabletScoreInput = (function (_React$Component) {
     }, {
         key: "renderDanceJudgeInput",
         value: function renderDanceJudgeInput() {
-            var score = this.props.scores[this.props.judge_id].data;
+            var score = this.props.score.data;
             return React.createElement(
                 "div",
                 null,
@@ -297,7 +287,7 @@ var TabletScoreInput = (function (_React$Component) {
     }, {
         key: "renderAcroJudgeInput",
         value: function renderAcroJudgeInput() {
-            var score = this.props.scores[this.props.judge_id].data;
+            var score = this.props.score.data;
             var inputs = this.props.acrobatics.map((function (acro, idx) {
                 return React.createElement(
                     "div",
@@ -341,7 +331,7 @@ var TabletScoreInput = (function (_React$Component) {
     }, {
         key: "renderFormationInput",
         value: function renderFormationInput() {
-            var score = this.props.scores[this.props.judge_id].data;
+            var score = this.props.score.data;
             return React.createElement(
                 "div",
                 null,
@@ -423,7 +413,7 @@ var TabletScoreInput = (function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            switch (this.getCurrentJudge().role) {
+            switch (this.props.discipline_judge.role) {
                 case "acro_judge":
                     if (this.props.scoring_system_name == "rosfarr.formation") {
                         return this.renderFormationInput();
@@ -439,7 +429,7 @@ var TabletScoreInput = (function (_React$Component) {
                 case "tech_judge":
                     return this.renderTechJudgeInput();
                 default:
-                    console.log("Unknown judge role", this.props.judges[this.props.judge_id].role);
+                    console.log("Unknown judge role", this.props.discipline_judge.role);
                     return null;
             }
         }

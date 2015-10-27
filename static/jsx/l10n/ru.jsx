@@ -99,14 +99,20 @@ function _(src, arg) {
                 "delete_non_empty": "Невозможно удалить соревнование, содержащее дисциплины, клубы или судей",
             },
             "discipline": {
+                "change_judges_with_finalized_tour": "Невозможно изменить состав судей для дисциплины, содержащей финализированные туры ",
                 "delete_with_participants": "Невозможно удалить дисциплину, содержащую участников",
                 "delete_with_tours": "Невозможно удалить дисциплину, содержащую туры",
+            },
+            "discipline_judge": {
+                "delete_with_finalized": "Невозможно удалить судью, у корого есть финализированне туры",
+                "delete_with_scores": "Невозможно удалить судью принявшего участие в судействе хотя бы одного тура",
+                "repeating_judge": (name) => name + " встречается в списке судей более одного раза",
             },
             "global": {
                 "internal_server_error": "Ошибка на сервере (проверьте логи для информации)",
             },
             "judge": {
-                "delete_with_scores": "Невозможно удалить судью, отсудившего хотя бы один тур",
+                "delete_with_disciplines": "Невозможно удалить судью, входящего в судейскую бригаду хотя бы одного тура",
             },
             "score": {
                 "score_not_exist": "Попытка получить значение несуществующей оценки судьи",
@@ -182,13 +188,14 @@ function _(src, arg) {
                 "name": "Название",
             },
             "discipline": {
+                "discipline_judges": "Судьи",
                 "external_id": "Внешний ID",
                 "name": "Название дисциплины",
                 "sp": "Приоритет",
             },
             "judge": {
                 "category": "Категория",
-                "external_id": "Внешний ID",
+                "external_id": "Вн. ID",
                 "name": "Ф. И. О.",
                 "number": "Номер",
                 "role": "Роль в судействе",
@@ -266,7 +273,9 @@ function _(src, arg) {
                 "select_page": "Страница",
             },
             "messages": {
-                "not_judging": "Вы не оцениваете этого спортсмена",
+                "not_judging_discipline": "Вы не участвуете в судействе данной дисциплины",
+                "not_judging_participant": "Вы не оцениваете этого участника",
+                "not_judging_tour": "Вы не оцениваете этот тур",
             },
             "pages": {
                 "dance": "Танец",
@@ -297,8 +306,8 @@ function _(src, arg) {
                         "black_card": "-100 баллов",
                         "ok": "OK",
                         "penalty_type": "Штрафные санкции",
-                        "red_card": "Красная карточка (-30)",
-                        "yellow_card": "Жёлтая карточка (-3)",
+                        "red_card": "-30",
+                        "yellow_card": "-3",
                     },
                     "tech_judge": {
                         "jump_steps": "Основные ходы",
@@ -350,7 +359,7 @@ function _(src, arg) {
             "tech_judge": "Технический судья",
             "": "-",
         },
-    }
+    };
     let path = src.split(".");
     let phrase_ptr = PHRASES;
     path.forEach((chunk) => phrase_ptr = phrase_ptr[chunk]);

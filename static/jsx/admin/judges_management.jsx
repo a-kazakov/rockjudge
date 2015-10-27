@@ -4,7 +4,6 @@ class JudgeEditorRow extends React.Component {
             name: this._name.value,
             number: this._number.value,
             category: this._category.value,
-            role: this._role.value,
             role_description: this._role_description.value,
             sp: this._sp.value,
             external_id: this._external_id.value,
@@ -25,14 +24,11 @@ class JudgeEditorRow extends React.Component {
         }
     }
     render() {
-        let roles = GL.judge_roles.map(function(role) {
-            return <option value={ role } key={ role }>{ _("judge_roles." + role) }</option>
-        });
         return <tr className={ "editor" + (this.props.newJudge ? " create" : "" ) }>
             <td colSpan="5">
                 <form onSubmit={ this.onSubmit.bind(this) }>
                     <div className="row">
-                        <div className="col-md-1">
+                        <div className="col-lg-1">
                             <label className="full-width">
                                 { _("models.judge.number") }
                                 <input
@@ -40,6 +36,8 @@ class JudgeEditorRow extends React.Component {
                                     className="full-width"
                                     defaultValue={ this.props.judge.number } />
                             </label>
+                        </div>
+                        <div className="col-lg-1">
                             <label className="full-width">
                                 { _("models.judge.category") }
                                 <input
@@ -48,7 +46,7 @@ class JudgeEditorRow extends React.Component {
                                     defaultValue={ this.props.judge.category } />
                             </label>
                         </div>
-                        <div className="col-md-4">
+                        <div className="col-lg-3">
                             <label className="full-width">
                                 { _("models.judge.name") }
                                 <input
@@ -56,6 +54,8 @@ class JudgeEditorRow extends React.Component {
                                     className="full-width"
                                     defaultValue={ this.props.judge.name } />
                             </label>
+                        </div>
+                        <div className="col-lg-3">
                             <label className="full-width">
                                 { _("models.judge.role_description") }
                                 <input
@@ -64,15 +64,7 @@ class JudgeEditorRow extends React.Component {
                                     defaultValue={ this.props.judge.role_description } />
                             </label>
                         </div>
-                        <div className="col-md-4">
-                            <label className="full-width">
-                                { _("models.judge.role") }
-                                <select
-                                    ref={ (e) => e && (this._role = e.getDOMNode()) }
-                                    className="full-width"
-                                    defaultValue={ this.props.judge.role }>
-                                { roles }</select>
-                            </label>
+                        <div className="col-lg-1">
                             <label className="full-width">
                                 { _("models.judge.external_id") }
                                 <input
@@ -81,7 +73,7 @@ class JudgeEditorRow extends React.Component {
                                     defaultValue={ this.props.judge.external_id } />
                             </label>
                         </div>
-                        <div className="col-md-3">
+                        <div className="col-lg-1">
                             <label className="full-width">
                                 { _("models.judge.sp") }
                                 <input
@@ -89,13 +81,15 @@ class JudgeEditorRow extends React.Component {
                                     className="full-width"
                                     defaultValue={ this.props.judge.sp } />
                             </label>
+                        </div>
+                        <div className="col-lg-2">
                             <div className="buttons">
                                 <button
                                     type="submit"
-                                    className="btn btn-primary">{ _("global.buttons.submit") }</button>
+                                    className="btn btn-sm btn-primary">{ _("global.buttons.submit") }</button>
                                 <button
                                     type="button"
-                                    className="btn btn-danger"
+                                    className="btn btn-sm btn-danger"
                                     onClick={ this.props.stopEditing }>{ _("global.buttons.discard") }</button>
                             </div>
                         </div>
@@ -143,7 +137,6 @@ class JudgeRow extends React.Component {
             <td className="role-description">{ j.role_description || _("global.phrases.judge_n", j.number) }</td>
             <td className="name">{ j.name }</td>
             <td className="category">{ j.category }</td>
-            <td className="role">{ _("judge_roles." + j.role) }</td>
             <td className="delete">
                 <button className="btn btn-danger" onClick={ this.onDelete.bind(this) }>X</button>
             </td>
@@ -179,7 +172,6 @@ class JudgeCreationRow extends React.Component {
         let empty_data = {
             "name": "",
             "number": "",
-            "role": "",
             "role_description": "",
             "category": "",
         }
@@ -222,7 +214,6 @@ class JudgesManagementUI extends React.Component {
                         <th className="role_description">{ _("models.judge.role_description") }</th>
                         <th className="name">{ _("models.judge.name") }</th>
                         <th className="category">{ _("models.judge.category") }</th>
-                        <th className="role">{ _("models.judge.role") }</th>
                         <th className="delete"></th>
                     </tr>
                     { rows }

@@ -40,10 +40,10 @@ class Competition(BaseModel):
         )
         if "clubs" in data:
             Club.load_models(self, data["clubs"])
-        if "disciplines" in data:
-            Discipline.load_models(self, data["disciplines"])
         if "judges" in data:
             Judge.load_models(self, data["judges"])
+        if "disciplines" in data:
+            Discipline.load_models(self, data["disciplines"])
         ws_message.add_message("reload_data")
 
     @classmethod

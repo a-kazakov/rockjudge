@@ -107,6 +107,7 @@ class ManagementUI extends React.Component {
         case "manage_disciplines":
             return <DisciplinesManagementUI
                 disciplines={ this.props.disciplines }
+                judges={ this.props.judges }
                 competition_id={ this.props.competition_id } />
         }
     }
@@ -268,6 +269,9 @@ class AdminUI extends React.Component {
             clubs: {},
             judges: {},
             disciplines: {
+                discipline_judges: {
+                    judge: {},
+                },
                 tours: {},
             },
         };
@@ -283,6 +287,9 @@ class AdminUI extends React.Component {
                 clubs: {},
                 judges: {},
                 disciplines: {
+                    discipline_judges: {
+                        judge: {},
+                    },
                     tours: {},
                 }
             }

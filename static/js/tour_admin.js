@@ -133,7 +133,7 @@ var TourAdminScoreCellWrapper = (function (_React$Component2) {
                 "td",
                 { className: "judge" + (this.state.editing ? " editing" : "") },
                 React.createElement(TourAdminScoreCell, {
-                    judge: this.props.judge,
+                    discipline_judge: this.props.discipline_judge,
                     scoring_system_name: this.props.scoring_system_name,
                     startEditing: this.startEditing.bind(this),
                     stopEditing: this.stopEditing.bind(this),
@@ -198,15 +198,16 @@ var TourAdminScoresRow = (function (_React$Component3) {
         value: function render() {
             var scores_map = {};
             this.props.scores.forEach(function (score_data) {
-                scores_map[score_data.judge_id] = score_data;
+                scores_map[score_data.discipline_judge_id] = score_data;
             });
-            var scores = this.props.judges.map((function (judge) {
+            var scores = this.props.discipline_judges.map((function (discipline_judge, idx) {
+                var score = scores_map[discipline_judge.id];
                 return React.createElement(TourAdminScoreCellWrapper, {
-                    key: scores_map[judge.id] && scores_map[judge.id].id,
-                    judge: judge,
+                    key: score && score.id || "I" + idx,
+                    discipline_judge: discipline_judge,
                     scoring_system_name: this.props.scoring_system_name,
-                    score_id: scores_map[judge.id] && scores_map[judge.id].id,
-                    value: scores_map[judge.id] && scores_map[judge.id].data });
+                    score_id: score && score.id,
+                    value: score && score.data });
             }).bind(this));
             return React.createElement(
                 "tr",
@@ -270,8 +271,9 @@ var TourAdminScoresTable = (function (_React$Component4) {
         value: function reloadFromStorage() {
             var SCHEMA = {
                 discipline: {
-                    competition: {
-                        judges: {}
+                    competition: {},
+                    discipline_judges: {
+                        judge: {}
                     }
                 },
                 runs: {
@@ -294,8 +296,9 @@ var TourAdminScoresTable = (function (_React$Component4) {
                 tour_id: this.props.tour_id,
                 children: {
                     discipline: {
-                        competition: {
-                            judges: {}
+                        competition: {},
+                        discipline_judges: {
+                            judge: {}
                         }
                     },
                     runs: {
@@ -493,10 +496,11 @@ var TourAdminScoresTable = (function (_React$Component4) {
                     "Loading..."
                 );
             }
-            var judges = this.state.discipline.competition.judges;
-            var active_judges = judges.filter(function (judge) {
-                return judge.role !== "" && judge.role != "tech_judge"; // TODO: move this to scoring system
-            });
+            var discipline_judges = this.state.discipline.discipline_judges;
+            var active_discipline_judges = discipline_judges.filter(function (discipline_judge) {
+                return discipline_judge.role !== "" && discipline_judge.role != "tech_judge";
+            } // TODO: move this to scoring system
+            );
             var rows = this.state.runs.map((function (run) {
                 return React.createElement(TourAdminScoresRow, {
                     key: run.id,
@@ -506,14 +510,14 @@ var TourAdminScoresTable = (function (_React$Component4) {
                     scores: run.scores,
                     scoring_system_name: this.state.scoring_system_name,
                     total_score: run.total_score,
-                    judges: active_judges });
+                    discipline_judges: active_discipline_judges });
             }).bind(this));
-            var judges_header = active_judges.map((function (judge) {
+            var judges_header = active_discipline_judges.map((function (discipline_judge) {
                 // TODO: move role staff to scoring system logic
                 return React.createElement(
                     "th",
-                    { className: "judge", key: judge.id },
-                    judge.number + (judge.role == "acro_judge" ? "*" : "")
+                    { className: "judge", key: discipline_judge.id },
+                    discipline_judge.judge.number + (discipline_judge.role == "acro_judge" ? "*" : "")
                 );
             }).bind(this));
             return React.createElement(

@@ -17,114 +17,98 @@ React.initializeTouchEvents(true);
 var JudgeTablet = (function (_React$Component) {
     _inherits(JudgeTablet, _React$Component);
 
-    // Intiialization
-
     function JudgeTablet(props) {
         _classCallCheck(this, JudgeTablet);
 
         _get(Object.getPrototypeOf(JudgeTablet.prototype), "constructor", this).call(this, props);
+        this.TOUR_SCHEMA = {
+            runs: {
+                participant: {},
+                scores: {},
+                acrobatics: {}
+            },
+            discipline: {
+                discipline_judges: {
+                    judge: {}
+                }
+            }
+        };
         this.state = {
             tour: null,
             judge: null,
+            discipline_judge: null,
             current_heat: 1,
-            page: "dance",
-            active_tour_id: null
+            page: "dance"
         };
+        this.active_tour_id = null;
         message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
         message_dispatcher.addListener("reload_data", this.loadData.bind(this));
         message_dispatcher.addListener("active_tour_update", this.dispatchActiveTourUpdate.bind(this));
         this.loadData();
     }
 
+    // Loaders
+
     _createClass(JudgeTablet, [{
         key: "reloadFromStorage",
-        value: function reloadFromStorage() {
-            var judge = storage.get("Judge").by_id(this.props.judge_id).serialize({});
-            var competition = storage.get("Competition").by_id(this.props.competition_id).serialize({ judges: {} });
-            var active_tour_id = this.state.active_tour_id;
-            if (active_tour_id === null) {
-                this.setState({
-                    judge: judge,
-                    competition: competition,
-                    tour: null
-                });
+        value: function reloadFromStorage(reset_heat) {
+            var st_judge = storage.get("Judge").by_id(this.props.judge_id);
+            if (!st_judge) {
                 return;
             }
-            var active_tour_model = storage.get("Tour").by_id(active_tour_id);
-            if (!active_tour_model) {
-                this.setState({
-                    judge: judge,
-                    competition: competition,
-                    tour: null
-                });
-                return;
-            }
-            this.setState({
-                judge: judge,
-                competition: competition,
-                tour: active_tour_model.serialize({
-                    runs: {
-                        participant: {
-                            "sportsmen": {}
-                        },
-                        scores: {},
-                        acrobatics: {}
-                    },
-                    discipline: {}
-                })
+            var state_upd = {};
+            state_upd["judge"] = st_judge.serialize({
+                competition: {}
             });
+            state_upd["competition"] = state_upd["judge"].competition;
+            if (this.active_tour_id !== null) {
+                var st_tour = storage.get("Tour").by_id(this.active_tour_id);
+                if (st_tour) {
+                    var tour = st_tour.serialize(this.TOUR_SCHEMA);
+                    state_upd["tour"] = tour;
+                    // Set find discipline judge
+                    state_upd["discipline_judge"] = null;
+                    tour.discipline.discipline_judges.forEach((function (dj) {
+                        if (dj.judge.id == this.props.judge_id) {
+                            state_upd["discipline_judge"] = dj;
+                        }
+                    }).bind(this));
+                    if (reset_heat) {
+                        state_upd["current_heat"] = 1;
+                    }
+                }
+            }
+            this.setState(state_upd);
+        }
+    }, {
+        key: "updateActiveTour",
+        value: function updateActiveTour(new_active_tour_id) {
+            if (new_active_tour_id === null) {
+                this.setState({
+                    tour: null,
+                    discipline_judge: null
+                });
+                this.active_tour_id = new_active_tour_id;
+                return;
+            }
+            if (new_active_tour_id !== this.active_tour_id) {
+                this.active_tour_id = new_active_tour_id;
+                Api("tour.get", { tour_id: this.active_tour_id, children: this.TOUR_SCHEMA }).updateDB("Tour", this.active_tour_id).onSuccess(this.reloadFromStorage.bind(this, true)).send();
+            }
         }
     }, {
         key: "loadData",
         value: function loadData() {
-            Api("competition.get", { competition_id: this.props.competition_id, children: {
-                    judges: {}
-                } }).updateDB("Competition", this.props.competition_id).onSuccess(this.reloadFromStorage.bind(this)).send();
-            Api("tour.find_active", {}).onSuccess((function (response) {
-                this.dispatchActiveTourUpdate(response, true);
-            }).bind(this)).send();
+            Api("judge.get", { judge_id: this.props.judge_id, children: { competition: {} } }).updateDB("Judge", this.props.judge_id).onSuccess(this.reloadFromStorage.bind(this)).send();
+            Api("tour.find_active", {}).onSuccess(this.dispatchActiveTourUpdate.bind(this)).send();
         }
 
         // Dispatchers
 
     }, {
         key: "dispatchActiveTourUpdate",
-        value: function dispatchActiveTourUpdate(response, force) {
-            var tour_id = response.tour_id;
-            if (!force) {
-                if (this.state.tour === null && tour_id === null || this.state.tour !== null && this.state.tour.id == tour_id) {
-                    return;
-                }
-            }
-            this.setState({
-                "active_tour_id": tour_id
-            });
-            if (tour_id === null) {
-                storage.del("Tour");
-                storage.del("Run");
-                storage.del("Score");
-                storage.del("Participant");
-                storage.del("Sportsman");
-                storage.del("Discipline");
-                this.setState({
-                    tour: null,
-                    current_heat: 1
-                });
-                return;
-            }
-            Api("tour.get", { tour_id: tour_id, children: {
-                    runs: {
-                        participant: {},
-                        scores: {},
-                        acrobatics: {}
-                    },
-                    discipline: {}
-                } }).updateDB("Tour", tour_id).onSuccess((function () {
-                this.reloadFromStorage(tour_id);
-                this.setState({
-                    current_heat: 1
-                });
-            }).bind(this)).send();
+        value: function dispatchActiveTourUpdate(data) {
+            this.updateActiveTour(data["tour_id"]);
         }
 
         // Listeners
@@ -222,7 +206,7 @@ var JudgeTablet = (function (_React$Component) {
         key: "renderSplashScreen",
         value: function renderSplashScreen() {
             var judge = this.state.judge;
-            var judge_number = judge.role_description || _("global.phrases.judge_n", this.state.judge.number);
+            var judge_number = judge.role_description || _("global.phrases.judge_n", judge.number);
             return React.createElement(
                 "div",
                 null,
@@ -254,7 +238,26 @@ var JudgeTablet = (function (_React$Component) {
                     "div",
                     { className: "judge-name" },
                     this.state.judge.name
-                )
+                ),
+                this.state.tour ? React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "div",
+                        { className: "not-judging-discipline" },
+                        this.state.tour.discipline.name
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "not-judging-tour" },
+                        this.state.tour.name
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "not-judging-message" },
+                        _("tablet.messages.not_judging_discipline")
+                    )
+                ) : null
             );
         }
     }, {
@@ -265,10 +268,11 @@ var JudgeTablet = (function (_React$Component) {
             }).bind(this)).map((function (run) {
                 var scores_map = {};
                 run.scores.forEach(function (score_data) {
-                    scores_map[score_data.judge_id] = score_data;
+                    scores_map[score_data.discipline_judge_id] = score_data;
                 });
+                var current_score = scores_map[this.state.discipline_judge.id];
                 var header = _("global.phrases.participant_n", run.participant.number, run.participant.sportsmen.length);
-                if (typeof scores_map[this.props.judge_id] === "undefined") {
+                if (typeof scores_map[this.state.discipline_judge.id] === "undefined") {
                     return React.createElement(
                         "td",
                         { key: run.id },
@@ -280,7 +284,7 @@ var JudgeTablet = (function (_React$Component) {
                         React.createElement(
                             "h3",
                             { className: "text-center" },
-                            _("tablet.messages.not_judging")
+                            _("tablet.messages.not_judging_participant")
                         )
                     );
                 }
@@ -294,19 +298,20 @@ var JudgeTablet = (function (_React$Component) {
                     ),
                     React.createElement(TabletScoreInput, {
                         acrobatics: run.acrobatics,
-                        judge_id: this.props.judge_id,
-                        judges: this.state.competition.judges,
+                        discipline_judge: this.state.discipline_judge,
+                        all_discipline_judges: this.state.tour.discipline.discipline_judges,
+                        score: current_score,
+                        all_scores: scores_map,
                         run_id: run.id,
                         page: this.state.page,
-                        scores: scores_map,
                         scoring_system_name: this.state.tour.scoring_system_name,
-                        onScoreUpdate: this.onScoreUpdate.bind(this, scores_map[this.props.judge_id].id) })
+                        onScoreUpdate: this.onScoreUpdate.bind(this, current_score.id) })
                 );
             }).bind(this));
-            var one_run_class = cells.length == 1 ? " single-run" : "";
+            var single_run_class = cells.length == 1 ? " single-run" : "";
             return React.createElement(
                 "table",
-                { className: "tablet-main-table" + one_run_class },
+                { className: "tablet-main-table" + single_run_class },
                 React.createElement(
                     "tbody",
                     null,
@@ -321,7 +326,10 @@ var JudgeTablet = (function (_React$Component) {
     }, {
         key: "renderFooter",
         value: function renderFooter() {
-            if (this.state.judge.role != "tech_judge" || this.state.tour.scoring_system_name != "rosfarr.acro") {
+            if (this.state.discipline_judge === null) {
+                return null;
+            }
+            if (this.state.discipline_judge.role != "tech_judge" || this.state.tour.scoring_system_name != "rosfarr.acro") {
                 return null;
             }
             return React.createElement(
@@ -359,6 +367,9 @@ var JudgeTablet = (function (_React$Component) {
                 );
             }
             if (this.state.tour === null) {
+                return this.renderSplashScreen();
+            }
+            if (this.state.discipline_judge === null) {
                 return this.renderSplashScreen();
             }
             return React.createElement(

@@ -13,14 +13,18 @@ class Judge(BaseModel):
         )
 
     competition = peewee.ForeignKeyField(Competition, related_name="judges")
+    number = peewee.CharField(default="")
     name = peewee.CharField()
     category = peewee.CharField()
     role_description = peewee.CharField(default="")
-    number = peewee.CharField(default="")
     sp = peewee.IntegerField(default=0)
     external_id = peewee.CharField(null=True)
 
-    RW_PROPS = ["name", "category", "role", "role_description", "number", "sp", "external_id"]
+    RW_PROPS = ["name", "category", "role_description", "number", "sp", "external_id"]
+
+    PF_CHILDREN = {
+        "competition": None,
+    }
 
     @classmethod
     def load_models(cls, competition, objects):
@@ -34,30 +38,18 @@ class Judge(BaseModel):
 
     def update_model(self, new_data, ws_message):
         self.update_model_base(new_data)
-        ws_message.add_model_update(
-            model_type=Competition,
-            model_id=self.competition_id,
-            schema={
-                "judges": {}
-            }
-        )
+        ws_message.add_message("reload_data")
 
     def delete_model(self, ws_message):
-        if self.get_attr_count("score_set") > 0:
-            raise ApiError("errors.judge.delete_with_scores")
+        if self.get_attr_count("discipline_judge_set") > 0:
+            raise ApiError("errors.judge.delete_with_disciplines")
         self.delete_instance()
         ws_message.add_message("reload_data")
 
     def get_sorting_key(self):  # TODO: move this logic to scoring system
-        if self.role == "head_judge":
-            primary_key = 0
-        elif self.role == "":
-            primary_key = 1
-        elif self.role in ["dance_judge", "acro_judge"]:
-            primary_key = 2
-        else:
-            primary_key = 3
-        return (self.sp, primary_key, self.number, self.role_description, self.name)
+        return (self.sp, self.number, self.role_description, self.name)
 
     def serialize(self, children={}):
-        return self.serialize_props()
+        result = self.serialize_props()
+        result = self.serialize_upper_child(result, "competition", children)
+        return result

@@ -89,6 +89,23 @@ h3 {
   font-size: 40px;
   text-align: center;
 }
+.not-judging-discipline {
+  margin-top: 30px;
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center;
+}
+.not-judging-message {
+  margin-top: 30px;
+  font-weight: 500;
+  font-size: 20px;
+  text-align: center;
+}
+.not-judging-tour {
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center;
+}
 header .header {
   text-align: center;
   margin-left: 150px;

@@ -1,16 +1,28 @@
 class RoleSelector extends React.Component {
     render() {
-        let judges = this.props.competition.judges
-        .filter((judge) => judge.role != "")
-        .map(function(judge) {
-            return <a href={ "/tablet/" + judge.id.toString() } className="btn btn-default btn-lg">
-                { judge.role_description || _("global.phrases.judge_n", judge.number) }: { judge.name }
-            </a>
-        });
+        let all_judges = this.props.competition.judges;
+        let line_judges = all_judges
+            .filter((judge) => judge.role_description == "")
+            .map(function(judge) {
+                return <a href={ "/tablet/" + judge.id.toString() } className="btn btn-default btn-lg" key={ judge.id }>
+                    { _("global.phrases.judge_n", judge.number) }: { judge.name }
+                </a>
+            });
+        let staff = all_judges
+            .filter((judge) => judge.role_description != "")
+            .map(function(judge) {
+                return <a href={ "/tablet/" + judge.id.toString() } className="btn btn-default btn-lg" key={ judge.id }>
+                    { judge.role_description }: { judge.name }
+                </a>
+            });
         return <div className="role-selector">
             <h3>{ _("start_page.headers.select_role") }</h3>
             <div className="row">
                 <div className="col-sm-6">
+                    <div className="btn-group-vertical full-width">
+                        { line_judges }
+                    </div>
+                    <br /><br /><br />
                     <div className="btn-group-vertical full-width">
                         <a href={ "/presenter" } className="btn btn-default btn-lg">
                             { _("start_page.roles.presenter") }
@@ -22,7 +34,7 @@ class RoleSelector extends React.Component {
                 </div>
                 <div className="col-sm-6">
                     <div className="btn-group-vertical full-width">
-                        { judges }
+                        { staff }
                     </div>
                 </div>
             </div>

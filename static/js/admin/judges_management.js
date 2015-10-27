@@ -26,7 +26,6 @@ var JudgeEditorRow = (function (_React$Component) {
                 name: this._name.value,
                 number: this._number.value,
                 category: this._category.value,
-                role: this._role.value,
                 role_description: this._role_description.value,
                 sp: this._sp.value,
                 external_id: this._external_id.value
@@ -53,13 +52,6 @@ var JudgeEditorRow = (function (_React$Component) {
         value: function render() {
             var _this = this;
 
-            var roles = GL.judge_roles.map(function (role) {
-                return React.createElement(
-                    "option",
-                    { value: role, key: role },
-                    _("judge_roles." + role)
-                );
-            });
             return React.createElement(
                 "tr",
                 { className: "editor" + (this.props.newJudge ? " create" : "") },
@@ -74,7 +66,7 @@ var JudgeEditorRow = (function (_React$Component) {
                             { className: "row" },
                             React.createElement(
                                 "div",
-                                { className: "col-md-1" },
+                                { className: "col-lg-1" },
                                 React.createElement(
                                     "label",
                                     { className: "full-width" },
@@ -87,7 +79,11 @@ var JudgeEditorRow = (function (_React$Component) {
                                         }).bind(this),
                                         className: "full-width",
                                         defaultValue: this.props.judge.number })
-                                ),
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "col-lg-1" },
                                 React.createElement(
                                     "label",
                                     { className: "full-width" },
@@ -102,7 +98,7 @@ var JudgeEditorRow = (function (_React$Component) {
                             ),
                             React.createElement(
                                 "div",
-                                { className: "col-md-4" },
+                                { className: "col-lg-3" },
                                 React.createElement(
                                     "label",
                                     { className: "full-width" },
@@ -113,7 +109,11 @@ var JudgeEditorRow = (function (_React$Component) {
                                         },
                                         className: "full-width",
                                         defaultValue: this.props.judge.name })
-                                ),
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "col-lg-3" },
                                 React.createElement(
                                     "label",
                                     { className: "full-width" },
@@ -128,22 +128,7 @@ var JudgeEditorRow = (function (_React$Component) {
                             ),
                             React.createElement(
                                 "div",
-                                { className: "col-md-4" },
-                                React.createElement(
-                                    "label",
-                                    { className: "full-width" },
-                                    _("models.judge.role"),
-                                    React.createElement(
-                                        "select",
-                                        {
-                                            ref: function (e) {
-                                                return e && (_this._role = e.getDOMNode());
-                                            },
-                                            className: "full-width",
-                                            defaultValue: this.props.judge.role },
-                                        roles
-                                    )
-                                ),
+                                { className: "col-lg-1" },
                                 React.createElement(
                                     "label",
                                     { className: "full-width" },
@@ -158,7 +143,7 @@ var JudgeEditorRow = (function (_React$Component) {
                             ),
                             React.createElement(
                                 "div",
-                                { className: "col-md-3" },
+                                { className: "col-lg-1" },
                                 React.createElement(
                                     "label",
                                     { className: "full-width" },
@@ -169,7 +154,11 @@ var JudgeEditorRow = (function (_React$Component) {
                                         },
                                         className: "full-width",
                                         defaultValue: this.props.judge.sp })
-                                ),
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "col-lg-2" },
                                 React.createElement(
                                     "div",
                                     { className: "buttons" },
@@ -177,14 +166,14 @@ var JudgeEditorRow = (function (_React$Component) {
                                         "button",
                                         {
                                             type: "submit",
-                                            className: "btn btn-primary" },
+                                            className: "btn btn-sm btn-primary" },
                                         _("global.buttons.submit")
                                     ),
                                     React.createElement(
                                         "button",
                                         {
                                             type: "button",
-                                            className: "btn btn-danger",
+                                            className: "btn btn-sm btn-danger",
                                             onClick: this.props.stopEditing },
                                         _("global.buttons.discard")
                                     )
@@ -268,11 +257,6 @@ var JudgeRow = (function (_React$Component2) {
                 ),
                 React.createElement(
                     "td",
-                    { className: "role" },
-                    _("judge_roles." + j.role)
-                ),
-                React.createElement(
-                    "td",
                     { className: "delete" },
                     React.createElement(
                         "button",
@@ -328,7 +312,6 @@ var JudgeCreationRow = (function (_React$Component3) {
             var empty_data = {
                 "name": "",
                 "number": "",
-                "role": "",
                 "role_description": "",
                 "category": ""
             };
@@ -414,11 +397,6 @@ var JudgesManagementUI = (function (_React$Component4) {
                                 "th",
                                 { className: "category" },
                                 _("models.judge.category")
-                            ),
-                            React.createElement(
-                                "th",
-                                { className: "role" },
-                                _("models.judge.role")
                             ),
                             React.createElement("th", { className: "delete" })
                         ),

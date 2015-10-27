@@ -8,6 +8,7 @@ from models.proxies import (
     discipline_proxy,
     tour_proxy,
 )
+from webserver.websocket import WsMessage
 
 
 class Discipline(BaseModel):
@@ -27,10 +28,11 @@ class Discipline(BaseModel):
 
     PF_CHILDREN = {
         "competition": None,
+        "discipline_judges": None,
+        "participants": None,
         "tours": {
             "raw_tours": None,
         },
-        "participants": None,
     }
 
     pf_tours = None
@@ -80,37 +82,93 @@ class Discipline(BaseModel):
             },
         })
 
+    def set_judges(self, new_judges_data):
+        from models import DisciplineJudge
+        new_data = {(judge_data["judge_id"], judge_data["role"]) for judge_data in new_judges_data}
+        old_data = {(discipline_judge.judge_id, discipline_judge.role) for discipline_judge in self.discipline_judges}
+        if new_data == old_data:
+            return
+        if self.first_tour is not None and self.first_tour.finalized:
+            raise ApiError("errors.discipline.change_judges_with_finalized_tour")
+        new_ids = {judge_data["judge_id"] for judge_data in new_judges_data}
+        old_ids = {discipline_judge.judge_id for discipline_judge in self.discipline_judges}
+        rev_judges = {
+            judge.id: judge
+            for judge in self.competition.judges
+        }
+        rev_discipline_judges = {
+            discipline_judge.judge_id: discipline_judge
+            for discipline_judge in self.discipline_judges
+        }
+        rev_judges_data = {
+            obj["judge_id"]: obj
+            for obj in new_judges_data
+        }
+        judges_ids_to_add = new_ids - old_ids
+        judges_ids_to_update = new_ids.intersection(old_ids)
+        judges_ids_to_delete = old_ids - new_ids
+        for judge_id in judges_ids_to_add:
+            DisciplineJudge.create_model(
+                discipline=self,
+                judge=rev_judges[judge_id],
+                data=rev_judges_data[judge_id],
+                ws_message=WsMessage())
+        for judge_id in judges_ids_to_update:
+            rev_discipline_judges[judge_id].update_model(
+                new_data=rev_judges_data[judge_id],
+                ws_message=WsMessage())
+        for judge_id in judges_ids_to_delete:
+            rev_discipline_judges[judge_id].delete_model(WsMessage())
+
     @classmethod
     def load_models(cls, competition, objects):
-        from models import Participant
+        from models import (
+            DisciplineJudge,
+            Participant,
+        )
         for model, created, raw_data in cls.load_models_base(objects, competition=competition):
             Participant.load_models(model, raw_data["participants"])
+            DisciplineJudge.load_models(model, raw_data["discipline_judges"])
 
     @classmethod
     def create_model(cls, competition, data, ws_message):
         create_kwargs = cls.gen_model_kwargs(data, competition=competition)
         new_model = cls.create(**create_kwargs)
+        new_model.set_judges(data["discipline_judges"])
         ws_message.add_model_update(
             model_type=Competition,
             model_id=competition.id,
             schema={
-                "disciplines": {},
+                "disciplines": {}
             }
         )
         ws_message.add_model_update(
             model_type=cls,
             model_id=new_model.id,
             schema={
-                "tours": {},
+                "discipline_judges": {
+                    "judge": {},
+                }
             })
 
     def update_model(self, new_data, ws_message):
         self.update_model_base(new_data)
+        if "discipline_judges" in new_data:
+            self.set_judges(new_data["discipline_judges"])
         ws_message.add_model_update(
             model_type=Competition,
             model_id=self.competition_id,
             schema={
                 "disciplines": {}
+            }
+        )
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id,
+            schema={
+                "discipline_judges": {
+                    "judge": {},
+                }
             }
         )
 
@@ -153,6 +211,7 @@ class Discipline(BaseModel):
     def serialize(self, children={}):
         result = self.serialize_props()
         result = self.serialize_upper_child(result, "competition", children)
+        result = self.serialize_lower_child(result, "discipline_judges", children)
         result = self.serialize_lower_child(result, "tours", children)
         result = self.serialize_lower_child(result, "participants", children)
         return result

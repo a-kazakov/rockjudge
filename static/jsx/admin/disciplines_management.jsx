@@ -1,23 +1,83 @@
 class DisciplineEditorRow extends React.Component {
-    sertialize() {
+    constructor(props) {
+        super(props);
+        this.state = {
+            discipline_judges: props.discipline.discipline_judges.map(function(dj) {
+                return {
+                    judge_id: dj.judge.id,
+                    role: dj.role,
+                };
+            }),
+        };
+    }
+    addDisciplineJudge() {
+        let discipline_judges = $.extend([], this.state.discipline_judges);
+        let new_idx = discipline_judges.length;
+        discipline_judges.push({
+            judge_id: this.props.judges[0] && this.props.judges[0].id,
+            role: GL.judge_roles[0],
+        });
+        this.latest_added = "j" + new_idx;
+        this.setState({
+            discipline_judges: discipline_judges,
+        });
+    }
+    removeDisciplineJudge(idx) {
+        let discipline_judges = $.extend([], this.state.discipline_judges);
+        discipline_judges.splice(idx, 1);
+        this.setState({
+            discipline_judges: discipline_judges,
+        });
+    }
+    validate() {
+        let used_judges = {};
+        this.state.discipline_judges.forEach(function(dj) {
+            console.log(dj.judge_id);
+            if (used_judges[dj.judge_id]) {
+                let judge = this.props.judges.filter((j) => j.id == dj.judge_id)[0];
+                throw _("errors.discipline_judge.repeating_judge", judge.name);
+            }
+            used_judges[dj.judge_id] = true;
+        }.bind(this));
+    }
+    serialize() {
         return {
             name: this._name.value,
             sp: this._sp.value,
+            discipline_judges: this.state.discipline_judges.map(function(dj) {
+                return {
+                    judge_id: parseInt(dj.judge_id),
+                    role: dj.role,
+                };
+            }),
             external_id: this._external_id.value,
         }
     }
+    onDisciplineJudgeChange(idx, field, event) {
+        let discipline_judges = $.extend([], this.state.discipline_judges);
+        discipline_judges[idx][field] = event.target.value;
+        this.setState({
+            discipline_judges: discipline_judges,
+        });
+    }
     onSubmit(event) {
         event.preventDefault();
-        if (!this.props.newDiscipline) {
-            Api("discipline.set", {
-                discipline_id: this.props.discipline.id,
-                data: this.sertialize(),
-            }).onSuccess(this.props.stopEditing).send();
-        } else {
-            Api("discipline.create", {
-                competition_id: this.props.competition_id,
-                data: this.sertialize(),
-            }).onSuccess(this.props.stopEditing).send();
+        try {
+            this.validate();
+            console.log(this.serialize());
+            if (!this.props.newDiscipline) {
+                Api("discipline.set", {
+                    discipline_id: this.props.discipline.id,
+                    data: this.serialize(),
+                }).onSuccess(this.props.stopEditing).send();
+            } else {
+                Api("discipline.create", {
+                    competition_id: this.props.competition_id,
+                    data: this.serialize(),
+                }).onSuccess(this.props.stopEditing).send();
+            }
+        } catch (ex) {
+            alert(ex);
         }
     }
     render() {
@@ -25,37 +85,69 @@ class DisciplineEditorRow extends React.Component {
             <td colSpan="5">
                 <form onSubmit={ this.onSubmit.bind(this) }>
                     <div className="row">
-                        <div className="col-md-5">
+                        <div className="col-lg-4">
                             <label className="full-width">
                                 { _("models.discipline.name") }
                                 <input
-                                    ref={ function(e) { if (e) { e.getDOMNode().select(); this._name = e.getDOMNode(); } }.bind(this) }
+                                    ref={ function(e) { if (e) { this._name = e.getDOMNode(); } }.bind(this) }
                                     className="full-width"
                                     defaultValue={ this.props.discipline.name } />
                             </label>
+                            <div className="row">
+                                <div className="col-lg-6">
+                                    <label className="full-width">
+                                        { _("models.discipline.sp") }
+                                        <input
+                                            ref={ (e) => e && (this._sp = e.getDOMNode()) }
+                                            className="full-width"
+                                            defaultValue={ this.props.discipline.sp } />
+                                    </label>
+                                </div>
+                                <div className="col-lg-6">
+                                    <label className="full-width">
+                                        { _("models.discipline.external_id") }<br />
+                                        <input
+                                            ref={ (e) => e && (this._external_id = e.getDOMNode()) }
+                                            className="full-width"
+                                            defaultValue={ this.props.discipline.external_id } />
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                        <div className="col-md-2">
+                        <div className="col-lg-6">
                             <label className="full-width">
-                                { _("models.discipline.sp") }
-                                <input
-                                    ref={ (e) => e && (this._sp = e.getDOMNode()) }
-                                    className="full-width"
-                                    defaultValue={ this.props.discipline.sp } />
+                                { _("models.discipline.discipline_judges") }
                             </label>
+                            { this.state.discipline_judges.map((dj, idx) =>
+                                <div key={ idx }>
+                                    <select value={ dj.judge_id } className="judge" onChange={ this.onDisciplineJudgeChange.bind(this, idx, "judge_id") }>
+                                        { this.props.judges.map((j) =>
+                                            <option value={ j.id } key={ j.id }>{ j.name }</option>
+                                        ) }
+                                    </select>
+                                    <select value={ dj.role } className="judge-role" onChange={ this.onDisciplineJudgeChange.bind(this, idx, "role") }>
+                                        { GL.judge_roles.map((jr) =>
+                                            <option value={ jr } key={ jr }>{ _("judge_roles." + jr) }</option>
+                                        ) }
+                                    </select>
+                                    <button
+                                        type="button"
+                                        className="del btn btn-danger"
+                                        onClick={ this.removeDisciplineJudge.bind(this, idx) }>X</button>
+                                </div>
+                            ) }
+                            <button
+                                type="button"
+                                className="full-width btn btn-sm btn-default"
+                                onClick={ this.addDisciplineJudge.bind(this) }>{ _("global.buttons.add") }</button>
                         </div>
-                        <div className="col-md-2">
-                            <label className="full-width">
-                                { _("models.discipline.external_id") }<br />
-                                <input
-                                    ref={ (e) => e && (this._external_id = e.getDOMNode()) }
-                                    defaultValue={ this.props.discipline.external_id } />
-                            </label>
-                        </div>
-                        <div className="col-md-3">
+                        <div className="col-lg-2">
+                            <label>&nbsp;</label>
                             <div className="buttons">
                                 <button
                                     type="submit"
                                     className="btn btn-primary">{ _("global.buttons.submit") }</button>
+                                <br />
                                 <button
                                     type="button"
                                     className="btn btn-danger"
@@ -140,6 +232,7 @@ class DisciplineCreationRow extends React.Component {
     renderEditor() {
         let empty_data = {
             "name": "",
+            "discipline_judges": [],
             "sp": "0",
             "external_id": "",
         }
@@ -173,7 +266,9 @@ class DisciplinesManagementUI extends React.Component {
         let rows = this.props.disciplines.map(function(discipline) {
             return <DisciplineRow
                 key={ discipline.id }
-                discipline={ discipline } />;
+                judges={ this.props.judges }
+                discipline={ discipline }
+                all_disciplines={ this.props.disciplines } />;
         }.bind(this));
         return <div className="manage-disciplines">
             <table className="table table-striped">

@@ -136,11 +136,11 @@ class TourAdminScoreInput extends React.Component {
                         value={ this.props.score.penalty }
                         onChange={ this.onChange.bind(this, "penalty") }
                         onKeyUp={ this.onKeyUp.bind(this) } />
-                </td><th>WC:</th><td>
+                </td><th>NT:</th><td>
                     <input
                         type="checkbox"
-                        checked={ this.props.score.wildcard }
-                        onChange={ this.onChange.bind(this, "wildcard") }
+                        checked={ this.props.score.nexttour }
+                        onChange={ this.onChange.bind(this, "nexttour") }
                         onKeyUp={ this.onKeyUp.bind(this) } />
                 </td></tr>
             </table>
@@ -149,7 +149,7 @@ class TourAdminScoreInput extends React.Component {
         </form>
     }
     render() {
-        switch (this.props.judge.role) {
+        switch (this.props.discipline_judge.role) {
         case "acro_judge":
             if (this.props.scoring_system_name == "rosfarr.formation") {
                 return this.renderFormationJudgeInput();
@@ -165,7 +165,7 @@ class TourAdminScoreInput extends React.Component {
         case "head_judge":
             return this.renderHeadJudgeInput();
         default:
-            console.log("Unknown judge role", this.props.judges[this.props.judge_id].role);
+            console.log("Unknown judge role", this.props.discipline_judge.role);
             return null;
         }
     }
@@ -210,11 +210,11 @@ class TourAdminScoreInput extends React.Component {
     serializeHeadScore() {
         return {
             penalty: parseInt(this.props.score.penalty) || 0,
-            wildcard: this.props.score.wildcard,
+            nexttour: this.props.score.nexttour,
         }
     }
     serializeScore() {
-        switch (this.props.judge.role) {
+        switch (this.props.discipline_judge.role) {
         case "acro_judge":
             return this.props.scoring_system_name == "rosfarr.no_acro"
                 ? this.serializeDanceScore()
@@ -224,7 +224,7 @@ class TourAdminScoreInput extends React.Component {
         case "head_judge":
             return this.serializeHeadScore();
         default:
-            console.log("Unknown judge role", this.props.judges[this.props.judge_id].role);
+            console.log("Unknown judge role", this.props.discipline_judge.role);
             return null;
         }
     }
@@ -237,14 +237,14 @@ class TourAdminScoreInput extends React.Component {
 class TourAdminScoreCell extends React.Component {
     render() {
         if (!this.props.editing) {
-            if (this.props.judge.role == "head_judge" && this.props.value.raw_data.wildcard) {
+            if (this.props.discipline_judge.role == "head_judge" && this.props.value.raw_data.nexttour) {
                 return <div onClick={ this.props.startEditing }>[{ this.props.value.total_score.toFixed(1) }]</div>
             }
             return <div onClick={ this.props.startEditing }>{ this.props.value.total_score.toFixed(1) }</div>
         } else {
             return <TourAdminScoreInput
                 score={ this.props.value.raw_data }
-                judge={ this.props.judge }
+                discipline_judge={ this.props.discipline_judge }
                 scoring_system_name={ this.props.scoring_system_name }
                 stopEditing={ this.props.stopEditing }
                 updateValue={ this.props.updateValue }

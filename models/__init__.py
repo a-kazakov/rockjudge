@@ -3,6 +3,7 @@ from models.api_log_item import ApiLogItem  # NOQA
 from models.club import Club  # NOQA
 from models.competition import Competition  # NOQA
 from models.discipline import Discipline  # NOQA
+from models.discipline_judge import DisciplineJudge  # NOQA
 from models.judge import Judge  # NOQA
 from models.participant import Participant  # NOQA
 from models.run import Run  # NOQA

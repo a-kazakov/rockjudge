@@ -1,20 +1,15 @@
 import json
-import logging
-import time
-import traceback
 
 import tornado.gen
 import tornado.web
 
 from api import Api
 from db import Database
-from exceptions import ApiError
 from models import (
     Competition,
     Judge,
     Tour,
 )
-from log import log_api
 from webserver.websocket import WsMessage
 
 

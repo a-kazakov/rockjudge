@@ -9,12 +9,12 @@ def get_tour_results(tour):
     return TourScores(tour, scoring_system="rosfarr.formation").get_results()
 
 
-def get_run_scores(run, judges=None):
-    return RunScore(run, judges=judges, scoring_system="rosfarr.formation").serialize()
+def get_run_scores(run, discipline_judges=None):
+    return RunScore(run, discipline_judges=discipline_judges, scoring_system="rosfarr.formation").serialize()
 
 
-def serialize_score(score, judge=None):
-    return ScoreWrapper(score, judge=judge, scoring_system="rosfarr.formation").serialize()
+def serialize_score(score, discipline_judge=None):
+    return ScoreWrapper(score, discipline_judge=discipline_judge, scoring_system="rosfarr.formation").serialize()
 
 
 def update_score(score, client_data):

@@ -10,6 +10,7 @@ from models import (
     Club,
     Competition,
     Discipline,
+    DisciplineJudge,
     Judge,
     Participant,
     Run,
@@ -147,6 +148,12 @@ class Api:
         return {}
 
     @classmethod
+    def discipline_judge_set(cls, request, ws_message):
+        model = cls.get_model(DisciplineJudge, "discipline_judge_id", request)
+        model.update_model(request["data"], ws_message=ws_message)
+        return {}
+
+    @classmethod
     def score_set(cls, request, ws_message):
         model = cls.get_model(Score, "score_id", request)
         model.update_model(request["data"], ws_message=ws_message)
@@ -223,6 +230,16 @@ class Api:
             ws_message=ws_message)
         return {}
 
+    def discipline_judge_create(cls, request, ws_message):
+        discipline = cls.get_model(Discipline, "discipline_id", request)
+        judge = cls.get_model(Judge, "judge_id", request)
+        DisciplineJudge.create_model(
+            discipline=discipline,
+            judge=judge,
+            data=request["data"],
+            ws_message=ws_message)
+        return {}
+
     @classmethod
     def participant_create(cls, request, ws_message):
         discipline = cls.get_model(Discipline, "discipline_id", request)
@@ -261,6 +278,12 @@ class Api:
     @classmethod
     def judge_delete(cls, request, ws_message):
         judge = cls.get_model(Judge, "judge_id", request)
+        judge.delete_model(ws_message=ws_message)
+        return {}
+
+    @classmethod
+    def discipline_judge_delete(cls, request, ws_message):
+        judge = cls.get_model(DisciplineJudge, "discipline_judge_id", request)
         judge.delete_model(ws_message=ws_message)
         return {}
 

@@ -175,7 +175,25 @@ div.load-competition-page form.load-competition button {
   width: 25%;
 }
 .manage-judges .buttons {
-  padding-top: 21px;
+  padding-top: 17px;
+}
+.manage-judges .buttons button,
+.manage-clubs .buttons button {
+  width: 50%;
+}
+.manage-disciplines .judge {
+  margin: 0 !important;
+  width: 55%;
+}
+.manage-disciplines .judge-role {
+  margin: 0 !important;
+  width: 40%;
+}
+.manage-disciplines .buttons {
+  padding: 0;
+}
+.manage-disciplines .buttons button {
+  width: 100%;
 }
 .manage-judges,
 .manage-clubs,
@@ -254,11 +272,6 @@ div.load-competition-page form.load-competition button {
   margin: 0;
   height: 24px;
   font-weight: bold;
-}
-.manage-judges table tr.editor .buttons button,
-.manage-clubs table tr.editor .buttons button,
-.manage-disciplines table tr.editor .buttons button {
-  width: 50%;
 }
 .manage-judges table tr.editor input,
 .manage-clubs table tr.editor input,

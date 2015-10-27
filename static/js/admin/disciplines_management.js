@@ -13,35 +13,102 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var DisciplineEditorRow = (function (_React$Component) {
     _inherits(DisciplineEditorRow, _React$Component);
 
-    function DisciplineEditorRow() {
+    function DisciplineEditorRow(props) {
         _classCallCheck(this, DisciplineEditorRow);
 
-        _get(Object.getPrototypeOf(DisciplineEditorRow.prototype), "constructor", this).apply(this, arguments);
+        _get(Object.getPrototypeOf(DisciplineEditorRow.prototype), "constructor", this).call(this, props);
+        this.state = {
+            discipline_judges: props.discipline.discipline_judges.map(function (dj) {
+                return {
+                    judge_id: dj.judge.id,
+                    role: dj.role
+                };
+            })
+        };
     }
 
     _createClass(DisciplineEditorRow, [{
-        key: "sertialize",
-        value: function sertialize() {
+        key: "addDisciplineJudge",
+        value: function addDisciplineJudge() {
+            var discipline_judges = $.extend([], this.state.discipline_judges);
+            var new_idx = discipline_judges.length;
+            discipline_judges.push({
+                judge_id: this.props.judges[0] && this.props.judges[0].id,
+                role: GL.judge_roles[0]
+            });
+            this.latest_added = "j" + new_idx;
+            this.setState({
+                discipline_judges: discipline_judges
+            });
+        }
+    }, {
+        key: "removeDisciplineJudge",
+        value: function removeDisciplineJudge(idx) {
+            var discipline_judges = $.extend([], this.state.discipline_judges);
+            discipline_judges.splice(idx, 1);
+            this.setState({
+                discipline_judges: discipline_judges
+            });
+        }
+    }, {
+        key: "validate",
+        value: function validate() {
+            var used_judges = {};
+            this.state.discipline_judges.forEach((function (dj) {
+                console.log(dj.judge_id);
+                if (used_judges[dj.judge_id]) {
+                    var judge = this.props.judges.filter(function (j) {
+                        return j.id == dj.judge_id;
+                    })[0];
+                    throw _("errors.discipline_judge.repeating_judge", judge.name);
+                }
+                used_judges[dj.judge_id] = true;
+            }).bind(this));
+        }
+    }, {
+        key: "serialize",
+        value: function serialize() {
             return {
                 name: this._name.value,
                 sp: this._sp.value,
+                discipline_judges: this.state.discipline_judges.map(function (dj) {
+                    return {
+                        judge_id: parseInt(dj.judge_id),
+                        role: dj.role
+                    };
+                }),
                 external_id: this._external_id.value
             };
+        }
+    }, {
+        key: "onDisciplineJudgeChange",
+        value: function onDisciplineJudgeChange(idx, field, event) {
+            var discipline_judges = $.extend([], this.state.discipline_judges);
+            discipline_judges[idx][field] = event.target.value;
+            this.setState({
+                discipline_judges: discipline_judges
+            });
         }
     }, {
         key: "onSubmit",
         value: function onSubmit(event) {
             event.preventDefault();
-            if (!this.props.newDiscipline) {
-                Api("discipline.set", {
-                    discipline_id: this.props.discipline.id,
-                    data: this.sertialize()
-                }).onSuccess(this.props.stopEditing).send();
-            } else {
-                Api("discipline.create", {
-                    competition_id: this.props.competition_id,
-                    data: this.sertialize()
-                }).onSuccess(this.props.stopEditing).send();
+            try {
+                this.validate();
+                console.log(this.serialize());
+                if (!this.props.newDiscipline) {
+                    Api("discipline.set", {
+                        discipline_id: this.props.discipline.id,
+                        data: this.serialize()
+                    }).onSuccess(this.props.stopEditing).send();
+                } else {
+                    Api("discipline.create", {
+                        competition_id: this.props.competition_id,
+                        data: this.serialize()
+                    }).onSuccess(this.props.stopEditing).send();
+                }
+            } catch (ex) {
+                alert(ex);
             }
         }
     }, {
@@ -63,7 +130,7 @@ var DisciplineEditorRow = (function (_React$Component) {
                             { className: "row" },
                             React.createElement(
                                 "div",
-                                { className: "col-md-5" },
+                                { className: "col-lg-4" },
                                 React.createElement(
                                     "label",
                                     { className: "full-width" },
@@ -71,46 +138,109 @@ var DisciplineEditorRow = (function (_React$Component) {
                                     React.createElement("input", {
                                         ref: (function (e) {
                                             if (e) {
-                                                e.getDOMNode().select();this._name = e.getDOMNode();
+                                                this._name = e.getDOMNode();
                                             }
                                         }).bind(this),
                                         className: "full-width",
                                         defaultValue: this.props.discipline.name })
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "row" },
+                                    React.createElement(
+                                        "div",
+                                        { className: "col-lg-6" },
+                                        React.createElement(
+                                            "label",
+                                            { className: "full-width" },
+                                            _("models.discipline.sp"),
+                                            React.createElement("input", {
+                                                ref: function (e) {
+                                                    return e && (_this._sp = e.getDOMNode());
+                                                },
+                                                className: "full-width",
+                                                defaultValue: this.props.discipline.sp })
+                                        )
+                                    ),
+                                    React.createElement(
+                                        "div",
+                                        { className: "col-lg-6" },
+                                        React.createElement(
+                                            "label",
+                                            { className: "full-width" },
+                                            _("models.discipline.external_id"),
+                                            React.createElement("br", null),
+                                            React.createElement("input", {
+                                                ref: function (e) {
+                                                    return e && (_this._external_id = e.getDOMNode());
+                                                },
+                                                className: "full-width",
+                                                defaultValue: this.props.discipline.external_id })
+                                        )
+                                    )
                                 )
                             ),
                             React.createElement(
                                 "div",
-                                { className: "col-md-2" },
+                                { className: "col-lg-6" },
                                 React.createElement(
                                     "label",
                                     { className: "full-width" },
-                                    _("models.discipline.sp"),
-                                    React.createElement("input", {
-                                        ref: function (e) {
-                                            return e && (_this._sp = e.getDOMNode());
-                                        },
-                                        className: "full-width",
-                                        defaultValue: this.props.discipline.sp })
+                                    _("models.discipline.discipline_judges")
+                                ),
+                                this.state.discipline_judges.map(function (dj, idx) {
+                                    return React.createElement(
+                                        "div",
+                                        { key: idx },
+                                        React.createElement(
+                                            "select",
+                                            { value: dj.judge_id, className: "judge", onChange: _this.onDisciplineJudgeChange.bind(_this, idx, "judge_id") },
+                                            _this.props.judges.map(function (j) {
+                                                return React.createElement(
+                                                    "option",
+                                                    { value: j.id, key: j.id },
+                                                    j.name
+                                                );
+                                            })
+                                        ),
+                                        React.createElement(
+                                            "select",
+                                            { value: dj.role, className: "judge-role", onChange: _this.onDisciplineJudgeChange.bind(_this, idx, "role") },
+                                            GL.judge_roles.map(function (jr) {
+                                                return React.createElement(
+                                                    "option",
+                                                    { value: jr, key: jr },
+                                                    _("judge_roles." + jr)
+                                                );
+                                            })
+                                        ),
+                                        React.createElement(
+                                            "button",
+                                            {
+                                                type: "button",
+                                                className: "del btn btn-danger",
+                                                onClick: _this.removeDisciplineJudge.bind(_this, idx) },
+                                            "X"
+                                        )
+                                    );
+                                }),
+                                React.createElement(
+                                    "button",
+                                    {
+                                        type: "button",
+                                        className: "full-width btn btn-sm btn-default",
+                                        onClick: this.addDisciplineJudge.bind(this) },
+                                    _("global.buttons.add")
                                 )
                             ),
                             React.createElement(
                                 "div",
-                                { className: "col-md-2" },
+                                { className: "col-lg-2" },
                                 React.createElement(
                                     "label",
-                                    { className: "full-width" },
-                                    _("models.discipline.external_id"),
-                                    React.createElement("br", null),
-                                    React.createElement("input", {
-                                        ref: function (e) {
-                                            return e && (_this._external_id = e.getDOMNode());
-                                        },
-                                        defaultValue: this.props.discipline.external_id })
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "col-md-3" },
+                                    null,
+                                    " "
+                                ),
                                 React.createElement(
                                     "div",
                                     { className: "buttons" },
@@ -121,6 +251,7 @@ var DisciplineEditorRow = (function (_React$Component) {
                                             className: "btn btn-primary" },
                                         _("global.buttons.submit")
                                     ),
+                                    React.createElement("br", null),
                                     React.createElement(
                                         "button",
                                         {
@@ -263,6 +394,7 @@ var DisciplineCreationRow = (function (_React$Component3) {
         value: function renderEditor() {
             var empty_data = {
                 "name": "",
+                "discipline_judges": [],
                 "sp": "0",
                 "external_id": ""
             };
@@ -320,7 +452,9 @@ var DisciplinesManagementUI = (function (_React$Component4) {
             var rows = this.props.disciplines.map((function (discipline) {
                 return React.createElement(DisciplineRow, {
                     key: discipline.id,
-                    discipline: discipline });
+                    judges: this.props.judges,
+                    discipline: discipline,
+                    all_disciplines: this.props.disciplines });
             }).bind(this));
             return React.createElement(
                 "div",

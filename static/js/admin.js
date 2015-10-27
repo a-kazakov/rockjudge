@@ -173,6 +173,7 @@ var ManagementUI = (function (_React$Component2) {
                 case "manage_disciplines":
                     return React.createElement(DisciplinesManagementUI, {
                         disciplines: this.props.disciplines,
+                        judges: this.props.judges,
                         competition_id: this.props.competition_id });
             }
         }
@@ -443,6 +444,9 @@ var AdminUI = (function (_React$Component4) {
                 clubs: {},
                 judges: {},
                 disciplines: {
+                    discipline_judges: {
+                        judge: {}
+                    },
                     tours: {}
                 }
             };
@@ -457,6 +461,9 @@ var AdminUI = (function (_React$Component4) {
                     clubs: {},
                     judges: {},
                     disciplines: {
+                        discipline_judges: {
+                            judge: {}
+                        },
                         tours: {}
                     }
                 }

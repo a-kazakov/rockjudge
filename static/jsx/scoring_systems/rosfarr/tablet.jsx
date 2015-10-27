@@ -13,8 +13,7 @@ class TabletScoreInput extends React.Component {
         this.props.onScoreUpdate(new_score);
     }
     updateAcroDeduction(idx, value) {
-        let score = this.props.scores[this.props.judge_id].data;
-        let deductions = score.raw_data.deductions.map(() => null);
+        let deductions = this.props.score.data.raw_data.deductions.map(() => null);
         deductions[idx] = value;
         let new_score = {
             deductions: deductions,
@@ -28,28 +27,22 @@ class TabletScoreInput extends React.Component {
             score: value,
         }).send();
     }
-    getCurrentJudge() {
-        for (var idx in this.props.judges) if (this.props.judges.hasOwnProperty(idx)) {
-            if (this.props.judges[idx].id === this.props.judge_id) {
-                return this.props.judges[idx];
-            }
-        }
-    }
     renderHeadJudgeInput() {
-        var tech_judges = this.props.judges.filter(function(judge) {
-            return judge.role == "tech_judge";
-        }).map(function(judge) {
-            var timing_data = (this.props.scores[judge.id].data.raw_data.timing_violation === null)
+        var tech_judges = this.props.all_discipline_judges.filter(function(discipline_judge) {
+            return discipline_judge.role == "tech_judge";
+        }).map(function(tech_judge) {
+            let tech_score = this.props.all_scores[tech_judge.id].data;
+            var timing_data = (tech_score.raw_data.timing_violation === null)
                 ? ["-", ""]
-                : (this.props.scores[judge.id].data.raw_data.timing_violation ? ["X", " fail"] : ["OK", " ok"])
-            return <div key={ judge.id }>
-                <h3>{ judge.name }:</h3>
+                : (tech_score.raw_data.timing_violation ? ["X", " fail"] : ["OK", " ok"])
+            return <div key={ tech_judge.id }>
+                <h3>{ tech_judge.judge.name }:</h3>
                 <div className="tech-judge-info">
                     <div className="title">
                         { __("tablet.tech_judge.jump_steps") }:
                     </div>
                     <div className="value">
-                        { this.props.scores[judge.id].data.raw_data.jump_steps }
+                        { tech_score.raw_data.jump_steps }
                     </div>
                 </div>
                 <div className="tech-judge-info">
@@ -62,19 +55,18 @@ class TabletScoreInput extends React.Component {
                 </div>
             </div>
         }.bind(this));
-        var score = this.props.scores[this.props.judge_id].data;
         return <div>
             <h3>{ __("tablet.head_judge.penalty_type") }:</h3>
             <TabletSelectorInput
                 choices={ [[0, __("tablet.head_judge.ok")], [-3, __("tablet.head_judge.yellow_card")], [-30, __("tablet.head_judge.red_card")], [-100, __("tablet.head_judge.black_card")]] }
-                active={ score.raw_data.penalty }
+                active={ this.props.score.data.raw_data.penalty }
                 onValueUpdate={ this.updateScores.bind(this, "penalty") } />
             <div className="spacer"></div>
             { tech_judges }
         </div>
     }
     renderTechJudgeInputAcro() {
-        var acrobatics = this.props.acrobatics.map(function(acro, idx) {
+        let acrobatics = this.props.acrobatics.map(function(acro, idx) {
             return <div className="tech-judge-acro" key={ acro.id }>
                 <div className="controls pull-right">
                     <div className="setter">
@@ -92,7 +84,7 @@ class TabletScoreInput extends React.Component {
         return <div>{ acrobatics }</div>;
     }
     renderTechJudgeInputDance() {
-        var score = this.props.scores[this.props.judge_id].data;
+        let score = this.props.score.data;
         return <div>
             <h3>{ __("tablet.tech_judge.jump_steps") }:</h3>
             <TabletIntegerInput
@@ -116,7 +108,7 @@ class TabletScoreInput extends React.Component {
         }
     }
     renderDanceJudgeInput() {
-        var score = this.props.scores[this.props.judge_id].data;
+        var score = this.props.score.data;
         return <div>
             <h3>{ __("tablet.dance_judge.fw_woman") }</h3>
             <TabletSelectorInput
@@ -157,7 +149,7 @@ class TabletScoreInput extends React.Component {
         </div>
     }
     renderAcroJudgeInput() {
-        var score = this.props.scores[this.props.judge_id].data;
+        var score = this.props.score.data;
         var inputs = this.props.acrobatics.map(function(acro, idx) {
             return <div key={ idx }>
                 <h3>{ acro.description }</h3>
@@ -179,7 +171,7 @@ class TabletScoreInput extends React.Component {
         </div>
     }
     renderFormationInput() {
-        var score = this.props.scores[this.props.judge_id].data;
+        var score = this.props.score.data;
         return <div>
             <h3>{ __("tablet.dance_judge.dance_tech") }</h3>
             <TabletPointFiveSelectInput
@@ -216,7 +208,7 @@ class TabletScoreInput extends React.Component {
         </div>
     }
     render() {
-        switch (this.getCurrentJudge().role) {
+        switch (this.props.discipline_judge.role) {
         case "acro_judge":
             if (this.props.scoring_system_name == "rosfarr.formation") {
                 return this.renderFormationInput();
@@ -234,7 +226,7 @@ class TabletScoreInput extends React.Component {
         case "tech_judge":
             return this.renderTechJudgeInput();
         default:
-            console.log("Unknown judge role", this.props.judges[this.props.judge_id].role);
+            console.log("Unknown judge role", this.props.discipline_judge.role);
             return null;
         }
     }
