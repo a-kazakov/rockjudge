@@ -80,6 +80,9 @@ class TourResultsVerboseTableRow extends React.Component {
                     <td><p>{ acro.score.toFixed(1) }</p></td>
                 </tr>
             }.bind(this));
+            if (acro_scores.length == 0) {
+                acro_scores = <tr><td><p>&nbsp;</p></td></tr>; // Hack for MS Word
+            }
             acro_scores_cell = <td className="w-4 acro_scores">
                 <table className="score-breakdown"><tbody>
                     { acro_scores }

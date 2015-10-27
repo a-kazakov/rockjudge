@@ -517,6 +517,21 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         )
                     );
                 }).bind(this));
+                if (acro_scores.length == 0) {
+                    acro_scores = React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement(
+                                "p",
+                                null,
+                                " "
+                            )
+                        )
+                    ); // Hack for MS Word
+                }
                 acro_scores_cell = React.createElement(
                     "td",
                     { className: "w-4 acro_scores" },
