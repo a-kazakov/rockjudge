@@ -252,7 +252,7 @@ class TourAdminScoresTable extends React.Component {
             return null;
         }
         return <tr key={ "H" + next_row.heat }><th className="heat-number" colSpan="3">
-            <p>{ _("global.phrases.heat_n", next_row.heat) }:</p>
+            <p>{ _("global.phrases.heat_n", next_row.heat) }</p>
         </th></tr>;
 
     }

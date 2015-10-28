@@ -21,17 +21,17 @@ class DisciplineResultsTable extends React.Component {
         return <tr key={ "R" + row.run.id }>
             <td className="w-8 place"><p className="text-center">{ row.place === null ? "" : row.place }</p></td>
             <td className="w-8 number"><p className="text-center">{ p.number }</p></td>
-            <td className="w-25" colSpan="2"><p>
+            <td className="w-36" colSpan="2"><p>
                 <table className="sportsmen"><tbody>
                     { p.formation_name ? <th colSpan="2"><p className="text-left">{ p.formation_name }</p></th> : null }
                     { p.sportsmen.map((s, idx) => <tr key={ idx }>
-                        <td className="w-70"><p>{ s.last_name + " " + s.first_name }</p></td>
-                        <td className="w-30"><p className="text-center">{ s.year_of_birth }</p></td>
+                        <td className="w-75"><p>{ s.last_name + " " + s.first_name }</p></td>
+                        <td className="w-25"><p className="text-center">{ s.year_of_birth }</p></td>
                     </tr> ) }
                 </tbody></table>
             </p></td>
-            <td className="w-34 club"><p>{ p.club.name }, { row.run.participant.club.city }</p></td>
-            <td className="w-20 coaches"><p>{ p.coaches.split(",").map((c) => [c.trim(), <br />]) }</p></td>
+            <td className="w-24 club"><p>{ p.club.name }</p></td>
+            <td className="w-24 coaches"><p>{ p.coaches.split(",").map((c) => [c.trim(), <br />]) }</p></td>
         </tr>;
     }
     renderRows() {
@@ -51,10 +51,10 @@ class DisciplineResultsTable extends React.Component {
                     <tr>
                         <th className="w-8"><p>{ __("results.labels.place") }</p></th>
                         <th className="w-8"><p>{ __("results.labels.number") }</p></th>
-                        <th className="w-21"><p>{ __("results.labels.sportsmen") }</p></th>
+                        <th className="w-27"><p>{ __("results.labels.sportsmen") }</p></th>
                         <th className="w-9"><p>{ __("results.labels.sportsmen_year_of_birth") }</p></th>
-                        <th className="w-34"><p>{ __("results.labels.participant_club") }</p></th>
-                        <th className="w-20"><p>{ __("results.labels.participant_coaches") }</p></th>
+                        <th className="w-24"><p>{ __("results.labels.participant_club") }</p></th>
+                        <th className="w-24"><p>{ __("results.labels.participant_coaches") }</p></th>
                     </tr>
                 </thead>
                 <tbody>

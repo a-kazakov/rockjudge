@@ -227,6 +227,7 @@ function _(src, arg) {
             },
             "participant": {
                 "acro_description": "Описание трюка",
+                "acro_descriptions": "Описание трюков",
                 "acro_score": "Оценка",
                 "acrobatics": "Акробатика",
                 "club_name": "Клуб",

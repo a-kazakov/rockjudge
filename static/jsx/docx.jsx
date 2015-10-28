@@ -7,12 +7,13 @@ class DocxImpl {
         this.title1 = null;
         this.title2 = null;
         this.title3 = null;
+        this.margins = null;
         this.body = "";
         this.orientation = "portrait";
         this.styles = {
             "body": {
                 "font-size": "10pt",
-                "font-family": "Calibri, Arial, sans-serif",
+                "font-family": "Calibri, Tahoma, Arial, sans-serif",
             },
             "table": {
                 "border-collapse": "collapse",
@@ -35,22 +36,33 @@ class DocxImpl {
                 "margin-top": "10pt",
             },
             "h2": {
-                "font-size": "18pt",
+                "font-size": "16pt",
                 "font-weight": "bold",
                 "text-align": "center",
                 "margin-top": "6pt",
             },
             "h3": {
-                "font-size": "14pt",
+                "font-size": "16pt",
                 "font-weight": "bold",
                 "text-align": "center",
                 "margin-top": "4pt",
+            },
+            "h4 p": {
+                "font-size": "14pt",
+                "font-weight": "bold",
+                "margin": "10pt 0 6pt",
+            },
+            "h5 p": {
+                "font-size": "12pt",
+                "font-weight": "bold",
+                "margin": "6pt 0",
             },
             ".header": {
                 "border-bottom": "1px solid black",
                 "font-size": "10pt",
                 "margin": 0,
                 "padding-bottom": "2pt",
+                "margin-bottom": "20pt",
                 "text-align": "center",
             },
             "p": {
@@ -58,13 +70,16 @@ class DocxImpl {
                 "padding": 0,
             },
             ".spacer": {
-                "font-size": "18pt",
+                "font-size": "14pt",
+            },
+            ".va-top": {
+                "vertical-align": "top",
             },
             ".text-left": { "text-align": "left" },
             ".text-right": { "text-align": "right" },
             ".text-center": { "text-align": "center" },
             ".bordered-table td, .bordered-table th": {
-                "border": "2px solid black",
+                "border": "1pt solid black",
             },
         }
         this.addWidthCss();
@@ -98,6 +113,10 @@ class DocxImpl {
         this.title3 = title3;
         return this;
     }
+    setMargins(margins) {
+        this.margins = margins;
+        return this;
+    }
     setBody(body) {
         this.body = body;
         return this;
@@ -119,7 +138,7 @@ class DocxImpl {
     }
     renderHTML() {
         let css = this.renderStyles();
-        let header = this.header ? '<div class="header">' + this.header + '</div>' : "";
+        let header = this.header ? '<p class="header">' + this.header + '</p>' : "";
         let title1 = this.title1 ? '<h1>' + this.title1 + '</h1>' : "";
         let title2 = this.title2 ? '<h2>' + this.title2 + '</h2>' : "";
         let title3 = this.title3 ? '<h3>' + this.title3 + '</h3>' : "";
@@ -139,7 +158,7 @@ class DocxImpl {
 
     save() {
         let html = this.renderHTML();
-        let margins = this.orientation == "portrait" ? [10, 15, 10, 15] : [7, 10, 7, 10];
+        let margins = this.margins || (this.orientation == "portrait" ? [10, 15, 10, 15] : [7, 10, 7, 10]);
         let converted = htmlDocx.asBlob(html, {
             orientation: this.orientation,
             margins: {

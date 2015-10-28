@@ -61,37 +61,37 @@ class StartList extends React.Component {
             return null;
         }
         return <div key={ ic.id }>
-            <h4>{ ic.name }</h4>
+            <h5><p>{ ic.name }</p></h5>
             <div className="discipline">
                 <table className="bordered-table"><thead>
                     <tr>
                         <th className="w-8 number"><p>{ _("models.participant.number") }</p></th>
-                        <th className="w-21 name"><p>{ _("models.participant.sportsmen") }</p></th>
+                        <th className="w-27 name"><p>{ _("models.participant.sportsmen") }</p></th>
                         <th className="w-9 year-of-birth"><p>{ _("models.participant.sportsmen_year_of_birth") }</p></th>
-                        <th className="w-37 club"><p>{ _("models.participant.club_name") }</p></th>
-                        <th className="w-25 coaches"><p>{ _("models.participant.coaches") }</p></th>
+                        <th className="w-28 club"><p>{ _("models.participant.club_name") }</p></th>
+                        <th className="w-28 coaches"><p>{ _("models.participant.coaches") }</p></th>
                     </tr>
                 </thead><tbody>
                     { ic.participants.map((p) => [
                         <tr key={ p.id } className={ !this.state.include_acrobatics || p.acrobatics.length == 0 ? "" : "has-acro" }>
                             <td className="w-8 number"><p className="text-center">{ p.number }</p></td>
-                            <td className="w-30 name" colSpan="2"><p>
+                            <td className="w-36 name" colSpan="2"><p>
                                 <table className="inner"><tbody>
                                     { p.formation_name ? <th colSpan="2"><p className="text-left">{ p.formation_name }</p></th> : null }
                                     { this.state.include_formation_sportsmen || !p.formation_name ? p.sportsmen.map((s, idx) => <tr key={ idx }>
-                                        <td className="w-70"><p>{ s.last_name + " " + s.first_name }</p></td>
-                                        <td className="w-30"><p className="text-center">{ s.year_of_birth }</p></td>
+                                        <td className="w-75"><p>{ s.last_name + " " + s.first_name }</p></td>
+                                        <td className="w-25"><p className="text-center">{ s.year_of_birth }</p></td>
                                     </tr> ) : null }
                                 </tbody></table>
                             </p></td>
-                            <td className="w-37 club"><p>{ p.club.name }{", "}{ p.club.city }</p></td>
-                            <td className="w-25 coaches"><p>{ p.coaches.split(",").map((c) => [c.trim(), <br />]) }</p></td>
+                            <td className="w-28 club"><p>{ p.club.name }</p></td>
+                            <td className="w-28 coaches"><p>{ p.coaches.split(",").map((c) => [c.trim(), <br />]) }</p></td>
                         </tr>,
                         !this.state.include_acrobatics || p.acrobatics.length == 0 ? null :
                             <tr key={ "Acro" + p.id } ><td className="acro" colSpan="5">
                                 <table className="inner"><tbody>
                                     <tr>
-                                        <th className="w-93"><p className="text-left">{ _("models.participant.acro_description") }</p></th>
+                                        <th className="w-93"><p className="text-left">{ _("models.participant.acro_descriptions") }</p></th>
                                         <th className="w-7"><p className="text-right">{ _("models.participant.acro_score") }</p></th>
                                     </tr>
                                     { p.acrobatics.map((a, idx) =>
@@ -163,6 +163,8 @@ class StartList extends React.Component {
     }
     createDocx() {
         Docx("start-list")
+            .setMargins([10, 15, 10, 25])
+            .setHeader(this.state.name + ", " + this.state.date)
             .setTitle1(_("admin.headers.start_list"))
             .setBody(React.findDOMNode(this.refs.content).innerHTML)
             .addStyle(".bordered-table .inner td, .bordered-table .inner th", "border", "none")

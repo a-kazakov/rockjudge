@@ -385,8 +385,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
                     React.createElement(
                         "p",
                         null,
-                        _("global.phrases.heat_n", next_row.heat),
-                        ":"
+                        _("global.phrases.heat_n", next_row.heat)
                     )
                 )
             );

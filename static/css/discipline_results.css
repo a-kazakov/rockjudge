@@ -12,6 +12,11 @@
   padding: 0;
   text-align: left;
 }
+.ic-results .bordered-table table th {
+  border: none;
+  padding: 0;
+  text-align: left;
+}
 .ic-results .bordered-table td.name,
 .ic-results .bordered-table td.club,
 .ic-results .bordered-table td.coaches {

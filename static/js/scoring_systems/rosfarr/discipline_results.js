@@ -73,7 +73,7 @@ var DisciplineResultsTable = (function (_React$Component) {
                 ),
                 React.createElement(
                     "td",
-                    { className: "w-25", colSpan: "2" },
+                    { className: "w-36", colSpan: "2" },
                     React.createElement(
                         "p",
                         null,
@@ -98,7 +98,7 @@ var DisciplineResultsTable = (function (_React$Component) {
                                         { key: idx },
                                         React.createElement(
                                             "td",
-                                            { className: "w-70" },
+                                            { className: "w-75" },
                                             React.createElement(
                                                 "p",
                                                 null,
@@ -107,7 +107,7 @@ var DisciplineResultsTable = (function (_React$Component) {
                                         ),
                                         React.createElement(
                                             "td",
-                                            { className: "w-30" },
+                                            { className: "w-25" },
                                             React.createElement(
                                                 "p",
                                                 { className: "text-center" },
@@ -122,18 +122,16 @@ var DisciplineResultsTable = (function (_React$Component) {
                 ),
                 React.createElement(
                     "td",
-                    { className: "w-34 club" },
+                    { className: "w-24 club" },
                     React.createElement(
                         "p",
                         null,
-                        p.club.name,
-                        ", ",
-                        row.run.participant.club.city
+                        p.club.name
                     )
                 ),
                 React.createElement(
                     "td",
-                    { className: "w-20 coaches" },
+                    { className: "w-24 coaches" },
                     React.createElement(
                         "p",
                         null,
@@ -191,7 +189,7 @@ var DisciplineResultsTable = (function (_React$Component) {
                             ),
                             React.createElement(
                                 "th",
-                                { className: "w-21" },
+                                { className: "w-27" },
                                 React.createElement(
                                     "p",
                                     null,
@@ -209,7 +207,7 @@ var DisciplineResultsTable = (function (_React$Component) {
                             ),
                             React.createElement(
                                 "th",
-                                { className: "w-34" },
+                                { className: "w-24" },
                                 React.createElement(
                                     "p",
                                     null,
@@ -218,7 +216,7 @@ var DisciplineResultsTable = (function (_React$Component) {
                             ),
                             React.createElement(
                                 "th",
-                                { className: "w-20" },
+                                { className: "w-24" },
                                 React.createElement(
                                     "p",
                                     null,

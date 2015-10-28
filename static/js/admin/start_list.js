@@ -89,9 +89,13 @@ var StartList = (function (_React$Component) {
                 "div",
                 { key: ic.id },
                 React.createElement(
-                    "h4",
+                    "h5",
                     null,
-                    ic.name
+                    React.createElement(
+                        "p",
+                        null,
+                        ic.name
+                    )
                 ),
                 React.createElement(
                     "div",
@@ -116,7 +120,7 @@ var StartList = (function (_React$Component) {
                                 ),
                                 React.createElement(
                                     "th",
-                                    { className: "w-21 name" },
+                                    { className: "w-27 name" },
                                     React.createElement(
                                         "p",
                                         null,
@@ -134,7 +138,7 @@ var StartList = (function (_React$Component) {
                                 ),
                                 React.createElement(
                                     "th",
-                                    { className: "w-37 club" },
+                                    { className: "w-28 club" },
                                     React.createElement(
                                         "p",
                                         null,
@@ -143,7 +147,7 @@ var StartList = (function (_React$Component) {
                                 ),
                                 React.createElement(
                                     "th",
-                                    { className: "w-25 coaches" },
+                                    { className: "w-28 coaches" },
                                     React.createElement(
                                         "p",
                                         null,
@@ -170,7 +174,7 @@ var StartList = (function (_React$Component) {
                                     ),
                                     React.createElement(
                                         "td",
-                                        { className: "w-30 name", colSpan: "2" },
+                                        { className: "w-36 name", colSpan: "2" },
                                         React.createElement(
                                             "p",
                                             null,
@@ -195,7 +199,7 @@ var StartList = (function (_React$Component) {
                                                             { key: idx },
                                                             React.createElement(
                                                                 "td",
-                                                                { className: "w-70" },
+                                                                { className: "w-75" },
                                                                 React.createElement(
                                                                     "p",
                                                                     null,
@@ -204,7 +208,7 @@ var StartList = (function (_React$Component) {
                                                             ),
                                                             React.createElement(
                                                                 "td",
-                                                                { className: "w-30" },
+                                                                { className: "w-25" },
                                                                 React.createElement(
                                                                     "p",
                                                                     { className: "text-center" },
@@ -219,18 +223,16 @@ var StartList = (function (_React$Component) {
                                     ),
                                     React.createElement(
                                         "td",
-                                        { className: "w-37 club" },
+                                        { className: "w-28 club" },
                                         React.createElement(
                                             "p",
                                             null,
-                                            p.club.name,
-                                            ", ",
-                                            p.club.city
+                                            p.club.name
                                         )
                                     ),
                                     React.createElement(
                                         "td",
-                                        { className: "w-25 coaches" },
+                                        { className: "w-28 coaches" },
                                         React.createElement(
                                             "p",
                                             null,
@@ -260,7 +262,7 @@ var StartList = (function (_React$Component) {
                                                         React.createElement(
                                                             "p",
                                                             { className: "text-left" },
-                                                            _("models.participant.acro_description")
+                                                            _("models.participant.acro_descriptions")
                                                         )
                                                     ),
                                                     React.createElement(
@@ -430,7 +432,7 @@ var StartList = (function (_React$Component) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("start-list").setTitle1(_("admin.headers.start_list")).setBody(React.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table .inner td, .bordered-table .inner th", "border", "none").addStyle(".bordered-table .inner td, .bordered-table .inner th", "padding", "0").addStyle(".inner", "width", "100%").addStyle(".acro", "border-top", "none !important").addStyle(".has-acro td", "border-bottom", "1px solid #555 !important").addStyle(".has-acro td td", "border-bottom", "none !important").save();
+            Docx("start-list").setMargins([10, 15, 10, 25]).setHeader(this.state.name + ", " + this.state.date).setTitle1(_("admin.headers.start_list")).setBody(React.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table .inner td, .bordered-table .inner th", "border", "none").addStyle(".bordered-table .inner td, .bordered-table .inner th", "padding", "0").addStyle(".inner", "width", "100%").addStyle(".acro", "border-top", "none !important").addStyle(".has-acro td", "border-bottom", "1px solid #555 !important").addStyle(".has-acro td td", "border-bottom", "none !important").save();
         }
     }]);
 
