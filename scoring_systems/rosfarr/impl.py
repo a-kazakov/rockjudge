@@ -349,7 +349,6 @@ class TourScores:
                 "sorting_score": run_score.sorting_score,
             })
         table = sorted(table, key=lambda s: s["sorting_score"])
-        next_tour = self.tour.next_tour
         place = 1
         lastest_sorting_score = None
         num_advances = self.tour.get_actual_num_advances()
@@ -359,7 +358,7 @@ class TourScores:
             lastest_sorting_score = row["sorting_score"]
             row.update({
                 "place": place,
-                "advances": next_tour is not None and num_advances >= place,
+                "advances": num_advances >= place,
             })
         return table
 
