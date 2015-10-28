@@ -15,7 +15,6 @@ class Judge(BaseModel):
     competition = peewee.ForeignKeyField(Competition, related_name="judges")
     name = peewee.CharField()
     category = peewee.CharField()
-    role = peewee.CharField(default="")
     role_description = peewee.CharField(default="")
     number = peewee.CharField(default="")
     sp = peewee.IntegerField(default=0)

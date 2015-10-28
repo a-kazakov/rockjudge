@@ -336,12 +336,14 @@ class TourAdminScoresTable extends React.Component {
     }
     createDocx() {
         Docx("tour-heats")
-            .setHeader(this.state.discipline.name)
-            .setSubheader(this.state.name)
+            .setHeader(this.state.discipline.competition.name + ", " + this.state.discipline.competition.date)
+            .setTitle1(_("admin.headers.tour_heats"))
+            .setTitle2(this.state.discipline.name)
+            .setTitle3(this.state.name)
             .setBody(React.findDOMNode(this.refs.printable_heats).innerHTML)
             .addStyle(".heat-number", "background", "#ccc")
             .addStyle(".heat-number", "text-align", "left")
-            .addStyle("td, th", "font-size", "14pt")
+            .addStyle("td, th", "font-size", "12pt")
             .save();
     }
 }

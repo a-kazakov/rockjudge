@@ -3,8 +3,10 @@ window.Docx = (fn) => new DocxImpl(fn);
 class DocxImpl {
     constructor(filename) {
         this.filename = filename;
-        this.header = "";
-        this.subheader = null;
+        this.header = null;
+        this.title1 = null;
+        this.title2 = null;
+        this.title3 = null;
         this.body = "";
         this.orientation = "portrait";
         this.styles = {
@@ -24,15 +26,39 @@ class DocxImpl {
             },
             "h1, h2, h3, h4, h5, h6": {
                 "page-break-after": "avoid",
+                "margin-bottom": 0,
             },
             "h1": {
                 "font-size": "20pt",
                 "font-weight": "bold",
                 "text-align": "center",
+                "margin-top": "10pt",
+            },
+            "h2": {
+                "font-size": "18pt",
+                "font-weight": "bold",
+                "text-align": "center",
+                "margin-top": "6pt",
+            },
+            "h3": {
+                "font-size": "14pt",
+                "font-weight": "bold",
+                "text-align": "center",
+                "margin-top": "4pt",
+            },
+            ".header": {
+                "border-bottom": "1px solid black",
+                "font-size": "10pt",
+                "margin": 0,
+                "padding-bottom": "2pt",
+                "text-align": "center",
             },
             "p": {
                 "margin": 0,
                 "padding": 0,
+            },
+            ".spacer": {
+                "font-size": "18pt",
             },
             ".text-left": { "text-align": "left" },
             ".text-right": { "text-align": "right" },
@@ -60,8 +86,16 @@ class DocxImpl {
         this.header = header;
         return this;
     }
-    setSubheader(subheader) {
-        this.subheader = subheader;
+    setTitle1(title1) {
+        this.title1 = title1;
+        return this;
+    }
+    setTitle2(title2) {
+        this.title2 = title2;
+        return this;
+    }
+    setTitle3(title3) {
+        this.title3 = title3;
         return this;
     }
     setBody(body) {
@@ -85,22 +119,27 @@ class DocxImpl {
     }
     renderHTML() {
         let css = this.renderStyles();
-        let header = (this.subheader !== null ? '<h1 style="margin-bottom:5pt">' : "<h1>") + this.header + "</h1>";
-        let subheader = this.subheader !== null ? '<h3 class="text-center" style="margin: 0 0 25pt 0">' + this.subheader + '</h3>' : "";
+        let header = this.header ? '<div class="header">' + this.header + '</div>' : "";
+        let title1 = this.title1 ? '<h1>' + this.title1 + '</h1>' : "";
+        let title2 = this.title2 ? '<h2>' + this.title2 + '</h2>' : "";
+        let title3 = this.title3 ? '<h3>' + this.title3 + '</h3>' : "";
         return "<!DOCTYPE html>\n" +
             "<html><head>" +
                 "<meta charset=\"utf-8\">" +
                 "<style>\n" + css + "\n</style>\n" +
             "</head><body>\n" +
                 header +
-                subheader +
+                title1 +
+                title2 +
+                title3 +
+                '<p class="spacer">&nbsp;</p>' +
                 this.body +
             "</body></html>";
     }
 
     save() {
         let html = this.renderHTML();
-        let margins = this.orientation.portrait ? [10, 7, 15, 7] : [7, 10, 7, 10];
+        let margins = this.orientation == "portrait" ? [10, 15, 10, 15] : [7, 10, 7, 10];
         let converted = htmlDocx.asBlob(html, {
             orientation: this.orientation,
             margins: {

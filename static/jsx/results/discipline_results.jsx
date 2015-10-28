@@ -102,8 +102,8 @@ class DisciplineResults extends React.Component {
     }
     createDocx() {
         Docx("discipline-results")
-            .setHeader(this.state.discipline.name)
-            .setSubheader(_("admin.headers.discipline_results"))
+            .setTitle1(this.state.discipline.name)
+            .setTitle3(_("admin.headers.discipline_results"))
             .setBody(React.findDOMNode(this.refs.main_table).innerHTML)
             .addStyle(".tour-name", "background", "#ccc")
             .addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none")

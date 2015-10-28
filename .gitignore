@@ -1,6 +1,7 @@
 **/*.pyc
 **/__pycache__/**
 *.db
+**.old
 **/*.map
 no-sharing/**
 settings_prod.py

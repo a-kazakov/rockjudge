@@ -63,6 +63,7 @@ function _(src, arg) {
                 "participants_management": "Управление участниками",
                 "service_menu": "Сервисное меню",
                 "start_list": "Стартовый лист",
+                "tour_heats": "Заходы участников",
                 "tour_results": "Результаты тура",
                 "unfinalize_tour": "Отмена финализации тура",
             },

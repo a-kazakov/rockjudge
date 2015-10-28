@@ -163,7 +163,7 @@ class StartList extends React.Component {
     }
     createDocx() {
         Docx("start-list")
-            .setHeader(_("admin.headers.start_list"))
+            .setTitle1(_("admin.headers.start_list"))
             .setBody(React.findDOMNode(this.refs.content).innerHTML)
             .addStyle(".bordered-table .inner td, .bordered-table .inner th", "border", "none")
             .addStyle(".bordered-table .inner td, .bordered-table .inner th", "padding", "0")

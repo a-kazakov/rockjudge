@@ -80,8 +80,8 @@ class TourResults extends React.Component {
     createDocx() {
         Docx("tour-results")
             .setOrientation(this.state.verbose ? "landscape" : "portrait")
-            .setHeader(this.state.discipline_name)
-            .setSubheader(this.state.name)
+            .setTitle1(this.state.discipline_name)
+            .setTitle3(this.state.name)
             .setBody(React.findDOMNode(this.refs.content).innerHTML)
             .addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none")
             .addStyle(".bordered-table .score-breakdown th", "padding", "0 1pt 0 0")

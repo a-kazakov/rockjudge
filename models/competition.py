@@ -32,21 +32,6 @@ class Competition(BaseModel):
             "judges": {},
         })
 
-    def get_max_number(self):
-        from models import (
-            Discipline,
-            Participant,
-        )
-        result = (Participant.select(Discipline, Participant)
-                  .join(Discipline)
-                  .where(Discipline.competition == self)
-                  .order_by(Participant.number.desc())
-                  .limit(1))
-        result = list(result)
-        if result == []:
-            return 0
-        return result[0].number
-
     def load(self, data, ws_message):
         from models import (
             Club,

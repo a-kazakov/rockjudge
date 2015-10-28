@@ -129,7 +129,7 @@ class CompetitionReport extends React.Component {
     }
     createDocx() {
         Docx("report")
-            .setHeader(_("admin.headers.competition_report"))
+            .setTitle1(_("admin.headers.competition_report"))
             .setBody(this.refs.main_table.getDOMNode().innerHTML)
             .addStyle(".spacer td", "height", "5pt")
             .addStyle(".tour-name", "background", "#bbb")
