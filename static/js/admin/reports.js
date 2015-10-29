@@ -110,7 +110,7 @@ var ReportsUI = (function (_React$Component) {
                 }).bind(this));
                 return React.createElement(
                     "details",
-                    { open: "true", className: "block", key: ic.id },
+                    { className: "block", key: ic.id },
                     React.createElement(
                         "summary",
                         { className: "level-1" },

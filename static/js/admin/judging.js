@@ -37,7 +37,7 @@ var CompetitionSchema = (function (_React$Component) {
         value: function renderDiscipline(ic) {
             return React.createElement(
                 "details",
-                { open: "true", className: "block", key: ic.id },
+                { className: "block", key: ic.id },
                 React.createElement(
                     "summary",
                     { className: "level-1" },
