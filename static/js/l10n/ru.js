@@ -350,18 +350,6 @@ function _(src, arg) {
                     }
                 },
                 "results": {
-                    "labels": {
-                        "acrobatics": "Акробатика",
-                        "next_tour": "След. тур",
-                        "number": "№",
-                        "participant_club": "Клуб",
-                        "participant_coaches": "Тренеры",
-                        "participant_name": "Участник",
-                        "place": "Место",
-                        "sportsmen": "Спортсмены",
-                        "sportsmen_year_of_birth": "Г.р.",
-                        "total_score": "Сумма баллов"
-                    },
                     "breakdown": {
                         "acro_n": function acro_n(n) {
                             return "A" + n.toString();
@@ -377,6 +365,23 @@ function _(src, arg) {
                         "p": "М",
                         "sm": "Ош",
                         "t": "Σ"
+                    },
+                    "headers": {
+                        "participants_advanced": "Прошли в следующий тур",
+                        "participants_not_advanced": "Не прошли в следующий тур"
+                    },
+                    "labels": {
+                        "acrobatics": "Акробатика",
+                        "card": "Штраф",
+                        "next_tour": "След. тур",
+                        "number": "№",
+                        "participant_club": "Клуб",
+                        "participant_coaches": "Тренеры",
+                        "participant_name": "Участник",
+                        "place": "Место",
+                        "sportsmen": "Спортсмены",
+                        "sportsmen_year_of_birth": "Г.р.",
+                        "total_score": "Сумма баллов"
                     }
                 }
             }

@@ -18,25 +18,15 @@
 .tour-results .score-breakdown .total-score {
   font-weight: bold;
 }
-.tour-results .bordered-table .place {
-  width: 50px;
-}
-.tour-results .bordered-table .number {
-  width: 50px;
-}
-.tour-results .bordered-table .participant {
-  width: 300px;
-}
-.tour-results .bordered-table .club {
-  width: 300px;
-}
-.tour-results .bordered-table .score {
-  width: 100px;
-}
-.tour-results .bordered-table .next-tour {
-  width: 70px;
+.tour-results .bordered-table {
+  width: 750px;
 }
 .tour-results .bordered-table td.participant,
 .tour-results .bordered-table td.club {
   text-align: left !important;
+}
+.tour-results .bordered-table .advances-header {
+  background-color: #ccc;
+  font-weight: bold;
+  text-align: left;
 }

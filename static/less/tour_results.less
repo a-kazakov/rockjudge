@@ -21,14 +21,14 @@
     }
   }
   .bordered-table {
-    .place        { width: 50px;  }
-    .number       { width: 50px;  }
-    .participant  { width: 300px; }
-    .club         { width: 300px; }
-    .score        { width: 100px; }
-    .next-tour    { width: 70px;  }
+    width: @print-width;
     td.participant, td.club {
       text-align: left !important;
+    }
+    .advances-header {
+      background-color: #ccc;
+      font-weight: bold;
+      text-align: left;
     }
   }
 }

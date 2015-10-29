@@ -47,7 +47,9 @@ class DisciplineResults extends React.Component {
         this.setState({
             loaded: true,
             table: new_state,
-            discipline: storage.get("Discipline").by_id(this.props.discipline_id).serialize({}),
+            discipline: storage.get("Discipline").by_id(this.props.discipline_id).serialize({
+                competition: {},
+            }),
         });
     }
     loadResults() {
@@ -66,6 +68,7 @@ class DisciplineResults extends React.Component {
         Api("discipline.get", {
             discipline_id: this.props.discipline_id,
             children: {
+                competition: {},
                 tours: {
                     runs: {
                         participant: {
@@ -102,8 +105,9 @@ class DisciplineResults extends React.Component {
     }
     createDocx() {
         Docx("discipline-results")
-            .setTitle1(this.state.discipline.name)
-            .setTitle3(_("admin.headers.discipline_results"))
+            .setHeader(this.state.discipline.competition.name + ", " + this.state.discipline.competition.date)
+            .setTitle1(_("admin.headers.discipline_results"))
+            .setTitle3(this.state.discipline.name)
             .setBody(React.findDOMNode(this.refs.main_table).innerHTML)
             .addStyle(".tour-name", "background", "#ddd")
             .addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none")

@@ -176,7 +176,7 @@ class Participant(BaseModel):
     def serialize(self, children={}):
         result = self.serialize_props()
         result["name"] = self.get_name()
-        result["sportsmen"] = self.sportsmen
+        result["sportsmen"] = sorted(self.sportsmen, key=lambda x: (x["gender"], x["last_name"], x["first_name"]))
         result["acrobatics"] = self.acrobatics
         result = self.serialize_upper_child(result, "club", children)
         return result

@@ -509,7 +509,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                 var score = this.props.row.scores.scores[judge.id].data;
                 return React.createElement(
                     "td",
-                    { key: judge.id },
+                    { className: judge.role, key: judge.id },
                     React.createElement(
                         "p",
                         { className: "text-center" },
@@ -681,7 +681,7 @@ var TourResultsVerboseTable = (function (_React$Component2) {
             ) : null;
             return React.createElement(
                 "table",
-                { className: "bordered-table" },
+                { className: "bordered-table", style: { width: "100%" } },
                 React.createElement(
                     "thead",
                     null,
@@ -763,15 +763,14 @@ var TourResultsTableRow = (function (_React$Component3) {
     _createClass(TourResultsTableRow, [{
         key: "render",
         value: function render() {
-            var next_tour_cell = this.props.has_next_tour ? React.createElement(
-                "td",
-                { className: "w-7 next-tour" },
-                React.createElement(
+            var name = this.props.row.participant.formation_name || this.props.row.participant.sportsmen.map(function (s, idx) {
+                return React.createElement(
                     "p",
-                    { className: "text-center" },
-                    this.props.row.advances ? _("global.labels.yes") : _("global.labels.no")
-                )
-            ) : null;
+                    { key: idx },
+                    s.last_name + " " + s.first_name
+                );
+            });
+            var card = this.props.head_judge ? this.props.row.scores.scores[this.props.head_judge.id].data.total_score : "0";
             return React.createElement(
                 "tr",
                 null,
@@ -784,10 +783,9 @@ var TourResultsTableRow = (function (_React$Component3) {
                         this.props.row.place
                     )
                 ),
-                next_tour_cell,
                 React.createElement(
                     "td",
-                    { className: "w-4 number" },
+                    { className: "w-6 number" },
                     React.createElement(
                         "p",
                         { className: "text-center" },
@@ -800,7 +798,7 @@ var TourResultsTableRow = (function (_React$Component3) {
                     React.createElement(
                         "p",
                         null,
-                        this.props.row.participant.name
+                        name
                     )
                 ),
                 React.createElement(
@@ -809,22 +807,25 @@ var TourResultsTableRow = (function (_React$Component3) {
                     React.createElement(
                         "p",
                         null,
-                        this.props.row.participant.club.name,
-                        ", ",
-                        React.createElement(
-                            "nobr",
-                            null,
-                            this.props.row.participant.club.city
-                        )
+                        this.props.row.participant.club.name
                     )
                 ),
                 React.createElement(
                     "td",
-                    { className: "w-13 score" },
+                    { className: "w-18 score" },
                     React.createElement(
                         "p",
                         { className: "text-center" },
                         this.props.row.scores.total_run_score
+                    )
+                ),
+                React.createElement(
+                    "td",
+                    { className: "w-8 card" },
+                    React.createElement(
+                        "p",
+                        { className: "text-center" },
+                        card
                     )
                 )
             );
@@ -844,13 +845,40 @@ var TourResultsTable = (function (_React$Component4) {
     }
 
     _createClass(TourResultsTable, [{
+        key: "renderAdvancesHeader",
+        value: function renderAdvancesHeader(prev_row, next_row, idx) {
+            if (prev_row && prev_row.advances == next_row.advances) {
+                return null;
+            }
+            if (!this.props.has_next_tour) {
+                return null;
+            }
+            return React.createElement(
+                "th",
+                { className: "advances-header", colSpan: "6" },
+                next_row.advances ? React.createElement(
+                    "p",
+                    { className: "text-left" },
+                    __("results.headers.participants_advanced")
+                ) : React.createElement(
+                    "p",
+                    { className: "text-left" },
+                    __("results.headers.participants_not_advanced")
+                )
+            );
+        }
+    }, {
         key: "render",
         value: function render() {
-            var rows = this.props.data.map((function (row) {
-                return React.createElement(TourResultsTableRow, {
+            var head_judge = this.props.judges.filter(function (j) {
+                return j.role == "head_judge";
+            })[0];
+            var rows = this.props.data.map((function (row, idx, arr) {
+                return [this.renderAdvancesHeader(arr[idx - 1], row), React.createElement(TourResultsTableRow, {
                     row: row,
                     key: row.participant.id,
-                    has_next_tour: this.props.has_next_tour });
+                    head_judge: head_judge,
+                    has_next_tour: this.props.has_next_tour })];
             }).bind(this));
             return React.createElement(
                 "table",
@@ -870,18 +898,9 @@ var TourResultsTable = (function (_React$Component4) {
                                 __("results.labels.place")
                             )
                         ),
-                        this.props.has_next_tour ? React.createElement(
-                            "th",
-                            { className: "next-tour" },
-                            React.createElement(
-                                "p",
-                                null,
-                                __("results.labels.next_tour")
-                            )
-                        ) : null,
                         React.createElement(
                             "th",
-                            { className: "w-4 number" },
+                            { className: "w-6 number" },
                             React.createElement(
                                 "p",
                                 null,
@@ -908,11 +927,20 @@ var TourResultsTable = (function (_React$Component4) {
                         ),
                         React.createElement(
                             "th",
-                            { className: "w-13 score" },
+                            { className: "w-18 score" },
                             React.createElement(
                                 "p",
                                 null,
                                 __("results.labels.total_score")
+                            )
+                        ),
+                        React.createElement(
+                            "th",
+                            { className: "w-8 card" },
+                            React.createElement(
+                                "p",
+                                { className: "text-center" },
+                                __("results.labels.card")
                             )
                         )
                     )

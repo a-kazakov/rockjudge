@@ -33,11 +33,29 @@ var TourResults = (function (_React$Component) {
     }
 
     _createClass(TourResults, [{
+        key: "reloadFromStorage",
+        value: function reloadFromStorage() {
+            var SCHEMA = {
+                discipline: {
+                    competition: {}
+                }
+            };
+            var serialized = storage.get("Tour").by_id(this.props.tour_id).serialize(SCHEMA);
+            this.setState({
+                tour: serialized
+            });
+        }
+    }, {
         key: "loadData",
         value: function loadData() {
             Api("tour.get_results", { tour_id: this.props.tour_id }).onSuccess((function (new_results) {
                 this.setState(new_results);
             }).bind(this)).send();
+            Api("tour.get", { tour_id: this.props.tour_id, children: {
+                    discipline: {
+                        competition: {}
+                    }
+                } }).updateDB("Tour", this.props.tour_id).onSuccess(this.reloadFromStorage.bind(this)).send();
         }
 
         // Control
@@ -95,6 +113,7 @@ var TourResults = (function (_React$Component) {
                     scoring_system_name: this.state.scoring_system_name });
             } else {
                 table = React.createElement(TourResultsTable, {
+                    judges: active_judges,
                     data: this.state.results,
                     has_next_tour: this.state.next_tour_id != null });
             }
@@ -136,7 +155,7 @@ var TourResults = (function (_React$Component) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("tour-results").setOrientation(this.state.verbose ? "landscape" : "portrait").setTitle1(this.state.discipline_name).setTitle3(this.state.name).setBody(React.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none").addStyle(".bordered-table .score-breakdown th", "padding", "0 1pt 0 0").addStyle(".bordered-table .score-breakdown td", "padding", "0 0 0 1pt").addStyle(".score-breakdown th", "text-align", "right").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown", "width", "50pt").addStyle(".total-score", "font-weight", "bold").save();
+            Docx("tour-results").setOrientation(this.state.verbose ? "landscape" : "portrait").setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date).setTitle1(_("admin.headers.tour_results")).setTitle2(this.state.tour.discipline.name).setTitle3(this.state.tour.name).setBody(React.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table", "font-size", "12pt").addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none").addStyle(".bordered-table .score-breakdown th", "padding", "0 1pt 0 0").addStyle(".bordered-table .score-breakdown td", "padding", "0 0 0 1pt").addStyle(".score-breakdown th", "text-align", "right").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown", "width", "50pt").addStyle(".total-score", "font-weight", "bold").addStyle(".advances-header", "background-color", "#ddd").addStyle(".head_judge", "width", "5%").addStyle(".dance_judge", "width", "8%").addStyle(".acro_judge", "width", "8%").save();
         }
     }]);
 

@@ -71,7 +71,7 @@ class TourResultsVerboseTableRow extends React.Component {
             : null;
         let judges_scores = this.props.judges.map(function(judge) {
             let score = this.props.row.scores.scores[judge.id].data;
-            return <td key={ judge.id } ><p className="text-center">{ this.renderScore(judge, score) }</p></td>;
+            return <td className={ judge.role } key={ judge.id }><p className="text-center">{ this.renderScore(judge, score) }</p></td>;
         }.bind(this));
         let acro_scores_cell = null;
         if (this.props.scoring_system_name == "rosfarr.acro") {
@@ -120,7 +120,7 @@ class TourResultsVerboseTable extends React.Component {
         });
         let acro_header = this.props.scoring_system_name == "rosfarr.acro"
             ? <th className="w-10 acro"><p>{ __("results.labels.acrobatics") }</p></th> : null;
-        return <table className="bordered-table">
+        return <table className="bordered-table" style={{ width: "100%" }}>
             <thead>
                 <tr>
                     <th className="w-3 place"><p>{ __("results.labels.place") }</p></th>
@@ -144,40 +144,56 @@ class TourResultsVerboseTable extends React.Component {
 
 class TourResultsTableRow extends React.Component {
     render() {
-        var next_tour_cell = this.props.has_next_tour
-            ? <td className="w-7 next-tour"><p className="text-center">
-                    { this.props.row.advances ? _("global.labels.yes") : _("global.labels.no") }
-                </p></td>
-            : null;
+        let name = this.props.row.participant.formation_name ||
+            this.props.row.participant.sportsmen.map((s, idx) => <p key={ idx }>{ s.last_name + " " + s.first_name }</p>)
+        let card = this.props.head_judge ? this.props.row.scores.scores[this.props.head_judge.id].data.total_score : "0";
         return <tr>
             <td className="w-7 place"><p className="text-center">{ this.props.row.place }</p></td>
-            { next_tour_cell }
-            <td className="w-4 number"><p className="text-center">{ this.props.row.participant.number }</p></td>
-            <td className="participant"><p>{ this.props.row.participant.name }</p></td>
-            <td className="club"><p>{ this.props.row.participant.club.name }{", "}
-                <nobr>{ this.props.row.participant.club.city }</nobr></p></td>
-            <td className="w-13 score"><p className="text-center">{ this.props.row.scores.total_run_score }</p></td>
+            <td className="w-6 number"><p className="text-center">{ this.props.row.participant.number }</p></td>
+            <td className="participant"><p>{ name }</p></td>
+            <td className="club"><p>{ this.props.row.participant.club.name }</p></td>
+            <td className="w-18 score"><p className="text-center">{ this.props.row.scores.total_run_score }</p></td>
+            <td className="w-8 card"><p className="text-center">{ card }</p></td>
         </tr>
     }
 }
 
 class TourResultsTable extends React.Component {
+    renderAdvancesHeader(prev_row, next_row, idx) {
+        if (prev_row && prev_row.advances == next_row.advances) {
+            return null;
+        }
+        if (!this.props.has_next_tour) {
+            return null;
+        }
+        return <th className="advances-header" colSpan="6" >
+            { next_row.advances
+                ? <p className="text-left">{ __("results.headers.participants_advanced") }</p>
+                : <p className="text-left">{ __("results.headers.participants_not_advanced") }</p>
+            }
+        </th>
+    }
     render() {
-        var rows = this.props.data.map(function(row) {
-            return <TourResultsTableRow
-                row={ row }
-                key={ row.participant.id }
-                has_next_tour={ this.props.has_next_tour } />
+        let head_judge = this.props.judges.filter((j) => j.role == "head_judge")[0];
+        var rows = this.props.data.map(function(row, idx, arr) {
+            return [
+                this.renderAdvancesHeader(arr[idx - 1], row),
+                <TourResultsTableRow
+                    row={ row }
+                    key={ row.participant.id }
+                    head_judge={ head_judge }
+                    has_next_tour={ this.props.has_next_tour } />
+            ]
         }.bind(this));
         return <table className="bordered-table">
             <thead>
                 <tr>
                     <th className="w-7 place"><p>{ __("results.labels.place") }</p></th>
-                    { this.props.has_next_tour ? <th className="next-tour"><p>{ __("results.labels.next_tour") }</p></th> : null }
-                    <th className="w-4 number"><p>{ __("results.labels.number") }</p></th>
+                    <th className="w-6 number"><p>{ __("results.labels.number") }</p></th>
                     <th className="participant"><p>{ __("results.labels.participant_name") }</p></th>
                     <th className="club"><p>{ __("results.labels.participant_club") }</p></th>
-                    <th className="w-13 score"><p>{ __("results.labels.total_score") }</p></th>
+                    <th className="w-18 score"><p>{ __("results.labels.total_score") }</p></th>
+                    <th className="w-8 card"><p className="text-center">{ __("results.labels.card") }</p></th>
                 </tr>
             </thead>
             <tbody>

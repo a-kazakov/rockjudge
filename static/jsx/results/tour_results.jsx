@@ -18,10 +18,31 @@ class TourResults extends React.Component {
         }.bind(this));
         this.loadData();
     }
+    reloadFromStorage() {
+        var SCHEMA = {
+            discipline: {
+                competition: {},
+            },
+        }
+        let serialized = storage.get("Tour")
+            .by_id(this.props.tour_id)
+            .serialize(SCHEMA);
+        this.setState({
+            tour: serialized,
+        });
+    }
     loadData() {
         Api("tour.get_results", {tour_id: this.props.tour_id}).onSuccess(function(new_results) {
             this.setState(new_results);
         }.bind(this)).send();
+        Api("tour.get", { tour_id: this.props.tour_id, children: {
+            discipline: {
+                competition: {},
+            },
+        }})
+        .updateDB("Tour", this.props.tour_id)
+        .onSuccess(this.reloadFromStorage.bind(this))
+        .send();
     }
 
     // Control
@@ -59,6 +80,7 @@ class TourResults extends React.Component {
                 scoring_system_name={ this.state.scoring_system_name } />
         } else {
             table = <TourResultsTable
+                judges={ active_judges }
                 data={ this.state.results }
                 has_next_tour={ this.state.next_tour_id != null } />
         }
@@ -80,9 +102,12 @@ class TourResults extends React.Component {
     createDocx() {
         Docx("tour-results")
             .setOrientation(this.state.verbose ? "landscape" : "portrait")
-            .setTitle1(this.state.discipline_name)
-            .setTitle3(this.state.name)
+            .setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date)
+            .setTitle1(_("admin.headers.tour_results"))
+            .setTitle2(this.state.tour.discipline.name)
+            .setTitle3(this.state.tour.name)
             .setBody(React.findDOMNode(this.refs.content).innerHTML)
+            .addStyle(".bordered-table", "font-size", "12pt")
             .addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none")
             .addStyle(".bordered-table .score-breakdown th", "padding", "0 1pt 0 0")
             .addStyle(".bordered-table .score-breakdown td", "padding", "0 0 0 1pt")
@@ -91,6 +116,10 @@ class TourResults extends React.Component {
             .addStyle(".score-breakdown td", "text-align", "left")
             .addStyle(".score-breakdown", "width", "50pt")
             .addStyle(".total-score", "font-weight", "bold")
+            .addStyle(".advances-header", "background-color", "#ddd")
+            .addStyle(".head_judge", "width", "5%")
+            .addStyle(".dance_judge", "width", "8%")
+            .addStyle(".acro_judge", "width", "8%")
             .save();
     }
 }
