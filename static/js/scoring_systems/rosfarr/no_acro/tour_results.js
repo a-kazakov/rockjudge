@@ -539,6 +539,8 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                             React.createElement(
                                 "p",
                                 null,
+                                acro.original_score.toFixed(1),
+                                " / ",
                                 acro.score.toFixed(1)
                             )
                         )
@@ -561,7 +563,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                 }
                 acro_scores_cell = React.createElement(
                     "td",
-                    { className: "w-4 acro_scores" },
+                    { className: "w-10 acro_scores" },
                     React.createElement(
                         "table",
                         { className: "score-breakdown" },
@@ -670,7 +672,7 @@ var TourResultsVerboseTable = (function (_React$Component2) {
             });
             var acro_header = this.props.scoring_system_name == "rosfarr.acro" ? React.createElement(
                 "th",
-                { className: "w-4 acro" },
+                { className: "w-10 acro" },
                 React.createElement(
                     "p",
                     null,

@@ -78,13 +78,13 @@ class TourResultsVerboseTableRow extends React.Component {
             let acro_scores = this.props.row.acrobatics.map(function(acro, idx) {
                 return <tr key={ idx }>
                     <th><p>{ __("results.breakdown.acro_n", idx + 1) }:</p></th>
-                    <td><p>{ acro.score.toFixed(1) }</p></td>
+                    <td><p>{ acro.original_score.toFixed(1) } / { acro.score.toFixed(1) }</p></td>
                 </tr>
             }.bind(this));
             if (acro_scores.length == 0) {
                 acro_scores = <tr><td><p>&nbsp;</p></td></tr>; // Hack for MS Word
             }
-            acro_scores_cell = <td className="w-4 acro_scores">
+            acro_scores_cell = <td className="w-10 acro_scores">
                 <table className="score-breakdown"><tbody>
                     { acro_scores }
                 </tbody></table>
@@ -119,7 +119,7 @@ class TourResultsVerboseTable extends React.Component {
             return <th key={ judge.id }><p>{ judge.number }</p></th>
         });
         let acro_header = this.props.scoring_system_name == "rosfarr.acro"
-            ? <th className="w-4 acro"><p>{ __("results.labels.acrobatics") }</p></th> : null;
+            ? <th className="w-10 acro"><p>{ __("results.labels.acrobatics") }</p></th> : null;
         return <table className="bordered-table">
             <thead>
                 <tr>
