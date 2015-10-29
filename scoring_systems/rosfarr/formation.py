@@ -1,16 +1,16 @@
 from .impl import (
     ScoreWrapper,
-    RunScore,
-    TourScores,
+    FormationRunScore,
+    FormationTourScores,
 )
 
 
 def get_tour_results(tour):
-    return TourScores(tour, scoring_system="rosfarr.formation").get_results()
+    return FormationTourScores(tour, scoring_system="rosfarr.formation").get_results()
 
 
 def get_run_scores(run, discipline_judges=None):
-    return RunScore(run, discipline_judges=discipline_judges, scoring_system="rosfarr.formation").serialize()
+    return FormationRunScore(run, discipline_judges=discipline_judges, scoring_system="rosfarr.formation").serialize()
 
 
 def serialize_score(score, discipline_judge=None):

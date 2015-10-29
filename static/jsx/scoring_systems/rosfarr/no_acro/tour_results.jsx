@@ -15,7 +15,8 @@ class TourResultsVerboseTableRow extends React.Component {
             <tr><th><p>{ __("results.breakdown.i")  }:</p></th><td><p>{ score.raw_data.impression }</p></td></tr>
             <tr><th><p>{ __("results.breakdown.sm") }:</p></th><td><p>{ score.raw_data.small_mistakes }</p></td></tr>
             <tr><th><p>{ __("results.breakdown.bm") }:</p></th><td><p>{ score.raw_data.big_mistakes }</p></td></tr>
-            <tr><th><p>{ __("results.breakdown.t")  }:</p></th><td className="total-score">{ score.total_score }</td></tr>
+            <tr><th><p>{ __("results.breakdown.t")  }:</p></th><td className="total-score"><p>{ score.total_score }</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.p")  }:</p></th><td className="total-score"><p>{ score.place }</p></td></tr>
         </tbody></table>
     }
     renderDanceScore(score) {

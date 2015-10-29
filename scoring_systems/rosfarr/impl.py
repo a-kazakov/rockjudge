@@ -306,14 +306,14 @@ class RunScore:
     def sorting_score(self):
         if self.scoring_system == "rosfarr.acro":
             return (
-                -self.dance_scores.primary_score - self.acro_scores.primary_score + self.penalties,
-                -self.dance_scores.secondary_score - self.acro_scores.secondary_score + self.penalties,
+                -(self.dance_scores.primary_score + self.acro_scores.primary_score + self.penalties),
+                -(self.dance_scores.secondary_score + self.acro_scores.secondary_score + self.penalties),
                 self.nexttour_score,
             )
         else:
             return (
-                -self.dance_scores.primary_score + self.penalties,
-                -self.dance_scores.secondary_score + self.penalties,
+                -(self.dance_scores.primary_score + self.penalties),
+                -(self.dance_scores.secondary_score + self.penalties),
                 self.nexttour_score,
             )
 
@@ -342,6 +342,173 @@ class TourScores:
 
     def create_table(self):
         table = []
+        for run_score in self.run_scores:
+            table.append({
+                "run_score": run_score,
+                "scores": run_score.serialize(),
+                "sorting_score": run_score.sorting_score,
+            })
+        table = sorted(table, key=lambda s: s["sorting_score"])
+        place = 1
+        lastest_sorting_score = None
+        num_advances = self.tour.get_actual_num_advances()
+        for idx, row in enumerate(table, start=1):
+            if lastest_sorting_score != row["sorting_score"]:
+                place = idx
+            lastest_sorting_score = row["sorting_score"]
+            row.update({
+                "place": place,
+                "advances": num_advances >= place,
+            })
+        return table
+
+    def table(self):
+        if not self._table:
+            self._table = self.create_table()
+        return self._table
+
+    def get_results(self):
+        return [{
+            "run": row["run_score"].run,
+            "place": row["place"],
+            "advances": row["advances"],
+            "scores": row["scores"]
+        } for row in self.table()]
+
+
+class FormationRunScore:
+    def __init__(self, run, scoring_system, discipline_judges=None):
+        discipline_judges = run.tour.discipline_judges if discipline_judges is None else discipline_judges
+        self.n_judges = len([None for j in discipline_judges if j.role == "dance_judge"])
+        self.run = run
+        self.scores = run.scores
+        self.places = None
+        self.places_counts = None
+
+        self.judge_scores = []
+        for discipline_judge in discipline_judges:
+            for score in self.scores:
+                if discipline_judge.id == score.discipline_judge_id:
+                    self.judge_scores.append((discipline_judge, score, ))
+                    break
+        head_judge_score = self.head_judge_score
+        if head_judge_score is not None:
+            discipline_judge, score = head_judge_score
+            score_wrapper = ScoreWrapper(score, scoring_system, discipline_judge=discipline_judge)
+            self.head_judge_total_score = score_wrapper.total_score
+            self.has_next_tour = score_wrapper.data["nexttour"]
+        self.dance_judges_total_scores = [
+            ScoreWrapper(l_score, scoring_system, discipline_judge=l_discipline_judge).total_score + self.penalties
+            for l_discipline_judge, l_score
+            in self.dance_judge_scores
+        ]
+
+    @property
+    def head_judge_score(self):
+        for discipline_judge, score in self.judge_scores:
+            if discipline_judge.role == "head_judge":
+                return discipline_judge, score
+        return None
+
+    @property
+    def dance_judge_scores(self):
+        for discipline_judge, score in self.judge_scores:
+            if discipline_judge.role == "dance_judge":
+                yield discipline_judge, score
+
+    def serialize(self):
+        scores = {}
+        p_idx = 0
+        for discipline_judge, score in self.judge_scores:
+            scores[str(discipline_judge.id)] = score.serialize(discipline_judge=discipline_judge)
+            if discipline_judge.role == "dance_judge":
+                scores[str(discipline_judge.id)]["data"]["place"] = \
+                    self.places[p_idx] if self.places is not None else None
+                p_idx += 1
+        return {
+            "scores": scores,
+            "total_run_score": self.display_score,
+        }
+
+    def populate_with_places(self, places, places_counts):
+        self.places = places
+        self.places_counts = list(places_counts)
+
+    @property
+    def penalties(self):
+        if self.head_judge_score is None:
+            return 0
+        penalty = self.head_judge_total_score
+        return penalty
+
+    @property
+    def nexttour_score(self):
+        if self.head_judge_score is None:
+            return 0
+        return -1 if self.has_next_tour else 1
+
+    @property
+    def sorting_score(self):
+        kv = len(self.places_counts)
+        for idx, n_judges in enumerate(self.places_counts):
+            if n_judges > self.n_judges // 2:
+                kv = idx
+                break
+        return (kv, sum(self.places), self.nexttour_score)
+
+    @property
+    def display_score(self):
+        if self.places_counts is None:
+            return "SK"
+        ss = self.sorting_score
+        return "{} ({})".format(ss[0], ss[1])
+
+
+class FormationTourScores:
+    def __init__(self, tour, scoring_system):
+        self.tour = tour
+        self.discipline_judges = list(tour.discipline_judges)
+        self.dance_discipline_judges = [judge for judge in self.discipline_judges if judge.role == "dance_judge"]
+        self._table = None
+        self.run_scores = [
+            FormationRunScore(run, scoring_system, discipline_judges=self.discipline_judges)
+            for run in self.tour.runs
+        ]
+
+    @staticmethod
+    def scores_to_places(scores):
+        tmp = zip(scores, range(len(scores)))
+        tmp = sorted(tmp, key=lambda y: -y[0])
+        place = 1
+        lates_score = None
+        for idx in range(len(tmp)):
+            if idx > 0 and lates_score != tmp[idx][0]:
+                place = idx + 1
+            lates_score = tmp[idx][0]
+            tmp[idx] = (place, tmp[idx][1])
+        result = [x[0] for x in sorted(tmp, key=lambda y: y[1])]
+        return result
+
+    def places_to_counts(self, places):
+        res = [0] * (len(places) + 1)
+        for place in places:
+            res[place] += 1
+        for idx in range(1, len(res)):
+            res[idx] += res[idx - 1]
+        return res
+
+    def create_table(self):
+        table = []
+        scores_by_runs = [
+            run_score.dance_judges_total_scores
+            for run_score in self.run_scores
+        ]
+        scores_by_judges = zip(*scores_by_runs)
+        places_by_judges = [self.scores_to_places(scores) for scores in scores_by_judges]
+        places_by_runs = list(zip(*places_by_judges))
+        places_counts = [self.places_to_counts(places) for places in places_by_runs]
+        for run_score, run_places, run_places_counts in zip(self.run_scores, places_by_runs, places_counts):
+            run_score.populate_with_places(run_places, run_places_counts)
         for run_score in self.run_scores:
             table.append({
                 "run_score": run_score,

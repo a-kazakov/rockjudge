@@ -165,7 +165,34 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         React.createElement(
                             "td",
                             { className: "total-score" },
-                            score.total_score
+                            React.createElement(
+                                "p",
+                                null,
+                                score.total_score
+                            )
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.p"),
+                                ":"
+                            )
+                        ),
+                        React.createElement(
+                            "td",
+                            { className: "total-score" },
+                            React.createElement(
+                                "p",
+                                null,
+                                score.place
+                            )
                         )
                     )
                 )
