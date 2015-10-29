@@ -200,9 +200,9 @@ class TourAdminScoreInput extends React.Component {
     serializeDanceScore() {
         if (this.props.scoring_system_name == "rosfarr.formation") {
             return {
-                dance_tech: parseInt(this.props.score.dance_tech) || 0,
-                dance_figs: parseInt(this.props.score.dance_figs) || 0,
-                impression: parseInt(this.props.score.impression) || 0,
+                dance_tech: parseFloat(this.props.score.dance_tech) || 0,
+                dance_figs: parseFloat(this.props.score.dance_figs) || 0,
+                impression: parseFloat(this.props.score.impression) || 0,
                 small_mistakes: parseInt(this.props.score.small_mistakes) || 0,
                 big_mistakes: parseInt(this.props.score.big_mistakes) || 0,
             }

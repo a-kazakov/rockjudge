@@ -384,6 +384,7 @@ class FormationRunScore:
         self.scores = run.scores
         self.places = None
         self.places_counts = None
+        self.sorting_score = None
 
         self.judge_scores = []
         for discipline_judge in discipline_judges:
@@ -447,21 +448,19 @@ class FormationRunScore:
             return 0
         return -1 if self.has_next_tour else 1
 
-    @property
-    def sorting_score(self):
-        kv = len(self.places_counts)
-        for idx, n_judges in enumerate(self.places_counts):
-            if n_judges > self.n_judges // 2:
-                kv = idx
-                break
-        return (kv, sum(self.places), self.nexttour_score)
+    def set_sorting_score(self, place):
+        self.sorting_score = (
+            place,
+            -self.places_counts[place],
+            sum([p for p in self.places if p <= place]),
+        )
 
     @property
     def display_score(self):
-        if self.places_counts is None:
+        if self.sorting_score is None:
             return "SK"
         ss = self.sorting_score
-        return "{} ({})".format(ss[0], ss[1])
+        return "{} / {} / {}".format(ss[0], -ss[1], ss[2])
 
 
 class FormationTourScores:
@@ -474,6 +473,24 @@ class FormationTourScores:
             FormationRunScore(run, scoring_system, discipline_judges=self.discipline_judges)
             for run in self.tour.runs
         ]
+
+    @staticmethod
+    def sort_table(table, kv_judges):
+        rows_left = {row["run_score"].run.id: row for row in table}
+        yielded = 0
+        for place in range(1, len(table) + 1):
+            rows_with_kv = []
+            for row_id, row in rows_left.items():
+                if row["run_score"].places_counts[place] >= kv_judges:
+                    rows_with_kv.append(row)
+            for row in rows_with_kv:
+                row["run_score"].set_sorting_score(place)
+            rows_with_kv = sorted(rows_with_kv, key=lambda x: x["run_score"].sorting_score)
+            to_yield = rows_with_kv[:(place - yielded)]
+            yield from to_yield
+            yielded += len(to_yield)
+            for row in to_yield:
+                del rows_left[row["run_score"].run.id]
 
     @staticmethod
     def scores_to_places(scores):
@@ -512,20 +529,19 @@ class FormationTourScores:
         for run_score in self.run_scores:
             table.append({
                 "run_score": run_score,
-                "scores": run_score.serialize(),
-                "sorting_score": run_score.sorting_score,
             })
-        table = sorted(table, key=lambda s: s["sorting_score"])
+        table = list(self.sort_table(table, len(self.dance_discipline_judges) // 2 + 1))
         place = 1
         lastest_sorting_score = None
         num_advances = self.tour.get_actual_num_advances()
         for idx, row in enumerate(table, start=1):
-            if lastest_sorting_score != row["sorting_score"]:
+            if lastest_sorting_score != row["run_score"].sorting_score:
                 place = idx
-            lastest_sorting_score = row["sorting_score"]
+            lastest_sorting_score = row["run_score"].sorting_score
             row.update({
                 "place": place,
                 "advances": num_advances >= place,
+                "scores": row["run_score"].serialize(),
             })
         return table
 
