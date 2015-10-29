@@ -84,6 +84,8 @@ class Participant(BaseModel):
 
     @classmethod
     def load_models(cls, discipline, objects):
+        if len(objects) == 0:
+            return
         clubs_ids = [obj["club"] for obj in objects]
         clubs = {
             club.external_id: club
