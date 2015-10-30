@@ -487,6 +487,10 @@ class FormationTourScores:
                 row["run_score"].set_sorting_score(place)
             rows_with_kv = sorted(rows_with_kv, key=lambda x: x["run_score"].sorting_score)
             to_yield = rows_with_kv[:(place - yielded)]
+            if len(to_yield) > 0:
+                for idx in range(len(to_yield), len(rows_with_kv)):
+                    if rows_with_kv[idx]["run_score"].sorting_score == rows_with_kv[idx - 1]["run_score"].sorting_score:
+                        to_yield.append(rows_with_kv[idx])
             yield from to_yield
             yielded += len(to_yield)
             for row in to_yield:
