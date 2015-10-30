@@ -506,8 +506,8 @@ class FormationTourScores:
         result = [x[0] for x in sorted(tmp, key=lambda y: y[1])]
         return result
 
-    def places_to_counts(self, places):
-        res = [0] * (len(places) + 1)
+    def places_to_counts(self, places, n_forms):
+        res = [0] * (n_forms + 1)
         for place in places:
             res[place] += 1
         for idx in range(1, len(res)):
@@ -523,7 +523,7 @@ class FormationTourScores:
         scores_by_judges = zip(*scores_by_runs)
         places_by_judges = [self.scores_to_places(scores) for scores in scores_by_judges]
         places_by_runs = list(zip(*places_by_judges))
-        places_counts = [self.places_to_counts(places) for places in places_by_runs]
+        places_counts = [self.places_to_counts(places, len(scores_by_runs)) for places in places_by_runs]
         for run_score, run_places, run_places_counts in zip(self.run_scores, places_by_runs, places_counts):
             run_score.populate_with_places(run_places, run_places_counts)
         for run_score in self.run_scores:
