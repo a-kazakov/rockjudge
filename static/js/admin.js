@@ -304,7 +304,7 @@ var ServiceUI = (function (_React$Component3) {
     }, {
         key: "refreshClients",
         value: function refreshClients() {
-            if (_("admin.confirms.refresh_clients")) {
+            if (confirm(_("admin.confirms.refresh_clients"))) {
                 Api("service.refresh_clients", {}).send();
             }
         }

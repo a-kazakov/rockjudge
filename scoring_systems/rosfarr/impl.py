@@ -446,7 +446,6 @@ class FormationRunScore:
     def nexttour_score(self):
         if self.head_judge_score is None:
             return 0
-        print(self.has_next_tour)
         return -1 if self.has_next_tour else 1
 
     def set_sorting_score(self, place):

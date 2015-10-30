@@ -92,6 +92,9 @@ function _(src, arg) {
             },
         },
         "errors": {
+            "api": {
+                "unable_to_get": (wanted) => "Невозможно получить " + wanted + " из запроса",
+            },
             "club": {
                 "delete_with_participants": "Невозможно удалить клуб, к которому привязаны участники",
             },

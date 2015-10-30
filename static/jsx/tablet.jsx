@@ -23,9 +23,9 @@ class JudgeTablet extends React.Component {
             page: "dance",
         };
         this.active_tour_id = null;
-        message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
+        message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this, false));
         message_dispatcher.addListener("reload_data", this.loadData.bind(this));
-        message_dispatcher.addListener("active_tour_update", this.dispatchActiveTourUpdate.bind(this));
+        message_dispatcher.addListener("active_tour_update", this.dispatchActiveTourUpdate.bind(this, false));
         this.loadData();
     }
 
@@ -60,7 +60,7 @@ class JudgeTablet extends React.Component {
         }
         this.setState(state_upd);
     }
-    updateActiveTour(new_active_tour_id) {
+    updateActiveTour(force_reload, new_active_tour_id) {
         if (new_active_tour_id === null) {
             this.setState({
                 tour: null,
@@ -69,28 +69,28 @@ class JudgeTablet extends React.Component {
             this.active_tour_id = new_active_tour_id;
             return;
         }
-        if (new_active_tour_id !== this.active_tour_id) {
+        if (force_reload || new_active_tour_id !== this.active_tour_id) {
             this.active_tour_id = new_active_tour_id;
             Api("tour.get", { tour_id: this.active_tour_id, children: this.TOUR_SCHEMA })
                 .updateDB("Tour", this.active_tour_id)
-                .onSuccess(this.reloadFromStorage.bind(this, true))
+                .onSuccess(this.reloadFromStorage.bind(this, new_active_tour_id !== this.active_tour_id))
                 .send()
         }
     }
     loadData() {
         Api("judge.get", { judge_id: this.props.judge_id, children: { competition: {} } })
             .updateDB("Judge", this.props.judge_id)
-            .onSuccess(this.reloadFromStorage.bind(this))
+            .onSuccess(this.reloadFromStorage.bind(this, false))
             .send();
         Api("tour.find_active", {})
-            .onSuccess(this.dispatchActiveTourUpdate.bind(this))
+            .onSuccess(this.dispatchActiveTourUpdate.bind(this, true))
             .send();
     }
 
     // Dispatchers
 
-    dispatchActiveTourUpdate(data) {
-        this.updateActiveTour(data["tour_id"]);
+    dispatchActiveTourUpdate(force_reload, data) {
+        this.updateActiveTour(force_reload, data["tour_id"]);
     }
 
     // Listeners

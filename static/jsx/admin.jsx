@@ -184,7 +184,7 @@ class ServiceUI extends React.Component {
         }
     }
     refreshClients() {
-        if (_("admin.confirms.refresh_clients")) {
+        if (confirm(_("admin.confirms.refresh_clients"))) {
             Api("service.refresh_clients", {}).send();
         }
     }
