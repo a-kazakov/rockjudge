@@ -6,6 +6,42 @@ function __() {
     return _("scoring_systems.rosfarr." + arguments[0], ...args);
 }
 
+class TourResultsVerboseTable extends React.Component {
+    render() {
+        let rows = this.props.data.map(function(row) {
+            return <TourResultsVerboseTableRow
+                row={ row }
+                key={ row.participant.id }
+                has_next_tour={ this.props.has_next_tour }
+                judges={ this.props.judges }
+                scoring_system_name={ this.props.scoring_system_name } />
+        }.bind(this));
+        let judges_header = this.props.judges.map(function(judge) {
+            return <th key={ judge.id }><p>{ judge.number }</p></th>
+        });
+        let acro_header = this.props.scoring_system_name == "rosfarr.acro"
+            ? <th className="w-10 acro"><p>{ __("results.labels.acrobatics") }</p></th> : null;
+        return <table className="bordered-table" style={{ width: "100%" }}>
+            <thead>
+                <tr>
+                    <th className="w-3 place"><p>{ __("results.labels.place") }</p></th>
+                    { this.props.has_next_tour ? <th className="w-3 next-tour"><p>{ __("results.labels.next_tour") }</p></th> : null }
+                    <th className="w-1 number"><p>{ __("results.labels.number") }</p></th>
+                    <th className="participant"><p>
+                        { __("results.labels.participant_name") }{", "}
+                        { __("results.labels.participant_club") }
+                    </p></th>
+                    <th className="w-5 score"><p>{ __("results.labels.total_score") }</p></th>
+                    { acro_header }
+                    { judges_header }
+                </tr>
+            </thead>
+            <tbody>
+                { rows }
+            </tbody>
+        </table>
+    }
+}
 
 class TourResultsVerboseTableRow extends React.Component {
     renderFormationScore(score) {

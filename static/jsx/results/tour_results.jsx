@@ -107,7 +107,7 @@ class TourResults extends React.Component {
             .setTitle2(this.state.tour.discipline.name)
             .setTitle3(this.state.tour.name)
             .setBody(React.findDOMNode(this.refs.content).innerHTML)
-            .addStyle(".bordered-table", "font-size", "12pt")
+            .addStyle(".bordered-table", "font-size", this.state.verbose ? "10pt" : "12pt")
             .addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none")
             .addStyle(".bordered-table .score-breakdown th", "padding", "0 1pt 0 0")
             .addStyle(".bordered-table .score-breakdown td", "padding", "0 0 0 1pt")
