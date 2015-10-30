@@ -87,7 +87,7 @@ var JudgingUI = (function (_React$Component2) {
         key: "getTourIdFromHash",
         value: function getTourIdFromHash(app) {
             var chunks = window.location.hash.substr(1).split("/");
-            if (chunks[1] && /^\d$/.test(chunks[1])) {
+            if (chunks[1] && /^\d+$/.test(chunks[1])) {
                 return parseInt(chunks[1]);
             }
             return null;

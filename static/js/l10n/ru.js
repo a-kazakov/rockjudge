@@ -188,10 +188,18 @@ function _(src, arg) {
                 "init_tour": "Вы действительно хотите пересоздать этот тур?",
                 "shuffle_heats": "Вы действительно хотите перемешать заходы?"
             },
+            "headers": {
+                "acrobatic_overrides": "Корректировки базовых оценок акробатики"
+            },
             "labels": {
+                "acro_description": "Описание трюка",
+                "acro_idx": "№ трюка",
+                "acrobatics": "Акробатика",
                 "club": "Клуб",
                 "heat": "Заход",
+                "new_score": "Корр.",
                 "number": "№",
+                "old_score": "База",
                 "participant_name": "Участник",
                 "total_score": "Сумма баллов"
             }

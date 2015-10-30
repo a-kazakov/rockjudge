@@ -302,6 +302,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
                         }
                     },
                     runs: {
+                        acrobatics: {},
                         scores: {},
                         participant: {
                             club: {}
@@ -343,6 +344,28 @@ var TourAdminScoresTable = (function (_React$Component4) {
         key: "onStopTourButtonClick",
         value: function onStopTourButtonClick() {
             Api("tour.stop", { tour_id: this.props.tour_id }).send();
+        }
+
+        // Helpers
+
+    }, {
+        key: "getAcrobaticOverrides",
+        value: function getAcrobaticOverrides() {
+            var result = [];
+            this.state.runs.forEach(function (run) {
+                run.acrobatics.forEach(function (acro, idx) {
+                    if (acro.original_score != acro.score) {
+                        result.push({
+                            run: run,
+                            acro_idx: idx + 1,
+                            acro_description: acro.description,
+                            score: acro.score,
+                            original_score: acro.original_score
+                        });
+                    }
+                });
+            });
+            return result;
         }
 
         // Rendering
@@ -486,6 +509,111 @@ var TourAdminScoresTable = (function (_React$Component4) {
             );
         }
     }, {
+        key: "renderAcrobaticOverrides",
+        value: function renderAcrobaticOverrides() {
+            var overrides = this.getAcrobaticOverrides();
+            if (overrides.length == 0) {
+                return null;
+            }
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(
+                    "h4",
+                    null,
+                    _("judging.headers.acrobatic_overrides")
+                ),
+                React.createElement(
+                    "table",
+                    { className: "bordered-table acrobatic-overrides" },
+                    React.createElement(
+                        "tbody",
+                        null,
+                        React.createElement(
+                            "tr",
+                            null,
+                            React.createElement(
+                                "th",
+                                { className: "heat" },
+                                _("judging.labels.heat")
+                            ),
+                            React.createElement(
+                                "th",
+                                { className: "number" },
+                                _("judging.labels.number")
+                            ),
+                            React.createElement(
+                                "th",
+                                { className: "name" },
+                                _("judging.labels.participant_name")
+                            ),
+                            React.createElement(
+                                "th",
+                                { className: "old-score" },
+                                _("judging.labels.old_score")
+                            ),
+                            React.createElement(
+                                "th",
+                                { className: "new-score" },
+                                _("judging.labels.new_score")
+                            ),
+                            React.createElement(
+                                "th",
+                                { className: "acro-idx" },
+                                _("judging.labels.acro_idx")
+                            ),
+                            React.createElement(
+                                "th",
+                                { className: "acro-description" },
+                                _("judging.labels.acro_description")
+                            )
+                        ),
+                        overrides.map(function (o) {
+                            return React.createElement(
+                                "tr",
+                                null,
+                                React.createElement(
+                                    "td",
+                                    { className: "heat" },
+                                    o.run.heat
+                                ),
+                                React.createElement(
+                                    "td",
+                                    { className: "number" },
+                                    o.run.participant.number
+                                ),
+                                React.createElement(
+                                    "td",
+                                    { className: "name" },
+                                    o.run.participant.name
+                                ),
+                                React.createElement(
+                                    "td",
+                                    { className: "old-score" },
+                                    o.original_score
+                                ),
+                                React.createElement(
+                                    "td",
+                                    { className: "new-score" },
+                                    o.score
+                                ),
+                                React.createElement(
+                                    "td",
+                                    { className: "acro-idx" },
+                                    o.acro_idx
+                                ),
+                                React.createElement(
+                                    "td",
+                                    { className: "acro-description" },
+                                    o.acro_description
+                                )
+                            );
+                        })
+                    )
+                )
+            );
+        }
+    }, {
         key: "render",
         value: function render() {
             if (this.state.name === null) {
@@ -620,6 +748,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
                         rows
                     )
                 ),
+                this.renderAcrobaticOverrides(),
                 this.renderPrintableHeats()
             );
         }

@@ -42,7 +42,7 @@ class JudgingUI extends React.Component {
     }
     getTourIdFromHash(app) {
         let chunks = window.location.hash.substr(1).split("/");
-        if (chunks[1] && /^\d$/.test(chunks[1])) {
+        if (chunks[1] && /^\d+$/.test(chunks[1])) {
             return parseInt(chunks[1]);
         }
         return null;

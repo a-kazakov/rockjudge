@@ -33,6 +33,7 @@ class Run(BaseModel):
     PF_CHILDREN = {
         "acrobatics": {
             "acrobatic_overrides": {},
+            "participant": {},
         },
         "participant": None,
         "scores": None,

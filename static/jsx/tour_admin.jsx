@@ -199,6 +199,7 @@ class TourAdminScoresTable extends React.Component {
                     }
                 },
                 runs: {
+                    acrobatics: {},
                     scores: {},
                     participant: {
                         club: {},
@@ -233,6 +234,26 @@ class TourAdminScoresTable extends React.Component {
     }
     onStopTourButtonClick() {
         Api("tour.stop", {tour_id: this.props.tour_id}).send();
+    }
+
+    // Helpers
+
+    getAcrobaticOverrides() {
+        let result = [];
+        this.state.runs.forEach(function(run) {
+            run.acrobatics.forEach(function(acro, idx) {
+                if (acro.original_score != acro.score) {
+                    result.push({
+                        run: run,
+                        acro_idx: idx + 1,
+                        acro_description: acro.description,
+                        score: acro.score,
+                        original_score: acro.original_score,
+                    })
+                }
+            })
+        });
+        return result;
     }
 
     // Rendering
@@ -281,6 +302,37 @@ class TourAdminScoresTable extends React.Component {
                 <th className="w-46"><p>{ _("judging.labels.club") }</p></th>
             </thead><tbody>
                 { this.renderHeatRows() }
+            </tbody></table>
+        </div>
+    }
+    renderAcrobaticOverrides() {
+        let overrides = this.getAcrobaticOverrides()
+        if (overrides.length == 0) {
+            return null;
+        }
+        return <div>
+            <h4>{ _("judging.headers.acrobatic_overrides") }</h4>
+            <table className="bordered-table acrobatic-overrides"><tbody>
+                <tr>
+                    <th className="heat">{ _("judging.labels.heat") }</th>
+                    <th className="number">{ _("judging.labels.number") }</th>
+                    <th className="name">{ _("judging.labels.participant_name") }</th>
+                    <th className="old-score">{ _("judging.labels.old_score") }</th>
+                    <th className="new-score">{ _("judging.labels.new_score") }</th>
+                    <th className="acro-idx">{ _("judging.labels.acro_idx") }</th>
+                    <th className="acro-description">{ _("judging.labels.acro_description") }</th>
+                </tr>
+                { overrides.map((o) =>
+                    <tr>
+                        <td className="heat">{ o.run.heat }</td>
+                        <td className="number">{ o.run.participant.number }</td>
+                        <td className="name">{ o.run.participant.name }</td>
+                        <td className="old-score">{ o.original_score }</td>
+                        <td className="new-score">{ o.score }</td>
+                        <td className="acro-idx">{ o.acro_idx }</td>
+                        <td className="acro-description">{ o.acro_description }</td>
+                    </tr>
+                ) }
             </tbody></table>
         </div>
     }
@@ -334,6 +386,7 @@ class TourAdminScoresTable extends React.Component {
                     { rows }
                 </tbody>
             </table>
+            { this.renderAcrobaticOverrides() }
             { this.renderPrintableHeats() }
         </div>;
     }
