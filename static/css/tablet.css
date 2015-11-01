@@ -475,8 +475,36 @@ button.score-btn.active {
 .footer.page-selector button.active {
   background-color: #ff7740;
 }
-.clearfix {
-  clear: both;
-  overflow: auto;
-  zoom: 1;
+.connection-tester {
+  margin-top: 10px;
+}
+.connection-tester h3 {
+  margin-top: 15px;
+}
+.connection-tester .stat div {
+  display: inline-block;
+}
+.connection-tester .stat .title {
+  width: 8.25%;
+  font-weight: bold;
+  text-align: right;
+  padding-right: 3px;
+}
+.connection-tester .stat .value {
+  width: 8.25%;
+}
+.connection-tester .latency-chart {
+  width: 100%;
+}
+.connection-tester .latency-chart .chart-cell {
+  width: 9.9%;
+  vertical-align: bottom;
+  height: 220px;
+  text-align: center;
+}
+.connection-tester .latency-chart .chart-cell .bar {
+  background-color: #2b3a42;
+}
+.connection-tester .latency-chart .chart-cell .bar.red {
+  background-color: #c00;
 }

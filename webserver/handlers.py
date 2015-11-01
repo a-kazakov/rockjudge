@@ -36,6 +36,11 @@ class CompetitionsHandler(tornado.web.RequestHandler):
         self.render("competitions.html")
 
 
+class ConnectionTesterHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render("connection.html")
+
+
 class DisciplineResultsHandler(tornado.web.RequestHandler):
     def get(self, discipline_id):
         self.render(

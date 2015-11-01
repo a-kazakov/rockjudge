@@ -103,11 +103,6 @@ var TabletIntegerSelectInput = (function (_React$Component2) {
 
             return React.createElement(TabletSelectorInput, _extends({}, other, { choices: this.createArray(min, max) }));
         }
-    }, {
-        key: "onClick",
-        value: function onClick(n) {
-            this.props.onValueUpdate(n);
-        }
     }]);
 
     return TabletIntegerSelectInput;
@@ -141,11 +136,6 @@ var TabletPointFiveSelectInput = (function (_React$Component3) {
             var other = _objectWithoutProperties(_props2, ["min", "max"]);
 
             return React.createElement(TabletSelectorInput, _extends({}, other, { choices: this.createArray(min, max) }));
-        }
-    }, {
-        key: "onClick",
-        value: function onClick(n) {
-            this.props.onValueUpdate(n);
         }
     }]);
 

@@ -48,9 +48,6 @@ class TabletIntegerSelectInput extends React.Component {
         let {min, max, ...other} = this.props;
         return <TabletSelectorInput { ...other } choices={ this.createArray(min, max) } />
     }
-    onClick(n) {
-        this.props.onValueUpdate(n);
-    }
 }
 
 class TabletPointFiveSelectInput extends React.Component {
@@ -64,9 +61,6 @@ class TabletPointFiveSelectInput extends React.Component {
     render() {
         let {min, max, ...other} = this.props;
         return <TabletSelectorInput { ...other } choices={ this.createArray(min, max) } />
-    }
-    onClick(n) {
-        this.props.onValueUpdate(n);
     }
 }
 

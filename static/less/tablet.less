@@ -303,8 +303,38 @@ button.score-btn {
   }
 }
 
-.clearfix {
-  clear: both;
-  overflow: auto;
-  zoom: 1;
+.connection-tester {
+  margin-top: 10px;
+  h3 {
+    margin-top: 15px;
+  }
+  .stat {
+    div {
+      display: inline-block;
+    }
+    .title {
+      width: 99% / 12;
+      font-weight: bold;
+      text-align: right;
+      padding-right: 3px;
+    }
+    .value {
+      width: 99% / 12;
+    }
+  }
+  .latency-chart {
+    width: 100%;
+    .chart-cell {
+      width: 9.9%;
+      vertical-align: bottom;
+      height: 220px;
+      text-align: center;
+      .bar {
+        background-color: @ui-dark;
+        &.red {
+          background-color: #c00;
+        }
+      }
+    }
+  }
 }

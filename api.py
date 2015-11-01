@@ -1,4 +1,6 @@
+import base64
 import logging
+import os
 import time
 import traceback
 from collections import deque
@@ -391,6 +393,12 @@ class Api:
         ws_message.add_message("force_refresh")
         return {}
 
+    @classmethod
+    def service_ping(cls, request, ws_message):
+        payload = base64.b64encode(os.urandom(request["payload_size"] * 10000000 // 13333333)).decode()
+        ws_message.add_message("ping_reply", {"ping_id": request["ping_id"], "payload": payload})
+        return {}
+
     # Service
 
     @classmethod
@@ -435,14 +443,15 @@ class Api:
             print(ex_str)
         finally:
             total_time = time.time() - begin
-            log_api(
-                time=begin,
-                latency=total_time,
-                queries=hdlr.cnt,
-                method=method,
-                request=request,
-                exception=ex_str,
-                response=response)
+            if method not in {"service.ping"}:
+                log_api(
+                    time=begin,
+                    latency=total_time,
+                    queries=hdlr.cnt + 1,
+                    method=method,
+                    request=request,
+                    exception=ex_str,
+                    response=response)
             logger.removeHandler(hdlr)
             print("Api call: {:<25s} {:4d}ms {:4d} queries".format(method, int(1000 * total_time), hdlr.cnt))
             return response

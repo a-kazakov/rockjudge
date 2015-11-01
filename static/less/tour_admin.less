@@ -35,7 +35,7 @@
       text-align: center;
     }
     tr td.confirmed-score {
-      background-color: #474;
+      background-color: @ui-green;
       font-weight: bold;
       color: #fff;
       input {
@@ -43,8 +43,11 @@
         font-weight: normal;
       }
     }
+    tr.odd-heat td.confirmed-score {
+      background-color: darken(@ui-green, 10%);
+    }
     td.editing {
-      background-color: @ui-contrast;
+      background-color: @ui-contrast !important;
     }
     td.name, td.club {
       text-align: left !important;
