@@ -92,8 +92,9 @@ var JudgeTablet = (function (_React$Component) {
                 return;
             }
             if (force_reload || new_active_tour_id !== this.active_tour_id) {
+                var old_active_tour_id = this.active_tour_id;
                 this.active_tour_id = new_active_tour_id;
-                Api("tour.get", { tour_id: this.active_tour_id, children: this.TOUR_SCHEMA }).updateDB("Tour", this.active_tour_id).onSuccess(this.reloadFromStorage.bind(this, new_active_tour_id !== this.active_tour_id)).send();
+                Api("tour.get", { tour_id: this.active_tour_id, children: this.TOUR_SCHEMA }).updateDB("Tour", this.active_tour_id).onSuccess(this.reloadFromStorage.bind(this, new_active_tour_id !== old_active_tour_id)).send();
             }
         }
     }, {

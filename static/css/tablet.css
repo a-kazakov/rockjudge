@@ -177,229 +177,229 @@ button.score-btn.active {
   color: #2b3a42;
 }
 .selector-layout.n-2 button {
-  width: 48.95%;
+  width: 48.5%;
 }
 .selector-layout.n-3 button {
-  width: 32.3%;
+  width: 32%;
 }
 .selector-layout.n-4 button {
-  width: 23.975%;
+  width: 23.75%;
 }
 .selector-layout.n-5 button {
-  width: 18.98%;
+  width: 18.8%;
 }
 .selector-layout.n-6 button {
-  width: 15.65%;
+  width: 15.5%;
 }
 .selector-layout.n-7 button {
-  width: 13.27142857%;
+  width: 13.14285714%;
 }
 .selector-layout.n-8 button {
-  width: 11.4875%;
+  width: 11.375%;
 }
 .selector-layout.n-9 button {
-  width: 10.1%;
+  width: 10%;
 }
 .selector-layout.n-10 button {
-  width: 8.99%;
+  width: 8.9%;
 }
 .selector-layout.n-11 button {
-  width: 8.08181818%;
+  width: 8%;
 }
 .selector-layout.n-12 button {
-  width: 7.325%;
+  width: 7.25%;
 }
 .selector-layout.n-13 button {
-  width: 6.68461538%;
+  width: 6.61538462%;
 }
 .selector-layout.n-14 button {
-  width: 6.13571429%;
+  width: 6.07142857%;
 }
 .selector-layout.n-15 button {
-  width: 5.66%;
+  width: 5.6%;
 }
 .selector-layout.n-16 button {
-  width: 5.24375%;
+  width: 5.1875%;
 }
 .selector-layout.n-17 button {
-  width: 4.87647059%;
+  width: 4.82352941%;
 }
 .selector-layout.n-18 button {
-  width: 4.55%;
+  width: 4.5%;
 }
 .selector-layout.n-19 button {
-  width: 4.25789474%;
+  width: 4.21052632%;
 }
 .selector-layout.n-20 button {
-  width: 3.995%;
+  width: 3.95%;
 }
 .selector-layout.n-21 button {
-  width: 3.75714286%;
+  width: 3.71428571%;
 }
 .selector-layout.n-22 button {
-  width: 3.54090909%;
+  width: 3.5%;
 }
 .selector-layout.n-23 button {
-  width: 3.34347826%;
+  width: 3.30434783%;
 }
 .selector-layout.n-24 button {
-  width: 3.1625%;
+  width: 3.125%;
 }
 .selector-layout.n-25 button {
-  width: 2.996%;
+  width: 2.96%;
 }
 .selector-layout.n-26 button {
-  width: 2.84230769%;
+  width: 2.80769231%;
 }
 .selector-layout-2rows.n-2 button {
-  width: 65.6%;
+  width: 65%;
 }
 .selector-layout-2rows.n-2 button:nth-child(2n) {
-  margin: 50px -32.8% 0 -32.8% !important;
+  margin: 50px -32.5% 0 -32.5% !important;
 }
 .selector-layout-2rows.n-3 button {
-  width: 48.95%;
+  width: 48.5%;
 }
 .selector-layout-2rows.n-3 button:nth-child(2n) {
-  margin: 50px -24.475% 0 -24.475% !important;
+  margin: 50px -24.25% 0 -24.25% !important;
 }
 .selector-layout-2rows.n-4 button {
-  width: 38.96%;
+  width: 38.6%;
 }
 .selector-layout-2rows.n-4 button:nth-child(2n) {
-  margin: 50px -19.48% 0 -19.48% !important;
+  margin: 50px -19.3% 0 -19.3% !important;
 }
 .selector-layout-2rows.n-5 button {
-  width: 32.3%;
+  width: 32%;
 }
 .selector-layout-2rows.n-5 button:nth-child(2n) {
-  margin: 50px -16.15% 0 -16.15% !important;
+  margin: 50px -16% 0 -16% !important;
 }
 .selector-layout-2rows.n-6 button {
-  width: 27.54285714%;
+  width: 27.28571429%;
 }
 .selector-layout-2rows.n-6 button:nth-child(2n) {
-  margin: 50px -13.77142857% 0 -13.77142857% !important;
+  margin: 50px -13.64285714% 0 -13.64285714% !important;
 }
 .selector-layout-2rows.n-7 button {
-  width: 23.975%;
+  width: 23.75%;
 }
 .selector-layout-2rows.n-7 button:nth-child(2n) {
-  margin: 50px -11.9875% 0 -11.9875% !important;
+  margin: 50px -11.875% 0 -11.875% !important;
 }
 .selector-layout-2rows.n-8 button {
-  width: 21.2%;
+  width: 21%;
 }
 .selector-layout-2rows.n-8 button:nth-child(2n) {
-  margin: 50px -10.6% 0 -10.6% !important;
+  margin: 50px -10.5% 0 -10.5% !important;
 }
 .selector-layout-2rows.n-9 button {
-  width: 18.98%;
+  width: 18.8%;
 }
 .selector-layout-2rows.n-9 button:nth-child(2n) {
-  margin: 50px -9.49% 0 -9.49% !important;
+  margin: 50px -9.4% 0 -9.4% !important;
 }
 .selector-layout-2rows.n-10 button {
-  width: 17.16363636%;
+  width: 17%;
 }
 .selector-layout-2rows.n-10 button:nth-child(2n) {
-  margin: 50px -8.58181818% 0 -8.58181818% !important;
+  margin: 50px -8.5% 0 -8.5% !important;
 }
 .selector-layout-2rows.n-11 button {
-  width: 15.65%;
+  width: 15.5%;
 }
 .selector-layout-2rows.n-11 button:nth-child(2n) {
-  margin: 50px -7.825% 0 -7.825% !important;
+  margin: 50px -7.75% 0 -7.75% !important;
 }
 .selector-layout-2rows.n-12 button {
-  width: 14.36923077%;
+  width: 14.23076923%;
 }
 .selector-layout-2rows.n-12 button:nth-child(2n) {
-  margin: 50px -7.18461538% 0 -7.18461538% !important;
+  margin: 50px -7.11538462% 0 -7.11538462% !important;
 }
 .selector-layout-2rows.n-13 button {
-  width: 13.27142857%;
+  width: 13.14285714%;
 }
 .selector-layout-2rows.n-13 button:nth-child(2n) {
-  margin: 50px -6.63571429% 0 -6.63571429% !important;
+  margin: 50px -6.57142857% 0 -6.57142857% !important;
 }
 .selector-layout-2rows.n-14 button {
-  width: 12.32%;
+  width: 12.2%;
 }
 .selector-layout-2rows.n-14 button:nth-child(2n) {
-  margin: 50px -6.16% 0 -6.16% !important;
+  margin: 50px -6.1% 0 -6.1% !important;
 }
 .selector-layout-2rows.n-15 button {
-  width: 11.4875%;
+  width: 11.375%;
 }
 .selector-layout-2rows.n-15 button:nth-child(2n) {
-  margin: 50px -5.74375% 0 -5.74375% !important;
+  margin: 50px -5.6875% 0 -5.6875% !important;
 }
 .selector-layout-2rows.n-16 button {
-  width: 10.75294118%;
+  width: 10.64705882%;
 }
 .selector-layout-2rows.n-16 button:nth-child(2n) {
-  margin: 50px -5.37647059% 0 -5.37647059% !important;
+  margin: 50px -5.32352941% 0 -5.32352941% !important;
 }
 .selector-layout-2rows.n-17 button {
-  width: 10.1%;
+  width: 10%;
 }
 .selector-layout-2rows.n-17 button:nth-child(2n) {
-  margin: 50px -5.05% 0 -5.05% !important;
+  margin: 50px -5% 0 -5% !important;
 }
 .selector-layout-2rows.n-18 button {
-  width: 9.51578947%;
+  width: 9.42105263%;
 }
 .selector-layout-2rows.n-18 button:nth-child(2n) {
-  margin: 50px -4.75789474% 0 -4.75789474% !important;
+  margin: 50px -4.71052632% 0 -4.71052632% !important;
 }
 .selector-layout-2rows.n-19 button {
-  width: 8.99%;
+  width: 8.9%;
 }
 .selector-layout-2rows.n-19 button:nth-child(2n) {
-  margin: 50px -4.495% 0 -4.495% !important;
+  margin: 50px -4.45% 0 -4.45% !important;
 }
 .selector-layout-2rows.n-20 button {
-  width: 8.51428571%;
+  width: 8.42857143%;
 }
 .selector-layout-2rows.n-20 button:nth-child(2n) {
-  margin: 50px -4.25714286% 0 -4.25714286% !important;
+  margin: 50px -4.21428571% 0 -4.21428571% !important;
 }
 .selector-layout-2rows.n-21 button {
-  width: 8.08181818%;
+  width: 8%;
 }
 .selector-layout-2rows.n-21 button:nth-child(2n) {
-  margin: 50px -4.04090909% 0 -4.04090909% !important;
+  margin: 50px -4% 0 -4% !important;
 }
 .selector-layout-2rows.n-22 button {
-  width: 7.68695652%;
+  width: 7.60869565%;
 }
 .selector-layout-2rows.n-22 button:nth-child(2n) {
-  margin: 50px -3.84347826% 0 -3.84347826% !important;
+  margin: 50px -3.80434783% 0 -3.80434783% !important;
 }
 .selector-layout-2rows.n-23 button {
-  width: 7.325%;
+  width: 7.25%;
 }
 .selector-layout-2rows.n-23 button:nth-child(2n) {
-  margin: 50px -3.6625% 0 -3.6625% !important;
+  margin: 50px -3.625% 0 -3.625% !important;
 }
 .selector-layout-2rows.n-24 button {
-  width: 6.992%;
+  width: 6.92%;
 }
 .selector-layout-2rows.n-24 button:nth-child(2n) {
-  margin: 50px -3.496% 0 -3.496% !important;
+  margin: 50px -3.46% 0 -3.46% !important;
 }
 .selector-layout-2rows.n-25 button {
-  width: 6.68461538%;
+  width: 6.61538462%;
 }
 .selector-layout-2rows.n-25 button:nth-child(2n) {
-  margin: 50px -3.34230769% 0 -3.34230769% !important;
+  margin: 50px -3.30769231% 0 -3.30769231% !important;
 }
 .selector-layout-2rows.n-26 button {
-  width: 6.4%;
+  width: 6.33333333%;
 }
 .selector-layout-2rows.n-26 button:nth-child(2n) {
-  margin: 50px -3.2% 0 -3.2% !important;
+  margin: 50px -3.16666667% 0 -3.16666667% !important;
 }
 .stopwatch {
   width: 100%;

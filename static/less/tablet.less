@@ -199,7 +199,7 @@ button.score-btn {
   .loop-width((@counter - 1));
   &.n-@{counter} {
     button {
-      width: ((99.9%) / @counter) - 1%;
+      width: ((99%) / @counter) - 1%;
     }
   }
 }
@@ -208,7 +208,7 @@ button.score-btn {
   .loop-width-2rows((@counter - 1));
   &.n-@{counter} {
     button {
-      @btn-width: 2 * (99.9%) / (@counter + 1) - 1%;
+      @btn-width: 2 * (99%) / (@counter + 1) - 1%;
         width: @btn-width;
         &:nth-child(2n) {
            margin: 50px (@btn-width / -2) 0 (@btn-width / -2) !important;
