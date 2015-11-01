@@ -13,6 +13,11 @@ from models import (
 from webserver.websocket import WsMessage
 
 
+class StaticFilesHandlerNoCache(tornado.web.StaticFileHandler):
+    def set_extra_headers(self, path):
+        self.set_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+
+
 class AdminHandler(tornado.web.RequestHandler):
     def get(self, competition_id):
         self.render("admin.html", competition_id=competition_id)

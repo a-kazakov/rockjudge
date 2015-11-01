@@ -54,7 +54,7 @@ class TourAdminScoreInput extends React.Component {
     }
     renderAcroJudgeInput() {
         var fields = this.props.score.deductions.map(function(value, idx) {
-            return [<th>A{idx + 1}:</th>, <td>
+            return [<th key={ "H" + idx }>A{idx + 1}:</th>, <td key={ "V" + idx }>
                 <input
                     type="text"
                     value={ this.props.score.deductions[idx] }
@@ -173,9 +173,9 @@ class TourAdminScoreInput extends React.Component {
         if (typeof(key) != "object") {
             key = [key];
         }
-        var score = this.serializeScore();
-        var score_inner = score;
-        for (var idx = 0; idx < key.length - 1; ++idx) {
+        let score = this.serializeScore();
+        let score_inner = score;
+        for (let idx = 0; idx < key.length - 1; ++idx) {
             score_inner = score_inner[key[idx]];
         }
         score_inner[key[key.length - 1]] = event.target.type == "checkbox" ? event.target.checked : event.target.value;
@@ -189,10 +189,13 @@ class TourAdminScoreInput extends React.Component {
             this.props.stopEditing();
         }
     }
+    isEmpty(value) {
+        return value === "" || value === null;
+    }
     serializeAcroScore() {
         return {
             deductions: this.props.score.deductions.map(function(deduction) {
-                return parseInt(deduction) || 0;
+                return deduction ? parseInt(deduction) || 0 : null;
             }),
             mistakes: parseInt(this.props.score.mistakes) || 0,
         }
@@ -200,20 +203,20 @@ class TourAdminScoreInput extends React.Component {
     serializeDanceScore() {
         if (this.props.scoring_system_name == "rosfarr.formation") {
             return {
-                dance_tech: parseFloat(this.props.score.dance_tech) || 0,
-                dance_figs: parseFloat(this.props.score.dance_figs) || 0,
-                impression: parseFloat(this.props.score.impression) || 0,
-                small_mistakes: parseInt(this.props.score.small_mistakes) || 0,
-                big_mistakes: parseInt(this.props.score.big_mistakes) || 0,
+                dance_tech: !this.isEmpty(this.props.score.dance_tech) ? parseFloat(this.props.score.dance_tech) || 0 : null,
+                dance_figs: !this.isEmpty(this.props.score.dance_figs) ? parseFloat(this.props.score.dance_figs) || 0 : null,
+                impression: !this.isEmpty(this.props.score.impression) ? parseFloat(this.props.score.impression) || 0 : null,
+                small_mistakes: !this.isEmpty(this.props.score.small_mistakes) ? parseInt(this.props.score.small_mistakes) || 0 : null,
+                big_mistakes: !this.isEmpty(this.props.score.big_mistakes) ? parseInt(this.props.score.big_mistakes) || 0 : null,
             }
         }
         return {
-            fw_man: parseInt(this.props.score.fw_man) || 0,
-            fw_woman: parseInt(this.props.score.fw_woman) || 0,
-            dance_figs: parseInt(this.props.score.dance_figs) || 0,
-            composition: parseInt(this.props.score.composition) || 0,
-            small_mistakes: parseInt(this.props.score.small_mistakes) || 0,
-            big_mistakes: parseInt(this.props.score.big_mistakes) || 0,
+            fw_man: !this.isEmpty(this.props.score.fw_man) ? parseInt(this.props.score.fw_man) || 0 : null,
+            fw_woman: !this.isEmpty(this.props.score.fw_woman) ? parseInt(this.props.score.fw_woman) || 0 : null,
+            dance_figs: !this.isEmpty(this.props.score.dance_figs) ? parseInt(this.props.score.dance_figs) || 0 : null,
+            composition: !this.isEmpty(this.props.score.composition) ? parseInt(this.props.score.composition) || 0 : null,
+            small_mistakes: !this.isEmpty(this.props.score.small_mistakes) ? parseInt(this.props.score.small_mistakes) || 0 : null,
+            big_mistakes: !this.isEmpty(this.props.score.big_mistakes) ? parseInt(this.props.score.big_mistakes) || 0 : null,
         }
     }
     serializeHeadScore() {
@@ -225,9 +228,7 @@ class TourAdminScoreInput extends React.Component {
     serializeScore() {
         switch (this.props.discipline_judge.role) {
         case "acro_judge":
-            return this.props.scoring_system_name == "rosfarr.no_acro"
-                ? this.serializeDanceScore()
-                : this.serializeAcroScore()
+            return this.serializeDanceScore()
         case "dance_judge":
             return this.serializeDanceScore();
         case "head_judge":
@@ -245,6 +246,7 @@ class TourAdminScoreInput extends React.Component {
 
 class TourAdminScoreCell extends React.Component {
     render() {
+        console.log(this.props);
         if (!this.props.editing) {
             if (this.props.discipline_judge.role == "head_judge" && this.props.value.raw_data.nexttour) {
                 return <div onClick={ this.props.startEditing }>[{ this.props.value.total_score.toFixed(1) }]</div>

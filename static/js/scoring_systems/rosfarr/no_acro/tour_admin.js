@@ -142,13 +142,13 @@ var TourAdminScoreInput = (function (_React$Component) {
             var fields = this.props.score.deductions.map((function (value, idx) {
                 return [React.createElement(
                     "th",
-                    null,
+                    { key: "H" + idx },
                     "A",
                     idx + 1,
                     ":"
                 ), React.createElement(
                     "td",
-                    null,
+                    { key: "V" + idx },
                     React.createElement("input", {
                         type: "text",
                         value: this.props.score.deductions[idx],
@@ -410,11 +410,16 @@ var TourAdminScoreInput = (function (_React$Component) {
             }
         }
     }, {
+        key: "isEmpty",
+        value: function isEmpty(value) {
+            return value === "" || value === null;
+        }
+    }, {
         key: "serializeAcroScore",
         value: function serializeAcroScore() {
             return {
                 deductions: this.props.score.deductions.map(function (deduction) {
-                    return parseInt(deduction) || 0;
+                    return deduction ? parseInt(deduction) || 0 : null;
                 }),
                 mistakes: parseInt(this.props.score.mistakes) || 0
             };
@@ -424,20 +429,20 @@ var TourAdminScoreInput = (function (_React$Component) {
         value: function serializeDanceScore() {
             if (this.props.scoring_system_name == "rosfarr.formation") {
                 return {
-                    dance_tech: parseFloat(this.props.score.dance_tech) || 0,
-                    dance_figs: parseFloat(this.props.score.dance_figs) || 0,
-                    impression: parseFloat(this.props.score.impression) || 0,
-                    small_mistakes: parseInt(this.props.score.small_mistakes) || 0,
-                    big_mistakes: parseInt(this.props.score.big_mistakes) || 0
+                    dance_tech: !this.isEmpty(this.props.score.dance_tech) ? parseFloat(this.props.score.dance_tech) || 0 : null,
+                    dance_figs: !this.isEmpty(this.props.score.dance_figs) ? parseFloat(this.props.score.dance_figs) || 0 : null,
+                    impression: !this.isEmpty(this.props.score.impression) ? parseFloat(this.props.score.impression) || 0 : null,
+                    small_mistakes: !this.isEmpty(this.props.score.small_mistakes) ? parseInt(this.props.score.small_mistakes) || 0 : null,
+                    big_mistakes: !this.isEmpty(this.props.score.big_mistakes) ? parseInt(this.props.score.big_mistakes) || 0 : null
                 };
             }
             return {
-                fw_man: parseInt(this.props.score.fw_man) || 0,
-                fw_woman: parseInt(this.props.score.fw_woman) || 0,
-                dance_figs: parseInt(this.props.score.dance_figs) || 0,
-                composition: parseInt(this.props.score.composition) || 0,
-                small_mistakes: parseInt(this.props.score.small_mistakes) || 0,
-                big_mistakes: parseInt(this.props.score.big_mistakes) || 0
+                fw_man: !this.isEmpty(this.props.score.fw_man) ? parseInt(this.props.score.fw_man) || 0 : null,
+                fw_woman: !this.isEmpty(this.props.score.fw_woman) ? parseInt(this.props.score.fw_woman) || 0 : null,
+                dance_figs: !this.isEmpty(this.props.score.dance_figs) ? parseInt(this.props.score.dance_figs) || 0 : null,
+                composition: !this.isEmpty(this.props.score.composition) ? parseInt(this.props.score.composition) || 0 : null,
+                small_mistakes: !this.isEmpty(this.props.score.small_mistakes) ? parseInt(this.props.score.small_mistakes) || 0 : null,
+                big_mistakes: !this.isEmpty(this.props.score.big_mistakes) ? parseInt(this.props.score.big_mistakes) || 0 : null
             };
         }
     }, {
@@ -453,7 +458,7 @@ var TourAdminScoreInput = (function (_React$Component) {
         value: function serializeScore() {
             switch (this.props.discipline_judge.role) {
                 case "acro_judge":
-                    return this.props.scoring_system_name == "rosfarr.no_acro" ? this.serializeDanceScore() : this.serializeAcroScore();
+                    return this.serializeDanceScore();
                 case "dance_judge":
                     return this.serializeDanceScore();
                 case "head_judge":
@@ -486,6 +491,7 @@ var TourAdminScoreCell = (function (_React$Component2) {
     _createClass(TourAdminScoreCell, [{
         key: "render",
         value: function render() {
+            console.log(this.props);
             if (!this.props.editing) {
                 if (this.props.discipline_judge.role == "head_judge" && this.props.value.raw_data.nexttour) {
                     return React.createElement(

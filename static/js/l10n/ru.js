@@ -137,7 +137,6 @@ function _(src, arg) {
                 "delete_with_disciplines": "Невозможно удалить судью, входящего в судейскую бригаду хотя бы одного тура"
             },
             "score": {
-                "change_of_confirmed": "Невозможно изменить зафиксированную оценку",
                 "score_not_exist": "Попытка получить значение несуществующей оценки судьи"
             },
             "tour": {
@@ -176,8 +175,8 @@ function _(src, arg) {
                 "judge_n": function judge_n(n) {
                     return "Линейный судья №" + n.toString();
                 },
-                "participant_n": function participant_n(n, n_sp) {
-                    return (n_sp == 2 ? "Пара №" : n_sp > 2 ? "Формейшн №" : "Участник №") + n.toString();
+                "participant_n": function participant_n(n, name, n_sp) {
+                    return n_sp > 2 ? "Формейшн №" + n.toString() + ": " + name : (n_sp == 2 ? "Пара №" : "Участник №") + n.toString();
                 }
             }
         },
@@ -315,6 +314,9 @@ function _(src, arg) {
                 "to_start_page": "На главную"
             },
             "headers": {
+                "acro_n": function acro_n(n) {
+                    return ["Первый", "Второй", "Третий", "Четвертый", "Пятый", "Шестой", "Седьмой", "Восьмой"][n] + " трюк";
+                },
                 "heat": "Заход",
                 "presenter": "Ведущий",
                 "select_page": "Страница"
@@ -361,7 +363,7 @@ function _(src, arg) {
                         "reset_to_n": function reset_to_n(n) {
                             return "Сброс на " + n.toString();
                         },
-                        "timing": "Длительность программы"
+                        "timing": "Длительность"
                     }
                 },
                 "results": {

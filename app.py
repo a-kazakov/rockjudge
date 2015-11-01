@@ -20,7 +20,6 @@ class Application(tornado.web.Application):
         config = dict(
             cookie_secret=settings.COOKIE_SECRET,
             template_path=os.path.join(os.path.dirname(__file__), 'templates'),
-            static_path=os.path.join(os.path.dirname(__file__), 'static'),
             login_url='/',
             xsrf_cookies=False,
             debug=settings.DEBUG,

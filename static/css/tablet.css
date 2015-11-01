@@ -175,6 +175,7 @@ div.mistakes {
 }
 .confirm {
   text-align: center;
+  padding-top: 10px;
 }
 .confirm button {
   width: 200px;

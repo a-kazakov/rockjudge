@@ -59,6 +59,11 @@ var TabletScoreInput = (function (_React$Component) {
             }).send();
         }
     }, {
+        key: "allowHeatsChange",
+        value: function allowHeatsChange() {
+            return this.props.discipline_judge.role == "head_judge" || this.props.discipline_judge.role == "tech_judge";
+        }
+    }, {
         key: "renderHeadJudgeInput",
         value: function renderHeadJudgeInput() {
             var tech_judges = this.props.all_discipline_judges.filter(function (discipline_judge) {
@@ -300,7 +305,7 @@ var TabletScoreInput = (function (_React$Component) {
                     React.createElement(
                         "h3",
                         null,
-                        acro.description
+                        _("tablet.headers.acro_n", idx)
                     ),
                     React.createElement(TabletSelectorInput, {
                         choices: [[100, "X"], [75, "75%"], [50, "50%"], [25, "25%"], [10, "10%"], [5, "5%"], [0, "OK"]],
@@ -440,6 +445,24 @@ var TabletScoreInput = (function (_React$Component) {
         value: function renderConfirmationButton() {
             if (this.props.score.confirmed) {
                 return null;
+            }
+            if (this.allowHeatsChange()) {
+                return false;
+            }
+            var score_data = this.props.score.data.raw_data;
+            var keys = Object.getOwnPropertyNames(score_data);
+            for (var idx in keys) {
+                if (score_data[keys[idx]] === null) {
+                    return null;
+                }
+                if (typeof score_data[keys[idx]] == "object") {
+                    var arr = score_data[keys[idx]];
+                    for (var j in Object.keys(arr)) {
+                        if (arr[j] === null) {
+                            return null;
+                        }
+                    }
+                }
             }
             return React.createElement(
                 "div",

@@ -55,8 +55,13 @@ class JudgeTablet extends React.Component {
                     }
                 }.bind(this));
                 if (reset_heat) {
-                    let discipline_judge_id = state_upd["discipline_judge"] && state_upd["discipline_judge"].id;
-                    state_upd["current_heat"] = this.getFirstNonConfirmedHeat(tour.runs, discipline_judge_id) || 1;
+                    let discipline_judge = state_upd["discipline_judge"];
+                    if (!discipline_judge || discipline_judge.role == "head_judge" || discipline_judge.role == "tech_judge") {
+                        state_upd["current_heat"] = 1;
+                    } else {
+                        let discipline_judge_id = discipline_judge && discipline_judge.id;
+                        state_upd["current_heat"] = this.getFirstNonConfirmedHeat(tour.runs, discipline_judge_id) || 1;
+                    }
                 }
             }
         }
@@ -130,8 +135,9 @@ class JudgeTablet extends React.Component {
 
     // Helpers
 
-    getHeatsCount() {
-        return Math.max(...this.state.tour.runs.map((run) => run.heat));
+    getHeatsCount(runs) {
+        runs = runs || this.state.tour.runs;
+        return Math.max(...runs.map((run) => run.heat));
     }
     getFirstNonConfirmedHeat(runs, discipline_judge_id) {
         runs = runs || this.state.tour.runs;
@@ -144,6 +150,7 @@ class JudgeTablet extends React.Component {
                 }
             }
         }
+        return this.getHeatsCount(runs);
     }
 
     // Rendering
@@ -156,7 +163,9 @@ class JudgeTablet extends React.Component {
                 { _("tablet.buttons.prev_heat") }
             </button>;
         }
-        if (this.state.current_heat < this.getHeatsCount() && this.getFirstNonConfirmedHeat() > this.state.current_heat) {
+        if (this.state.current_heat < this.getHeatsCount() && (
+                this.state.discipline_judge.role == "tech_judge" || this.state.discipline_judge.role == "head_judge"
+                || this.getFirstNonConfirmedHeat() > this.state.current_heat)) {
             btn_next = <button className="btn btn-primary pull-right" {...onTouchOrClick(this.toNextHeat.bind(this))}>
                 { _("tablet.buttons.next_heat") }
             </button>;
@@ -206,7 +215,7 @@ class JudgeTablet extends React.Component {
                     scores_map[score_data.discipline_judge_id] = score_data;
                 });
                 let current_score = scores_map[this.state.discipline_judge.id];
-                let header = _("global.phrases.participant_n", run.participant.number, run.participant.sportsmen.length);
+                let header = _("global.phrases.participant_n", run.participant.number, run.participant.name, run.participant.sportsmen.length);
                 if (typeof scores_map[this.state.discipline_judge.id] === "undefined") {
                     return <td key={ run.id }>
                         <h2>{ header }</h2>

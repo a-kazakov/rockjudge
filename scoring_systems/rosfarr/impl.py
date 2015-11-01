@@ -3,6 +3,9 @@ from fractions import Fraction as frac
 from exceptions import ApiError
 
 
+POSSIBLE_DEDUCTIONS = {0, 5, 10, 25, 50, 75, 100}
+
+
 def apply_deduction(base_score, deduction):
     return base_score * (100 - deduction) // 100
 
@@ -11,35 +14,37 @@ def m100(score):
     return round(100 * score)
 
 
-class FormationScore:
+class BaseScore:
+    DEFAULT_SCORES = {}
+    INITIAL_SCORES = {}
+    SCORES_VALIDATORS = {}
+
     def __init__(self, score):
         self.score = score
         raw_data = score.get_data()
         self.data = {
-            "dance_tech":       raw_data.pop("dance_tech",      0),
-            "dance_figs":       raw_data.pop("dance_figs",      0),
-            "impression":       raw_data.pop("impression",      0),
-            "small_mistakes":   raw_data.pop("small_mistakes",  0),
-            "big_mistakes":     raw_data.pop("big_mistakes",    0),
+            key: raw_data.pop(key, self.INITIAL_SCORES[key] if key in self.INITIAL_SCORES else None)
+            for key in self.DEFAULT_SCORES.keys()
         }
 
     @property
     def total_score(self):
-        return sum([
-            m100(self.data["dance_tech"]),
-            m100(self.data["dance_figs"]),
-            m100(self.data["impression"]),
-             -5 * m100(self.data["small_mistakes"]),  # NOQA
-            -30 * m100(self.data["big_mistakes"]),
-        ])
+        raw_scores = {
+            key: value if value is not None else self.DEFAULT_SCORES[key]
+            for key, value in self.data.items()
+        }
+        return self.get_total_score(raw_scores)
+
+    @classmethod
+    def clear_value(cls, key, value):
+        if not cls.SCORES_VALIDATORS[key](value):
+            return None
+        return value
 
     def update(self, new_data):
         self.data = {
-            "dance_tech":       float(new_data.pop("dance_tech",      self.data["dance_tech"])),
-            "dance_figs":       float(new_data.pop("dance_figs",      self.data["dance_figs"])),
-            "impression":       float(new_data.pop("impression",      self.data["impression"])),
-            "small_mistakes":     int(new_data.pop("small_mistakes",  self.data["small_mistakes"])),
-            "big_mistakes":       int(new_data.pop("big_mistakes",    self.data["big_mistakes"])),
+            key: self.clear_value(key, new_data[key]) if key in new_data else old_value
+            for key, old_value in self.data.items()
         }
         self.score.set_data(self.data)
 
@@ -50,46 +55,69 @@ class FormationScore:
         }
 
 
-class DanceScore:
-    def __init__(self, score):
-        self.score = score
-        raw_data = score.get_data()
-        self.data = {
-            "fw_man":           raw_data.pop("fw_man",          100),
-            "fw_woman":         raw_data.pop("fw_woman",        100),
-            "dance_figs":       raw_data.pop("dance_figs",      0),
-            "composition":      raw_data.pop("composition",     0),
-            "small_mistakes":   raw_data.pop("small_mistakes",  0),
-            "big_mistakes":     raw_data.pop("big_mistakes",    0),
-        }
+class FormationScore(BaseScore):
+    DEFAULT_SCORES = {
+        "dance_tech": 0,
+        "dance_figs": 0,
+        "impression": 0,
+        "small_mistakes": 0,
+        "big_mistakes": 0,
+    }
+    INITIAL_SCORES = {
+        "small_mistakes": 0,
+        "big_mistakes": 0,
+    }
+    SCORES_VALIDATORS = {
+        "dance_tech": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "dance_figs": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "impression": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "small_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+        "big_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+    }
 
-    @property
-    def total_score(self):
+    @staticmethod
+    def get_total_score(raw_scores):
         return sum([
-            apply_deduction(m100(10), self.data["fw_man"]),
-            apply_deduction(m100(10), self.data["fw_woman"]),
-            m100(self.data["dance_figs"]),
-            m100(self.data["composition"]),
-             -5 * m100(self.data["small_mistakes"]),  # NOQA
-            -30 * m100(self.data["big_mistakes"]),
+            m100(raw_scores["dance_tech"]),
+            m100(raw_scores["dance_figs"]),
+            m100(raw_scores["impression"]),
+             -5 * m100(raw_scores["small_mistakes"]),  # NOQA
+            -30 * m100(raw_scores["big_mistakes"]),
         ])
 
-    def update(self, new_data):
-        self.data = {
-            "fw_man":           int(new_data.pop("fw_man",          self.data["fw_man"])),
-            "fw_woman":         int(new_data.pop("fw_woman",        self.data["fw_woman"])),
-            "dance_figs":       int(new_data.pop("dance_figs",      self.data["dance_figs"])),
-            "composition":      int(new_data.pop("composition",     self.data["composition"])),
-            "small_mistakes":   int(new_data.pop("small_mistakes",  self.data["small_mistakes"])),
-            "big_mistakes":     int(new_data.pop("big_mistakes",    self.data["big_mistakes"])),
-        }
-        self.score.set_data(self.data)
 
-    def serialize(self):
-        return {
-            "total_score": self.total_score / 100,
-            "raw_data": self.data,
-        }
+class DanceScore(BaseScore):
+    DEFAULT_SCORES = {
+        "fw_man": 100,
+        "fw_woman": 100,
+        "dance_figs": 0,
+        "composition": 0,
+        "small_mistakes": 0,
+        "big_mistakes": 0,
+    }
+    INITIAL_SCORES = {
+        "small_mistakes": 0,
+        "big_mistakes": 0,
+    }
+    SCORES_VALIDATORS = {
+        "fw_man": lambda x: type(x) is int and x in POSSIBLE_DEDUCTIONS,
+        "fw_woman": lambda x: type(x) is int and x in POSSIBLE_DEDUCTIONS,
+        "dance_figs": lambda x: type(x) is int and 0 <= x <= 25,
+        "composition": lambda x: type(x) is int and 0 <= x <= 20,
+        "small_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+        "big_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+    }
+
+    @staticmethod
+    def get_total_score(raw_scores):
+        return sum([
+            apply_deduction(m100(10), raw_scores["fw_man"]),
+            apply_deduction(m100(10), raw_scores["fw_woman"]),
+            m100(raw_scores["dance_figs"]),
+            m100(raw_scores["composition"]),
+             -5 * m100(raw_scores["small_mistakes"]),  # NOQA
+            -30 * m100(raw_scores["big_mistakes"]),
+        ])
 
 
 class AcroScore:
@@ -98,7 +126,7 @@ class AcroScore:
         raw_data = score.get_data()
         num_acros = len(score.run.participant.acrobatics)
         self.data = {
-            "deductions": raw_data.pop("deductions", [100] * num_acros),
+            "deductions": raw_data.pop("deductions", [None] * num_acros),
             "mistakes": raw_data.pop("mistakes", 0),
         }
 
@@ -107,20 +135,24 @@ class AcroScore:
         result = 0
         acro_data = enumerate(zip(self.score.run.acrobatics, self.data["deductions"]))
         for acro_idx, (acro, deduction) in acro_data:
-            override = self.score.run.get_acrobatic_override(acro_idx)
-            base_score = override.score if override is not None else acro["score"]
-            result += apply_deduction(m100(base_score), deduction)
+            if deduction is not None:
+                override = self.score.run.get_acrobatic_override(acro_idx)
+                base_score = override.score if override is not None else acro["score"]
+                result += apply_deduction(m100(base_score), deduction)
         result -= 30 * m100(self.data["mistakes"])
         return result
 
     def update(self, new_data):
-        self.data.update({
-            "mistakes": int(new_data.pop("mistakes", self.data["mistakes"])),
-        })
+        if "mistakes" in new_data:
+            mistakes = new_data["mistakes"]
+            self.data["mistakes"] = mistakes if type(mistakes) is int and 0 <= mistakes <= 100 else 0
         if "deductions" in new_data:
             for idx, deduction in enumerate(new_data["deductions"]):
                 if deduction is not None and idx < len(self.data["deductions"]):
-                    self.data["deductions"][idx] = int(deduction)
+                    cleared_deduction = deduction \
+                        if type(deduction) is int and deduction in POSSIBLE_DEDUCTIONS \
+                        else None
+                    self.data["deductions"][idx] = cleared_deduction
         self.score.set_data(self.data)
 
     def serialize(self):

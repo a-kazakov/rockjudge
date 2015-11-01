@@ -1,3 +1,5 @@
+import os.path
+
 from sockjs.tornado import SockJSRouter
 
 from webserver.handlers import (
@@ -10,12 +12,15 @@ from webserver.handlers import (
     PresenterHandler,
     StartListHandler,
     StartPageHandler,
+    StaticFilesHandlerNoCache,
     TourAdminHandler,
     TourResultsHandler,
     TabletHandler,
 )
 from webserver.websocket import WebSocketClients
 
+
+STATIC_PATH = os.path.join(os.path.dirname(__file__), 'static')
 
 ws_router = SockJSRouter(WebSocketClients, '/ws')
 
@@ -28,9 +33,9 @@ handlers = [
     (r"/presenter$", PresenterHandler),
     (r"/report/(\d+)$", CompetitionReportHandler),
     (r"/start_list/(\d+)$", StartListHandler),
+    (r"/static/(.*)", StaticFilesHandlerNoCache, {"path": STATIC_PATH}),
     (r"/tablet/(\d+)$", TabletHandler),
     (r"/tour/(\d+)$", TourAdminHandler),
     (r"/tour/(\d+)/results$", TourResultsHandler),
-
     (r"/api", ApiHandler),
 ] + ws_router.urls

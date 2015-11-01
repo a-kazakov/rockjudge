@@ -31,6 +31,9 @@ class TabletScoreInput extends React.Component {
             score: value,
         }).send();
     }
+    allowHeatsChange() {
+        return this.props.discipline_judge.role == "head_judge" || this.props.discipline_judge.role == "tech_judge"
+    }
     renderHeadJudgeInput() {
         var tech_judges = this.props.all_discipline_judges.filter(function(discipline_judge) {
             return discipline_judge.role == "tech_judge";
@@ -156,7 +159,7 @@ class TabletScoreInput extends React.Component {
         var score = this.props.score.data;
         var inputs = this.props.acrobatics.map(function(acro, idx) {
             return <div key={ idx }>
-                <h3>{ acro.description }</h3>
+                <h3>{ _("tablet.headers.acro_n", idx) }</h3>
                 <TabletSelectorInput
                     choices={ [[100, "X"], [75, "75%"], [50, "50%"], [25, "25%"], [10, "10%"], [5, "5%"], [0, "OK"]] }
                     active={ score.raw_data.deductions[idx] }
@@ -234,6 +237,24 @@ class TabletScoreInput extends React.Component {
     renderConfirmationButton() {
         if (this.props.score.confirmed) {
             return null;
+        }
+        if (this.allowHeatsChange()) {
+            return false;
+        }
+        let score_data = this.props.score.data.raw_data;
+        let keys = Object.getOwnPropertyNames(score_data);
+        for (let idx in keys) {
+            if (score_data[keys[idx]] === null) {
+                return null;
+            }
+            if (typeof score_data[keys[idx]] == "object") {
+                let arr = score_data[keys[idx]];
+                for (let j in Object.keys(arr)) {
+                    if (arr[j] === null) {
+                        return null;
+                    }
+                }
+            }
         }
         return <div className="confirm">
             <button className="tbtn" {...onTouchOrClick(this.props.onScoreConfirm)}>
