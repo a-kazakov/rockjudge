@@ -1,5 +1,6 @@
 React.initializeTouchEvents(true);
 
+
 class JudgeTablet extends React.Component {
     constructor(props) {
         super(props);
@@ -54,7 +55,8 @@ class JudgeTablet extends React.Component {
                     }
                 }.bind(this));
                 if (reset_heat) {
-                    state_upd["current_heat"] = 1;
+                    let discipline_judge_id = state_upd["discipline_judge"] && state_upd["discipline_judge"].id;
+                    state_upd["current_heat"] = this.getFirstNonConfirmedHeat(tour.runs, discipline_judge_id) || 1;
                 }
             }
         }
@@ -63,7 +65,6 @@ class JudgeTablet extends React.Component {
     updateActiveTour(force_reload, new_active_tour_id) {
         if (new_active_tour_id === null) {
             this.setState({
-                current_heat: 1,
                 tour: null,
                 discipline_judge: null,
             });
@@ -98,7 +99,15 @@ class JudgeTablet extends React.Component {
     // Listeners
 
     onScoreUpdate(score_id, new_score) {
-        Api("score.set", {score_id: score_id, data: new_score}).send();
+        let request = {
+            score_data: new_score,
+            force: false,
+        };
+        Api("score.set", {score_id: score_id, data: request}).send();
+    }
+
+    onScoreConfirm(score_id) {
+        Api("score.confirm", {score_id: score_id}).send();
     }
 
     // Actions
@@ -124,6 +133,18 @@ class JudgeTablet extends React.Component {
     getHeatsCount() {
         return Math.max(...this.state.tour.runs.map((run) => run.heat));
     }
+    getFirstNonConfirmedHeat(runs, discipline_judge_id) {
+        runs = runs || this.state.tour.runs;
+        discipline_judge_id = discipline_judge_id || this.state.discipline_judge.id;
+        for (let i = 0; i < runs.length; ++i) {
+            for (let j = 0; j < runs[i].scores.length; ++j) {
+                let score = runs[i].scores[j];
+                if (score.discipline_judge_id == discipline_judge_id && !score.confirmed) {
+                    return runs[i].heat;
+                }
+            }
+        }
+    }
 
     // Rendering
 
@@ -135,7 +156,7 @@ class JudgeTablet extends React.Component {
                 { _("tablet.buttons.prev_heat") }
             </button>;
         }
-        if (this.state.current_heat < this.getHeatsCount()) {
+        if (this.state.current_heat < this.getHeatsCount() && this.getFirstNonConfirmedHeat() > this.state.current_heat) {
             btn_next = <button className="btn btn-primary pull-right" {...onTouchOrClick(this.toNextHeat.bind(this))}>
                 { _("tablet.buttons.next_heat") }
             </button>;
@@ -199,11 +220,13 @@ class JudgeTablet extends React.Component {
                         discipline_judge={ this.state.discipline_judge }
                         all_discipline_judges={ this.state.tour.discipline.discipline_judges }
                         score={ current_score }
+                        readOnly={ current_score.confirmed }
                         all_scores={ scores_map }
                         run_id={ run.id }
                         page={ this.state.page }
                         scoring_system_name={ this.state.tour.scoring_system_name }
-                        onScoreUpdate={ this.onScoreUpdate.bind(this, current_score.id) } />
+                        onScoreUpdate={ this.onScoreUpdate.bind(this, current_score.id) }
+                        onScoreConfirm={ this.onScoreConfirm.bind(this, current_score.id) } />
                 </td>
             }.bind(this));
         var single_run_class = cells.length == 1 ? " single-run" : "";

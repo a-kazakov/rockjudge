@@ -13,6 +13,15 @@ body,
   font-size: 14px;
   font-weight: 500;
 }
+.read-only .tbtn,
+.read-only .mistakes .tbtn {
+  background-color: #666;
+  color: #fff;
+}
+.read-only .mistakes .value {
+  background-color: #ddd;
+  color: #000;
+}
 .spacer {
   height: 30px;
 }
@@ -163,6 +172,12 @@ div.mistakes {
 .tech-judge-info .value.fail {
   background-color: #900;
   color: #efefef;
+}
+.confirm {
+  text-align: center;
+}
+.confirm button {
+  width: 200px;
 }
 button.score-btn {
   vertical-align: top;

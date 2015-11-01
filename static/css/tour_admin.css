@@ -54,6 +54,15 @@
 .tour-admin .bordered-table td {
   text-align: center;
 }
+.tour-admin .bordered-table tr td.confirmed-score {
+  background-color: #474;
+  font-weight: bold;
+  color: #fff;
+}
+.tour-admin .bordered-table tr td.confirmed-score input {
+  color: #000;
+  font-weight: normal;
+}
 .tour-admin .bordered-table td.editing {
   background-color: #ff530d;
 }

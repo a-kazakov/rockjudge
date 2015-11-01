@@ -137,6 +137,7 @@ function _(src, arg) {
                 "delete_with_disciplines": "Невозможно удалить судью, входящего в судейскую бригаду хотя бы одного тура"
             },
             "score": {
+                "change_of_confirmed": "Невозможно изменить зафиксированную оценку",
                 "score_not_exist": "Попытка получить значение несуществующей оценки судьи"
             },
             "tour": {
@@ -182,6 +183,7 @@ function _(src, arg) {
         },
         "judging": {
             "buttons": {
+                "confirm_score": "Зафиксировать",
                 "init_tour": "Пересоздать тур",
                 "finalize_tour": "Финализировать",
                 "shuffle_heats": "Перемешать заходы",
@@ -348,7 +350,7 @@ function _(src, arg) {
                         "total_score": "Сумма баллов"
                     },
                     "head_judge": {
-                        "black_card": "-100 баллов",
+                        "black_card": "-100",
                         "ok": "OK",
                         "penalty_type": "Штрафные санкции",
                         "red_card": "-30",

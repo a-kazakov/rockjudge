@@ -129,9 +129,10 @@ var TourAdminScoreCellWrapper = (function (_React$Component2) {
                     " "
                 );
             }
+            var classes = ["judge"].concat(this.state.editing ? ["editing"] : []).concat(this.props.confirmed ? ["confirmed-score"] : []);
             return React.createElement(
                 "td",
-                { className: "judge" + (this.state.editing ? " editing" : "") },
+                { className: classes.join(" ") },
                 React.createElement(TourAdminScoreCell, {
                     discipline_judge: this.props.discipline_judge,
                     scoring_system_name: this.props.scoring_system_name,
@@ -175,9 +176,11 @@ var TourAdminScoreCellWrapper = (function (_React$Component2) {
     }, {
         key: "submitValue",
         value: function submitValue(new_value) {
-            Api("score.set", { score_id: this.props.score_id, data: new_value }).onSuccess((function () {
-                this.stopEditing();
-            }).bind(this)).send();
+            var request = {
+                score_data: new_value,
+                force: true
+            };
+            Api("score.set", { score_id: this.props.score_id, data: request }).onSuccess(this.stopEditing.bind(this)).send();
         }
     }]);
 
@@ -207,7 +210,8 @@ var TourAdminScoresRow = (function (_React$Component3) {
                     discipline_judge: discipline_judge,
                     scoring_system_name: this.props.scoring_system_name,
                     score_id: score && score.id,
-                    value: score && score.data });
+                    value: score && score.data,
+                    confirmed: score && score.confirmed });
             }).bind(this));
             return React.createElement(
                 "tr",

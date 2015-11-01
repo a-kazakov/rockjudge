@@ -1,6 +1,7 @@
 import json
 import peewee
 
+from exceptions import ApiError
 from models.base_model import BaseModel
 from models.discipline_judge import DisciplineJudge
 from models.run import Run
@@ -17,6 +18,7 @@ class Score(BaseModel):
     run = peewee.ForeignKeyField(Run, related_name="scores")
     discipline_judge = peewee.ForeignKeyField(DisciplineJudge)
     score_data = peewee.TextField(default="{}")
+    confirmed = peewee.BooleanField(default=False)
 
     def get_sorting_key(self):
         return self.discipline_judge.get_sorting_key()
@@ -28,8 +30,19 @@ class Score(BaseModel):
         self.score_data = json.dumps(score_data)
         self.save()
 
+    def confirm(self, ws_message):
+        self.confirmed = True
+        self.save()
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id,
+        )
+
     def update_model(self, new_data, ws_message):
-        self.run.tour.scoring_system.update_score(self, new_data)
+        if self.confirmed:
+            if "force" not in new_data or not new_data["force"]:
+                raise ApiError("errors.score.change_of_confirmed")
+        self.run.tour.scoring_system.update_score(self, new_data["score_data"])
         ws_message.add_model_update(
             model_type=self.__class__,
             model_id=self.id,
@@ -43,5 +56,6 @@ class Score(BaseModel):
     def serialize(self, children={}, discipline_judge=None):
         return {
             "discipline_judge_id": self.discipline_judge_id,
-            "data": self.run.tour.scoring_system.serialize_score(self, discipline_judge=discipline_judge)
+            "data": self.run.tour.scoring_system.serialize_score(self, discipline_judge=discipline_judge),
+            "confirmed": self.confirmed,
         }

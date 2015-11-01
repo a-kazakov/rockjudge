@@ -74,7 +74,8 @@ var JudgeTablet = (function (_React$Component) {
                         }
                     }).bind(this));
                     if (reset_heat) {
-                        state_upd["current_heat"] = 1;
+                        var discipline_judge_id = state_upd["discipline_judge"] && state_upd["discipline_judge"].id;
+                        state_upd["current_heat"] = this.getFirstNonConfirmedHeat(tour.runs, discipline_judge_id) || 1;
                     }
                 }
             }
@@ -117,7 +118,16 @@ var JudgeTablet = (function (_React$Component) {
     }, {
         key: "onScoreUpdate",
         value: function onScoreUpdate(score_id, new_score) {
-            Api("score.set", { score_id: score_id, data: new_score }).send();
+            var request = {
+                score_data: new_score,
+                force: false
+            };
+            Api("score.set", { score_id: score_id, data: request }).send();
+        }
+    }, {
+        key: "onScoreConfirm",
+        value: function onScoreConfirm(score_id) {
+            Api("score.confirm", { score_id: score_id }).send();
         }
 
         // Actions
@@ -153,6 +163,20 @@ var JudgeTablet = (function (_React$Component) {
                 return run.heat;
             })));
         }
+    }, {
+        key: "getFirstNonConfirmedHeat",
+        value: function getFirstNonConfirmedHeat(runs, discipline_judge_id) {
+            runs = runs || this.state.tour.runs;
+            discipline_judge_id = discipline_judge_id || this.state.discipline_judge.id;
+            for (var i = 0; i < runs.length; ++i) {
+                for (var j = 0; j < runs[i].scores.length; ++j) {
+                    var score = runs[i].scores[j];
+                    if (score.discipline_judge_id == discipline_judge_id && !score.confirmed) {
+                        return runs[i].heat;
+                    }
+                }
+            }
+        }
 
         // Rendering
 
@@ -168,7 +192,7 @@ var JudgeTablet = (function (_React$Component) {
                     _("tablet.buttons.prev_heat")
                 );
             }
-            if (this.state.current_heat < this.getHeatsCount()) {
+            if (this.state.current_heat < this.getHeatsCount() && this.getFirstNonConfirmedHeat() > this.state.current_heat) {
                 btn_next = React.createElement(
                     "button",
                     _extends({ className: "btn btn-primary pull-right" }, onTouchOrClick(this.toNextHeat.bind(this))),
@@ -302,11 +326,13 @@ var JudgeTablet = (function (_React$Component) {
                         discipline_judge: this.state.discipline_judge,
                         all_discipline_judges: this.state.tour.discipline.discipline_judges,
                         score: current_score,
+                        readOnly: current_score.confirmed,
                         all_scores: scores_map,
                         run_id: run.id,
                         page: this.state.page,
                         scoring_system_name: this.state.tour.scoring_system_name,
-                        onScoreUpdate: this.onScoreUpdate.bind(this, current_score.id) })
+                        onScoreUpdate: this.onScoreUpdate.bind(this, current_score.id),
+                        onScoreConfirm: this.onScoreConfirm.bind(this, current_score.id) })
                 );
             }).bind(this));
             var single_run_class = cells.length == 1 ? " single-run" : "";

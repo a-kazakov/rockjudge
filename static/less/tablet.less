@@ -15,6 +15,16 @@ html, body, #content {
   font-weight: 500;
 }
 
+.read-only .tbtn, .read-only .mistakes .tbtn {
+  background-color: #666;
+  color: #fff;
+}
+
+.read-only .mistakes .value {
+  background-color: #ddd;
+  color: #000;
+}
+
 .spacer {
   height: 30px;
 }
@@ -179,6 +189,13 @@ header .header {
       background-color: #900;
       color: @ui-white;
     }
+  }
+}
+
+.confirm {
+  text-align: center;
+  button {
+    width: 200px;
   }
 }
 

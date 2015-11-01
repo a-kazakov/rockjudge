@@ -59,18 +59,6 @@ class Run(BaseModel):
                     discipline_judge=discipline_judge,
                 )
 
-    def get_score_obj(self, judge):
-        from models import Score
-        return self.scores.select().where(Score.judge == judge).get()
-
-    def set_score(self, judge, score_data):
-        score_obj = self.get_score_obj(judge)
-        score_obj.set(score_data)
-
-    def get_score(self, judge):
-        score_obj = self.get_score_obj(judge)
-        return score_obj.get()
-
     def get_acrobatic_override(self, acrobatic_idx):
         for override in self.acrobatic_overrides:
             if override.acrobatic_idx == acrobatic_idx:

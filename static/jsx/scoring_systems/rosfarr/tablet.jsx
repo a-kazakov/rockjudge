@@ -6,8 +6,12 @@ function __() {
     return _("scoring_systems.rosfarr." + arguments[0], ...args);
 }
 
+
 class TabletScoreInput extends React.Component {
     updateScores(type, value) {
+        if (this.props.readOnly) {
+            return;
+        }
         let new_score = {};
         new_score[type] = value;
         this.props.onScoreUpdate(new_score);
@@ -207,12 +211,9 @@ class TabletScoreInput extends React.Component {
             <div className="total-score">{ __("tablet.global.total_score") }: { score.total_score }</div>
         </div>
     }
-    render() {
+    renderScoresInput() {
         switch (this.props.discipline_judge.role) {
         case "acro_judge":
-            if (this.props.scoring_system_name == "rosfarr.formation") {
-                return this.renderFormationInput();
-            }
             return this.props.scoring_system_name == "rosfarr.no_acro"
                 ? this.renderDanceJudgeInput()
                 : this.renderAcroJudgeInput()
@@ -229,5 +230,21 @@ class TabletScoreInput extends React.Component {
             console.log("Unknown judge role", this.props.discipline_judge.role);
             return null;
         }
+    }
+    renderConfirmationButton() {
+        if (this.props.score.confirmed) {
+            return null;
+        }
+        return <div className="confirm">
+            <button className="tbtn" {...onTouchOrClick(this.props.onScoreConfirm)}>
+                { _("judging.buttons.confirm_score") }
+            </button>
+        </div>;
+    }
+    render() {
+        return <div className={ this.props.readOnly ? "read-only" : "" }>
+            { this.renderScoresInput() }
+            { this.renderConfirmationButton() }
+        </div>;
     }
 }

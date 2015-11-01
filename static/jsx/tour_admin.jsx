@@ -78,7 +78,10 @@ class TourAdminScoreCellWrapper extends React.Component {
         if (typeof this.props.value === "undefined") {
             return <td className="no-score">&nbsp;</td>
         }
-        return <td className={ "judge" + (this.state.editing ? " editing" : "") } >
+        let classes = ["judge"]
+            .concat(this.state.editing ? ["editing"] : [])
+            .concat(this.props.confirmed ? ["confirmed-score"] : [])
+        return <td className={ classes.join(" ") } >
             <TourAdminScoreCell
                 discipline_judge={ this.props.discipline_judge }
                 scoring_system_name={ this.props.scoring_system_name }
@@ -114,9 +117,13 @@ class TourAdminScoreCellWrapper extends React.Component {
         });
     }
     submitValue(new_value) {
-        Api("score.set", {score_id: this.props.score_id, data: new_value}).onSuccess(function() {
-            this.stopEditing();
-        }.bind(this)).send();
+        let request = {
+            score_data: new_value,
+            force: true,
+        }
+        Api("score.set", {score_id: this.props.score_id, data: request})
+            .onSuccess(this.stopEditing.bind(this))
+            .send();
     }
 }
 
@@ -133,7 +140,8 @@ class TourAdminScoresRow extends React.Component {
                 discipline_judge={ discipline_judge }
                 scoring_system_name={ this.props.scoring_system_name }
                 score_id={ score && score.id }
-                value={ score && score.data } />
+                value={ score && score.data }
+                confirmed={ score && score.confirmed} />
         }.bind(this));
         return <tr className={ this.props.heat % 2 ? "odd-heat" : ""}>
             <TourAdminHeatValue
