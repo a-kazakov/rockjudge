@@ -136,14 +136,14 @@ class ManagementUI extends React.Component {
                                 { _("admin.menu.manage_disciplines") }
                             </div>
                         </div>
-                        <details className="block">
-                            <summary className="level-1">
+                        <details className="block" open={ !!parseInt(sessionStorage.getItem("D_TOURS")) }>
+                            <summary className="level-1" onClick={ (e) => sessionStorage.setItem("D_TOURS", e.target.parentNode.open ? 0 : 1) }>
                                 { _("admin.menu.manage_tours") }
                             </summary>
                             { ics_tours }
                         </details>
-                        <details className="block">
-                            <summary className="level-1">
+                        <details className="block" open={ !!parseInt(sessionStorage.getItem("D_SPORTSMEN")) }>
+                            <summary className="level-1" onClick={ (e) => sessionStorage.setItem("D_SPORTSMEN", e.target.parentNode.open ? 0 : 1) }>
                                 { _("admin.menu.manage_sportsmen") }
                             </summary>
                             { ics_participants }

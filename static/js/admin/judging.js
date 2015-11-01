@@ -37,10 +37,12 @@ var CompetitionSchema = (function (_React$Component) {
         value: function renderDiscipline(ic) {
             return React.createElement(
                 "details",
-                { className: "block", key: ic.id },
+                { className: "block", key: ic.id, open: !!parseInt(sessionStorage.getItem("D_J_" + ic.id)) },
                 React.createElement(
                     "summary",
-                    { className: "level-1" },
+                    { className: "level-1", onClick: function (e) {
+                            return sessionStorage.setItem("D_J_" + ic.id, e.target.parentNode.open ? 0 : 1);
+                        } },
                     ic.name
                 ),
                 ic.tours.map(this.renderTour.bind(this))

@@ -59,8 +59,8 @@ class ReportsUI extends React.Component {
                     { tour.name }
                 </div>
             }.bind(this));
-            return <details className="block" key={ ic.id }>
-                <summary className="level-1">
+            return <details className="block" key={ ic.id } open={ !!parseInt(sessionStorage.getItem("D_R_" + ic.id)) }>
+                <summary className="level-1" onClick={ (e) => sessionStorage.setItem("D_R_" + ic.id, e.target.parentNode.open ? 0 : 1) }>
                     { ic.name }
                 </summary>
                 { tours }

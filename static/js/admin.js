@@ -225,20 +225,24 @@ var ManagementUI = (function (_React$Component2) {
                                 ),
                                 React.createElement(
                                     "details",
-                                    { className: "block" },
+                                    { className: "block", open: !!parseInt(sessionStorage.getItem("D_TOURS")) },
                                     React.createElement(
                                         "summary",
-                                        { className: "level-1" },
+                                        { className: "level-1", onClick: function (e) {
+                                                return sessionStorage.setItem("D_TOURS", e.target.parentNode.open ? 0 : 1);
+                                            } },
                                         _("admin.menu.manage_tours")
                                     ),
                                     ics_tours
                                 ),
                                 React.createElement(
                                     "details",
-                                    { className: "block" },
+                                    { className: "block", open: !!parseInt(sessionStorage.getItem("D_SPORTSMEN")) },
                                     React.createElement(
                                         "summary",
-                                        { className: "level-1" },
+                                        { className: "level-1", onClick: function (e) {
+                                                return sessionStorage.setItem("D_SPORTSMEN", e.target.parentNode.open ? 0 : 1);
+                                            } },
                                         _("admin.menu.manage_sportsmen")
                                     ),
                                     ics_participants

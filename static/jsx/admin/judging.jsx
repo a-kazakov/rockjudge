@@ -14,8 +14,10 @@ class CompetitionSchema extends React.Component {
         </div>
     }
     renderDiscipline(ic) {
-        return <details className="block" key={ ic.id }>
-            <summary className="level-1">{ ic.name }</summary>
+        return <details className="block" key={ ic.id } open={ !!parseInt(sessionStorage.getItem("D_J_" + ic.id)) }>
+            <summary className="level-1" onClick={ (e) => sessionStorage.setItem("D_J_" + ic.id, e.target.parentNode.open ? 0 : 1) }>
+                { ic.name }
+            </summary>
             { ic.tours.map(this.renderTour.bind(this)) }
         </details>
     }
