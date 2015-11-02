@@ -25,6 +25,9 @@ class TabletScoreInput extends React.Component {
         this.props.onScoreUpdate(new_score);
     }
     overrideAcroScore(acro_idx, value) {
+        if (this.props.readOnly) {
+            return;
+        }
         Api("acrobatic_override.set", {
             run_id: this.props.run_id,
             acrobatic_idx: acro_idx,
@@ -32,7 +35,7 @@ class TabletScoreInput extends React.Component {
         }).send();
     }
     allowHeatsChange() {
-        return this.props.discipline_judge.role == "head_judge" || this.props.discipline_judge.role == "tech_judge"
+        return this.props.discipline_judge.role == "head_judge"
     }
     renderHeadJudgeInput() {
         let acrobatic_overrides = this.props.acrobatics
@@ -41,18 +44,18 @@ class TabletScoreInput extends React.Component {
         let tech_judges = this.props.all_discipline_judges.filter(function(discipline_judge) {
             return discipline_judge.role == "tech_judge";
         }).map(function(tech_judge) {
-            let tech_score = this.props.all_scores[tech_judge.id].data;
-            var timing_data = (tech_score.raw_data.timing_violation === null)
+            let tech_score = this.props.all_scores[tech_judge.id];
+            var timing_data = (tech_score.data.raw_data.timing_violation === null)
                 ? ["-", ""]
-                : (tech_score.raw_data.timing_violation ? ["X", " fail"] : ["OK", " ok"])
+                : (tech_score.data.raw_data.timing_violation ? ["X", " fail"] : ["OK", " ok"])
             return <div key={ tech_judge.id }>
-                <h3>{ tech_judge.judge.name }</h3>
+                <h3 className={ tech_score.confirmed ? "confirmed" : "" }>{ tech_judge.judge.name }</h3>
                 <div className="tech-judge-info">
                     <div className="title">
                         { __("tablet.tech_judge.jump_steps") }
                     </div>
                     <div className="value">
-                        { tech_score.raw_data.jump_steps }
+                        { tech_score.data.raw_data.jump_steps }
                     </div>
                 </div>
                 <div className="tech-judge-info">
@@ -259,19 +262,21 @@ class TabletScoreInput extends React.Component {
             return null;
         }
         if (this.allowHeatsChange()) {
-            return false;
+            return null;
         }
         let score_data = this.props.score.data.raw_data;
         let keys = Object.getOwnPropertyNames(score_data);
-        for (let idx in keys) {
-            if (score_data[keys[idx]] === null) {
-                return null;
-            }
-            if (typeof score_data[keys[idx]] == "object") {
-                let arr = score_data[keys[idx]];
-                for (let j in Object.keys(arr)) {
-                    if (arr[j] === null) {
-                        return null;
+        if (this.props.discipline_judge.role !== "tech_judge") {
+            for (let idx in keys) {
+                if (score_data[keys[idx]] === null) {
+                    return null;
+                }
+                if (typeof score_data[keys[idx]] == "object") {
+                    let arr = score_data[keys[idx]];
+                    for (let j in Object.keys(arr)) {
+                        if (arr[j] === null) {
+                            return null;
+                        }
                     }
                 }
             }

@@ -52,6 +52,9 @@ var TabletScoreInput = (function (_React$Component) {
     }, {
         key: "overrideAcroScore",
         value: function overrideAcroScore(acro_idx, value) {
+            if (this.props.readOnly) {
+                return;
+            }
             Api("acrobatic_override.set", {
                 run_id: this.props.run_id,
                 acrobatic_idx: acro_idx,
@@ -61,7 +64,7 @@ var TabletScoreInput = (function (_React$Component) {
     }, {
         key: "allowHeatsChange",
         value: function allowHeatsChange() {
-            return this.props.discipline_judge.role == "head_judge" || this.props.discipline_judge.role == "tech_judge";
+            return this.props.discipline_judge.role == "head_judge";
         }
     }, {
         key: "renderHeadJudgeInput",
@@ -74,14 +77,14 @@ var TabletScoreInput = (function (_React$Component) {
             var tech_judges = this.props.all_discipline_judges.filter(function (discipline_judge) {
                 return discipline_judge.role == "tech_judge";
             }).map((function (tech_judge) {
-                var tech_score = this.props.all_scores[tech_judge.id].data;
-                var timing_data = tech_score.raw_data.timing_violation === null ? ["-", ""] : tech_score.raw_data.timing_violation ? ["X", " fail"] : ["OK", " ok"];
+                var tech_score = this.props.all_scores[tech_judge.id];
+                var timing_data = tech_score.data.raw_data.timing_violation === null ? ["-", ""] : tech_score.data.raw_data.timing_violation ? ["X", " fail"] : ["OK", " ok"];
                 return React.createElement(
                     "div",
                     { key: tech_judge.id },
                     React.createElement(
                         "h3",
-                        null,
+                        { className: tech_score.confirmed ? "confirmed" : "" },
                         tech_judge.judge.name
                     ),
                     React.createElement(
@@ -95,7 +98,7 @@ var TabletScoreInput = (function (_React$Component) {
                         React.createElement(
                             "div",
                             { className: "value" },
-                            tech_score.raw_data.jump_steps
+                            tech_score.data.raw_data.jump_steps
                         )
                     ),
                     React.createElement(
@@ -498,19 +501,21 @@ var TabletScoreInput = (function (_React$Component) {
                 return null;
             }
             if (this.allowHeatsChange()) {
-                return false;
+                return null;
             }
             var score_data = this.props.score.data.raw_data;
             var keys = Object.getOwnPropertyNames(score_data);
-            for (var idx in keys) {
-                if (score_data[keys[idx]] === null) {
-                    return null;
-                }
-                if (typeof score_data[keys[idx]] == "object") {
-                    var arr = score_data[keys[idx]];
-                    for (var j in Object.keys(arr)) {
-                        if (arr[j] === null) {
-                            return null;
+            if (this.props.discipline_judge.role !== "tech_judge") {
+                for (var idx in keys) {
+                    if (score_data[keys[idx]] === null) {
+                        return null;
+                    }
+                    if (typeof score_data[keys[idx]] == "object") {
+                        var arr = score_data[keys[idx]];
+                        for (var j in Object.keys(arr)) {
+                            if (arr[j] === null) {
+                                return null;
+                            }
                         }
                     }
                 }

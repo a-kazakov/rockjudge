@@ -168,11 +168,11 @@ class StopWatch extends React.Component {
     }
     render() {
         return <div className="stopwatch">
-            <button className={ "tbtn btn-toggle" + (this.state.active ? " active" : "") } {...onTouchOrClick(this.toggle.bind(this))}>
-                { this.state.active ? _("tablet.buttons.stop_stopwatch") : _("tablet.buttons.start_stopwatch") }
-            </button>
-            <button className="tbtn btn-reset" {...onTouchOrClick(this.reset.bind(this))}>
+            <button className="tbtn btn-reset ignore-readonly" {...onTouchOrClick(this.reset.bind(this))}>
                 { _("tablet.buttons.reset_stopwatch") }
+            </button>
+            <button className={ "tbtn btn-toggle ignore-readonly" + (this.state.active ? " active" : "") } {...onTouchOrClick(this.toggle.bind(this))}>
+                { this.state.active ? _("tablet.buttons.stop_stopwatch") : _("tablet.buttons.start_stopwatch") }
             </button>
             <div className="time">{ this.getStrValue() }</div>
         </div>

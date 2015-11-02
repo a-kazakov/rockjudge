@@ -56,7 +56,7 @@ class JudgeTablet extends React.Component {
                 }.bind(this));
                 if (reset_heat) {
                     let discipline_judge = state_upd["discipline_judge"];
-                    if (!discipline_judge || discipline_judge.role == "head_judge" || discipline_judge.role == "tech_judge") {
+                    if (!discipline_judge || discipline_judge.role == "head_judge") {
                         state_upd["current_heat"] = 1;
                     } else {
                         let discipline_judge_id = discipline_judge && discipline_judge.id;
@@ -164,7 +164,7 @@ class JudgeTablet extends React.Component {
             </button>;
         }
         if (this.state.current_heat < this.getHeatsCount() && (
-                this.state.discipline_judge.role == "tech_judge" || this.state.discipline_judge.role == "head_judge"
+                this.state.discipline_judge.role == "head_judge"
                 || this.getFirstNonConfirmedHeat() > this.state.current_heat)) {
             btn_next = <button className="btn btn-primary pull-right" {...onTouchOrClick(this.toNextHeat.bind(this))}>
                 { _("tablet.buttons.next_heat") }
