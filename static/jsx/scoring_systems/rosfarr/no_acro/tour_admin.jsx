@@ -151,9 +151,6 @@ class TourAdminScoreInput extends React.Component {
     render() {
         switch (this.props.discipline_judge.role) {
         case "acro_judge":
-            if (this.props.scoring_system_name == "rosfarr.formation") {
-                return this.renderFormationJudgeInput();
-            }
             return this.props.scoring_system_name == "rosfarr.no_acro"
                 ? this.renderDanceJudgeInput()
                 : this.renderAcroJudgeInput()
@@ -228,7 +225,7 @@ class TourAdminScoreInput extends React.Component {
     serializeScore() {
         switch (this.props.discipline_judge.role) {
         case "acro_judge":
-            return this.serializeDanceScore()
+            return this.serializeAcroScore()
         case "dance_judge":
             return this.serializeDanceScore();
         case "head_judge":
@@ -246,7 +243,6 @@ class TourAdminScoreInput extends React.Component {
 
 class TourAdminScoreCell extends React.Component {
     render() {
-        console.log(this.props);
         if (!this.props.editing) {
             if (this.props.discipline_judge.role == "head_judge" && this.props.value.raw_data.nexttour) {
                 return <div onClick={ this.props.startEditing }>[{ this.props.value.total_score.toFixed(1) }]</div>

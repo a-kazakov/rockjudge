@@ -32,7 +32,6 @@ class DisciplineEditorRow extends React.Component {
     validate() {
         let used_judges = {};
         this.state.discipline_judges.forEach(function(dj) {
-            console.log(dj.judge_id);
             if (used_judges[dj.judge_id]) {
                 let judge = this.props.judges.filter((j) => j.id == dj.judge_id)[0];
                 throw _("errors.discipline_judge.repeating_judge", judge.name);
@@ -64,7 +63,6 @@ class DisciplineEditorRow extends React.Component {
         event.preventDefault();
         try {
             this.validate();
-            console.log(this.serialize());
             if (!this.props.newDiscipline) {
                 Api("discipline.set", {
                     discipline_id: this.props.discipline.id,

@@ -1,8 +1,19 @@
 .tour-results {
   margin: 10px;
+  width: 750px;
 }
 .tour-results td {
   vertical-align: top;
+}
+.tour-results .info-block {
+  text-align: left;
+}
+.tour-results .info-block .acro-table {
+  width: 100%;
+  table-layout: fixed;
+}
+.tour-results .info-block .acro-table td {
+  border: none;
 }
 .tour-results .score-breakdown th,
 .tour-results .score-breakdown td {

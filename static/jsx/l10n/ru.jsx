@@ -154,7 +154,7 @@ function _(src, arg) {
                 "judge_n": (n) => "Линейный судья №" + n.toString(),
                 "participant_n": (n, name, n_sp) =>
                     (n_sp > 2
-                        ? "Формейшн №" + n.toString() + ": " + name
+                        ? "Формейшн №" + n.toString() + (name ? ": " + name : "")
                         : (n_sp == 2
                             ? "Пара №"
                             : "Участник №"
@@ -357,16 +357,19 @@ function _(src, arg) {
                     },
                     "labels": {
                         "acrobatics": "Акробатика",
+                        "acrobatics_verbose": "Акробатика (заявка/факт)",
                         "card": "Штраф",
-                        "next_tour": "След. тур",
+                        "info": "Участник, результат",
+                        "next_tour": "Следующий тур",
                         "number": "№",
                         "participant_club": "Клуб",
                         "participant_coaches": "Тренеры",
                         "participant_name": "Участник",
+                        "penalty": "Штраф главного судьи",
                         "place": "Место",
                         "sportsmen": "Спортсмены",
                         "sportsmen_year_of_birth": "Г.р.",
-                        "total_score": "Сумма баллов",
+                        "total_score": "Итоговый балл",
                     },
                 }
             }

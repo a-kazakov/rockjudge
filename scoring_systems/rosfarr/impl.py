@@ -377,7 +377,6 @@ class TourScores:
         for run_score in self.run_scores:
             table.append({
                 "run_score": run_score,
-                "scores": run_score.serialize(),
                 "sorting_score": run_score.sorting_score,
             })
         table = sorted(table, key=lambda s: s["sorting_score"])
@@ -404,7 +403,7 @@ class TourScores:
             "run": row["run_score"].run,
             "place": row["place"],
             "advances": row["advances"],
-            "scores": row["scores"]
+            "additional_data": {},
         } for row in self.table()]
 
 
@@ -451,17 +450,21 @@ class FormationRunScore:
 
     def serialize(self):
         scores = {}
-        p_idx = 0
         for discipline_judge, score in self.judge_scores:
             scores[str(discipline_judge.id)] = score.serialize(discipline_judge=discipline_judge)
-            if discipline_judge.role == "dance_judge":
-                scores[str(discipline_judge.id)]["data"]["place"] = \
-                    self.places[p_idx] if self.places is not None else None
-                p_idx += 1
         return {
             "scores": scores,
             "total_run_score": self.display_score,
         }
+
+    def get_places(self):
+        places = {}
+        p_idx = 0
+        for discipline_judge, score in self.judge_scores:
+            if discipline_judge.role == "dance_judge":
+                places[str(score.id)] = self.places[p_idx] if self.places is not None else None
+                p_idx += 1
+        return places
 
     def populate_with_places(self, places, places_counts):
         self.places = places
@@ -592,5 +595,7 @@ class FormationTourScores:
             "run": row["run_score"].run,
             "place": row["place"],
             "advances": row["advances"],
-            "scores": row["scores"]
+            "additional_data": {
+                "places": row["run_score"].get_places(),
+            }
         } for row in self.table()]

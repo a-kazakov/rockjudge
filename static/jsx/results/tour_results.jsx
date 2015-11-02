@@ -5,44 +5,50 @@ class TourResults extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: "",
-            results: [],
-            finalized: true,
-            judges: [],
+            tour: null,
+            results: null,
             verbose: false,
         }
         message_dispatcher.addListener("tour_results_changed reload_data", function(message) {
-            if (message.tour_id == this.props.tour_id) {
+            if (!message || message.tour_id == this.props.tour_id) {
                 this.loadData();
             }
         }.bind(this));
+        this.TOUR_SCHEMA = {
+            discipline: {
+                competition: {},
+                discipline_judges: {
+                    judge: {},
+                },
+            },
+            runs: {
+                acrobatics: {},
+                scores: {},
+                participant: {
+                    club: {},
+                },
+            },
+        };
         this.loadData();
     }
     reloadFromStorage() {
-        var SCHEMA = {
-            discipline: {
-                competition: {},
-            },
-        }
         let serialized = storage.get("Tour")
             .by_id(this.props.tour_id)
-            .serialize(SCHEMA);
+            .serialize(this.TOUR_SCHEMA);
         this.setState({
             tour: serialized,
         });
     }
     loadData() {
         Api("tour.get_results", {tour_id: this.props.tour_id}).onSuccess(function(new_results) {
-            this.setState(new_results);
+            this.setState({
+                "results": new_results,
+            });
         }.bind(this)).send();
-        Api("tour.get", { tour_id: this.props.tour_id, children: {
-            discipline: {
-                competition: {},
-            },
-        }})
-        .updateDB("Tour", this.props.tour_id)
-        .onSuccess(this.reloadFromStorage.bind(this))
-        .send();
+        Api("tour.get", { tour_id: this.props.tour_id, children: this.TOUR_SCHEMA})
+            .updateDB("Tour", this.props.tour_id)
+            .onSuccess(this.reloadFromStorage.bind(this))
+            .send();
     }
 
     // Control
@@ -63,26 +69,19 @@ class TourResults extends React.Component {
         }
     }
     renderNonFinalizedWarning() {
-        if (!this.state.finalized) {
+        if (!this.state.tour.finalized) {
             return <div className="alert alert-danger">{ _("results.alerts.not_finalized") }</div>
         }
     }
     render() {
-        var active_judges = this.state.judges.filter(function(judge) {
-            return judge.role !== "" && judge.role != "tech_judge"; // TODO: move this to scoring system
-        });
+        if (this.state.tour === null || this.state.results === null) {
+            return <span>Loading ...</span>
+        }
         var table = null;
         if (this.state.verbose) {
-            table = <TourResultsVerboseTable
-                judges={ active_judges }
-                data={ this.state.results }
-                has_next_tour={ this.state.next_tour_id != null }
-                scoring_system_name={ this.state.scoring_system_name } />
+            table = <TourResultsVerboseTable {...this.state} />
         } else {
-            table = <TourResultsTable
-                judges={ active_judges }
-                data={ this.state.results }
-                has_next_tour={ this.state.next_tour_id != null } />
+            table = <TourResultsTable {...this.state} />
         }
         return <div>
             <header>
@@ -90,8 +89,8 @@ class TourResults extends React.Component {
                     { this.renderVerboseButton() }
                     <button className="btn btn-primary" onClick={ this.createDocx.bind(this) }>DOCX</button>
                 </div>
-                <h1>{ this.state.discipline_name }</h1>
-                <h2>{ this.state.name }</h2>
+                <h1>{ this.state.tour.discipline.name }</h1>
+                <h2>{ this.state.tour.name }</h2>
             </header>
             <div className="tour-results" ref="content">
                 { this.renderNonFinalizedWarning() }
@@ -101,13 +100,15 @@ class TourResults extends React.Component {
     }
     createDocx() {
         Docx("tour-results")
-            .setOrientation(this.state.verbose ? "landscape" : "portrait")
             .setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date)
             .setTitle1(_("admin.headers.tour_results"))
             .setTitle2(this.state.tour.discipline.name)
             .setTitle3(this.state.tour.name)
             .setBody(React.findDOMNode(this.refs.content).innerHTML)
-            .addStyle(".bordered-table", "font-size", this.state.verbose ? "10pt" : "12pt")
+            .addStyle(".bordered-table", "font-size", this.state.verbose ? "9pt" : "12pt")
+            .addStyle(".bordered-table .acro-table td", "padding", "0 3pt")
+            .addStyle(".bordered-table .acro-table td", "border", "none")
+            .addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "font-size", "9pt")
             .addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none")
             .addStyle(".bordered-table .score-breakdown th", "padding", "0 1pt 0 0")
             .addStyle(".bordered-table .score-breakdown td", "padding", "0 0 0 1pt")

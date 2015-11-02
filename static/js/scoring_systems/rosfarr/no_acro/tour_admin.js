@@ -366,9 +366,6 @@ var TourAdminScoreInput = (function (_React$Component) {
         value: function render() {
             switch (this.props.discipline_judge.role) {
                 case "acro_judge":
-                    if (this.props.scoring_system_name == "rosfarr.formation") {
-                        return this.renderFormationJudgeInput();
-                    }
                     return this.props.scoring_system_name == "rosfarr.no_acro" ? this.renderDanceJudgeInput() : this.renderAcroJudgeInput();
                 case "dance_judge":
                     if (this.props.scoring_system_name == "rosfarr.formation") {
@@ -458,7 +455,7 @@ var TourAdminScoreInput = (function (_React$Component) {
         value: function serializeScore() {
             switch (this.props.discipline_judge.role) {
                 case "acro_judge":
-                    return this.serializeDanceScore();
+                    return this.serializeAcroScore();
                 case "dance_judge":
                     return this.serializeDanceScore();
                 case "head_judge":
@@ -491,7 +488,6 @@ var TourAdminScoreCell = (function (_React$Component2) {
     _createClass(TourAdminScoreCell, [{
         key: "render",
         value: function render() {
-            console.log(this.props);
             if (!this.props.editing) {
                 if (this.props.discipline_judge.role == "head_judge" && this.props.value.raw_data.nexttour) {
                     return React.createElement(

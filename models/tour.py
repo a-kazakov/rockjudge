@@ -333,33 +333,16 @@ class Tour(BaseModel):
         ws_message.add_message("active_tour_update")
 
     def get_serialized_results(self):
-        tour_results = self.scoring_system.get_tour_results(self)
-        for row in tour_results:
-            run = row["run"]
-            participant = run.participant.serialize()
-            participant["id"] = run.participant.id
-            participant["club"] = run.participant.club.serialize()
-            row["participant"] = participant
-            row["acrobatics"] = run.serialize_acrobatics()
-            del row["run"]
-        result = self.serialize_props()
-        judges = []
-        sorted_discipline_judges = sorted(self.discipline_judges, key=lambda x: x.get_sorting_key())
-        for discipline_judge in sorted_discipline_judges:
-            discipline_judge_s = discipline_judge.judge.serialize()
-            discipline_judge_s["id"] = discipline_judge.id
-            discipline_judge_s["role"] = discipline_judge.role
-            judges.append(discipline_judge_s)
-        result.update({
-            "discipline_name": self.discipline.name,
-            "judges": judges,
-            "next_tour_id": self.next_tour_id,
-            "results": tour_results,
-        })
-        return result
+        return [{
+            "run_id": row["run"].id,
+            "place": row["place"],
+            "advances": row["advances"],
+            "additional_data": row["additional_data"],
+        } for row in self.scoring_system.get_tour_results(self)]
 
     def serialize(self, children={}):
         result = self.serialize_props()
+        result["next_tour_id"] = self.next_tour_id
         result = self.serialize_upper_child(result, "discipline", children)
         result = self.serialize_lower_child(result, "judges", children)
         result = self.serialize_lower_child(

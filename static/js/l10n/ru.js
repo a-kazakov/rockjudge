@@ -176,7 +176,7 @@ function _(src, arg) {
                     return "Линейный судья №" + n.toString();
                 },
                 "participant_n": function participant_n(n, name, n_sp) {
-                    return n_sp > 2 ? "Формейшн №" + n.toString() + ": " + name : (n_sp == 2 ? "Пара №" : "Участник №") + n.toString();
+                    return n_sp > 2 ? "Формейшн №" + n.toString() + (name ? ": " + name : "") : (n_sp == 2 ? "Пара №" : "Участник №") + n.toString();
                 }
             }
         },
@@ -389,16 +389,19 @@ function _(src, arg) {
                     },
                     "labels": {
                         "acrobatics": "Акробатика",
+                        "acrobatics_verbose": "Акробатика (заявка/факт)",
                         "card": "Штраф",
-                        "next_tour": "След. тур",
+                        "info": "Участник, результат",
+                        "next_tour": "Следующий тур",
                         "number": "№",
                         "participant_club": "Клуб",
                         "participant_coaches": "Тренеры",
                         "participant_name": "Участник",
+                        "penalty": "Штраф главного судьи",
                         "place": "Место",
                         "sportsmen": "Спортсмены",
                         "sportsmen_year_of_birth": "Г.р.",
-                        "total_score": "Сумма баллов"
+                        "total_score": "Итоговый балл"
                     }
                 }
             }

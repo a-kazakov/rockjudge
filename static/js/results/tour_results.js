@@ -18,29 +18,37 @@ var TourResults = (function (_React$Component) {
 
         _get(Object.getPrototypeOf(TourResults.prototype), "constructor", this).call(this, props);
         this.state = {
-            name: "",
-            results: [],
-            finalized: true,
-            judges: [],
+            tour: null,
+            results: null,
             verbose: false
         };
         message_dispatcher.addListener("tour_results_changed reload_data", (function (message) {
-            if (message.tour_id == this.props.tour_id) {
+            if (!message || message.tour_id == this.props.tour_id) {
                 this.loadData();
             }
         }).bind(this));
+        this.TOUR_SCHEMA = {
+            discipline: {
+                competition: {},
+                discipline_judges: {
+                    judge: {}
+                }
+            },
+            runs: {
+                acrobatics: {},
+                scores: {},
+                participant: {
+                    club: {}
+                }
+            }
+        };
         this.loadData();
     }
 
     _createClass(TourResults, [{
         key: "reloadFromStorage",
         value: function reloadFromStorage() {
-            var SCHEMA = {
-                discipline: {
-                    competition: {}
-                }
-            };
-            var serialized = storage.get("Tour").by_id(this.props.tour_id).serialize(SCHEMA);
+            var serialized = storage.get("Tour").by_id(this.props.tour_id).serialize(this.TOUR_SCHEMA);
             this.setState({
                 tour: serialized
             });
@@ -49,13 +57,11 @@ var TourResults = (function (_React$Component) {
         key: "loadData",
         value: function loadData() {
             Api("tour.get_results", { tour_id: this.props.tour_id }).onSuccess((function (new_results) {
-                this.setState(new_results);
+                this.setState({
+                    "results": new_results
+                });
             }).bind(this)).send();
-            Api("tour.get", { tour_id: this.props.tour_id, children: {
-                    discipline: {
-                        competition: {}
-                    }
-                } }).updateDB("Tour", this.props.tour_id).onSuccess(this.reloadFromStorage.bind(this)).send();
+            Api("tour.get", { tour_id: this.props.tour_id, children: this.TOUR_SCHEMA }).updateDB("Tour", this.props.tour_id).onSuccess(this.reloadFromStorage.bind(this)).send();
         }
 
         // Control
@@ -90,7 +96,7 @@ var TourResults = (function (_React$Component) {
     }, {
         key: "renderNonFinalizedWarning",
         value: function renderNonFinalizedWarning() {
-            if (!this.state.finalized) {
+            if (!this.state.tour.finalized) {
                 return React.createElement(
                     "div",
                     { className: "alert alert-danger" },
@@ -101,21 +107,18 @@ var TourResults = (function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var active_judges = this.state.judges.filter(function (judge) {
-                return judge.role !== "" && judge.role != "tech_judge"; // TODO: move this to scoring system
-            });
+            if (this.state.tour === null || this.state.results === null) {
+                return React.createElement(
+                    "span",
+                    null,
+                    "Loading ..."
+                );
+            }
             var table = null;
             if (this.state.verbose) {
-                table = React.createElement(TourResultsVerboseTable, {
-                    judges: active_judges,
-                    data: this.state.results,
-                    has_next_tour: this.state.next_tour_id != null,
-                    scoring_system_name: this.state.scoring_system_name });
+                table = React.createElement(TourResultsVerboseTable, this.state);
             } else {
-                table = React.createElement(TourResultsTable, {
-                    judges: active_judges,
-                    data: this.state.results,
-                    has_next_tour: this.state.next_tour_id != null });
+                table = React.createElement(TourResultsTable, this.state);
             }
             return React.createElement(
                 "div",
@@ -136,12 +139,12 @@ var TourResults = (function (_React$Component) {
                     React.createElement(
                         "h1",
                         null,
-                        this.state.discipline_name
+                        this.state.tour.discipline.name
                     ),
                     React.createElement(
                         "h2",
                         null,
-                        this.state.name
+                        this.state.tour.name
                     )
                 ),
                 React.createElement(
@@ -155,7 +158,7 @@ var TourResults = (function (_React$Component) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("tour-results").setOrientation(this.state.verbose ? "landscape" : "portrait").setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date).setTitle1(_("admin.headers.tour_results")).setTitle2(this.state.tour.discipline.name).setTitle3(this.state.tour.name).setBody(React.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table", "font-size", this.state.verbose ? "10pt" : "12pt").addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none").addStyle(".bordered-table .score-breakdown th", "padding", "0 1pt 0 0").addStyle(".bordered-table .score-breakdown td", "padding", "0 0 0 1pt").addStyle(".score-breakdown th", "text-align", "right").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown", "width", "50pt").addStyle(".total-score", "font-weight", "bold").addStyle(".advances-header", "background-color", "#ddd").addStyle(".head_judge", "width", "5%").addStyle(".dance_judge", "width", "8%").addStyle(".acro_judge", "width", "8%").save();
+            Docx("tour-results").setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date).setTitle1(_("admin.headers.tour_results")).setTitle2(this.state.tour.discipline.name).setTitle3(this.state.tour.name).setBody(React.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table", "font-size", this.state.verbose ? "9pt" : "12pt").addStyle(".bordered-table .acro-table td", "padding", "0 3pt").addStyle(".bordered-table .acro-table td", "border", "none").addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "font-size", "9pt").addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none").addStyle(".bordered-table .score-breakdown th", "padding", "0 1pt 0 0").addStyle(".bordered-table .score-breakdown td", "padding", "0 0 0 1pt").addStyle(".score-breakdown th", "text-align", "right").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown", "width", "50pt").addStyle(".total-score", "font-weight", "bold").addStyle(".advances-header", "background-color", "#ddd").addStyle(".head_judge", "width", "5%").addStyle(".dance_judge", "width", "8%").addStyle(".acro_judge", "width", "8%").save();
         }
     }]);
 

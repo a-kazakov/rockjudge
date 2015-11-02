@@ -55,7 +55,6 @@ var DisciplineEditorRow = (function (_React$Component) {
         value: function validate() {
             var used_judges = {};
             this.state.discipline_judges.forEach((function (dj) {
-                console.log(dj.judge_id);
                 if (used_judges[dj.judge_id]) {
                     var judge = this.props.judges.filter(function (j) {
                         return j.id == dj.judge_id;
@@ -95,7 +94,6 @@ var DisciplineEditorRow = (function (_React$Component) {
             event.preventDefault();
             try {
                 this.validate();
-                console.log(this.serialize());
                 if (!this.props.newDiscipline) {
                     Api("discipline.set", {
                         discipline_id: this.props.discipline.id,
