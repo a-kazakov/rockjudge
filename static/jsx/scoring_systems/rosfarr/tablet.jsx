@@ -35,7 +35,10 @@ class TabletScoreInput extends React.Component {
         return this.props.discipline_judge.role == "head_judge" || this.props.discipline_judge.role == "tech_judge"
     }
     renderHeadJudgeInput() {
-        var tech_judges = this.props.all_discipline_judges.filter(function(discipline_judge) {
+        let acrobatic_overrides = this.props.acrobatics
+            .map((acro, idx) => ({ idx: idx + 1, acrobatic: acro }))
+            .filter((acro) => acro.acrobatic.original_score != acro.acrobatic.score);
+        let tech_judges = this.props.all_discipline_judges.filter(function(discipline_judge) {
             return discipline_judge.role == "tech_judge";
         }).map(function(tech_judge) {
             let tech_score = this.props.all_scores[tech_judge.id].data;
@@ -43,10 +46,10 @@ class TabletScoreInput extends React.Component {
                 ? ["-", ""]
                 : (tech_score.raw_data.timing_violation ? ["X", " fail"] : ["OK", " ok"])
             return <div key={ tech_judge.id }>
-                <h3>{ tech_judge.judge.name }:</h3>
+                <h3>{ tech_judge.judge.name }</h3>
                 <div className="tech-judge-info">
                     <div className="title">
-                        { __("tablet.tech_judge.jump_steps") }:
+                        { __("tablet.tech_judge.jump_steps") }
                     </div>
                     <div className="value">
                         { tech_score.raw_data.jump_steps }
@@ -54,7 +57,7 @@ class TabletScoreInput extends React.Component {
                 </div>
                 <div className="tech-judge-info">
                     <div className="title">
-                        { __("tablet.tech_judge.timing") }:
+                        { __("tablet.tech_judge.timing") }
                     </div>
                     <div className={ "value" + timing_data[1] }>
                         { timing_data[0] }
@@ -62,6 +65,22 @@ class TabletScoreInput extends React.Component {
                 </div>
             </div>
         }.bind(this));
+        let acrobatics = acrobatic_overrides.length > 0
+            ? <div>
+                <h3>{ __("tablet.head_judge.acrobatic_overrides") }</h3>
+                <table className="full-width"><tbody>
+                    { acrobatic_overrides.map((acro) =>
+                        <tr>
+                            <td className="w-5">{ acro.idx }</td>
+                            <td>{ acro.acrobatic.description }</td>
+                            <td className="w-10 text-right">{ acro.acrobatic.original_score.toFixed(1) }</td>
+                            <td className="w-5 text-center">→</td>
+                            <td className="w-10 text-left">{ acro.acrobatic.score.toFixed(1) }</td>
+                        </tr>
+                    ) }
+                </tbody></table>
+            </div>
+            : null;
         return <div>
             <h3>{ __("tablet.head_judge.penalty_type") }:</h3>
             <TabletSelectorInput
@@ -70,6 +89,7 @@ class TabletScoreInput extends React.Component {
                 onValueUpdate={ this.updateScores.bind(this, "penalty") } />
             <div className="spacer"></div>
             { tech_judges }
+            { acrobatics }
         </div>
     }
     renderTechJudgeInputAcro() {

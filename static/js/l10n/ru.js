@@ -352,6 +352,7 @@ function _(src, arg) {
                         "total_score": "Сумма баллов"
                     },
                     "head_judge": {
+                        "acrobatic_overrides": "Корректировки акробатики",
                         "black_card": "-100",
                         "ok": "OK",
                         "penalty_type": "Штрафные санкции",

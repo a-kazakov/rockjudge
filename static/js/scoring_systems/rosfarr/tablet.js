@@ -66,6 +66,11 @@ var TabletScoreInput = (function (_React$Component) {
     }, {
         key: "renderHeadJudgeInput",
         value: function renderHeadJudgeInput() {
+            var acrobatic_overrides = this.props.acrobatics.map(function (acro, idx) {
+                return { idx: idx + 1, acrobatic: acro };
+            }).filter(function (acro) {
+                return acro.acrobatic.original_score != acro.acrobatic.score;
+            });
             var tech_judges = this.props.all_discipline_judges.filter(function (discipline_judge) {
                 return discipline_judge.role == "tech_judge";
             }).map((function (tech_judge) {
@@ -77,8 +82,7 @@ var TabletScoreInput = (function (_React$Component) {
                     React.createElement(
                         "h3",
                         null,
-                        tech_judge.judge.name,
-                        ":"
+                        tech_judge.judge.name
                     ),
                     React.createElement(
                         "div",
@@ -86,8 +90,7 @@ var TabletScoreInput = (function (_React$Component) {
                         React.createElement(
                             "div",
                             { className: "title" },
-                            __("tablet.tech_judge.jump_steps"),
-                            ":"
+                            __("tablet.tech_judge.jump_steps")
                         ),
                         React.createElement(
                             "div",
@@ -101,8 +104,7 @@ var TabletScoreInput = (function (_React$Component) {
                         React.createElement(
                             "div",
                             { className: "title" },
-                            __("tablet.tech_judge.timing"),
-                            ":"
+                            __("tablet.tech_judge.timing")
                         ),
                         React.createElement(
                             "div",
@@ -112,6 +114,54 @@ var TabletScoreInput = (function (_React$Component) {
                     )
                 );
             }).bind(this));
+            var acrobatics = acrobatic_overrides.length > 0 ? React.createElement(
+                "div",
+                null,
+                React.createElement(
+                    "h3",
+                    null,
+                    __("tablet.head_judge.acrobatic_overrides")
+                ),
+                React.createElement(
+                    "table",
+                    { className: "full-width" },
+                    React.createElement(
+                        "tbody",
+                        null,
+                        acrobatic_overrides.map(function (acro) {
+                            return React.createElement(
+                                "tr",
+                                null,
+                                React.createElement(
+                                    "td",
+                                    { className: "w-5" },
+                                    acro.idx
+                                ),
+                                React.createElement(
+                                    "td",
+                                    null,
+                                    acro.acrobatic.description
+                                ),
+                                React.createElement(
+                                    "td",
+                                    { className: "w-10 text-right" },
+                                    acro.acrobatic.original_score.toFixed(1)
+                                ),
+                                React.createElement(
+                                    "td",
+                                    { className: "w-5 text-center" },
+                                    "→"
+                                ),
+                                React.createElement(
+                                    "td",
+                                    { className: "w-10 text-left" },
+                                    acro.acrobatic.score.toFixed(1)
+                                )
+                            );
+                        })
+                    )
+                )
+            ) : null;
             return React.createElement(
                 "div",
                 null,
@@ -126,7 +176,8 @@ var TabletScoreInput = (function (_React$Component) {
                     active: this.props.score.data.raw_data.penalty,
                     onValueUpdate: this.updateScores.bind(this, "penalty") }),
                 React.createElement("div", { className: "spacer" }),
-                tech_judges
+                tech_judges,
+                acrobatics
             );
         }
     }, {
