@@ -171,8 +171,7 @@ var TabletScoreInput = (function (_React$Component) {
                 React.createElement(
                     "h3",
                     null,
-                    __("tablet.head_judge.penalty_type"),
-                    ":"
+                    __("tablet.head_judge.penalty_type")
                 ),
                 React.createElement(TabletSelectorInput, {
                     choices: [[0, __("tablet.head_judge.ok")], [-3, __("tablet.head_judge.yellow_card")], [-30, __("tablet.head_judge.red_card")], [-100, __("tablet.head_judge.black_card")]],
@@ -228,8 +227,7 @@ var TabletScoreInput = (function (_React$Component) {
                 React.createElement(
                     "h3",
                     null,
-                    __("tablet.tech_judge.jump_steps"),
-                    ":"
+                    __("tablet.tech_judge.jump_steps")
                 ),
                 React.createElement(TabletIntegerInput, {
                     value: score.raw_data.jump_steps,
@@ -238,8 +236,7 @@ var TabletScoreInput = (function (_React$Component) {
                 React.createElement(
                     "h3",
                     null,
-                    __("tablet.tech_judge.timing"),
-                    ":"
+                    __("tablet.tech_judge.timing")
                 ),
                 React.createElement(StopWatch, null),
                 React.createElement(TabletSelectorInput, {

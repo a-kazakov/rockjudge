@@ -13,12 +13,12 @@ body,
   font-size: 14px;
   font-weight: 500;
 }
-.read-only .tbtn:not(.ignore-readonly),
-.read-only .mistakes .tbtn:not(.ignore-readonly) {
+.read-only .tbtn:not(.ignore-readonly):not(.active),
+.read-only .mistakes .tbtn:not(.ignore-readonly):not(.active) {
   background-color: #666;
   color: #fff;
 }
-.read-only .mistakes .value:not(.ignore-readonly) {
+.read-only .mistakes .value:not(.ignore-readonly):not(.active) {
   background-color: #ddd;
   color: #000;
 }

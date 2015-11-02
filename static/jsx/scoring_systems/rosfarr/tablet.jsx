@@ -85,7 +85,7 @@ class TabletScoreInput extends React.Component {
             </div>
             : null;
         return <div>
-            <h3>{ __("tablet.head_judge.penalty_type") }:</h3>
+            <h3>{ __("tablet.head_judge.penalty_type") }</h3>
             <TabletSelectorInput
                 choices={ [[0, __("tablet.head_judge.ok")], [-3, __("tablet.head_judge.yellow_card")], [-30, __("tablet.head_judge.red_card")], [-100, __("tablet.head_judge.black_card")]] }
                 active={ this.props.score.data.raw_data.penalty }
@@ -116,12 +116,12 @@ class TabletScoreInput extends React.Component {
     renderTechJudgeInputDance() {
         let score = this.props.score.data;
         return <div>
-            <h3>{ __("tablet.tech_judge.jump_steps") }:</h3>
+            <h3>{ __("tablet.tech_judge.jump_steps") }</h3>
             <TabletIntegerInput
                 value={ score.raw_data.jump_steps }
                 onValueUpdate={ this.updateScores.bind(this, "jump_steps") } />
             <div className="spacer"></div>
-            <h3>{ __("tablet.tech_judge.timing") }:</h3>
+            <h3>{ __("tablet.tech_judge.timing") }</h3>
             <StopWatch />
             <TabletSelectorInput
                 choices={ [[true, "X"], [null, "-"], [false, "OK"]] }
