@@ -278,7 +278,9 @@ class DisciplinesManagementUI extends React.Component {
                         <th className="delete"></th>
                     </tr>
                     { rows }
-                    <DisciplineCreationRow competition_id={ this.props.competition_id } />
+                    <DisciplineCreationRow
+                        judges={ this.props.judges }
+                        competition_id={ this.props.competition_id } />
                 </tbody>
             </table>
         </div>

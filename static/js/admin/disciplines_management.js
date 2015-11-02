@@ -484,7 +484,9 @@ var DisciplinesManagementUI = (function (_React$Component4) {
                             React.createElement("th", { className: "delete" })
                         ),
                         rows,
-                        React.createElement(DisciplineCreationRow, { competition_id: this.props.competition_id })
+                        React.createElement(DisciplineCreationRow, {
+                            judges: this.props.judges,
+                            competition_id: this.props.competition_id })
                     )
                 )
             );
