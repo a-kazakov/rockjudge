@@ -56,7 +56,7 @@ var TabletScoreInput = (function (_React$Component) {
                 return;
             }
             Api("acrobatic_override.set", {
-                run_id: this.props.run_id,
+                run_id: this.props.run.id,
                 acrobatic_idx: acro_idx,
                 score: value
             }).send();
@@ -69,7 +69,7 @@ var TabletScoreInput = (function (_React$Component) {
     }, {
         key: "renderHeadJudgeInput",
         value: function renderHeadJudgeInput() {
-            var acrobatic_overrides = this.props.acrobatics.map(function (acro, idx) {
+            var acrobatic_overrides = this.props.run.acrobatics.map(function (acro, idx) {
                 return { idx: idx + 1, acrobatic: acro };
             }).filter(function (acro) {
                 return acro.acrobatic.original_score != acro.acrobatic.score;
@@ -117,9 +117,49 @@ var TabletScoreInput = (function (_React$Component) {
                     )
                 );
             }).bind(this));
+            var penalties = this.props.run.inherited_data.penalties.length > 0 ? React.createElement(
+                "div",
+                null,
+                React.createElement("div", { className: "spacer" }),
+                React.createElement(
+                    "h3",
+                    null,
+                    __("tablet.head_judge.previous_penalties")
+                ),
+                React.createElement(
+                    "table",
+                    { className: "full-width" },
+                    React.createElement(
+                        "tbody",
+                        null,
+                        " ",
+                        this.props.run.inherited_data.penalties.map(function (d, idx) {
+                            return React.createElement(
+                                "tr",
+                                { key: idx },
+                                React.createElement(
+                                    "td",
+                                    { className: "w-10 text-center" },
+                                    React.createElement(
+                                        "strong",
+                                        null,
+                                        d.penalty
+                                    )
+                                ),
+                                React.createElement(
+                                    "td",
+                                    null,
+                                    d.tour
+                                )
+                            );
+                        })
+                    )
+                )
+            ) : null;
             var acrobatics = acrobatic_overrides.length > 0 ? React.createElement(
                 "div",
                 null,
+                React.createElement("div", { className: "spacer" }),
                 React.createElement(
                     "h3",
                     null,
@@ -131,10 +171,10 @@ var TabletScoreInput = (function (_React$Component) {
                     React.createElement(
                         "tbody",
                         null,
-                        acrobatic_overrides.map(function (acro) {
+                        acrobatic_overrides.map(function (acro, idx) {
                             return React.createElement(
                                 "tr",
-                                null,
+                                { key: idx },
                                 React.createElement(
                                     "td",
                                     { className: "w-5" },
@@ -179,13 +219,14 @@ var TabletScoreInput = (function (_React$Component) {
                     onValueUpdate: this.updateScores.bind(this, "penalty") }),
                 React.createElement("div", { className: "spacer" }),
                 tech_judges,
-                acrobatics
+                acrobatics,
+                penalties
             );
         }
     }, {
         key: "renderTechJudgeInputAcro",
         value: function renderTechJudgeInputAcro() {
-            var acrobatics = this.props.acrobatics.map((function (acro, idx) {
+            var acrobatics = this.props.run.acrobatics.map((function (acro, idx) {
                 return React.createElement(
                     "div",
                     { className: "tech-judge-acro", key: acro.id },
@@ -349,7 +390,7 @@ var TabletScoreInput = (function (_React$Component) {
         key: "renderAcroJudgeInput",
         value: function renderAcroJudgeInput() {
             var score = this.props.score.data;
-            var inputs = this.props.acrobatics.map((function (acro, idx) {
+            var inputs = this.props.run.acrobatics.map((function (acro, idx) {
                 return React.createElement(
                     "div",
                     { key: idx },

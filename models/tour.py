@@ -56,14 +56,14 @@ class Tour(BaseModel):
             prev_tour.full_prefetch()
             if self.hope_tour:
                 return [
-                    row["run"].participant
+                    (row["run"].participant, row["run"].get_data_to_inherit())
                     for row in prev_tour.scoring_system.get_tour_results(prev_tour)
                     if not row["advances"]
                 ]
             result = []
             while True:
                 result += [
-                    row["run"].participant
+                    (row["run"].participant, row["run"].get_data_to_inherit())
                     for row in prev_tour.scoring_system.get_tour_results(prev_tour)
                     if row["advances"]
                 ]
@@ -77,7 +77,7 @@ class Tour(BaseModel):
             self.discipline.smart_prefetch({
                 "participants": {},
             })
-            return self.discipline.participants
+            return [(p, {}) for p in self.discipline.participants]
 
     def get_actual_num_advances(self):
         base_value = self.num_advances
@@ -102,9 +102,18 @@ class Tour(BaseModel):
             Score,
         )
         self.smart_prefetch({
-            "runs": {},
+            "runs": {
+                "discipline": {
+                    "discipline_judges": {},
+                },
+                "scores": {},
+            },
         })
-        estimated_participants = self.estimate_participants()
+        estimated_participants = []
+        inherited_data = {}
+        for participant, data in self.estimate_participants():
+            estimated_participants.append(participant)
+            inherited_data[participant.id] = data
         existing_participant_ids = {run.participant_id for run in self.runs}
         new_participant_ids = {participant.id for participant in estimated_participants}
         participant_ids_to_create = new_participant_ids - existing_participant_ids
@@ -134,6 +143,7 @@ class Tour(BaseModel):
         for run in self.runs:
             run.create_scores()
             run.acrobatics_json = participants_rev[run.participant_id].acrobatics_json
+            run.inherited_data = inherited_data[run.participant_id] if run.participant_id in inherited_data else {}
             run.save()
         self.shuffle_heats(ws_message=None, broadcast=False, shuffle=(len(existing_participant_ids) == 0))
 

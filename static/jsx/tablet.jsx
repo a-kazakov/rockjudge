@@ -225,13 +225,12 @@ class JudgeTablet extends React.Component {
                 return <td key={ run.id }>
                     <h2>{ header }</h2>
                     <TabletScoreInput
-                        acrobatics={ run.acrobatics }
                         discipline_judge={ this.state.discipline_judge }
                         all_discipline_judges={ this.state.tour.discipline.discipline_judges }
                         score={ current_score }
                         readOnly={ current_score.confirmed }
                         all_scores={ scores_map }
-                        run_id={ run.id }
+                        run={ run }
                         page={ this.state.page }
                         scoring_system_name={ this.state.tour.scoring_system_name }
                         onScoreUpdate={ this.onScoreUpdate.bind(this, current_score.id) }

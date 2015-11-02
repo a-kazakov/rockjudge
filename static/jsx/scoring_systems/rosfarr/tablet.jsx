@@ -29,7 +29,7 @@ class TabletScoreInput extends React.Component {
             return;
         }
         Api("acrobatic_override.set", {
-            run_id: this.props.run_id,
+            run_id: this.props.run.id,
             acrobatic_idx: acro_idx,
             score: value,
         }).send();
@@ -38,7 +38,7 @@ class TabletScoreInput extends React.Component {
         return this.props.discipline_judge.role == "head_judge"
     }
     renderHeadJudgeInput() {
-        let acrobatic_overrides = this.props.acrobatics
+        let acrobatic_overrides = this.props.run.acrobatics
             .map((acro, idx) => ({ idx: idx + 1, acrobatic: acro }))
             .filter((acro) => acro.acrobatic.original_score != acro.acrobatic.score);
         let tech_judges = this.props.all_discipline_judges.filter(function(discipline_judge) {
@@ -68,12 +68,27 @@ class TabletScoreInput extends React.Component {
                 </div>
             </div>
         }.bind(this));
+        let penalties = this.props.run.inherited_data.penalties.length > 0
+            ? <div>
+                <div className="spacer"></div>
+                <h3>{ __("tablet.head_judge.previous_penalties") }</h3>
+                <table className="full-width"><tbody> {
+                    this.props.run.inherited_data.penalties.map((d, idx) =>
+                        <tr key={ idx }>
+                            <td className="w-10 text-center"><strong>{ d.penalty }</strong></td>
+                            <td>{ d.tour }</td>
+                        </tr>
+                    ) }
+                </tbody></table>
+            </div>
+            : null;
         let acrobatics = acrobatic_overrides.length > 0
             ? <div>
+                <div className="spacer"></div>
                 <h3>{ __("tablet.head_judge.acrobatic_overrides") }</h3>
                 <table className="full-width"><tbody>
-                    { acrobatic_overrides.map((acro) =>
-                        <tr>
+                    { acrobatic_overrides.map((acro, idx) =>
+                        <tr key={ idx }>
                             <td className="w-5">{ acro.idx }</td>
                             <td>{ acro.acrobatic.description }</td>
                             <td className="w-10 text-right">{ acro.acrobatic.original_score.toFixed(1) }</td>
@@ -93,10 +108,11 @@ class TabletScoreInput extends React.Component {
             <div className="spacer"></div>
             { tech_judges }
             { acrobatics }
+            { penalties }
         </div>
     }
     renderTechJudgeInputAcro() {
-        let acrobatics = this.props.acrobatics.map(function(acro, idx) {
+        let acrobatics = this.props.run.acrobatics.map(function(acro, idx) {
             return <div className="tech-judge-acro" key={ acro.id }>
                 <div className="controls pull-right">
                     <div className="setter">
@@ -180,7 +196,7 @@ class TabletScoreInput extends React.Component {
     }
     renderAcroJudgeInput() {
         var score = this.props.score.data;
-        var inputs = this.props.acrobatics.map(function(acro, idx) {
+        var inputs = this.props.run.acrobatics.map(function(acro, idx) {
             return <div key={ idx }>
                 <h3>{ _("tablet.headers.acro_n", idx) }</h3>
                 <TabletSelectorInput

@@ -328,6 +328,7 @@ function _(src, arg) {
                         "black_card": "-100",
                         "ok": "OK",
                         "penalty_type": "Штрафные санкции",
+                        "previous_penalties": "Предыдущие штрафы",
                         "red_card": "-30",
                         "yellow_card": "-3",
                     },

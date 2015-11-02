@@ -17,6 +17,7 @@ class Run(BaseModel):
     tour = peewee.ForeignKeyField(Tour, related_name="runs")
     heat = peewee.IntegerField()
     acrobatics_json = peewee.TextField(default="[]")
+    inherited_data_json = peewee.TextField(default="{}")
 
     RW_PROPS = ["heat"]
 
@@ -47,7 +48,16 @@ class Run(BaseModel):
     def acrobatics(self, value):
         self.acrobatics_json = json.dumps(value)
 
-    # Controls
+    @property
+    def inherited_data(self):
+        return json.loads(self.inherited_data_json)
+
+    @inherited_data.setter
+    def inherited_data(self, value):
+        self.inherited_data_json = json.dumps(value)
+
+    def get_data_to_inherit(self):
+        return self.tour.scoring_system.get_run_data_to_inherit(self, self.tour.discipline_judges)
 
     def create_scores(self):
         from models import Score
@@ -116,6 +126,7 @@ class Run(BaseModel):
         scores_obj = self.tour.scoring_system.get_run_scores(self, discipline_judges=discipline_judges)
         result = self.serialize_props()
         result["total_score"] = scores_obj["total_run_score"]
+        result["inherited_data"] = self.inherited_data
         result = self.serialize_upper_child(result, "participant", children)
         if discipline_judges is not None:
             rev_discipline_judges = {

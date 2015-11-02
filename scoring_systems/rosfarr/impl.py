@@ -1,3 +1,5 @@
+import copy
+
 from fractions import Fraction as frac
 
 from exceptions import ApiError
@@ -353,6 +355,20 @@ class RunScore:
     def display_score(self):
         return "{:.2f} / {:.2f}".format(-self.sorting_score[0] / 100.0, -self.sorting_score[1] / 100.0)
 
+    def serialize_data_to_inherit(self):
+        if "penalties" in self.run.inherited_data:
+            current_penalties = copy.deepcopy(self.run.inherited_data["penalties"])
+        else:
+            current_penalties = []
+        if self.penalties != 0:
+            current_penalties.append({
+                "tour": self.run.tour.name,
+                "penalty": int(self.penalties) // 100,
+            })
+        return {
+            "penalties": current_penalties,
+        }
+
     def serialize(self):
         scores = {}
         for discipline_judge, score in self.judge_scores:
@@ -447,6 +463,20 @@ class FormationRunScore:
         for discipline_judge, score in self.judge_scores:
             if discipline_judge.role == "dance_judge":
                 yield discipline_judge, score
+
+    def serialize_data_to_inherit(self):
+        if "penalties" in self.run.inherited_data:
+            current_penalties = copy.deepcopy(self.run.inherited_data["penalties"])
+        else:
+            current_penalties = []
+        if self.penalties != 0:
+            current_penalties.append({
+                "tour": self.run.tour.name,
+                "penalty": int(self.penalties) // 100,
+            })
+        return {
+            "penalties": current_penalties,
+        }
 
     def serialize(self):
         scores = {}
