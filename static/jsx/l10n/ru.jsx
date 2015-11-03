@@ -314,14 +314,14 @@ function _(src, arg) {
                         "fall_down": "Падения (-30)",
                     },
                     "dance_judge": {
-                        "big_mistakes": "Серьёзные ошибки (-30)",
+                        "big_mistakes": "Большие ошибки (-30)",
                         "composition": "Композиция",
                         "dance_figs": "Танцевальные фигуры",
                         "dance_tech": "Техника танцевания",
                         "fw_man": "Техника ног, партнёр (сбавка в %)",
                         "fw_woman": "Техника ног, партнёрша (сбавка в %)",
                         "impression": "Общее впечатление",
-                        "small_mistakes": "Ошибки (-5)",
+                        "small_mistakes": "Маленькие ошибки (-5)",
                     },
                     "global": {
                         "total_score": "Сумма баллов",
@@ -344,7 +344,7 @@ function _(src, arg) {
                 "results": {
                     "breakdown": {
                         "acro_n": (n) => "A" + n.toString(),
-                        "bm": "СО",
+                        "bm": "БО",
                         "c": "К",
                         "df": "ТФ",
                         "dt": "ТT",
@@ -353,7 +353,7 @@ function _(src, arg) {
                         "fw": "ТНж",
                         "i": "ОВ",
                         "p": "М",
-                        "sm": "Ош",
+                        "sm": "МО",
                         "t": "Σ",
                     },
                     "headers": {
