@@ -12,6 +12,132 @@ function onTouchOrClick(handler) {
     }
 }
 
+class Slider extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            position: 0,
+            touch: false,
+            finished: false,
+        };
+        this.pin = null;
+    }
+    isFree() {
+        return !this.state.touch && !this.props.done && !this.state.finished;
+    }
+    componentDidUpdate(prevProps) {
+        if (!prevProps.done && this.props.done) {
+            this.setState({
+                finished: false,
+            });
+        }
+    }
+    render() {
+        return <div className="slider noselect">
+            <div className={"inner" + (this.isFree() ? " free" : "")}
+                    style={{ left: (this.props.done || this.state.finished) ? "200px" : this.state.position + "px" }}
+                    onTouchStart={ this.onTouchStart.bind(this)}
+                    onTouchMove={ this.onTouchMove.bind(this)}
+                    onTouchEnd={ this.onTouchEnd.bind(this) }
+                    onClick={ this.onClick.bind(this) } >
+                →
+            </div>
+            { this.props.done
+                ? <span
+                    style={{ color: "rgb(100,100,100)" }}
+                    className={ "done-text" } >
+                        { this.props.doneText }
+                </span>
+                : <span
+                    style={{ color: "rgba(100,100,100," + this.getOuterTextOpacity() + ")" }}
+                    className={ "slide-text" + (this.isFree() ? " free" : "") } >
+                        { this.props.slideText }
+                </span>
+            }
+        </div>;
+    }
+    getOuterTextOpacity() {
+        if (this.state.finished) {
+            return 0;
+        }
+        let value = Math.min(Math.max(100 - this.state.position, 0), 100);
+        return (value / 100).toFixed(3);
+    }
+    getElementOffset(element) {
+        let res = 0;
+        while (element) {
+            res += element.offsetLeft || 0;
+            element = element.parentNode;
+        }
+        return res;
+    }
+    getTouch(event) {
+        let touch = event.touches[0];
+        let parent = event.target.parentNode;
+        return touch.pageX - this.getElementOffset(parent);
+    }
+    getRelativeTouch(event) {
+        let touch = event.touches[0];
+        let parent = event.target;
+        return touch.pageX - this.getElementOffset(parent);
+    }
+    getSliderPos(event) {
+        let pos = this.getTouch(event) - this.pin;
+        return Math.min(Math.max(pos, 0), 200);
+    }
+    onClick(event) {
+        if (this.state.finished || this.props.done) {
+            return;
+        }
+        this.setState({
+            posision: 200,
+            touch: false,
+            finished: true,
+        });
+        this.props.onActivate();
+    }
+    onTouchStart(event) {
+        event.preventDefault();
+        if (this.state.finished || this.props.done) {
+            return;
+        }
+        this.pin = this.getRelativeTouch(event);
+        this.setState({
+            position: this.getSliderPos(event),
+            touch: true,
+        });
+    }
+    onTouchMove(event) {
+        event.preventDefault();
+        if (this.state.finished || this.props.done) {
+            return;
+        }
+        this.setState({
+            position: this.getSliderPos(event),
+        });
+    }
+    onTouchEnd(event) {
+        event.preventDefault();
+        if (this.state.finished || this.props.done) {
+            return;
+        }
+        if (this.state.position == 200) {
+            this.setState({
+                position: 0,
+                finished: true,
+                touch: false,
+            });
+            this.props.onActivate();
+        } else {
+            this.setState({
+                position: 0,
+                touch: false,
+            });
+        }
+    }
+}
+
+
 class TabletSelectorInput extends React.Component {
     getButtonsCount() {
         return this.props.choices.length;

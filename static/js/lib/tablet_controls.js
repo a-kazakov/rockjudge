@@ -25,8 +25,170 @@ function onTouchOrClick(handler) {
     };
 }
 
-var TabletSelectorInput = (function (_React$Component) {
-    _inherits(TabletSelectorInput, _React$Component);
+var Slider = (function (_React$Component) {
+    _inherits(Slider, _React$Component);
+
+    function Slider(props) {
+        _classCallCheck(this, Slider);
+
+        _get(Object.getPrototypeOf(Slider.prototype), "constructor", this).call(this, props);
+        this.state = {
+            position: 0,
+            touch: false,
+            finished: false
+        };
+        this.pin = null;
+    }
+
+    _createClass(Slider, [{
+        key: "isFree",
+        value: function isFree() {
+            return !this.state.touch && !this.props.done && !this.state.finished;
+        }
+    }, {
+        key: "componentDidUpdate",
+        value: function componentDidUpdate(prevProps) {
+            if (!prevProps.done && this.props.done) {
+                this.setState({
+                    finished: false
+                });
+            }
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { className: "slider noselect" },
+                React.createElement(
+                    "div",
+                    { className: "inner" + (this.isFree() ? " free" : ""),
+                        style: { left: this.props.done || this.state.finished ? "200px" : this.state.position + "px" },
+                        onTouchStart: this.onTouchStart.bind(this),
+                        onTouchMove: this.onTouchMove.bind(this),
+                        onTouchEnd: this.onTouchEnd.bind(this),
+                        onClick: this.onClick.bind(this) },
+                    "→"
+                ),
+                this.props.done ? React.createElement(
+                    "span",
+                    {
+                        style: { color: "rgb(100,100,100)" },
+                        className: "done-text" },
+                    this.props.doneText
+                ) : React.createElement(
+                    "span",
+                    {
+                        style: { color: "rgba(100,100,100," + this.getOuterTextOpacity() + ")" },
+                        className: "slide-text" + (this.isFree() ? " free" : "") },
+                    this.props.slideText
+                )
+            );
+        }
+    }, {
+        key: "getOuterTextOpacity",
+        value: function getOuterTextOpacity() {
+            if (this.state.finished) {
+                return 0;
+            }
+            var value = Math.min(Math.max(100 - this.state.position, 0), 100);
+            return (value / 100).toFixed(3);
+        }
+    }, {
+        key: "getElementOffset",
+        value: function getElementOffset(element) {
+            var res = 0;
+            while (element) {
+                res += element.offsetLeft || 0;
+                element = element.parentNode;
+            }
+            return res;
+        }
+    }, {
+        key: "getTouch",
+        value: function getTouch(event) {
+            var touch = event.touches[0];
+            var parent = event.target.parentNode;
+            return touch.pageX - this.getElementOffset(parent);
+        }
+    }, {
+        key: "getRelativeTouch",
+        value: function getRelativeTouch(event) {
+            var touch = event.touches[0];
+            var parent = event.target;
+            return touch.pageX - this.getElementOffset(parent);
+        }
+    }, {
+        key: "getSliderPos",
+        value: function getSliderPos(event) {
+            var pos = this.getTouch(event) - this.pin;
+            return Math.min(Math.max(pos, 0), 200);
+        }
+    }, {
+        key: "onClick",
+        value: function onClick(event) {
+            if (this.state.finished || this.props.done) {
+                return;
+            }
+            this.setState({
+                posision: 200,
+                touch: false,
+                finished: true
+            });
+            this.props.onActivate();
+        }
+    }, {
+        key: "onTouchStart",
+        value: function onTouchStart(event) {
+            event.preventDefault();
+            if (this.state.finished || this.props.done) {
+                return;
+            }
+            this.pin = this.getRelativeTouch(event);
+            this.setState({
+                position: this.getSliderPos(event),
+                touch: true
+            });
+        }
+    }, {
+        key: "onTouchMove",
+        value: function onTouchMove(event) {
+            event.preventDefault();
+            if (this.state.finished || this.props.done) {
+                return;
+            }
+            this.setState({
+                position: this.getSliderPos(event)
+            });
+        }
+    }, {
+        key: "onTouchEnd",
+        value: function onTouchEnd(event) {
+            event.preventDefault();
+            if (this.state.finished || this.props.done) {
+                return;
+            }
+            if (this.state.position == 200) {
+                this.setState({
+                    position: 0,
+                    finished: true,
+                    touch: false
+                });
+                this.props.onActivate();
+            } else {
+                this.setState({
+                    position: 0,
+                    touch: false
+                });
+            }
+        }
+    }]);
+
+    return Slider;
+})(React.Component);
+
+var TabletSelectorInput = (function (_React$Component2) {
+    _inherits(TabletSelectorInput, _React$Component2);
 
     function TabletSelectorInput() {
         _classCallCheck(this, TabletSelectorInput);
@@ -74,8 +236,8 @@ var TabletSelectorInput = (function (_React$Component) {
     return TabletSelectorInput;
 })(React.Component);
 
-var TabletIntegerSelectInput = (function (_React$Component2) {
-    _inherits(TabletIntegerSelectInput, _React$Component2);
+var TabletIntegerSelectInput = (function (_React$Component3) {
+    _inherits(TabletIntegerSelectInput, _React$Component3);
 
     function TabletIntegerSelectInput() {
         _classCallCheck(this, TabletIntegerSelectInput);
@@ -108,8 +270,8 @@ var TabletIntegerSelectInput = (function (_React$Component2) {
     return TabletIntegerSelectInput;
 })(React.Component);
 
-var TabletPointFiveSelectInput = (function (_React$Component3) {
-    _inherits(TabletPointFiveSelectInput, _React$Component3);
+var TabletPointFiveSelectInput = (function (_React$Component4) {
+    _inherits(TabletPointFiveSelectInput, _React$Component4);
 
     function TabletPointFiveSelectInput() {
         _classCallCheck(this, TabletPointFiveSelectInput);
@@ -142,8 +304,8 @@ var TabletPointFiveSelectInput = (function (_React$Component3) {
     return TabletPointFiveSelectInput;
 })(React.Component);
 
-var TabletIntegerInput = (function (_React$Component4) {
-    _inherits(TabletIntegerInput, _React$Component4);
+var TabletIntegerInput = (function (_React$Component5) {
+    _inherits(TabletIntegerInput, _React$Component5);
 
     function TabletIntegerInput() {
         _classCallCheck(this, TabletIntegerInput);
@@ -191,8 +353,8 @@ var TabletIntegerInput = (function (_React$Component4) {
     return TabletIntegerInput;
 })(React.Component);
 
-var TabletPoint5Input = (function (_React$Component5) {
-    _inherits(TabletPoint5Input, _React$Component5);
+var TabletPoint5Input = (function (_React$Component6) {
+    _inherits(TabletPoint5Input, _React$Component6);
 
     function TabletPoint5Input() {
         _classCallCheck(this, TabletPoint5Input);
@@ -240,8 +402,8 @@ var TabletPoint5Input = (function (_React$Component5) {
     return TabletPoint5Input;
 })(React.Component);
 
-var StopWatch = (function (_React$Component6) {
-    _inherits(StopWatch, _React$Component6);
+var StopWatch = (function (_React$Component7) {
+    _inherits(StopWatch, _React$Component7);
 
     function StopWatch(props) {
         _classCallCheck(this, StopWatch);

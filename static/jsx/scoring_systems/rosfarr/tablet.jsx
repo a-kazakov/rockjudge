@@ -274,9 +274,6 @@ class TabletScoreInput extends React.Component {
         }
     }
     renderConfirmationButton() {
-        if (this.props.score.confirmed) {
-            return null;
-        }
         if (this.allowHeatsChange()) {
             return null;
         }
@@ -298,9 +295,11 @@ class TabletScoreInput extends React.Component {
             }
         }
         return <div className="confirm">
-            <button className="tbtn" {...onTouchOrClick(this.props.onScoreConfirm)}>
-                { _("judging.buttons.confirm_score") }
-            </button>
+            <Slider
+                onActivate={ this.props.onScoreConfirm }
+                done={ this.props.score.confirmed }
+                slideText={ _("judging.buttons.confirm_score") }
+                doneText={ _("judging.labels.confirmed") } />
         </div>;
     }
     render() {

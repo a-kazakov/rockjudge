@@ -89,16 +89,16 @@ var BaseScoreInput = (function (_React$Component) {
     return BaseScoreInput;
 })(React.Component);
 
-var DanceJudgeInput = (function (_BaseScoreInput) {
-    _inherits(DanceJudgeInput, _BaseScoreInput);
+var DanceScoreInput = (function (_BaseScoreInput) {
+    _inherits(DanceScoreInput, _BaseScoreInput);
 
-    function DanceJudgeInput() {
-        _classCallCheck(this, DanceJudgeInput);
+    function DanceScoreInput() {
+        _classCallCheck(this, DanceScoreInput);
 
-        _get(Object.getPrototypeOf(DanceJudgeInput.prototype), "constructor", this).apply(this, arguments);
+        _get(Object.getPrototypeOf(DanceScoreInput.prototype), "constructor", this).apply(this, arguments);
     }
 
-    _createClass(DanceJudgeInput, [{
+    _createClass(DanceScoreInput, [{
         key: "renderTable",
         value: function renderTable() {
             return React.createElement(
@@ -219,7 +219,7 @@ var DanceJudgeInput = (function (_BaseScoreInput) {
         }
     }]);
 
-    return DanceJudgeInput;
+    return DanceScoreInput;
 })(BaseScoreInput);
 
 var AcroScoreInput = (function (_BaseScoreInput2) {

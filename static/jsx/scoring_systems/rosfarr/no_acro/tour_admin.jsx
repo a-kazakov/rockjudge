@@ -44,7 +44,7 @@ class BaseScoreInput extends React.Component {
     }
 }
 
-class DanceJudgeInput extends BaseScoreInput {
+class DanceScoreInput extends BaseScoreInput {
     renderTable() {
         return <table><tbody>
             <tr><th>FW:</th><td>

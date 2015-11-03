@@ -420,6 +420,36 @@ button.score-btn.active {
 .selector-layout-2rows.n-26 button:nth-child(2n) {
   margin: 50px -3.16666667% 0 -3.16666667% !important;
 }
+.slider {
+  position: relative;
+  width: 250px;
+  height: 30px;
+  line-height: 30px;
+  background-color: #e2e2e2;
+  text-align: center;
+  margin: 0 auto;
+}
+.slider .inner {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50px;
+  line-height: 30px;
+  background-color: #2b3a42;
+  text-align: center;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+}
+.slider .free {
+  transition: all 1s ease;
+}
+.slider .slide-text {
+  margin-left: 35px;
+}
+.slider .done-text {
+  margin-right: 35px;
+}
 .stopwatch {
   width: 100%;
   padding-bottom: 15px;

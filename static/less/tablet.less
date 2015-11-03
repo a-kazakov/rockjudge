@@ -246,6 +246,37 @@ button.score-btn {
   .loop-width-2rows(26);
 }
 
+.slider {
+  .inner {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50px;
+    line-height: 30px;
+    background-color: @ui-dark;
+    text-align: center;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+  }
+  .free {
+    transition: all 1s ease;
+  }
+  position: relative;
+  width: 250px;
+  height: 30px;
+  line-height: 30px;
+  background-color: darken(@ui-white, 5%);
+  text-align: center;
+  margin: 0 auto;
+  .slide-text {
+    margin-left: 35px;
+  }
+  .done-text {
+    margin-right: 35px;
+  }
+}
+
 .stopwatch {
   width: 100%;
   padding-bottom: 15px;

@@ -205,6 +205,7 @@ function _(src, arg) {
                 "acro_idx": "№ трюка",
                 "acrobatics": "Акробатика",
                 "club": "Клуб",
+                "confirmed": "Зафиксировано",
                 "heat": "Заход",
                 "new_score": "Корр.",
                 "number": "№",
