@@ -117,7 +117,7 @@ var TabletScoreInput = (function (_React$Component) {
                     )
                 );
             }).bind(this));
-            var penalties = this.props.run.inherited_data.penalties.length > 0 ? React.createElement(
+            var penalties = this.props.run.inherited_data.penalties && this.props.run.inherited_data.penalties.length > 0 ? React.createElement(
                 "div",
                 null,
                 React.createElement("div", { className: "spacer" }),

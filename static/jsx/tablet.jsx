@@ -47,8 +47,9 @@ class JudgeTablet extends React.Component {
             if (st_tour) {
                 let tour = st_tour.serialize(this.TOUR_SCHEMA);
                 state_upd["tour"] = tour;
-                // Set find discipline judge
+                // Find discipline judge
                 state_upd["discipline_judge"] = null;
+                console.log(tour, tour.discipline.discipline_judges)
                 tour.discipline.discipline_judges.forEach(function(dj) {
                     if (dj.judge.id == this.props.judge_id) {
                         state_upd["discipline_judge"] = dj;
@@ -74,6 +75,12 @@ class JudgeTablet extends React.Component {
                 discipline_judge: null,
             });
             this.active_tour_id = new_active_tour_id;
+            storage.del("Tour");
+            storage.del("Participant");
+            storage.del("Score");
+            storage.del("Run");
+            storage.del("Discipline");
+            storage.del("DisciplineJudge");
             return;
         }
         if (force_reload || new_active_tour_id !== this.active_tour_id) {

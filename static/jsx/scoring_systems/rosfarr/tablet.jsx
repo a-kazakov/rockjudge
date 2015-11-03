@@ -68,7 +68,7 @@ class TabletScoreInput extends React.Component {
                 </div>
             </div>
         }.bind(this));
-        let penalties = this.props.run.inherited_data.penalties.length > 0
+        let penalties = this.props.run.inherited_data.penalties && this.props.run.inherited_data.penalties.length > 0
             ? <div>
                 <div className="spacer"></div>
                 <h3>{ __("tablet.head_judge.previous_penalties") }</h3>
