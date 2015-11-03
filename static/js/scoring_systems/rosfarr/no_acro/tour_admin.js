@@ -8,23 +8,104 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var TourAdminScoreInput = (function (_React$Component) {
-    _inherits(TourAdminScoreInput, _React$Component);
+var BaseScoreInput = (function (_React$Component) {
+    _inherits(BaseScoreInput, _React$Component);
 
-    function TourAdminScoreInput(props) {
-        _classCallCheck(this, TourAdminScoreInput);
+    function BaseScoreInput() {
+        _classCallCheck(this, BaseScoreInput);
 
-        _get(Object.getPrototypeOf(TourAdminScoreInput.prototype), "constructor", this).call(this, props);
+        _get(Object.getPrototypeOf(BaseScoreInput.prototype), "constructor", this).apply(this, arguments);
     }
 
-    _createClass(TourAdminScoreInput, [{
-        key: "renderDanceJudgeInput",
-        value: function renderDanceJudgeInput() {
+    _createClass(BaseScoreInput, [{
+        key: "render",
+        value: function render() {
             return React.createElement(
                 "form",
                 { onSubmit: this.onSubmit.bind(this), className: "form-score-input" },
+                this.renderTable(),
                 React.createElement(
-                    "table",
+                    "button",
+                    { className: "btn btn-primary", type: "submit" },
+                    _("global.buttons.submit")
+                ),
+                " ",
+                React.createElement(
+                    "button",
+                    { className: "btn btn-primary", type: "button", onClick: this.props.stopEditing },
+                    _("global.buttons.discard")
+                ),
+                React.createElement(ConfirmationButton, {
+                    confirmed: this.props.confirmed,
+                    toggleConfirmation: this.props.toggleConfirmation,
+                    onKeyUp: this.onKeyUp.bind(this) })
+            );
+        }
+    }, {
+        key: "componentDidMount",
+        value: function componentDidMount() {
+            React.findDOMNode(this).querySelectorAll("input")[0].select();
+            this.onMount.apply(this, arguments);
+        }
+    }, {
+        key: "onMount",
+        value: function onMount() {}
+    }, {
+        key: "onChange",
+        value: function onChange(key, event) {
+            if (typeof key != "object") {
+                key = [key];
+            }
+            var score = this.serialize();
+            var score_inner = score;
+            for (var idx = 0; idx < key.length - 1; ++idx) {
+                score_inner = score_inner[key[idx]];
+            }
+            score_inner[key[key.length - 1]] = event.target.type == "checkbox" ? event.target.indeterminate ? null : event.target.checked : event.target.value;
+            console.log(score_inner[key[key.length - 1]]);
+            this.props.updateValue(score);
+        }
+    }, {
+        key: "onKeyUp",
+        value: function onKeyUp(event) {
+            if (event.keyCode == 27) {
+                // Esc
+                this.props.stopEditing();
+            }
+        }
+    }, {
+        key: "isEmpty",
+        value: function isEmpty(value) {
+            return value === "" || value === null;
+        }
+    }, {
+        key: "onSubmit",
+        value: function onSubmit(e) {
+            e.preventDefault();
+            this.props.submitValue(this.serialize());
+        }
+    }]);
+
+    return BaseScoreInput;
+})(React.Component);
+
+var DanceJudgeInput = (function (_BaseScoreInput) {
+    _inherits(DanceJudgeInput, _BaseScoreInput);
+
+    function DanceJudgeInput() {
+        _classCallCheck(this, DanceJudgeInput);
+
+        _get(Object.getPrototypeOf(DanceJudgeInput.prototype), "constructor", this).apply(this, arguments);
+    }
+
+    _createClass(DanceJudgeInput, [{
+        key: "renderTable",
+        value: function renderTable() {
+            return React.createElement(
+                "table",
+                null,
+                React.createElement(
+                    "tbody",
                     null,
                     React.createElement(
                         "tr",
@@ -122,23 +203,37 @@ var TourAdminScoreInput = (function (_React$Component) {
                                 onKeyUp: this.onKeyUp.bind(this) })
                         )
                     )
-                ),
-                React.createElement(
-                    "button",
-                    { className: "btn btn-primary", type: "submit" },
-                    _("global.buttons.submit")
-                ),
-                " ",
-                React.createElement(
-                    "button",
-                    { className: "btn btn-primary", type: "button", onClick: this.props.stopEditing },
-                    _("global.buttons.discard")
                 )
             );
         }
     }, {
-        key: "renderAcroJudgeInput",
-        value: function renderAcroJudgeInput() {
+        key: "serialize",
+        value: function serialize() {
+            return {
+                dance_tech: !this.isEmpty(this.props.score.dance_tech) ? parseFloat(this.props.score.dance_tech) || 0 : null,
+                dance_figs: !this.isEmpty(this.props.score.dance_figs) ? parseFloat(this.props.score.dance_figs) || 0 : null,
+                impression: !this.isEmpty(this.props.score.impression) ? parseFloat(this.props.score.impression) || 0 : null,
+                small_mistakes: !this.isEmpty(this.props.score.small_mistakes) ? parseInt(this.props.score.small_mistakes) || 0 : null,
+                big_mistakes: !this.isEmpty(this.props.score.big_mistakes) ? parseInt(this.props.score.big_mistakes) || 0 : null
+            };
+        }
+    }]);
+
+    return DanceJudgeInput;
+})(BaseScoreInput);
+
+var AcroScoreInput = (function (_BaseScoreInput2) {
+    _inherits(AcroScoreInput, _BaseScoreInput2);
+
+    function AcroScoreInput() {
+        _classCallCheck(this, AcroScoreInput);
+
+        _get(Object.getPrototypeOf(AcroScoreInput.prototype), "constructor", this).apply(this, arguments);
+    }
+
+    _createClass(AcroScoreInput, [{
+        key: "renderTable",
+        value: function renderTable() {
             var fields = this.props.score.deductions.map((function (value, idx) {
                 return [React.createElement(
                     "th",
@@ -178,34 +273,47 @@ var TourAdminScoreInput = (function (_React$Component) {
                 ));
             }
             return React.createElement(
-                "form",
-                { onSubmit: this.onSubmit.bind(this), className: "form-score-input" },
+                "table",
+                null,
                 React.createElement(
-                    "table",
+                    "tbody",
                     null,
                     rows
-                ),
-                React.createElement(
-                    "button",
-                    { className: "btn btn-primary", type: "submit" },
-                    _("global.buttons.submit")
-                ),
-                " ",
-                React.createElement(
-                    "button",
-                    { className: "btn btn-primary", type: "button", onClick: this.props.stopEditing },
-                    _("global.buttons.discard")
                 )
             );
         }
     }, {
-        key: "renderFormationJudgeInput",
-        value: function renderFormationJudgeInput() {
+        key: "serialize",
+        value: function serialize() {
+            return {
+                deductions: this.props.score.deductions.map(function (deduction) {
+                    return deduction ? parseInt(deduction) || 0 : null;
+                }),
+                mistakes: parseInt(this.props.score.mistakes) || 0
+            };
+        }
+    }]);
+
+    return AcroScoreInput;
+})(BaseScoreInput);
+
+var FormationScoreInput = (function (_BaseScoreInput3) {
+    _inherits(FormationScoreInput, _BaseScoreInput3);
+
+    function FormationScoreInput() {
+        _classCallCheck(this, FormationScoreInput);
+
+        _get(Object.getPrototypeOf(FormationScoreInput.prototype), "constructor", this).apply(this, arguments);
+    }
+
+    _createClass(FormationScoreInput, [{
+        key: "renderTable",
+        value: function renderTable() {
             return React.createElement(
-                "form",
-                { onSubmit: this.onSubmit.bind(this), className: "form-score-input" },
+                "table",
+                null,
                 React.createElement(
-                    "table",
+                    "tbody",
                     null,
                     React.createElement(
                         "tr",
@@ -293,28 +401,43 @@ var TourAdminScoreInput = (function (_React$Component) {
                                 onKeyUp: this.onKeyUp.bind(this) })
                         )
                     )
-                ),
-                React.createElement(
-                    "button",
-                    { className: "btn btn-primary", type: "submit" },
-                    _("global.buttons.submit")
-                ),
-                " ",
-                React.createElement(
-                    "button",
-                    { className: "btn btn-primary", type: "button", onClick: this.props.stopEditing },
-                    _("global.buttons.discard")
                 )
             );
         }
     }, {
-        key: "renderHeadJudgeInput",
-        value: function renderHeadJudgeInput() {
+        key: "serialize",
+        value: function serialize() {
+            return {
+                fw_man: !this.isEmpty(this.props.score.fw_man) ? parseInt(this.props.score.fw_man) || 0 : null,
+                fw_woman: !this.isEmpty(this.props.score.fw_woman) ? parseInt(this.props.score.fw_woman) || 0 : null,
+                dance_figs: !this.isEmpty(this.props.score.dance_figs) ? parseInt(this.props.score.dance_figs) || 0 : null,
+                composition: !this.isEmpty(this.props.score.composition) ? parseInt(this.props.score.composition) || 0 : null,
+                small_mistakes: !this.isEmpty(this.props.score.small_mistakes) ? parseInt(this.props.score.small_mistakes) || 0 : null,
+                big_mistakes: !this.isEmpty(this.props.score.big_mistakes) ? parseInt(this.props.score.big_mistakes) || 0 : null
+            };
+        }
+    }]);
+
+    return FormationScoreInput;
+})(BaseScoreInput);
+
+var HeadScoreInput = (function (_BaseScoreInput4) {
+    _inherits(HeadScoreInput, _BaseScoreInput4);
+
+    function HeadScoreInput() {
+        _classCallCheck(this, HeadScoreInput);
+
+        _get(Object.getPrototypeOf(HeadScoreInput.prototype), "constructor", this).apply(this, arguments);
+    }
+
+    _createClass(HeadScoreInput, [{
+        key: "renderTable",
+        value: function renderTable() {
             return React.createElement(
-                "form",
-                { onSubmit: this.onSubmit.bind(this), className: "form-score-input" },
+                "table",
+                null,
                 React.createElement(
-                    "table",
+                    "tbody",
                     null,
                     React.createElement(
                         "tr",
@@ -348,136 +471,167 @@ var TourAdminScoreInput = (function (_React$Component) {
                                 onKeyUp: this.onKeyUp.bind(this) })
                         )
                     )
-                ),
-                React.createElement(
-                    "button",
-                    { className: "btn btn-primary", type: "submit" },
-                    _("global.buttons.submit")
-                ),
-                React.createElement(
-                    "button",
-                    { className: "btn btn-primary", type: "button", onClick: this.props.stopEditing },
-                    _("global.buttons.discard")
                 )
             );
         }
     }, {
-        key: "render",
-        value: function render() {
-            switch (this.props.discipline_judge.role) {
-                case "acro_judge":
-                    return this.props.scoring_system_name == "rosfarr.no_acro" ? this.renderDanceJudgeInput() : this.renderAcroJudgeInput();
-                case "dance_judge":
-                    if (this.props.scoring_system_name == "rosfarr.formation") {
-                        return this.renderFormationJudgeInput();
-                    }
-                    return this.renderDanceJudgeInput();
-                case "head_judge":
-                    return this.renderHeadJudgeInput();
-                default:
-                    console.log("Unknown judge role", this.props.discipline_judge.role);
-                    return null;
-            }
-        }
-    }, {
-        key: "onChange",
-        value: function onChange(key, event) {
-            if (typeof key != "object") {
-                key = [key];
-            }
-            var score = this.serializeScore();
-            var score_inner = score;
-            for (var idx = 0; idx < key.length - 1; ++idx) {
-                score_inner = score_inner[key[idx]];
-            }
-            score_inner[key[key.length - 1]] = event.target.type == "checkbox" ? event.target.checked : event.target.value;
-            this.props.updateValue(score);
-        }
-    }, {
-        key: "componentDidMount",
-        value: function componentDidMount() {
-            React.findDOMNode(this).querySelectorAll("input")[0].select();
-        }
-    }, {
-        key: "onKeyUp",
-        value: function onKeyUp(event) {
-            if (event.keyCode == 27) {
-                // Esc
-                this.props.stopEditing();
-            }
-        }
-    }, {
-        key: "isEmpty",
-        value: function isEmpty(value) {
-            return value === "" || value === null;
-        }
-    }, {
-        key: "serializeAcroScore",
-        value: function serializeAcroScore() {
-            return {
-                deductions: this.props.score.deductions.map(function (deduction) {
-                    return deduction ? parseInt(deduction) || 0 : null;
-                }),
-                mistakes: parseInt(this.props.score.mistakes) || 0
-            };
-        }
-    }, {
-        key: "serializeDanceScore",
-        value: function serializeDanceScore() {
-            if (this.props.scoring_system_name == "rosfarr.formation") {
-                return {
-                    dance_tech: !this.isEmpty(this.props.score.dance_tech) ? parseFloat(this.props.score.dance_tech) || 0 : null,
-                    dance_figs: !this.isEmpty(this.props.score.dance_figs) ? parseFloat(this.props.score.dance_figs) || 0 : null,
-                    impression: !this.isEmpty(this.props.score.impression) ? parseFloat(this.props.score.impression) || 0 : null,
-                    small_mistakes: !this.isEmpty(this.props.score.small_mistakes) ? parseInt(this.props.score.small_mistakes) || 0 : null,
-                    big_mistakes: !this.isEmpty(this.props.score.big_mistakes) ? parseInt(this.props.score.big_mistakes) || 0 : null
-                };
-            }
-            return {
-                fw_man: !this.isEmpty(this.props.score.fw_man) ? parseInt(this.props.score.fw_man) || 0 : null,
-                fw_woman: !this.isEmpty(this.props.score.fw_woman) ? parseInt(this.props.score.fw_woman) || 0 : null,
-                dance_figs: !this.isEmpty(this.props.score.dance_figs) ? parseInt(this.props.score.dance_figs) || 0 : null,
-                composition: !this.isEmpty(this.props.score.composition) ? parseInt(this.props.score.composition) || 0 : null,
-                small_mistakes: !this.isEmpty(this.props.score.small_mistakes) ? parseInt(this.props.score.small_mistakes) || 0 : null,
-                big_mistakes: !this.isEmpty(this.props.score.big_mistakes) ? parseInt(this.props.score.big_mistakes) || 0 : null
-            };
-        }
-    }, {
-        key: "serializeHeadScore",
-        value: function serializeHeadScore() {
+        key: "serialize",
+        value: function serialize() {
             return {
                 penalty: parseInt(this.props.score.penalty) || 0,
                 nexttour: this.props.score.nexttour
             };
         }
+    }]);
+
+    return HeadScoreInput;
+})(BaseScoreInput);
+
+var TechScoreInput = (function (_BaseScoreInput5) {
+    _inherits(TechScoreInput, _BaseScoreInput5);
+
+    function TechScoreInput() {
+        _classCallCheck(this, TechScoreInput);
+
+        _get(Object.getPrototypeOf(TechScoreInput.prototype), "constructor", this).apply(this, arguments);
+    }
+
+    _createClass(TechScoreInput, [{
+        key: "renderTable",
+        value: function renderTable() {
+            return React.createElement(
+                "table",
+                null,
+                React.createElement(
+                    "tbody",
+                    null,
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            "JS:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement("input", {
+                                type: "text",
+                                value: this.props.score.jump_steps,
+                                onChange: this.onChange.bind(this, "jump_steps"),
+                                onKeyUp: this.onKeyUp.bind(this) })
+                        ),
+                        React.createElement(
+                            "th",
+                            null,
+                            "TV:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement("input", {
+                                type: "checkbox",
+                                ref: "cb",
+                                checked: !!this.props.score.timing_violation,
+                                onChange: this.onChange.bind(this, "timing_violation"),
+                                onKeyUp: this.onKeyUp.bind(this),
+                                onClick: function (event) {
+                                    var cb = event.target;
+                                    if (cb.readOnly) {
+                                        cb.checked = cb.readOnly = false;
+                                    } else if (!cb.checked) {
+                                        cb.readOnly = cb.indeterminate = true;
+                                    }
+                                } })
+                        )
+                    )
+                )
+            );
+        }
     }, {
-        key: "serializeScore",
-        value: function serializeScore() {
+        key: "onMount",
+        value: function onMount() {
+            var node = this.refs.cb.getDOMNode();
+            node.readOnly = this.props.score.timing_violation === null;
+            node.indeterminate = this.props.score.timing_violation === null;
+        }
+    }, {
+        key: "serialize",
+        value: function serialize() {
+            return {
+                jump_steps: parseInt(this.props.score.jump_steps) || 0,
+                timing_violation: this.props.score.timing_violation
+            };
+        }
+    }]);
+
+    return TechScoreInput;
+})(BaseScoreInput);
+
+var ConfirmationButton = (function (_React$Component2) {
+    _inherits(ConfirmationButton, _React$Component2);
+
+    function ConfirmationButton() {
+        _classCallCheck(this, ConfirmationButton);
+
+        _get(Object.getPrototypeOf(ConfirmationButton.prototype), "constructor", this).apply(this, arguments);
+    }
+
+    _createClass(ConfirmationButton, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "button",
+                {
+                    className: "btn btn-sm btn-confirmation" + (this.props.confirmed ? " btn-danger" : " btn-success"),
+                    type: "button",
+                    onClick: this.props.toggleConfirmation,
+                    onKeyUp: this.props.onKeyUp },
+                this.props.confirmed ? _("admin.buttons.unconfirm_score") : _("admin.buttons.confirm_score")
+            );
+        }
+    }]);
+
+    return ConfirmationButton;
+})(React.Component);
+
+var TourAdminScoreInput = (function (_React$Component3) {
+    _inherits(TourAdminScoreInput, _React$Component3);
+
+    function TourAdminScoreInput() {
+        _classCallCheck(this, TourAdminScoreInput);
+
+        _get(Object.getPrototypeOf(TourAdminScoreInput.prototype), "constructor", this).apply(this, arguments);
+    }
+
+    _createClass(TourAdminScoreInput, [{
+        key: "render",
+        value: function render() {
             switch (this.props.discipline_judge.role) {
                 case "acro_judge":
-                    return this.serializeAcroScore();
+                    return React.createElement(AcroScoreInput, this.props);
                 case "dance_judge":
-                    return this.serializeDanceScore();
+                    if (this.props.scoring_system_name == "rosfarr.formation") {
+                        return React.createElement(FormationScoreInput, this.props);
+                    }
+                    return React.createElement(DanceScoreInput, this.props);
                 case "head_judge":
-                    return this.serializeHeadScore();
+                    return React.createElement(HeadScoreInput, this.props);
+                case "tech_judge":
+                    return React.createElement(TechScoreInput, this.props);
                 default:
                     console.log("Unknown judge role", this.props.discipline_judge.role);
                     return null;
             }
-        }
-    }, {
-        key: "onSubmit",
-        value: function onSubmit(e) {
-            e.preventDefault();
-            this.props.submitValue(this.serializeScore());
         }
     }]);
 
     return TourAdminScoreInput;
 })(React.Component);
 
-var TourAdminScoreCell = (function (_React$Component2) {
-    _inherits(TourAdminScoreCell, _React$Component2);
+var TourAdminScoreCell = (function (_React$Component4) {
+    _inherits(TourAdminScoreCell, _React$Component4);
 
     function TourAdminScoreCell() {
         _classCallCheck(this, TourAdminScoreCell);
@@ -498,6 +652,14 @@ var TourAdminScoreCell = (function (_React$Component2) {
                         "]"
                     );
                 }
+                if (this.props.discipline_judge.role == "tech_judge") {
+                    var tv_str = this.props.value.raw_data.timing_violation === null ? " ?" : this.props.value.raw_data.timing_violation ? " ✗" : " ✓";
+                    return React.createElement(
+                        "div",
+                        { onClick: this.props.startEditing },
+                        this.props.value.raw_data.jump_steps + tv_str
+                    );
+                }
                 return React.createElement(
                     "div",
                     { onClick: this.props.startEditing },
@@ -506,11 +668,13 @@ var TourAdminScoreCell = (function (_React$Component2) {
             } else {
                 return React.createElement(TourAdminScoreInput, {
                     score: this.props.value.raw_data,
+                    confirmed: this.props.confirmed,
                     discipline_judge: this.props.discipline_judge,
                     scoring_system_name: this.props.scoring_system_name,
                     stopEditing: this.props.stopEditing,
                     updateValue: this.props.updateValue,
-                    submitValue: this.props.submitValue });
+                    submitValue: this.props.submitValue,
+                    toggleConfirmation: this.props.toggleConfirmation });
             }
         }
     }]);

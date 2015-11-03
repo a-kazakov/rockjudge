@@ -304,6 +304,12 @@ class Api:
         return {}
 
     @classmethod
+    def score_unconfirm(cls, request, ws_message):
+        score = cls.get_model(Score, "score_id", request)
+        score.unconfirm(ws_message=ws_message)
+        return {}
+
+    @classmethod
     def acrobatic_override_set(cls, request, ws_message):
         run = cls.get_model(Run, "run_id", request)
         run.set_acrobatic_override(request["acrobatic_idx"], request["score"], ws_message=ws_message)

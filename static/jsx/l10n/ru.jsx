@@ -31,10 +31,12 @@ function _(src, arg) {
                 "add_judge": "Добавить судью",
                 "add_participant": "Добавить участника",
                 "add_tour": "Добавить тур",
+                "confirm_score": "Зафиксировать",
                 "import": "Импортировать",
                 "refresh_clients": "Перезагрузить все устройства",
                 "reload_clients": "Обновить данные на всех устройствах",
                 "to_start_page": "На главную",
+                "unconfirm_score": "Отмена фиксации",
                 "unfinalize": "Отменить финализацию",
             },
             "confirms": {

@@ -205,9 +205,11 @@ class TechScore:
         return 0
 
     def update(self, new_data):
+        timing_violation = new_data.pop("timing_violation", self.data["timing_violation"])
         self.data = {
             "jump_steps": int(new_data.pop("jump_steps", self.data["jump_steps"])),
-            "timing_violation": new_data.pop("timing_violation", self.data["timing_violation"]),
+            "timing_violation":
+                None if timing_violation is None or timing_violation == "" else bool(timing_violation),
         }
         self.score.set_data(self.data)
 

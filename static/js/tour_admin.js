@@ -140,8 +140,10 @@ var TourAdminScoreCellWrapper = (function (_React$Component2) {
                     stopEditing: this.stopEditing.bind(this),
                     updateValue: this.updateValue.bind(this),
                     submitValue: this.submitValue.bind(this),
+                    toggleConfirmation: this.toggleConfirmation.bind(this),
                     editing: this.state.editing,
-                    value: this.state.editing ? this.state.current_value : this.props.value })
+                    value: this.state.editing ? this.state.current_value : this.props.value,
+                    confirmed: this.props.confirmed })
             );
         }
     }, {
@@ -181,6 +183,16 @@ var TourAdminScoreCellWrapper = (function (_React$Component2) {
                 force: true
             };
             Api("score.set", { score_id: this.props.score_id, data: request }).onSuccess(this.stopEditing.bind(this)).send();
+        }
+    }, {
+        key: "toggleConfirmation",
+        value: function toggleConfirmation() {
+            console.log("TOGGLE ", this.props.confirmed);
+            if (this.props.confirmed) {
+                Api("score.unconfirm", { score_id: this.props.score_id }).send();
+            } else {
+                Api("score.confirm", { score_id: this.props.score_id }).send();
+            }
         }
     }]);
 
@@ -628,10 +640,6 @@ var TourAdminScoresTable = (function (_React$Component4) {
                 );
             }
             var discipline_judges = this.state.discipline.discipline_judges;
-            var active_discipline_judges = discipline_judges.filter(function (discipline_judge) {
-                return discipline_judge.role !== "" && discipline_judge.role != "tech_judge";
-            } // TODO: move this to scoring system
-            );
             var rows = this.state.runs.map((function (run) {
                 return React.createElement(TourAdminScoresRow, {
                     key: run.id,
@@ -641,9 +649,9 @@ var TourAdminScoresTable = (function (_React$Component4) {
                     scores: run.scores,
                     scoring_system_name: this.state.scoring_system_name,
                     total_score: run.total_score,
-                    discipline_judges: active_discipline_judges });
+                    discipline_judges: discipline_judges });
             }).bind(this));
-            var judges_header = active_discipline_judges.map((function (discipline_judge) {
+            var judges_header = discipline_judges.map((function (discipline_judge) {
                 // TODO: move role staff to scoring system logic
                 return React.createElement(
                     "th",

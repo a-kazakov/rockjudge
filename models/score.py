@@ -37,6 +37,14 @@ class Score(BaseModel):
             model_id=self.id,
         )
 
+    def unconfirm(self, ws_message):
+        self.confirmed = False
+        self.save()
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id,
+        )
+
     def update_model(self, new_data, ws_message):
         if self.confirmed:
             if "force" not in new_data or not new_data["force"]:
