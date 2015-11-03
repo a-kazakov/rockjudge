@@ -10,10 +10,9 @@
 }
 .tour-results .info-block .acro-table {
   width: 100%;
-  table-layout: fixed;
 }
 .tour-results .info-block .acro-table td {
-  border: none;
+  border: 1px solid black;
 }
 .tour-results .score-breakdown th,
 .tour-results .score-breakdown td {

@@ -1,6 +1,3 @@
-React.initializeTouchEvents(true);
-
-
 class PresenterTablet extends React.Component {
 
     // Intiialization

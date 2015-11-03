@@ -70,6 +70,7 @@ class TourResultsVerboseTableRow extends React.Component {
                 has_acro_overrides = true;
             }
         });
+        let acro_cell_width = (100 / this.props.run.acrobatics.length) + "%";
         return <td className="info-block">
             <p><strong>{ _("global.phrases.participant_n",
                 this.props.run.participant.number,
@@ -83,13 +84,13 @@ class TourResultsVerboseTableRow extends React.Component {
                     <p><strong>{ has_acro_overrides ? __("results.labels.acrobatics_verbose") : __("results.labels.acrobatics") }:</strong></p>
                     <table className="acro-table"><tbody>
                         <tr> {
-                            this.props.run.acrobatics.map((acro, idx) => <td key={ idx }><p className="text-center">
+                            this.props.run.acrobatics.map((acro, idx) => <td key={ idx } style={{ width: acro_cell_width }}><p className="text-center">
                                 { acro.original_score.toFixed(1) }
                             </p></td>)
                         } </tr>
                         {
                             has_acro_overrides ? <tr> {
-                                this.props.run.acrobatics.map((acro, idx) => <td key={ idx }><p className="text-center">
+                                this.props.run.acrobatics.map((acro, idx) => <td key={ idx } style={{ width: acro_cell_width }}><p className="text-center">
                                     { acro.score.toFixed(1) }
                                 </p></td>)
                             } </tr> : null
@@ -167,7 +168,7 @@ class TourResultsTableRow extends React.Component {
         return <tr>
             <td className="w-7 place"><p className="text-center">{ this.props.results_info.place }</p></td>
             <td className="w-6 number"><p className="text-center">{ this.props.run.participant.number }</p></td>
-            <td className="participant"><p>{ getParticipantDisplay(this.props.run.participant) }</p></td>
+            <td className="w-30 participant"><p>{ getParticipantDisplay(this.props.run.participant) }</p></td>
             <td className="club"><p>{ this.props.run.participant.club.name }</p></td>
             { this.props.has_total_score ? <td className="w-18 score"><p className="text-center">{ this.props.run.total_score }</p></td> : null }
             <td className="w-8 card"><p className="text-center">{ card }</p></td>
@@ -213,7 +214,7 @@ class TourResultsTable extends React.Component {
                 <tr>
                     <th className="w-7 place"><p>{ __("results.labels.place") }</p></th>
                     <th className="w-6 number"><p>{ __("results.labels.number") }</p></th>
-                    <th className="participant"><p>{ __("results.labels.participant_name") }</p></th>
+                    <th className="w-30 participant"><p>{ __("results.labels.participant_name") }</p></th>
                     <th className="club"><p>{ __("results.labels.participant_club") }</p></th>
                     { has_total_score ? <th className="w-18 score"><p>{ __("results.labels.total_score") }</p></th> : null }
                     <th className="w-8 card"><p className="text-center">{ __("results.labels.card") }</p></th>

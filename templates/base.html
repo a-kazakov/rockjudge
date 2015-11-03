@@ -8,7 +8,13 @@
 </head>
 <body>
   {% block body %}{% end %}
-  <script src="/static/thirdparty/react/react.js"></script>
+  {% if debug %}
+    <script src="/static/thirdparty/react/react-with-addons.js"></script>
+    <script src="/static/thirdparty/react/react-dom.js"></script>
+  {% else %}
+    <script src="/static/thirdparty/react/react.min.js"></script>
+    <script src="/static/thirdparty/react/react-dom.min.js"></script>
+  {% end %}
   <script src="/static/thirdparty/jquery/jquery.js"></script>
   <script src="/static/thirdparty/sockjs/sockjs.js"></script>
   <script src="/static/js/definitions.js"></script>

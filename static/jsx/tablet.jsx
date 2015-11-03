@@ -1,6 +1,3 @@
-React.initializeTouchEvents(true);
-
-
 class JudgeTablet extends React.Component {
     constructor(props) {
         super(props);

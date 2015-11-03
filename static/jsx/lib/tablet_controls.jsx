@@ -1,6 +1,3 @@
-React.initializeTouchEvents(true);
-
-
 function onTouchOrClick(handler) {
     var f = function(event) {
         event.preventDefault();

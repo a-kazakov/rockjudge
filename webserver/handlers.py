@@ -3,6 +3,7 @@ import json
 import tornado.gen
 import tornado.web
 
+import settings
 from api import Api
 from db import Database
 from models import (
@@ -20,7 +21,7 @@ class StaticFilesHandlerNoCache(tornado.web.StaticFileHandler):
 
 class AdminHandler(tornado.web.RequestHandler):
     def get(self, competition_id):
-        self.render("admin.html", competition_id=competition_id)
+        self.render("admin.html", competition_id=competition_id, debug=settings.DEBUG)
 
 
 class CompetitionReportHandler(tornado.web.RequestHandler):
@@ -28,17 +29,18 @@ class CompetitionReportHandler(tornado.web.RequestHandler):
         self.render(
             "competition_report.html",
             competition_id=competition_id,
+            debug=settings.DEBUG,
         )
 
 
 class CompetitionsHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("competitions.html")
+        self.render("competitions.html", debug=settings.DEBUG)
 
 
 class ConnectionTesterHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("connection.html")
+        self.render("connection.html", debug=settings.DEBUG)
 
 
 class DisciplineResultsHandler(tornado.web.RequestHandler):
@@ -46,6 +48,7 @@ class DisciplineResultsHandler(tornado.web.RequestHandler):
         self.render(
             "discipline_results.html",
             discipline_id=discipline_id,
+            debug=settings.DEBUG,
         )
 
 
@@ -54,12 +57,13 @@ class ManageParticipantsHandler(tornado.web.RequestHandler):
         self.render(
             "manage_participants.html",
             discipline_id=discipline_id,
+            debug=settings.DEBUG,
         )
 
 
 class PresenterHandler(tornado.web.RequestHandler):
     def get(self):
-        return self.render("presenter.html")
+        return self.render("presenter.html", debug=settings.DEBUG)
 
 
 class StartListHandler(tornado.web.RequestHandler):
@@ -67,13 +71,14 @@ class StartListHandler(tornado.web.RequestHandler):
         self.render(
             "start_list.html",
             competition_id=competition_id,
+            debug=settings.DEBUG,
         )
 
 
 class StartPageHandler(tornado.web.RequestHandler):
     def get(self):
         competition_ids = [c.id for c in Competition.select().where(Competition.active == True)]  # NOQA
-        self.render("start_page.html", competition_ids=competition_ids)
+        self.render("start_page.html", competition_ids=competition_ids, debug=settings.DEBUG)
 
 
 class TourAdminHandler(tornado.web.RequestHandler):
@@ -85,6 +90,7 @@ class TourAdminHandler(tornado.web.RequestHandler):
             return self.render(
                 "tour_admin.html",
                 tour_id=tour_id,
+                debug=settings.DEBUG,
             )
 
 
@@ -93,6 +99,7 @@ class TourResultsHandler(tornado.web.RequestHandler):
         self.render(
             "tour_results.html",
             tour_id=tour_id,
+            debug=settings.DEBUG,
         )
 
 
@@ -103,6 +110,7 @@ class TabletHandler(tornado.web.RequestHandler):
             "tablet.html",
             judge_id=judge_id,
             competition_id=judge.competition_id,
+            debug=settings.DEBUG,
         )
 
 

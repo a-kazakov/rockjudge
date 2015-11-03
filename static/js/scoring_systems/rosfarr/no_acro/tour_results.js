@@ -497,6 +497,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                     has_acro_overrides = true;
                 }
             });
+            var acro_cell_width = 100 / this.props.run.acrobatics.length + "%";
             return React.createElement(
                 "td",
                 { className: "info-block" },
@@ -551,7 +552,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                                 this.props.run.acrobatics.map(function (acro, idx) {
                                     return React.createElement(
                                         "td",
-                                        { key: idx },
+                                        { key: idx, style: { width: acro_cell_width } },
                                         React.createElement(
                                             "p",
                                             { className: "text-center" },
@@ -568,7 +569,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                                 this.props.run.acrobatics.map(function (acro, idx) {
                                     return React.createElement(
                                         "td",
-                                        { key: idx },
+                                        { key: idx, style: { width: acro_cell_width } },
                                         React.createElement(
                                             "p",
                                             { className: "text-center" },
@@ -762,7 +763,7 @@ var TourResultsTableRow = (function (_React$Component3) {
                 ),
                 React.createElement(
                     "td",
-                    { className: "participant" },
+                    { className: "w-30 participant" },
                     React.createElement(
                         "p",
                         null,
@@ -885,7 +886,7 @@ var TourResultsTable = (function (_React$Component4) {
                         ),
                         React.createElement(
                             "th",
-                            { className: "participant" },
+                            { className: "w-30 participant" },
                             React.createElement(
                                 "p",
                                 null,
