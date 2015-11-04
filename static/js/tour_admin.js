@@ -489,30 +489,34 @@ var TourAdminScoresTable = (function (_React$Component4) {
                         "thead",
                         null,
                         React.createElement(
-                            "th",
-                            { className: "w-8" },
+                            "tr",
+                            null,
                             React.createElement(
-                                "p",
-                                null,
-                                _("judging.labels.number")
-                            )
-                        ),
-                        React.createElement(
-                            "th",
-                            { className: "w-46" },
+                                "th",
+                                { className: "w-8" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    _("judging.labels.number")
+                                )
+                            ),
                             React.createElement(
-                                "p",
-                                null,
-                                _("judging.labels.participant_name")
-                            )
-                        ),
-                        React.createElement(
-                            "th",
-                            { className: "w-46" },
+                                "th",
+                                { className: "w-46" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    _("judging.labels.participant_name")
+                                )
+                            ),
                             React.createElement(
-                                "p",
-                                null,
-                                _("judging.labels.club")
+                                "th",
+                                { className: "w-46" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    _("judging.labels.club")
+                                )
                             )
                         )
                     ),

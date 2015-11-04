@@ -315,9 +315,11 @@ class TourAdminScoresTable extends React.Component {
     renderPrintableHeats() {
         return <div className="print-only" ref="printable_heats">
             <table className="bordered-table"><thead>
-                <th className="w-8"><p>{ _("judging.labels.number") }</p></th>
-                <th className="w-46"><p>{ _("judging.labels.participant_name") }</p></th>
-                <th className="w-46"><p>{ _("judging.labels.club") }</p></th>
+                <tr>
+                    <th className="w-8"><p>{ _("judging.labels.number") }</p></th>
+                    <th className="w-46"><p>{ _("judging.labels.participant_name") }</p></th>
+                    <th className="w-46"><p>{ _("judging.labels.club") }</p></th>
+                </tr>
             </thead><tbody>
                 { this.renderHeatRows() }
             </tbody></table>

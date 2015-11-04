@@ -124,7 +124,7 @@ header .header {
   margin-right: 150px;
 }
 header .header h1 {
-  font-size: 20px;
+  font-size: 16px;
 }
 .mistakes .tbtn {
   background-color: #900;
@@ -423,8 +423,8 @@ button.score-btn.active {
 .slider {
   position: relative;
   width: 250px;
-  height: 30px;
-  line-height: 30px;
+  height: 37px;
+  line-height: 37px;
   background-color: #e2e2e2;
   text-align: center;
   margin: 0 auto;
@@ -434,7 +434,7 @@ button.score-btn.active {
   top: 0;
   bottom: 0;
   width: 50px;
-  line-height: 30px;
+  line-height: 37px;
   background-color: #2b3a42;
   text-align: center;
   font-weight: bold;

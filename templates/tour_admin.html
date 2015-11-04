@@ -17,7 +17,7 @@
   <script src="/static/js/tour_admin.js"></script>
   <script src="/static/js/scoring_systems/rosfarr/no_acro/tour_admin.js"></script>
   <script>
-    React.render(
+    ReactDOM.render(
       React.createElement(TourAdminScoresTable, { tour_id: {{ tour_id }} }),
       document.getElementById("content")
     );

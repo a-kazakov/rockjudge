@@ -36,6 +36,7 @@ var BaseScoreInput = (function (_React$Component) {
                     _("global.buttons.discard")
                 ),
                 React.createElement(ConfirmationButton, {
+                    judge_role: this.props.discipline_judge.role,
                     confirmed: this.props.confirmed,
                     toggleConfirmation: this.props.toggleConfirmation,
                     onKeyUp: this.onKeyUp.bind(this) })
@@ -581,6 +582,9 @@ var ConfirmationButton = (function (_React$Component2) {
     _createClass(ConfirmationButton, [{
         key: "render",
         value: function render() {
+            if (this.props.judge_role == "head_judge") {
+                return null;
+            }
             return React.createElement(
                 "button",
                 {

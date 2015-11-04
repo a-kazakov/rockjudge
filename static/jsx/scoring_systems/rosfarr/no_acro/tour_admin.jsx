@@ -5,6 +5,7 @@ class BaseScoreInput extends React.Component {
             <button className="btn btn-primary" type="submit">{ _("global.buttons.submit") }</button>&nbsp;
             <button className="btn btn-primary" type="button" onClick={ this.props.stopEditing }>{ _("global.buttons.discard") }</button>
             <ConfirmationButton
+                judge_role={ this.props.discipline_judge.role }
                 confirmed={ this.props.confirmed }
                 toggleConfirmation={ this.props.toggleConfirmation }
                 onKeyUp={ this.onKeyUp.bind(this) } />
@@ -261,6 +262,9 @@ class TechScoreInput extends BaseScoreInput {
 
 class ConfirmationButton extends React.Component {
     render() {
+        if (this.props.judge_role == "head_judge") {
+            return null;
+        }
         return <button
                 className={ "btn btn-sm btn-confirmation" + (this.props.confirmed ? " btn-danger" : " btn-success") }
                 type="button"

@@ -13,7 +13,7 @@
 {% block scripts %}
   <script src="/static/js/competitions.js"></script>
   <script>
-    React.render(
+    ReactDOM.render(
       React.createElement(CompetitionsManager, {}),
       document.getElementById("content")
     );

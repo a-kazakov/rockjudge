@@ -13,7 +13,7 @@
 {% block scripts %}
   <script src="/static/js/manage_participants.js"></script>
   <script>
-    React.render(
+    ReactDOM.render(
       React.createElement(ParticipantsManager, { discipline_id: {{ discipline_id }} }),
       document.getElementById("content")
     );

@@ -162,6 +162,8 @@ class JudgeTablet extends React.Component {
     renderHeader() {
         var btn_prev = null;
         var btn_next = null;
+        let judge = this.state.judge;
+        let judge_number = judge.role_description || _("global.phrases.judge_n", judge.number);
         if (this.state.current_heat > 1) {
             btn_prev = <button className="btn btn-primary pull-left" {...onTouchOrClick(this.toPrevHeat.bind(this))}>
                 { _("tablet.buttons.prev_heat") }
@@ -175,8 +177,17 @@ class JudgeTablet extends React.Component {
             </button>;
         }
         var current_tour = <div className="header">
-            <h1>{ this.state.tour.discipline.name }: { this.state.tour.name }</h1>
-            <h2>{ _("tablet.headers.heat") }: { this.state.current_heat } / { this.getHeatsCount() }</h2>
+            <table className="full-width"><tbody><tr>
+                <td>
+                    <h1>{ this.state.tour.discipline.name }</h1>
+                    <h2>{ this.state.tour.name }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        { _("tablet.headers.heat") }: { this.state.current_heat } / { this.getHeatsCount() }</h2>
+                </td>
+                <td>
+                    <h1>{ judge_number }</h1>
+                    <h2>{ judge.name }</h2>
+                </td>
+            </tr></tbody></table>
         </div>;
         return <header>
             { btn_prev }

@@ -17,7 +17,7 @@
   <script src="/static/js/scoring_systems/rosfarr/discipline_results.js"></script>
   <script src="/static/js/results/discipline_results.js"></script>
   <script>
-    React.render(
+    ReactDOM.render(
       React.createElement(DisciplineResults, { discipline_id: {{ discipline_id }} }),
       document.getElementById("content")
     );

@@ -19,7 +19,7 @@
   <script src="/static/js/results/discipline_results.js"></script>
   <script src="/static/js/results/competition_report.js"></script>
   <script>
-    React.render(
+    ReactDOM.render(
       React.createElement(CompetitionReport, { competition_id: {{ competition_id }} }),
       document.getElementById("content")
     );

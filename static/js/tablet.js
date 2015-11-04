@@ -197,6 +197,8 @@ var JudgeTablet = (function (_React$Component) {
         value: function renderHeader() {
             var btn_prev = null;
             var btn_next = null;
+            var judge = this.state.judge;
+            var judge_number = judge.role_description || _("global.phrases.judge_n", judge.number);
             if (this.state.current_heat > 1) {
                 btn_prev = React.createElement(
                     "button",
@@ -215,20 +217,50 @@ var JudgeTablet = (function (_React$Component) {
                 "div",
                 { className: "header" },
                 React.createElement(
-                    "h1",
-                    null,
-                    this.state.tour.discipline.name,
-                    ": ",
-                    this.state.tour.name
-                ),
-                React.createElement(
-                    "h2",
-                    null,
-                    _("tablet.headers.heat"),
-                    ": ",
-                    this.state.current_heat,
-                    " / ",
-                    this.getHeatsCount()
+                    "table",
+                    { className: "full-width" },
+                    React.createElement(
+                        "tbody",
+                        null,
+                        React.createElement(
+                            "tr",
+                            null,
+                            React.createElement(
+                                "td",
+                                null,
+                                React.createElement(
+                                    "h1",
+                                    null,
+                                    this.state.tour.discipline.name
+                                ),
+                                React.createElement(
+                                    "h2",
+                                    null,
+                                    this.state.tour.name,
+                                    "       ",
+                                    _("tablet.headers.heat"),
+                                    ": ",
+                                    this.state.current_heat,
+                                    " / ",
+                                    this.getHeatsCount()
+                                )
+                            ),
+                            React.createElement(
+                                "td",
+                                null,
+                                React.createElement(
+                                    "h1",
+                                    null,
+                                    judge_number
+                                ),
+                                React.createElement(
+                                    "h2",
+                                    null,
+                                    judge.name
+                                )
+                            )
+                        )
+                    )
                 )
             );
             return React.createElement(
