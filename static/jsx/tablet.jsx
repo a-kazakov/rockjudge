@@ -179,13 +179,13 @@ class JudgeTablet extends React.Component {
         var current_tour = <div className="header">
             <table className="full-width"><tbody><tr>
                 <td>
+                    <h1>{ judge_number }</h1>
+                    <h2>{ judge.name }</h2>
+                </td>
+                <td>
                     <h1>{ this.state.tour.discipline.name }</h1>
                     <h2>{ this.state.tour.name }&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         { _("tablet.headers.heat") }: { this.state.current_heat } / { this.getHeatsCount() }</h2>
-                </td>
-                <td>
-                    <h1>{ judge_number }</h1>
-                    <h2>{ judge.name }</h2>
                 </td>
             </tr></tbody></table>
         </div>;

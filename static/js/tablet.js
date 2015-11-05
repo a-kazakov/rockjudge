@@ -231,6 +231,20 @@ var JudgeTablet = (function (_React$Component) {
                                 React.createElement(
                                     "h1",
                                     null,
+                                    judge_number
+                                ),
+                                React.createElement(
+                                    "h2",
+                                    null,
+                                    judge.name
+                                )
+                            ),
+                            React.createElement(
+                                "td",
+                                null,
+                                React.createElement(
+                                    "h1",
+                                    null,
                                     this.state.tour.discipline.name
                                 ),
                                 React.createElement(
@@ -243,20 +257,6 @@ var JudgeTablet = (function (_React$Component) {
                                     this.state.current_heat,
                                     " / ",
                                     this.getHeatsCount()
-                                )
-                            ),
-                            React.createElement(
-                                "td",
-                                null,
-                                React.createElement(
-                                    "h1",
-                                    null,
-                                    judge_number
-                                ),
-                                React.createElement(
-                                    "h2",
-                                    null,
-                                    judge.name
                                 )
                             )
                         )

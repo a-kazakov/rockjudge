@@ -45,7 +45,6 @@ class ApiImpl {
                 }
             }.bind(this),
             error: function(xhr, status, err) {
-                alert(_("global.messages.api_error"));
                 console.error(xhr, status, err.toString());
                 this.cb_fail && this.cb_fail(xhr, status, err);
             },
