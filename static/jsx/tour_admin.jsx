@@ -31,7 +31,7 @@ class TourAdminHeatValue extends React.Component {
     }
     componentDidUpdate (prevProps, prevState) {
         if (!prevState.editing && this.state.editing) {
-            React.findDOMNode(this).querySelector("input").select();
+            ReactDOM.findDOMNode(this).querySelector("input").select();
         }
     }
     startEditing () {
@@ -285,46 +285,6 @@ class TourAdminScoresTable extends React.Component {
             </span>
         }
     }
-    renderHeatHeader(prev_row, next_row) {
-        let need_render = (typeof prev_row == "undefined") || (prev_row.heat != next_row.heat)
-        if (!need_render) {
-            return null;
-        }
-        return <tr key={ "H" + next_row.heat }><th className="heat-number" colSpan="3">
-            <p>{ _("global.phrases.heat_n", next_row.heat) }</p>
-        </th></tr>;
-
-    }
-    renderHeatRow(row) {
-        return <tr key={ "R" + row.id }>
-            <td className="w-8"><p className="text-center">{ row.participant.number }</p></td>
-            <td className="w-50"><p>{ row.participant.name }</p></td>
-            <td className="w-42"><p>{ row.participant.club.name }</p></td>
-        </tr>;
-    }
-    renderHeatRows() {
-        let result = [];
-        let runs = this.state.runs;
-        for (let i = 0; i < runs.length; ++i) {
-            let header = this.renderHeatHeader(runs[i - 1], runs[i]);
-            header && result.push(header);
-            result.push(this.renderHeatRow(runs[i]));
-        }
-        return result;
-    }
-    renderPrintableHeats() {
-        return <div className="print-only" ref="printable_heats">
-            <table className="bordered-table"><thead>
-                <tr>
-                    <th className="w-8"><p>{ _("judging.labels.number") }</p></th>
-                    <th className="w-46"><p>{ _("judging.labels.participant_name") }</p></th>
-                    <th className="w-46"><p>{ _("judging.labels.club") }</p></th>
-                </tr>
-            </thead><tbody>
-                { this.renderHeatRows() }
-            </tbody></table>
-        </div>
-    }
     renderAcrobaticOverrides() {
         let overrides = this.getAcrobaticOverrides()
         if (overrides.length == 0) {
@@ -343,7 +303,7 @@ class TourAdminScoresTable extends React.Component {
                     <th className="acro-description">{ _("judging.labels.acro_description") }</th>
                 </tr>
                 { overrides.map((o) =>
-                    <tr>
+                    <tr key={ o.run.participant.id + "/" + o.acro_idx }>
                         <td className="heat">{ o.run.heat }</td>
                         <td className="number">{ o.run.participant.number }</td>
                         <td className="name">{ o.run.participant.name }</td>
@@ -384,7 +344,9 @@ class TourAdminScoresTable extends React.Component {
                     { this.state.active ? null : <button className="btn btn-primary" onClick={ this.onInitButtonClick.bind(this) }>{ _("judging.buttons.init_tour") }</button> }
                     { this.state.active ? null : <button className="btn btn-primary" onClick={ this.onFinalizeButtonClick.bind(this) }>{ _("judging.buttons.finalize_tour") }</button> }
                     { this.state.active ? null : <button className="btn btn-primary" onClick={ this.onShuffleHeatsButtonClick.bind(this) }>{ _("judging.buttons.shuffle_heats") }</button> }
-                    <button className="btn btn-primary" onClick={ this.createDocx.bind(this) }>DOCX</button>
+                    <button className="btn btn-primary" onClick={ (() => this.refs.heats.createDocx()).bind(this) }>
+                        { _("admin.buttons.docx_heats") }
+                    </button>
                     { this.renderActiveTourControls() }
                 </div>
                 <h1>{ this.state.discipline.name }</h1>
@@ -404,19 +366,10 @@ class TourAdminScoresTable extends React.Component {
                 </tbody>
             </table>
             { this.renderAcrobaticOverrides() }
-            { this.renderPrintableHeats() }
-        </div>;
-    }
-    createDocx() {
-        Docx("tour-heats")
-            .setHeader(this.state.discipline.competition.name + ", " + this.state.discipline.competition.date)
-            .setTitle1(_("admin.headers.tour_heats"))
-            .setTitle2(this.state.discipline.name)
-            .setTitle3(this.state.name)
-            .setBody(React.findDOMNode(this.refs.printable_heats).innerHTML)
-            .addStyle(".heat-number", "background", "#ccc")
-            .addStyle(".heat-number", "text-align", "left")
-            .addStyle("td, th", "font-size", "12pt")
-            .save();
+            <HeatsTable
+                ref="heats"
+                discipline={ this.state.discipline }
+                runs={ this.state.runs } />
+        </div>
     }
 }

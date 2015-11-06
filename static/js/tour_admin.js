@@ -60,7 +60,7 @@ var TourAdminHeatValue = (function (_React$Component) {
         key: "componentDidUpdate",
         value: function componentDidUpdate(prevProps, prevState) {
             if (!prevState.editing && this.state.editing) {
-                React.findDOMNode(this).querySelector("input").select();
+                ReactDOM.findDOMNode(this).querySelector("input").select();
             }
         }
     }, {
@@ -409,126 +409,6 @@ var TourAdminScoresTable = (function (_React$Component4) {
             }
         }
     }, {
-        key: "renderHeatHeader",
-        value: function renderHeatHeader(prev_row, next_row) {
-            var need_render = typeof prev_row == "undefined" || prev_row.heat != next_row.heat;
-            if (!need_render) {
-                return null;
-            }
-            return React.createElement(
-                "tr",
-                { key: "H" + next_row.heat },
-                React.createElement(
-                    "th",
-                    { className: "heat-number", colSpan: "3" },
-                    React.createElement(
-                        "p",
-                        null,
-                        _("global.phrases.heat_n", next_row.heat)
-                    )
-                )
-            );
-        }
-    }, {
-        key: "renderHeatRow",
-        value: function renderHeatRow(row) {
-            return React.createElement(
-                "tr",
-                { key: "R" + row.id },
-                React.createElement(
-                    "td",
-                    { className: "w-8" },
-                    React.createElement(
-                        "p",
-                        { className: "text-center" },
-                        row.participant.number
-                    )
-                ),
-                React.createElement(
-                    "td",
-                    { className: "w-50" },
-                    React.createElement(
-                        "p",
-                        null,
-                        row.participant.name
-                    )
-                ),
-                React.createElement(
-                    "td",
-                    { className: "w-42" },
-                    React.createElement(
-                        "p",
-                        null,
-                        row.participant.club.name
-                    )
-                )
-            );
-        }
-    }, {
-        key: "renderHeatRows",
-        value: function renderHeatRows() {
-            var result = [];
-            var runs = this.state.runs;
-            for (var i = 0; i < runs.length; ++i) {
-                var header = this.renderHeatHeader(runs[i - 1], runs[i]);
-                header && result.push(header);
-                result.push(this.renderHeatRow(runs[i]));
-            }
-            return result;
-        }
-    }, {
-        key: "renderPrintableHeats",
-        value: function renderPrintableHeats() {
-            return React.createElement(
-                "div",
-                { className: "print-only", ref: "printable_heats" },
-                React.createElement(
-                    "table",
-                    { className: "bordered-table" },
-                    React.createElement(
-                        "thead",
-                        null,
-                        React.createElement(
-                            "tr",
-                            null,
-                            React.createElement(
-                                "th",
-                                { className: "w-8" },
-                                React.createElement(
-                                    "p",
-                                    null,
-                                    _("judging.labels.number")
-                                )
-                            ),
-                            React.createElement(
-                                "th",
-                                { className: "w-46" },
-                                React.createElement(
-                                    "p",
-                                    null,
-                                    _("judging.labels.participant_name")
-                                )
-                            ),
-                            React.createElement(
-                                "th",
-                                { className: "w-46" },
-                                React.createElement(
-                                    "p",
-                                    null,
-                                    _("judging.labels.club")
-                                )
-                            )
-                        )
-                    ),
-                    React.createElement(
-                        "tbody",
-                        null,
-                        this.renderHeatRows()
-                    )
-                )
-            );
-        }
-    }, {
         key: "renderAcrobaticOverrides",
         value: function renderAcrobaticOverrides() {
             var overrides = this.getAcrobaticOverrides();
@@ -591,7 +471,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
                         overrides.map(function (o) {
                             return React.createElement(
                                 "tr",
-                                null,
+                                { key: o.run.participant.id + "/" + o.acro_idx },
                                 React.createElement(
                                     "td",
                                     { className: "heat" },
@@ -636,6 +516,8 @@ var TourAdminScoresTable = (function (_React$Component4) {
     }, {
         key: "render",
         value: function render() {
+            var _this = this;
+
             if (this.state.name === null) {
                 return React.createElement(
                     "span",
@@ -689,8 +571,10 @@ var TourAdminScoresTable = (function (_React$Component4) {
                         ),
                         React.createElement(
                             "button",
-                            { className: "btn btn-primary", onClick: this.createDocx.bind(this) },
-                            "DOCX"
+                            { className: "btn btn-primary", onClick: (function () {
+                                    return _this.refs.heats.createDocx();
+                                }).bind(this) },
+                            _("admin.buttons.docx_heats")
                         ),
                         this.renderActiveTourControls()
                     ),
@@ -765,13 +649,11 @@ var TourAdminScoresTable = (function (_React$Component4) {
                     )
                 ),
                 this.renderAcrobaticOverrides(),
-                this.renderPrintableHeats()
+                React.createElement(HeatsTable, {
+                    ref: "heats",
+                    discipline: this.state.discipline,
+                    runs: this.state.runs })
             );
-        }
-    }, {
-        key: "createDocx",
-        value: function createDocx() {
-            Docx("tour-heats").setHeader(this.state.discipline.competition.name + ", " + this.state.discipline.competition.date).setTitle1(_("admin.headers.tour_heats")).setTitle2(this.state.discipline.name).setTitle3(this.state.name).setBody(React.findDOMNode(this.refs.printable_heats).innerHTML).addStyle(".heat-number", "background", "#ccc").addStyle(".heat-number", "text-align", "left").addStyle("td, th", "font-size", "12pt").save();
         }
     }]);
 

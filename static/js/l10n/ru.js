@@ -45,6 +45,8 @@ function _(src, arg) {
                 "add_participant": "Добавить участника",
                 "add_tour": "Добавить тур",
                 "confirm_score": "Зафиксировать",
+                "docx_heats": "Заходы в DOCX",
+                "docx_results": "Результаты в DOCX",
                 "import": "Импортировать",
                 "refresh_clients": "Перезагрузить все устройства",
                 "reload_clients": "Обновить данные на всех устройствах",

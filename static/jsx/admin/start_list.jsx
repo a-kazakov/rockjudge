@@ -166,7 +166,7 @@ class StartList extends React.Component {
             .setMargins([10, 15, 10, 25])
             .setHeader(this.state.name + ", " + this.state.date)
             .setTitle1(_("admin.headers.start_list"))
-            .setBody(React.findDOMNode(this.refs.content).innerHTML)
+            .setBody(ReactDOM.findDOMNode(this.refs.content).innerHTML)
             .addStyle(".bordered-table .inner td, .bordered-table .inner th", "border", "none")
             .addStyle(".bordered-table .inner td, .bordered-table .inner th", "padding", "0")
             .addStyle(".inner", "width", "100%")

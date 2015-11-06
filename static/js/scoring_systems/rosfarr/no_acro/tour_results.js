@@ -820,16 +820,20 @@ var TourResultsTable = (function (_React$Component4) {
                 return null;
             }
             return React.createElement(
-                "th",
-                { className: "advances-header", colSpan: "6", key: "NT" + idx },
-                next_row.advances ? React.createElement(
-                    "p",
-                    { className: "text-left" },
-                    __("results.headers.participants_advanced")
-                ) : React.createElement(
-                    "p",
-                    { className: "text-left" },
-                    __("results.headers.participants_not_advanced")
+                "tr",
+                null,
+                React.createElement(
+                    "th",
+                    { className: "advances-header", colSpan: "6", key: "NT" + idx },
+                    next_row.advances ? React.createElement(
+                        "p",
+                        { className: "text-left" },
+                        __("results.headers.participants_advanced")
+                    ) : React.createElement(
+                        "p",
+                        { className: "text-left" },
+                        __("results.headers.participants_not_advanced")
+                    )
                 )
             );
         }

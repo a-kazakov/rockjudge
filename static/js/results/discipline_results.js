@@ -141,7 +141,7 @@ var DisciplineResults = (function (_React$Component) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("discipline-results").setHeader(this.state.discipline.competition.name + ", " + this.state.discipline.competition.date).setTitle1(_("admin.headers.discipline_results")).setTitle3(this.state.discipline.name).setBody(React.findDOMNode(this.refs.main_table).innerHTML).addStyle(".tour-name", "background", "#ddd").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0").addStyle(".sportsmen", "width", "100%").save();
+            Docx("discipline-results").setHeader(this.state.discipline.competition.name + ", " + this.state.discipline.competition.date).setTitle1(_("admin.headers.discipline_results")).setTitle3(this.state.discipline.name).setBody(ReactDOM.findDOMNode(this.refs.main_table).innerHTML).addStyle(".tour-name", "background", "#ddd").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0").addStyle(".sportsmen", "width", "100%").save();
         }
     }]);
 

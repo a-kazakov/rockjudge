@@ -87,7 +87,10 @@ class TourResults extends React.Component {
             <header>
                 <div className="controls">
                     { this.renderVerboseButton() }
-                    <button className="btn btn-primary" onClick={ this.createDocx.bind(this) }>DOCX</button>
+                    <button className="btn btn-primary" onClick={ this.createDocx.bind(this) }>{ _("admin.buttons.docx_results") }</button>
+                    <button className="btn btn-primary" onClick={ (() => this.refs.heats.createDocx()).bind(this) }>
+                        { _("admin.buttons.docx_heats") }
+                    </button>
                 </div>
                 <h1>{ this.state.tour.discipline.name }</h1>
                 <h2>{ this.state.tour.name }</h2>
@@ -96,6 +99,10 @@ class TourResults extends React.Component {
                 { this.renderNonFinalizedWarning() }
                 { table }
             </div>
+            <HeatsTable
+                ref="heats"
+                discipline={ this.state.tour.discipline }
+                runs={ this.state.tour.runs } />
         </div>
     }
     createDocx() {
@@ -104,7 +111,7 @@ class TourResults extends React.Component {
             .setTitle1(_("admin.headers.tour_results"))
             .setTitle2(this.state.tour.discipline.name)
             .setTitle3(this.state.tour.name)
-            .setBody(React.findDOMNode(this.refs.content).innerHTML)
+            .setBody(ReactDOM.findDOMNode(this.refs.content).innerHTML)
             .addStyle(".bordered-table", "font-size", this.state.verbose ? "9pt" : "12pt")
             .addStyle(".bordered-table .acro-table td", "font-size", "9pt")
             .addStyle(".bordered-table .acro-table td", "padding", "0 3pt")

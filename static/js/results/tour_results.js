@@ -107,6 +107,8 @@ var TourResults = (function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
+            var _this = this;
+
             if (this.state.tour === null || this.state.results === null) {
                 return React.createElement(
                     "span",
@@ -133,7 +135,14 @@ var TourResults = (function (_React$Component) {
                         React.createElement(
                             "button",
                             { className: "btn btn-primary", onClick: this.createDocx.bind(this) },
-                            "DOCX"
+                            _("admin.buttons.docx_results")
+                        ),
+                        React.createElement(
+                            "button",
+                            { className: "btn btn-primary", onClick: (function () {
+                                    return _this.refs.heats.createDocx();
+                                }).bind(this) },
+                            _("admin.buttons.docx_heats")
                         )
                     ),
                     React.createElement(
@@ -152,13 +161,17 @@ var TourResults = (function (_React$Component) {
                     { className: "tour-results", ref: "content" },
                     this.renderNonFinalizedWarning(),
                     table
-                )
+                ),
+                React.createElement(HeatsTable, {
+                    ref: "heats",
+                    discipline: this.state.tour.discipline,
+                    runs: this.state.tour.runs })
             );
         }
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("tour-results").setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date).setTitle1(_("admin.headers.tour_results")).setTitle2(this.state.tour.discipline.name).setTitle3(this.state.tour.name).setBody(React.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table", "font-size", this.state.verbose ? "9pt" : "12pt").addStyle(".bordered-table .acro-table td", "font-size", "9pt").addStyle(".bordered-table .acro-table td", "padding", "0 3pt").addStyle(".bordered-table .acro-table td", "border", "0.5pt solid black").addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "font-size", "9pt").addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none").addStyle(".bordered-table .score-breakdown th", "padding", "0 1pt 0 0").addStyle(".bordered-table .score-breakdown td", "padding", "0 0 0 1pt").addStyle(".score-breakdown th", "text-align", "right").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown", "width", "50pt").addStyle(".total-score", "font-weight", "bold").addStyle(".advances-header", "background-color", "#ddd").addStyle(".head_judge", "width", "5%").addStyle(".dance_judge", "width", "8%").addStyle(".acro_judge", "width", "8%").save();
+            Docx("tour-results").setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date).setTitle1(_("admin.headers.tour_results")).setTitle2(this.state.tour.discipline.name).setTitle3(this.state.tour.name).setBody(ReactDOM.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table", "font-size", this.state.verbose ? "9pt" : "12pt").addStyle(".bordered-table .acro-table td", "font-size", "9pt").addStyle(".bordered-table .acro-table td", "padding", "0 3pt").addStyle(".bordered-table .acro-table td", "border", "0.5pt solid black").addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "font-size", "9pt").addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none").addStyle(".bordered-table .score-breakdown th", "padding", "0 1pt 0 0").addStyle(".bordered-table .score-breakdown td", "padding", "0 0 0 1pt").addStyle(".score-breakdown th", "text-align", "right").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown", "width", "50pt").addStyle(".total-score", "font-weight", "bold").addStyle(".advances-header", "background-color", "#ddd").addStyle(".head_judge", "width", "5%").addStyle(".dance_judge", "width", "8%").addStyle(".acro_judge", "width", "8%").save();
         }
     }]);
 

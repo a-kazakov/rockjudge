@@ -12,7 +12,7 @@ class BaseScoreInput extends React.Component {
         </form>
     }
     componentDidMount() {
-        React.findDOMNode(this).querySelectorAll("input")[0].select();
+        ReactDOM.findDOMNode(this).querySelectorAll("input")[0].select();
         this.onMount(...arguments);
     }
     onMount() {}

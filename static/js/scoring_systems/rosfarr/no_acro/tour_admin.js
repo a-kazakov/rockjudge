@@ -45,7 +45,7 @@ var BaseScoreInput = (function (_React$Component) {
     }, {
         key: "componentDidMount",
         value: function componentDidMount() {
-            React.findDOMNode(this).querySelectorAll("input")[0].select();
+            ReactDOM.findDOMNode(this).querySelectorAll("input")[0].select();
             this.onMount.apply(this, arguments);
         }
     }, {
