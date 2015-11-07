@@ -101,6 +101,7 @@ class TourResults extends React.Component {
             </div>
             <HeatsTable
                 ref="heats"
+                name={ this.state.tour.name }
                 discipline={ this.state.tour.discipline }
                 runs={ this.state.tour.runs } />
         </div>

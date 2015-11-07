@@ -12487,14 +12487,14 @@ module.exports = {
       switch (documentOptions.orientation) {
         case 'landscape':
           return {
-            height: '210mm',
-            width: '297mm',
+            height: '11906',
+            width: '16838',
             orient: 'landscape'
           };
         default:
           return {
-            width: '210mm',
-            height: '297mm',
+            width: '11906',
+            height: '16838',
             orient: 'portrait'
           };
       }

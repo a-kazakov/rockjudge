@@ -140,6 +140,7 @@ var HeatsTable = (function (_React$Component) {
     }, {
         key: "createDocx",
         value: function createDocx() {
+            console.log(this.props.discipline);
             Docx("tour-heats").setHeader(this.props.discipline.competition.name + ", " + this.props.discipline.competition.date).setTitle1(_("admin.headers.tour_heats")).setTitle2(this.props.discipline.name).setTitle3(this.props.name).setBody(ReactDOM.findDOMNode(this.refs.printable_heats).innerHTML).addStyle(".heat-number", "background", "#ccc").addStyle(".heat-number", "text-align", "left").addStyle("td, th", "font-size", "12pt").save();
         }
     }]);

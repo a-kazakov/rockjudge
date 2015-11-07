@@ -368,6 +368,7 @@ class TourAdminScoresTable extends React.Component {
             { this.renderAcrobaticOverrides() }
             <HeatsTable
                 ref="heats"
+                name={ this.state.name }
                 discipline={ this.state.discipline }
                 runs={ this.state.runs } />
         </div>

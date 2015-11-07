@@ -651,6 +651,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
                 this.renderAcrobaticOverrides(),
                 React.createElement(HeatsTable, {
                     ref: "heats",
+                    name: this.state.name,
                     discipline: this.state.discipline,
                     runs: this.state.runs })
             );

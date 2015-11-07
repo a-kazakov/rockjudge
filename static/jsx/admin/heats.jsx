@@ -40,6 +40,7 @@ class HeatsTable extends React.Component {
         </div>
     }
     createDocx() {
+        console.log(this.props.discipline);
         Docx("tour-heats")
             .setHeader(this.props.discipline.competition.name + ", " + this.props.discipline.competition.date)
             .setTitle1(_("admin.headers.tour_heats"))

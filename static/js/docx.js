@@ -189,10 +189,10 @@ var DocxImpl = (function () {
             var converted = htmlDocx.asBlob(html, {
                 orientation: this.orientation,
                 margins: {
-                    top: margins[0] + "mm",
-                    right: margins[1] + "mm",
-                    bottom: margins[2] + "mm",
-                    left: margins[3] + "mm"
+                    top: Math.floor(margins[0] * 56.659).toString(),
+                    right: Math.floor(margins[1] * 56.659).toString(),
+                    bottom: Math.floor(margins[2] * 56.659).toString(),
+                    left: Math.floor(margins[3] * 56.659).toString()
                 }
             });
             saveAs(converted, this.filename + ".docx");

@@ -41,7 +41,7 @@ class Judge(BaseModel):
         ws_message.add_message("reload_data")
 
     def delete_model(self, ws_message):
-        if self.get_attr_count("discipline_judge_set") > 0:
+        if self.get_attr_count("discipline_judges") > 0:
             raise ApiError("errors.judge.delete_with_disciplines")
         self.delete_instance()
         ws_message.add_message("reload_data")
