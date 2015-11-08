@@ -19,9 +19,9 @@ class ApiImpl {
         this.cb_fail = callback;
         return this;
     }
-    updateDB(model_type, model_id) {
+    addToDB(model_type, model_id, st=storage) {
         this.update_db = function(response) {
-            storage.get(model_type).add(model_id, response);
+            st.get(model_type).add(model_id, response);
         }
         return this;
     }

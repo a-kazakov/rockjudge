@@ -34,7 +34,7 @@ class TourAdminHeatValue extends React.Component {
             ReactDOM.findDOMNode(this).querySelector("input").select();
         }
     }
-    startEditing () {
+    startEditing() {
         if (current_editing_cell !== null) {
             current_editing_cell.stopEditing();
         }
@@ -179,9 +179,16 @@ class TourAdminScoresTable extends React.Component {
         this.state = {
             name: null,
         };
-        message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
-        message_dispatcher.addListener("reload_data", this.loadData.bind(this));
+    }
+    componentWillMount() {
+        this.storage = storage.getDomain("judging_" + this.props.tour_id);
+        this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData.bind(this));
+        this.reload_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
         this.loadData();
+    }
+    componentWillUnmount() {
+        message_dispatcher.removeListener(this.reload_listener);
+        storage.delDomain("judging_" + this.props.tour_id);
     }
     reloadFromStorage() {
         var SCHEMA = {
@@ -198,12 +205,9 @@ class TourAdminScoresTable extends React.Component {
                 }
             },
         }
-        let serialized = storage.get("Tour")
+        let serialized = this.storage.get("Tour")
             .by_id(this.props.tour_id)
             .serialize(SCHEMA);
-        if (serialized.finalized) {
-            window.location.reload(true);
-        }
         this.setState(serialized);
     }
     loadData() {
@@ -225,7 +229,7 @@ class TourAdminScoresTable extends React.Component {
                 },
             }
         })
-        .updateDB("Tour", this.props.tour_id)
+        .addToDB("Tour", this.props.tour_id, this.storage)
         .onSuccess(this.reloadFromStorage.bind(this))
         .send();
     }

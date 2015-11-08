@@ -84,14 +84,14 @@ class JudgeTablet extends React.Component {
             let old_active_tour_id = this.active_tour_id;
             this.active_tour_id = new_active_tour_id;
             Api("tour.get", { tour_id: this.active_tour_id, children: this.TOUR_SCHEMA })
-                .updateDB("Tour", this.active_tour_id)
+                .addToDB("Tour", this.active_tour_id)
                 .onSuccess(this.reloadFromStorage.bind(this, new_active_tour_id !== old_active_tour_id))
                 .send()
         }
     }
     loadData() {
         Api("judge.get", { judge_id: this.props.judge_id, children: { competition: {} } })
-            .updateDB("Judge", this.props.judge_id)
+            .addToDB("Judge", this.props.judge_id)
             .onSuccess(this.reloadFromStorage.bind(this, false))
             .send();
         Api("tour.find_active", {})

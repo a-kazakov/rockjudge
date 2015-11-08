@@ -39,10 +39,12 @@ var ApiImpl = (function () {
             return this;
         }
     }, {
-        key: "updateDB",
-        value: function updateDB(model_type, model_id) {
+        key: "addToDB",
+        value: function addToDB(model_type, model_id) {
+            var st = arguments.length <= 2 || arguments[2] === undefined ? storage : arguments[2];
+
             this.update_db = function (response) {
-                storage.get(model_type).add(model_id, response);
+                st.get(model_type).add(model_id, response);
             };
             return this;
         }

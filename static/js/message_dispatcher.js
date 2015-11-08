@@ -10,6 +10,7 @@ var MessageDispatcher = (function () {
 
         this.closed = false;
         this.listeners = {};
+        this.listeners_cnt = 0;
         this.connect();
     }
 
@@ -40,6 +41,8 @@ var MessageDispatcher = (function () {
     }, {
         key: "onMessage",
         value: function onMessage(message) {
+            var _this = this;
+
             var data = JSON.parse(message.data);
             if (data["client_id"]) {
                 window.client_id = data["client_id"];
@@ -48,35 +51,49 @@ var MessageDispatcher = (function () {
             data.messages.forEach((function (data) {
                 var msg_type = data[0];
                 var msg_data = data[1];
+                var listeners = this.listeners[msg_type] || {};
                 if (msg_type == "force_refresh") {
                     window.location.reload(true);
                 }
-                (this.listeners[msg_type] || []).forEach(function (listener) {
-                    listener(msg_data);
+                Object.keys(this.listeners[msg_type] || {}).forEach(function (key) {
+                    return listeners[key](msg_data);
                 });
             }).bind(this));
             var data_changed = false;
             data.model_updates.forEach(function (data) {
-                var model = storage.get(data.model).by_id(data.id);
-                if (model) {
-                    model.update(data.data);
-                }
-                data_changed = true;
+                data_changed = storage.updateModel(data.model, data.id, data.data) || data_changed;
             });
             if (data_changed) {
-                (this.listeners["db_update"] || []).forEach(function (listener) {
-                    listener();
-                });
+                (function () {
+                    var listeners = _this.listeners["db_update"] || {};
+                    Object.keys(listeners).forEach(function (key) {
+                        return listeners[key]();
+                    });
+                })();
             }
+        }
+    }, {
+        key: "getListenerId",
+        value: function getListenerId() {
+            return this.listeners_cnt++;
         }
     }, {
         key: "addListener",
         value: function addListener(msg_types, callback) {
+            var id = this.getListenerId();
             msg_types.split(" ").forEach((function (msg_type) {
                 if (!this.listeners[msg_type]) {
-                    this.listeners[msg_type] = [];
+                    this.listeners[msg_type] = {};
                 }
-                this.listeners[msg_type].push(callback);
+                this.listeners[msg_type][id] = callback;
+            }).bind(this));
+            return id;
+        }
+    }, {
+        key: "removeListener",
+        value: function removeListener(listener_id) {
+            Object.keys(this.listeners).forEach((function (key) {
+                delete this.listeners[key][listener_id];
             }).bind(this));
         }
     }]);

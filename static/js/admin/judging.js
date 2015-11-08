@@ -121,7 +121,13 @@ var JudgingUI = (function (_React$Component2) {
                         React.createElement(
                             "td",
                             null,
-                            this.state.tour_id === null ? React.createElement("br", null) : React.createElement("iframe", { className: "judging-frame", src: "/tour/" + this.state.tour_id })
+                            React.createElement(
+                                "div",
+                                { className: "app-page" },
+                                this.state.tour_id === null ? React.createElement("br", null)
+                                // : <iframe className="judging-frame" src={ "/tour/" + this.state.tour_id } /> }
+                                : React.createElement(TourAdminScoresTable, { tour_id: this.state.tour_id, key: this.state.tour_id })
+                            )
                         )
                     )
                 )

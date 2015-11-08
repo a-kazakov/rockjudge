@@ -63,7 +63,6 @@ var BaseScoreInput = (function (_React$Component) {
                 score_inner = score_inner[key[idx]];
             }
             score_inner[key[key.length - 1]] = event.target.type == "checkbox" ? event.target.indeterminate ? null : event.target.checked : event.target.value;
-            console.log(score_inner[key[key.length - 1]]);
             this.props.updateValue(score);
         }
     }, {
@@ -255,11 +254,11 @@ var AcroScoreInput = (function (_BaseScoreInput2) {
             }).bind(this));
             fields.push([React.createElement(
                 "th",
-                null,
+                { key: "HFD" },
                 "FD:"
             ), React.createElement(
                 "td",
-                null,
+                { key: "VFD" },
                 React.createElement("input", {
                     type: "text",
                     value: this.props.score.mistakes,
@@ -270,7 +269,7 @@ var AcroScoreInput = (function (_BaseScoreInput2) {
             for (var idx = 0; idx < fields.length; idx += 2) {
                 rows.push(React.createElement(
                     "tr",
-                    null,
+                    { key: "R" + idx },
                     fields.slice(idx, idx + 2)
                 ));
             }
@@ -553,7 +552,7 @@ var TechScoreInput = (function (_BaseScoreInput5) {
     }, {
         key: "onMount",
         value: function onMount() {
-            var node = this.refs.cb.getDOMNode();
+            var node = this.refs.cb;
             node.readOnly = this.props.score.timing_violation === null;
             node.indeterminate = this.props.score.timing_violation === null;
         }

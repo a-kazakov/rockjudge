@@ -1,16 +1,18 @@
 class Ref {
-    constructor(model_name, id) {
+    constructor(storage, model_name, id) {
         this.model_name = model_name;
         this.id = id;
+        this.storage = storage;
     }
     get() {
-        return storage.get(this.model_name).by_id(this.id);
+        return this.storage.get(this.model_name).by_id(this.id);
     }
 }
 
 class Model {
-    constructor(id, model_storage) {
+    constructor(storage, id, model_storage) {
         this.id = id;
+        this.__storage = storage;
         this.__key_types = {};
         this.__model_storage = model_storage;
     }
@@ -18,18 +20,23 @@ class Model {
         this[key] = ref;
         this.__key_types[key] = "^";
     }
-    update(data) {
+    update(data, create=true) {
         for (let idx in data) if (data.hasOwnProperty(idx)) {
+            if (idx.charAt(0) === "*" || idx.charAt(0) === "^") {
+                if (!create && typeof this[idx.slice(1)] === "undefined") {
+                    continue;
+                }
+            }
             if (idx.charAt(0) === "*") {
                 let key = idx.slice(1);
                 this[key] = []
-                let back_ref = new Ref(this.__model_storage.model_name, this.id);
+                let back_ref = new Ref(this.__storage, this.__model_storage.model_name, this.id);
                 let back_ref_key = data[idx].back_ref;
                 data[idx].children.forEach(function(nested_data) {
                     if (typeof nested_data.data == "object") {
-                        storage.get(nested_data.model).add(nested_data.id, nested_data.data);
+                        this.__storage.get(nested_data.model).add(nested_data.id, nested_data.data);
                     }
-                    let ref = new Ref(nested_data.model, nested_data.id);
+                    let ref = new Ref(this.__storage, nested_data.model, nested_data.id);
                     ref.get().addBackRef(back_ref_key, back_ref);
                     this[key].push(ref);
                 }.bind(this));
@@ -38,9 +45,9 @@ class Model {
                 let key = idx.slice(1);
                 let nested_data = data[idx];
                 if (typeof nested_data == "object") {
-                    storage.get(nested_data.model).add(nested_data.id, nested_data.data);
+                    this.__storage.get(nested_data.model).add(nested_data.id, nested_data.data);
                 }
-                this[key] = new Ref(nested_data.model, nested_data.id);
+                this[key] = new Ref(this.__storage, nested_data.model, nested_data.id);
                 this.__key_types[key] = "^"
             } else {
                 this[idx] = data[idx];
@@ -74,15 +81,23 @@ class Model {
 }
 
 class ModelsStorage {
-    constructor(model_name) {
+    constructor(storage, model_name) {
         this.model_name = model_name;
         this.models = {};
+        this.storage = storage;
     }
     add(id, data) {
         if (typeof this.models[id] === "undefined") {
-            this.models[id] = new Model(id, this);
+            this.models[id] = new Model(this.storage, id, this);
         }
         this.models[id].update(data);
+    }
+    update(id, data) {
+        if (this.models[id]) {
+            this.models[id].update(data, false);
+            return true;
+        }
+        return false;
     }
     by_id(id) {
         return this.models[id];
@@ -98,20 +113,34 @@ class ModelsStorage {
 class Storage {
     constructor() {
         this.model_storages = {}
+        this.domains = {}
     }
-    register_model(model_name) {
-        this.model_storages[model_name] = new ModelsStorage(model_name);
+    getDomain(domain) {
+        if (typeof this.domains[domain] === "undefined") {
+            this.domains[domain] = new Storage();
+        }
+        return this.domains[domain];
+    }
+    delDomain(domain) {
+        delete this.domains[domain];
     }
     get(model_name) {
-        let result = this.model_storages[model_name];
-        if (typeof result === "undefined") {
-            storage.register_model(model_name);
-            result = this.model_storages[model_name];
+        if (typeof this.model_storages[model_name] === "undefined") {
+            this.model_storages[model_name] = new ModelsStorage(this, model_name);
         }
-        return result;
+        return this.model_storages[model_name];
     }
     del(model_name) {
         delete this.model_storages[model_name];
+    }
+    updateModel(model_type, model_id, data) {
+        let data_changed = false;
+        if (this.model_storages[model_type]) {
+            data_changed = this.get(model_type).update(model_id, data) || data_changed;
+        }
+        Object.keys(this.domains).forEach((key) =>
+            data_changed = this.domains[key].updateModel(...arguments) || data_changed);
+        return data_changed;
     }
 }
 

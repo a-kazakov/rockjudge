@@ -294,7 +294,7 @@ class AdminUI extends React.Component {
                 }
             }
         })
-        .updateDB("Competition", this.props.competition_id)
+        .addToDB("Competition", this.props.competition_id)
         .onSuccess(this.reloadFromStorage.bind(this))
         .send();
     }

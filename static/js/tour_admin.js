@@ -277,12 +277,23 @@ var TourAdminScoresTable = (function (_React$Component4) {
         this.state = {
             name: null
         };
-        message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
-        message_dispatcher.addListener("reload_data", this.loadData.bind(this));
-        this.loadData();
     }
 
     _createClass(TourAdminScoresTable, [{
+        key: "componentWillMount",
+        value: function componentWillMount() {
+            this.storage = storage.getDomain("judging_" + this.props.tour_id);
+            this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData.bind(this));
+            this.reload_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
+            this.loadData();
+        }
+    }, {
+        key: "componentWillUnmount",
+        value: function componentWillUnmount() {
+            message_dispatcher.removeListener(this.reload_listener);
+            storage.delDomain("judging_" + this.props.tour_id);
+        }
+    }, {
         key: "reloadFromStorage",
         value: function reloadFromStorage() {
             var SCHEMA = {
@@ -299,10 +310,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
                     }
                 }
             };
-            var serialized = storage.get("Tour").by_id(this.props.tour_id).serialize(SCHEMA);
-            if (serialized.finalized) {
-                window.location.reload(true);
-            }
+            var serialized = this.storage.get("Tour").by_id(this.props.tour_id).serialize(SCHEMA);
             this.setState(serialized);
         }
     }, {
@@ -325,7 +333,7 @@ var TourAdminScoresTable = (function (_React$Component4) {
                         }
                     }
                 }
-            }).updateDB("Tour", this.props.tour_id).onSuccess(this.reloadFromStorage.bind(this)).send();
+            }).addToDB("Tour", this.props.tour_id, this.storage).onSuccess(this.reloadFromStorage.bind(this)).send();
         }
 
         // Listeners

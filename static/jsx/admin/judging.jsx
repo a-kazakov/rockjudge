@@ -61,8 +61,11 @@ class JudgingUI extends React.Component {
                     </div>
                 </td>
                 <td>
-                    { this.state.tour_id === null ? <br />
-                        : <iframe className="judging-frame" src={ "/tour/" + this.state.tour_id } /> }
+                    <div className="app-page">
+                        { this.state.tour_id === null ? <br />
+                            // : <iframe className="judging-frame" src={ "/tour/" + this.state.tour_id } /> }
+                            : <TourAdminScoresTable tour_id={ this.state.tour_id } key={ this.state.tour_id } /> }
+                    </div>
                 </td>
             </tr></tbody>
         </table>;

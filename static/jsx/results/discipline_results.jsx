@@ -78,7 +78,7 @@ class DisciplineResults extends React.Component {
                 }
             }
         })
-        .updateDB("Discipline", this.props.discipline_id)
+        .addToDB("Discipline", this.props.discipline_id)
         .onSuccess(function() {
             this.runs_loaded = true;
             this.reloadState(this)

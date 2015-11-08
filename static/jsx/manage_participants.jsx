@@ -392,7 +392,7 @@ class ParticipantsManager extends React.Component {
                 },
             }
         })
-        .updateDB("Discipline", this.props.discipline_id)
+        .addToDB("Discipline", this.props.discipline_id)
         .onSuccess(this.reloadFromStorage.bind(this))
         .send();
     }

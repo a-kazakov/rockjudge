@@ -58,7 +58,7 @@ class StartPage extends React.Component {
                 judges: {},
             },
         })
-        .updateDB("Competition", competition_id)
+        .addToDB("Competition", competition_id)
         .onSuccess(this.reloadFromStorage.bind(this))
         .send();
     }

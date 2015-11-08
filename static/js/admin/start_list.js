@@ -50,7 +50,7 @@ var StartList = (function (_React$Component) {
                         }
                     }
                 }
-            }).updateDB("Competition", this.props.competition_id).onSuccess(this.reloadFromStorage.bind(this)).send();
+            }).addToDB("Competition", this.props.competition_id).onSuccess(this.reloadFromStorage.bind(this)).send();
         }
     }, {
         key: "onCbChange",

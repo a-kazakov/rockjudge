@@ -584,7 +584,7 @@ var ParticipantsManager = (function (_React$Component4) {
                         club: {}
                     }
                 }
-            }).updateDB("Discipline", this.props.discipline_id).onSuccess(this.reloadFromStorage.bind(this)).send();
+            }).addToDB("Discipline", this.props.discipline_id).onSuccess(this.reloadFromStorage.bind(this)).send();
         }
     }, {
         key: "renderTable",

@@ -78,7 +78,7 @@ class PresenterTablet extends React.Component {
             },
             discipline: {},
         }})
-            .updateDB("Tour", tour_id)
+            .addToDB("Tour", tour_id)
             .onSuccess(function() {
                 this.reloadFromStorage(tour_id);
                 this.setState({

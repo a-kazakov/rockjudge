@@ -95,7 +95,7 @@ var DisciplineResults = (function (_React$Component) {
                         }
                     }
                 }
-            }).updateDB("Discipline", this.props.discipline_id).onSuccess((function () {
+            }).addToDB("Discipline", this.props.discipline_id).onSuccess((function () {
                 this.runs_loaded = true;
                 this.reloadState(this);
             }).bind(this)).send();

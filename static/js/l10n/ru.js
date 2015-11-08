@@ -70,13 +70,13 @@ function _(src, arg) {
                 "clubs": "Клубы-участники",
                 "clubs_management": "Управление клубами",
                 "competitions_management": "Управление соревнованиями",
-                "competition_report": "Протокол соревнования",
-                "competition_results": "Результаты соревнования",
+                "competition_report": "Протокол соревнований",
+                "competition_results": "Результаты соревнований",
                 "discipline_results": "Результаты дисциплины",
                 "disciplines_management": "Управление дисциплинами",
                 "judges": "Судейская бригада",
                 "judges_management": "Управление судьями",
-                "load_competition": "Импорт данных соревнования",
+                "load_competition": "Импорт данных соревнований",
                 "participants_management": "Управление участниками",
                 "service_menu": "Сервисное меню",
                 "start_list": "Стартовый лист",
@@ -141,7 +141,8 @@ function _(src, arg) {
                 "delete_with_disciplines": "Невозможно удалить судью, входящего в судейскую бригаду хотя бы одного тура"
             },
             "score": {
-                "score_not_exist": "Попытка получить значение несуществующей оценки судьи"
+                "score_not_exist": "Попытка получить значение несуществующей оценки судьи",
+                "update_on_finalized_tour": "Невозможно изменить оценку в финализированном туре"
             },
             "tour": {
                 "add_before_finalized": "Невозможно добавить новый тур перед финализированным",

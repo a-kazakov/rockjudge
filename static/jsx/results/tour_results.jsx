@@ -46,7 +46,7 @@ class TourResults extends React.Component {
             });
         }.bind(this)).send();
         Api("tour.get", { tour_id: this.props.tour_id, children: this.TOUR_SCHEMA})
-            .updateDB("Tour", this.props.tour_id)
+            .addToDB("Tour", this.props.tour_id)
             .onSuccess(this.reloadFromStorage.bind(this))
             .send();
     }

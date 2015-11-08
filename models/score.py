@@ -1,6 +1,7 @@
 import json
 import peewee
 
+from exceptions import ApiError
 from models.base_model import BaseModel
 from models.discipline_judge import DisciplineJudge
 from models.run import Run
@@ -49,6 +50,8 @@ class Score(BaseModel):
         if self.confirmed:
             if "force" not in new_data or not new_data["force"]:
                 return
+        if self.run.tour.finalized:
+            raise ApiError("errors.score.update_on_finalized_tour")
         self.run.tour.scoring_system.update_score(self, new_data["score_data"])
         ws_message.add_model_update(
             model_type=self.__class__,

@@ -61,7 +61,7 @@ var TourResults = (function (_React$Component) {
                     "results": new_results
                 });
             }).bind(this)).send();
-            Api("tour.get", { tour_id: this.props.tour_id, children: this.TOUR_SCHEMA }).updateDB("Tour", this.props.tour_id).onSuccess(this.reloadFromStorage.bind(this)).send();
+            Api("tour.get", { tour_id: this.props.tour_id, children: this.TOUR_SCHEMA }).addToDB("Tour", this.props.tour_id).onSuccess(this.reloadFromStorage.bind(this)).send();
         }
 
         // Control
@@ -164,6 +164,7 @@ var TourResults = (function (_React$Component) {
                 ),
                 React.createElement(HeatsTable, {
                     ref: "heats",
+                    name: this.state.tour.name,
                     discipline: this.state.tour.discipline,
                     runs: this.state.tour.runs })
             );

@@ -28,7 +28,6 @@ class BaseScoreInput extends React.Component {
         score_inner[key[key.length - 1]] = event.target.type == "checkbox"
             ? (event.target.indeterminate ? null : event.target.checked)
             : event.target.value;
-        console.log(score_inner[key[key.length - 1]]);
         this.props.updateValue(score);
     }
     onKeyUp(event) {
@@ -115,7 +114,7 @@ class AcroScoreInput extends BaseScoreInput {
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td>]
         }.bind(this));
-        fields.push([<th>FD:</th>, <td>
+        fields.push([<th key="HFD">FD:</th>, <td key="VFD">
             <input
                 type="text"
                 value={ this.props.score.mistakes }
@@ -124,7 +123,7 @@ class AcroScoreInput extends BaseScoreInput {
         </td>])
         var rows = []
         for (var idx = 0; idx < fields.length; idx += 2) {
-            rows.push(<tr>{ fields.slice(idx, idx + 2) }</tr>);
+            rows.push(<tr key={ "R" + idx }>{ fields.slice(idx, idx + 2) }</tr>);
         }
         return <table><tbody>
             { rows }
@@ -248,7 +247,7 @@ class TechScoreInput extends BaseScoreInput {
         </tbody></table>
     }
     onMount() {
-        let node = this.refs.cb.getDOMNode();
+        let node = this.refs.cb;
         node.readOnly = this.props.score.timing_violation === null;
         node.indeterminate = this.props.score.timing_violation === null;
     }

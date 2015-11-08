@@ -119,7 +119,7 @@ var StartPage = (function (_React$Component2) {
                 children: {
                     judges: {}
                 }
-            }).updateDB("Competition", competition_id).onSuccess(this.reloadFromStorage.bind(this)).send();
+            }).addToDB("Competition", competition_id).onSuccess(this.reloadFromStorage.bind(this)).send();
         }
     }, {
         key: "loadData",

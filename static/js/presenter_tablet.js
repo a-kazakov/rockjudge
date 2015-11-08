@@ -101,7 +101,7 @@ var PresenterTablet = (function (_React$Component) {
                         }
                     },
                     discipline: {}
-                } }).updateDB("Tour", tour_id).onSuccess((function () {
+                } }).addToDB("Tour", tour_id).onSuccess((function () {
                 this.reloadFromStorage(tour_id);
                 this.setState({
                     current_heat: 1

@@ -471,7 +471,7 @@ var AdminUI = (function (_React$Component4) {
                         tours: {}
                     }
                 }
-            }).updateDB("Competition", this.props.competition_id).onSuccess(this.reloadFromStorage.bind(this)).send();
+            }).addToDB("Competition", this.props.competition_id).onSuccess(this.reloadFromStorage.bind(this)).send();
         }
 
         // Navigation
