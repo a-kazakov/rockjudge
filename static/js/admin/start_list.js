@@ -176,15 +176,15 @@ var StartList = (function (_React$Component) {
                                         "td",
                                         { className: "w-36 name", colSpan: "2" },
                                         React.createElement(
-                                            "p",
-                                            null,
+                                            "table",
+                                            { className: "inner" },
                                             React.createElement(
-                                                "table",
-                                                { className: "inner" },
-                                                React.createElement(
-                                                    "tbody",
+                                                "tbody",
+                                                null,
+                                                p.formation_name ? React.createElement(
+                                                    "tr",
                                                     null,
-                                                    p.formation_name ? React.createElement(
+                                                    React.createElement(
                                                         "th",
                                                         { colSpan: "2" },
                                                         React.createElement(
@@ -192,32 +192,32 @@ var StartList = (function (_React$Component) {
                                                             { className: "text-left" },
                                                             p.formation_name
                                                         )
-                                                    ) : null,
-                                                    _this.state.include_formation_sportsmen || !p.formation_name ? p.sportsmen.map(function (s, idx) {
-                                                        return React.createElement(
-                                                            "tr",
-                                                            { key: idx },
+                                                    )
+                                                ) : null,
+                                                _this.state.include_formation_sportsmen || !p.formation_name ? p.sportsmen.map(function (s, idx) {
+                                                    return React.createElement(
+                                                        "tr",
+                                                        { key: idx },
+                                                        React.createElement(
+                                                            "td",
+                                                            { className: "w-75" },
                                                             React.createElement(
-                                                                "td",
-                                                                { className: "w-75" },
-                                                                React.createElement(
-                                                                    "p",
-                                                                    null,
-                                                                    s.last_name + " " + s.first_name
-                                                                )
-                                                            ),
-                                                            React.createElement(
-                                                                "td",
-                                                                { className: "w-25" },
-                                                                React.createElement(
-                                                                    "p",
-                                                                    { className: "text-center" },
-                                                                    s.year_of_birth
-                                                                )
+                                                                "p",
+                                                                null,
+                                                                s.last_name + " " + s.first_name
                                                             )
-                                                        );
-                                                    }) : null
-                                                )
+                                                        ),
+                                                        React.createElement(
+                                                            "td",
+                                                            { className: "w-25" },
+                                                            React.createElement(
+                                                                "p",
+                                                                { className: "text-center" },
+                                                                s.year_of_birth
+                                                            )
+                                                        )
+                                                    );
+                                                }) : null
                                             )
                                         )
                                     ),

@@ -681,4 +681,4 @@ var ParticipantsManager = (function (_React$Component4) {
 
     return ParticipantsManager;
 })(React.Component);
-//# sourceMappingURL=manage_participants.js.map
+//# sourceMappingURL=participants_management.js.map

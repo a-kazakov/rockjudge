@@ -74,7 +74,7 @@ var JudgeEditorRow = (function (_React$Component) {
                                     React.createElement("input", {
                                         ref: (function (e) {
                                             if (e) {
-                                                e.getDOMNode().select();this._number = e.getDOMNode();
+                                                e.select();_this._number = e;
                                             }
                                         }).bind(this),
                                         className: "full-width",
@@ -90,7 +90,7 @@ var JudgeEditorRow = (function (_React$Component) {
                                     _("models.judge.category"),
                                     React.createElement("input", {
                                         ref: function (e) {
-                                            return e && (_this._category = e.getDOMNode());
+                                            return e && (_this._category = e);
                                         },
                                         className: "full-width",
                                         defaultValue: this.props.judge.category })
@@ -105,7 +105,7 @@ var JudgeEditorRow = (function (_React$Component) {
                                     _("models.judge.name"),
                                     React.createElement("input", {
                                         ref: function (e) {
-                                            return e && (_this._name = e.getDOMNode());
+                                            return e && (_this._name = e);
                                         },
                                         className: "full-width",
                                         defaultValue: this.props.judge.name })
@@ -120,7 +120,7 @@ var JudgeEditorRow = (function (_React$Component) {
                                     _("models.judge.role_description"),
                                     React.createElement("input", {
                                         ref: function (e) {
-                                            return e && (_this._role_description = e.getDOMNode());
+                                            return e && (_this._role_description = e);
                                         },
                                         className: "full-width",
                                         defaultValue: this.props.judge.role_description })
@@ -135,7 +135,7 @@ var JudgeEditorRow = (function (_React$Component) {
                                     _("models.judge.external_id"),
                                     React.createElement("input", {
                                         ref: function (e) {
-                                            return e && (_this._external_id = e.getDOMNode());
+                                            return e && (_this._external_id = e);
                                         },
                                         className: "full-width",
                                         defaultValue: this.props.judge.external_id })
@@ -150,7 +150,7 @@ var JudgeEditorRow = (function (_React$Component) {
                                     _("models.judge.sp"),
                                     React.createElement("input", {
                                         ref: function (e) {
-                                            return e && (_this._sp = e.getDOMNode());
+                                            return e && (_this._sp = e);
                                         },
                                         className: "full-width",
                                         defaultValue: this.props.judge.sp })

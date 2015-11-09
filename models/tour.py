@@ -179,6 +179,8 @@ class Tour(BaseModel):
             return None
 
     def start(self, ws_message):
+        if self.finalized:
+            raise ApiError("errors.tour.start_finalized")
         active_tours = list(self.select().where(Tour.active == True))  # NOQA
         for tour in active_tours:
             tour.stop(ws_message=ws_message, broadcast=False)

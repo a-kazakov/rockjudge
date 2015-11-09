@@ -166,7 +166,6 @@ var CompetitionReport = (function (_React$Component) {
                 React.createElement(
                     "tbody",
                     null,
-                    " ",
                     cities.map(function (city) {
                         return React.createElement(
                             "tr",
@@ -190,8 +189,7 @@ var CompetitionReport = (function (_React$Component) {
                                 )
                             )
                         );
-                    }),
-                    " "
+                    })
                 )
             );
         }
@@ -204,7 +202,6 @@ var CompetitionReport = (function (_React$Component) {
                 React.createElement(
                     "tbody",
                     null,
-                    " ",
                     this.state.competition.judges.map(function (judge) {
                         return React.createElement(
                             "tr",

@@ -65,6 +65,15 @@ header {
     font-weight: 500;
     margin: 3px 5px;
   }
+  &.with-tabs {
+    padding-bottom: 0;
+    .nav-tabs {
+      border: none !important;
+    }
+    .nav-tabs li:not(.active):not(:hover) a:not(:focus) {
+      color: @ui-white;
+    }
+  }
   .controls {
     float: right;
     text-align: right;

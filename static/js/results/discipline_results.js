@@ -8,8 +8,44 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var DisciplineResults = (function (_React$Component) {
-    _inherits(DisciplineResults, _React$Component);
+var DisciplineResultsButtons = (function (_React$Component) {
+    _inherits(DisciplineResultsButtons, _React$Component);
+
+    function DisciplineResultsButtons() {
+        _classCallCheck(this, DisciplineResultsButtons);
+
+        _get(Object.getPrototypeOf(DisciplineResultsButtons.prototype), "constructor", this).apply(this, arguments);
+    }
+
+    _createClass(DisciplineResultsButtons, [{
+        key: "signal",
+        value: function signal(message) {
+            var _this = this;
+
+            return (function () {
+                console.log(message);_this.props.onSignal(message);
+            }).bind(this);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(
+                    "button",
+                    { className: "btn btn-primary", onClick: this.signal("docx") },
+                    "DOCX"
+                )
+            );
+        }
+    }]);
+
+    return DisciplineResultsButtons;
+})(React.Component);
+
+var DisciplineResults = (function (_React$Component2) {
+    _inherits(DisciplineResults, _React$Component2);
 
     // Initialization
 
@@ -21,21 +57,39 @@ var DisciplineResults = (function (_React$Component) {
             loaded: false
         };
         this.runs_loaded = false;
-        message_dispatcher.addListener("db_update", this.reloadState.bind(this));
-        message_dispatcher.addListener("reload_data", this.loadData.bind(this));
-        message_dispatcher.addListener("tour_results_changed", (function (data) {
-            var tour_storage = storage.get("Tour").by_id(data["tour_id"]);
-            if (!tour_storage) {
-                return;
-            }
-            if (tour_storage.discipline.id == this.props.discipline_id) {
-                this.loadResults();
-            }
-        }).bind(this));
-        this.loadData();
     }
 
     _createClass(DisciplineResults, [{
+        key: "componentWillMount",
+        value: function componentWillMount() {
+            this.storage = storage.getDomain("discipline_results_" + this.props.tour_id);
+            this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData.bind(this));
+            this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadState.bind(this));
+            this.results_change_listener = message_dispatcher.addListener("tour_results_changed reload_data", (function (message) {
+                if (!message) {
+                    this.loadResults();
+                    return;
+                }
+                var tour_storage = this.storage.get("Tour").by_id(message["tour_id"]);
+                if (!tour_storage) {
+                    return;
+                }
+                if (tour_storage.discipline.id == this.props.discipline_id) {
+                    this.loadResults();
+                }
+            }).bind(this));
+            this.loadData();
+            this.loadResults();
+        }
+    }, {
+        key: "componentWillUnmount",
+        value: function componentWillUnmount() {
+            message_dispatcher.removeListener(this.reload_listener);
+            message_dispatcher.removeListener(this.db_update_listener);
+            message_dispatcher.removeListener(this.results_change_listener);
+            storage.delDomain("discipline_results_" + this.props.tour_id);
+        }
+    }, {
         key: "reloadState",
         value: function reloadState() {
             if (!this.state.discipline_results) {
@@ -44,7 +98,7 @@ var DisciplineResults = (function (_React$Component) {
             if (!this.runs_loaded) {
                 return;
             }
-            var storage_runs = storage.get("Run");
+            var storage_runs = this.storage.get("Run");
             var results = this.state.discipline_results;
             var new_state = [];
             var SCHEMA = {
@@ -63,7 +117,7 @@ var DisciplineResults = (function (_React$Component) {
             this.setState({
                 loaded: true,
                 table: new_state,
-                discipline: storage.get("Discipline").by_id(this.props.discipline_id).serialize({
+                discipline: this.storage.get("Discipline").by_id(this.props.discipline_id).serialize({
                     competition: {}
                 })
             });
@@ -95,12 +149,28 @@ var DisciplineResults = (function (_React$Component) {
                         }
                     }
                 }
-            }).addToDB("Discipline", this.props.discipline_id).onSuccess((function () {
+            }).addToDB("Discipline", this.props.discipline_id, this.storage).onSuccess((function () {
                 this.runs_loaded = true;
                 this.reloadState(this);
             }).bind(this)).send();
-            this.loadResults();
         }
+
+        // Listeners
+
+    }, {
+        key: "onSignal",
+        value: function onSignal(message) {
+            switch (message) {
+                case "docx":
+                    this.createDocx();
+                    break;
+                default:
+                    console.log("Unknown message:", message);
+            }
+        }
+
+        // Rendering
+
     }, {
         key: "render",
         value: function render() {
@@ -111,30 +181,9 @@ var DisciplineResults = (function (_React$Component) {
                     "Loading..."
                 );
             }
-            if (this.props.table_only) {
-                return React.createElement(DisciplineResultsTable, { table: this.state.table });
-            }
             return React.createElement(
                 "div",
-                null,
-                React.createElement(
-                    "header",
-                    null,
-                    React.createElement(
-                        "div",
-                        { className: "controls" },
-                        React.createElement(
-                            "button",
-                            { className: "btn btn-primary", onClick: this.createDocx.bind(this) },
-                            "DOCX"
-                        )
-                    ),
-                    React.createElement(
-                        "h1",
-                        null,
-                        this.state.discipline.name
-                    )
-                ),
+                { className: "discipline-results" },
                 React.createElement(DisciplineResultsTable, { table: this.state.table, ref: "main_table" })
             );
         }

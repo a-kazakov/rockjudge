@@ -75,15 +75,15 @@ class StartList extends React.Component {
                     { ic.participants.map((p) => [
                         <tr key={ p.id } className={ !this.state.include_acrobatics || p.acrobatics.length == 0 ? "" : "has-acro" }>
                             <td className="w-8 number"><p className="text-center">{ p.number }</p></td>
-                            <td className="w-36 name" colSpan="2"><p>
+                            <td className="w-36 name" colSpan="2">
                                 <table className="inner"><tbody>
-                                    { p.formation_name ? <th colSpan="2"><p className="text-left">{ p.formation_name }</p></th> : null }
+                                    { p.formation_name ? <tr><th colSpan="2"><p className="text-left">{ p.formation_name }</p></th></tr> : null }
                                     { this.state.include_formation_sportsmen || !p.formation_name ? p.sportsmen.map((s, idx) => <tr key={ idx }>
                                         <td className="w-75"><p>{ s.last_name + " " + s.first_name }</p></td>
                                         <td className="w-25"><p className="text-center">{ s.year_of_birth }</p></td>
                                     </tr> ) : null }
                                 </tbody></table>
-                            </p></td>
+                            </td>
                             <td className="w-28 club"><p>{ p.club.name }</p></td>
                             <td className="w-28 coaches"><p>{ p.coaches.split(",").map((c) => [c.trim(), <br />]) }</p></td>
                         </tr>,

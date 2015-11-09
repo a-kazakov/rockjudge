@@ -1,3 +1,16 @@
+class DisciplineResultsButtons extends React.Component {
+    signal(message) {
+        return (() => {console.log(message); this.props.onSignal(message)}).bind(this);
+    }
+    render() {
+        return <div>
+            <button className="btn btn-primary" onClick={ this.signal("docx") }>
+                DOCX
+            </button>
+        </div>
+    }
+}
+
 class DisciplineResults extends React.Component {
 
     // Initialization
@@ -8,10 +21,17 @@ class DisciplineResults extends React.Component {
             loaded: false,
         };
         this.runs_loaded = false;
-        message_dispatcher.addListener("db_update", this.reloadState.bind(this));
-        message_dispatcher.addListener("reload_data", this.loadData.bind(this));
-        message_dispatcher.addListener("tour_results_changed", function(data) {
-            let tour_storage = storage.get("Tour").by_id(data["tour_id"]);
+    }
+    componentWillMount() {
+        this.storage = storage.getDomain("discipline_results_" + this.props.tour_id);
+        this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData.bind(this));
+        this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadState.bind(this));
+        this.results_change_listener = message_dispatcher.addListener("tour_results_changed reload_data", function(message) {
+            if (!message) {
+                this.loadResults();
+                return;
+            }
+            let tour_storage = this.storage.get("Tour").by_id(message["tour_id"]);
             if (!tour_storage) {
                 return;
             }
@@ -20,6 +40,13 @@ class DisciplineResults extends React.Component {
             }
         }.bind(this));
         this.loadData();
+        this.loadResults();
+    }
+    componentWillUnmount() {
+        message_dispatcher.removeListener(this.reload_listener);
+        message_dispatcher.removeListener(this.db_update_listener);
+        message_dispatcher.removeListener(this.results_change_listener);
+        storage.delDomain("discipline_results_" + this.props.tour_id);
     }
     reloadState() {
         if (!this.state.discipline_results) {
@@ -28,7 +55,7 @@ class DisciplineResults extends React.Component {
         if (!this.runs_loaded) {
             return;
         }
-        let storage_runs = storage.get("Run")
+        let storage_runs = this.storage.get("Run")
         let results = this.state.discipline_results;
         let new_state = []
         var SCHEMA = {
@@ -47,7 +74,7 @@ class DisciplineResults extends React.Component {
         this.setState({
             loaded: true,
             table: new_state,
-            discipline: storage.get("Discipline").by_id(this.props.discipline_id).serialize({
+            discipline: this.storage.get("Discipline").by_id(this.props.discipline_id).serialize({
                 competition: {},
             }),
         });
@@ -78,28 +105,33 @@ class DisciplineResults extends React.Component {
                 }
             }
         })
-        .addToDB("Discipline", this.props.discipline_id)
+        .addToDB("Discipline", this.props.discipline_id, this.storage)
         .onSuccess(function() {
             this.runs_loaded = true;
             this.reloadState(this)
         }.bind(this))
         .send();
-        this.loadResults();
     }
+
+    // Listeners
+
+    onSignal(message) {
+        switch (message) {
+        case "docx":
+            this.createDocx();
+            break;
+        default:
+            console.log("Unknown message:", message)
+        }
+    }
+
+    // Rendering
+
     render() {
         if (!this.state.loaded) {
             return <span>Loading...</span>;
         }
-        if (this.props.table_only) {
-            return <DisciplineResultsTable table={ this.state.table } />
-        }
-        return <div>
-            <header>
-                <div className="controls">
-                    <button className="btn btn-primary" onClick={ this.createDocx.bind(this) }>DOCX</button>
-                </div>
-                <h1>{ this.state.discipline.name }</h1>
-            </header>
+        return <div className="discipline-results">
             <DisciplineResultsTable table={ this.state.table } ref="main_table" />
         </div>
     }

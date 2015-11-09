@@ -32,7 +32,7 @@ class JudgeEditorRow extends React.Component {
                             <label className="full-width">
                                 { _("models.judge.number") }
                                 <input
-                                    ref={ function(e) { if (e) { e.getDOMNode().select(); this._number = e.getDOMNode(); } }.bind(this) }
+                                    ref={ (e) => { if (e) { e.select(); this._number = e; } }.bind(this) }
                                     className="full-width"
                                     defaultValue={ this.props.judge.number } />
                             </label>
@@ -41,7 +41,7 @@ class JudgeEditorRow extends React.Component {
                             <label className="full-width">
                                 { _("models.judge.category") }
                                 <input
-                                    ref={ (e) => e && (this._category = e.getDOMNode()) }
+                                    ref={ (e) => e && (this._category = e) }
                                     className="full-width"
                                     defaultValue={ this.props.judge.category } />
                             </label>
@@ -50,7 +50,7 @@ class JudgeEditorRow extends React.Component {
                             <label className="full-width">
                                 { _("models.judge.name") }
                                 <input
-                                    ref={ (e) => e && (this._name = e.getDOMNode()) }
+                                    ref={ (e) => e && (this._name = e) }
                                     className="full-width"
                                     defaultValue={ this.props.judge.name } />
                             </label>
@@ -59,7 +59,7 @@ class JudgeEditorRow extends React.Component {
                             <label className="full-width">
                                 { _("models.judge.role_description") }
                                 <input
-                                    ref={ (e) => e && (this._role_description = e.getDOMNode()) }
+                                    ref={ (e) => e && (this._role_description = e) }
                                     className="full-width"
                                     defaultValue={ this.props.judge.role_description } />
                             </label>
@@ -68,7 +68,7 @@ class JudgeEditorRow extends React.Component {
                             <label className="full-width">
                                 { _("models.judge.external_id") }
                                 <input
-                                    ref={ (e) => e && (this._external_id = e.getDOMNode()) }
+                                    ref={ (e) => e && (this._external_id = e) }
                                     className="full-width"
                                     defaultValue={ this.props.judge.external_id } />
                             </label>
@@ -77,7 +77,7 @@ class JudgeEditorRow extends React.Component {
                             <label className="full-width">
                                 { _("models.judge.sp") }
                                 <input
-                                    ref={ (e) => e && (this._sp = e.getDOMNode()) }
+                                    ref={ (e) => e && (this._sp = e) }
                                     className="full-width"
                                     defaultValue={ this.props.judge.sp } />
                             </label>

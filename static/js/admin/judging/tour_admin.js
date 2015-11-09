@@ -187,7 +187,6 @@ var TourAdminScoreCellWrapper = (function (_React$Component2) {
     }, {
         key: "toggleConfirmation",
         value: function toggleConfirmation() {
-            console.log("TOGGLE ", this.props.confirmed);
             if (this.props.confirmed) {
                 Api("score.unconfirm", { score_id: this.props.score_id }).send();
             } else {
@@ -265,21 +264,105 @@ var TourAdminScoresRow = (function (_React$Component3) {
     return TourAdminScoresRow;
 })(React.Component);
 
-var TourAdminScoresTable = (function (_React$Component4) {
-    _inherits(TourAdminScoresTable, _React$Component4);
+var TourAdminStartStopTourButton = (function (_React$Component4) {
+    _inherits(TourAdminStartStopTourButton, _React$Component4);
+
+    function TourAdminStartStopTourButton() {
+        _classCallCheck(this, TourAdminStartStopTourButton);
+
+        _get(Object.getPrototypeOf(TourAdminStartStopTourButton.prototype), "constructor", this).apply(this, arguments);
+    }
+
+    _createClass(TourAdminStartStopTourButton, [{
+        key: "render",
+        value: function render() {
+            if (this.props.tour.active) {
+                return React.createElement(
+                    "button",
+                    { className: "btn btn-danger", onClick: this.props.onStop },
+                    _("judging.buttons.stop_tour")
+                );
+            } else {
+                return React.createElement(
+                    "button",
+                    { className: "btn btn-success", onClick: this.props.onStart },
+                    _("judging.buttons.start_tour")
+                );
+            }
+        }
+    }]);
+
+    return TourAdminStartStopTourButton;
+})(React.Component);
+
+var TourAdminButtons = (function (_React$Component5) {
+    _inherits(TourAdminButtons, _React$Component5);
+
+    function TourAdminButtons() {
+        _classCallCheck(this, TourAdminButtons);
+
+        _get(Object.getPrototypeOf(TourAdminButtons.prototype), "constructor", this).apply(this, arguments);
+    }
+
+    _createClass(TourAdminButtons, [{
+        key: "signal",
+        value: function signal(message) {
+            var _this = this;
+
+            return (function () {
+                return _this.props.onSignal(message);
+            }).bind(this);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var result = [];
+            if (!this.props.tour.active) {
+                result = result.concat([React.createElement(
+                    "button",
+                    { className: "btn btn-primary", onClick: this.signal("init_tour"), key: "btn-init-tour" },
+                    _("judging.buttons.init_tour")
+                ), React.createElement(
+                    "button",
+                    { className: "btn btn-primary", onClick: this.signal("finalize_tour"), key: "btn-finalize-tour" },
+                    _("judging.buttons.finalize_tour")
+                ), React.createElement(
+                    "button",
+                    { className: "btn btn-primary", onClick: this.signal("shuffle_heats"), key: "btn-shuffle-heats" },
+                    _("judging.buttons.shuffle_heats")
+                )]);
+            }
+            result.push(React.createElement(TourAdminStartStopTourButton, {
+                tour: this.props.tour,
+                onStart: this.signal("start_tour"),
+                onStop: this.signal("stop_tour"),
+                key: "btn-start-stop" }));
+            return React.createElement(
+                "div",
+                null,
+                result
+            );
+        }
+    }]);
+
+    return TourAdminButtons;
+})(React.Component);
+
+var TourAdminBody = (function (_React$Component6) {
+    _inherits(TourAdminBody, _React$Component6);
 
     // Intiialization
 
-    function TourAdminScoresTable(props) {
-        _classCallCheck(this, TourAdminScoresTable);
+    function TourAdminBody(props) {
+        _classCallCheck(this, TourAdminBody);
 
-        _get(Object.getPrototypeOf(TourAdminScoresTable.prototype), "constructor", this).call(this, props);
+        _get(Object.getPrototypeOf(TourAdminBody.prototype), "constructor", this).call(this, props);
         this.state = {
             name: null
         };
     }
 
-    _createClass(TourAdminScoresTable, [{
+    _createClass(TourAdminBody, [{
         key: "componentWillMount",
         value: function componentWillMount() {
             this.storage = storage.getDomain("judging_" + this.props.tour_id);
@@ -340,35 +423,33 @@ var TourAdminScoresTable = (function (_React$Component4) {
         // Listeners
 
     }, {
-        key: "onInitButtonClick",
-        value: function onInitButtonClick() {
-            if (confirm(_("judging.confirms.init_tour"))) {
-                Api("tour.init", { tour_id: this.props.tour_id }).send();
+        key: "onSignal",
+        value: function onSignal(message) {
+            switch (message) {
+                case "init_tour":
+                    if (confirm(_("judging.confirms.init_tour"))) {
+                        Api("tour.init", { tour_id: this.props.tour_id }).send();
+                    }
+                    break;
+                case "finalize_tour":
+                    if (confirm(_("judging.confirms.finalize_tour"))) {
+                        Api("tour.finalize", { tour_id: this.props.tour_id }).send();
+                    }
+                    break;
+                case "shuffle_heats":
+                    if (confirm(_("judging.confirms.shuffle_heats"))) {
+                        Api("tour.shuffle_heats", { tour_id: this.props.tour_id }).send();
+                    }
+                    break;
+                case "start_tour":
+                    Api("tour.start", { tour_id: this.props.tour_id }).send();
+                    break;
+                case "stop_tour":
+                    Api("tour.stop", { tour_id: this.props.tour_id }).send();
+                    break;
+                default:
+                    console.error("Unknown signal received:", message);
             }
-        }
-    }, {
-        key: "onFinalizeButtonClick",
-        value: function onFinalizeButtonClick() {
-            if (confirm(_("judging.confirms.finalize_tour"))) {
-                Api("tour.finalize", { tour_id: this.props.tour_id }).send();
-            }
-        }
-    }, {
-        key: "onShuffleHeatsButtonClick",
-        value: function onShuffleHeatsButtonClick() {
-            if (confirm(_("judging.confirms.shuffle_heats"))) {
-                Api("tour.shuffle_heats", { tour_id: this.props.tour_id }).send();
-            }
-        }
-    }, {
-        key: "onStartTourButtonClick",
-        value: function onStartTourButtonClick() {
-            Api("tour.start", { tour_id: this.props.tour_id }).send();
-        }
-    }, {
-        key: "onStopTourButtonClick",
-        value: function onStopTourButtonClick() {
-            Api("tour.stop", { tour_id: this.props.tour_id }).send();
         }
 
         // Helpers
@@ -395,28 +476,6 @@ var TourAdminScoresTable = (function (_React$Component4) {
 
         // Rendering
 
-    }, {
-        key: "renderActiveTourControls",
-        value: function renderActiveTourControls() {
-            if (!this.state.active) {
-                return React.createElement(
-                    "button",
-                    { className: "btn btn-success", onClick: this.onStartTourButtonClick.bind(this) },
-                    _("judging.buttons.start_tour")
-                );
-            } else {
-                return React.createElement(
-                    "span",
-                    null,
-                    React.createElement(
-                        "button",
-                        { className: "btn btn-danger", onClick: this.onStopTourButtonClick.bind(this) },
-                        _("judging.buttons.stop_tour")
-                    ),
-                    React.createElement("br", null)
-                );
-            }
-        }
     }, {
         key: "renderAcrobaticOverrides",
         value: function renderAcrobaticOverrides() {
@@ -525,8 +584,6 @@ var TourAdminScoresTable = (function (_React$Component4) {
     }, {
         key: "render",
         value: function render() {
-            var _this = this;
-
             if (this.state.name === null) {
                 return React.createElement(
                     "span",
@@ -557,47 +614,6 @@ var TourAdminScoresTable = (function (_React$Component4) {
             return React.createElement(
                 "div",
                 { className: "tour-admin" },
-                React.createElement(
-                    "header",
-                    null,
-                    React.createElement(
-                        "div",
-                        { className: "controls" },
-                        this.state.active ? null : React.createElement(
-                            "button",
-                            { className: "btn btn-primary", onClick: this.onInitButtonClick.bind(this) },
-                            _("judging.buttons.init_tour")
-                        ),
-                        this.state.active ? null : React.createElement(
-                            "button",
-                            { className: "btn btn-primary", onClick: this.onFinalizeButtonClick.bind(this) },
-                            _("judging.buttons.finalize_tour")
-                        ),
-                        this.state.active ? null : React.createElement(
-                            "button",
-                            { className: "btn btn-primary", onClick: this.onShuffleHeatsButtonClick.bind(this) },
-                            _("judging.buttons.shuffle_heats")
-                        ),
-                        React.createElement(
-                            "button",
-                            { className: "btn btn-primary", onClick: (function () {
-                                    return _this.refs.heats.createDocx();
-                                }).bind(this) },
-                            _("admin.buttons.docx_heats")
-                        ),
-                        this.renderActiveTourControls()
-                    ),
-                    React.createElement(
-                        "h1",
-                        null,
-                        this.state.discipline.name
-                    ),
-                    React.createElement(
-                        "h2",
-                        null,
-                        this.state.name
-                    )
-                ),
                 React.createElement(
                     "table",
                     { className: "bordered-table" },
@@ -657,16 +673,11 @@ var TourAdminScoresTable = (function (_React$Component4) {
                         rows
                     )
                 ),
-                this.renderAcrobaticOverrides(),
-                React.createElement(HeatsTable, {
-                    ref: "heats",
-                    name: this.state.name,
-                    discipline: this.state.discipline,
-                    runs: this.state.runs })
+                this.renderAcrobaticOverrides()
             );
         }
     }]);
 
-    return TourAdminScoresTable;
+    return TourAdminBody;
 })(React.Component);
 //# sourceMappingURL=tour_admin.js.map

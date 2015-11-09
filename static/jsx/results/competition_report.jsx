@@ -64,25 +64,24 @@ class CompetitionReport extends React.Component {
         clubs.forEach((club) => clubs_dict[club.city].sort )
         Object.getOwnPropertyNames(clubs_dict).forEach((city) => cities.push(city))
         cities.sort()
-        return <table className="clubs"><tbody> {
+        return <table className="clubs"><tbody>{
             cities.map((city) =>
                 <tr key={ city } className="va-top">
                     <th className="w-20"><p className="text-left">{ city }</p></th>
                     <td className="w-80"><p>{ clubs_dict[city].join(", ") }</p></td>
                 </tr>
             )
-        } </tbody></table>;
+        }</tbody></table>;
     }
     renderJudges() {
-        return <table className="judges"><tbody> {
+        return <table className="judges"><tbody>{
             this.state.competition.judges.map((judge) =>
                 <tr key={ judge.id }>
                     <th className="w-40"><p className="text-left">{ judge.role_description || _("global.phrases.judge_n", judge.number) }</p></th>
                     <td className="w-60"><p>{ judge.name }, { judge.category }</p></td>
                 </tr>
             )
-        }
-        </tbody></table>
+        }</tbody></table>
     }
     renderResults() {
         return this.state.competition.disciplines.map((ic) =>

@@ -1,4 +1,17 @@
-class TourResults extends React.Component {
+class TourResultsButtons extends React.Component {
+    signal(message) {
+        return (() => {console.log(message); this.props.onSignal(message)}).bind(this);
+    }
+    render() {
+        return <div>
+            <button className="btn btn-primary" onClick={ this.signal("docx") }>
+                DOCX
+            </button>
+        </div>
+    }
+}
+
+class TourResultsBody extends React.Component {
 
     // Initialization
 
@@ -7,13 +20,7 @@ class TourResults extends React.Component {
         this.state = {
             tour: null,
             results: null,
-            verbose: false,
         }
-        message_dispatcher.addListener("tour_results_changed reload_data", function(message) {
-            if (!message || message.tour_id == this.props.tour_id) {
-                this.loadData();
-            }
-        }.bind(this));
         this.TOUR_SCHEMA = {
             discipline: {
                 competition: {},
@@ -29,45 +36,64 @@ class TourResults extends React.Component {
                 },
             },
         };
+    }
+    componentWillMount() {
+        this.storage = storage.getDomain("results_" + this.props.tour_id);
+        this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData.bind(this));
+        this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
+        this.results_change_listener = message_dispatcher.addListener("tour_results_changed reload_data", function(message) {
+            if (!message || message.tour_id == this.props.tour_id) {
+                this.loadResults();
+            }
+        }.bind(this));
         this.loadData();
+        this.loadResults();
+    }
+    componentWillUnmount() {
+        message_dispatcher.removeListener(this.reload_listener);
+        message_dispatcher.removeListener(this.db_update_listener);
+        message_dispatcher.removeListener(this.results_change_listener);
+        storage.delDomain("results_" + this.props.tour_id);
     }
     reloadFromStorage() {
-        let serialized = storage.get("Tour")
+        let serialized = this.storage.get("Tour")
             .by_id(this.props.tour_id)
             .serialize(this.TOUR_SCHEMA);
         this.setState({
             tour: serialized,
         });
     }
-    loadData() {
-        Api("tour.get_results", {tour_id: this.props.tour_id}).onSuccess(function(new_results) {
+    loadResults() {
+        Api("tour.get_results", {tour_id: this.props.tour_id})
+        .onSuccess(function(new_results) {
             this.setState({
                 "results": new_results,
             });
-        }.bind(this)).send();
+            this.reloadFromStorage();
+        }.bind(this))
+        .send();
+    }
+    loadData() {
         Api("tour.get", { tour_id: this.props.tour_id, children: this.TOUR_SCHEMA})
-            .addToDB("Tour", this.props.tour_id)
+            .addToDB("Tour", this.props.tour_id, this.storage)
             .onSuccess(this.reloadFromStorage.bind(this))
             .send();
     }
 
-    // Control
+    // Listeners
 
-    toggleVerbose() {
-        this.setState({
-            verbose: !this.state.verbose,
-        });
+    onSignal(message) {
+        switch (message) {
+        case "docx":
+            this.createDocx();
+            break;
+        default:
+            console.log("Unknown message:", message)
+        }
     }
 
     // Rendering
 
-    renderVerboseButton() {
-        if (this.state.verbose) {
-            return <button className="btn btn-primary" onClick={ this.toggleVerbose.bind(this) }>{ _("results.buttons.simple_view") }</button>
-        } else {
-            return <button className="btn btn-primary" onClick={ this.toggleVerbose.bind(this) }>{ _("results.buttons.verbose_view") }</button>
-        }
-    }
     renderNonFinalizedWarning() {
         if (!this.state.tour.finalized) {
             return <div className="alert alert-danger">{ _("results.alerts.not_finalized") }</div>
@@ -78,32 +104,16 @@ class TourResults extends React.Component {
             return <span>Loading ...</span>
         }
         var table = null;
-        if (this.state.verbose) {
+        if (this.props.verbosity == "3") {
             table = <TourResultsVerboseTable {...this.state} />
+        } else if (this.props.verbosity == "2") {
+            table = <TourSemiVerboseResultsTable {...this.state} />
         } else {
             table = <TourResultsTable {...this.state} />
         }
-        return <div>
-            <header>
-                <div className="controls">
-                    { this.renderVerboseButton() }
-                    <button className="btn btn-primary" onClick={ this.createDocx.bind(this) }>{ _("admin.buttons.docx_results") }</button>
-                    <button className="btn btn-primary" onClick={ (() => this.refs.heats.createDocx()).bind(this) }>
-                        { _("admin.buttons.docx_heats") }
-                    </button>
-                </div>
-                <h1>{ this.state.tour.discipline.name }</h1>
-                <h2>{ this.state.tour.name }</h2>
-            </header>
-            <div className="tour-results" ref="content">
-                { this.renderNonFinalizedWarning() }
-                { table }
-            </div>
-            <HeatsTable
-                ref="heats"
-                name={ this.state.tour.name }
-                discipline={ this.state.tour.discipline }
-                runs={ this.state.tour.runs } />
+        return <div className="tour-results" ref="content">
+            { this.renderNonFinalizedWarning() }
+            { table }
         </div>
     }
     createDocx() {
@@ -113,7 +123,7 @@ class TourResults extends React.Component {
             .setTitle2(this.state.tour.discipline.name)
             .setTitle3(this.state.tour.name)
             .setBody(ReactDOM.findDOMNode(this.refs.content).innerHTML)
-            .addStyle(".bordered-table", "font-size", this.state.verbose ? "9pt" : "12pt")
+            .addStyle(".bordered-table", "font-size", this.props.verbosity == "1" ? "12pt" : "9pt")
             .addStyle(".bordered-table .acro-table td", "font-size", "9pt")
             .addStyle(".bordered-table .acro-table td", "padding", "0 3pt")
             .addStyle(".bordered-table .acro-table td", "border", "0.5pt solid black")

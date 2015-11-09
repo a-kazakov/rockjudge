@@ -6826,6 +6826,15 @@ header h2 {
   font-weight: 500;
   margin: 3px 5px;
 }
+header.with-tabs {
+  padding-bottom: 0;
+}
+header.with-tabs .nav-tabs {
+  border: none !important;
+}
+header.with-tabs .nav-tabs li:not(.active):not(:hover) a:not(:focus) {
+  color: #efefef;
+}
 header .controls {
   float: right;
   text-align: right;

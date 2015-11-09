@@ -21,15 +21,15 @@ class DisciplineResultsTable extends React.Component {
         return <tr key={ "R" + row.run.id }>
             <td className="w-8 place"><p className="text-center">{ row.place === null ? "" : row.place }</p></td>
             <td className="w-8 number"><p className="text-center">{ p.number }</p></td>
-            <td className="w-36" colSpan="2"><p>
+            <td className="w-36" colSpan="2">
                 <table className="sportsmen"><tbody>
-                    { p.formation_name ? <th colSpan="2"><p className="text-left">{ p.formation_name }</p></th> : null }
+                    { p.formation_name ? <tr><th colSpan="2"><p className="text-left">{ p.formation_name }</p></th></tr> : null }
                     { p.sportsmen.map((s, idx) => <tr key={ idx }>
                         <td className="w-75"><p>{ s.last_name + " " + s.first_name }</p></td>
                         <td className="w-25"><p className="text-center">{ s.year_of_birth }</p></td>
                     </tr> ) }
                 </tbody></table>
-            </p></td>
+            </td>
             <td className="w-24 club"><p>{ p.club.name }</p></td>
             <td className="w-24 coaches"><p>{ p.coaches.split(",").map((c) => [c.trim(), <br />]) }</p></td>
         </tr>;

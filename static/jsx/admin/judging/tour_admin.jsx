@@ -128,7 +128,6 @@ class TourAdminScoreCellWrapper extends React.Component {
             .send();
     }
     toggleConfirmation() {
-        console.log("TOGGLE ", this.props.confirmed);
         if (this.props.confirmed) {
             Api("score.unconfirm", { score_id: this.props.score_id }).send();
         } else {
@@ -170,7 +169,49 @@ class TourAdminScoresRow extends React.Component {
     }
 }
 
-class TourAdminScoresTable extends React.Component {
+class TourAdminStartStopTourButton extends React.Component {
+    render() {
+        if (this.props.tour.active) {
+            return <button className="btn btn-danger" onClick={ this.props.onStop }>
+                { _("judging.buttons.stop_tour") }
+            </button>
+        } else {
+            return <button className="btn btn-success" onClick={ this.props.onStart }>
+                { _("judging.buttons.start_tour") }
+            </button>
+        }
+    }
+}
+
+class TourAdminButtons extends React.Component {
+    signal(message) {
+        return (() => this.props.onSignal(message)).bind(this);
+    }
+    render() {
+        let result = [];
+        if (!this.props.tour.active) {
+            result = result.concat([
+                <button className="btn btn-primary" onClick={ this.signal("init_tour") } key="btn-init-tour">
+                    { _("judging.buttons.init_tour") }
+                </button>,
+                <button className="btn btn-primary" onClick={ this.signal("finalize_tour") } key="btn-finalize-tour">
+                    { _("judging.buttons.finalize_tour") }
+                </button>,
+                <button className="btn btn-primary" onClick={ this.signal("shuffle_heats") } key="btn-shuffle-heats">
+                    { _("judging.buttons.shuffle_heats") }
+                </button>,
+            ])
+        }
+        result.push(<TourAdminStartStopTourButton
+            tour={ this.props.tour }
+            onStart={ this.signal("start_tour") }
+            onStop={ this.signal("stop_tour") }
+            key="btn-start-stop" />);
+        return <div>{ result }</div>;
+    }
+}
+
+class TourAdminBody extends React.Component {
 
     // Intiialization
 
@@ -183,11 +224,12 @@ class TourAdminScoresTable extends React.Component {
     componentWillMount() {
         this.storage = storage.getDomain("judging_" + this.props.tour_id);
         this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData.bind(this));
-        this.reload_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
+        this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
         this.loadData();
     }
     componentWillUnmount() {
         message_dispatcher.removeListener(this.reload_listener);
+        message_dispatcher.removeListener(this.db_update_listener);
         storage.delDomain("judging_" + this.props.tour_id);
     }
     reloadFromStorage() {
@@ -236,26 +278,32 @@ class TourAdminScoresTable extends React.Component {
 
     // Listeners
 
-    onInitButtonClick() {
-        if (confirm(_("judging.confirms.init_tour"))) {
-            Api("tour.init", {tour_id: this.props.tour_id}).send();
+    onSignal(message) {
+        switch (message) {
+        case "init_tour":
+            if (confirm(_("judging.confirms.init_tour"))) {
+                Api("tour.init", {tour_id: this.props.tour_id}).send();
+            }
+            break;
+        case "finalize_tour":
+            if (confirm(_("judging.confirms.finalize_tour"))) {
+                Api("tour.finalize", {tour_id: this.props.tour_id}).send();
+            }
+            break;
+        case "shuffle_heats":
+            if (confirm(_("judging.confirms.shuffle_heats"))) {
+                Api("tour.shuffle_heats", {tour_id: this.props.tour_id}).send();
+            }
+            break;
+        case "start_tour":
+            Api("tour.start", {tour_id: this.props.tour_id}).send();
+            break;
+        case "stop_tour":
+            Api("tour.stop", {tour_id: this.props.tour_id}).send();
+            break;
+        default:
+            console.error("Unknown signal received:", message);
         }
-    }
-    onFinalizeButtonClick() {
-        if (confirm(_("judging.confirms.finalize_tour"))) {
-            Api("tour.finalize", {tour_id: this.props.tour_id}).send();
-        }
-    }
-    onShuffleHeatsButtonClick() {
-        if (confirm(_("judging.confirms.shuffle_heats"))) {
-            Api("tour.shuffle_heats", {tour_id: this.props.tour_id}).send();
-        }
-    }
-    onStartTourButtonClick() {
-        Api("tour.start", {tour_id: this.props.tour_id}).send();
-    }
-    onStopTourButtonClick() {
-        Api("tour.stop", {tour_id: this.props.tour_id}).send();
     }
 
     // Helpers
@@ -280,15 +328,6 @@ class TourAdminScoresTable extends React.Component {
 
     // Rendering
 
-    renderActiveTourControls() {
-        if (!this.state.active) {
-            return <button className="btn btn-success" onClick={ this.onStartTourButtonClick.bind(this) }>{ _("judging.buttons.start_tour") }</button>
-        } else {
-            return <span>
-                <button className="btn btn-danger" onClick={ this.onStopTourButtonClick.bind(this) }>{ _("judging.buttons.stop_tour") }</button><br />
-            </span>
-        }
-    }
     renderAcrobaticOverrides() {
         let overrides = this.getAcrobaticOverrides()
         if (overrides.length == 0) {
@@ -343,19 +382,6 @@ class TourAdminScoresTable extends React.Component {
             </th>;
         }.bind(this));
         return <div className="tour-admin">
-            <header>
-                <div className="controls">
-                    { this.state.active ? null : <button className="btn btn-primary" onClick={ this.onInitButtonClick.bind(this) }>{ _("judging.buttons.init_tour") }</button> }
-                    { this.state.active ? null : <button className="btn btn-primary" onClick={ this.onFinalizeButtonClick.bind(this) }>{ _("judging.buttons.finalize_tour") }</button> }
-                    { this.state.active ? null : <button className="btn btn-primary" onClick={ this.onShuffleHeatsButtonClick.bind(this) }>{ _("judging.buttons.shuffle_heats") }</button> }
-                    <button className="btn btn-primary" onClick={ (() => this.refs.heats.createDocx()).bind(this) }>
-                        { _("admin.buttons.docx_heats") }
-                    </button>
-                    { this.renderActiveTourControls() }
-                </div>
-                <h1>{ this.state.discipline.name }</h1>
-                <h2>{ this.state.name }</h2>
-            </header>
             <table className="bordered-table">
                 <tbody>
                     <tr>
@@ -370,11 +396,6 @@ class TourAdminScoresTable extends React.Component {
                 </tbody>
             </table>
             { this.renderAcrobaticOverrides() }
-            <HeatsTable
-                ref="heats"
-                name={ this.state.name }
-                discipline={ this.state.discipline }
-                runs={ this.state.runs } />
         </div>
     }
 }

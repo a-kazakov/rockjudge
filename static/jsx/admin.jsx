@@ -49,7 +49,15 @@ class ManagementUI extends React.Component {
     }
     getPageFromHash() {
         let chunks = window.location.hash.substr(1).split("/");
-        if (chunks[1] && ["load_competition", "manage_tours", "manage_participants", "manage_judges", "manage_clubs", "manage_disciplines"].indexOf(chunks[1]) >= 0) {
+        if (chunks[1] && [
+                "load_competition",
+                "manage_tours",
+                "manage_participants",
+                "manage_judges",
+                "manage_clubs",
+                "manage_disciplines",
+                "start_list",
+                "competition_report"].indexOf(chunks[1]) >= 0) {
             return chunks[1];
         }
         return null;
@@ -109,6 +117,10 @@ class ManagementUI extends React.Component {
                 disciplines={ this.props.disciplines }
                 judges={ this.props.judges }
                 competition_id={ this.props.competition_id } />
+        case "start_list":
+            return <div className="ifw"><iframe src={ "/start_list/" + this.props.competition_id } /></div>
+        case "competition_report":
+            return <div className="ifw"><iframe src={ "/report/" + this.props.competition_id } /></div>
         }
     }
     render() {
@@ -162,10 +174,24 @@ class ManagementUI extends React.Component {
                                 { _("admin.menu.manage_judges") }
                             </div>
                         </div>
+                        <div className="block">
+                            <div
+                                    className={ "level-1" + (this.state.page == "start_list" ? " active" : "") }
+                                    onClick={ this.switchPage.bind(this, "start_list", {}) }>
+                                { _("admin.menu.start_list") }
+                            </div>
+                        </div>
+                        <div className="block">
+                            <div
+                                    className={ "level-1" + (this.state.page == "competition_report" ? " active" : "") }
+                                    onClick={ this.switchPage.bind(this, "competition_report", {}) }>
+                                { _("admin.menu.competition_report") }
+                            </div>
+                        </div>
                     </div>
                 </td>
-                <td>
-                    <div className="app-page">
+                <td className="">
+                    <div className="app-page scroller">
                         { this.renderContent() }
                     </div>
                 </td>
@@ -231,7 +257,7 @@ class ServiceUI extends React.Component {
         </div>
     }
     render() {
-        return <div>
+        return <div className="app-content">
             <header>
                 <h1>{ _("admin.headers.service_menu") }</h1>
             </header>
@@ -309,7 +335,7 @@ class AdminUI extends React.Component {
     }
     getActiveAppFromHash(app) {
         let chunks = window.location.hash.substr(1).split("/");
-        if (chunks[0] && ["judging", "management", "reports", "service"].indexOf(chunks[0]) >= 0) {
+        if (chunks[0] && ["judging", "management", "service"].indexOf(chunks[0]) >= 0) {
             return chunks[0];
         }
         return "management";
@@ -327,10 +353,6 @@ class AdminUI extends React.Component {
                 disciplines={ this.state.disciplines }
                 clubs={ this.state.clubs }
                 judges={ this.state.judges }
-                competition_id={ this.props.competition_id } />;
-        case "reports":
-            return <ReportsUI
-                disciplines={ this.state.disciplines }
                 competition_id={ this.props.competition_id } />;
         case "service":
             return <ServiceUI
@@ -355,10 +377,6 @@ class AdminUI extends React.Component {
                     <div className={ "app" + (this.state.active_app == "judging" ? " active" : "") } onClick={ this.setApp.bind(this, "judging") }>
                         <div className="icon">J</div>
                         <div className="label">Judging</div>
-                    </div>
-                    <div className={ "app" + (this.state.active_app == "reports" ? " active" : "") } onClick={ this.setApp.bind(this, "reports") }>
-                        <div className="icon">R</div>
-                        <div className="label">Reports</div>
                     </div>
                     <div className={ "app" + (this.state.active_app == "service" ? " active" : "") } onClick={ this.setApp.bind(this, "service") }>
                         <div className="icon">S</div>

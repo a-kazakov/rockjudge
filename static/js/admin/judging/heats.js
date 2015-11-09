@@ -8,16 +8,116 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var HeatsTable = (function (_React$Component) {
-    _inherits(HeatsTable, _React$Component);
+var HeatsButtons = (function (_React$Component) {
+    _inherits(HeatsButtons, _React$Component);
 
-    function HeatsTable() {
-        _classCallCheck(this, HeatsTable);
+    function HeatsButtons() {
+        _classCallCheck(this, HeatsButtons);
 
-        _get(Object.getPrototypeOf(HeatsTable.prototype), "constructor", this).apply(this, arguments);
+        _get(Object.getPrototypeOf(HeatsButtons.prototype), "constructor", this).apply(this, arguments);
     }
 
-    _createClass(HeatsTable, [{
+    _createClass(HeatsButtons, [{
+        key: "signal",
+        value: function signal(message) {
+            var _this = this;
+
+            return (function () {
+                console.log(message);_this.props.onSignal(message);
+            }).bind(this);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(
+                    "button",
+                    { className: "btn btn-primary", onClick: this.signal("docx") },
+                    "DOCX"
+                )
+            );
+        }
+    }]);
+
+    return HeatsButtons;
+})(React.Component);
+
+var HeatsBody = (function (_React$Component2) {
+    _inherits(HeatsBody, _React$Component2);
+
+    function HeatsBody(props) {
+        _classCallCheck(this, HeatsBody);
+
+        _get(Object.getPrototypeOf(HeatsBody.prototype), "constructor", this).call(this, props);
+        this.state = {
+            tour: null
+        };
+    }
+
+    _createClass(HeatsBody, [{
+        key: "componentWillMount",
+        value: function componentWillMount() {
+            this.storage = storage.getDomain("heats_" + this.props.tour_id);
+            this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData.bind(this));
+            this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
+            this.loadData();
+        }
+    }, {
+        key: "componentWillUnmount",
+        value: function componentWillUnmount() {
+            message_dispatcher.removeListener(this.reload_listener);
+            message_dispatcher.removeListener(this.db_update_listener);
+            storage.delDomain("heats_" + this.props.tour_id);
+        }
+    }, {
+        key: "reloadFromStorage",
+        value: function reloadFromStorage() {
+            var SCHEMA = {
+                discipline: {
+                    competition: {}
+                },
+                runs: {
+                    participant: {
+                        club: {}
+                    }
+                }
+            };
+            var serialized = this.storage.get("Tour").by_id(this.props.tour_id).serialize(SCHEMA);
+            this.setState({
+                tour: serialized
+            });
+        }
+    }, {
+        key: "loadData",
+        value: function loadData() {
+            Api("tour.get", {
+                tour_id: this.props.tour_id,
+                children: {
+                    discipline: {
+                        competition: {}
+                    },
+                    runs: {
+                        participant: {
+                            club: {}
+                        }
+                    }
+                }
+            }).addToDB("Tour", this.props.tour_id, this.storage).onSuccess(this.reloadFromStorage.bind(this)).send();
+        }
+    }, {
+        key: "onSignal",
+        value: function onSignal(message) {
+            switch (message) {
+                case "docx":
+                    this.createDocx();
+                    break;
+                default:
+                    console.log("Unknown message:", message);
+            }
+        }
+    }, {
         key: "renderHeatHeader",
         value: function renderHeatHeader(prev_row, next_row) {
             var need_render = typeof prev_row == "undefined" || prev_row.heat != next_row.heat;
@@ -77,7 +177,7 @@ var HeatsTable = (function (_React$Component) {
         key: "renderHeatRows",
         value: function renderHeatRows() {
             var result = [];
-            var runs = this.props.runs;
+            var runs = this.state.tour.runs;
             for (var i = 0; i < runs.length; ++i) {
                 var header = this.renderHeatHeader(runs[i - 1], runs[i]);
                 header && result.push(header);
@@ -88,9 +188,16 @@ var HeatsTable = (function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
+            if (this.state.tour === null) {
+                return React.createElement(
+                    "span",
+                    null,
+                    "Loading ..."
+                );
+            }
             return React.createElement(
                 "div",
-                { className: "print-only", ref: "printable_heats" },
+                { className: "tour-heats", ref: "printable_heats" },
                 React.createElement(
                     "table",
                     { className: "bordered-table" },
@@ -140,11 +247,10 @@ var HeatsTable = (function (_React$Component) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            console.log(this.props.discipline);
-            Docx("tour-heats").setHeader(this.props.discipline.competition.name + ", " + this.props.discipline.competition.date).setTitle1(_("admin.headers.tour_heats")).setTitle2(this.props.discipline.name).setTitle3(this.props.name).setBody(ReactDOM.findDOMNode(this.refs.printable_heats).innerHTML).addStyle(".heat-number", "background", "#ccc").addStyle(".heat-number", "text-align", "left").addStyle("td, th", "font-size", "12pt").save();
+            Docx("tour-heats").setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date).setTitle1(_("admin.headers.tour_heats")).setTitle2(this.state.tour.discipline.name).setTitle3(this.state.tour.name).setBody(ReactDOM.findDOMNode(this.refs.printable_heats).innerHTML).addStyle(".heat-number", "background", "#ccc").addStyle(".heat-number", "text-align", "left").addStyle("td, th", "font-size", "12pt").save();
         }
     }]);
 
-    return HeatsTable;
+    return HeatsBody;
 })(React.Component);
 //# sourceMappingURL=heats.js.map

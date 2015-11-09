@@ -1,3 +1,20 @@
+.tour-heats {
+  margin: 10px;
+}
+.tour-heats .bordered-table {
+  width: 750px;
+}
+.tour-heats td {
+  text-align: left;
+}
+.tour-heats td,
+.tour-heats th {
+  font-size: 15px;
+}
+.tour-heats .heat-number {
+  text-align: left;
+  background-color: #ccc;
+}
 .tour-admin h4 {
   margin: 10px;
 }

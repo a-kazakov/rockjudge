@@ -132,8 +132,8 @@ class AcroScoreInput extends BaseScoreInput {
     serialize() {
         return {
             deductions: this.props.score.deductions.map(function(deduction) {
-                return deduction ? parseInt(deduction) || 0 : null;
-            }),
+                return !this.isEmpty(deduction) ? parseInt(deduction) || 0 : null;
+            }.bind(this)),
             mistakes: parseInt(this.props.score.mistakes) || 0,
         }
     }

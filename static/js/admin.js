@@ -102,7 +102,7 @@ var ManagementUI = (function (_React$Component2) {
         key: "getPageFromHash",
         value: function getPageFromHash() {
             var chunks = window.location.hash.substr(1).split("/");
-            if (chunks[1] && ["load_competition", "manage_tours", "manage_participants", "manage_judges", "manage_clubs", "manage_disciplines"].indexOf(chunks[1]) >= 0) {
+            if (chunks[1] && ["load_competition", "manage_tours", "manage_participants", "manage_judges", "manage_clubs", "manage_disciplines", "start_list", "competition_report"].indexOf(chunks[1]) >= 0) {
                 return chunks[1];
             }
             return null;
@@ -175,6 +175,18 @@ var ManagementUI = (function (_React$Component2) {
                         disciplines: this.props.disciplines,
                         judges: this.props.judges,
                         competition_id: this.props.competition_id });
+                case "start_list":
+                    return React.createElement(
+                        "div",
+                        { className: "ifw" },
+                        React.createElement("iframe", { src: "/start_list/" + this.props.competition_id })
+                    );
+                case "competition_report":
+                    return React.createElement(
+                        "div",
+                        { className: "ifw" },
+                        React.createElement("iframe", { src: "/report/" + this.props.competition_id })
+                    );
             }
         }
     }, {
@@ -268,15 +280,37 @@ var ManagementUI = (function (_React$Component2) {
                                             onClick: this.switchPage.bind(this, "manage_judges", {}) },
                                         _("admin.menu.manage_judges")
                                     )
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "block" },
+                                    React.createElement(
+                                        "div",
+                                        {
+                                            className: "level-1" + (this.state.page == "start_list" ? " active" : ""),
+                                            onClick: this.switchPage.bind(this, "start_list", {}) },
+                                        _("admin.menu.start_list")
+                                    )
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "block" },
+                                    React.createElement(
+                                        "div",
+                                        {
+                                            className: "level-1" + (this.state.page == "competition_report" ? " active" : ""),
+                                            onClick: this.switchPage.bind(this, "competition_report", {}) },
+                                        _("admin.menu.competition_report")
+                                    )
                                 )
                             )
                         ),
                         React.createElement(
                             "td",
-                            null,
+                            { className: "" },
                             React.createElement(
                                 "div",
-                                { className: "app-page" },
+                                { className: "app-page scroller" },
                                 this.renderContent()
                             )
                         )
@@ -381,7 +415,7 @@ var ServiceUI = (function (_React$Component3) {
         value: function render() {
             return React.createElement(
                 "div",
-                null,
+                { className: "app-content" },
                 React.createElement(
                     "header",
                     null,
@@ -488,7 +522,7 @@ var AdminUI = (function (_React$Component4) {
         key: "getActiveAppFromHash",
         value: function getActiveAppFromHash(app) {
             var chunks = window.location.hash.substr(1).split("/");
-            if (chunks[0] && ["judging", "management", "reports", "service"].indexOf(chunks[0]) >= 0) {
+            if (chunks[0] && ["judging", "management", "service"].indexOf(chunks[0]) >= 0) {
                 return chunks[0];
             }
             return "management";
@@ -508,10 +542,6 @@ var AdminUI = (function (_React$Component4) {
                         disciplines: this.state.disciplines,
                         clubs: this.state.clubs,
                         judges: this.state.judges,
-                        competition_id: this.props.competition_id });
-                case "reports":
-                    return React.createElement(ReportsUI, {
-                        disciplines: this.state.disciplines,
                         competition_id: this.props.competition_id });
                 case "service":
                     return React.createElement(ServiceUI, {
@@ -578,20 +608,6 @@ var AdminUI = (function (_React$Component4) {
                                     "div",
                                     { className: "label" },
                                     "Judging"
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "app" + (this.state.active_app == "reports" ? " active" : ""), onClick: this.setApp.bind(this, "reports") },
-                                React.createElement(
-                                    "div",
-                                    { className: "icon" },
-                                    "R"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "label" },
-                                    "Reports"
                                 )
                             ),
                             React.createElement(

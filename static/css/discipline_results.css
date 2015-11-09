@@ -1,31 +1,31 @@
-.ic-results {
+.discipline-results {
   margin: 10px;
 }
-.ic-results td {
+.discipline-results td {
   vertical-align: top;
 }
-.ic-results .bordered-table {
+.discipline-results .bordered-table {
   width: 750px;
 }
-.ic-results .bordered-table table td {
+.discipline-results .bordered-table table td {
   border: none;
   padding: 0;
   text-align: left;
 }
-.ic-results .bordered-table table th {
+.discipline-results .bordered-table table th {
   border: none;
   padding: 0;
   text-align: left;
 }
-.ic-results .bordered-table td.name,
-.ic-results .bordered-table td.club,
-.ic-results .bordered-table td.coaches {
+.discipline-results .bordered-table td.name,
+.discipline-results .bordered-table td.club,
+.discipline-results .bordered-table td.coaches {
   text-align: left !important;
 }
-.ic-results .bordered-table table.sportsmen {
+.discipline-results .bordered-table table.sportsmen {
   width: 100%;
 }
-.ic-results .bordered-table .tour-name {
+.discipline-results .bordered-table .tour-name {
   font-weight: bold;
   background-color: #ccc;
 }
