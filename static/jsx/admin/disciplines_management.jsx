@@ -87,7 +87,7 @@ class DisciplineEditorRow extends React.Component {
                             <label className="full-width">
                                 { _("models.discipline.name") }
                                 <input
-                                    ref={ function(e) { if (e) { this._name = e.getDOMNode(); } }.bind(this) }
+                                    ref={ function(e) { if (e) { this._name = e; } }.bind(this) }
                                     className="full-width"
                                     defaultValue={ this.props.discipline.name } />
                             </label>
@@ -96,7 +96,7 @@ class DisciplineEditorRow extends React.Component {
                                     <label className="full-width">
                                         { _("models.discipline.sp") }
                                         <input
-                                            ref={ (e) => e && (this._sp = e.getDOMNode()) }
+                                            ref={ (e) => e && (this._sp = e) }
                                             className="full-width"
                                             defaultValue={ this.props.discipline.sp } />
                                     </label>
@@ -105,7 +105,7 @@ class DisciplineEditorRow extends React.Component {
                                     <label className="full-width">
                                         { _("models.discipline.external_id") }<br />
                                         <input
-                                            ref={ (e) => e && (this._external_id = e.getDOMNode()) }
+                                            ref={ (e) => e && (this._external_id = e) }
                                             className="full-width"
                                             defaultValue={ this.props.discipline.external_id } />
                                     </label>

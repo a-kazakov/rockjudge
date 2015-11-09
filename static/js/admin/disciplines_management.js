@@ -136,7 +136,7 @@ var DisciplineEditorRow = (function (_React$Component) {
                                     React.createElement("input", {
                                         ref: (function (e) {
                                             if (e) {
-                                                this._name = e.getDOMNode();
+                                                this._name = e;
                                             }
                                         }).bind(this),
                                         className: "full-width",
@@ -154,7 +154,7 @@ var DisciplineEditorRow = (function (_React$Component) {
                                             _("models.discipline.sp"),
                                             React.createElement("input", {
                                                 ref: function (e) {
-                                                    return e && (_this._sp = e.getDOMNode());
+                                                    return e && (_this._sp = e);
                                                 },
                                                 className: "full-width",
                                                 defaultValue: this.props.discipline.sp })
@@ -170,7 +170,7 @@ var DisciplineEditorRow = (function (_React$Component) {
                                             React.createElement("br", null),
                                             React.createElement("input", {
                                                 ref: function (e) {
-                                                    return e && (_this._external_id = e.getDOMNode());
+                                                    return e && (_this._external_id = e);
                                                 },
                                                 className: "full-width",
                                                 defaultValue: this.props.discipline.external_id })
