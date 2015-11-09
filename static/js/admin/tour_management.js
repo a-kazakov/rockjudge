@@ -182,13 +182,18 @@ var TourInputForm = (function (_React$Component) {
     }, {
         key: "serialize",
         value: function serialize() {
-            return {
-                name: this.refs.name.getDOMNode().value,
-                num_advances: this.refs.num_advances.getDOMNode().value,
-                participants_per_heat: this.refs.participants_per_heat.getDOMNode().value,
-                scoring_system_name: this.refs.scoring_system_name.getDOMNode().value,
-                hope_tour: this.refs.hope_tour.getDOMNode().checked
+            var result = {
+                name: this.refs.name.value,
+                participants_per_heat: this.refs.participants_per_heat.value
             };
+            if (!this.props.tour || !this.props.tour.finalized) {
+                $.extend(result, {
+                    num_advances: this.refs.num_advances.value,
+                    scoring_system_name: this.refs.scoring_system_name.value,
+                    hope_tour: this.refs.hope_tour.checked
+                });
+            }
+            return result;
         }
     }]);
 
@@ -401,8 +406,8 @@ var ToursManagementUI = (function (_React$Component4) {
             Api("discipline.set", {
                 discipline_id: this.props.discipline.id,
                 data: {
-                    name: this.refs.name.getDOMNode().value,
-                    external_id: this.refs.external_id.getDOMNode().value
+                    name: this.refs.name.value,
+                    external_id: this.refs.external_id.value
                 }
             }).onSuccess(function () {
                 alert(_("global.messages.success"));

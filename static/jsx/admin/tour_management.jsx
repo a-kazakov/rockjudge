@@ -1,7 +1,7 @@
 class TourInputForm extends React.Component {
     render() {
-        var classes = ["tour", "form-horizontal"].concat(this.props.classes || []).join(" ");
-        var tour = this.props.tour || { id: "new" }
+        let classes = ["tour", "form-horizontal"].concat(this.props.classes || []).join(" ");
+        let tour = this.props.tour || { id: "new" }
         return <form className={ classes } key={ tour.id } onSubmit={ this.submitTour.bind(this) }>
             <div className="row">
                 <div className="col-md-6">
@@ -80,13 +80,18 @@ class TourInputForm extends React.Component {
         this.props.submitTour(this.serialize());
     }
     serialize() {
-        return {
-            name: this.refs.name.getDOMNode().value,
-            num_advances: this.refs.num_advances.getDOMNode().value,
-            participants_per_heat: this.refs.participants_per_heat.getDOMNode().value,
-            scoring_system_name: this.refs.scoring_system_name.getDOMNode().value,
-            hope_tour: this.refs.hope_tour.getDOMNode().checked,
+        let result = {
+            name: this.refs.name.value,
+            participants_per_heat: this.refs.participants_per_heat.value,
         };
+        if (!this.props.tour || !this.props.tour.finalized) {
+            $.extend(result, {
+                num_advances: this.refs.num_advances.value,
+                scoring_system_name: this.refs.scoring_system_name.value,
+                hope_tour: this.refs.hope_tour.checked,
+            })
+        }
+        return result;
     }
 }
 
@@ -183,8 +188,8 @@ class ToursManagementUI extends React.Component {
         Api("discipline.set", {
             discipline_id: this.props.discipline.id,
             data: {
-                name: this.refs.name.getDOMNode().value,
-                external_id: this.refs.external_id.getDOMNode().value,
+                name: this.refs.name.value,
+                external_id: this.refs.external_id.value,
             }
         }).onSuccess(function() {
             alert(_("global.messages.success"));
