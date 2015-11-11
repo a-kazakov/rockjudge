@@ -56,8 +56,8 @@ var StartList = (function (_React$Component) {
         key: "onCbChange",
         value: function onCbChange() {
             this.setState({
-                include_acrobatics: this.refs.cb_acro.getDOMNode().checked,
-                include_formation_sportsmen: this.refs.cb_forms.getDOMNode().checked
+                include_acrobatics: this.refs.cb_acro.checked,
+                include_formation_sportsmen: this.refs.cb_forms.checked
             });
         }
     }, {

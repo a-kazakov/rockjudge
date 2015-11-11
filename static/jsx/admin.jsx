@@ -23,7 +23,7 @@ class CompetitionLoadingUI extends React.Component {
         event.preventDefault();
         Api("competition.load", {
             competition_id: this.props.competition_id,
-            data: JSON.parse(this._input.getDOMNode().value),
+            data: JSON.parse(this._input.value),
         }).onSuccess(function() { alert(_("global.messages.success")); }).send();
     }
 }
@@ -218,7 +218,7 @@ class ServiceUI extends React.Component {
         event.preventDefault();
         if (prompt(_("admin.confirms.unfinalize_tour")) == "unfinalize") {
             Api("tour.unfinalize", {
-                tour_id: this.refs.select_unfinalize.getDOMNode().value,
+                tour_id: this.refs.select_unfinalize.value,
             }).onSuccess(function(event) {
                 alert(_("global.messages.success"));
             }).send();

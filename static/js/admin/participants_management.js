@@ -148,7 +148,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                         tabIndex: bti + 1000 + 10 * idx + 1,
                         ref: (function (e) {
                             if (e && this.latest_added == "sp" + idx.toString()) {
-                                e.getDOMNode().select();
+                                e.select();
                                 this.latest_added = null;
                             };
                         }).bind(this),
@@ -207,7 +207,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                         tabIndex: bti + 2000 + 10 * idx + 1,
                         ref: (function (e) {
                             if (e && this.latest_added == "acro" + idx.toString()) {
-                                e.getDOMNode().select();
+                                e.select();
                                 this.latest_added = null;
                             };
                         }).bind(this),
@@ -264,7 +264,7 @@ var ParticipantEditorRow = (function (_React$Component) {
                                     tabIndex: bti + 1,
                                     ref: (function (e) {
                                         if (e && this.latest_added == "base") {
-                                            e.getDOMNode().select();
+                                            e.select();
                                             this.latest_added = null;
                                         };
                                     }).bind(this),

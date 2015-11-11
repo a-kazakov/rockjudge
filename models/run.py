@@ -126,6 +126,7 @@ class Run(BaseModel):
         scores_obj = self.tour.scoring_system.get_run_scores(self, discipline_judges=discipline_judges)
         result = self.serialize_props()
         result["total_score"] = scores_obj["total_run_score"]
+        result["verbose_total_score"] = scores_obj["verbose_run_score"]
         result["inherited_data"] = self.inherited_data
         result = self.serialize_upper_child(result, "participant", children)
         if discipline_judges is not None:

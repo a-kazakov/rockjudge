@@ -71,7 +71,7 @@ var ClubEditorRow = (function (_React$Component) {
                                     React.createElement("input", {
                                         ref: (function (e) {
                                             if (e) {
-                                                e.getDOMNode().select();this._name = e.getDOMNode();
+                                                e.select();this._name = e;
                                             }
                                         }).bind(this),
                                         className: "full-width",
@@ -87,7 +87,7 @@ var ClubEditorRow = (function (_React$Component) {
                                     _("models.club.city"),
                                     React.createElement("input", {
                                         ref: function (e) {
-                                            return e && (_this._city = e.getDOMNode());
+                                            return e && (_this._city = e);
                                         },
                                         className: "full-width",
                                         defaultValue: this.props.club.city })
@@ -103,7 +103,7 @@ var ClubEditorRow = (function (_React$Component) {
                                     React.createElement("br", null),
                                     React.createElement("input", {
                                         ref: function (e) {
-                                            return e && (_this._external_id = e.getDOMNode());
+                                            return e && (_this._external_id = e);
                                         },
                                         defaultValue: this.props.club.external_id })
                                 )

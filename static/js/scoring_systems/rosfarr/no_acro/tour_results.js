@@ -473,20 +473,20 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
     }, {
         key: "renderScore",
         value: function renderScore(judge, score, additiolal_data) {
-            if (judge.role == "dance_judge") {
-                if (this.props.tour.scoring_system_name == "rosfarr.formation") {
+            switch (getScoringType(judge, this.props.tour.scoring_system_name)) {
+                case "dance":
+                    return this.renderDanceScore(score, additiolal_data);
+                case "acro":
+                    return this.renderAcroScore(score, additiolal_data);
+                case "formation":
                     return this.renderFormationScore(score, additiolal_data);
-                }
-                return this.renderDanceScore(score, additiolal_data);
+                default:
+                    return React.createElement(
+                        "span",
+                        null,
+                        score.data.total_score.toFixed(2)
+                    );
             }
-            if (judge.role == "acro_judge") {
-                return this.renderAcroScore(score, additiolal_data);
-            }
-            return React.createElement(
-                "span",
-                null,
-                score.data.total_score.toFixed(2)
-            );
         }
     }, {
         key: "renderInfoBlock",
@@ -577,6 +577,28 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                             ) : null
                         )
                     )
+                ) : null,
+                this.props.tour.scoring_system_name === "rosfarr.am_final_acro" ? React.createElement(
+                    "p",
+                    null,
+                    React.createElement(
+                        "strong",
+                        null,
+                        __("results.labels.fw_score")
+                    ),
+                    ": ",
+                    this.props.run.verbose_total_score.previous_tour.primary_score.toFixed(2) + " / " + this.props.run.verbose_total_score.previous_tour.secondary_score.toFixed(2)
+                ) : null,
+                this.props.tour.scoring_system_name === "rosfarr.am_final_acro" ? React.createElement(
+                    "p",
+                    null,
+                    React.createElement(
+                        "strong",
+                        null,
+                        __("results.labels.acro_score")
+                    ),
+                    ": ",
+                    this.props.run.verbose_total_score.current_tour.primary_score.toFixed(2) + " / " + this.props.run.verbose_total_score.current_tour.secondary_score.toFixed(2)
                 ) : null,
                 this.props.tour.scoring_system_name !== "rosfarr.formation" ? React.createElement(
                     "p",
@@ -776,6 +798,7 @@ var TourResultsSemiVerboseTableRow = (function (_React$Component3) {
                     " "
                 );
             }).bind(this));
+            var total_score = this.props.run.verbose_total_score;
             return React.createElement(
                 "tr",
                 null,
@@ -808,7 +831,24 @@ var TourResultsSemiVerboseTableRow = (function (_React$Component3) {
                     React.createElement(
                         "p",
                         { className: "text-center" },
-                        this.props.run.total_score
+                        this.props.tour.scoring_system_name == "rosfarr.am_final_acro" ? React.createElement(
+                            "em",
+                            null,
+                            __("results.labels.fw_score_short"),
+                            ": ",
+                            total_score.previous_tour.primary_score.toFixed(2),
+                            " / ",
+                            total_score.previous_tour.secondary_score.toFixed(2),
+                            React.createElement("br", null)
+                        ) : null,
+                        React.createElement(
+                            "strong",
+                            null,
+                            total_score.primary_score.toFixed(2)
+                        ),
+                        " /",
+                        " ",
+                        total_score.secondary_score.toFixed(2)
                     )
                 ) : null,
                 judges_scores,
@@ -878,17 +918,18 @@ var TourSemiVerboseResultsTable = (function (_React$Component4) {
             var runs = tour_wrapper.getRuns();
             var has_next_tour = this.props.tour.next_tour_id !== null;
             var has_total_score = this.props.tour.scoring_system_name !== "rosfarr.formation";
-            var judges_header = discipline_judges.map(function (dj) {
+            var judges_header = discipline_judges.map((function (dj) {
+                var suffix = getScoringType(dj, this.props.tour.scoring_system_name) == "acro" ? " (A)" : "";
                 return React.createElement(
                     "th",
                     { key: dj.id, className: "w-9" },
                     React.createElement(
                         "p",
                         null,
-                        dj.judge.number + (dj.role == "acro_judge" ? " (A)" : "")
+                        dj.judge.number + suffix
                     )
                 );
-            });
+            }).bind(this));
             var rows = [];
             for (var idx = 0; idx < runs.length; ++idx) {
                 if (has_next_tour) {
@@ -1028,7 +1069,14 @@ var TourResultsTableRow = (function (_React$Component5) {
                     React.createElement(
                         "p",
                         { className: "text-center" },
-                        this.props.run.total_score
+                        React.createElement(
+                            "strong",
+                            null,
+                            this.props.run.verbose_total_score.primary_score.toFixed(2)
+                        ),
+                        " /",
+                        " ",
+                        this.props.run.verbose_total_score.secondary_score.toFixed(2)
                     )
                 ) : null,
                 React.createElement(

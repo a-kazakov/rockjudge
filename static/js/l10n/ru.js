@@ -412,9 +412,12 @@ function _(src, arg) {
                         "participants_not_advanced": "Не прошли в следующий тур"
                     },
                     "labels": {
+                        "acro_score": "Результат акро",
                         "acrobatics": "Акробатика",
                         "acrobatics_verbose": "Акробатика (заявка/факт)",
                         "card": "Штраф",
+                        "fw_score": "Результат ТН",
+                        "fw_score_short": "TH",
                         "info": "Участник, результат",
                         "next_tour": "Следующий тур",
                         "number": "№",

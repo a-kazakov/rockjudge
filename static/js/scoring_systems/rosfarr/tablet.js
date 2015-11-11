@@ -864,8 +864,8 @@ var AcroJudgeInput = (function (_React$Component18) {
             };
         }
     }, {
-        key: "renderContent",
-        value: function renderContent() {
+        key: "render",
+        value: function render() {
             var _this10 = this;
 
             var score_data = this.props.score.data.raw_data;
@@ -883,15 +883,6 @@ var AcroJudgeInput = (function (_React$Component18) {
                     mistakes: score_data.mistakes,
                     onScoreUpdate: this.genOnMistakesUpdate() })
             );
-        }
-    }, {
-        key: "render",
-        value: function render() {
-            if (this.props.scoring_system_name === "rosfarr.am_final_fw") {
-                // Fallback to dance judging
-                return React.createElement(DanceJudgeScoreInput, this.props);
-            }
-            return this.renderContent();
         }
     }]);
 
@@ -1066,32 +1057,30 @@ var TabletScoreInput = (function (_React$Component22) {
     }, {
         key: "renderScoresInput",
         value: function renderScoresInput() {
-            switch (this.props.discipline_judge.role) {
-                case "acro_judge":
+            switch (getScoringType(this.props.discipline_judge, this.props.scoring_system_name)) {
+                case "acro":
                     return React.createElement(AcroJudgeInput, {
                         score: this.props.score,
-                        scoring_system_name: this.props.scoring_system_name,
                         onAcroReductionUpdate: this.updateAcroReduction.bind(this),
                         onScoreUpdate: this.updateScores.bind(this) });
-                case "dance_judge":
+                case "dance":
+                case "formation":
                     return React.createElement(DanceJudgeScoreInput, {
                         score: this.props.score,
                         scoring_system_name: this.props.scoring_system_name,
                         onScoreUpdate: this.updateScores.bind(this) });
-                case "head_judge":
+                case "head":
                     return React.createElement(HeadJudgeScoreInput, {
                         run: this.props.run,
                         score: this.props.score,
-                        scoring_system_name: this.props.scoring_system_name,
                         all_discipline_judges: this.props.all_discipline_judges,
                         all_scores: this.props.all_scores,
                         onScoreUpdate: this.updateScores.bind(this) });
-                case "tech_judge":
+                case "tech":
                     return React.createElement(TechJudgeScoreInput, {
                         page: this.props.page,
                         run: this.props.run,
                         score: this.props.score,
-                        scoring_system_name: this.props.scoring_system_name,
                         onAcroOverride: this.overrideAcroScore.bind(this),
                         onScoreUpdate: this.updateScores.bind(this) });
                 default:

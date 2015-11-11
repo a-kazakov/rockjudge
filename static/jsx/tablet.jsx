@@ -260,7 +260,10 @@ class JudgeTablet extends React.Component {
         if (this.state.discipline_judge === null) {
             return null;
         }
-        if (this.state.discipline_judge.role != "tech_judge" || this.state.tour.scoring_system_name != "rosfarr.acro") {
+        if (this.state.discipline_judge.role != "tech_judge" || (
+                this.state.tour.scoring_system_name != "rosfarr.acro" &&
+                    this.state.tour.scoring_system_name != "rosfarr.am_final_acro")
+        ) {
             return null;
         }
         return <div className="footer page-selector">

@@ -41,6 +41,8 @@ class BaseScore:
     def clear_value(cls, key, value):
         if not cls.SCORES_VALIDATORS[key](value):
             return None
+        if type(value) is float:
+            return round(100 * value) / 100
         return value
 
     def update(self, new_data):
@@ -265,6 +267,8 @@ def ScoreWrapper(score, scoring_system, discipline_judge=None):
     if role in ["acro_judge", "dance_judge"]:
         if scoring_system == "rosfarr.am_final_fw":
             return FinalDanceScore(score)
+        if scoring_system == "rosfarr.am_final_acro":
+            return FinalDanceScore(score) if role == "dance_judge" else AcroScore(score)
         if scoring_system == "rosfarr.no_acro":
             return DanceScore(score)
         if scoring_system == "rosfarr.acro":
@@ -332,7 +336,7 @@ class RunScore:
             score_wrapper = ScoreWrapper(score, scoring_system, discipline_judge=discipline_judge)
             self.head_judge_total_score = score_wrapper.total_score
             self.has_next_tour = score_wrapper.data["nexttour"]
-        if scoring_system == "rosfarr.acro":
+        if scoring_system in ["rosfarr.acro", "rosfarr.am_final_acro"]:
             self.acro_scores = SmallScoresSet(self.acro_judges_total_scores)
             self.dance_scores = SmallScoresSet(self.dance_judges_total_scores)
         else:
@@ -352,13 +356,15 @@ class RunScore:
         for discipline_judge, score in self.judge_scores:
             if discipline_judge.role == "dance_judge":
                 yield discipline_judge, score
-            elif discipline_judge.role == "acro_judge" and self.scoring_system != "rosfarr.acro":
+            elif discipline_judge.role == "acro_judge" and \
+                    self.scoring_system not in ["rosfarr.acro", "rosfarr.am_final_acro"]:
                 yield discipline_judge, score
 
     @property
     def acro_judge_scores(self):
         for discipline_judge, score in self.judge_scores:
-            if discipline_judge.role == "acro_judge" and self.scoring_system == "rosfarr.acro":
+            if discipline_judge.role == "acro_judge" and \
+                    self.scoring_system in ["rosfarr.acro", "rosfarr.am_final_acro"]:
                 yield discipline_judge, score
 
     @property
@@ -374,20 +380,61 @@ class RunScore:
             return 0
         return -1 if self.has_next_tour else 1
 
+    def get_prev_score(self):
+        prev_primary, prev_secondary = 0, 0
+        if "total_score" in self.run.inherited_data:
+            prev_total_score = self.run.inherited_data["total_score"]
+            prev_primary, prev_secondary = \
+                frac(*prev_total_score["primary_score"]), frac(*prev_total_score["secondary_score"])
+        return prev_primary, prev_secondary
+
     @property
     def sorting_score(self):
+        prev_primary, prev_secondary = self.get_prev_score()
+        if self.scoring_system == "rosfarr.am_final_acro":
+            return (
+                -(self.dance_scores.primary_score + self.acro_scores.primary_score + self.penalties + prev_primary),
+                -(self.dance_scores.secondary_score + self.acro_scores.secondary_score + self.penalties +
+                  prev_secondary),
+                -(self.dance_scores.primary_score + self.acro_scores.primary_score + self.penalties),
+                -(self.dance_scores.secondary_score + self.acro_scores.secondary_score + self.penalties),
+                self.nexttour_score,
+            )
         if self.scoring_system == "rosfarr.acro":
             return (
                 -(self.dance_scores.primary_score + self.acro_scores.primary_score + self.penalties),
                 -(self.dance_scores.secondary_score + self.acro_scores.secondary_score + self.penalties),
                 self.nexttour_score,
             )
-        else:
-            return (
-                -(self.dance_scores.primary_score + self.penalties),
-                -(self.dance_scores.secondary_score + self.penalties),
-                self.nexttour_score,
-            )
+        return (
+            -(self.dance_scores.primary_score + self.penalties),
+            -(self.dance_scores.secondary_score + self.penalties),
+            self.nexttour_score,
+        )
+
+    @property
+    def verbose_display_score(self):
+        sorting_score = self.sorting_score
+        prev_primary, prev_secondary = self.get_prev_score()
+        if self.scoring_system == "rosfarr.am_final_acro":
+            return {
+                "previous_tour": {
+                    "primary_score": float(prev_primary / 100.0),
+                    "secondary_score": float(prev_secondary / 100.0),
+                },
+                "current_tour": {
+                    "primary_score": float(-sorting_score[2] / 100.0),
+                    "secondary_score": float(-sorting_score[3] / 100.0),
+                },
+                "primary_score": float(-sorting_score[0] / 100.0),
+                "secondary_score": float(-sorting_score[1] / 100.0),
+                "nexttour": bool(sorting_score[4] == -1),
+            }
+        return {
+            "primary_score": float(-sorting_score[0] / 100.0),
+            "secondary_score": float(-sorting_score[1] / 100.0),
+            "nexttour": bool(sorting_score[2] == -1),
+        }
 
     @property
     def display_score(self):
@@ -408,13 +455,14 @@ class RunScore:
             "penalties": current_penalties,
         }
         if self.scoring_system == "rosfarr.am_final_fw":
-            sorting_score = self.sorting_score[0]
-            result.udpdate({
-                "total_scores": {
-                    "primary": -sorting_score[0],
-                    "secondary": -sorting_score[1],
+            sorting_score = self.sorting_score
+            result.update({
+                "total_score": {
+                    "primary_score": [-sorting_score[0].numerator, sorting_score[0].denominator],
+                    "secondary_score": [-sorting_score[1].numerator, sorting_score[1].denominator],
                 },
-            });
+            })
+        return result
 
     def serialize(self):
         scores = {}
@@ -422,7 +470,8 @@ class RunScore:
             scores[str(discipline_judge.id)] = score.serialize(discipline_judge=discipline_judge)
         return {
             "total_run_score": self.display_score,
-            "scores": scores
+            "verbose_run_score": self.verbose_display_score,
+            "scores": scores,
         }
 
 

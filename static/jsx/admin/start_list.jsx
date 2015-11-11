@@ -41,8 +41,8 @@ class StartList extends React.Component {
     }
     onCbChange() {
         this.setState({
-            include_acrobatics: this.refs.cb_acro.getDOMNode().checked,
-            include_formation_sportsmen: this.refs.cb_forms.getDOMNode().checked,
+            include_acrobatics: this.refs.cb_acro.checked,
+            include_formation_sportsmen: this.refs.cb_forms.checked,
         });
     }
     onDisciplineCbChange(discipline_id, event) {

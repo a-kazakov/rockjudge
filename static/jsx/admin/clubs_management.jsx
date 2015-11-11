@@ -29,7 +29,7 @@ class ClubEditorRow extends React.Component {
                             <label className="full-width">
                                 { _("models.club.name") }
                                 <input
-                                    ref={ function(e) { if (e) { e.getDOMNode().select(); this._name = e.getDOMNode(); } }.bind(this) }
+                                    ref={ function(e) { if (e) { e.select(); this._name = e; } }.bind(this) }
                                     className="full-width"
                                     defaultValue={ this.props.club.name } />
                             </label>
@@ -38,7 +38,7 @@ class ClubEditorRow extends React.Component {
                             <label className="full-width">
                                 { _("models.club.city") }
                                 <input
-                                    ref={ (e) => e && (this._city = e.getDOMNode()) }
+                                    ref={ (e) => e && (this._city = e) }
                                     className="full-width"
                                     defaultValue={ this.props.club.city } />
                             </label>
@@ -47,7 +47,7 @@ class ClubEditorRow extends React.Component {
                             <label className="full-width">
                                 { _("models.club.external_id") }<br />
                                 <input
-                                    ref={ (e) => e && (this._external_id = e.getDOMNode()) }
+                                    ref={ (e) => e && (this._external_id = e) }
                                     defaultValue={ this.props.club.external_id } />
                             </label>
                         </div>
