@@ -212,8 +212,8 @@ var DanceScoreInput = (function (_BaseScoreInput) {
             return {
                 fw_man: !this.isEmpty(this.props.score.fw_man) ? parseInt(this.props.score.fw_man) || 0 : null,
                 fw_woman: !this.isEmpty(this.props.score.fw_woman) ? parseInt(this.props.score.fw_woman) || 0 : null,
-                dance_figs: !this.isEmpty(this.props.score.dance_figs) ? parseInt(this.props.score.dance_figs) || 0 : null,
-                composition: !this.isEmpty(this.props.score.composition) ? parseInt(this.props.score.composition) || 0 : null,
+                dance_figs: !this.isEmpty(this.props.score.dance_figs) ? parseFloat(this.props.score.dance_figs) || 0 : null,
+                composition: !this.isEmpty(this.props.score.composition) ? parseFloat(this.props.score.composition) || 0 : null,
                 small_mistakes: !this.isEmpty(this.props.score.small_mistakes) ? parseInt(this.props.score.small_mistakes) || 0 : null,
                 big_mistakes: !this.isEmpty(this.props.score.big_mistakes) ? parseInt(this.props.score.big_mistakes) || 0 : null
             };
@@ -613,6 +613,9 @@ var TourAdminScoreInput = (function (_React$Component3) {
         value: function render() {
             switch (this.props.discipline_judge.role) {
                 case "acro_judge":
+                    if (this.props.scoring_system_name == "rosfarr.am_final_fw") {
+                        return React.createElement(DanceScoreInput, this.props);
+                    }
                     return React.createElement(AcroScoreInput, this.props);
                 case "dance_judge":
                     if (this.props.scoring_system_name == "rosfarr.formation") {
@@ -666,7 +669,7 @@ var TourAdminScoreCell = (function (_React$Component4) {
                 return React.createElement(
                     "div",
                     { onClick: this.props.startEditing },
-                    this.props.value.total_score.toFixed(1)
+                    this.props.value.total_score.toFixed(2)
                 );
             } else {
                 return React.createElement(TourAdminScoreInput, {

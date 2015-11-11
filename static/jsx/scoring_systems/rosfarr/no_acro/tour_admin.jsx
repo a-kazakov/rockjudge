@@ -95,8 +95,8 @@ class DanceScoreInput extends BaseScoreInput {
         return {
             fw_man: !this.isEmpty(this.props.score.fw_man) ? parseInt(this.props.score.fw_man) || 0 : null,
             fw_woman: !this.isEmpty(this.props.score.fw_woman) ? parseInt(this.props.score.fw_woman) || 0 : null,
-            dance_figs: !this.isEmpty(this.props.score.dance_figs) ? parseInt(this.props.score.dance_figs) || 0 : null,
-            composition: !this.isEmpty(this.props.score.composition) ? parseInt(this.props.score.composition) || 0 : null,
+            dance_figs: !this.isEmpty(this.props.score.dance_figs) ? parseFloat(this.props.score.dance_figs) || 0 : null,
+            composition: !this.isEmpty(this.props.score.composition) ? parseFloat(this.props.score.composition) || 0 : null,
             small_mistakes: !this.isEmpty(this.props.score.small_mistakes) ? parseInt(this.props.score.small_mistakes) || 0 : null,
             big_mistakes: !this.isEmpty(this.props.score.big_mistakes) ? parseInt(this.props.score.big_mistakes) || 0 : null,
         };
@@ -278,6 +278,9 @@ class TourAdminScoreInput extends React.Component {
     render() {
         switch (this.props.discipline_judge.role) {
         case "acro_judge":
+            if (this.props.scoring_system_name == "rosfarr.am_final_fw") {
+                return <DanceScoreInput {...this.props} />
+            }
             return <AcroScoreInput {...this.props} />
         case "dance_judge":
             if (this.props.scoring_system_name == "rosfarr.formation") {
@@ -307,7 +310,7 @@ class TourAdminScoreCell extends React.Component {
                 )
                 return <div onClick={ this.props.startEditing }>{ this.props.value.raw_data.jump_steps + tv_str }</div>
             }
-            return <div onClick={ this.props.startEditing }>{ this.props.value.total_score.toFixed(1) }</div>
+            return <div onClick={ this.props.startEditing }>{ this.props.value.total_score.toFixed(2) }</div>
         } else {
             return <TourAdminScoreInput
                 score={ this.props.value.raw_data }

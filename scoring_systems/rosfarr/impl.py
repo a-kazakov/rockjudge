@@ -8,8 +8,8 @@ from exceptions import ApiError
 POSSIBLE_DEDUCTIONS = {0, 5, 10, 25, 50, 75, 100}
 
 
-def apply_deduction(base_score, deduction):
-    return base_score * (100 - deduction) // 100
+def apply_reduction(base_score, reduction):
+    return base_score * (100 - reduction) // 100
 
 
 def m100(score):
@@ -113,8 +113,42 @@ class DanceScore(BaseScore):
     @staticmethod
     def get_total_score(raw_scores):
         return sum([
-            apply_deduction(m100(10), raw_scores["fw_man"]),
-            apply_deduction(m100(10), raw_scores["fw_woman"]),
+            apply_reduction(m100(10), raw_scores["fw_man"]),
+            apply_reduction(m100(10), raw_scores["fw_woman"]),
+            m100(raw_scores["dance_figs"]),
+            m100(raw_scores["composition"]),
+             -5 * m100(raw_scores["small_mistakes"]),  # NOQA
+            -30 * m100(raw_scores["big_mistakes"]),
+        ])
+
+
+class FinalDanceScore(BaseScore):
+    DEFAULT_SCORES = {
+        "fw_man": 100,
+        "fw_woman": 100,
+        "dance_figs": 0,
+        "composition": 0,
+        "small_mistakes": 0,
+        "big_mistakes": 0,
+    }
+    INITIAL_SCORES = {
+        "small_mistakes": 0,
+        "big_mistakes": 0,
+    }
+    SCORES_VALIDATORS = {
+        "fw_man": lambda x: type(x) is int and x in POSSIBLE_DEDUCTIONS,
+        "fw_woman": lambda x: type(x) is int and x in POSSIBLE_DEDUCTIONS,
+        "dance_figs": lambda x: type(x) in (float, int) and 0 <= x <= 12.5 and round(x * 100) % 50 == 0,
+        "composition": lambda x: type(x) in (float, int) and 0 <= x <= 12.5 and round(x * 100) % 50 == 0,
+        "small_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+        "big_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+    }
+
+    @staticmethod
+    def get_total_score(raw_scores):
+        return sum([
+            apply_reduction(m100(5), raw_scores["fw_man"]),
+            apply_reduction(m100(5), raw_scores["fw_woman"]),
             m100(raw_scores["dance_figs"]),
             m100(raw_scores["composition"]),
              -5 * m100(raw_scores["small_mistakes"]),  # NOQA
@@ -128,19 +162,19 @@ class AcroScore:
         raw_data = score.get_data()
         num_acros = len(score.run.participant.acrobatics)
         self.data = {
-            "deductions": raw_data.pop("deductions", [None] * num_acros),
+            "reductions": raw_data.pop("reductions", [None] * num_acros),
             "mistakes": raw_data.pop("mistakes", 0),
         }
 
     @property
     def total_score(self):
         result = 0
-        acro_data = enumerate(zip(self.score.run.acrobatics, self.data["deductions"]))
-        for acro_idx, (acro, deduction) in acro_data:
-            if deduction is not None:
+        acro_data = enumerate(zip(self.score.run.acrobatics, self.data["reductions"]))
+        for acro_idx, (acro, reduction) in acro_data:
+            if reduction is not None:
                 override = self.score.run.get_acrobatic_override(acro_idx)
                 base_score = override.score if override is not None else acro["score"]
-                result += apply_deduction(m100(base_score), deduction)
+                result += apply_reduction(m100(base_score), reduction)
         result -= 30 * m100(self.data["mistakes"])
         return result
 
@@ -148,13 +182,13 @@ class AcroScore:
         if "mistakes" in new_data:
             mistakes = new_data["mistakes"]
             self.data["mistakes"] = mistakes if type(mistakes) is int and 0 <= mistakes <= 100 else 0
-        if "deductions" in new_data:
-            for idx, deduction in enumerate(new_data["deductions"]):
-                if deduction is not None and idx < len(self.data["deductions"]):
-                    cleared_deduction = deduction \
-                        if type(deduction) is int and deduction in POSSIBLE_DEDUCTIONS \
+        if "reductions" in new_data:
+            for idx, reduction in enumerate(new_data["reductions"]):
+                if reduction is not None and idx < len(self.data["reductions"]):
+                    cleared_reduction = reduction \
+                        if type(reduction) is int and reduction in POSSIBLE_DEDUCTIONS \
                         else None
-                    self.data["deductions"][idx] = cleared_deduction
+                    self.data["reductions"][idx] = cleared_reduction
         self.score.set_data(self.data)
 
     def serialize(self):
@@ -229,6 +263,8 @@ def ScoreWrapper(score, scoring_system, discipline_judge=None):
     if role == "tech_judge":
         return TechScore(score)
     if role in ["acro_judge", "dance_judge"]:
+        if scoring_system == "rosfarr.am_final_fw":
+            return FinalDanceScore(score)
         if scoring_system == "rosfarr.no_acro":
             return DanceScore(score)
         if scoring_system == "rosfarr.acro":
@@ -355,7 +391,8 @@ class RunScore:
 
     @property
     def display_score(self):
-        return "{:.2f} / {:.2f}".format(-self.sorting_score[0] / 100.0, -self.sorting_score[1] / 100.0)
+        sorting_score = self.sorting_score
+        return "{:.2f} / {:.2f}".format(-sorting_score[0] / 100.0, -sorting_score[1] / 100.0)
 
     def serialize_data_to_inherit(self):
         if "penalties" in self.run.inherited_data:
@@ -367,9 +404,17 @@ class RunScore:
                 "tour": self.run.tour.name,
                 "penalty": int(self.penalties) // 100,
             })
-        return {
+        result = {
             "penalties": current_penalties,
         }
+        if self.scoring_system == "rosfarr.am_final_fw":
+            sorting_score = self.sorting_score[0]
+            result.udpdate({
+                "total_scores": {
+                    "primary": -sorting_score[0],
+                    "secondary": -sorting_score[1],
+                },
+            });
 
     def serialize(self):
         scores = {}
