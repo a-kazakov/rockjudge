@@ -218,9 +218,10 @@ var TabletSelectorInput = (function (_React$Component2) {
                 ));
             }).bind(this));
             var layout_class = this.getButtonsCount() <= 10 ? "selector-layout" : "selector-layout-2rows";
+            var selected_class = this.props.active === null ? "" : " selected";
             return React.createElement(
                 "div",
-                { className: "scoring-layout " + layout_class + " n-" + this.getButtonsCount().toString() },
+                { className: "scoring-layout " + layout_class + selected_class + " n-" + this.getButtonsCount().toString() },
                 result
             );
         }
@@ -281,7 +282,7 @@ var TabletPointFiveSelectInput = (function (_React$Component4) {
         key: "createArray",
         value: function createArray(min, max) {
             var result = [];
-            for (var idx = 2 * min; idx <= 2 * max; ++idx) {
+            for (var idx = Math.round(2 * min); idx <= Math.round(2 * max); ++idx) {
                 result.push([idx / 2, idx % 2 ? (idx / 2).toFixed(1) : Math.floor(idx / 2).toString()]);
             }
             return result;

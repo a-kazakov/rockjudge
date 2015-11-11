@@ -23,7 +23,7 @@ var DisciplineResultsButtons = (function (_React$Component) {
             var _this = this;
 
             return (function () {
-                console.log(message);_this.props.onSignal(message);
+                return _this.props.onSignal(message);
             }).bind(this);
         }
     }, {

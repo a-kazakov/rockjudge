@@ -1,6 +1,6 @@
 class TourResultsButtons extends React.Component {
     signal(message) {
-        return (() => {console.log(message); this.props.onSignal(message)}).bind(this);
+        return (() => this.props.onSignal(message)).bind(this);
     }
     render() {
         return <div>

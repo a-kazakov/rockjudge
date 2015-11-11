@@ -105,12 +105,12 @@ class DanceScoreInput extends BaseScoreInput {
 
 class AcroScoreInput extends BaseScoreInput {
     renderTable() {
-        var fields = this.props.score.deductions.map(function(value, idx) {
+        var fields = this.props.score.reductions.map(function(value, idx) {
             return [<th key={ "H" + idx }>A{idx + 1}:</th>, <td key={ "V" + idx }>
                 <input
                     type="text"
-                    value={ this.props.score.deductions[idx] }
-                    onChange={ this.onChange.bind(this, ["deductions", idx]) }
+                    value={ this.props.score.reductions[idx] }
+                    onChange={ this.onChange.bind(this, ["reductions", idx]) }
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td>]
         }.bind(this));
@@ -131,8 +131,8 @@ class AcroScoreInput extends BaseScoreInput {
     }
     serialize() {
         return {
-            deductions: this.props.score.deductions.map(function(deduction) {
-                return !this.isEmpty(deduction) ? parseInt(deduction) || 0 : null;
+            reductions: this.props.score.reductions.map(function(reduction) {
+                return !this.isEmpty(reduction) ? parseInt(reduction) || 0 : null;
             }.bind(this)),
             mistakes: parseInt(this.props.score.mistakes) || 0,
         }

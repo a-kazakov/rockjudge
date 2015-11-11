@@ -389,7 +389,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
     }, {
         key: "renderAcroScore",
         value: function renderAcroScore(score) {
-            var acro_scores = score.data.raw_data.deductions.map((function (score, idx) {
+            var acro_scores = score.data.raw_data.reductions.map((function (score, idx) {
                 return React.createElement(
                     "tr",
                     { key: idx },

@@ -66,7 +66,6 @@ var JudgeTablet = (function (_React$Component) {
                     state_upd["tour"] = tour;
                     // Find discipline judge
                     state_upd["discipline_judge"] = null;
-                    console.log(tour, tour.discipline.discipline_judges);
                     tour.discipline.discipline_judges.forEach((function (dj) {
                         if (dj.judge.id == this.props.judge_id) {
                             state_upd["discipline_judge"] = dj;

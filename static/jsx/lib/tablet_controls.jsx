@@ -140,19 +140,20 @@ class TabletSelectorInput extends React.Component {
         return this.props.choices.length;
     }
     render() {
-        var result = [];
+        let result = [];
         this.props.choices.forEach(function(el) {
-            var key = el[0];
-            var text = el[1];
-            var active_class_name = (this.props.active === key) ? " active" : "";
+            let key = el[0];
+            let text = el[1];
+            let active_class_name = (this.props.active === key) ? " active" : "";
             result.push(<button
                 key={key}
                 {...onTouchOrClick(this.onClick.bind(this, key))}
                 className={ "tbtn score-btn" + active_class_name }
             >{text}</button>);
         }.bind(this));
-        var layout_class = (this.getButtonsCount() <= 10) ? "selector-layout" : "selector-layout-2rows";
-        return <div className={"scoring-layout " + layout_class + " n-" + this.getButtonsCount().toString() }>{ result }</div>
+        let layout_class = (this.getButtonsCount() <= 10) ? "selector-layout" : "selector-layout-2rows";
+        let selected_class = this.props.active === null ? "" : " selected"
+        return <div className={"scoring-layout " + layout_class + selected_class + " n-" + this.getButtonsCount().toString() }>{ result }</div>
     }
     onClick(n) {
         this.props.onValueUpdate(n);
@@ -176,7 +177,7 @@ class TabletIntegerSelectInput extends React.Component {
 class TabletPointFiveSelectInput extends React.Component {
     createArray(min, max) {
         let result = [];
-        for (let idx = 2 * min; idx <= 2 * max; ++idx) {
+        for (let idx = Math.round(2 * min); idx <= Math.round(2 * max); ++idx) {
             result.push([idx / 2, (idx % 2) ? (idx / 2).toFixed(1) : Math.floor(idx / 2).toString()]);
         }
         return result;

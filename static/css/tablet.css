@@ -15,18 +15,21 @@ body,
 }
 .read-only .tbtn:not(.ignore-readonly):not(.active),
 .read-only .mistakes .tbtn:not(.ignore-readonly):not(.active) {
-  background-color: #666;
-  color: #fff;
+  background-color: #666 !important;
+  color: #fff !important;
 }
 .read-only .mistakes .value:not(.ignore-readonly):not(.active) {
-  background-color: #ddd;
-  color: #000;
+  background-color: #ddd !important;
+  color: #000 !important;
 }
 .spacer {
   height: 30px;
 }
 .scoring-layout {
   margin-bottom: 7px;
+}
+.scoring-layout.selected .tbtn:not(.active) {
+  background-color: #3f5765;
 }
 .total-score {
   font-weight: bold;

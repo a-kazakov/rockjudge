@@ -39,7 +39,7 @@ class TourResultsVerboseTableRow extends React.Component {
         </tbody></table>
     }
     renderAcroScore(score) {
-        let acro_scores = score.data.raw_data.deductions.map(function(score, idx) {
+        let acro_scores = score.data.raw_data.reductions.map(function(score, idx) {
             return <tr key={ idx }>
                 <th><p>{ __("results.breakdown.acro_n", idx + 1) }:</p></th>
                 <td><p>{ this.formatScore(score, "-$%") }</p></td>

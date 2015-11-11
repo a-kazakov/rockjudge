@@ -235,7 +235,7 @@ var AcroScoreInput = (function (_BaseScoreInput2) {
     _createClass(AcroScoreInput, [{
         key: "renderTable",
         value: function renderTable() {
-            var fields = this.props.score.deductions.map((function (value, idx) {
+            var fields = this.props.score.reductions.map((function (value, idx) {
                 return [React.createElement(
                     "th",
                     { key: "H" + idx },
@@ -247,8 +247,8 @@ var AcroScoreInput = (function (_BaseScoreInput2) {
                     { key: "V" + idx },
                     React.createElement("input", {
                         type: "text",
-                        value: this.props.score.deductions[idx],
-                        onChange: this.onChange.bind(this, ["deductions", idx]),
+                        value: this.props.score.reductions[idx],
+                        onChange: this.onChange.bind(this, ["reductions", idx]),
                         onKeyUp: this.onKeyUp.bind(this) })
                 )];
             }).bind(this));
@@ -287,8 +287,8 @@ var AcroScoreInput = (function (_BaseScoreInput2) {
         key: "serialize",
         value: function serialize() {
             return {
-                deductions: this.props.score.deductions.map((function (deduction) {
-                    return !this.isEmpty(deduction) ? parseInt(deduction) || 0 : null;
+                reductions: this.props.score.reductions.map((function (reduction) {
+                    return !this.isEmpty(reduction) ? parseInt(reduction) || 0 : null;
                 }).bind(this)),
                 mistakes: parseInt(this.props.score.mistakes) || 0
             };

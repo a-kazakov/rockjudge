@@ -16,13 +16,13 @@ html, body, #content {
 }
 
 .read-only .tbtn:not(.ignore-readonly):not(.active), .read-only .mistakes .tbtn:not(.ignore-readonly):not(.active) {
-  background-color: #666;
-  color: #fff;
+  background-color: #666 !important;
+  color: #fff !important;
 }
 
 .read-only .mistakes .value:not(.ignore-readonly):not(.active) {
-  background-color: #ddd;
-  color: #000;
+  background-color: #ddd !important;
+  color: #000 !important;
 }
 
 .spacer {
@@ -31,6 +31,11 @@ html, body, #content {
 
 .scoring-layout {
   margin-bottom: 7px;
+  &.selected {
+    .tbtn:not(.active) {
+      background-color: @ui-medium;
+    }
+  }
 }
 
 .total-score {
