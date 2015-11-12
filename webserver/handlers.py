@@ -125,7 +125,7 @@ class ApiHandler(tornado.web.RequestHandler):
             client_id = None
         ws_message = WsMessage(client_id)
         result = Api.call(method, data, ws_message=ws_message)
-        response = json.dumps(result)
+        response = json.dumps(result, ensure_ascii=False)
         if not ws_message.empty():
             with Database.instance().db.transaction():
                 ws_message.send()

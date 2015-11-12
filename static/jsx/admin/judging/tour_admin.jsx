@@ -187,7 +187,11 @@ class TourAdminScoresRow extends React.Component {
                 updateValue={ this.updateHeat.bind(this) } />
             <td className="number">{ this.props.run.participant.number }</td>
             <td className="name">{ this.props.run.participant.name }</td>
-            <TourAdminAcrobaticsCell run_id={ this.props.run.id } acrobatics={ this.props.run.acrobatics } />
+            <TourAdminAcrobaticsCell
+                run_id={ this.props.run.id }
+                program_name={ this.props.run.program_name }
+                acrobatics={ this.props.run.acrobatics }
+                programs={ this.props.run.participant.programs } />
             <td className="total">{ this.props.run.total_score }</td>
             { scores }
         </tr>;
@@ -241,14 +245,16 @@ class TourAdminAcrobaticEditorRow extends React.Component {
             <td className="old-score">
                 { this.props.acrobatic.original_score.toFixed(1) }
             </td>
-            <td className="old-score">
+            <td className="new-score">
                 { this.props.acrobatic.has_override
                     ? this.props.acrobatic.score.toFixed(1)
                     : null }
             </td>
             <td className="controls">
                 { this.props.acrobatic.has_override
-                    ? <button className="btn btn-default btn-sm" onClick={ this.onReset.bind(this) }>Reset</button>
+                    ? <button className="btn btn-default btn-sm" onClick={ this.onReset.bind(this) }>
+                        { _("judging.buttons.reset_acrobatic_override") }
+                    </button>
                     : null }
                 <button className="btn btn-default btn-sm" onClick={ this.onMinus.bind(this) }>&minus;</button>
                 <button className="btn btn-default btn-sm" onClick={ this.onPlus.bind(this) }>+</button>
@@ -257,9 +263,39 @@ class TourAdminAcrobaticEditorRow extends React.Component {
     }
 }
 
-class TourAdminAcrobaticEditor extends React.Component {
+class TourAdminAcrobaticLoader extends React.Component {
+    onSubmit() {
+        let value = this.refs.selector.value;
+        if (value === "null") {
+            value = null;
+        }
+        if (confirm("sure?")) {
+            this.props.onLoad(value);
+        }
+    }
+    renderSelector() {
+        return <select defaultValue="null" ref="selector">
+            <option value="null">-</option>
+            { this.props.programs.map( program =>
+                <option value={ program.id } key={ program.id }>{ program.name }</option>
+            ) }
+        </select>
+    }
     render() {
-        return <div className="form-acro-input">
+        return <form onSubmit={ this.onSubmit.bind(this) } className="acro-loader pull-left">
+            { this.renderSelector() }
+            <button className="btn btn-primary btn-sm">{ _("global.buttons.load") }</button>
+        </form>
+    }
+}
+
+class TourAdminAcrobaticEditor extends React.Component {
+    loadAcrobatics(program_id) {
+        Api("run.load_program", { program_id: program_id, run_id: this.props.run_id }).send();
+    }
+    renderBody() {
+        return <div>
+            <h4>{ this.props.program_name }</h4>
             <table className="acrobatics"><tbody>
                 <tr>
                     <th className="description">{ _("judging.labels.acro_description") }</th>
@@ -275,9 +311,21 @@ class TourAdminAcrobaticEditor extends React.Component {
                         key={ idx } />
                 ) }
             </tbody></table>
-            <button className="btn btn-primary btn-sm" onClick={ this.props.stopEditing }>
+        </div>
+    }
+    renderMock() {
+        return <div className="no-program text-center">No program loaded</div>
+    }
+    render() {
+        return <div className="form-acro-input">
+            { this.props.program_name === null ? this.renderMock() : this.renderBody() }
+            <TourAdminAcrobaticLoader
+                onLoad={ this.loadAcrobatics.bind(this) }
+                programs={ this.props.programs } />
+            <button className="btn btn-primary btn-sm pull-right" onClick={ this.props.stopEditing }>
                 { _("global.buttons.close") }
             </button>
+            <div className="clearfix"></div>
         </div>
     }
 }
@@ -307,8 +355,15 @@ class TourAdminAcrobaticsCell extends React.Component {
     render() {
         if (this.state.editing) {
             return <td className="acrobatics editing">
-                <TourAdminAcrobaticEditor stopEditing={ this.stopEditing.bind(this) } run_id={ this.props.run_id } {...this.props} />
+                <TourAdminAcrobaticEditor
+                    stopEditing={ this.stopEditing.bind(this) }
+                    {...this.props} />
             </td>
+        }
+        if (this.props.program_name === null) {
+        return <td className="acrobatics" onClick={ this.startEditing.bind(this) }>
+            &mdash;
+        </td>
         }
         let has_overrides = false;
         let original_score = 0;
@@ -355,7 +410,9 @@ class TourAdminBody extends React.Component {
             },
             runs: {
                 scores: {},
-                participant: {},
+                participant: {
+                    programs: {},
+                },
             },
         }
         let serialized = this.storage.get("Tour")
@@ -376,7 +433,9 @@ class TourAdminBody extends React.Component {
                 runs: {
                     acrobatics: {},
                     scores: {},
-                    participant: {},
+                    participant: {
+                        programs: {},
+                    },
                 },
             }
         })

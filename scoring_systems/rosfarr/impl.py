@@ -162,7 +162,7 @@ class AcroScore:
     def __init__(self, score):
         self.score = score
         raw_data = score.get_data()
-        num_acros = len(score.run.participant.acrobatics)
+        num_acros = len(score.run.acrobatics)
         self.data = {
             "reductions": raw_data.pop("reductions", [None] * num_acros),
             "mistakes": raw_data.pop("mistakes", 0),

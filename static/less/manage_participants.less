@@ -4,11 +4,47 @@ html, body {
   overflow-x: hidden;
 }
 
+h5 {
+  font-weight: bold;
+}
+
 .manage-participants {
   margin: 10px;
   .total-participants {
     font-weight: bold;
     text-align: right;
+  }
+  .program {
+    tr:nth-child(2n+1) {
+      background-color: lighten(@ui-light, 10%);
+    }
+    td {
+      padding: 5px;
+    }
+  }
+  .program-creator {
+    margin-top: 10px;
+  }
+  .program-editor {
+    padding: 10px;
+    background-color: lighten(@ui-light, 10%);
+    margin-bottom: 10px;
+    &.create {
+      background-color: @brand-warning;
+    }
+    .name {
+      font-weight: bold;
+      margin-bottom: 10px;
+      width: 80%;
+    }
+    .default-for {
+      width: 20%;
+      margin-bottom: 10px;
+      font-style: italic;
+    }
+    .elements {
+      margin-bottom: 10px;
+    }
   }
   table {
     .number {

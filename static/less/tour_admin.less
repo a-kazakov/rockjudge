@@ -73,9 +73,14 @@
       background-color: @ui-light;
     }
     .form-acro-input {
+      width: 630px;
       color: @ui-white;
+      .no-program {
+        margin: 10px 0 20px;
+        font-style: italic;
+      }
       .acrobatics {
-        width: 600px;
+        width: 100%;
         td, th {
           vertical-align: middle;
         }
@@ -91,6 +96,13 @@
         .old-score, .new-score {
           text-align: center;
           width: 50px;
+        }
+      }
+      .acro-loader {
+        color: #000;
+        select {
+          width: 300px;
+          height: 29px;
         }
       }
     }

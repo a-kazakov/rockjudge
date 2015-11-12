@@ -20,7 +20,7 @@ var TourInputForm = (function (_React$Component) {
     _createClass(TourInputForm, [{
         key: "render",
         value: function render() {
-            var classes = ["tour", "form-horizontal"].concat(this.props.classes || []).join(" ");
+            var classes = ["tour", ""].concat(this.props.classes || []).join(" ");
             var tour = this.props.tour || { id: "new" };
             return React.createElement(
                 "form",
@@ -36,105 +36,56 @@ var TourInputForm = (function (_React$Component) {
                             { className: "form-group form-group-sm" },
                             React.createElement(
                                 "label",
-                                { className: "col-sm-4 control-label" },
-                                _("models.tour.name"),
-                                ":"
+                                { className: "control-label" },
+                                _("models.tour.name")
                             ),
-                            React.createElement(
-                                "div",
-                                { className: "col-sm-8" },
-                                React.createElement("input", {
-                                    list: "dl_tours",
-                                    type: "text",
-                                    className: "form-control",
-                                    ref: "name",
-                                    defaultValue: tour.name })
-                            )
+                            React.createElement("input", {
+                                list: "dl_tours",
+                                type: "text",
+                                className: "form-control",
+                                ref: "name",
+                                defaultValue: tour.name })
                         ),
                         React.createElement(
                             "div",
-                            { className: "form-group form-group-sm" },
-                            React.createElement(
-                                "label",
-                                { className: "col-sm-4 control-label" },
-                                _("models.tour.num_advances"),
-                                ":"
-                            ),
+                            { className: "form-group form-group-sm row" },
                             React.createElement(
                                 "div",
-                                { className: "col-sm-8" },
+                                { className: "col-lg-4" },
+                                React.createElement(
+                                    "label",
+                                    { className: "control-label" },
+                                    _("models.tour.num_advances")
+                                ),
                                 React.createElement("input", {
                                     type: "text",
                                     className: "form-control",
                                     ref: "num_advances",
                                     disabled: tour.finalized,
                                     defaultValue: tour.num_advances })
-                            )
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "form-group form-group-sm" },
-                            React.createElement(
-                                "label",
-                                { className: "col-sm-4 control-label" },
-                                _("models.tour.participants_per_heat"),
-                                ":"
                             ),
                             React.createElement(
                                 "div",
-                                { className: "col-sm-8" },
+                                { className: "col-lg-4" },
+                                React.createElement(
+                                    "label",
+                                    { className: "control-label" },
+                                    _("models.tour.participants_per_heat")
+                                ),
                                 React.createElement("input", {
                                     type: "text",
                                     className: "form-control",
                                     ref: "participants_per_heat",
                                     defaultValue: tour.participants_per_heat || 2 })
-                            )
-                        )
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "col-md-6" },
-                        React.createElement(
-                            "div",
-                            { className: "form-group form-group-sm" },
-                            React.createElement(
-                                "label",
-                                { className: "col-sm-4 control-label" },
-                                _("models.tour.scoring_system_name"),
-                                ":"
                             ),
                             React.createElement(
                                 "div",
-                                { className: "col-sm-8" },
+                                { div: true, className: "col-lg-4" },
                                 React.createElement(
-                                    "select",
-                                    {
-                                        className: "form-control",
-                                        ref: "scoring_system_name",
-                                        disabled: tour.finalized,
-                                        defaultValue: tour.scoring_system_name || GL.scoring_systems[0] },
-                                    GL.scoring_systems.map(function (sn) {
-                                        return React.createElement(
-                                            "option",
-                                            { key: sn, value: sn },
-                                            _("scoring_systems_names." + sn)
-                                        );
-                                    })
-                                )
-                            )
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "form-group form-group-sm" },
-                            React.createElement(
-                                "label",
-                                { className: "col-sm-4 control-label" },
-                                _("models.tour.is_hope_tour"),
-                                ":"
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "col-sm-8" },
+                                    "label",
+                                    { className: "control-label" },
+                                    _("models.tour.is_hope_tour")
+                                ),
                                 React.createElement(
                                     "div",
                                     { className: "checkbox" },
@@ -149,23 +100,74 @@ var TourInputForm = (function (_React$Component) {
                                     )
                                 )
                             )
-                        ),
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "col-md-6" },
                         React.createElement(
                             "div",
                             { className: "form-group form-group-sm" },
                             React.createElement(
+                                "label",
+                                { className: "control-label" },
+                                _("models.tour.scoring_system_name")
+                            ),
+                            React.createElement(
+                                "select",
+                                {
+                                    className: "form-control",
+                                    ref: "scoring_system_name",
+                                    disabled: tour.finalized,
+                                    defaultValue: tour.scoring_system_name || GL.scoring_systems[0] },
+                                GL.scoring_systems.map(function (sn) {
+                                    return React.createElement(
+                                        "option",
+                                        { key: sn, value: sn },
+                                        _("scoring_systems_names." + sn)
+                                    );
+                                })
+                            )
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "form-group form-group-sm row" },
+                            React.createElement(
                                 "div",
-                                { className: "col-sm-offset-4 col-sm-8" },
+                                { className: "col-lg-6" },
                                 React.createElement(
-                                    "button",
-                                    { className: "btn btn-primary btn-sm", type: "submit" },
-                                    _("global.buttons.submit")
+                                    "label",
+                                    { className: "control-label" },
+                                    _("models.tour.default_program")
                                 ),
-                                " ",
+                                React.createElement("input", {
+                                    type: "text",
+                                    className: "form-control",
+                                    ref: "default_program",
+                                    defaultValue: tour.default_program || "" })
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "col-lg-6" },
                                 React.createElement(
-                                    "button",
-                                    { className: "btn btn-primary btn-sm", type: "button", onClick: this.props.stopEditing },
-                                    _("global.buttons.discard")
+                                    "label",
+                                    { className: "control-label" },
+                                    " "
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "text-right" },
+                                    React.createElement(
+                                        "button",
+                                        { className: "btn btn-primary btn-sm", type: "submit" },
+                                        _("global.buttons.submit")
+                                    ),
+                                    " ",
+                                    React.createElement(
+                                        "button",
+                                        { className: "btn btn-primary btn-sm", type: "button", onClick: this.props.stopEditing },
+                                        _("global.buttons.discard")
+                                    )
                                 )
                             )
                         )
@@ -184,7 +186,8 @@ var TourInputForm = (function (_React$Component) {
         value: function serialize() {
             var result = {
                 name: this.refs.name.value,
-                participants_per_heat: this.refs.participants_per_heat.value
+                participants_per_heat: this.refs.participants_per_heat.value,
+                default_program: this.refs.default_program.value
             };
             if (!this.props.tour || !this.props.tour.finalized) {
                 $.extend(result, {
@@ -276,11 +279,7 @@ var TourEditingUI = (function (_React$Component2) {
                             " ",
                             this.props.tour.participants_per_heat,
                             " "
-                        )
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "col-md-5" },
+                        ),
                         React.createElement(
                             "p",
                             null,
@@ -293,7 +292,11 @@ var TourEditingUI = (function (_React$Component2) {
                             " ",
                             this.props.tour.hope_tour ? _("global.labels.yes") : _("global.labels.no"),
                             " "
-                        ),
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "col-md-5" },
                         React.createElement(
                             "p",
                             null,
@@ -305,6 +308,19 @@ var TourEditingUI = (function (_React$Component2) {
                             ),
                             " ",
                             _("scoring_systems_names." + this.props.tour.scoring_system_name),
+                            " "
+                        ),
+                        React.createElement(
+                            "p",
+                            null,
+                            React.createElement(
+                                "strong",
+                                null,
+                                _("models.tour.default_program"),
+                                ":"
+                            ),
+                            " ",
+                            this.props.tour.default_program,
                             " "
                         )
                     ),

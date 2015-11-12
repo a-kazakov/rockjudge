@@ -153,6 +153,9 @@ div.load-competition-page form.load-competition button {
   background-color: #bdd4de;
   padding: 10px 10px 10px 10px;
 }
+.ic-management-ui .tour label {
+  font-size: 12px;
+}
 .ic-management-ui .tour h3 {
   margin-top: 0;
 }

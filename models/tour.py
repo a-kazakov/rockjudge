@@ -7,12 +7,15 @@ from models.discipline import Discipline
 from models.proxies import tour_proxy
 from scoring_systems import get_scoring_system
 
+from webserver.websocket import WsMessage
+
 
 class Tour(BaseModel):
     name = peewee.CharField()
     next_tour = peewee.ForeignKeyField("self", null=True, default=None, related_name="prev_tour")
     num_advances = peewee.IntegerField()
     participants_per_heat = peewee.IntegerField()
+    default_program = peewee.CharField(default="")
     finalized = peewee.BooleanField(default=False)
     active = peewee.BooleanField(default=False)
     hope_tour = peewee.BooleanField(default=False)
@@ -20,7 +23,7 @@ class Tour(BaseModel):
     discipline = peewee.ForeignKeyField(Discipline, related_name="raw_tours")
     scoring_system_name = peewee.CharField()
 
-    RW_PROPS = ["name", "num_advances", "participants_per_heat", "hope_tour", "scoring_system_name"]
+    RW_PROPS = ["name", "num_advances", "participants_per_heat", "hope_tour", "scoring_system_name", "default_program"]
     RO_PROPS = ["finalized", "active"]
 
     PF_CHILDREN = {
@@ -135,14 +138,11 @@ class Tour(BaseModel):
                 heat=1,
                 tour=self,
             )
+            if self.default_program != "":
+                run.load_acrobatics(run.participant.get_default_program(self.default_program), WsMessage())
             self.runs.append(run)
-        participants_rev = {
-            p.id: p
-            for p in estimated_participants
-        }
         for run in self.runs:
             run.create_scores()
-            run.acrobatics_json = participants_rev[run.participant_id].acrobatics_json
             run.inherited_data = inherited_data[run.participant_id] if run.participant_id in inherited_data else {}
             run.save()
         self.shuffle_heats(ws_message=None, broadcast=False, shuffle=(len(existing_participant_ids) == 0))

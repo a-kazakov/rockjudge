@@ -6,6 +6,7 @@ from models.discipline import Discipline  # NOQA
 from models.discipline_judge import DisciplineJudge  # NOQA
 from models.judge import Judge  # NOQA
 from models.participant import Participant  # NOQA
+from models.program import Program  # NOQA
 from models.run import Run  # NOQA
 from models.score import Score  # NOQA
 from models.tour import Tour  # NOQA

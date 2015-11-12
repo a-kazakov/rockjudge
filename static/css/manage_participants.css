@@ -2,12 +2,45 @@ html,
 body {
   overflow-x: hidden;
 }
+h5 {
+  font-weight: bold;
+}
 .manage-participants {
   margin: 10px;
 }
 .manage-participants .total-participants {
   font-weight: bold;
   text-align: right;
+}
+.manage-participants .program tr:nth-child(2n+1) {
+  background-color: #dfeaef;
+}
+.manage-participants .program td {
+  padding: 5px;
+}
+.manage-participants .program-creator {
+  margin-top: 10px;
+}
+.manage-participants .program-editor {
+  padding: 10px;
+  background-color: #dfeaef;
+  margin-bottom: 10px;
+}
+.manage-participants .program-editor.create {
+  background-color: #f0ad4e;
+}
+.manage-participants .program-editor .name {
+  font-weight: bold;
+  margin-bottom: 10px;
+  width: 80%;
+}
+.manage-participants .program-editor .default-for {
+  width: 20%;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+.manage-participants .program-editor .elements {
+  margin-bottom: 10px;
 }
 .manage-participants table .number {
   width: 100px;

@@ -1,24 +1,22 @@
 class TourInputForm extends React.Component {
     render() {
-        let classes = ["tour", "form-horizontal"].concat(this.props.classes || []).join(" ");
+        let classes = ["tour", ""].concat(this.props.classes || []).join(" ");
         let tour = this.props.tour || { id: "new" }
         return <form className={ classes } key={ tour.id } onSubmit={ this.submitTour.bind(this) }>
             <div className="row">
                 <div className="col-md-6">
                     <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">{ _("models.tour.name") }:</label>
-                        <div className="col-sm-8">
-                            <input
-                                list="dl_tours"
-                                type="text"
-                                className="form-control"
-                                ref="name"
-                                defaultValue={ tour.name } />
-                        </div>
+                        <label className="control-label">{ _("models.tour.name") }</label>
+                        <input
+                            list="dl_tours"
+                            type="text"
+                            className="form-control"
+                            ref="name"
+                            defaultValue={ tour.name } />
                     </div>
-                    <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">{ _("models.tour.num_advances") }:</label>
-                        <div className="col-sm-8">
+                    <div className="form-group form-group-sm row">
+                        <div className="col-lg-4">
+                            <label className="control-label">{ _("models.tour.num_advances") }</label>
                             <input
                                 type="text"
                                 className="form-control"
@@ -26,34 +24,16 @@ class TourInputForm extends React.Component {
                                 disabled={ tour.finalized }
                                 defaultValue={ tour.num_advances }  />
                         </div>
-                    </div>
-                    <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">{ _("models.tour.participants_per_heat") }:</label>
-                        <div className="col-sm-8">
+                        <div className="col-lg-4">
+                            <label className="control-label">{ _("models.tour.participants_per_heat") }</label>
                             <input
                                 type="text"
                                 className="form-control"
                                 ref="participants_per_heat"
                                 defaultValue={ tour.participants_per_heat || 2 } />
                         </div>
-                    </div>
-                </div>
-                <div className="col-md-6">
-                    <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">{ _("models.tour.scoring_system_name") }:</label>
-                        <div className="col-sm-8">
-                            <select
-                                className="form-control"
-                                ref="scoring_system_name"
-                                disabled={ tour.finalized }
-                                defaultValue={ tour.scoring_system_name || GL.scoring_systems[0] } >
-                                { GL.scoring_systems.map((sn) => <option key={ sn } value={ sn }>{ _("scoring_systems_names." + sn) }</option>) }
-                            </select>
-                        </div>
-                    </div>
-                    <div className="form-group form-group-sm">
-                        <label className="col-sm-4 control-label">{ _("models.tour.is_hope_tour") }:</label>
-                        <div className="col-sm-8">
+                        <div div className="col-lg-4">
+                            <label className="control-label">{ _("models.tour.is_hope_tour") }</label>
                             <div className="checkbox">
                                 <label>
                                     <input
@@ -65,10 +45,33 @@ class TourInputForm extends React.Component {
                             </div>
                         </div>
                     </div>
+                </div>
+                <div className="col-md-6">
                     <div className="form-group form-group-sm">
-                        <div className="col-sm-offset-4 col-sm-8">
-                            <button className="btn btn-primary btn-sm" type="submit">{ _("global.buttons.submit") }</button>&nbsp;
-                            <button className="btn btn-primary btn-sm" type="button" onClick={ this.props.stopEditing }>{ _("global.buttons.discard") }</button>
+                        <label className="control-label">{ _("models.tour.scoring_system_name") }</label>
+                        <select
+                            className="form-control"
+                            ref="scoring_system_name"
+                            disabled={ tour.finalized }
+                            defaultValue={ tour.scoring_system_name || GL.scoring_systems[0] } >
+                            { GL.scoring_systems.map((sn) => <option key={ sn } value={ sn }>{ _("scoring_systems_names." + sn) }</option>) }
+                        </select>
+                    </div>
+                    <div className="form-group form-group-sm row">
+                        <div className="col-lg-6">
+                            <label className="control-label">{ _("models.tour.default_program") }</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                ref="default_program"
+                                defaultValue={ tour.default_program || "" } />
+                        </div>
+                        <div className="col-lg-6">
+                            <label className="control-label">&nbsp;</label>
+                            <div className="text-right">
+                                <button className="btn btn-primary btn-sm" type="submit">{ _("global.buttons.submit") }</button>&nbsp;
+                                <button className="btn btn-primary btn-sm" type="button" onClick={ this.props.stopEditing }>{ _("global.buttons.discard") }</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -83,6 +86,7 @@ class TourInputForm extends React.Component {
         let result = {
             name: this.refs.name.value,
             participants_per_heat: this.refs.participants_per_heat.value,
+            default_program: this.refs.default_program.value,
         };
         if (!this.props.tour || !this.props.tour.finalized) {
             $.extend(result, {
@@ -125,10 +129,11 @@ class TourEditingUI extends React.Component {
                 <div className="col-md-5">
                     <p><strong>{ _("models.tour.num_advances") }:</strong> { this.props.tour.num_advances } </p>
                     <p><strong>{ _("models.tour.participants_per_heat") }:</strong> { this.props.tour.participants_per_heat } </p>
+                    <p><strong>{ _("models.tour.is_hope_tour") }:</strong> { this.props.tour.hope_tour ? _("global.labels.yes") :  _("global.labels.no") } </p>
                 </div>
                 <div className="col-md-5">
-                    <p><strong>{ _("models.tour.is_hope_tour") }:</strong> { this.props.tour.hope_tour ? _("global.labels.yes") :  _("global.labels.no") } </p>
                     <p><strong>{ _("models.tour.scoring_system_name") }:</strong> { _("scoring_systems_names." + this.props.tour.scoring_system_name) } </p>
+                    <p><strong>{ _("models.tour.default_program") }:</strong> { this.props.tour.default_program } </p>
                 </div>
                 <div className="col-md-2">
                     <button className="full-width btn btn-primary btn-sm" onClick={ this.startEditing.bind(this) }>{ _("global.buttons.edit") }</button><br />
@@ -154,7 +159,6 @@ class TourEditingUI extends React.Component {
         }
         Api("tour.delete", { tour_id: this.props.tour.id }).send();
     }
-
 }
 
 class TourCreatingUI extends React.Component {

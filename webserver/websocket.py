@@ -42,7 +42,7 @@ class WebSocketClients(SockJSConnection):
             message, cl_id = cls.pending_messages[cls.next_to_send]
             if message is not None:
                 clients = copy.copy(cls.clients)
-                json_message = json.dumps(message)
+                json_message = json.dumps(message, ensure_ascii=False)
                 if cl_id in cls.clients:
                     cls.clients[cl_id].send(json_message)
                     del clients[cl_id]

@@ -177,6 +177,7 @@ function _(src, arg) {
                 "edit": "Редактировать",
                 "delete": "Удалить",
                 "discard": "Отменить",
+                "load": "Загрузить",
                 "save": "Сохранить",
                 "select_all": "Выбрать все",
                 "submit": "Сохранить"
@@ -206,6 +207,7 @@ function _(src, arg) {
                 "confirm_score": "Зафиксировать",
                 "init_tour": "Пересоздать тур",
                 "finalize_tour": "Финализировать",
+                "reset_acrobatic_override": "Сброс",
                 "shuffle_heats": "Перемешать заходы",
                 "start_tour": "Начать тур",
                 "stop_tour": "Остановить тур"
@@ -279,14 +281,20 @@ function _(src, arg) {
                 "last_name": "Фамилия",
                 "name": "Участник",
                 "number": "Номер",
+                "programs": "Программы",
                 "sportsmen": "Спортсмены",
                 "sportsmen_year_of_birth": "Г.р.",
                 "year_of_birth": "Год рождения",
                 "yob": "Г.р."
             },
+            "program": {
+                "default_for": "По умолчанию",
+                "name": "Название программы"
+            },
             "tour": {
-                "name": "Название тура",
+                "default_program": "Программа по умолчанию",
                 "is_hope_tour": "Тур «Надежды»",
+                "name": "Название тура",
                 "num_advances": "Квота вывода",
                 "participants_per_heat": "Участников в заходе",
                 "scoring_system_name": "Система судейства"

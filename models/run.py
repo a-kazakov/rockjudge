@@ -16,9 +16,11 @@ class Run(BaseModel):
     participant = peewee.ForeignKeyField(Participant)
     tour = peewee.ForeignKeyField(Tour, related_name="runs")
     heat = peewee.IntegerField()
-    acrobatics_json = peewee.TextField(default="[]")
+    program_name = peewee.CharField(null=True)
+    acrobatics_json = peewee.TextField(default="{}")
     inherited_data_json = peewee.TextField(default="{}")
 
+    RO_PROPS = ["program_name"]
     RW_PROPS = ["heat"]
 
     PF_SCHEMA = {
@@ -58,6 +60,23 @@ class Run(BaseModel):
 
     def get_data_to_inherit(self):
         return self.tour.scoring_system.get_run_data_to_inherit(self, self.tour.discipline_judges)
+
+    def load_acrobatics(self, program, ws_message):
+        if program is None:
+            self.program_name = None
+            self.acrobatics = []
+        else:
+            self.program_name = program.name
+            self.acrobatics_json = program.acrobatics_json
+        self.save()
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id,
+            schema={
+                "acrobatics": {},
+                "scores": {},
+            },
+        )
 
     def create_scores(self):
         from models import Score

@@ -296,7 +296,11 @@ var TourAdminScoresRow = (function (_React$Component4) {
                     { className: "name" },
                     this.props.run.participant.name
                 ),
-                React.createElement(TourAdminAcrobaticsCell, { run_id: this.props.run.id, acrobatics: this.props.run.acrobatics }),
+                React.createElement(TourAdminAcrobaticsCell, {
+                    run_id: this.props.run.id,
+                    program_name: this.props.run.program_name,
+                    acrobatics: this.props.run.acrobatics,
+                    programs: this.props.run.participant.programs }),
                 React.createElement(
                     "td",
                     { className: "total" },
@@ -402,7 +406,7 @@ var TourAdminAcrobaticEditorRow = (function (_React$Component6) {
                 ),
                 React.createElement(
                     "td",
-                    { className: "old-score" },
+                    { className: "new-score" },
                     this.props.acrobatic.has_override ? this.props.acrobatic.score.toFixed(1) : null
                 ),
                 React.createElement(
@@ -411,7 +415,7 @@ var TourAdminAcrobaticEditorRow = (function (_React$Component6) {
                     this.props.acrobatic.has_override ? React.createElement(
                         "button",
                         { className: "btn btn-default btn-sm", onClick: this.onReset.bind(this) },
-                        "Reset"
+                        _("judging.buttons.reset_acrobatic_override")
                     ) : null,
                     React.createElement(
                         "button",
@@ -431,8 +435,67 @@ var TourAdminAcrobaticEditorRow = (function (_React$Component6) {
     return TourAdminAcrobaticEditorRow;
 })(React.Component);
 
-var TourAdminAcrobaticEditor = (function (_React$Component7) {
-    _inherits(TourAdminAcrobaticEditor, _React$Component7);
+var TourAdminAcrobaticLoader = (function (_React$Component7) {
+    _inherits(TourAdminAcrobaticLoader, _React$Component7);
+
+    function TourAdminAcrobaticLoader() {
+        _classCallCheck(this, TourAdminAcrobaticLoader);
+
+        _get(Object.getPrototypeOf(TourAdminAcrobaticLoader.prototype), "constructor", this).apply(this, arguments);
+    }
+
+    _createClass(TourAdminAcrobaticLoader, [{
+        key: "onSubmit",
+        value: function onSubmit() {
+            var value = this.refs.selector.value;
+            if (value === "null") {
+                value = null;
+            }
+            if (confirm("sure?")) {
+                this.props.onLoad(value);
+            }
+        }
+    }, {
+        key: "renderSelector",
+        value: function renderSelector() {
+            return React.createElement(
+                "select",
+                { defaultValue: "null", ref: "selector" },
+                React.createElement(
+                    "option",
+                    { value: "null" },
+                    "-"
+                ),
+                this.props.programs.map(function (program) {
+                    return React.createElement(
+                        "option",
+                        { value: program.id, key: program.id },
+                        program.name
+                    );
+                })
+            );
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "form",
+                { onSubmit: this.onSubmit.bind(this), className: "acro-loader pull-left" },
+                this.renderSelector(),
+                React.createElement(
+                    "button",
+                    { className: "btn btn-primary btn-sm" },
+                    _("global.buttons.load")
+                )
+            );
+        }
+    }]);
+
+    return TourAdminAcrobaticLoader;
+})(React.Component);
+
+var TourAdminAcrobaticEditor = (function (_React$Component8) {
+    _inherits(TourAdminAcrobaticEditor, _React$Component8);
 
     function TourAdminAcrobaticEditor() {
         _classCallCheck(this, TourAdminAcrobaticEditor);
@@ -441,13 +504,23 @@ var TourAdminAcrobaticEditor = (function (_React$Component7) {
     }
 
     _createClass(TourAdminAcrobaticEditor, [{
-        key: "render",
-        value: function render() {
+        key: "loadAcrobatics",
+        value: function loadAcrobatics(program_id) {
+            Api("run.load_program", { program_id: program_id, run_id: this.props.run_id }).send();
+        }
+    }, {
+        key: "renderBody",
+        value: function renderBody() {
             var _this2 = this;
 
             return React.createElement(
                 "div",
-                { className: "form-acro-input" },
+                null,
+                React.createElement(
+                    "h4",
+                    null,
+                    this.props.program_name
+                ),
                 React.createElement(
                     "table",
                     { className: "acrobatics" },
@@ -482,12 +555,34 @@ var TourAdminAcrobaticEditor = (function (_React$Component7) {
                                 key: idx });
                         })
                     )
-                ),
+                )
+            );
+        }
+    }, {
+        key: "renderMock",
+        value: function renderMock() {
+            return React.createElement(
+                "div",
+                { className: "no-program text-center" },
+                "No program loaded"
+            );
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { className: "form-acro-input" },
+                this.props.program_name === null ? this.renderMock() : this.renderBody(),
+                React.createElement(TourAdminAcrobaticLoader, {
+                    onLoad: this.loadAcrobatics.bind(this),
+                    programs: this.props.programs }),
                 React.createElement(
                     "button",
-                    { className: "btn btn-primary btn-sm", onClick: this.props.stopEditing },
+                    { className: "btn btn-primary btn-sm pull-right", onClick: this.props.stopEditing },
                     _("global.buttons.close")
-                )
+                ),
+                React.createElement("div", { className: "clearfix" })
             );
         }
     }]);
@@ -495,8 +590,8 @@ var TourAdminAcrobaticEditor = (function (_React$Component7) {
     return TourAdminAcrobaticEditor;
 })(React.Component);
 
-var TourAdminAcrobaticsCell = (function (_React$Component8) {
-    _inherits(TourAdminAcrobaticsCell, _React$Component8);
+var TourAdminAcrobaticsCell = (function (_React$Component9) {
+    _inherits(TourAdminAcrobaticsCell, _React$Component9);
 
     function TourAdminAcrobaticsCell(props) {
         _classCallCheck(this, TourAdminAcrobaticsCell);
@@ -533,7 +628,16 @@ var TourAdminAcrobaticsCell = (function (_React$Component8) {
                 return React.createElement(
                     "td",
                     { className: "acrobatics editing" },
-                    React.createElement(TourAdminAcrobaticEditor, _extends({ stopEditing: this.stopEditing.bind(this), run_id: this.props.run_id }, this.props))
+                    React.createElement(TourAdminAcrobaticEditor, _extends({
+                        stopEditing: this.stopEditing.bind(this)
+                    }, this.props))
+                );
+            }
+            if (this.props.program_name === null) {
+                return React.createElement(
+                    "td",
+                    { className: "acrobatics", onClick: this.startEditing.bind(this) },
+                    "—"
                 );
             }
             var has_overrides = false;
@@ -555,8 +659,8 @@ var TourAdminAcrobaticsCell = (function (_React$Component8) {
     return TourAdminAcrobaticsCell;
 })(React.Component);
 
-var TourAdminBody = (function (_React$Component9) {
-    _inherits(TourAdminBody, _React$Component9);
+var TourAdminBody = (function (_React$Component10) {
+    _inherits(TourAdminBody, _React$Component10);
 
     // Intiialization
 
@@ -596,7 +700,9 @@ var TourAdminBody = (function (_React$Component9) {
                 },
                 runs: {
                     scores: {},
-                    participant: {}
+                    participant: {
+                        programs: {}
+                    }
                 }
             };
             var serialized = this.storage.get("Tour").by_id(this.props.tour_id).serialize(SCHEMA);
@@ -617,7 +723,9 @@ var TourAdminBody = (function (_React$Component9) {
                     runs: {
                         acrobatics: {},
                         scores: {},
-                        participant: {}
+                        participant: {
+                            programs: {}
+                        }
                     }
                 }
             }).addToDB("Tour", this.props.tour_id, this.storage).onSuccess(this.reloadFromStorage.bind(this)).send();

@@ -95,10 +95,15 @@
   background-color: #bdd4de;
 }
 .tour-admin .bordered-table .form-acro-input {
+  width: 630px;
   color: #efefef;
 }
+.tour-admin .bordered-table .form-acro-input .no-program {
+  margin: 10px 0 20px;
+  font-style: italic;
+}
 .tour-admin .bordered-table .form-acro-input .acrobatics {
-  width: 600px;
+  width: 100%;
 }
 .tour-admin .bordered-table .form-acro-input .acrobatics td,
 .tour-admin .bordered-table .form-acro-input .acrobatics th {
@@ -117,6 +122,13 @@
 .tour-admin .bordered-table .form-acro-input .acrobatics .new-score {
   text-align: center;
   width: 50px;
+}
+.tour-admin .bordered-table .form-acro-input .acro-loader {
+  color: #000;
+}
+.tour-admin .bordered-table .form-acro-input .acro-loader select {
+  width: 300px;
+  height: 29px;
 }
 .tour-admin .bordered-table .form-score-input,
 .tour-admin .bordered-table .form-acro-input {
