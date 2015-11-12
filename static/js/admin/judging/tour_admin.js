@@ -296,7 +296,7 @@ var TourAdminScoresRow = (function (_React$Component4) {
                     { className: "name" },
                     this.props.run.participant.name
                 ),
-                React.createElement(TourAdminAcrobaticsCell, { acrobatics: this.props.run.acrobatics }),
+                React.createElement(TourAdminAcrobaticsCell, { run_id: this.props.run.id, acrobatics: this.props.run.acrobatics }),
                 React.createElement(
                     "td",
                     { className: "total" },
@@ -356,6 +356,35 @@ var TourAdminAcrobaticEditorRow = (function (_React$Component6) {
     }
 
     _createClass(TourAdminAcrobaticEditorRow, [{
+        key: "onPlus",
+        value: function onPlus() {
+            var value = Math.round(2 * this.props.acrobatic.score + 1) / 2;
+            Api("acrobatic_override.set", {
+                run_id: this.props.run_id,
+                acrobatic_idx: this.props.acro_idx,
+                score: value
+            }).send();
+        }
+    }, {
+        key: "onMinus",
+        value: function onMinus() {
+            var value = Math.max(0, Math.round(2 * this.props.acrobatic.score - 1) / 2);
+            Api("acrobatic_override.set", {
+                run_id: this.props.run_id,
+                acrobatic_idx: this.props.acro_idx,
+                score: value
+            }).send();
+        }
+    }, {
+        key: "onReset",
+        value: function onReset() {
+            Api("acrobatic_override.set", {
+                run_id: this.props.run_id,
+                acrobatic_idx: this.props.acro_idx,
+                score: null
+            }).send();
+        }
+    }, {
         key: "render",
         value: function render() {
             return React.createElement(
@@ -373,10 +402,28 @@ var TourAdminAcrobaticEditorRow = (function (_React$Component6) {
                 ),
                 React.createElement(
                     "td",
-                    { className: "new-score" },
-                    this.props.acrobatic.score.toFixed(1)
+                    { className: "old-score" },
+                    this.props.acrobatic.has_override ? this.props.acrobatic.score.toFixed(1) : null
                 ),
-                React.createElement("td", { className: "controls" })
+                React.createElement(
+                    "td",
+                    { className: "controls" },
+                    this.props.acrobatic.has_override ? React.createElement(
+                        "button",
+                        { className: "btn btn-default btn-sm", onClick: this.onReset.bind(this) },
+                        "Reset"
+                    ) : null,
+                    React.createElement(
+                        "button",
+                        { className: "btn btn-default btn-sm", onClick: this.onMinus.bind(this) },
+                        "−"
+                    ),
+                    React.createElement(
+                        "button",
+                        { className: "btn btn-default btn-sm", onClick: this.onPlus.bind(this) },
+                        "+"
+                    )
+                )
             );
         }
     }]);
@@ -396,6 +443,8 @@ var TourAdminAcrobaticEditor = (function (_React$Component7) {
     _createClass(TourAdminAcrobaticEditor, [{
         key: "render",
         value: function render() {
+            var _this2 = this;
+
             return React.createElement(
                 "div",
                 { className: "form-acro-input" },
@@ -426,7 +475,11 @@ var TourAdminAcrobaticEditor = (function (_React$Component7) {
                             React.createElement("th", { className: "controls" })
                         ),
                         this.props.acrobatics.map(function (acro, idx) {
-                            return React.createElement(TourAdminAcrobaticEditorRow, { acrobatic: acro, key: idx });
+                            return React.createElement(TourAdminAcrobaticEditorRow, {
+                                acrobatic: acro,
+                                acro_idx: idx,
+                                run_id: _this2.props.run_id,
+                                key: idx });
                         })
                     )
                 ),
@@ -480,7 +533,7 @@ var TourAdminAcrobaticsCell = (function (_React$Component8) {
                 return React.createElement(
                     "td",
                     { className: "acrobatics editing" },
-                    React.createElement(TourAdminAcrobaticEditor, _extends({ stopEditing: this.stopEditing.bind(this) }, this.props))
+                    React.createElement(TourAdminAcrobaticEditor, _extends({ stopEditing: this.stopEditing.bind(this), run_id: this.props.run_id }, this.props))
                 );
             }
             var has_overrides = false;

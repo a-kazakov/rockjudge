@@ -187,7 +187,7 @@ class TourAdminScoresRow extends React.Component {
                 updateValue={ this.updateHeat.bind(this) } />
             <td className="number">{ this.props.run.participant.number }</td>
             <td className="name">{ this.props.run.participant.name }</td>
-            <TourAdminAcrobaticsCell acrobatics={ this.props.run.acrobatics } />
+            <TourAdminAcrobaticsCell run_id={ this.props.run.id } acrobatics={ this.props.run.acrobatics } />
             <td className="total">{ this.props.run.total_score }</td>
             { scores }
         </tr>;
@@ -212,12 +212,47 @@ class TourAdminStartStopTourButton extends React.Component {
 }
 
 class TourAdminAcrobaticEditorRow extends React.Component {
+    onPlus() {
+        let value = Math.round(2 * this.props.acrobatic.score + 1) / 2;
+        Api("acrobatic_override.set", {
+            run_id: this.props.run_id,
+            acrobatic_idx: this.props.acro_idx,
+            score: value,
+        }).send();
+    }
+    onMinus() {
+        let value = Math.max(0, Math.round(2 * this.props.acrobatic.score - 1) / 2);
+        Api("acrobatic_override.set", {
+            run_id: this.props.run_id,
+            acrobatic_idx: this.props.acro_idx,
+            score: value,
+        }).send();
+    }
+    onReset() {
+        Api("acrobatic_override.set", {
+            run_id: this.props.run_id,
+            acrobatic_idx: this.props.acro_idx,
+            score: null,
+        }).send();
+    }
     render() {
         return <tr>
             <td className="description">{ this.props.acrobatic.description }</td>
-            <td className="old-score">{ this.props.acrobatic.original_score.toFixed(1) }</td>
-            <td className="new-score">{ this.props.acrobatic.score.toFixed(1) }</td>
-            <td className="controls"></td>
+            <td className="old-score">
+                { this.props.acrobatic.original_score.toFixed(1) }
+            </td>
+            <td className="old-score">
+                { this.props.acrobatic.has_override
+                    ? this.props.acrobatic.score.toFixed(1)
+                    : null }
+            </td>
+            <td className="controls">
+                { this.props.acrobatic.has_override
+                    ? <button className="btn btn-default btn-sm" onClick={ this.onReset.bind(this) }>Reset</button>
+                    : null }
+                <button className="btn btn-default btn-sm" onClick={ this.onMinus.bind(this) }>&minus;</button>
+                <button className="btn btn-default btn-sm" onClick={ this.onPlus.bind(this) }>+</button>
+            </td>
         </tr>
     }
 }
@@ -233,7 +268,12 @@ class TourAdminAcrobaticEditor extends React.Component {
                     <th className="controls"></th>
                 </tr>
                 { this.props.acrobatics.map((acro, idx) =>
-                    <TourAdminAcrobaticEditorRow acrobatic={ acro } key={ idx } />) }
+                    <TourAdminAcrobaticEditorRow
+                        acrobatic={ acro }
+                        acro_idx={ idx }
+                        run_id={ this.props.run_id }
+                        key={ idx } />
+                ) }
             </tbody></table>
             <button className="btn btn-primary btn-sm" onClick={ this.props.stopEditing }>
                 { _("global.buttons.close") }
@@ -267,7 +307,7 @@ class TourAdminAcrobaticsCell extends React.Component {
     render() {
         if (this.state.editing) {
             return <td className="acrobatics editing">
-                <TourAdminAcrobaticEditor stopEditing={ this.stopEditing.bind(this) } {...this.props} />
+                <TourAdminAcrobaticEditor stopEditing={ this.stopEditing.bind(this) } run_id={ this.props.run_id } {...this.props} />
             </td>
         }
         let has_overrides = false;

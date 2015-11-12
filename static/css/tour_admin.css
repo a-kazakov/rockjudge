@@ -110,6 +110,9 @@
 .tour-admin .bordered-table .form-acro-input .acrobatics .description {
   width: 350px;
 }
+.tour-admin .bordered-table .form-acro-input .acrobatics .controls {
+  text-align: right;
+}
 .tour-admin .bordered-table .form-acro-input .acrobatics .old-score,
 .tour-admin .bordered-table .form-acro-input .acrobatics .new-score {
   text-align: center;

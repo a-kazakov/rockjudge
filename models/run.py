@@ -119,6 +119,7 @@ class Run(BaseModel):
             override = self.get_acrobatic_override(idx)
             if override is not None:
                 acro["score"] = override.score
+            acro["has_override"] = (override is not None)
             acro_list.append(acro)
         return acro_list
 
