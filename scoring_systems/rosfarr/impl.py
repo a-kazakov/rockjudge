@@ -581,6 +581,7 @@ class FormationRunScore:
         return {
             "scores": scores,
             "total_run_score": self.display_score,
+            "verbose_run_score": self.verbose_display_score,
         }
 
     def get_places(self):
@@ -616,6 +617,18 @@ class FormationRunScore:
             sum([p for p in self.places if p <= place]),
             self.nexttour_score,
         )
+
+    @property
+    def verbose_display_score(self):
+        sorting_score = self.sorting_score
+        if sorting_score is None:
+            return {}
+        return {
+            "quorum": sorting_score[0],
+            "places_with_quorum": -sorting_score[1],
+            "sum_places_with_quorum": sorting_score[2],
+            "nexttour": bool(sorting_score[3] == -1),
+        }
 
     @property
     def display_score(self):
