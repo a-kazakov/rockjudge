@@ -66,6 +66,34 @@ class TourAdminHeatValue extends React.Component {
     }
 }
 
+class TourAdminButtons extends React.Component {
+    signal(message) {
+        return (() => this.props.onSignal(message)).bind(this);
+    }
+    render() {
+        let result = [];
+        if (!this.props.tour.active) {
+            result = result.concat([
+                <button className="btn btn-primary" onClick={ this.signal("init_tour") } key="btn-init-tour">
+                    { _("judging.buttons.init_tour") }
+                </button>,
+                <button className="btn btn-primary" onClick={ this.signal("finalize_tour") } key="btn-finalize-tour">
+                    { _("judging.buttons.finalize_tour") }
+                </button>,
+                <button className="btn btn-primary" onClick={ this.signal("shuffle_heats") } key="btn-shuffle-heats">
+                    { _("judging.buttons.shuffle_heats") }
+                </button>,
+            ])
+        }
+        result.push(<TourAdminStartStopTourButton
+            tour={ this.props.tour }
+            onStart={ this.signal("start_tour") }
+            onStop={ this.signal("stop_tour") }
+            key="btn-start-stop" />);
+        return <div>{ result }</div>;
+    }
+}
+
 class TourAdminScoreCellWrapper extends React.Component {
     constructor(props) {
         super(props);
@@ -139,7 +167,7 @@ class TourAdminScoreCellWrapper extends React.Component {
 class TourAdminScoresRow extends React.Component {
     render() {
         let scores_map = {}
-        this.props.scores.forEach(function(score_data) {
+        this.props.run.scores.forEach(function(score_data) {
             scores_map[score_data.discipline_judge_id] = score_data;
         });
         let scores = this.props.discipline_judges.map(function(discipline_judge, idx) {
@@ -152,15 +180,15 @@ class TourAdminScoresRow extends React.Component {
                 value={ score && score.data }
                 confirmed={ score && score.confirmed} />
         }.bind(this));
-        return <tr className={ this.props.heat % 2 ? "odd-heat" : ""}>
+        return <tr className={ this.props.run.heat % 2 ? "odd-heat" : ""}>
             <TourAdminHeatValue
-                run_id={ this.props.run_id }
-                value={ this.props.heat }
+                run_id={ this.props.run.id }
+                value={ this.props.run.heat }
                 updateValue={ this.updateHeat.bind(this) } />
-            <td className="number">{ this.props.participant.number }</td>
-            <td className="name">{ this.props.participant.name }</td>
-            <td className="club">{ this.props.participant.club.name }</td>
-            <td className="total">{ this.props.total_score }</td>
+            <td className="number">{ this.props.run.participant.number }</td>
+            <td className="name">{ this.props.run.participant.name }</td>
+            <TourAdminAcrobaticsCell acrobatics={ this.props.run.acrobatics } />
+            <td className="total">{ this.props.run.total_score }</td>
             { scores }
         </tr>;
     }
@@ -183,31 +211,76 @@ class TourAdminStartStopTourButton extends React.Component {
     }
 }
 
-class TourAdminButtons extends React.Component {
-    signal(message) {
-        return (() => this.props.onSignal(message)).bind(this);
+class TourAdminAcrobaticEditorRow extends React.Component {
+    render() {
+        return <tr>
+            <td className="description">{ this.props.acrobatic.description }</td>
+            <td className="old-score">{ this.props.acrobatic.original_score.toFixed(1) }</td>
+            <td className="new-score">{ this.props.acrobatic.score.toFixed(1) }</td>
+            <td className="controls"></td>
+        </tr>
+    }
+}
+
+class TourAdminAcrobaticEditor extends React.Component {
+    render() {
+        return <div className="form-acro-input">
+            <table className="acrobatics"><tbody>
+                <tr>
+                    <th className="description">{ _("judging.labels.acro_description") }</th>
+                    <th className="old-score">{ _("judging.labels.old_score") }</th>
+                    <th className="new-score">{ _("judging.labels.new_score") }</th>
+                    <th className="controls"></th>
+                </tr>
+                { this.props.acrobatics.map((acro, idx) =>
+                    <TourAdminAcrobaticEditorRow acrobatic={ acro } key={ idx } />) }
+            </tbody></table>
+            <button className="btn btn-primary btn-sm" onClick={ this.props.stopEditing }>
+                { _("global.buttons.close") }
+            </button>
+        </div>
+    }
+}
+
+class TourAdminAcrobaticsCell extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            editing: false,
+        };
+    }
+    startEditing() {
+        if (current_editing_cell !== null) {
+            current_editing_cell.stopEditing();
+        }
+        current_editing_cell = this;
+        this.setState({
+            editing: true,
+        });
+    }
+    stopEditing() {
+        this.setState({
+            editing: false,
+        });
+        current_editing_cell = null;
     }
     render() {
-        let result = [];
-        if (!this.props.tour.active) {
-            result = result.concat([
-                <button className="btn btn-primary" onClick={ this.signal("init_tour") } key="btn-init-tour">
-                    { _("judging.buttons.init_tour") }
-                </button>,
-                <button className="btn btn-primary" onClick={ this.signal("finalize_tour") } key="btn-finalize-tour">
-                    { _("judging.buttons.finalize_tour") }
-                </button>,
-                <button className="btn btn-primary" onClick={ this.signal("shuffle_heats") } key="btn-shuffle-heats">
-                    { _("judging.buttons.shuffle_heats") }
-                </button>,
-            ])
+        if (this.state.editing) {
+            return <td className="acrobatics editing">
+                <TourAdminAcrobaticEditor stopEditing={ this.stopEditing.bind(this) } {...this.props} />
+            </td>
         }
-        result.push(<TourAdminStartStopTourButton
-            tour={ this.props.tour }
-            onStart={ this.signal("start_tour") }
-            onStop={ this.signal("stop_tour") }
-            key="btn-start-stop" />);
-        return <div>{ result }</div>;
+        let has_overrides = false;
+        let original_score = 0;
+        let score = 0;
+        this.props.acrobatics.forEach((acro) => {
+            original_score += acro.original_score;
+            score += acro.score;
+            has_overrides = has_overrides || acro.score != acro.original_score;
+        });
+        return <td className="acrobatics" onClick={ this.startEditing.bind(this) }>
+            { has_overrides ? original_score.toFixed(1) + " → " + score.toFixed(1) : score.toFixed(1) }
+        </td>
     }
 }
 
@@ -242,9 +315,7 @@ class TourAdminBody extends React.Component {
             },
             runs: {
                 scores: {},
-                participant: {
-                    club: {},
-                }
+                participant: {},
             },
         }
         let serialized = this.storage.get("Tour")
@@ -265,9 +336,7 @@ class TourAdminBody extends React.Component {
                 runs: {
                     acrobatics: {},
                     scores: {},
-                    participant: {
-                        club: {},
-                    }
+                    participant: {},
                 },
             }
         })
@@ -328,37 +397,6 @@ class TourAdminBody extends React.Component {
 
     // Rendering
 
-    renderAcrobaticOverrides() {
-        let overrides = this.getAcrobaticOverrides()
-        if (overrides.length == 0) {
-            return null;
-        }
-        return <div>
-            <h4>{ _("judging.headers.acrobatic_overrides") }</h4>
-            <table className="bordered-table acrobatic-overrides"><tbody>
-                <tr>
-                    <th className="heat">{ _("judging.labels.heat") }</th>
-                    <th className="number">{ _("judging.labels.number") }</th>
-                    <th className="name">{ _("judging.labels.participant_name") }</th>
-                    <th className="old-score">{ _("judging.labels.old_score") }</th>
-                    <th className="new-score">{ _("judging.labels.new_score") }</th>
-                    <th className="acro-idx">{ _("judging.labels.acro_idx") }</th>
-                    <th className="acro-description">{ _("judging.labels.acro_description") }</th>
-                </tr>
-                { overrides.map((o) =>
-                    <tr key={ o.run.participant.id + "/" + o.acro_idx }>
-                        <td className="heat">{ o.run.heat }</td>
-                        <td className="number">{ o.run.participant.number }</td>
-                        <td className="name">{ o.run.participant.name }</td>
-                        <td className="old-score">{ o.original_score }</td>
-                        <td className="new-score">{ o.score }</td>
-                        <td className="acro-idx">{ o.acro_idx }</td>
-                        <td className="acro-description">{ o.acro_description }</td>
-                    </tr>
-                ) }
-            </tbody></table>
-        </div>
-    }
     render() {
         if (this.state.name === null) {
             return <span>Loading...</span>;
@@ -367,12 +405,8 @@ class TourAdminBody extends React.Component {
         let rows = this.state.runs.map(function(run) {
             return <TourAdminScoresRow
                 key={ run.id }
-                run_id={ run.id }
-                heat={ run.heat }
-                participant={ run.participant }
-                scores={ run.scores }
+                run={ run }
                 scoring_system_name={ this.state.scoring_system_name }
-                total_score={ run.total_score }
                 discipline_judges={ discipline_judges } />
         }.bind(this));
         let judges_header = discipline_judges.map(function(discipline_judge) {
@@ -388,14 +422,13 @@ class TourAdminBody extends React.Component {
                         <th className="heat"><p>{ _("judging.labels.heat") }</p></th>
                         <th className="number"><p>{ _("judging.labels.number") }</p></th>
                         <th className="name"><p>{ _("judging.labels.participant_name") }</p></th>
-                        <th className="club"><p>{ _("judging.labels.club") }</p></th>
+                        <th className="acrobatics"><p>{ _("judging.labels.acrobatics") }</p></th>
                         <th className="total"><p>{ _("judging.labels.total_score") }</p></th>
                         { judges_header }
                     </tr>
                     { rows }
                 </tbody>
             </table>
-            { this.renderAcrobaticOverrides() }
         </div>
     }
 }

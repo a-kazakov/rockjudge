@@ -1,5 +1,7 @@
 "use strict";
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
@@ -106,8 +108,61 @@ var TourAdminHeatValue = (function (_React$Component) {
     return TourAdminHeatValue;
 })(React.Component);
 
-var TourAdminScoreCellWrapper = (function (_React$Component2) {
-    _inherits(TourAdminScoreCellWrapper, _React$Component2);
+var TourAdminButtons = (function (_React$Component2) {
+    _inherits(TourAdminButtons, _React$Component2);
+
+    function TourAdminButtons() {
+        _classCallCheck(this, TourAdminButtons);
+
+        _get(Object.getPrototypeOf(TourAdminButtons.prototype), "constructor", this).apply(this, arguments);
+    }
+
+    _createClass(TourAdminButtons, [{
+        key: "signal",
+        value: function signal(message) {
+            var _this = this;
+
+            return (function () {
+                return _this.props.onSignal(message);
+            }).bind(this);
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var result = [];
+            if (!this.props.tour.active) {
+                result = result.concat([React.createElement(
+                    "button",
+                    { className: "btn btn-primary", onClick: this.signal("init_tour"), key: "btn-init-tour" },
+                    _("judging.buttons.init_tour")
+                ), React.createElement(
+                    "button",
+                    { className: "btn btn-primary", onClick: this.signal("finalize_tour"), key: "btn-finalize-tour" },
+                    _("judging.buttons.finalize_tour")
+                ), React.createElement(
+                    "button",
+                    { className: "btn btn-primary", onClick: this.signal("shuffle_heats"), key: "btn-shuffle-heats" },
+                    _("judging.buttons.shuffle_heats")
+                )]);
+            }
+            result.push(React.createElement(TourAdminStartStopTourButton, {
+                tour: this.props.tour,
+                onStart: this.signal("start_tour"),
+                onStop: this.signal("stop_tour"),
+                key: "btn-start-stop" }));
+            return React.createElement(
+                "div",
+                null,
+                result
+            );
+        }
+    }]);
+
+    return TourAdminButtons;
+})(React.Component);
+
+var TourAdminScoreCellWrapper = (function (_React$Component3) {
+    _inherits(TourAdminScoreCellWrapper, _React$Component3);
 
     function TourAdminScoreCellWrapper(props) {
         _classCallCheck(this, TourAdminScoreCellWrapper);
@@ -198,8 +253,8 @@ var TourAdminScoreCellWrapper = (function (_React$Component2) {
     return TourAdminScoreCellWrapper;
 })(React.Component);
 
-var TourAdminScoresRow = (function (_React$Component3) {
-    _inherits(TourAdminScoresRow, _React$Component3);
+var TourAdminScoresRow = (function (_React$Component4) {
+    _inherits(TourAdminScoresRow, _React$Component4);
 
     function TourAdminScoresRow() {
         _classCallCheck(this, TourAdminScoresRow);
@@ -211,7 +266,7 @@ var TourAdminScoresRow = (function (_React$Component3) {
         key: "render",
         value: function render() {
             var scores_map = {};
-            this.props.scores.forEach(function (score_data) {
+            this.props.run.scores.forEach(function (score_data) {
                 scores_map[score_data.discipline_judge_id] = score_data;
             });
             var scores = this.props.discipline_judges.map((function (discipline_judge, idx) {
@@ -226,30 +281,26 @@ var TourAdminScoresRow = (function (_React$Component3) {
             }).bind(this));
             return React.createElement(
                 "tr",
-                { className: this.props.heat % 2 ? "odd-heat" : "" },
+                { className: this.props.run.heat % 2 ? "odd-heat" : "" },
                 React.createElement(TourAdminHeatValue, {
-                    run_id: this.props.run_id,
-                    value: this.props.heat,
+                    run_id: this.props.run.id,
+                    value: this.props.run.heat,
                     updateValue: this.updateHeat.bind(this) }),
                 React.createElement(
                     "td",
                     { className: "number" },
-                    this.props.participant.number
+                    this.props.run.participant.number
                 ),
                 React.createElement(
                     "td",
                     { className: "name" },
-                    this.props.participant.name
+                    this.props.run.participant.name
                 ),
-                React.createElement(
-                    "td",
-                    { className: "club" },
-                    this.props.participant.club.name
-                ),
+                React.createElement(TourAdminAcrobaticsCell, { acrobatics: this.props.run.acrobatics }),
                 React.createElement(
                     "td",
                     { className: "total" },
-                    this.props.total_score
+                    this.props.run.total_score
                 ),
                 scores
             );
@@ -264,8 +315,8 @@ var TourAdminScoresRow = (function (_React$Component3) {
     return TourAdminScoresRow;
 })(React.Component);
 
-var TourAdminStartStopTourButton = (function (_React$Component4) {
-    _inherits(TourAdminStartStopTourButton, _React$Component4);
+var TourAdminStartStopTourButton = (function (_React$Component5) {
+    _inherits(TourAdminStartStopTourButton, _React$Component5);
 
     function TourAdminStartStopTourButton() {
         _classCallCheck(this, TourAdminStartStopTourButton);
@@ -295,61 +346,164 @@ var TourAdminStartStopTourButton = (function (_React$Component4) {
     return TourAdminStartStopTourButton;
 })(React.Component);
 
-var TourAdminButtons = (function (_React$Component5) {
-    _inherits(TourAdminButtons, _React$Component5);
+var TourAdminAcrobaticEditorRow = (function (_React$Component6) {
+    _inherits(TourAdminAcrobaticEditorRow, _React$Component6);
 
-    function TourAdminButtons() {
-        _classCallCheck(this, TourAdminButtons);
+    function TourAdminAcrobaticEditorRow() {
+        _classCallCheck(this, TourAdminAcrobaticEditorRow);
 
-        _get(Object.getPrototypeOf(TourAdminButtons.prototype), "constructor", this).apply(this, arguments);
+        _get(Object.getPrototypeOf(TourAdminAcrobaticEditorRow.prototype), "constructor", this).apply(this, arguments);
     }
 
-    _createClass(TourAdminButtons, [{
-        key: "signal",
-        value: function signal(message) {
-            var _this = this;
-
-            return (function () {
-                return _this.props.onSignal(message);
-            }).bind(this);
-        }
-    }, {
+    _createClass(TourAdminAcrobaticEditorRow, [{
         key: "render",
         value: function render() {
-            var result = [];
-            if (!this.props.tour.active) {
-                result = result.concat([React.createElement(
-                    "button",
-                    { className: "btn btn-primary", onClick: this.signal("init_tour"), key: "btn-init-tour" },
-                    _("judging.buttons.init_tour")
-                ), React.createElement(
-                    "button",
-                    { className: "btn btn-primary", onClick: this.signal("finalize_tour"), key: "btn-finalize-tour" },
-                    _("judging.buttons.finalize_tour")
-                ), React.createElement(
-                    "button",
-                    { className: "btn btn-primary", onClick: this.signal("shuffle_heats"), key: "btn-shuffle-heats" },
-                    _("judging.buttons.shuffle_heats")
-                )]);
-            }
-            result.push(React.createElement(TourAdminStartStopTourButton, {
-                tour: this.props.tour,
-                onStart: this.signal("start_tour"),
-                onStop: this.signal("stop_tour"),
-                key: "btn-start-stop" }));
             return React.createElement(
-                "div",
+                "tr",
                 null,
-                result
+                React.createElement(
+                    "td",
+                    { className: "description" },
+                    this.props.acrobatic.description
+                ),
+                React.createElement(
+                    "td",
+                    { className: "old-score" },
+                    this.props.acrobatic.original_score.toFixed(1)
+                ),
+                React.createElement(
+                    "td",
+                    { className: "new-score" },
+                    this.props.acrobatic.score.toFixed(1)
+                ),
+                React.createElement("td", { className: "controls" })
             );
         }
     }]);
 
-    return TourAdminButtons;
+    return TourAdminAcrobaticEditorRow;
 })(React.Component);
 
-var TourAdminBody = (function (_React$Component6) {
-    _inherits(TourAdminBody, _React$Component6);
+var TourAdminAcrobaticEditor = (function (_React$Component7) {
+    _inherits(TourAdminAcrobaticEditor, _React$Component7);
+
+    function TourAdminAcrobaticEditor() {
+        _classCallCheck(this, TourAdminAcrobaticEditor);
+
+        _get(Object.getPrototypeOf(TourAdminAcrobaticEditor.prototype), "constructor", this).apply(this, arguments);
+    }
+
+    _createClass(TourAdminAcrobaticEditor, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { className: "form-acro-input" },
+                React.createElement(
+                    "table",
+                    { className: "acrobatics" },
+                    React.createElement(
+                        "tbody",
+                        null,
+                        React.createElement(
+                            "tr",
+                            null,
+                            React.createElement(
+                                "th",
+                                { className: "description" },
+                                _("judging.labels.acro_description")
+                            ),
+                            React.createElement(
+                                "th",
+                                { className: "old-score" },
+                                _("judging.labels.old_score")
+                            ),
+                            React.createElement(
+                                "th",
+                                { className: "new-score" },
+                                _("judging.labels.new_score")
+                            ),
+                            React.createElement("th", { className: "controls" })
+                        ),
+                        this.props.acrobatics.map(function (acro, idx) {
+                            return React.createElement(TourAdminAcrobaticEditorRow, { acrobatic: acro, key: idx });
+                        })
+                    )
+                ),
+                React.createElement(
+                    "button",
+                    { className: "btn btn-primary btn-sm", onClick: this.props.stopEditing },
+                    _("global.buttons.close")
+                )
+            );
+        }
+    }]);
+
+    return TourAdminAcrobaticEditor;
+})(React.Component);
+
+var TourAdminAcrobaticsCell = (function (_React$Component8) {
+    _inherits(TourAdminAcrobaticsCell, _React$Component8);
+
+    function TourAdminAcrobaticsCell(props) {
+        _classCallCheck(this, TourAdminAcrobaticsCell);
+
+        _get(Object.getPrototypeOf(TourAdminAcrobaticsCell.prototype), "constructor", this).call(this, props);
+        this.state = {
+            editing: false
+        };
+    }
+
+    _createClass(TourAdminAcrobaticsCell, [{
+        key: "startEditing",
+        value: function startEditing() {
+            if (current_editing_cell !== null) {
+                current_editing_cell.stopEditing();
+            }
+            current_editing_cell = this;
+            this.setState({
+                editing: true
+            });
+        }
+    }, {
+        key: "stopEditing",
+        value: function stopEditing() {
+            this.setState({
+                editing: false
+            });
+            current_editing_cell = null;
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            if (this.state.editing) {
+                return React.createElement(
+                    "td",
+                    { className: "acrobatics editing" },
+                    React.createElement(TourAdminAcrobaticEditor, _extends({ stopEditing: this.stopEditing.bind(this) }, this.props))
+                );
+            }
+            var has_overrides = false;
+            var original_score = 0;
+            var score = 0;
+            this.props.acrobatics.forEach(function (acro) {
+                original_score += acro.original_score;
+                score += acro.score;
+                has_overrides = has_overrides || acro.score != acro.original_score;
+            });
+            return React.createElement(
+                "td",
+                { className: "acrobatics", onClick: this.startEditing.bind(this) },
+                has_overrides ? original_score.toFixed(1) + " → " + score.toFixed(1) : score.toFixed(1)
+            );
+        }
+    }]);
+
+    return TourAdminAcrobaticsCell;
+})(React.Component);
+
+var TourAdminBody = (function (_React$Component9) {
+    _inherits(TourAdminBody, _React$Component9);
 
     // Intiialization
 
@@ -389,9 +543,7 @@ var TourAdminBody = (function (_React$Component6) {
                 },
                 runs: {
                     scores: {},
-                    participant: {
-                        club: {}
-                    }
+                    participant: {}
                 }
             };
             var serialized = this.storage.get("Tour").by_id(this.props.tour_id).serialize(SCHEMA);
@@ -412,9 +564,7 @@ var TourAdminBody = (function (_React$Component6) {
                     runs: {
                         acrobatics: {},
                         scores: {},
-                        participant: {
-                            club: {}
-                        }
+                        participant: {}
                     }
                 }
             }).addToDB("Tour", this.props.tour_id, this.storage).onSuccess(this.reloadFromStorage.bind(this)).send();
@@ -477,111 +627,6 @@ var TourAdminBody = (function (_React$Component6) {
         // Rendering
 
     }, {
-        key: "renderAcrobaticOverrides",
-        value: function renderAcrobaticOverrides() {
-            var overrides = this.getAcrobaticOverrides();
-            if (overrides.length == 0) {
-                return null;
-            }
-            return React.createElement(
-                "div",
-                null,
-                React.createElement(
-                    "h4",
-                    null,
-                    _("judging.headers.acrobatic_overrides")
-                ),
-                React.createElement(
-                    "table",
-                    { className: "bordered-table acrobatic-overrides" },
-                    React.createElement(
-                        "tbody",
-                        null,
-                        React.createElement(
-                            "tr",
-                            null,
-                            React.createElement(
-                                "th",
-                                { className: "heat" },
-                                _("judging.labels.heat")
-                            ),
-                            React.createElement(
-                                "th",
-                                { className: "number" },
-                                _("judging.labels.number")
-                            ),
-                            React.createElement(
-                                "th",
-                                { className: "name" },
-                                _("judging.labels.participant_name")
-                            ),
-                            React.createElement(
-                                "th",
-                                { className: "old-score" },
-                                _("judging.labels.old_score")
-                            ),
-                            React.createElement(
-                                "th",
-                                { className: "new-score" },
-                                _("judging.labels.new_score")
-                            ),
-                            React.createElement(
-                                "th",
-                                { className: "acro-idx" },
-                                _("judging.labels.acro_idx")
-                            ),
-                            React.createElement(
-                                "th",
-                                { className: "acro-description" },
-                                _("judging.labels.acro_description")
-                            )
-                        ),
-                        overrides.map(function (o) {
-                            return React.createElement(
-                                "tr",
-                                { key: o.run.participant.id + "/" + o.acro_idx },
-                                React.createElement(
-                                    "td",
-                                    { className: "heat" },
-                                    o.run.heat
-                                ),
-                                React.createElement(
-                                    "td",
-                                    { className: "number" },
-                                    o.run.participant.number
-                                ),
-                                React.createElement(
-                                    "td",
-                                    { className: "name" },
-                                    o.run.participant.name
-                                ),
-                                React.createElement(
-                                    "td",
-                                    { className: "old-score" },
-                                    o.original_score
-                                ),
-                                React.createElement(
-                                    "td",
-                                    { className: "new-score" },
-                                    o.score
-                                ),
-                                React.createElement(
-                                    "td",
-                                    { className: "acro-idx" },
-                                    o.acro_idx
-                                ),
-                                React.createElement(
-                                    "td",
-                                    { className: "acro-description" },
-                                    o.acro_description
-                                )
-                            );
-                        })
-                    )
-                )
-            );
-        }
-    }, {
         key: "render",
         value: function render() {
             if (this.state.name === null) {
@@ -595,12 +640,8 @@ var TourAdminBody = (function (_React$Component6) {
             var rows = this.state.runs.map((function (run) {
                 return React.createElement(TourAdminScoresRow, {
                     key: run.id,
-                    run_id: run.id,
-                    heat: run.heat,
-                    participant: run.participant,
-                    scores: run.scores,
+                    run: run,
                     scoring_system_name: this.state.scoring_system_name,
-                    total_score: run.total_score,
                     discipline_judges: discipline_judges });
             }).bind(this));
             var judges_header = discipline_judges.map((function (discipline_judge) {
@@ -652,11 +693,11 @@ var TourAdminBody = (function (_React$Component6) {
                             ),
                             React.createElement(
                                 "th",
-                                { className: "club" },
+                                { className: "acrobatics" },
                                 React.createElement(
                                     "p",
                                     null,
-                                    _("judging.labels.club")
+                                    _("judging.labels.acrobatics")
                                 )
                             ),
                             React.createElement(
@@ -672,8 +713,7 @@ var TourAdminBody = (function (_React$Component6) {
                         ),
                         rows
                     )
-                ),
-                this.renderAcrobaticOverrides()
+                )
             );
         }
     }]);

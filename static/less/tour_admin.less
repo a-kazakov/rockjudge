@@ -23,12 +23,12 @@
   }
   .bordered-table {
     margin: 10px;
-    .number { width: 50px;  }
-    .name   { width: 300px; }
-    .club   { width: 250px; }
-    .heat   { width: 40px;  }
-    .judge  { width: 50px;  }
-    .total  { width: 120px; }
+    .number     { width: 50px;  }
+    .name       { width: 300px; }
+    .acrobatics { width: 120px; }
+    .heat       { width: 40px;  }
+    .judge      { width: 50px;  }
+    .total      { width: 120px; }
     .acro-description { width: 400px; }
     .acro-idx  { width: 75px; }
     .old-score { width: 50px; }
@@ -38,7 +38,7 @@
     }
     td {
       position: relative;
-      &.judge, &.heat {
+      &.judge, &.heat, &.acrobatics {
         cursor: pointer;
       }
       &.no-score {
@@ -72,13 +72,33 @@
     tr.active {
       background-color: @ui-light;
     }
-    .form-score-input {
+    .form-acro-input {
+      color: @ui-white;
+      .acrobatics {
+        width: 600px;
+        td, th {
+          vertical-align: middle;
+        }
+        tr:nth-child(2n) {
+          background-color: lighten(@ui-medium, 5%);
+        }
+        .description {
+          width: 350px;
+        }
+        .old-score, .new-score {
+          text-align: center;
+          width: 50px;
+        }
+      }
+    }
+    .form-score-input, .form-acro-input {
       position: absolute;
       top: 50%;
       left: 50%;
       background-color: @ui-medium;
       z-index: 10;
       padding: 10px;
+      cursor: default;
       table {
         margin-bottom: 10px;
       }

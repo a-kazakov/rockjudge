@@ -27,8 +27,8 @@
 .tour-admin .bordered-table .name {
   width: 300px;
 }
-.tour-admin .bordered-table .club {
-  width: 250px;
+.tour-admin .bordered-table .acrobatics {
+  width: 120px;
 }
 .tour-admin .bordered-table .heat {
   width: 40px;
@@ -58,7 +58,8 @@
   position: relative;
 }
 .tour-admin .bordered-table td.judge,
-.tour-admin .bordered-table td.heat {
+.tour-admin .bordered-table td.heat,
+.tour-admin .bordered-table td.acrobatics {
   cursor: pointer;
 }
 .tour-admin .bordered-table td.no-score {
@@ -93,29 +94,58 @@
 .tour-admin .bordered-table tr.active {
   background-color: #bdd4de;
 }
-.tour-admin .bordered-table .form-score-input {
+.tour-admin .bordered-table .form-acro-input {
+  color: #efefef;
+}
+.tour-admin .bordered-table .form-acro-input .acrobatics {
+  width: 600px;
+}
+.tour-admin .bordered-table .form-acro-input .acrobatics td,
+.tour-admin .bordered-table .form-acro-input .acrobatics th {
+  vertical-align: middle;
+}
+.tour-admin .bordered-table .form-acro-input .acrobatics tr:nth-child(2n) {
+  background-color: #496575;
+}
+.tour-admin .bordered-table .form-acro-input .acrobatics .description {
+  width: 350px;
+}
+.tour-admin .bordered-table .form-acro-input .acrobatics .old-score,
+.tour-admin .bordered-table .form-acro-input .acrobatics .new-score {
+  text-align: center;
+  width: 50px;
+}
+.tour-admin .bordered-table .form-score-input,
+.tour-admin .bordered-table .form-acro-input {
   position: absolute;
   top: 50%;
   left: 50%;
   background-color: #3f5765;
   z-index: 10;
   padding: 10px;
+  cursor: default;
 }
-.tour-admin .bordered-table .form-score-input table {
+.tour-admin .bordered-table .form-score-input table,
+.tour-admin .bordered-table .form-acro-input table {
   margin-bottom: 10px;
 }
-.tour-admin .bordered-table .form-score-input th {
+.tour-admin .bordered-table .form-score-input th,
+.tour-admin .bordered-table .form-acro-input th {
   color: #efefef;
 }
 .tour-admin .bordered-table .form-score-input td,
-.tour-admin .bordered-table .form-score-input th {
+.tour-admin .bordered-table .form-acro-input td,
+.tour-admin .bordered-table .form-score-input th,
+.tour-admin .bordered-table .form-acro-input th {
   border: 0;
   padding-left: 10px;
   padding-right: 10px;
   text-align: left;
 }
 .tour-admin .bordered-table .form-score-input td input,
-.tour-admin .bordered-table .form-score-input th input {
+.tour-admin .bordered-table .form-acro-input td input,
+.tour-admin .bordered-table .form-score-input th input,
+.tour-admin .bordered-table .form-acro-input th input {
   width: 50px;
 }
 .tour-admin .bordered-table .input-heat {

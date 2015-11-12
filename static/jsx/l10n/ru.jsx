@@ -147,6 +147,7 @@ function _(src, arg) {
         "global": {
             "buttons": {
                 "add": "Добавить",
+                "close": "Закрыть",
                 "deselect_all": "Снять все",
                 "edit": "Редактировать",
                 "delete": "Удалить",
