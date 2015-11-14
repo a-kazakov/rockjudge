@@ -512,22 +512,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                     )
                 ),
                 getParticipantDisplay(this.props.run.participant),
-                React.createElement(
-                    "p",
-                    null,
-                    React.createElement(
-                        "strong",
-                        null,
-                        __("results.labels.penalty"),
-                        ": "
-                    ),
-                    this.props.head_judge_score ? this.props.head_judge_score.data.total_score : React.createElement(
-                        "span",
-                        null,
-                        "—"
-                    )
-                ),
-                render_acro_table && this.props.run.acrobatics.length > 0 ? React.createElement(
+                this.props.run.performed ? React.createElement(
                     "div",
                     null,
                     React.createElement(
@@ -536,82 +521,109 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         React.createElement(
                             "strong",
                             null,
-                            has_acro_overrides ? __("results.labels.acrobatics_verbose") : __("results.labels.acrobatics"),
-                            ":"
+                            __("results.labels.penalty"),
+                            ": "
+                        ),
+                        this.props.head_judge_score ? this.props.head_judge_score.data.total_score : React.createElement(
+                            "span",
+                            null,
+                            "—"
                         )
                     ),
-                    React.createElement(
-                        "table",
-                        { className: "acro-table" },
+                    render_acro_table && this.props.run.acrobatics.length > 0 ? React.createElement(
+                        "div",
+                        null,
                         React.createElement(
-                            "tbody",
+                            "p",
                             null,
                             React.createElement(
-                                "tr",
+                                "strong",
                                 null,
-                                this.props.run.acrobatics.map(function (acro, idx) {
-                                    return React.createElement(
-                                        "td",
-                                        { key: idx, style: { width: acro_cell_width } },
-                                        React.createElement(
-                                            "p",
-                                            { className: "text-center" },
-                                            acro.original_score.toFixed(1)
-                                        )
-                                    );
-                                })
-                            ),
-                            has_acro_overrides ? React.createElement(
-                                "tr",
+                                has_acro_overrides ? __("results.labels.acrobatics_verbose") : __("results.labels.acrobatics"),
+                                ":"
+                            )
+                        ),
+                        React.createElement(
+                            "table",
+                            { className: "acro-table" },
+                            React.createElement(
+                                "tbody",
                                 null,
-                                this.props.run.acrobatics.map(function (acro, idx) {
-                                    return React.createElement(
-                                        "td",
-                                        { key: idx, style: { width: acro_cell_width } },
-                                        React.createElement(
-                                            "p",
-                                            { className: "text-center" },
-                                            acro.score.toFixed(1)
-                                        )
-                                    );
-                                })
-                            ) : null
+                                React.createElement(
+                                    "tr",
+                                    null,
+                                    this.props.run.acrobatics.map(function (acro, idx) {
+                                        return React.createElement(
+                                            "td",
+                                            { key: idx, style: { width: acro_cell_width } },
+                                            React.createElement(
+                                                "p",
+                                                { className: "text-center" },
+                                                acro.original_score.toFixed(1)
+                                            )
+                                        );
+                                    })
+                                ),
+                                has_acro_overrides ? React.createElement(
+                                    "tr",
+                                    null,
+                                    this.props.run.acrobatics.map(function (acro, idx) {
+                                        return React.createElement(
+                                            "td",
+                                            { key: idx, style: { width: acro_cell_width } },
+                                            React.createElement(
+                                                "p",
+                                                { className: "text-center" },
+                                                acro.score.toFixed(1)
+                                            )
+                                        );
+                                    })
+                                ) : null
+                            )
                         )
-                    )
-                ) : null,
-                this.props.tour.scoring_system_name === "rosfarr.am_final_acro" ? React.createElement(
-                    "p",
-                    null,
-                    React.createElement(
-                        "strong",
+                    ) : null,
+                    this.props.tour.scoring_system_name === "rosfarr.am_final_acro" ? React.createElement(
+                        "p",
                         null,
-                        __("results.labels.fw_score")
-                    ),
-                    ": ",
-                    this.props.run.verbose_total_score.previous_tour.primary_score.toFixed(2) + " / " + this.props.run.verbose_total_score.previous_tour.secondary_score.toFixed(2)
-                ) : null,
-                this.props.tour.scoring_system_name === "rosfarr.am_final_acro" ? React.createElement(
-                    "p",
-                    null,
-                    React.createElement(
-                        "strong",
-                        null,
-                        __("results.labels.acro_score")
-                    ),
-                    ": ",
-                    this.props.run.verbose_total_score.current_tour.primary_score.toFixed(2) + " / " + this.props.run.verbose_total_score.current_tour.secondary_score.toFixed(2)
-                ) : null,
-                this.props.tour.scoring_system_name !== "rosfarr.formation" ? React.createElement(
-                    "p",
-                    null,
-                    React.createElement(
-                        "strong",
-                        null,
-                        __("results.labels.total_score"),
+                        React.createElement(
+                            "strong",
+                            null,
+                            __("results.labels.fw_score")
+                        ),
                         ": ",
-                        this.props.run.total_score
+                        this.props.run.verbose_total_score.previous_tour.primary_score.toFixed(2) + " / " + this.props.run.verbose_total_score.previous_tour.secondary_score.toFixed(2)
+                    ) : null,
+                    this.props.tour.scoring_system_name === "rosfarr.am_final_acro" ? React.createElement(
+                        "p",
+                        null,
+                        React.createElement(
+                            "strong",
+                            null,
+                            __("results.labels.acro_score")
+                        ),
+                        ": ",
+                        this.props.run.verbose_total_score.current_tour.primary_score.toFixed(2) + " / " + this.props.run.verbose_total_score.current_tour.secondary_score.toFixed(2)
+                    ) : null,
+                    this.props.tour.scoring_system_name !== "rosfarr.formation" ? React.createElement(
+                        "p",
+                        null,
+                        React.createElement(
+                            "strong",
+                            null,
+                            __("results.labels.total_score"),
+                            ": ",
+                            this.props.run.total_score
+                        )
+                    ) : null
+                ) : React.createElement(
+                    "p",
+                    null,
+                    React.createElement(
+                        "em",
+                        null,
+                        __("results.labels.not_performed")
                     )
-                ) : null,
+                ),
                 this.props.has_next_tour ? React.createElement(
                     "p",
                     null,
@@ -630,7 +642,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
         value: function render() {
             var _this = this;
 
-            var judges_scores = this.props.scores.map((function (score, idx) {
+            var judges_scores = this.props.scores.map(function (score, idx) {
                 return React.createElement(
                     "td",
                     { className: "w-13", key: idx },
@@ -638,7 +650,20 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                     _this.renderScore(_this.props.discipline_judges[idx], score, _this.props.results_info.additional_data),
                     " "
                 );
-            }).bind(this));
+            });
+            if (!this.props.run.performed) {
+                judges_scores = this.props.scores.map(function (score, idx) {
+                    return React.createElement(
+                        "td",
+                        { className: "w-13", key: idx },
+                        React.createElement(
+                            "p",
+                            { className: "text-center" },
+                            "—"
+                        )
+                    );
+                });
+            }
             return React.createElement(
                 "tr",
                 null,
@@ -790,7 +815,7 @@ var TourResultsSemiVerboseTableRow = (function (_React$Component3) {
         value: function render() {
             var _this2 = this;
 
-            var judges_scores = this.props.scores.map((function (score, idx) {
+            var judges_scores = this.props.scores.map(function (score, idx) {
                 return React.createElement(
                     "td",
                     { className: "w-9", key: idx },
@@ -798,7 +823,20 @@ var TourResultsSemiVerboseTableRow = (function (_React$Component3) {
                     _this2.renderScore(_this2.props.discipline_judges[idx], score, _this2.props.results_info.additional_data),
                     " "
                 );
-            }).bind(this));
+            });
+            if (!this.props.run.performed) {
+                judges_scores = this.props.scores.map(function (score, idx) {
+                    return React.createElement(
+                        "td",
+                        { className: "w-9", key: idx },
+                        React.createElement(
+                            "p",
+                            { className: "text-center" },
+                            "—"
+                        )
+                    );
+                });
+            }
             var total_score = this.props.run.verbose_total_score;
             return React.createElement(
                 "tr",
@@ -829,28 +867,51 @@ var TourResultsSemiVerboseTableRow = (function (_React$Component3) {
                 this.props.tour.scoring_system_name !== "rosfarr.formation" ? React.createElement(
                     "td",
                     { className: "w-14 total-score" },
-                    React.createElement(
-                        "p",
-                        { className: "text-center" },
-                        this.props.tour.scoring_system_name == "rosfarr.am_final_acro" ? React.createElement(
-                            "em",
-                            null,
-                            __("results.labels.fw_score_short"),
-                            ": ",
-                            total_score.previous_tour.primary_score.toFixed(2),
-                            " / ",
-                            total_score.previous_tour.secondary_score.toFixed(2),
-                            React.createElement("br", null)
-                        ) : null,
-                        React.createElement(
-                            "strong",
-                            null,
-                            total_score.primary_score.toFixed(2)
-                        ),
-                        " /",
-                        " ",
-                        total_score.secondary_score.toFixed(2)
-                    )
+                    (function () {
+                        if (!_this2.props.run.performed) {
+                            return React.createElement(
+                                "p",
+                                { className: "text-center" },
+                                "—"
+                            );
+                        }
+                        if (_this2.props.tour.scoring_system_name == "rosfarr.am_final_acro") {
+                            return React.createElement(
+                                "p",
+                                { className: "text-center" },
+                                React.createElement(
+                                    "em",
+                                    null,
+                                    __("results.labels.fw_score_short"),
+                                    ": ",
+                                    total_score.previous_tour.primary_score.toFixed(2),
+                                    " / ",
+                                    total_score.previous_tour.secondary_score.toFixed(2),
+                                    React.createElement("br", null)
+                                ),
+                                React.createElement(
+                                    "strong",
+                                    null,
+                                    total_score.primary_score.toFixed(2)
+                                ),
+                                " /",
+                                " ",
+                                total_score.secondary_score.toFixed(2)
+                            );
+                        }
+                        return React.createElement(
+                            "p",
+                            { className: "text-center" },
+                            React.createElement(
+                                "strong",
+                                null,
+                                total_score.primary_score.toFixed(2)
+                            ),
+                            " /",
+                            " ",
+                            total_score.secondary_score.toFixed(2)
+                        );
+                    })()
                 ) : null,
                 judges_scores,
                 React.createElement(
@@ -859,7 +920,7 @@ var TourResultsSemiVerboseTableRow = (function (_React$Component3) {
                     React.createElement(
                         "p",
                         { className: "text-center" },
-                        this.props.head_judge_score ? this.props.head_judge_score.data.total_score : React.createElement(
+                        this.props.head_judge_score && this.props.run.performed ? this.props.head_judge_score.data.total_score : React.createElement(
                             "span",
                             null,
                             "—"
@@ -884,25 +945,32 @@ var TourSemiVerboseResultsTable = (function (_React$Component4) {
 
     _createClass(TourSemiVerboseResultsTable, [{
         key: "renderAdvancesHeader",
-        value: function renderAdvancesHeader(prev_row, next_row, idx, n_cols) {
-            if (prev_row && prev_row.advances == next_row.advances) {
+        value: function renderAdvancesHeader(has_next_tour, prev_row, next_row, prev_run, next_run, idx, n_cols) {
+            var prev_status = prev_row ? prev_run.performed ? prev_row.advances ? "advanced" : "not_advanced" : "not_performed" : null;
+            var next_status = next_run.performed ? next_row.advances ? "advanced" : "not_advanced" : "not_performed";
+            var result = prev_status !== next_status ? next_status === "not_performed" ? React.createElement(
+                "p",
+                { className: "text-left" },
+                __("results.headers.participants_not_performed")
+            ) : has_next_tour ? next_status === "not_advanced" ? React.createElement(
+                "p",
+                { className: "text-left" },
+                __("results.headers.participants_not_advanced")
+            ) : React.createElement(
+                "p",
+                { className: "text-left" },
+                __("results.headers.participants_advanced")
+            ) : null : null;
+            if (result === null) {
                 return null;
             }
             return React.createElement(
                 "tr",
-                { key: "H" + idx },
+                { key: "NT" + idx },
                 React.createElement(
                     "th",
-                    { className: "advances-header", colSpan: n_cols, key: "NT" + idx },
-                    next_row.advances ? React.createElement(
-                        "p",
-                        { className: "text-left" },
-                        __("results.headers.participants_advanced")
-                    ) : React.createElement(
-                        "p",
-                        { className: "text-left" },
-                        __("results.headers.participants_not_advanced")
-                    )
+                    { className: "advances-header", colSpan: n_cols },
+                    result
                 )
             );
         }
@@ -933,9 +1001,7 @@ var TourSemiVerboseResultsTable = (function (_React$Component4) {
             }).bind(this));
             var rows = [];
             for (var idx = 0; idx < runs.length; ++idx) {
-                if (has_next_tour) {
-                    rows.push(this.renderAdvancesHeader(results_info[idx - 1], results_info[idx], idx, 4 + discipline_judges.length + has_total_score));
-                }
+                rows.push(this.renderAdvancesHeader(has_next_tour, results_info[idx - 1], results_info[idx], runs[idx - 1], runs[idx], idx, 4 + discipline_judges.length + has_total_score));
                 rows.push(React.createElement(TourResultsSemiVerboseTableRow, {
                     key: runs[idx].id,
                     head_judge_score: head_judge_scores[idx],
@@ -1029,6 +1095,22 @@ var TourResultsTableRow = (function (_React$Component5) {
         key: "render",
         value: function render() {
             var card = this.props.head_judge_score ? this.props.head_judge_score.data.total_score : "0";
+            var total_score = this.props.has_total_score ? this.props.run.performed ? React.createElement(
+                "p",
+                { className: "text-center" },
+                React.createElement(
+                    "strong",
+                    null,
+                    this.props.run.verbose_total_score.primary_score.toFixed(2)
+                ),
+                " /",
+                " ",
+                this.props.run.verbose_total_score.secondary_score.toFixed(2)
+            ) : React.createElement(
+                "p",
+                { className: "text-center" },
+                "—"
+            ) : null;
             return React.createElement(
                 "tr",
                 null,
@@ -1067,18 +1149,7 @@ var TourResultsTableRow = (function (_React$Component5) {
                 this.props.has_total_score ? React.createElement(
                     "td",
                     { className: "w-18 score" },
-                    React.createElement(
-                        "p",
-                        { className: "text-center" },
-                        React.createElement(
-                            "strong",
-                            null,
-                            this.props.run.verbose_total_score.primary_score.toFixed(2)
-                        ),
-                        " /",
-                        " ",
-                        this.props.run.verbose_total_score.secondary_score.toFixed(2)
-                    )
+                    total_score
                 ) : null,
                 React.createElement(
                     "td",
@@ -1107,25 +1178,32 @@ var TourResultsTable = (function (_React$Component6) {
 
     _createClass(TourResultsTable, [{
         key: "renderAdvancesHeader",
-        value: function renderAdvancesHeader(prev_row, next_row, idx) {
-            if (prev_row && prev_row.advances == next_row.advances) {
+        value: function renderAdvancesHeader(has_next_tour, prev_row, next_row, prev_run, next_run, idx, n_cols) {
+            var prev_status = prev_row ? prev_run.performed ? prev_row.advances ? "advanced" : "not_advanced" : "not_performed" : null;
+            var next_status = next_run.performed ? next_row.advances ? "advanced" : "not_advanced" : "not_performed";
+            var result = prev_status !== next_status ? next_status === "not_performed" ? React.createElement(
+                "p",
+                { className: "text-left" },
+                __("results.headers.participants_not_performed")
+            ) : has_next_tour ? next_status === "not_advanced" ? React.createElement(
+                "p",
+                { className: "text-left" },
+                __("results.headers.participants_not_advanced")
+            ) : React.createElement(
+                "p",
+                { className: "text-left" },
+                __("results.headers.participants_advanced")
+            ) : null : null;
+            if (result === null) {
                 return null;
             }
             return React.createElement(
                 "tr",
-                null,
+                { key: "NT" + idx },
                 React.createElement(
                     "th",
-                    { className: "advances-header", colSpan: "6", key: "NT" + idx },
-                    next_row.advances ? React.createElement(
-                        "p",
-                        { className: "text-left" },
-                        __("results.headers.participants_advanced")
-                    ) : React.createElement(
-                        "p",
-                        { className: "text-left" },
-                        __("results.headers.participants_not_advanced")
-                    )
+                    { className: "advances-header", colSpan: n_cols },
+                    result
                 )
             );
         }
@@ -1142,9 +1220,7 @@ var TourResultsTable = (function (_React$Component6) {
             var has_total_score = this.props.tour.scoring_system_name !== "rosfarr.formation";
             var rows = [];
             for (var idx = 0; idx < runs.length; ++idx) {
-                if (has_next_tour) {
-                    rows.push(this.renderAdvancesHeader(results_info[idx - 1], results_info[idx], idx));
-                }
+                rows.push(this.renderAdvancesHeader(has_next_tour, results_info[idx - 1], results_info[idx], runs[idx - 1], runs[idx], idx, 5 + has_total_score));
                 rows.push(React.createElement(TourResultsTableRow, {
                     key: runs[idx].id,
                     head_judge_score: head_judge_scores[idx],

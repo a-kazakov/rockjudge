@@ -889,8 +889,31 @@ var AcroJudgeInput = (function (_React$Component18) {
     return AcroJudgeInput;
 })(React.Component);
 
-var ScorePartScale = (function (_React$Component19) {
-    _inherits(ScorePartScale, _React$Component19);
+var NotPerformingMessage = (function (_React$Component19) {
+    _inherits(NotPerformingMessage, _React$Component19);
+
+    function NotPerformingMessage() {
+        _classCallCheck(this, NotPerformingMessage);
+
+        _get(Object.getPrototypeOf(NotPerformingMessage.prototype), "constructor", this).apply(this, arguments);
+    }
+
+    _createClass(NotPerformingMessage, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { className: "not-performing" },
+                _("tablet.messages.not_performing")
+            );
+        }
+    }]);
+
+    return NotPerformingMessage;
+})(React.Component);
+
+var ScorePartScale = (function (_React$Component20) {
+    _inherits(ScorePartScale, _React$Component20);
 
     function ScorePartScale() {
         _classCallCheck(this, ScorePartScale);
@@ -922,8 +945,8 @@ var ScorePartScale = (function (_React$Component19) {
     return ScorePartScale;
 })(React.Component);
 
-var TabletScoreTotalScore = (function (_React$Component20) {
-    _inherits(TabletScoreTotalScore, _React$Component20);
+var TabletScoreTotalScore = (function (_React$Component21) {
+    _inherits(TabletScoreTotalScore, _React$Component21);
 
     function TabletScoreTotalScore() {
         _classCallCheck(this, TabletScoreTotalScore);
@@ -951,8 +974,8 @@ var TabletScoreTotalScore = (function (_React$Component20) {
     return TabletScoreTotalScore;
 })(React.Component);
 
-var TabletScoreConfirmationButton = (function (_React$Component21) {
-    _inherits(TabletScoreConfirmationButton, _React$Component21);
+var TabletScoreConfirmationButton = (function (_React$Component22) {
+    _inherits(TabletScoreConfirmationButton, _React$Component22);
 
     function TabletScoreConfirmationButton() {
         _classCallCheck(this, TabletScoreConfirmationButton);
@@ -1011,8 +1034,8 @@ var TabletScoreConfirmationButton = (function (_React$Component21) {
     return TabletScoreConfirmationButton;
 })(React.Component);
 
-var TabletScoreInput = (function (_React$Component22) {
-    _inherits(TabletScoreInput, _React$Component22);
+var TabletScoreInput = (function (_React$Component23) {
+    _inherits(TabletScoreInput, _React$Component23);
 
     function TabletScoreInput() {
         _classCallCheck(this, TabletScoreInput);
@@ -1091,6 +1114,9 @@ var TabletScoreInput = (function (_React$Component22) {
     }, {
         key: "render",
         value: function render() {
+            if (!this.props.run.performed) {
+                return React.createElement(NotPerformingMessage, null);
+            }
             return React.createElement(
                 "div",
                 { className: this.props.readOnly ? "read-only" : "" },

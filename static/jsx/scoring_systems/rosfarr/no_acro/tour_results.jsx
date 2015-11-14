@@ -80,41 +80,48 @@ class TourResultsVerboseTableRow extends React.Component {
                 this.props.run.participant.sportsmen.length
             )}</strong></p>
             { getParticipantDisplay(this.props.run.participant) }
-            <p><strong>{ __("results.labels.penalty") }: </strong>{ this.props.head_judge_score ? this.props.head_judge_score.data.total_score : <span>&mdash;</span> }</p>
-            { render_acro_table && this.props.run.acrobatics.length > 0 ?
-                <div>
-                    <p><strong>{ has_acro_overrides ? __("results.labels.acrobatics_verbose") : __("results.labels.acrobatics") }:</strong></p>
-                    <table className="acro-table"><tbody>
-                        <tr>{
-                            this.props.run.acrobatics.map((acro, idx) => <td key={ idx } style={{ width: acro_cell_width }}><p className="text-center">
-                                { acro.original_score.toFixed(1) }
-                            </p></td>)
-                        }</tr>
-                        {
-                            has_acro_overrides ? <tr>{
-                                this.props.run.acrobatics.map((acro, idx) => <td key={ idx } style={{ width: acro_cell_width }}><p className="text-center">
-                                    { acro.score.toFixed(1) }
-                                </p></td>)
-                            }</tr> : null
-                        }
-                    </tbody></table>
+            { this.props.run.performed
+                ? <div>
+                    <p><strong>{ __("results.labels.penalty") }: </strong>{ this.props.head_judge_score ? this.props.head_judge_score.data.total_score : <span>&mdash;</span> }</p>
+                    { render_acro_table && this.props.run.acrobatics.length > 0 ?
+                        <div>
+                            <p><strong>{ has_acro_overrides ? __("results.labels.acrobatics_verbose") : __("results.labels.acrobatics") }:</strong></p>
+                            <table className="acro-table"><tbody>
+                                <tr>{
+                                    this.props.run.acrobatics.map((acro, idx) => <td key={ idx } style={{ width: acro_cell_width }}><p className="text-center">
+                                        { acro.original_score.toFixed(1) }
+                                    </p></td>)
+                                }</tr>
+                                {
+                                    has_acro_overrides ? <tr>{
+                                        this.props.run.acrobatics.map((acro, idx) => <td key={ idx } style={{ width: acro_cell_width }}><p className="text-center">
+                                            { acro.score.toFixed(1) }
+                                        </p></td>)
+                                    }</tr> : null
+                                }
+                            </tbody></table>
+                        </div>
+                    : null }
+                    { this.props.tour.scoring_system_name === "rosfarr.am_final_acro"
+                        ? <p><strong>{ __("results.labels.fw_score") }</strong>: {
+                            this.props.run.verbose_total_score.previous_tour.primary_score.toFixed(2) + " / " +
+                            this.props.run.verbose_total_score.previous_tour.secondary_score.toFixed(2)
+                        }</p>
+                        : null }
+                    { this.props.tour.scoring_system_name === "rosfarr.am_final_acro"
+                        ? <p><strong>{ __("results.labels.acro_score") }</strong>: {
+                            this.props.run.verbose_total_score.current_tour.primary_score.toFixed(2) + " / " +
+                            this.props.run.verbose_total_score.current_tour.secondary_score.toFixed(2)
+                        }</p>
+                        : null }
+                    { this.props.tour.scoring_system_name !== "rosfarr.formation"
+                        ? <p><strong>{ __("results.labels.total_score") }: { this.props.run.total_score }</strong></p>
+                        : null }
                 </div>
-            : null }
-            { this.props.tour.scoring_system_name === "rosfarr.am_final_acro"
-                ? <p><strong>{ __("results.labels.fw_score") }</strong>: {
-                    this.props.run.verbose_total_score.previous_tour.primary_score.toFixed(2) + " / " +
-                    this.props.run.verbose_total_score.previous_tour.secondary_score.toFixed(2)
-                }</p>
-                : null }
-            { this.props.tour.scoring_system_name === "rosfarr.am_final_acro"
-                ? <p><strong>{ __("results.labels.acro_score") }</strong>: {
-                    this.props.run.verbose_total_score.current_tour.primary_score.toFixed(2) + " / " +
-                    this.props.run.verbose_total_score.current_tour.secondary_score.toFixed(2)
-                }</p>
-                : null }
-            { this.props.tour.scoring_system_name !== "rosfarr.formation"
-                ? <p><strong>{ __("results.labels.total_score") }: { this.props.run.total_score }</strong></p>
-                : null }
+                : <p><em>
+                    { __("results.labels.not_performed") }
+                </em></p>
+            }
             { this.props.has_next_tour ?
                 <p><strong>{ __("results.labels.next_tour") }: </strong>{
                     this.props.results_info.advances ? _("global.labels.yes") : _("global.labels.no")
@@ -123,9 +130,13 @@ class TourResultsVerboseTableRow extends React.Component {
         </td>
     }
     render() {
-        let judges_scores = this.props.scores.map(((score, idx) => <td className="w-13" key={ idx }> {
+        let judges_scores = this.props.scores.map((score, idx) => <td className="w-13" key={ idx }> {
             this.renderScore(this.props.discipline_judges[idx], score, this.props.results_info.additional_data)
-        } </td>).bind(this));
+        } </td>);
+        if (!this.props.run.performed) {
+            judges_scores = this.props.scores.map((score, idx) =>
+                <td className="w-13" key={ idx }><p className="text-center">&mdash;</p></td>);
+        }
         return <tr>
             <td className="w-3 place"><p className="text-center">{ this.props.results_info.place }</p></td>
             { this.renderInfoBlock() }
@@ -189,45 +200,79 @@ class TourResultsSemiVerboseTableRow extends React.Component {
         return <p className="text-center">{ score.data.total_score.toFixed(2) }</p>;
     }
     render() {
-        let judges_scores = this.props.scores.map(((score, idx) => <td className="w-9" key={ idx }> {
+        let judges_scores = this.props.scores.map((score, idx) => <td className="w-9" key={ idx }> {
             this.renderScore(this.props.discipline_judges[idx], score, this.props.results_info.additional_data)
-        } </td>).bind(this));
+        } </td>);
+        if (!this.props.run.performed) {
+            judges_scores = this.props.scores.map((score, idx) =>
+                <td className="w-9" key={ idx }><p className="text-center">&mdash;</p></td>);
+        }
         let total_score = this.props.run.verbose_total_score;
         return <tr>
             <td className="w-5 place"><p className="text-center">{ this.props.results_info.place }</p></td>
             <td className="w-5 number"><p className="text-center">{ this.props.run.participant.number }</p></td>
             <td className="participant">{ getParticipantDisplay(this.props.run.participant) }</td>
             { this.props.tour.scoring_system_name !== "rosfarr.formation"
-                ? <td className="w-14 total-score"><p className="text-center">
-                    {
-                        this.props.tour.scoring_system_name == "rosfarr.am_final_acro"
-                            ? <em>
-                                { __("results.labels.fw_score_short") }{": "}
-                                { total_score.previous_tour.primary_score.toFixed(2) }{" / "}
-                                { total_score.previous_tour.secondary_score.toFixed(2) }<br /></em>
-                            : null
-                    }
-                    <strong>{ total_score.primary_score.toFixed(2) }</strong>
-                    &nbsp;/{" "}{ total_score.secondary_score.toFixed(2) }
-                </p></td> : null }
+                ? <td className="w-14 total-score">
+                    { (() => {
+                        if (!this.props.run.performed) {
+                            return <p className="text-center">&mdash;</p>;
+                        }
+                        if (this.props.tour.scoring_system_name == "rosfarr.am_final_acro") {
+                            return <p className="text-center">
+                                <em>
+                                    { __("results.labels.fw_score_short") }{": "}
+                                    { total_score.previous_tour.primary_score.toFixed(2) }{" / "}
+                                    { total_score.previous_tour.secondary_score.toFixed(2) }<br />
+                                </em>
+                                <strong>{ total_score.primary_score.toFixed(2) }</strong>
+                                &nbsp;/{" "}{ total_score.secondary_score.toFixed(2) }
+                            </p>;
+                        }
+                        return <p className="text-center">
+                            <strong>{ total_score.primary_score.toFixed(2) }</strong>
+                            &nbsp;/{" "}{ total_score.secondary_score.toFixed(2) }
+                        </p>;
+                    })() }
+                </td> : null }
             { judges_scores }
             <td className="w-7 card"><p className="text-center">{
-                this.props.head_judge_score ? this.props.head_judge_score.data.total_score : <span>&mdash;</span>
+                this.props.head_judge_score && this.props.run.performed
+                    ? this.props.head_judge_score.data.total_score
+                    : <span>&mdash;</span>
             }</p></td>
         </tr>
     }
 }
 
 class TourSemiVerboseResultsTable extends React.Component {
-    renderAdvancesHeader(prev_row, next_row, idx, n_cols) {
-        if (prev_row && prev_row.advances == next_row.advances) {
+    renderAdvancesHeader(has_next_tour ,prev_row, next_row, prev_run, next_run, idx, n_cols) {
+        let prev_status = prev_row
+            ? prev_run.performed
+                ? prev_row.advances
+                    ? "advanced"
+                    : "not_advanced"
+                : "not_performed"
+            : null;
+        let next_status = next_run.performed
+            ? next_row.advances
+                ? "advanced"
+                : "not_advanced"
+            : "not_performed";
+        let result = prev_status !== next_status
+            ? next_status === "not_performed"
+                ? <p className="text-left">{ __("results.headers.participants_not_performed") }</p>
+                : has_next_tour
+                    ? next_status === "not_advanced"
+                        ? <p className="text-left">{ __("results.headers.participants_not_advanced") }</p>
+                        : <p className="text-left">{ __("results.headers.participants_advanced") }</p>
+                    : null
+            : null;
+        if (result === null) {
             return null;
         }
-        return <tr key={ "H" + idx }><th className="advances-header" colSpan={ n_cols } key={ "NT" + idx }>
-            { next_row.advances
-                ? <p className="text-left">{ __("results.headers.participants_advanced") }</p>
-                : <p className="text-left">{ __("results.headers.participants_not_advanced") }</p>
-            }
+        return <tr key={ "NT" + idx }><th className="advances-header" colSpan={ n_cols }>
+            { result }
         </th></tr>
     }
     render() {
@@ -245,9 +290,15 @@ class TourSemiVerboseResultsTable extends React.Component {
         }.bind(this));
         let rows = [];
         for (let idx = 0; idx < runs.length; ++idx) {
-            if (has_next_tour) {
-                rows.push(this.renderAdvancesHeader(results_info[idx - 1], results_info[idx], idx, 4 + discipline_judges.length + has_total_score));
-            }
+            rows.push(this.renderAdvancesHeader(
+                has_next_tour,
+                results_info[idx - 1],
+                results_info[idx],
+                runs[idx - 1],
+                runs[idx],
+                idx,
+                4 + discipline_judges.length + has_total_score
+            ));
             rows.push(<TourResultsSemiVerboseTableRow
                 key={ runs[idx].id }
                 head_judge_score={ head_judge_scores[idx] }
@@ -281,30 +332,53 @@ class TourSemiVerboseResultsTable extends React.Component {
 class TourResultsTableRow extends React.Component {
     render() {
         let card = this.props.head_judge_score ? this.props.head_judge_score.data.total_score : "0";
+        let total_score = this.props.has_total_score ?
+            this.props.run.performed
+                ? <p className="text-center">
+                    <strong>{ this.props.run.verbose_total_score.primary_score.toFixed(2) }</strong>
+                    &nbsp;/{" "}{ this.props.run.verbose_total_score.secondary_score.toFixed(2) }
+                </p>
+                : <p className="text-center">&mdash;</p>
+            : null;
         return <tr>
             <td className="w-7 place"><p className="text-center">{ this.props.results_info.place }</p></td>
             <td className="w-6 number"><p className="text-center">{ this.props.run.participant.number }</p></td>
             <td className="w-30 participant">{ getParticipantDisplay(this.props.run.participant) }</td>
             <td className="club"><p>{ this.props.run.participant.club.name }</p></td>
-            { this.props.has_total_score ? <td className="w-18 score"><p className="text-center">
-                <strong>{ this.props.run.verbose_total_score.primary_score.toFixed(2) }</strong>
-                &nbsp;/{" "}{ this.props.run.verbose_total_score.secondary_score.toFixed(2) }
-            </p></td> : null }
+            { this.props.has_total_score ? <td className="w-18 score">{ total_score }</td> : null }
             <td className="w-8 card"><p className="text-center">{ card }</p></td>
         </tr>
     }
 }
 
 class TourResultsTable extends React.Component {
-    renderAdvancesHeader(prev_row, next_row, idx) {
-        if (prev_row && prev_row.advances == next_row.advances) {
+    renderAdvancesHeader(has_next_tour, prev_row, next_row, prev_run, next_run, idx, n_cols) {
+        let prev_status = prev_row
+            ? prev_run.performed
+                ? prev_row.advances
+                    ? "advanced"
+                    : "not_advanced"
+                : "not_performed"
+            : null;
+        let next_status = next_run.performed
+            ? next_row.advances
+                ? "advanced"
+                : "not_advanced"
+            : "not_performed";
+        let result = prev_status !== next_status
+            ? next_status === "not_performed"
+                ? <p className="text-left">{ __("results.headers.participants_not_performed") }</p>
+                : has_next_tour
+                    ? next_status === "not_advanced"
+                        ? <p className="text-left">{ __("results.headers.participants_not_advanced") }</p>
+                        : <p className="text-left">{ __("results.headers.participants_advanced") }</p>
+                    : null
+            : null;
+        if (result === null) {
             return null;
         }
-        return <tr><th className="advances-header" colSpan="6" key={ "NT" + idx }>
-            { next_row.advances
-                ? <p className="text-left">{ __("results.headers.participants_advanced") }</p>
-                : <p className="text-left">{ __("results.headers.participants_not_advanced") }</p>
-            }
+        return <tr key={ "NT" + idx }><th className="advances-header" colSpan={ n_cols }>
+            { result }
         </th></tr>
     }
     render() {
@@ -316,9 +390,15 @@ class TourResultsTable extends React.Component {
         let has_total_score = this.props.tour.scoring_system_name !== "rosfarr.formation";
         let rows = [];
         for (let idx = 0; idx < runs.length; ++idx) {
-            if (has_next_tour) {
-                rows.push(this.renderAdvancesHeader(results_info[idx - 1], results_info[idx], idx));
-            }
+            rows.push(this.renderAdvancesHeader(
+                has_next_tour,
+                results_info[idx - 1],
+                results_info[idx],
+                runs[idx - 1],
+                runs[idx],
+                idx,
+                5 + has_total_score
+            ));
             rows.push(<TourResultsTableRow
                 key={ runs[idx].id }
                 head_judge_score={ head_judge_scores[idx] }

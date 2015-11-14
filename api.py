@@ -301,12 +301,24 @@ class Api:
     @classmethod
     def run_load_program(cls, request, ws_message):
         run = cls.get_model(Run, "run_id", request)
-        if (request["program_id"] is None):
+        if request["program_id"] is None:
             run.load_acrobatics(None, ws_message)
         else:
             program = cls.get_model(Program, "program_id", request)
             run.load_acrobatics(program, ws_message)
         return {}
+
+    @classmethod
+    def run_mark_performed(cls, request, ws_message):
+        run = cls.get_model(Run, "run_id", request)
+        run.set_performed_flag(True, ws_message)
+
+    @classmethod
+    def run_mark_not_performed(cls, request, ws_message):
+        run = cls.get_model(Run, "run_id", request, {
+            "tour": {},
+        })
+        run.set_performed_flag(False, ws_message)
 
     @classmethod
     def tour_find_active(cls, request, ws_message):

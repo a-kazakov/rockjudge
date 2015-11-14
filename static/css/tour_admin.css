@@ -54,6 +54,15 @@
 .tour-admin .bordered-table .acro-description {
   text-align: left !important;
 }
+.tour-admin .bordered-table .performed {
+  padding: 0;
+  vertical-align: middle;
+  text-align: center;
+}
+.tour-admin .bordered-table .performed input {
+  margin: 0 5px;
+  vertical-align: middle;
+}
 .tour-admin .bordered-table td {
   position: relative;
 }

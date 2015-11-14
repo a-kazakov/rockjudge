@@ -391,6 +391,8 @@ class RunScore:
     @property
     def sorting_score(self):
         prev_primary, prev_secondary = self.get_prev_score()
+        if not self.run.performed:
+            return (10000000000000000, )
         if self.scoring_system == "rosfarr.am_final_acro":
             return (
                 -(self.dance_scores.primary_score + self.acro_scores.primary_score + self.penalties + prev_primary),
@@ -416,6 +418,8 @@ class RunScore:
     def verbose_display_score(self):
         sorting_score = self.sorting_score
         prev_primary, prev_secondary = self.get_prev_score()
+        if not self.run.performed:
+            return {}
         if self.scoring_system == "rosfarr.am_final_acro":
             return {
                 "previous_tour": {
@@ -438,6 +442,8 @@ class RunScore:
 
     @property
     def display_score(self):
+        if not self.run.performed:
+            return "—"
         sorting_score = self.sorting_score
         return "{:.2f} / {:.2f}".format(-sorting_score[0] / 100.0, -sorting_score[1] / 100.0)
 
@@ -501,7 +507,7 @@ class TourScores:
             lastest_sorting_score = row["sorting_score"]
             row.update({
                 "place": place,
-                "advances": num_advances >= place,
+                "advances": num_advances >= place and row["run_score"].run.performed,
             })
         return table
 
@@ -611,6 +617,8 @@ class FormationRunScore:
         return -1 if self.has_next_tour else 1
 
     def set_sorting_score(self, place):
+        if not self.run.scores:
+            return (10000000000000000, )
         self.sorting_score = (
             place,
             -self.places_counts[place],
@@ -620,6 +628,8 @@ class FormationRunScore:
 
     @property
     def verbose_display_score(self):
+        if not self.run.performed:
+            return {}
         sorting_score = self.sorting_score
         if sorting_score is None:
             return {}
@@ -632,6 +642,8 @@ class FormationRunScore:
 
     @property
     def display_score(self):
+        if not self.run.performed:
+            return "—"
         if self.sorting_score is None:
             return "SK"
         ss = self.sorting_score
@@ -666,6 +678,8 @@ class FormationTourScores:
                 for idx in range(len(to_yield), len(rows_with_kv)):
                     if rows_with_kv[idx]["run_score"].sorting_score == rows_with_kv[idx - 1]["run_score"].sorting_score:
                         to_yield.append(rows_with_kv[idx])
+                    else:
+                        break
             yield from to_yield
             yielded += len(to_yield)
             for row in to_yield:
@@ -674,13 +688,13 @@ class FormationTourScores:
     @staticmethod
     def scores_to_places(scores):
         tmp = zip(scores, range(len(scores)))
-        tmp = sorted(tmp, key=lambda y: -y[0])
+        tmp = sorted(tmp, key=lambda y: y[0])
         place = 1
-        lates_score = None
+        latest_score = None
         for idx in range(len(tmp)):
-            if idx > 0 and lates_score != tmp[idx][0]:
+            if idx > 0 and latest_score != tmp[idx][0]:
                 place = idx + 1
-            lates_score = tmp[idx][0]
+            latest_score = tmp[idx][0]
             tmp[idx] = (place, tmp[idx][1])
         result = [x[0] for x in sorted(tmp, key=lambda y: y[1])]
         return result
@@ -696,8 +710,10 @@ class FormationTourScores:
     def create_table(self):
         table = []
         scores_by_runs = [
-            run_score.dance_judges_total_scores
-            for run_score in self.run_scores
+            [
+                (0, -judge_score) if run_score.run.performed else (1, )
+                for judge_score in run_score.dance_judges_total_scores
+            ] for run_score in self.run_scores
         ]
         scores_by_judges = zip(*scores_by_runs)
         places_by_judges = [self.scores_to_places(scores) for scores in scores_by_judges]

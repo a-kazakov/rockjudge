@@ -1,6 +1,7 @@
 import json
 import peewee
 
+from exceptions import ApiError
 from models.base_model import BaseModel
 from models.participant import Participant
 from models.tour import Tour
@@ -16,11 +17,12 @@ class Run(BaseModel):
     participant = peewee.ForeignKeyField(Participant)
     tour = peewee.ForeignKeyField(Tour, related_name="runs")
     heat = peewee.IntegerField()
+    performed = peewee.BooleanField(default=True)
     program_name = peewee.CharField(null=True)
     acrobatics_json = peewee.TextField(default="{}")
     inherited_data_json = peewee.TextField(default="{}")
 
-    RO_PROPS = ["program_name"]
+    RO_PROPS = ["program_name", "performed"]
     RW_PROPS = ["heat"]
 
     PF_SCHEMA = {
@@ -110,7 +112,6 @@ class Run(BaseModel):
                 override.save()
             else:
                 override.delete_instance()
-
         ws_message.add_model_update(
             model_type=self.__class__,
             model_id=self.id,
@@ -118,6 +119,20 @@ class Run(BaseModel):
                 "acrobatics": {},
                 "scores": {},
             },
+        )
+        ws_message.add_message("tour_results_changed", {"tour_id": self.tour_id})
+
+    def set_performed_flag(self, new_value, ws_message):
+        if new_value == self.performed:
+            return
+        if self.tour.finalized:
+            raise ApiError("errors.run.set_performed_flag_on_finalized")
+        self.performed = new_value
+        self.save()
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id,
+            schema={}
         )
         ws_message.add_message("tour_results_changed", {"tour_id": self.tour_id})
 

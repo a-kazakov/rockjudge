@@ -181,7 +181,7 @@ var JudgeTablet = (function (_React$Component) {
             for (var i = 0; i < runs.length; ++i) {
                 for (var j = 0; j < runs[i].scores.length; ++j) {
                     var score = runs[i].scores[j];
-                    if (score.discipline_judge_id == discipline_judge_id && !score.confirmed) {
+                    if (score.discipline_judge_id == discipline_judge_id && !score.confirmed && runs[i].performed) {
                         return runs[i].heat;
                     }
                 }

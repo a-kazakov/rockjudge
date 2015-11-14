@@ -428,6 +428,14 @@ class AcroJudgeInput extends React.Component {
 
 // Common
 
+class NotPerformingMessage extends React.Component {
+    render() {
+        return <div className="not-performing">
+            { _("tablet.messages.not_performing") }
+        </div>
+    }
+}
+
 class ScorePartScale extends React.Component {
     genPossibleReductions() {
         return [
@@ -567,6 +575,9 @@ class TabletScoreInput extends React.Component {
         }
     }
     render() {
+        if (!this.props.run.performed) {
+            return <NotPerformingMessage />
+        }
         return <div className={ this.props.readOnly ? "read-only" : "" }>
             { this.renderScoresInput() }
             <TabletScoreTotalScore

@@ -301,6 +301,8 @@ var TourAdminScoresRow = (function (_React$Component4) {
                     program_name: this.props.run.program_name,
                     acrobatics: this.props.run.acrobatics,
                     programs: this.props.run.participant.programs }),
+                React.createElement(TourAdminPerformedCell, {
+                    run: this.props.run }),
                 React.createElement(
                     "td",
                     { className: "total" },
@@ -659,8 +661,40 @@ var TourAdminAcrobaticsCell = (function (_React$Component9) {
     return TourAdminAcrobaticsCell;
 })(React.Component);
 
-var TourAdminBody = (function (_React$Component10) {
-    _inherits(TourAdminBody, _React$Component10);
+var TourAdminPerformedCell = (function (_React$Component10) {
+    _inherits(TourAdminPerformedCell, _React$Component10);
+
+    function TourAdminPerformedCell() {
+        _classCallCheck(this, TourAdminPerformedCell);
+
+        _get(Object.getPrototypeOf(TourAdminPerformedCell.prototype), "constructor", this).apply(this, arguments);
+    }
+
+    _createClass(TourAdminPerformedCell, [{
+        key: "toggleState",
+        value: function toggleState() {
+            var method = this.props.run.performed ? "run.mark_not_performed" : "run.mark_performed";
+            Api(method, { run_id: this.props.run.id }).send();
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "td",
+                { className: "performed" },
+                React.createElement("input", {
+                    type: "checkbox",
+                    checked: this.props.run.performed,
+                    onClick: this.toggleState.bind(this) })
+            );
+        }
+    }]);
+
+    return TourAdminPerformedCell;
+})(React.Component);
+
+var TourAdminBody = (function (_React$Component11) {
+    _inherits(TourAdminBody, _React$Component11);
 
     // Intiialization
 
@@ -828,47 +862,32 @@ var TourAdminBody = (function (_React$Component10) {
                             React.createElement(
                                 "th",
                                 { className: "heat" },
-                                React.createElement(
-                                    "p",
-                                    null,
-                                    _("judging.labels.heat")
-                                )
+                                _("judging.labels.heat")
                             ),
                             React.createElement(
                                 "th",
                                 { className: "number" },
-                                React.createElement(
-                                    "p",
-                                    null,
-                                    _("judging.labels.number")
-                                )
+                                _("judging.labels.number")
                             ),
                             React.createElement(
                                 "th",
                                 { className: "name" },
-                                React.createElement(
-                                    "p",
-                                    null,
-                                    _("judging.labels.participant_name")
-                                )
+                                _("judging.labels.participant_name")
                             ),
                             React.createElement(
                                 "th",
                                 { className: "acrobatics" },
-                                React.createElement(
-                                    "p",
-                                    null,
-                                    _("judging.labels.acrobatics")
-                                )
+                                _("judging.labels.acrobatics")
+                            ),
+                            React.createElement(
+                                "th",
+                                { className: "performed" },
+                                _("judging.labels.performed")
                             ),
                             React.createElement(
                                 "th",
                                 { className: "total" },
-                                React.createElement(
-                                    "p",
-                                    null,
-                                    _("judging.labels.total_score")
-                                )
+                                _("judging.labels.total_score")
                             ),
                             judges_header
                         ),

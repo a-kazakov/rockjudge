@@ -130,6 +130,9 @@ function _(src, arg) {
             "judge": {
                 "delete_with_disciplines": "Невозможно удалить судью, входящего в судейскую бригаду хотя бы одной дисциплины",
             },
+            "run": {
+                "set_performed_flag_on_finalized": "Невозможно изменить статус захода финализинованного тура",
+            },
             "score": {
                 "score_not_exist": "Попытка получить значение несуществующей оценки судьи",
                 "update_on_finalized_tour": "Невозможно изменить оценку в финализированном туре",
@@ -210,6 +213,7 @@ function _(src, arg) {
                 "number": "№",
                 "old_score": "База",
                 "participant_name": "Участник",
+                "performed": "В",
                 "total_score": "Сумма баллов",
             },
         },
@@ -324,6 +328,7 @@ function _(src, arg) {
                 "not_judging_discipline": "Вы не участвуете в судействе данной дисциплины",
                 "not_judging_participant": "Вы не оцениваете этого участника",
                 "not_judging_tour": "Вы не оцениваете этот тур",
+                "not_performing": "Не выступает",
             },
             "pages": {
                 "dance": "Танец",
@@ -383,6 +388,7 @@ function _(src, arg) {
                     "headers": {
                         "participants_advanced": "Прошли в следующий тур",
                         "participants_not_advanced": "Не прошли в следующий тур",
+                        "participants_not_performed": "Не выступали",
                     },
                     "labels": {
                         "acro_score": "Результат акро",
@@ -393,6 +399,7 @@ function _(src, arg) {
                         "fw_score_short": "TH",
                         "info": "Участник, результат",
                         "next_tour": "Следующий тур",
+                        "not_performed": "Не принимал участие",
                         "number": "№",
                         "participant_club": "Клуб",
                         "participant_coaches": "Тренеры",

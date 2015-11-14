@@ -148,7 +148,7 @@ class JudgeTablet extends React.Component {
         for (let i = 0; i < runs.length; ++i) {
             for (let j = 0; j < runs[i].scores.length; ++j) {
                 let score = runs[i].scores[j];
-                if (score.discipline_judge_id == discipline_judge_id && !score.confirmed) {
+                if (score.discipline_judge_id == discipline_judge_id && !score.confirmed && runs[i].performed) {
                     return runs[i].heat;
                 }
             }

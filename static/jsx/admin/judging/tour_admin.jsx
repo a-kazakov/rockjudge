@@ -192,6 +192,8 @@ class TourAdminScoresRow extends React.Component {
                 program_name={ this.props.run.program_name }
                 acrobatics={ this.props.run.acrobatics }
                 programs={ this.props.run.participant.programs } />
+            <TourAdminPerformedCell
+                run={ this.props.run } />
             <td className="total">{ this.props.run.total_score }</td>
             { scores }
         </tr>;
@@ -379,6 +381,23 @@ class TourAdminAcrobaticsCell extends React.Component {
     }
 }
 
+class TourAdminPerformedCell extends React.Component {
+    toggleState() {
+        let method = this.props.run.performed
+            ? "run.mark_not_performed"
+            : "run.mark_performed";
+        Api(method, { run_id: this.props.run.id }).send();
+    }
+    render() {
+        return <td className="performed">
+            <input
+                type="checkbox"
+                checked={ this.props.run.performed }
+                onClick={ this.toggleState.bind(this) } />
+        </td>
+    }
+}
+
 class TourAdminBody extends React.Component {
 
     // Intiialization
@@ -518,11 +537,12 @@ class TourAdminBody extends React.Component {
             <table className="bordered-table">
                 <tbody>
                     <tr>
-                        <th className="heat"><p>{ _("judging.labels.heat") }</p></th>
-                        <th className="number"><p>{ _("judging.labels.number") }</p></th>
-                        <th className="name"><p>{ _("judging.labels.participant_name") }</p></th>
-                        <th className="acrobatics"><p>{ _("judging.labels.acrobatics") }</p></th>
-                        <th className="total"><p>{ _("judging.labels.total_score") }</p></th>
+                        <th className="heat">{ _("judging.labels.heat") }</th>
+                        <th className="number">{ _("judging.labels.number") }</th>
+                        <th className="name">{ _("judging.labels.participant_name") }</th>
+                        <th className="acrobatics">{ _("judging.labels.acrobatics") }</th>
+                        <th className="performed">{ _("judging.labels.performed") }</th>
+                        <th className="total">{ _("judging.labels.total_score") }</th>
                         { judges_header }
                     </tr>
                     { rows }
