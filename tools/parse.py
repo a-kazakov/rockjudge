@@ -141,7 +141,7 @@ class Couple:
     storage = []
 
     def __init__(self, grid, idx):
-        row = grid.getRow(idx, 9 + 6 * 2)
+        row = grid.getRow(idx, 11 + 6 * 2)
         if row[1] is None and row[4] is None:
             raise StopIteration
         self.sportsmen = []
@@ -160,7 +160,7 @@ class Couple:
                 "gender": "M",
             })
         self.acrobatics = []
-        for idx in range(10, 9 + 6 * 2, 2):
+        for idx in range(12, 9 + 6 * 2, 2):
             if row[idx] is not None:
                 self.acrobatics.append({
                     "description": str(row[idx]),
@@ -170,6 +170,8 @@ class Couple:
         self.discipline = str(row[7])
         self.club = Club.storage[row[8]].external_id
         self.coaches = str(row[9])
+        self.program_name = row[10]
+        self.default_for = str(row[11])
         self.external_id = md5((
             self.club + "|" +
             "|".join([s["first_name"] + "$" + s["last_name"] for s in self.sportsmen])
@@ -177,11 +179,25 @@ class Couple:
         self.storage.append(self)
 
     def serialize(self):
-        return {
+        result = {
             k: getattr(self, k)
-            for k in ["sportsmen", "acrobatics", "club", "coaches", "number", "external_id"]
+            for k in ["sportsmen", "club", "coaches", "number", "external_id"]
             if getattr(self, k) is not None
         }
+        if self.program_name is not None:
+            result.update({
+                "programs": [{
+                    "external_id": self.default_for,
+                    "default_for": self.default_for,
+                    "name": str(self.program_name),
+                    "acrobatics": self.acrobatics,
+                }]
+            })
+        else:
+            result.update({
+                "programs": [],
+            })
+        return result
 
 
 class Formation:
@@ -211,11 +227,15 @@ class Formation:
         self.storage.append(self)
 
     def serialize(self):
-        return {
+        result = {
             k: getattr(self, k)
             for k in ["formation_name", "sportsmen", "acrobatics", "club", "coaches", "number", "external_id"]
             if getattr(self, k) is not None
         }
+        result.update({
+            "programs": [],
+        })
+        return result
 
 
 @contextmanager
