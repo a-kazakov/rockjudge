@@ -269,7 +269,7 @@ class TourAdminAcrobaticLoader extends React.Component {
         if (value === "null") {
             value = null;
         }
-        if (confirm("sure?")) {
+        if (confirm(_("judging.confirms.load_program"))) {
             this.props.onLoad(value);
         }
     }

@@ -539,7 +539,7 @@ var ParticipantEditorRowProgram = (function (_React$Component9) {
         key: "onDelClick",
         value: function onDelClick(event) {
             event.preventDefault();
-            if (confirm("sure?")) {
+            if (confirm(_("admin.confirms.delete_program"))) {
                 Api("program.delete", { program_id: this.props.program.id }).send();
             }
         }

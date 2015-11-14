@@ -304,7 +304,7 @@ class ParticipantEditorRowProgram extends React.Component {
     }
     onDelClick(event) {
         event.preventDefault();
-        if (confirm("sure?")) {
+        if (confirm(_("admin.confirms.delete_program"))) {
             Api("program.delete", { program_id: this.props.program.id }).send();
         }
     }
