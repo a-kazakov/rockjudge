@@ -65,6 +65,8 @@ class TourResultsVerboseTableRow extends React.Component {
     }
     renderInfoBlock() {
         let has_acro_overrides = false;
+        let render_acro_table = this.props.tour.scoring_system_name == "rosfarr.acro" ||
+            this.props.tour.scoring_system_name == "rosfarr.am_final_acro";
         this.props.run.acrobatics.forEach(function(acro) {
             if (acro.score !== acro.original_score) {
                 has_acro_overrides = true;
@@ -79,7 +81,7 @@ class TourResultsVerboseTableRow extends React.Component {
             )}</strong></p>
             { getParticipantDisplay(this.props.run.participant) }
             <p><strong>{ __("results.labels.penalty") }: </strong>{ this.props.head_judge_score ? this.props.head_judge_score.data.total_score : <span>&mdash;</span> }</p>
-            { this.props.tour.scoring_system_name == "rosfarr.acro" && this.props.run.acrobatics.length > 0 ?
+            { render_acro_table && this.props.run.acrobatics.length > 0 ?
                 <div>
                     <p><strong>{ has_acro_overrides ? __("results.labels.acrobatics_verbose") : __("results.labels.acrobatics") }:</strong></p>
                     <table className="acro-table"><tbody>

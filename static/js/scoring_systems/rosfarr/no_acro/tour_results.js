@@ -492,6 +492,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
         key: "renderInfoBlock",
         value: function renderInfoBlock() {
             var has_acro_overrides = false;
+            var render_acro_table = this.props.tour.scoring_system_name == "rosfarr.acro" || this.props.tour.scoring_system_name == "rosfarr.am_final_acro";
             this.props.run.acrobatics.forEach(function (acro) {
                 if (acro.score !== acro.original_score) {
                     has_acro_overrides = true;
@@ -526,7 +527,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         "—"
                     )
                 ),
-                this.props.tour.scoring_system_name == "rosfarr.acro" && this.props.run.acrobatics.length > 0 ? React.createElement(
+                render_acro_table && this.props.run.acrobatics.length > 0 ? React.createElement(
                     "div",
                     null,
                     React.createElement(
