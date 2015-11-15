@@ -378,6 +378,63 @@ var JudgeTablet = (function (_React$Component) {
                 );
             }).bind(this));
             var single_run_class = cells.length == 1 ? " single-run" : "";
+            if (cells.length > 3) {
+                var _ret = (function () {
+                    var first_row = [];
+                    var second_row = [];
+                    cells.forEach(function (cell, idx) {
+                        if (idx % 2 === 0) {
+                            first_row.push(cell);
+                        } else {
+                            second_row.push(cell);
+                        }
+                    });
+                    var half_width = 100 / (2 * first_row.length + 1);
+                    var first_width = undefined,
+                        second_width = undefined;
+                    if (first_row.length === second_row.length) {
+                        first_width = 100 - half_width;
+                        second_width = 100 - half_width;
+                    } else {
+                        first_width = 100;
+                        second_width = 100 - 2 * half_width;
+                    }
+                    return {
+                        v: React.createElement(
+                            "div",
+                            null,
+                            React.createElement(
+                                "table",
+                                { className: "tablet-main-table", style: { width: first_width + "%", "margin-left": 0 } },
+                                React.createElement(
+                                    "tbody",
+                                    null,
+                                    React.createElement(
+                                        "tr",
+                                        null,
+                                        first_row
+                                    )
+                                )
+                            ),
+                            React.createElement(
+                                "table",
+                                { className: "tablet-main-table", style: { width: second_width + "%", "margin-right": first_row.length === second_row.length ? 0 : "auto" } },
+                                React.createElement(
+                                    "tbody",
+                                    null,
+                                    React.createElement(
+                                        "tr",
+                                        null,
+                                        second_row
+                                    )
+                                )
+                            )
+                        )
+                    };
+                })();
+
+                if (typeof _ret === "object") return _ret.v;
+            }
             return React.createElement(
                 "table",
                 { className: "tablet-main-table" + single_run_class },

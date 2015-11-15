@@ -137,21 +137,30 @@ class Slider extends React.Component {
 
 class TabletSelectorInput extends React.Component {
     getButtonsCount() {
+        if (this.props.style === "grid") {
+            return this.props.row_size;
+        }
         return this.props.choices.length;
+    }
+    renderLine() {
+        return result;
     }
     render() {
         let result = [];
-        this.props.choices.forEach(function(el) {
+        this.props.choices.forEach((el, idx) => {
             let key = el[0];
             let text = el[1];
             let active_class_name = (this.props.active === key) ? " active" : "";
             result.push(<button
-                key={key}
+                key={ key }
                 {...onTouchOrClick(this.onClick.bind(this, key))}
                 className={ "tbtn score-btn" + active_class_name }
             >{text}</button>);
-        }.bind(this));
-        let layout_class = (this.getButtonsCount() <= 10) ? "selector-layout" : "selector-layout-2rows";
+            if (this.props.style === "grid" && (idx + 1) % this.props.row_size === 0) {
+                result.push(<br key={ "br" + idx } />)
+            }
+        });
+        let layout_class = (this.props.style !== "two-lines") ? "selector-layout" : "selector-layout-2rows";
         let selected_class = this.props.active === null ? "" : " selected"
         return <div className={"scoring-layout " + layout_class + selected_class + " n-" + this.getButtonsCount().toString() }>{ result }</div>
     }

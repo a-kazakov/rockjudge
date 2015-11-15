@@ -510,16 +510,23 @@ var DanceJudgeScorePartInput = (function (_React$Component10) {
             };
         }
     }, {
+        key: "renderHeader",
+        value: function renderHeader() {
+            if (this.props.skip_header) {
+                return null;
+            }
+            React.createElement(
+                "h3",
+                null,
+                __("tablet.dance_judge." + this.props.part)
+            );
+        }
+    }, {
         key: "render",
         value: function render() {
             return React.createElement(
                 "div",
                 null,
-                React.createElement(
-                    "h3",
-                    null,
-                    __("tablet.dance_judge." + this.props.part)
-                ),
                 React.createElement(ScorePartScale, _extends({
                     scale: this.props.scale,
                     active: this.props.score.data.raw_data[this.props.part],
@@ -737,8 +744,40 @@ var DanceJudgeFormationScoreInput = (function (_React$Component14) {
     return DanceJudgeFormationScoreInput;
 })(React.Component);
 
-var DanceJudgeScoreInput = (function (_React$Component15) {
-    _inherits(DanceJudgeScoreInput, _React$Component15);
+var DanceJudgeSimplifiedScoreInput = (function (_React$Component15) {
+    _inherits(DanceJudgeSimplifiedScoreInput, _React$Component15);
+
+    function DanceJudgeSimplifiedScoreInput() {
+        _classCallCheck(this, DanceJudgeSimplifiedScoreInput);
+
+        _get(Object.getPrototypeOf(DanceJudgeSimplifiedScoreInput.prototype), "constructor", this).apply(this, arguments);
+    }
+
+    _createClass(DanceJudgeSimplifiedScoreInput, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(DanceJudgeScorePartInput, _extends({
+                    part: "points",
+                    scale: "grid",
+                    skip_header: true,
+                    scale_props: {
+                        min: 1,
+                        max: 40,
+                        row_size: 10
+                    }
+                }, this.props))
+            );
+        }
+    }]);
+
+    return DanceJudgeSimplifiedScoreInput;
+})(React.Component);
+
+var DanceJudgeScoreInput = (function (_React$Component16) {
+    _inherits(DanceJudgeScoreInput, _React$Component16);
 
     function DanceJudgeScoreInput() {
         _classCallCheck(this, DanceJudgeScoreInput);
@@ -746,7 +785,7 @@ var DanceJudgeScoreInput = (function (_React$Component15) {
         _get(Object.getPrototypeOf(DanceJudgeScoreInput.prototype), "constructor", this).apply(this, arguments);
     }
 
-    // AcroJudge
+    // Acro judge
 
     _createClass(DanceJudgeScoreInput, [{
         key: "render",
@@ -764,6 +803,8 @@ var DanceJudgeScoreInput = (function (_React$Component15) {
                     return React.createElement(DanceJudgeFinalDanceScoreInput, props);
                 case "rosfarr.formation":
                     return React.createElement(DanceJudgeFormationScoreInput, props);
+                case "rosfarr.simplified":
+                    return React.createElement(DanceJudgeSimplifiedScoreInput, props);
                 default:
                     return null;
             }
@@ -773,8 +814,8 @@ var DanceJudgeScoreInput = (function (_React$Component15) {
     return DanceJudgeScoreInput;
 })(React.Component);
 
-var AcroJudgeAcrobaticInput = (function (_React$Component16) {
-    _inherits(AcroJudgeAcrobaticInput, _React$Component16);
+var AcroJudgeAcrobaticInput = (function (_React$Component17) {
+    _inherits(AcroJudgeAcrobaticInput, _React$Component17);
 
     function AcroJudgeAcrobaticInput() {
         _classCallCheck(this, AcroJudgeAcrobaticInput);
@@ -804,8 +845,8 @@ var AcroJudgeAcrobaticInput = (function (_React$Component16) {
     return AcroJudgeAcrobaticInput;
 })(React.Component);
 
-var AcroJudgeScoreMistakes = (function (_React$Component17) {
-    _inherits(AcroJudgeScoreMistakes, _React$Component17);
+var AcroJudgeScoreMistakes = (function (_React$Component18) {
+    _inherits(AcroJudgeScoreMistakes, _React$Component18);
 
     function AcroJudgeScoreMistakes() {
         _classCallCheck(this, AcroJudgeScoreMistakes);
@@ -834,8 +875,8 @@ var AcroJudgeScoreMistakes = (function (_React$Component17) {
     return AcroJudgeScoreMistakes;
 })(React.Component);
 
-var AcroJudgeInput = (function (_React$Component18) {
-    _inherits(AcroJudgeInput, _React$Component18);
+var AcroJudgeInput = (function (_React$Component19) {
+    _inherits(AcroJudgeInput, _React$Component19);
 
     function AcroJudgeInput() {
         _classCallCheck(this, AcroJudgeInput);
@@ -889,8 +930,8 @@ var AcroJudgeInput = (function (_React$Component18) {
     return AcroJudgeInput;
 })(React.Component);
 
-var NotPerformingMessage = (function (_React$Component19) {
-    _inherits(NotPerformingMessage, _React$Component19);
+var NotPerformingMessage = (function (_React$Component20) {
+    _inherits(NotPerformingMessage, _React$Component20);
 
     function NotPerformingMessage() {
         _classCallCheck(this, NotPerformingMessage);
@@ -912,8 +953,8 @@ var NotPerformingMessage = (function (_React$Component19) {
     return NotPerformingMessage;
 })(React.Component);
 
-var ScorePartScale = (function (_React$Component20) {
-    _inherits(ScorePartScale, _React$Component20);
+var ScorePartScale = (function (_React$Component21) {
+    _inherits(ScorePartScale, _React$Component21);
 
     function ScorePartScale() {
         _classCallCheck(this, ScorePartScale);
@@ -931,11 +972,14 @@ var ScorePartScale = (function (_React$Component20) {
         value: function render() {
             switch (this.props.scale) {
                 case "point5":
-                    return React.createElement(TabletPointFiveSelectInput, this.props);
+                    return React.createElement(TabletPointFiveSelectInput, _extends({ style: "two-lines" }, this.props));
                 case "integer":
-                    return React.createElement(TabletIntegerSelectInput, this.props);
+                    return React.createElement(TabletIntegerSelectInput, _extends({ style: "two-lines" }, this.props));
+                case "grid":
+                    return React.createElement(TabletIntegerSelectInput, _extends({ style: "grid" }, this.props));
                 case "reduction":
                     return React.createElement(TabletSelectorInput, _extends({
+                        style: "one-line",
                         choices: this.genPossibleReductions()
                     }, this.props));
             }
@@ -945,8 +989,8 @@ var ScorePartScale = (function (_React$Component20) {
     return ScorePartScale;
 })(React.Component);
 
-var TabletScoreTotalScore = (function (_React$Component21) {
-    _inherits(TabletScoreTotalScore, _React$Component21);
+var TabletScoreTotalScore = (function (_React$Component22) {
+    _inherits(TabletScoreTotalScore, _React$Component22);
 
     function TabletScoreTotalScore() {
         _classCallCheck(this, TabletScoreTotalScore);
@@ -958,6 +1002,9 @@ var TabletScoreTotalScore = (function (_React$Component21) {
         key: "render",
         value: function render() {
             var role = this.props.discipline_judge.role;
+            if (this.props.scoring_system_name === "rosfarr.simplified") {
+                return null;
+            }
             if (role === "head_judge" || role === "tech_judge") {
                 return null;
             }
@@ -974,8 +1021,8 @@ var TabletScoreTotalScore = (function (_React$Component21) {
     return TabletScoreTotalScore;
 })(React.Component);
 
-var TabletScoreConfirmationButton = (function (_React$Component22) {
-    _inherits(TabletScoreConfirmationButton, _React$Component22);
+var TabletScoreConfirmationButton = (function (_React$Component23) {
+    _inherits(TabletScoreConfirmationButton, _React$Component23);
 
     function TabletScoreConfirmationButton() {
         _classCallCheck(this, TabletScoreConfirmationButton);
@@ -1017,7 +1064,7 @@ var TabletScoreConfirmationButton = (function (_React$Component22) {
                 return null;
             }
             if (!this.readyToConfirm()) {
-                return null;
+                return React.createElement("div", { className: "confirm" });
             }
             return React.createElement(
                 "div",
@@ -1034,8 +1081,8 @@ var TabletScoreConfirmationButton = (function (_React$Component22) {
     return TabletScoreConfirmationButton;
 })(React.Component);
 
-var TabletScoreInput = (function (_React$Component23) {
-    _inherits(TabletScoreInput, _React$Component23);
+var TabletScoreInput = (function (_React$Component24) {
+    _inherits(TabletScoreInput, _React$Component24);
 
     function TabletScoreInput() {
         _classCallCheck(this, TabletScoreInput);
@@ -1088,6 +1135,7 @@ var TabletScoreInput = (function (_React$Component23) {
                         onScoreUpdate: this.updateScores.bind(this) });
                 case "dance":
                 case "formation":
+                case "simplified":
                     return React.createElement(DanceJudgeScoreInput, {
                         score: this.props.score,
                         scoring_system_name: this.props.scoring_system_name,
@@ -1122,6 +1170,7 @@ var TabletScoreInput = (function (_React$Component23) {
                 { className: this.props.readOnly ? "read-only" : "" },
                 this.renderScoresInput(),
                 React.createElement(TabletScoreTotalScore, {
+                    scoring_system_name: this.props.scoring_system_name,
                     discipline_judge: this.props.discipline_judge,
                     score: this.props.score }),
                 React.createElement(TabletScoreConfirmationButton, {

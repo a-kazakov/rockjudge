@@ -137,6 +137,8 @@ function getScoringType(discipline_judge, scoring_system_name) {
             switch (scoring_system_name) {
                 case "rosfarr.formation":
                     return "formation";
+                case "rosfarr.simplified":
+                    return "simplified";
                 default:
                     return "dance";
             }

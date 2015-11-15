@@ -197,27 +197,40 @@ var TabletSelectorInput = (function (_React$Component2) {
     _createClass(TabletSelectorInput, [{
         key: "getButtonsCount",
         value: function getButtonsCount() {
+            if (this.props.style === "grid") {
+                return this.props.row_size;
+            }
             return this.props.choices.length;
+        }
+    }, {
+        key: "renderLine",
+        value: function renderLine() {
+            return result;
         }
     }, {
         key: "render",
         value: function render() {
+            var _this = this;
+
             var result = [];
-            this.props.choices.forEach((function (el) {
+            this.props.choices.forEach(function (el, idx) {
                 var key = el[0];
                 var text = el[1];
-                var active_class_name = this.props.active === key ? " active" : "";
+                var active_class_name = _this.props.active === key ? " active" : "";
                 result.push(React.createElement(
                     "button",
                     _extends({
                         key: key
-                    }, onTouchOrClick(this.onClick.bind(this, key)), {
+                    }, onTouchOrClick(_this.onClick.bind(_this, key)), {
                         className: "tbtn score-btn" + active_class_name
                     }),
                     text
                 ));
-            }).bind(this));
-            var layout_class = this.getButtonsCount() <= 10 ? "selector-layout" : "selector-layout-2rows";
+                if (_this.props.style === "grid" && (idx + 1) % _this.props.row_size === 0) {
+                    result.push(React.createElement("br", { key: "br" + idx }));
+                }
+            });
+            var layout_class = this.props.style !== "two-lines" ? "selector-layout" : "selector-layout-2rows";
             var selected_class = this.props.active === null ? "" : " selected";
             return React.createElement(
                 "div",

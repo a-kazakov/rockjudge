@@ -223,9 +223,14 @@ class DanceJudgeScorePartInput extends React.Component {
     genOnScoreUpdate() {
         return (new_value) => this.props.onScoreUpdate(this.props.part, new_value);
     }
+    renderHeader() {
+        if (this.props.skip_header) {
+            return null;
+        }
+        <h3>{ __("tablet.dance_judge." + this.props.part) }</h3>
+    }
     render() {
         return <div>
-            <h3>{ __("tablet.dance_judge." + this.props.part) }</h3>
             <ScorePartScale
                 scale={ this.props.scale }
                 active={ this.props.score.data.raw_data[this.props.part] }
@@ -356,6 +361,23 @@ class DanceJudgeFormationScoreInput extends React.Component {
     }
 }
 
+class DanceJudgeSimplifiedScoreInput extends React.Component {
+    render() {
+        return <div>
+            <DanceJudgeScorePartInput
+                part="points"
+                scale="grid"
+                skip_header={ true }
+                scale_props={{
+                    min: 1,
+                    max: 40,
+                    row_size: 10,
+                }}
+                {...this.props} />
+        </div>
+    }
+}
+
 class DanceJudgeScoreInput extends React.Component {
     render() {
         let props = {
@@ -371,13 +393,15 @@ class DanceJudgeScoreInput extends React.Component {
             return <DanceJudgeFinalDanceScoreInput {...props} />
         case "rosfarr.formation":
             return <DanceJudgeFormationScoreInput {...props} />
+        case "rosfarr.simplified":
+            return <DanceJudgeSimplifiedScoreInput {...props} />
         default:
             return null;
         }
     }
 }
 
-// AcroJudge
+// Acro judge
 
 class AcroJudgeAcrobaticInput extends React.Component {
     render() {
@@ -451,11 +475,14 @@ class ScorePartScale extends React.Component {
     render() {
         switch (this.props.scale) {
         case "point5":
-            return <TabletPointFiveSelectInput {...this.props} />
+            return <TabletPointFiveSelectInput style="two-lines" {...this.props} />
         case "integer":
-            return <TabletIntegerSelectInput {...this.props} />
+            return <TabletIntegerSelectInput style="two-lines" {...this.props} />
+        case "grid":
+            return <TabletIntegerSelectInput style="grid" {...this.props} />
         case "reduction":
             return <TabletSelectorInput
+                style="one-line"
                 choices={ this.genPossibleReductions() }
                 {...this.props} />
         }
@@ -465,6 +492,9 @@ class ScorePartScale extends React.Component {
 class TabletScoreTotalScore extends React.Component {
     render() {
         let role = this.props.discipline_judge.role;
+        if (this.props.scoring_system_name === "rosfarr.simplified") {
+            return null;
+        }
         if (role === "head_judge" || role === "tech_judge") {
             return null;
         }
@@ -503,7 +533,7 @@ class TabletScoreConfirmationButton extends React.Component {
             return null;
         }
         if (!this.readyToConfirm()) {
-            return null;
+            return <div className="confirm"></div>;
         }
         return <div className="confirm">
             <Slider
@@ -551,6 +581,7 @@ class TabletScoreInput extends React.Component {
                 onScoreUpdate={ this.updateScores.bind(this) } />
         case "dance":
         case "formation":
+        case "simplified":
             return <DanceJudgeScoreInput
                 score={ this.props.score }
                 scoring_system_name={ this.props.scoring_system_name }
@@ -581,6 +612,7 @@ class TabletScoreInput extends React.Component {
         return <div className={ this.props.readOnly ? "read-only" : "" }>
             { this.renderScoresInput() }
             <TabletScoreTotalScore
+                scoring_system_name={ this.props.scoring_system_name }
                 discipline_judge={ this.props.discipline_judge }
                 score={ this.props.score } />
             <TabletScoreConfirmationButton

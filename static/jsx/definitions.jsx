@@ -9,6 +9,7 @@ var GL = {
         "rosfarr.no_acro",
         "rosfarr.acro",
         "rosfarr.formation",
+        "rosfarr.simplified",
         "rosfarr.am_final_fw",
         "rosfarr.am_final_acro",
     ],

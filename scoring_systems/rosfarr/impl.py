@@ -90,6 +90,21 @@ class FormationScore(BaseScore):
         ])
 
 
+class SimplifiedScore(BaseScore):
+    DEFAULT_SCORES = {
+        "points": 0,
+    }
+    SCORES_VALIDATORS = {
+        "points": lambda x: type(x) is int and 1 <= x <= 40,
+    }
+
+    @staticmethod
+    def get_total_score(raw_scores):
+        return sum([
+            m100(raw_scores["points"]),
+        ])
+
+
 class DanceScore(BaseScore):
     DEFAULT_SCORES = {
         "fw_man": 100,
@@ -275,6 +290,8 @@ def ScoreWrapper(score, scoring_system, discipline_judge=None):
             return DanceScore(score) if role == "dance_judge" else AcroScore(score)
         if scoring_system == "rosfarr.formation":
             return FormationScore(score)
+        if scoring_system == "rosfarr.simplified":
+            return SimplifiedScore(score)
     raise ApiError("errors.score.score_not_exist")
 
 

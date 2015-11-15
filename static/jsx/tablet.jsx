@@ -251,7 +251,33 @@ class JudgeTablet extends React.Component {
                         onScoreConfirm={ this.onScoreConfirm.bind(this, current_score.id) } />
                 </td>
             }.bind(this));
-        var single_run_class = cells.length == 1 ? " single-run" : "";
+        let single_run_class = cells.length == 1 ? " single-run" : "";
+        if (cells.length > 3) {
+            let first_row = []
+            let second_row = []
+            cells.forEach((cell, idx) => {
+                if (idx % 2 === 0) {
+                    first_row.push(cell);
+                } else {
+                    second_row.push(cell);
+                }
+            })
+            let half_width = 100 / (2 * first_row.length + 1);
+            let first_width, second_width;
+            if (first_row.length === second_row.length) {
+                [first_width, second_width] = [100 - half_width, 100 - half_width];
+            } else {
+                [first_width, second_width] = [100, 100 - 2 * half_width];
+            }
+            return <div>
+                <table className="tablet-main-table" style={{ width: first_width + "%", "margin-left": 0 }}><tbody><tr>
+                    { first_row }
+                </tr></tbody></table>
+                <table className="tablet-main-table" style={{ width: second_width + "%", "margin-right": first_row.length === second_row.length ? 0 : "auto" }}><tbody><tr>
+                    { second_row }
+                </tr></tbody></table>
+            </div>
+        }
         return <table className={ "tablet-main-table" + single_run_class }><tbody><tr>
             { cells }
         </tr></tbody></table>;
