@@ -233,14 +233,23 @@ class TabletPoint5Input extends React.Component {
     }
 }
 
+var stopwatches = {};
+
 class StopWatch extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
+        this.state = stopwatches[props.score_id] || {
             active: false,
             value: 0,
             str_value: "0:00",
         };
+        if (this.state.active) {
+            this.state.interval = setInterval(this.tick.bind(this), 10);
+        }
+    }
+    componentWillUnmount() {
+        clearInterval(this.state.interval);
+        stopwatches[this.props.score_id] = this.state;
     }
     now() {
         return (new Date()).getTime();

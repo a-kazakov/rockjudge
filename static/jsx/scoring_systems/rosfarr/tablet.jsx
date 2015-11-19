@@ -263,7 +263,7 @@ class TechJudgeDanceScoreInput extends React.Component {
                 onValueUpdate={ this.genOnScoreUpdate("jump_steps") } />
             <div className="spacer"></div>
             <h3>{ __("tablet.tech_judge.timing") }</h3>
-            <StopWatch />
+            <StopWatch score_id={ this.props.score.id } />
             <TabletSelectorInput
                 choices={ [[true, "X"], [null, "-"], [false, "OK"]] }
                 active={ score.raw_data.timing_violation }

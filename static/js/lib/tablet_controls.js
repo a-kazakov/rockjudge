@@ -414,6 +414,8 @@ var TabletPoint5Input = (function (_React$Component6) {
     return TabletPoint5Input;
 })(React.Component);
 
+var stopwatches = {};
+
 var StopWatch = (function (_React$Component7) {
     _inherits(StopWatch, _React$Component7);
 
@@ -421,14 +423,23 @@ var StopWatch = (function (_React$Component7) {
         _classCallCheck(this, StopWatch);
 
         _get(Object.getPrototypeOf(StopWatch.prototype), "constructor", this).call(this, props);
-        this.state = {
+        this.state = stopwatches[props.score_id] || {
             active: false,
             value: 0,
             str_value: "0:00"
         };
+        if (this.state.active) {
+            this.state.interval = setInterval(this.tick.bind(this), 10);
+        }
     }
 
     _createClass(StopWatch, [{
+        key: "componentWillUnmount",
+        value: function componentWillUnmount() {
+            clearInterval(this.state.interval);
+            stopwatches[this.props.score_id] = this.state;
+        }
+    }, {
         key: "now",
         value: function now() {
             return new Date().getTime();

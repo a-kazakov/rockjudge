@@ -605,7 +605,7 @@ var TechJudgeDanceScoreInput = (function (_React$Component11) {
                     null,
                     __("tablet.tech_judge.timing")
                 ),
-                React.createElement(StopWatch, null),
+                React.createElement(StopWatch, { score_id: this.props.score.id }),
                 React.createElement(TabletSelectorInput, {
                     choices: [[true, "X"], [null, "-"], [false, "OK"]],
                     active: score.raw_data.timing_violation,
