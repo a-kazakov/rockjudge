@@ -38,16 +38,25 @@ class BaseScore:
         return self.get_total_score(raw_scores)
 
     @classmethod
-    def clear_value(cls, key, value):
+    def clear_value(cls, key, value, original_value=None):
         if not cls.SCORES_VALIDATORS[key](value):
-            return None
+            # Probably delta?
+            if original_value is None:
+                return original_value
+            if type(value) is not dict:
+                return original_value
+            keys = list(value.keys())
+            if keys != ["delta"]:
+                return original_value
+            new_value = original_value + value["delta"]
+            return cls.clear_value(key, new_value)
         if type(value) is float:
             return round(100 * value) / 100
         return value
 
     def update(self, new_data):
         self.data = {
-            key: self.clear_value(key, new_data[key]) if key in new_data else old_value
+            key: self.clear_value(key, new_data[key], old_value) if key in new_data else old_value
             for key, old_value in self.data.items()
         }
         self.score.set_data(self.data)
@@ -242,33 +251,23 @@ class HeadScore:
         }
 
 
-class TechScore:
-    def __init__(self, score):
-        self.score = score
-        raw_data = score.get_data()
-        self.data = {
-            "jump_steps":           raw_data.pop("jump_steps", 0),
-            "timing_violation":     raw_data.pop("timing_violation", None),
-        }
+class TechScore(BaseScore):
+    DEFAULT_SCORES = {
+        "jump_steps": 0,
+        "timing_violation": None,
+    }
+    INITIAL_SCORES = {
+        "jump_steps": 0,
+        "timing_violation": None,
+    }
+    SCORES_VALIDATORS = {
+        "jump_steps": lambda x: type(x) is int and 0 <= x <= 100,
+        "timing_violation": lambda x: x in [None, True, False],
+    }
 
-    @property
-    def total_score(self):
+    @staticmethod
+    def get_total_score(raw_scores):
         return 0
-
-    def update(self, new_data):
-        timing_violation = new_data.pop("timing_violation", self.data["timing_violation"])
-        self.data = {
-            "jump_steps": int(new_data.pop("jump_steps", self.data["jump_steps"])),
-            "timing_violation":
-                None if timing_violation is None or timing_violation == "" else bool(timing_violation),
-        }
-        self.score.set_data(self.data)
-
-    def serialize(self):
-        return {
-            "total_score": self.total_score,
-            "raw_data": self.data,
-        }
 
 
 def ScoreWrapper(score, scoring_system, discipline_judge=None):

@@ -206,12 +206,18 @@ class TabletIntegerInput extends React.Component {
         </div>
     }
     onMinus() {
-        if (this.props.value > 0) {
+        if (this.props.sendDeltas) {
+            this.props.onValueUpdate({"delta": -1});
+        } else {
             this.props.onValueUpdate(this.props.value - 1);
         }
     }
     onPlus() {
-        this.props.onValueUpdate(this.props.value + 1);
+        if (this.props.sendDeltas) {
+            this.props.onValueUpdate({"delta": 1});
+        } else {
+            this.props.onValueUpdate(this.props.value + 1);
+        }
     }
 }
 
@@ -224,12 +230,18 @@ class TabletPoint5Input extends React.Component {
         </div>
     }
     onMinus() {
-        if (this.props.value > 0) {
-            this.props.onValueUpdate((Math.round(this.props.value * 2) - 1) / 2);
+        if (this.props.sendDeltas) {
+            this.props.onValueUpdate({"delta": -0.5});
+        } else {
+            this.props.onValueUpdate(this.props.value - 0.5);
         }
     }
     onPlus() {
-        this.props.onValueUpdate((Math.round(this.props.value * 2) + 1) / 2);
+        if (this.props.sendDeltas) {
+            this.props.onValueUpdate({"delta": 0.5});
+        } else {
+            this.props.onValueUpdate(this.props.value + 0.5);
+        }
     }
 }
 

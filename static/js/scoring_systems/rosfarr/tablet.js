@@ -598,6 +598,7 @@ var TechJudgeDanceScoreInput = (function (_React$Component11) {
                 ),
                 React.createElement(TabletIntegerInput, {
                     value: score.raw_data.jump_steps,
+                    sendDeltas: true,
                     onValueUpdate: this.genOnScoreUpdate("jump_steps") }),
                 React.createElement("div", { className: "spacer" }),
                 React.createElement(

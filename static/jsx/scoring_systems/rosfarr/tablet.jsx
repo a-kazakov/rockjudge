@@ -260,6 +260,7 @@ class TechJudgeDanceScoreInput extends React.Component {
             <h3>{ __("tablet.tech_judge.jump_steps") }</h3>
             <TabletIntegerInput
                 value={ score.raw_data.jump_steps }
+                sendDeltas={ true }
                 onValueUpdate={ this.genOnScoreUpdate("jump_steps") } />
             <div className="spacer"></div>
             <h3>{ __("tablet.tech_judge.timing") }</h3>

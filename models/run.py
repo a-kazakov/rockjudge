@@ -84,6 +84,7 @@ class Run(BaseModel):
     def set_acrobatic_override(self, acrobatic_idx, score, ws_message):
         from models import AcrobaticOverride
         override = self.get_acrobatic_override(acrobatic_idx)
+        score = max(0, score)
         if override is None:
             if score is not None:
                 AcrobaticOverride.create(

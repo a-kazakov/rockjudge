@@ -351,14 +351,20 @@ var TabletIntegerInput = (function (_React$Component5) {
     }, {
         key: "onMinus",
         value: function onMinus() {
-            if (this.props.value > 0) {
+            if (this.props.sendDeltas) {
+                this.props.onValueUpdate({ "delta": -1 });
+            } else {
                 this.props.onValueUpdate(this.props.value - 1);
             }
         }
     }, {
         key: "onPlus",
         value: function onPlus() {
-            this.props.onValueUpdate(this.props.value + 1);
+            if (this.props.sendDeltas) {
+                this.props.onValueUpdate({ "delta": 1 });
+            } else {
+                this.props.onValueUpdate(this.props.value + 1);
+            }
         }
     }]);
 
@@ -400,14 +406,20 @@ var TabletPoint5Input = (function (_React$Component6) {
     }, {
         key: "onMinus",
         value: function onMinus() {
-            if (this.props.value > 0) {
-                this.props.onValueUpdate((Math.round(this.props.value * 2) - 1) / 2);
+            if (this.props.sendDeltas) {
+                this.props.onValueUpdate({ "delta": -0.5 });
+            } else {
+                this.props.onValueUpdate(this.props.value - 0.5);
             }
         }
     }, {
         key: "onPlus",
         value: function onPlus() {
-            this.props.onValueUpdate((Math.round(this.props.value * 2) + 1) / 2);
+            if (this.props.sendDeltas) {
+                this.props.onValueUpdate({ "delta": 0.5 });
+            } else {
+                this.props.onValueUpdate(this.props.value + 0.5);
+            }
         }
     }]);
 
