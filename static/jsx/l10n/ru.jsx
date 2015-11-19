@@ -361,6 +361,7 @@ function _(src, arg) {
                     "head_judge": {
                         "acrobatic_overrides": "Корректировки акробатики",
                         "black_card": "-100",
+                        "dance_judge_scores": "Оценки линейных судей",
                         "ok": "OK",
                         "penalty_type": "Штрафные санкции",
                         "previous_penalties": "Предыдущие штрафы",

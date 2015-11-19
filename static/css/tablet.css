@@ -130,6 +130,25 @@ h3.confirmed {
   text-align: center;
   padding-top: 20px;
 }
+.dance-judge-scores {
+  width: 100%;
+  max-width: 450px;
+  margin: 5px auto;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 5px;
+}
+.dance-judge-scores td {
+  background-color: #a7bbc5;
+  padding: 5px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+.dance-judge-scores td.confirmed {
+  color: #efefef;
+  background-color: #090;
+}
 header .header {
   text-align: center;
   margin-left: 150px;

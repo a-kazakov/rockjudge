@@ -114,6 +114,36 @@ class HeadJudgeTechJudgesScores extends React.Component {
     }
 }
 
+class HeadJudgeDanceJudgeScore extends React.Component {
+    render() {
+        return <td className={ this.props.score.confirmed ? "confirmed" : "" }>
+            { this.props.score.data.total_score.toFixed(2) }
+        </td>
+    }
+}
+
+class HeadJudgeDanceJudgesScores extends React.Component {
+    getDanceDisciplineJudges() {
+        return this.props.all_discipline_judges.filter((dj) => dj.role == "dance_judge" || dj.role == "acro_judge");
+    }
+    renderContent() {
+        return this.getDanceDisciplineJudges().map((judge) =>
+            <HeadJudgeDanceJudgeScore
+                key={ judge.id }
+                discipline_judge={ judge }
+                score={ this.props.all_scores[judge.id] } />
+        );
+    }
+    render() {
+        return <div>
+            <h3>{ __("tablet.head_judge.dance_judge_scores") }</h3>
+            <table className="dance-judge-scores"><tbody><tr>
+                { this.renderContent() }
+            </tr></tbody></table>
+        </div>
+    }
+}
+
 class HeadJudgeNotPerformedSwitch extends React.Component {
     markNotPerformed() {
         Api("run.mark_not_performed", { run_id: this.props.run_id }).send();
@@ -165,6 +195,9 @@ class HeadJudgeScoreInput extends React.Component {
                 active={ this.props.score.data.raw_data.penalty }
                 onValueUpdate={ this.genOnPenaltyUpdate() } />
             <HeadJudgeTechJudgesScores
+                all_discipline_judges={ this.props.all_discipline_judges }
+                all_scores={ this.props.all_scores } />
+            <HeadJudgeDanceJudgesScores
                 all_discipline_judges={ this.props.all_discipline_judges }
                 all_scores={ this.props.all_scores } />
             <HeadJudgeActobaticOverrides
