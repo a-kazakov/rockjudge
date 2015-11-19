@@ -103,7 +103,7 @@ class HeatsBody extends React.Component {
     }
     render() {
         if (this.state.tour === null) {
-            return <span>Loading ...</span>;
+            return <Loader />
         }
         return <div className="tour-heats" ref="printable_heats">
             <table className="bordered-table"><thead>

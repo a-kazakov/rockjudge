@@ -189,11 +189,7 @@ var HeatsBody = (function (_React$Component2) {
         key: "render",
         value: function render() {
             if (this.state.tour === null) {
-                return React.createElement(
-                    "span",
-                    null,
-                    "Loading ..."
-                );
+                return React.createElement(Loader, null);
             }
             return React.createElement(
                 "div",

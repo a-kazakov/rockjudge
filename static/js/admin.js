@@ -548,11 +548,7 @@ var AdminUI = (function (_React$Component4) {
         key: "render",
         value: function render() {
             if (this.state.name === null) {
-                return React.createElement(
-                    "span",
-                    null,
-                    "Loading..."
-                );
+                return React.createElement(Loader, null);
             }
             return React.createElement(
                 "table",

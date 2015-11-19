@@ -170,7 +170,7 @@ class PresenterTablet extends React.Component {
     }
     render() {
         if (this.state.judge === null) {
-            return <p>Loading ...</p>;
+            return <Loader />
         }
         if (this.state.tour === null) {
             return this.renderSplashScreen();

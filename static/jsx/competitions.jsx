@@ -321,7 +321,7 @@ class CompetitionsManager extends React.Component {
     }
     render() {
         if (this.state.competitions === null) {
-            return <span>Loading ...</span>;
+            return <Loader />
         }
         return <div>
             <header>

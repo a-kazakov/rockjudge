@@ -257,11 +257,7 @@ var CompetitionReport = (function (_React$Component) {
         key: "render",
         value: function render() {
             if (this.state.competition === null) {
-                return React.createElement(
-                    "span",
-                    null,
-                    "Loading..."
-                );
+                return React.createElement(Loader, null);
             }
             return React.createElement(
                 "div",

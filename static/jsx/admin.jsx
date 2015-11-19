@@ -359,7 +359,7 @@ class AdminUI extends React.Component {
     }
     render() {
         if (this.state.name === null) {
-            return <span>Loading...</span>;
+            return <Loader />;
         }
         return <table className="outer-table">
             <tbody><tr>

@@ -114,7 +114,7 @@ class StartPage extends React.Component {
             </div>;
         }
         if (!this.state.all_loaded) {
-            return <span>Loading ...</span>;
+            return <Loader />
         }
         if (this.state.selected_competition !== null) {
             return <div className="start-screen">

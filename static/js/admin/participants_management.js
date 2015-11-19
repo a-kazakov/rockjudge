@@ -1048,11 +1048,7 @@ var ParticipantsManager = (function (_React$Component14) {
         key: "render",
         value: function render() {
             if (this.state.name === null) {
-                return React.createElement(
-                    "span",
-                    null,
-                    "Loading ..."
-                );
+                return React.createElement(Loader, null);
             }
             return React.createElement(
                 "div",

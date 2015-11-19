@@ -95,7 +95,7 @@ class CompetitionReport extends React.Component {
     }
     render() {
         if (this.state.competition === null) {
-            return <span>Loading...</span>
+            return <Loader />
         }
         return <div>
             <header>

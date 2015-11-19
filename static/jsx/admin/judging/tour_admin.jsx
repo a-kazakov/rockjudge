@@ -517,7 +517,7 @@ class TourAdminBody extends React.Component {
 
     render() {
         if (this.state.name === null) {
-            return <span>Loading...</span>;
+            return <Loader />
         }
         let discipline_judges = this.state.discipline.discipline_judges;
         let rows = this.state.runs.map(function(run) {

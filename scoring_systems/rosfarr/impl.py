@@ -49,14 +49,16 @@ class BaseScore:
             if keys != ["delta"]:
                 return original_value
             new_value = original_value + value["delta"]
-            return cls.clear_value(key, new_value)
+            return cls.clear_value(key, new_value, original_value)
         if type(value) is float:
             return round(100 * value) / 100
         return value
 
     def update(self, new_data):
         self.data = {
-            key: self.clear_value(key, new_data[key], old_value) if key in new_data else old_value
+            key: (self.clear_value(key, new_data[key],
+                                   old_value if old_value is not None else self.DEFAULT_SCORES[key])
+                  if key in new_data else old_value)
             for key, old_value in self.data.items()
         }
         self.score.set_data(self.data)

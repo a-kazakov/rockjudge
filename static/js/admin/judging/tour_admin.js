@@ -825,11 +825,7 @@ var TourAdminBody = (function (_React$Component11) {
         key: "render",
         value: function render() {
             if (this.state.name === null) {
-                return React.createElement(
-                    "span",
-                    null,
-                    "Loading..."
-                );
+                return React.createElement(Loader, null);
             }
             var discipline_judges = this.state.discipline.discipline_judges;
             var rows = this.state.runs.map((function (run) {

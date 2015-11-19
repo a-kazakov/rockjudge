@@ -324,11 +324,7 @@ var StartList = (function (_React$Component) {
             var _this2 = this;
 
             if (this.state.name === null) {
-                return React.createElement(
-                    "span",
-                    null,
-                    "Loading ..."
-                );
+                return React.createElement(Loader, null);
             }
             return React.createElement(
                 "div",

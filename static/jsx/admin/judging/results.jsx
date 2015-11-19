@@ -101,7 +101,7 @@ class TourResultsBody extends React.Component {
     }
     render() {
         if (this.state.tour === null || this.state.results === null) {
-            return <span>Loading ...</span>
+            return <Loader />
         }
         var table = null;
         if (this.props.verbosity == "3") {

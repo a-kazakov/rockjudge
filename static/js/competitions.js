@@ -514,11 +514,7 @@ var CompetitionsManager = (function (_React$Component4) {
         key: "render",
         value: function render() {
             if (this.state.competitions === null) {
-                return React.createElement(
-                    "span",
-                    null,
-                    "Loading ..."
-                );
+                return React.createElement(Loader, null);
             }
             return React.createElement(
                 "div",

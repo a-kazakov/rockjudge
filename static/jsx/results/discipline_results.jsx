@@ -129,7 +129,7 @@ class DisciplineResults extends React.Component {
 
     render() {
         if (!this.state.loaded) {
-            return <span>Loading...</span>;
+            return <Loader />
         }
         return <div className="discipline-results">
             <DisciplineResultsTable table={ this.state.table } ref="main_table" />

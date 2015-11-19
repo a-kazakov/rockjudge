@@ -112,7 +112,7 @@ class StartList extends React.Component {
     }
     render() {
         if (this.state.name === null) {
-            return <span>Loading ...</span>;
+            return <Loader />
         }
         return <div>
             <header>

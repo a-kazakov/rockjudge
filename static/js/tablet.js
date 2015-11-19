@@ -486,11 +486,7 @@ var JudgeTablet = (function (_React$Component) {
         key: "render",
         value: function render() {
             if (this.state.judge === null) {
-                return React.createElement(
-                    "p",
-                    null,
-                    "Loading ..."
-                );
+                return React.createElement(Loader, null);
             }
             if (this.state.tour === null) {
                 return this.renderSplashScreen();

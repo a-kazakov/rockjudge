@@ -205,11 +205,7 @@ var StartPage = (function (_React$Component2) {
                 );
             }
             if (!this.state.all_loaded) {
-                return React.createElement(
-                    "span",
-                    null,
-                    "Loading ..."
-                );
+                return React.createElement(Loader, null);
             }
             if (this.state.selected_competition !== null) {
                 return React.createElement(
