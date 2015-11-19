@@ -3,6 +3,7 @@ import peewee
 from collections import deque
 
 from db import Database
+from exceptions import ApiError
 from webserver.websocket import WsMessage
 
 
@@ -208,6 +209,8 @@ class BaseModel(peewee.Model, PrefetchedModel):
             for data in prepared
             if "external_id" in data
         ]
+        if len(set(external_ids)) != len(external_ids):
+            raise ApiError("errors.api.duplicated_external_id")
         if len(external_ids) == 0:
             models_to_update = []
         else:

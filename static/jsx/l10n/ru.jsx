@@ -106,6 +106,7 @@ function _(src, arg) {
         },
         "errors": {
             "api": {
+                "duplicated_external_id": "В данных имеются записи с повторяющимимся external_id",
                 "unable_to_get": (wanted) => "Невозможно получить " + wanted + " из запроса",
             },
             "club": {

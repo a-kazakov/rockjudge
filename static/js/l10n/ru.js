@@ -127,6 +127,7 @@ function _(src, arg) {
         },
         "errors": {
             "api": {
+                "duplicated_external_id": "В данных имеются записи с повторяющимимся external_id",
                 "unable_to_get": function unable_to_get(wanted) {
                     return "Невозможно получить " + wanted + " из запроса";
                 }
