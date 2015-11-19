@@ -13,4 +13,9 @@ var GL = {
         "rosfarr.am_final_fw",
         "rosfarr.am_final_acro",
     ],
+    "suggested_programs": [
+        "default",
+        "qualification",
+        "final",
+    ],
 }

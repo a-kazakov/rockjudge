@@ -274,7 +274,7 @@ function _(src, arg) {
                 "name": "Название программы",
             },
             "tour": {
-                "default_program": "Программа по умолчанию",
+                "default_program": "Акробатика по умолчанию",
                 "is_hope_tour": "Тур «Надежды»",
                 "name": "Название тура",
                 "num_advances": "Квота вывода",

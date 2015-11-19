@@ -142,6 +142,7 @@ var TourInputForm = (function (_React$Component) {
                                 ),
                                 React.createElement("input", {
                                     type: "text",
+                                    list: "dl_programs",
                                     className: "form-control",
                                     ref: "default_program",
                                     defaultValue: tour.default_program || "" })
@@ -487,6 +488,13 @@ var ToursManagementUI = (function (_React$Component4) {
                     "datalist",
                     { id: "dl_tours" },
                     _getPossibleTourNames().map(function (n, idx) {
+                        return React.createElement("option", { key: idx, value: n });
+                    })
+                ),
+                React.createElement(
+                    "datalist",
+                    { id: "dl_programs" },
+                    GL.suggested_programs.map(function (n, idx) {
                         return React.createElement("option", { key: idx, value: n });
                     })
                 )

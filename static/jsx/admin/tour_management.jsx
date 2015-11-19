@@ -62,6 +62,7 @@ class TourInputForm extends React.Component {
                             <label className="control-label">{ _("models.tour.default_program") }</label>
                             <input
                                 type="text"
+                                list="dl_programs"
                                 className="form-control"
                                 ref="default_program"
                                 defaultValue={ tour.default_program || "" } />
@@ -238,6 +239,9 @@ class ToursManagementUI extends React.Component {
             </div>
             <datalist id="dl_tours">
                 { _getPossibleTourNames().map((n, idx) => <option key={ idx } value={ n } />) }
+            </datalist>
+            <datalist id="dl_programs">
+                { GL.suggested_programs.map((n, idx) => <option key={ idx } value={ n } />) }
             </datalist>
         </div>
     }
