@@ -126,6 +126,10 @@ h3.confirmed {
   font-size: 20px;
   text-align: center;
 }
+.not-performed-control {
+  text-align: center;
+  padding-top: 20px;
+}
 header .header {
   text-align: center;
   margin-left: 150px;
@@ -150,37 +154,37 @@ div.mistakes {
 }
 .tech-judge-info {
   font-weight: bold;
-  font-size: 14px;
-  width: 50%;
+  font-size: 13px;
+  width: 100%;
   pading: 5px;
   box-sizing: border-box;
-  display: inline-block;
   vertical-align: top;
   margin-bottom: 10px;
   height: 29px;
-  line-height: 29px;
 }
 .tech-judge-info .title {
   box-sizing: border-box;
-  display: inline-block;
-  vertical-align: top;
-  width: 65%;
+  vertical-align: middle;
+  width: 32.5%;
   padding-right: 5px;
   text-align: right;
 }
 .tech-judge-info .value {
-  box-sizing: border-box;
-  display: inline-block;
   vertical-align: top;
-  width: 35%;
+  width: 17.5%;
   text-align: center;
-  background-color: #a7bbc5;
+  padding: 2px;
 }
-.tech-judge-info .value.ok {
+.tech-judge-info .value .inner {
+  background-color: #a7bbc5;
+  line-height: 29px;
+  height: 29px;
+}
+.tech-judge-info .value .inner.ok {
   background-color: #090;
   color: #efefef;
 }
-.tech-judge-info .value.fail {
+.tech-judge-info .value .inner.fail {
   background-color: #900;
   color: #efefef;
 }

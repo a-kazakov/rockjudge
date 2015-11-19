@@ -344,6 +344,8 @@ function _(src, arg) {
         "tablet": {
             "buttons": {
                 "next_heat": "След. заход",
+                "not_performed": "Невыход на площадку",
+                "performed": "Отмена невыхода на площадку",
                 "prev_heat": "Пред. заход",
                 "reset_stopwatch": "Сброс",
                 "start_stopwatch": "Старт",

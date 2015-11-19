@@ -72,22 +72,24 @@ class HeadJudgeTechJudgeScore extends React.Component {
         let timing_data = this.getTimingData();
         return <div>
             <h3 className={ this.props.score.confirmed ? "confirmed" : "" }>{ this.props.discipline_judge.judge.name }</h3>
-            <div className="tech-judge-info">
-                <div className="title">
+            <table className="tech-judge-info"><tbody><tr>
+                <td className="title">
                     { __("tablet.tech_judge.jump_steps") }
-                </div>
-                <div className="value">
-                    { this.props.score.data.raw_data.jump_steps }
-                </div>
-            </div>
-            <div className="tech-judge-info">
-                <div className="title">
+                </td>
+                <td className="value">
+                    <div className="inner">
+                        { this.props.score.data.raw_data.jump_steps }
+                    </div>
+                </td>
+                <td className="title">
                     { __("tablet.tech_judge.timing") }
-                </div>
-                <div className={ "value" + timing_data[1] }>
-                    { timing_data[0] }
-                </div>
-            </div>
+                </td>
+                <td className="value">
+                    <div className={ "inner" + timing_data[1] }>
+                        { timing_data[0] }
+                    </div>
+                </td>
+            </tr></tbody></table>
         </div>
     }
 }
@@ -112,6 +114,31 @@ class HeadJudgeTechJudgesScores extends React.Component {
     }
 }
 
+class HeadJudgeNotPerformedSwitch extends React.Component {
+    markNotPerformed() {
+        Api("run.mark_not_performed", { run_id: this.props.run_id }).send();
+    }
+    markPerformed() {
+        Api("run.mark_performed", { run_id: this.props.run_id }).send();
+    }
+    renderButton() {
+        if (this.props.performed) {
+            return <button type="button" className="btn btn-sm btn-danger" onClick={ this.markNotPerformed.bind(this) }>
+                { _("tablet.buttons.not_performed") }
+            </button>
+        } else {
+            return <button type="button" className="btn btn-sm btn-success" onClick={ this.markPerformed.bind(this) }>
+                { _("tablet.buttons.performed") }
+            </button>
+        }
+    }
+    render() {
+        return <div className="not-performed-control">
+            { this.renderButton() }
+        </div>
+    }
+}
+
 class HeadJudgeScoreInput extends React.Component {
     getPenaltyCoices() {
         return [
@@ -125,6 +152,12 @@ class HeadJudgeScoreInput extends React.Component {
         return (new_value) => this.props.onScoreUpdate("penalty", new_value);
     }
     render() {
+        if (!this.props.run.performed) {
+            return <HeadJudgeNotPerformedSwitch
+                run_id={ this.props.run.id }
+                performed={ this.props.run.performed } />
+
+        }
         return <div>
             <h3>{ __("tablet.head_judge.penalty_type") }</h3>
             <TabletSelectorInput
@@ -138,6 +171,9 @@ class HeadJudgeScoreInput extends React.Component {
                 acrobatics={ this.props.run.acrobatics } />
             <HeadJudgePreviousPenlties
                 penalties={ this.props.run.inherited_data.penalties } />
+            <HeadJudgeNotPerformedSwitch
+                run_id={ this.props.run.id }
+                performed={ this.props.run.performed } />
         </div>
     }
 }
@@ -607,7 +643,7 @@ class TabletScoreInput extends React.Component {
         }
     }
     render() {
-        if (!this.props.run.performed) {
+        if (!this.props.run.performed && this.props.discipline_judge.role !== "head_judge") {
             return <NotPerformingMessage />
         }
         return <div className={ this.props.readOnly ? "read-only" : "" }>

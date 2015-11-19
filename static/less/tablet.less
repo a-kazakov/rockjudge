@@ -143,6 +143,11 @@ h3 {
   text-align: center;
 }
 
+.not-performed-control {
+  text-align: center;
+  padding-top: 20px;
+}
+
 header .header {
   text-align: center;
   margin-left: 150px;
@@ -171,37 +176,37 @@ header .header {
 
 .tech-judge-info {
   font-weight: bold;
-  font-size: 14px;
-  width: 50%;
+  font-size: 13px;
+  width: 100%;
   pading: 5px;
   box-sizing: border-box;
-  display: inline-block;
   vertical-align: top;
   margin-bottom: 10px;
   height: 29px;
-  line-height: 29px;
   .title {
     box-sizing: border-box;
-    display: inline-block;
-    vertical-align: top;
-    width: 65%;
+    vertical-align: middle;
+    width: 32.5%;
     padding-right: 5px;
     text-align: right;
   }
   .value {
-    box-sizing: border-box;
-    display: inline-block;
     vertical-align: top;
-    width: 35%;
+    width: 17.5%;
     text-align: center;
-    background-color: lighten(@ui-dark, 50%);
-    &.ok {
-      background-color: #090;
-      color: @ui-white;
-    }
-    &.fail {
-      background-color: #900;
-      color: @ui-white;
+    padding: 2px;
+    .inner {
+      background-color: lighten(@ui-dark, 50%);
+      line-height: 29px;
+      height: 29px;
+      &.ok {
+        background-color: #090;
+        color: @ui-white;
+      }
+      &.fail {
+        background-color: #900;
+        color: @ui-white;
+      }
     }
   }
 }
