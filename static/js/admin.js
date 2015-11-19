@@ -58,12 +58,21 @@ var CompetitionLoadingUI = (function (_React$Component) {
         key: "onSubmit",
         value: function onSubmit(event) {
             event.preventDefault();
-            Api("competition.load", {
-                competition_id: this.props.competition_id,
-                data: JSON.parse(this._input.value)
-            }).onSuccess(function () {
-                alert(_("global.messages.success"));
-            }).send();
+            try {
+                var data = JSON.parse(this._input.value);
+                Api("competition.load", {
+                    competition_id: this.props.competition_id,
+                    data: data
+                }).onSuccess(function () {
+                    return swal({
+                        title: _("global.messages.success"),
+                        type: "success",
+                        "animation": false
+                    });
+                }).send();
+            } catch (SyntaxError) {
+                showError(_("errors.admin.load_syntax_error"));
+            }
         }
     }]);
 
@@ -345,16 +354,31 @@ var ServiceUI = (function (_React$Component3) {
     }, {
         key: "unfinalizeTour",
         value: function unfinalizeTour(event) {
+            var _this2 = this;
+
             event.preventDefault();
-            if (prompt(_("admin.confirms.unfinalize_tour")) == "unfinalize") {
+            var passcode = swal({
+                title: _("admin.headers.unfinalize_tour"),
+                text: _("admin.confirms.unfinalize_tour"),
+                showCancelButton: true,
+                closeOnConfirm: false,
+                type: "input",
+                animation: false
+            }, function (value) {
+                if (value !== "unfinalize") {
+                    swal.showInputError(_("admin.messages.invalid_passcode"));
+                    return false;
+                }
                 Api("tour.unfinalize", {
-                    tour_id: this.refs.select_unfinalize.value
+                    tour_id: _this2.refs.select_unfinalize.value
                 }).onSuccess(function (event) {
-                    alert(_("global.messages.success"));
+                    swal({
+                        title: _("global.messages.success"),
+                        animation: false,
+                        type: "success"
+                    });
                 }).send();
-            } else {
-                alert(_("admin.messages.invalid_passcode"));
-            }
+            });
         }
     }, {
         key: "renderUnfinalize",

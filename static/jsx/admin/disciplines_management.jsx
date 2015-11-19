@@ -75,7 +75,7 @@ class DisciplineEditorRow extends React.Component {
                 }).onSuccess(this.props.stopEditing).send();
             }
         } catch (ex) {
-            alert(ex);
+            showError(ex);
         }
     }
     render() {

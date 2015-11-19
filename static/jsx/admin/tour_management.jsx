@@ -188,18 +188,6 @@ class ToursManagementUI extends React.Component {
             new_tour_after_id: -1,
         }
     }
-    submitBaseData(event) {
-        event.preventDefault();
-        Api("discipline.set", {
-            discipline_id: this.props.discipline.id,
-            data: {
-                name: this.refs.name.value,
-                external_id: this.refs.external_id.value,
-            }
-        }).onSuccess(function() {
-            alert(_("global.messages.success"));
-        }).send();
-    }
     addTourAfter(tour_id) {
         this.setState({
             new_tour_after_id: tour_id,

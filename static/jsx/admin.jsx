@@ -21,10 +21,20 @@ class CompetitionLoadingUI extends React.Component {
     }
     onSubmit(event) {
         event.preventDefault();
-        Api("competition.load", {
-            competition_id: this.props.competition_id,
-            data: JSON.parse(this._input.value),
-        }).onSuccess(function() { alert(_("global.messages.success")); }).send();
+        try {
+            let data = JSON.parse(this._input.value);
+            Api("competition.load", {
+                competition_id: this.props.competition_id,
+                data: data,
+            }).onSuccess(() => swal({
+                title: _("global.messages.success"),
+                type: "success",
+                "animation": false
+            })).send();
+        }
+        catch (SyntaxError) {
+            showError(_("errors.admin.load_syntax_error"));
+        }
     }
 }
 
@@ -214,15 +224,28 @@ class ServiceUI extends React.Component {
     }
     unfinalizeTour(event) {
         event.preventDefault();
-        if (prompt(_("admin.confirms.unfinalize_tour")) == "unfinalize") {
+        let passcode = swal({
+            title: _("admin.headers.unfinalize_tour"),
+            text: _("admin.confirms.unfinalize_tour"),
+            showCancelButton: true,
+            closeOnConfirm: false,
+            type: "input",
+            animation: false,
+        }, (value) => {
+            if (value !== "unfinalize") {
+                swal.showInputError(_("admin.messages.invalid_passcode"));
+                return false;
+            }
             Api("tour.unfinalize", {
                 tour_id: this.refs.select_unfinalize.value,
             }).onSuccess(function(event) {
-                alert(_("global.messages.success"));
+                swal({
+                    title: _("global.messages.success"),
+                    animation: false,
+                    type: "success",
+                });
             }).send();
-        } else {
-            alert(_("admin.messages.invalid_passcode"));
-        }
+        });
     }
     renderUnfinalize() {
         let eligible_tours = [];

@@ -14,7 +14,7 @@ var ApiImpl = (function () {
         this.data = data;
         this.cb_success = null;
         this.cb_error = function (msg, code, args) {
-            return alert(code ? _.apply(undefined, [code].concat(_toConsumableArray(args))) : msg);
+            return showError(code ? _.apply(undefined, [code].concat(_toConsumableArray(args))) : msg);
         };
         this.cb_fail = null;
         this.update_db = null;

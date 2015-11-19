@@ -105,6 +105,9 @@ function _(src, arg) {
             },
         },
         "errors": {
+            "admin": {
+                "load_syntax_error": "Некорректный формат данных",
+            },
             "api": {
                 "duplicated_external_id": "В данных имеются записи с повторяющимимся external_id",
                 "unable_to_get": (wanted) => "Невозможно получить " + wanted + " из запроса",
@@ -126,7 +129,7 @@ function _(src, arg) {
                 "repeating_judge": (name) => name + " встречается в списке судей более одного раза",
             },
             "global": {
-                "internal_server_error": "Ошибка на сервере (проверьте логи для информации)",
+                "internal_server_error": ["Ошибка на сервере", "проверьте логи для информации"],
             },
             "judge": {
                 "delete_with_disciplines": "Невозможно удалить судью, входящего в судейскую бригаду хотя бы одной дисциплины",
@@ -168,6 +171,7 @@ function _(src, arg) {
             },
             "messages": {
                 "connection_error": "Похоже, имеются проблемы с сетью",
+                "error_header": "Ошибка",
                 "success": "Операция успешно завершена",
             },
             "phrases": {

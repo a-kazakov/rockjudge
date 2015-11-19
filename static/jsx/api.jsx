@@ -3,7 +3,7 @@ class ApiImpl {
         this.method = method;
         this.data = data;
         this.cb_success = null;
-        this.cb_error = (msg, code, args) => alert(code ? _(code, ...args) : msg);
+        this.cb_error = (msg, code, args) => showError(code ? _(code, ...args) : msg);
         this.cb_fail = null;
         this.update_db = null;
     }

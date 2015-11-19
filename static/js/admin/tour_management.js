@@ -417,20 +417,6 @@ var ToursManagementUI = (function (_React$Component4) {
     }
 
     _createClass(ToursManagementUI, [{
-        key: "submitBaseData",
-        value: function submitBaseData(event) {
-            event.preventDefault();
-            Api("discipline.set", {
-                discipline_id: this.props.discipline.id,
-                data: {
-                    name: this.refs.name.value,
-                    external_id: this.refs.external_id.value
-                }
-            }).onSuccess(function () {
-                alert(_("global.messages.success"));
-            }).send();
-        }
-    }, {
         key: "addTourAfter",
         value: function addTourAfter(tour_id) {
             this.setState({

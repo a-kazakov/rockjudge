@@ -31,7 +31,7 @@ var Loader = (function (_React$Component) {
                         null,
                         React.createElement(
                             "td",
-                            { style: { "text-align": "center" } },
+                            { style: { "textAlign": "center" } },
                             React.createElement("img", { src: "/static/img/ajax-loader.gif" })
                         )
                     )
