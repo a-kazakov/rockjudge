@@ -1,5 +1,6 @@
-import json
 import peewee
+
+from playhouse import postgres_ext
 
 from exceptions import ApiError
 from models.base_model import BaseModel
@@ -17,17 +18,17 @@ class Score(BaseModel):
 
     run = peewee.ForeignKeyField(Run, related_name="scores")
     discipline_judge = peewee.ForeignKeyField(DisciplineJudge)
-    score_data = peewee.TextField(default="{}")
+    score_data = postgres_ext.BinaryJSONField(default="{}")
     confirmed = peewee.BooleanField(default=False)
 
     def get_sorting_key(self):
         return self.discipline_judge.get_sorting_key()
 
     def get_data(self):
-        return json.loads(self.score_data)
+        return self.score_data
 
     def set_data(self, score_data):
-        self.score_data = json.dumps(score_data)
+        self.score_data = score_data
         self.save()
 
     def confirm(self, ws_message):

@@ -1,9 +1,18 @@
 import json
 import peewee
 
+from playhouse import postgres_ext
+
 from exceptions import ApiError
 from models.base_model import BaseModel
 from models.proxies import competition_proxy
+
+
+def serialize_competition_info(raw_data):
+    return json.dumps([
+        [str(row[0]), str(row[1])]
+        for row in raw_data
+    ], check_circular=False)
 
 
 class Competition(BaseModel):
@@ -12,10 +21,10 @@ class Competition(BaseModel):
 
     name = peewee.CharField()
     date = peewee.CharField()
-    info = peewee.TextField(default="[]")
+    info = postgres_ext.BinaryJSONField(default=[], dumps=serialize_competition_info)
     active = peewee.BooleanField(default=True)
 
-    RW_PROPS = ["name", "date", "active"]
+    RW_PROPS = ["name", "date", "active", "info"]
 
     PF_CHILDREN = {
         "disciplines": None,
@@ -48,12 +57,12 @@ class Competition(BaseModel):
 
     @classmethod
     def create_model(cls, data, ws_message):
-        create_kwargs = cls.gen_model_kwargs(data, info=json.dumps(data["info"]))
+        create_kwargs = cls.gen_model_kwargs(data)
         cls.create(**create_kwargs)
         ws_message.add_message("competition_list_update")
 
     def update_model(self, new_data, ws_message):
-        self.update_model_base(new_data, info=json.dumps(new_data["info"]))
+        self.update_model_base(new_data)
         ws_message.add_model_update(
             model_type=Competition,
             model_id=self.id,
@@ -72,7 +81,6 @@ class Competition(BaseModel):
 
     def serialize(self, children={}):
         result = self.serialize_props()
-        result["info"] = json.loads(self.info)
         result = self.serialize_lower_child(result, "disciplines", children)
         result = self.serialize_lower_child(result, "judges", children)
         result = self.serialize_lower_child(result, "clubs", children)

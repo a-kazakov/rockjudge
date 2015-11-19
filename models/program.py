@@ -1,8 +1,19 @@
 import json
 import peewee
 
+from playhouse import postgres_ext
+
 from models.base_model import BaseModel
 from models.participant import Participant
+
+
+def serialize_program_acrobatics(raw_data):
+    return json.dumps([
+        {
+            "description": str(sp["description"]),
+            "score": float(sp["score"]),
+        } for sp in raw_data
+    ], check_circular=False)
 
 
 class Program(BaseModel):
@@ -14,33 +25,16 @@ class Program(BaseModel):
 
     name = peewee.CharField()
     participant = peewee.ForeignKeyField(Participant, related_name="programs", null=True)
-    acrobatics_json = peewee.TextField(default="[]")
+    acrobatics = postgres_ext.BinaryJSONField(default=[], dumps=serialize_program_acrobatics)
     default_for = peewee.CharField(null=True)
     external_id = peewee.CharField(null=True)
 
-    RW_PROPS = ["name", "default_for", "external_id"]
+    RW_PROPS = ["name", "default_for", "external_id", "acrobatics"]
 
     PF_CHILDREN = {
         "participant": None,
         "runs": None,
     }
-
-    @staticmethod
-    def serialize_acrobatics(raw_data):
-        return json.dumps(
-            [{
-                "description": str(sp["description"]),
-                "score": float(sp["score"]),
-            } for sp in raw_data],
-            ensure_ascii=False, check_circular=False)
-
-    @property
-    def acrobatics(self):
-        return json.loads(self.acrobatics_json)
-
-    @acrobatics.setter
-    def acrobatics(self, value):
-        self.acrobatics_json = self.serialize_acrobatics(value)
 
     @classmethod
     def load_models(cls, participant, objects):
@@ -48,7 +42,6 @@ class Program(BaseModel):
             cls.gen_model_kwargs(
                 obj,
                 participant=participant,
-                acrobatics=obj["acrobatics"],
             ) for obj in objects
         ]
         list(cls.load_models_base(objects, prepared, participant=participant))
@@ -58,7 +51,6 @@ class Program(BaseModel):
         kwargs = cls.gen_model_kwargs(
             data,
             participant=participant,
-            acrobatics_json=cls.serialize_acrobatics(data["acrobatics"])
         )
         model = cls.create(**kwargs)
         ws_message.add_model_update(
@@ -76,10 +68,6 @@ class Program(BaseModel):
 
     def update_model(self, new_data, ws_message):
         from models import Participant
-        if "acrobatics" in new_data:
-            self.acrobatics = new_data["acrobatics"]
-        else:
-            print(new_data)
         self.update_model_base(new_data)
         ws_message.add_model_update(
             model_type=Participant,
@@ -109,7 +97,6 @@ class Program(BaseModel):
 
     def serialize(self, children={}):
         result = self.serialize_props()
-        result["acrobatics"] = self.acrobatics
         result = self.serialize_upper_child(result, "participant", children)
         result = self.serialize_lower_child(result, "runs", children)
         return result

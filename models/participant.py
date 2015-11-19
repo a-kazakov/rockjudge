@@ -1,9 +1,22 @@
 import json
 import peewee
 
+from playhouse import postgres_ext
+
 from models.base_model import BaseModel
 from models.club import Club
 from models.proxies import discipline_proxy
+
+
+def serialize_participant_sportsmen(raw_data):
+    return json.dumps([
+        {
+            "first_name": str(sp["first_name"]),
+            "last_name": str(sp["last_name"]),
+            "year_of_birth": int(sp["year_of_birth"]),
+            "gender": "M" if sp["gender"] == "M" else "F"
+        } for sp in raw_data
+    ], check_circular=False)
 
 
 class Participant(BaseModel):
@@ -19,33 +32,14 @@ class Participant(BaseModel):
     number = peewee.IntegerField(default=0)
     club = peewee.ForeignKeyField(Club, related_name="participants")
     external_id = peewee.CharField(null=True, default=None)
-    sportsmen_json = peewee.TextField(default="[]")
+    sportsmen = postgres_ext.BinaryJSONField(default=[], dumps=serialize_participant_sportsmen)
 
-    RW_PROPS = ["formation_name", "coaches", "number", "external_id"]
+    RW_PROPS = ["formation_name", "coaches", "number", "external_id", "sportsmen"]
 
     PF_CHILDREN = {
         "club": None,
         "programs": None,
     }
-
-    @staticmethod
-    def serialize_sportsmen(raw_data):
-        return json.dumps([
-            {
-                "first_name": str(sp["first_name"]),
-                "last_name": str(sp["last_name"]),
-                "year_of_birth": int(sp["year_of_birth"]),
-                "gender": "M" if sp["gender"] == "M" else "F"
-            } for sp in raw_data
-        ], ensure_ascii=False, check_circular=False)
-
-    @property
-    def sportsmen(self):
-        return json.loads(self.sportsmen_json)
-
-    @sportsmen.setter
-    def sportsmen(self, value):
-        self.sportsmen_json = self.serialize_sportsmen(value)
 
     def get_name(self):
         if self.is_couple():
@@ -86,7 +80,6 @@ class Participant(BaseModel):
             cls.gen_model_kwargs(
                 obj,
                 discipline=discipline,
-                sportsmen=obj["sportsmen"],
                 club=clubs[obj["club"]]
             ) for obj in objects
         ]
@@ -99,8 +92,7 @@ class Participant(BaseModel):
         create_kwargs = cls.gen_model_kwargs(
             data,
             discipline=discipline,
-            club=club,
-            sportsmen_json=cls.serialize_sportsmen(data["sportsmen"]))
+            club=club)
         model = cls.create(**create_kwargs)
         ws_message.add_model_update(
             model_type=discipline_proxy,
@@ -119,7 +111,6 @@ class Participant(BaseModel):
 
     def update_model(self, new_data, ws_message):
         number_changed = "number" in new_data and new_data["number"] != self.number
-        self.sportsmen = new_data["sportsmen"]
         if "club_id" in new_data:
             club = Club.get((Club.id == new_data["club_id"]) & (Club.competition == self.discipline.competition_id))
             self.club = club
@@ -162,7 +153,6 @@ class Participant(BaseModel):
     def serialize(self, children={}):
         result = self.serialize_props()
         result["name"] = self.get_name()
-        result["sportsmen"] = sorted(self.sportsmen, key=lambda x: (x["gender"], x["last_name"], x["first_name"]))
         result = self.serialize_upper_child(result, "club", children)
         result = self.serialize_lower_child(result, "programs", children)
         return result

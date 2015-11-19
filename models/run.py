@@ -1,5 +1,6 @@
-import json
 import peewee
+
+from playhouse import postgres_ext
 
 from exceptions import ApiError
 from models.base_model import BaseModel
@@ -19,10 +20,10 @@ class Run(BaseModel):
     heat = peewee.IntegerField()
     performed = peewee.BooleanField(default=True)
     program_name = peewee.CharField(null=True)
-    acrobatics_json = peewee.TextField(default="{}")
-    inherited_data_json = peewee.TextField(default="{}")
+    acrobatics = postgres_ext.BinaryJSONField(default={})
+    inherited_data = postgres_ext.BinaryJSONField(default={})
 
-    RO_PROPS = ["program_name", "performed"]
+    RO_PROPS = ["program_name", "performed", "inherited_data"]
     RW_PROPS = ["heat"]
 
     PF_SCHEMA = {
@@ -44,22 +45,6 @@ class Run(BaseModel):
         "scores": None,
     }
 
-    @property
-    def acrobatics(self):
-        return json.loads(self.acrobatics_json)
-
-    @acrobatics.setter
-    def acrobatics(self, value):
-        self.acrobatics_json = json.dumps(value)
-
-    @property
-    def inherited_data(self):
-        return json.loads(self.inherited_data_json)
-
-    @inherited_data.setter
-    def inherited_data(self, value):
-        self.inherited_data_json = json.dumps(value)
-
     def get_data_to_inherit(self):
         return self.tour.scoring_system.get_run_data_to_inherit(self, self.tour.discipline_judges)
 
@@ -69,7 +54,7 @@ class Run(BaseModel):
             self.acrobatics = []
         else:
             self.program_name = program.name
-            self.acrobatics_json = program.acrobatics_json
+            self.acrobatics = program.acrobatics
         self.save()
         ws_message.add_model_update(
             model_type=self.__class__,
@@ -162,7 +147,6 @@ class Run(BaseModel):
         result = self.serialize_props()
         result["total_score"] = scores_obj["total_run_score"]
         result["verbose_total_score"] = scores_obj["verbose_run_score"]
-        result["inherited_data"] = self.inherited_data
         result = self.serialize_upper_child(result, "participant", children)
         if discipline_judges is not None:
             rev_discipline_judges = {

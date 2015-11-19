@@ -1,5 +1,5 @@
 import asyncio
-import peewee_async
+import peewee_asyncext
 
 from settings import DB_CONFIG
 
@@ -14,7 +14,7 @@ class Database:
         return cls._instance
 
     def __init__(self):
-        self._db = peewee_async.PooledPostgresqlDatabase(
+        self._db = peewee_asyncext.PooledPostgresqlExtDatabase(
             self._db_name,
             user=DB_CONFIG["user"],
             password=DB_CONFIG["password"],
