@@ -63,70 +63,113 @@ class TourResultsVerboseTableRow extends React.Component {
             return <span>{ score.data.total_score.toFixed(2) }</span>;
         }
     }
-    renderInfoBlock() {
-        let has_acro_overrides = false;
-        let render_acro_table = this.props.tour.scoring_system_name == "rosfarr.acro" ||
-            this.props.tour.scoring_system_name == "rosfarr.am_final_acro";
-        this.props.run.acrobatics.forEach(function(acro) {
-            if (acro.score !== acro.original_score) {
-                has_acro_overrides = true;
-            }
-        });
-        let acro_cell_width = (100 / this.props.run.acrobatics.length) + "%";
-        return <td className="info-block">
+    renderParticipantInfo() {
+        return <div>
             <p><strong>{ _("global.phrases.participant_n",
                 this.props.run.participant.number,
                 null,
                 this.props.run.participant.sportsmen.length
             )}</strong></p>
             { getParticipantDisplay(this.props.run.participant) }
-            { this.props.run.performed
-                ? <div>
-                    <p><strong>{ __("results.labels.penalty") }: </strong>{ this.props.head_judge_score ? this.props.head_judge_score.data.total_score : <span>&mdash;</span> }</p>
-                    { render_acro_table && this.props.run.acrobatics.length > 0 ?
-                        <div>
-                            <p><strong>{ has_acro_overrides ? __("results.labels.acrobatics_verbose") : __("results.labels.acrobatics") }:</strong></p>
-                            <table className="acro-table"><tbody>
-                                <tr>{
-                                    this.props.run.acrobatics.map((acro, idx) => <td key={ idx } style={{ width: acro_cell_width }}><p className="text-center">
-                                        { acro.original_score.toFixed(1) }
-                                    </p></td>)
-                                }</tr>
-                                {
-                                    has_acro_overrides ? <tr>{
-                                        this.props.run.acrobatics.map((acro, idx) => <td key={ idx } style={{ width: acro_cell_width }}><p className="text-center">
-                                            { acro.score.toFixed(1) }
-                                        </p></td>)
-                                    }</tr> : null
-                                }
-                            </tbody></table>
-                        </div>
-                    : null }
-                    { this.props.tour.scoring_system_name === "rosfarr.am_final_acro"
-                        ? <p><strong>{ __("results.labels.fw_score") }</strong>: {
-                            this.props.run.verbose_total_score.previous_tour.primary_score.toFixed(2) + " / " +
-                            this.props.run.verbose_total_score.previous_tour.secondary_score.toFixed(2)
-                        }</p>
-                        : null }
-                    { this.props.tour.scoring_system_name === "rosfarr.am_final_acro"
-                        ? <p><strong>{ __("results.labels.acro_score") }</strong>: {
-                            this.props.run.verbose_total_score.current_tour.primary_score.toFixed(2) + " / " +
-                            this.props.run.verbose_total_score.current_tour.secondary_score.toFixed(2)
-                        }</p>
-                        : null }
-                    { this.props.tour.scoring_system_name !== "rosfarr.formation"
-                        ? <p><strong>{ __("results.labels.total_score") }: { this.props.run.total_score }</strong></p>
-                        : null }
-                </div>
-                : <p><em>
-                    { __("results.labels.not_performed") }
-                </em></p>
+        </div>
+    }
+    renderHeadJudgePenalty() {
+        if (!this.props.run.performed) {
+            return null;
+        }
+        return <p><strong>{ __("results.labels.penalty") }: </strong>
+            { this.props.head_judge_score ? this.props.head_judge_score.data.total_score : <span>&mdash;</span> }</p>
+    }
+    renderAcroTable() {
+        if (!this.props.run.performed) {
+            return null;
+        }
+        let has_acro_overrides = false;
+        let render_acro_table = this.props.tour.scoring_system_name == "rosfarr.acro" ||
+            this.props.tour.scoring_system_name == "rosfarr.am_final_acro";
+        if (!render_acro_table) {
+            return null;
+        }
+        this.props.run.acrobatics.forEach(function(acro) {
+            if (acro.score !== acro.original_score) {
+                has_acro_overrides = true;
             }
-            { this.props.has_next_tour ?
-                <p><strong>{ __("results.labels.next_tour") }: </strong>{
-                    this.props.results_info.advances ? _("global.labels.yes") : _("global.labels.no")
-                }</p>
-            : null }
+        });
+        if (this.props.run.acrobatics.length == 0) {
+            return null;
+        }
+        let acro_cell_width = (100 / this.props.run.acrobatics.length) + "%";
+        return <div>
+            <p><strong>{ has_acro_overrides ? __("results.labels.acrobatics_verbose") : __("results.labels.acrobatics") }:</strong></p>
+            <table className="acro-table"><tbody>
+                <tr>{
+                    this.props.run.acrobatics.map((acro, idx) => <td key={ idx } style={{ width: acro_cell_width }}><p className="text-center">
+                        { acro.original_score.toFixed(1) }
+                    </p></td>)
+                }</tr>
+                {
+                    has_acro_overrides ? <tr>{
+                        this.props.run.acrobatics.map((acro, idx) => <td key={ idx } style={{ width: acro_cell_width }}><p className="text-center">
+                            { acro.score.toFixed(1) }
+                        </p></td>)
+                    }</tr> : null
+                }
+            </tbody></table>
+        </div>
+    }
+    renderAmClassFwScore() {
+        if (this.props.tour.scoring_system_name !== "rosfarr.am_final_acro") {
+            return null;
+        }
+        return <p><strong>{ __("results.labels.fw_score") }</strong>: {
+            this.props.run.verbose_total_score.previous_tour.primary_score.toFixed(2) + " / " +
+            this.props.run.verbose_total_score.previous_tour.secondary_score.toFixed(2)
+        } </p>
+    }
+    renderAmClassAcroScore() {
+        if (!this.props.run.performed) {
+            return null;
+        }
+        if (this.props.tour.scoring_system_name !== "rosfarr.am_final_acro") {
+            return null;
+        }
+        return <p><strong>{ __("results.labels.acro_score") }</strong>: {
+            this.props.run.verbose_total_score.current_tour.primary_score.toFixed(2) + " / " +
+            this.props.run.verbose_total_score.current_tour.secondary_score.toFixed(2)
+        } </p>
+    }
+    renderTotalScore() {
+        if (!this.props.run.performed) {
+            return null;
+        }
+        return <p><strong>{ __("results.labels.total_score") }: { this.props.run.total_score }</strong></p>;
+    }
+    renderNotPerformedLabel() {
+        if (this.props.performed) {
+            return null;
+        }
+        return <p><em>
+            { __("results.labels.not_performed") }
+        </em></p>
+    }
+    renderNextTourLabel() {
+        if (!this.props.has_next_tour) {
+            return null;
+        }
+        <p><strong>{ __("results.labels.next_tour") }: </strong>{
+            this.props.results_info.advances ? _("global.labels.yes") : _("global.labels.no")
+        }</p>
+    }
+    renderInfoBlock() {
+        return <td className="info-block">
+            { this.renderParticipantInfo() }
+            { this.renderHeadJudgePenalty() }
+            { this.renderAcroTable() }
+            { this.renderAmClassFwScore() }
+            { this.renderAmClassAcroScore() }
+            { this.renderTotalScore() }
+            { this.renderNotPerformedLabel() }
+            { this.renderNextTourLabel() }
         </td>
     }
     render() {
@@ -331,7 +374,11 @@ class TourSemiVerboseResultsTable extends React.Component {
 
 class TourResultsTableRow extends React.Component {
     render() {
-        let card = this.props.head_judge_score ? this.props.head_judge_score.data.total_score : "0";
+        let card = this.props.run.performed
+            ? this.props.head_judge_score
+                ? this.props.head_judge_score.data.total_score
+                : "0"
+            : <span>&mdash;</span>;
         let total_score = this.props.has_total_score ?
             this.props.run.performed
                 ? <p className="text-center">

@@ -239,7 +239,8 @@ class Tour(BaseModel):
             schema={
                 "runs": {
                     "participant": {
-                        "club": {}
+                        "programs": {},
+                        "club": {},
                     },
                     "acrobatics": {},
                     "scores": {},

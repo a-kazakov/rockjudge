@@ -141,7 +141,7 @@ class Couple:
     storage = []
 
     def __init__(self, grid, idx):
-        row = grid.getRow(idx, 11 + 6 * 2)
+        row = grid.getRow(idx, 13 + 6 * 2)
         if row[1] is None and row[4] is None:
             raise StopIteration
         self.sportsmen = []
@@ -160,7 +160,7 @@ class Couple:
                 "gender": "M",
             })
         self.acrobatics = []
-        for idx in range(12, 9 + 6 * 2, 2):
+        for idx in range(12, 12 + 6 * 2, 2):
             if row[idx] is not None:
                 self.acrobatics.append({
                     "description": str(row[idx]),

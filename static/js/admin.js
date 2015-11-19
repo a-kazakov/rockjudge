@@ -212,96 +212,92 @@ var ManagementUI = (function (_React$Component2) {
                             { className: "side-panel" },
                             React.createElement(
                                 "div",
-                                { className: "scroller" },
+                                { className: "block" },
                                 React.createElement(
                                     "div",
-                                    { className: "block" },
-                                    React.createElement(
-                                        "div",
-                                        {
-                                            className: "level-1" + (this.state.page == "load_competition" ? " active" : ""),
-                                            onClick: this.switchPage.bind(this, "load_competition", {}) },
-                                        _("admin.menu.load_competition")
-                                    )
-                                ),
+                                    {
+                                        className: "level-1" + (this.state.page == "load_competition" ? " active" : ""),
+                                        onClick: this.switchPage.bind(this, "load_competition", {}) },
+                                    _("admin.menu.load_competition")
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "block" },
                                 React.createElement(
                                     "div",
-                                    { className: "block" },
-                                    React.createElement(
-                                        "div",
-                                        {
-                                            className: "level-1" + (this.state.page == "manage_disciplines" ? " active" : ""),
-                                            onClick: this.switchPage.bind(this, "manage_disciplines", {}) },
-                                        _("admin.menu.manage_disciplines")
-                                    )
-                                ),
+                                    {
+                                        className: "level-1" + (this.state.page == "manage_disciplines" ? " active" : ""),
+                                        onClick: this.switchPage.bind(this, "manage_disciplines", {}) },
+                                    _("admin.menu.manage_disciplines")
+                                )
+                            ),
+                            React.createElement(
+                                "details",
+                                { className: "block", open: !!parseInt(sessionStorage.getItem("D_TOURS")) },
                                 React.createElement(
-                                    "details",
-                                    { className: "block", open: !!parseInt(sessionStorage.getItem("D_TOURS")) },
-                                    React.createElement(
-                                        "summary",
-                                        { className: "level-1", onClick: function (e) {
-                                                return sessionStorage.setItem("D_TOURS", e.target.parentNode.open ? 0 : 1);
-                                            } },
-                                        _("admin.menu.manage_tours")
-                                    ),
-                                    ics_tours
+                                    "summary",
+                                    { className: "level-1", onClick: function (e) {
+                                            return sessionStorage.setItem("D_TOURS", e.target.parentNode.open ? 0 : 1);
+                                        } },
+                                    _("admin.menu.manage_tours")
                                 ),
+                                ics_tours
+                            ),
+                            React.createElement(
+                                "details",
+                                { className: "block", open: !!parseInt(sessionStorage.getItem("D_SPORTSMEN")) },
                                 React.createElement(
-                                    "details",
-                                    { className: "block", open: !!parseInt(sessionStorage.getItem("D_SPORTSMEN")) },
-                                    React.createElement(
-                                        "summary",
-                                        { className: "level-1", onClick: function (e) {
-                                                return sessionStorage.setItem("D_SPORTSMEN", e.target.parentNode.open ? 0 : 1);
-                                            } },
-                                        _("admin.menu.manage_sportsmen")
-                                    ),
-                                    ics_participants
+                                    "summary",
+                                    { className: "level-1", onClick: function (e) {
+                                            return sessionStorage.setItem("D_SPORTSMEN", e.target.parentNode.open ? 0 : 1);
+                                        } },
+                                    _("admin.menu.manage_sportsmen")
                                 ),
-                                React.createElement(
-                                    "div",
-                                    { className: "block" },
-                                    React.createElement(
-                                        "div",
-                                        {
-                                            className: "level-1" + (this.state.page == "manage_clubs" ? " active" : ""),
-                                            onClick: this.switchPage.bind(this, "manage_clubs", {}) },
-                                        _("admin.menu.manage_clubs")
-                                    )
-                                ),
+                                ics_participants
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "block" },
                                 React.createElement(
                                     "div",
-                                    { className: "block" },
-                                    React.createElement(
-                                        "div",
-                                        {
-                                            className: "level-1" + (this.state.page == "manage_judges" ? " active" : ""),
-                                            onClick: this.switchPage.bind(this, "manage_judges", {}) },
-                                        _("admin.menu.manage_judges")
-                                    )
-                                ),
+                                    {
+                                        className: "level-1" + (this.state.page == "manage_clubs" ? " active" : ""),
+                                        onClick: this.switchPage.bind(this, "manage_clubs", {}) },
+                                    _("admin.menu.manage_clubs")
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "block" },
                                 React.createElement(
                                     "div",
-                                    { className: "block" },
-                                    React.createElement(
-                                        "div",
-                                        {
-                                            className: "level-1" + (this.state.page == "start_list" ? " active" : ""),
-                                            onClick: this.switchPage.bind(this, "start_list", {}) },
-                                        _("admin.menu.start_list")
-                                    )
-                                ),
+                                    {
+                                        className: "level-1" + (this.state.page == "manage_judges" ? " active" : ""),
+                                        onClick: this.switchPage.bind(this, "manage_judges", {}) },
+                                    _("admin.menu.manage_judges")
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "block" },
                                 React.createElement(
                                     "div",
-                                    { className: "block" },
-                                    React.createElement(
-                                        "div",
-                                        {
-                                            className: "level-1" + (this.state.page == "competition_report" ? " active" : ""),
-                                            onClick: this.switchPage.bind(this, "competition_report", {}) },
-                                        _("admin.menu.competition_report")
-                                    )
+                                    {
+                                        className: "level-1" + (this.state.page == "start_list" ? " active" : ""),
+                                        onClick: this.switchPage.bind(this, "start_list", {}) },
+                                    _("admin.menu.start_list")
+                                )
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "block" },
+                                React.createElement(
+                                    "div",
+                                    {
+                                        className: "level-1" + (this.state.page == "competition_report" ? " active" : ""),
+                                        onClick: this.switchPage.bind(this, "competition_report", {}) },
+                                    _("admin.menu.competition_report")
                                 )
                             )
                         ),

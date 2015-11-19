@@ -489,19 +489,11 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
             }
         }
     }, {
-        key: "renderInfoBlock",
-        value: function renderInfoBlock() {
-            var has_acro_overrides = false;
-            var render_acro_table = this.props.tour.scoring_system_name == "rosfarr.acro" || this.props.tour.scoring_system_name == "rosfarr.am_final_acro";
-            this.props.run.acrobatics.forEach(function (acro) {
-                if (acro.score !== acro.original_score) {
-                    has_acro_overrides = true;
-                }
-            });
-            var acro_cell_width = 100 / this.props.run.acrobatics.length + "%";
+        key: "renderParticipantInfo",
+        value: function renderParticipantInfo() {
             return React.createElement(
-                "td",
-                { className: "info-block" },
+                "div",
+                null,
                 React.createElement(
                     "p",
                     null,
@@ -511,130 +503,211 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                         _("global.phrases.participant_n", this.props.run.participant.number, null, this.props.run.participant.sportsmen.length)
                     )
                 ),
-                getParticipantDisplay(this.props.run.participant),
-                this.props.run.performed ? React.createElement(
-                    "div",
+                getParticipantDisplay(this.props.run.participant)
+            );
+        }
+    }, {
+        key: "renderHeadJudgePenalty",
+        value: function renderHeadJudgePenalty() {
+            if (!this.props.run.performed) {
+                return null;
+            }
+            return React.createElement(
+                "p",
+                null,
+                React.createElement(
+                    "strong",
                     null,
-                    React.createElement(
-                        "p",
-                        null,
-                        React.createElement(
-                            "strong",
-                            null,
-                            __("results.labels.penalty"),
-                            ": "
-                        ),
-                        this.props.head_judge_score ? this.props.head_judge_score.data.total_score : React.createElement(
-                            "span",
-                            null,
-                            "—"
-                        )
-                    ),
-                    render_acro_table && this.props.run.acrobatics.length > 0 ? React.createElement(
-                        "div",
-                        null,
-                        React.createElement(
-                            "p",
-                            null,
-                            React.createElement(
-                                "strong",
-                                null,
-                                has_acro_overrides ? __("results.labels.acrobatics_verbose") : __("results.labels.acrobatics"),
-                                ":"
-                            )
-                        ),
-                        React.createElement(
-                            "table",
-                            { className: "acro-table" },
-                            React.createElement(
-                                "tbody",
-                                null,
-                                React.createElement(
-                                    "tr",
-                                    null,
-                                    this.props.run.acrobatics.map(function (acro, idx) {
-                                        return React.createElement(
-                                            "td",
-                                            { key: idx, style: { width: acro_cell_width } },
-                                            React.createElement(
-                                                "p",
-                                                { className: "text-center" },
-                                                acro.original_score.toFixed(1)
-                                            )
-                                        );
-                                    })
-                                ),
-                                has_acro_overrides ? React.createElement(
-                                    "tr",
-                                    null,
-                                    this.props.run.acrobatics.map(function (acro, idx) {
-                                        return React.createElement(
-                                            "td",
-                                            { key: idx, style: { width: acro_cell_width } },
-                                            React.createElement(
-                                                "p",
-                                                { className: "text-center" },
-                                                acro.score.toFixed(1)
-                                            )
-                                        );
-                                    })
-                                ) : null
-                            )
-                        )
-                    ) : null,
-                    this.props.tour.scoring_system_name === "rosfarr.am_final_acro" ? React.createElement(
-                        "p",
-                        null,
-                        React.createElement(
-                            "strong",
-                            null,
-                            __("results.labels.fw_score")
-                        ),
-                        ": ",
-                        this.props.run.verbose_total_score.previous_tour.primary_score.toFixed(2) + " / " + this.props.run.verbose_total_score.previous_tour.secondary_score.toFixed(2)
-                    ) : null,
-                    this.props.tour.scoring_system_name === "rosfarr.am_final_acro" ? React.createElement(
-                        "p",
-                        null,
-                        React.createElement(
-                            "strong",
-                            null,
-                            __("results.labels.acro_score")
-                        ),
-                        ": ",
-                        this.props.run.verbose_total_score.current_tour.primary_score.toFixed(2) + " / " + this.props.run.verbose_total_score.current_tour.secondary_score.toFixed(2)
-                    ) : null,
-                    this.props.tour.scoring_system_name !== "rosfarr.formation" ? React.createElement(
-                        "p",
-                        null,
-                        React.createElement(
-                            "strong",
-                            null,
-                            __("results.labels.total_score"),
-                            ": ",
-                            this.props.run.total_score
-                        )
-                    ) : null
-                ) : React.createElement(
-                    "p",
-                    null,
-                    React.createElement(
-                        "em",
-                        null,
-                        __("results.labels.not_performed")
-                    )
+                    __("results.labels.penalty"),
+                    ": "
                 ),
-                this.props.has_next_tour ? React.createElement(
+                this.props.head_judge_score ? this.props.head_judge_score.data.total_score : React.createElement(
+                    "span",
+                    null,
+                    "—"
+                )
+            );
+        }
+    }, {
+        key: "renderAcroTable",
+        value: function renderAcroTable() {
+            if (!this.props.run.performed) {
+                return null;
+            }
+            var has_acro_overrides = false;
+            var render_acro_table = this.props.tour.scoring_system_name == "rosfarr.acro" || this.props.tour.scoring_system_name == "rosfarr.am_final_acro";
+            if (!render_acro_table) {
+                return null;
+            }
+            this.props.run.acrobatics.forEach(function (acro) {
+                if (acro.score !== acro.original_score) {
+                    has_acro_overrides = true;
+                }
+            });
+            if (this.props.run.acrobatics.length == 0) {
+                return null;
+            }
+            var acro_cell_width = 100 / this.props.run.acrobatics.length + "%";
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(
                     "p",
                     null,
                     React.createElement(
                         "strong",
                         null,
-                        __("results.labels.next_tour"),
-                        ": "
-                    ),
-                    this.props.results_info.advances ? _("global.labels.yes") : _("global.labels.no")
-                ) : null
+                        has_acro_overrides ? __("results.labels.acrobatics_verbose") : __("results.labels.acrobatics"),
+                        ":"
+                    )
+                ),
+                React.createElement(
+                    "table",
+                    { className: "acro-table" },
+                    React.createElement(
+                        "tbody",
+                        null,
+                        React.createElement(
+                            "tr",
+                            null,
+                            this.props.run.acrobatics.map(function (acro, idx) {
+                                return React.createElement(
+                                    "td",
+                                    { key: idx, style: { width: acro_cell_width } },
+                                    React.createElement(
+                                        "p",
+                                        { className: "text-center" },
+                                        acro.original_score.toFixed(1)
+                                    )
+                                );
+                            })
+                        ),
+                        has_acro_overrides ? React.createElement(
+                            "tr",
+                            null,
+                            this.props.run.acrobatics.map(function (acro, idx) {
+                                return React.createElement(
+                                    "td",
+                                    { key: idx, style: { width: acro_cell_width } },
+                                    React.createElement(
+                                        "p",
+                                        { className: "text-center" },
+                                        acro.score.toFixed(1)
+                                    )
+                                );
+                            })
+                        ) : null
+                    )
+                )
+            );
+        }
+    }, {
+        key: "renderAmClassFwScore",
+        value: function renderAmClassFwScore() {
+            if (this.props.tour.scoring_system_name !== "rosfarr.am_final_acro") {
+                return null;
+            }
+            return React.createElement(
+                "p",
+                null,
+                React.createElement(
+                    "strong",
+                    null,
+                    __("results.labels.fw_score")
+                ),
+                ": ",
+                this.props.run.verbose_total_score.previous_tour.primary_score.toFixed(2) + " / " + this.props.run.verbose_total_score.previous_tour.secondary_score.toFixed(2),
+                " "
+            );
+        }
+    }, {
+        key: "renderAmClassAcroScore",
+        value: function renderAmClassAcroScore() {
+            if (!this.props.run.performed) {
+                return null;
+            }
+            if (this.props.tour.scoring_system_name !== "rosfarr.am_final_acro") {
+                return null;
+            }
+            return React.createElement(
+                "p",
+                null,
+                React.createElement(
+                    "strong",
+                    null,
+                    __("results.labels.acro_score")
+                ),
+                ": ",
+                this.props.run.verbose_total_score.current_tour.primary_score.toFixed(2) + " / " + this.props.run.verbose_total_score.current_tour.secondary_score.toFixed(2),
+                " "
+            );
+        }
+    }, {
+        key: "renderTotalScore",
+        value: function renderTotalScore() {
+            if (!this.props.run.performed) {
+                return null;
+            }
+            return React.createElement(
+                "p",
+                null,
+                React.createElement(
+                    "strong",
+                    null,
+                    __("results.labels.total_score"),
+                    ": ",
+                    this.props.run.total_score
+                )
+            );
+        }
+    }, {
+        key: "renderNotPerformedLabel",
+        value: function renderNotPerformedLabel() {
+            if (this.props.performed) {
+                return null;
+            }
+            return React.createElement(
+                "p",
+                null,
+                React.createElement(
+                    "em",
+                    null,
+                    __("results.labels.not_performed")
+                )
+            );
+        }
+    }, {
+        key: "renderNextTourLabel",
+        value: function renderNextTourLabel() {
+            if (!this.props.has_next_tour) {
+                return null;
+            }
+            React.createElement(
+                "p",
+                null,
+                React.createElement(
+                    "strong",
+                    null,
+                    __("results.labels.next_tour"),
+                    ": "
+                ),
+                this.props.results_info.advances ? _("global.labels.yes") : _("global.labels.no")
+            );
+        }
+    }, {
+        key: "renderInfoBlock",
+        value: function renderInfoBlock() {
+            return React.createElement(
+                "td",
+                { className: "info-block" },
+                this.renderParticipantInfo(),
+                this.renderHeadJudgePenalty(),
+                this.renderAcroTable(),
+                this.renderAmClassFwScore(),
+                this.renderAmClassAcroScore(),
+                this.renderTotalScore(),
+                this.renderNotPerformedLabel(),
+                this.renderNextTourLabel()
             );
         }
     }, {
@@ -1094,7 +1167,11 @@ var TourResultsTableRow = (function (_React$Component5) {
     _createClass(TourResultsTableRow, [{
         key: "render",
         value: function render() {
-            var card = this.props.head_judge_score ? this.props.head_judge_score.data.total_score : "0";
+            var card = this.props.run.performed ? this.props.head_judge_score ? this.props.head_judge_score.data.total_score : "0" : React.createElement(
+                "span",
+                null,
+                "—"
+            );
             var total_score = this.props.has_total_score ? this.props.run.performed ? React.createElement(
                 "p",
                 { className: "text-center" },

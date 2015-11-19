@@ -11,6 +11,7 @@ h5 {
 .manage-participants .total-participants {
   font-weight: bold;
   text-align: right;
+  margin-bottom: 40px;
 }
 .manage-participants .program tr:nth-child(2n+1) {
   background-color: #dfeaef;

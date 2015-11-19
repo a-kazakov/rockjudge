@@ -515,7 +515,7 @@ var DanceJudgeScorePartInput = (function (_React$Component10) {
             if (this.props.skip_header) {
                 return null;
             }
-            React.createElement(
+            return React.createElement(
                 "h3",
                 null,
                 __("tablet.dance_judge." + this.props.part)
@@ -527,6 +527,7 @@ var DanceJudgeScorePartInput = (function (_React$Component10) {
             return React.createElement(
                 "div",
                 null,
+                this.renderHeader(),
                 React.createElement(ScorePartScale, _extends({
                     scale: this.props.scale,
                     active: this.props.score.data.raw_data[this.props.part],

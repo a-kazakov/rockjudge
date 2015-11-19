@@ -227,10 +227,11 @@ class DanceJudgeScorePartInput extends React.Component {
         if (this.props.skip_header) {
             return null;
         }
-        <h3>{ __("tablet.dance_judge." + this.props.part) }</h3>
+        return <h3>{ __("tablet.dance_judge." + this.props.part) }</h3>
     }
     render() {
         return <div>
+            { this.renderHeader() }
             <ScorePartScale
                 scale={ this.props.scale }
                 active={ this.props.score.data.raw_data[this.props.part] }

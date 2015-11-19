@@ -409,6 +409,8 @@ class RunScore:
     def sorting_score(self):
         prev_primary, prev_secondary = self.get_prev_score()
         if not self.run.performed:
+            if self.scoring_system == "rosfarr.am_final_acro":
+                return (10000000000000000, -prev_primary, -prev_secondary)
             return (10000000000000000, )
         if self.scoring_system == "rosfarr.am_final_acro":
             return (
@@ -436,6 +438,13 @@ class RunScore:
         sorting_score = self.sorting_score
         prev_primary, prev_secondary = self.get_prev_score()
         if not self.run.performed:
+            if self.scoring_system == "rosfarr.am_final_acro":
+                return {
+                    "previous_tour": {
+                        "primary_score": float(prev_primary / 100.0),
+                        "secondary_score": float(prev_secondary / 100.0),
+                    }
+                }
             return {}
         if self.scoring_system == "rosfarr.am_final_acro":
             return {

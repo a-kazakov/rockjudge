@@ -133,60 +133,58 @@ class ManagementUI extends React.Component {
         return <table className="app-content">
             <tbody><tr>
                 <td className="side-panel">
-                    <div className="scroller">
-                        <div className="block">
-                            <div
-                                    className={ "level-1" + (this.state.page == "load_competition" ? " active" : "") }
-                                    onClick= { this.switchPage.bind(this, "load_competition", {}) } >
-                                { _("admin.menu.load_competition") }
-                            </div>
+                    <div className="block">
+                        <div
+                                className={ "level-1" + (this.state.page == "load_competition" ? " active" : "") }
+                                onClick= { this.switchPage.bind(this, "load_competition", {}) } >
+                            { _("admin.menu.load_competition") }
                         </div>
-                        <div className="block">
-                            <div
-                                    className={ "level-1" + (this.state.page == "manage_disciplines" ? " active" : "") }
-                                    onClick={ this.switchPage.bind(this, "manage_disciplines", {}) }>
-                                { _("admin.menu.manage_disciplines") }
-                            </div>
+                    </div>
+                    <div className="block">
+                        <div
+                                className={ "level-1" + (this.state.page == "manage_disciplines" ? " active" : "") }
+                                onClick={ this.switchPage.bind(this, "manage_disciplines", {}) }>
+                            { _("admin.menu.manage_disciplines") }
                         </div>
-                        <details className="block" open={ !!parseInt(sessionStorage.getItem("D_TOURS")) }>
-                            <summary className="level-1" onClick={ (e) => sessionStorage.setItem("D_TOURS", e.target.parentNode.open ? 0 : 1) }>
-                                { _("admin.menu.manage_tours") }
-                            </summary>
-                            { ics_tours }
-                        </details>
-                        <details className="block" open={ !!parseInt(sessionStorage.getItem("D_SPORTSMEN")) }>
-                            <summary className="level-1" onClick={ (e) => sessionStorage.setItem("D_SPORTSMEN", e.target.parentNode.open ? 0 : 1) }>
-                                { _("admin.menu.manage_sportsmen") }
-                            </summary>
-                            { ics_participants }
-                        </details>
-                        <div className="block">
-                            <div
-                                    className={ "level-1" + (this.state.page == "manage_clubs" ? " active" : "") }
-                                    onClick={ this.switchPage.bind(this, "manage_clubs", {}) }>
-                                { _("admin.menu.manage_clubs") }
-                            </div>
+                    </div>
+                    <details className="block" open={ !!parseInt(sessionStorage.getItem("D_TOURS")) }>
+                        <summary className="level-1" onClick={ (e) => sessionStorage.setItem("D_TOURS", e.target.parentNode.open ? 0 : 1) }>
+                            { _("admin.menu.manage_tours") }
+                        </summary>
+                        { ics_tours }
+                    </details>
+                    <details className="block" open={ !!parseInt(sessionStorage.getItem("D_SPORTSMEN")) }>
+                        <summary className="level-1" onClick={ (e) => sessionStorage.setItem("D_SPORTSMEN", e.target.parentNode.open ? 0 : 1) }>
+                            { _("admin.menu.manage_sportsmen") }
+                        </summary>
+                        { ics_participants }
+                    </details>
+                    <div className="block">
+                        <div
+                                className={ "level-1" + (this.state.page == "manage_clubs" ? " active" : "") }
+                                onClick={ this.switchPage.bind(this, "manage_clubs", {}) }>
+                            { _("admin.menu.manage_clubs") }
                         </div>
-                        <div className="block">
-                            <div
-                                    className={ "level-1" + (this.state.page == "manage_judges" ? " active" : "") }
-                                    onClick={ this.switchPage.bind(this, "manage_judges", {}) }>
-                                { _("admin.menu.manage_judges") }
-                            </div>
+                    </div>
+                    <div className="block">
+                        <div
+                                className={ "level-1" + (this.state.page == "manage_judges" ? " active" : "") }
+                                onClick={ this.switchPage.bind(this, "manage_judges", {}) }>
+                            { _("admin.menu.manage_judges") }
                         </div>
-                        <div className="block">
-                            <div
-                                    className={ "level-1" + (this.state.page == "start_list" ? " active" : "") }
-                                    onClick={ this.switchPage.bind(this, "start_list", {}) }>
-                                { _("admin.menu.start_list") }
-                            </div>
+                    </div>
+                    <div className="block">
+                        <div
+                                className={ "level-1" + (this.state.page == "start_list" ? " active" : "") }
+                                onClick={ this.switchPage.bind(this, "start_list", {}) }>
+                            { _("admin.menu.start_list") }
                         </div>
-                        <div className="block">
-                            <div
-                                    className={ "level-1" + (this.state.page == "competition_report" ? " active" : "") }
-                                    onClick={ this.switchPage.bind(this, "competition_report", {}) }>
-                                { _("admin.menu.competition_report") }
-                            </div>
+                    </div>
+                    <div className="block">
+                        <div
+                                className={ "level-1" + (this.state.page == "competition_report" ? " active" : "") }
+                                onClick={ this.switchPage.bind(this, "competition_report", {}) }>
+                            { _("admin.menu.competition_report") }
                         </div>
                     </div>
                 </td>
