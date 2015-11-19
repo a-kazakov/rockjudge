@@ -18,14 +18,14 @@ class Score(BaseModel):
 
     run = peewee.ForeignKeyField(Run, related_name="scores")
     discipline_judge = peewee.ForeignKeyField(DisciplineJudge)
-    score_data = postgres_ext.BinaryJSONField(default="{}")
+    score_data = postgres_ext.BinaryJSONField(default={})
     confirmed = peewee.BooleanField(default=False)
 
     def get_sorting_key(self):
         return self.discipline_judge.get_sorting_key()
 
     def get_data(self):
-        return self.score_data
+        return dict(self.score_data)
 
     def set_data(self, score_data):
         self.score_data = score_data
