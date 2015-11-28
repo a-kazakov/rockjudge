@@ -315,9 +315,7 @@ class Api:
 
     @classmethod
     def run_mark_not_performed(cls, request, ws_message):
-        run = cls.get_model(Run, "run_id", request, {
-            "tour": {},
-        })
+        run = cls.get_model(Run, "run_id", request)
         run.set_performed_flag(False, ws_message)
 
     @classmethod
