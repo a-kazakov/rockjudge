@@ -11,20 +11,15 @@ import tornado.ioloop
 
 from tornado.platform.asyncio import AsyncIOMainLoop
 
-# This should happend before any app imports
+# This should happen before any app imports
 AsyncIOMainLoop().install()
 
 import settings
 
-from app import (
-    Application,
-    ModelManager,
-)
-
-
 class Commands:
     @staticmethod
     def start():
+        from app import Application
         print("Starting RockJudge server...")
         app = Application.instance()
         app.listen(settings.LISTEN_PORT)
@@ -36,11 +31,18 @@ class Commands:
         tornado.ioloop.IOLoop.instance().stop()
 
     @staticmethod
+    def install():
+        from service import db_setup
+        db_setup.setup()
+
+    @staticmethod
     def setup():
+        from app import ModelManager
         ModelManager.instance().reset("simple")
 
     @staticmethod
     def reset():
+        from app import ModelManager
         ModelManager.instance().reset()
 
     @staticmethod
@@ -61,6 +63,7 @@ class Commands:
     def replay(filename):
         from api import Api
         from webserver.websocket import WsMessage
+        from app import ModelManager
         ModelManager.instance().reset()
         with open(filename, "rt", encoding="utf-8") as f:
             log = json.load(f)

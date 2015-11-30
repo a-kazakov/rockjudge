@@ -4,7 +4,7 @@ cd ..
 
 echo Setting up database ...
 
-py install\internal\db_setup.py
+py service\db_setup.py
 
 echo Creating tables ...
 

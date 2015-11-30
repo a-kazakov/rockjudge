@@ -145,7 +145,7 @@ class TourResultsVerboseTableRow extends React.Component {
         return <p><strong>{ __("results.labels.total_score") }: { this.props.run.total_score }</strong></p>;
     }
     renderNotPerformedLabel() {
-        if (this.props.performed) {
+        if (this.props.run.performed) {
             return null;
         }
         return <p><em>

@@ -49,6 +49,7 @@ spec = gen(
         'scoring_systems.rosfarr.acro',
         'scoring_systems.rosfarr.no_acro',
         'scoring_systems.rosfarr.formation',
+        'scoring_systems.rosfarr.simplified',
         'scoring_systems.rosfarr.am_final_fw',
         'scoring_systems.rosfarr.am_final_acro',
     ],

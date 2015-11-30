@@ -663,7 +663,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
     }, {
         key: "renderNotPerformedLabel",
         value: function renderNotPerformedLabel() {
-            if (this.props.performed) {
+            if (this.props.run.performed) {
                 return null;
             }
             return React.createElement(
