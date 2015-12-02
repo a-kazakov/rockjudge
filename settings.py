@@ -2,7 +2,7 @@ COOKIE_SECRET = "cs"
 
 DEBUG = True
 
-LISTEN_PORT = 5000
+LISTEN_PORT = 80
 
 DB_CONFIG = {
     "dbname": "rock",
