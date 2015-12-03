@@ -237,6 +237,8 @@ class BaseModel(peewee.Model, PrefetchedModel):
             for key in cls.RW_PROPS
             if key in data
         }
+        if "external_id" in result and result["external_id"] == "":
+            result["external_id"] = None
         result.update(kwargs)
         return result
 
