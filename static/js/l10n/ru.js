@@ -311,6 +311,19 @@ function _(src, arg) {
                 "scoring_system_name": "Система судейства"
             }
         },
+        "presenter": {
+            "headers": {
+                "clubs": "Клубы-участники",
+                "heats": "Заходы",
+                "info": "Информация",
+                "judges": "Судьи",
+                "results": "Результаты"
+            },
+            "labels": {
+                "no_active_tour": "Нет активного тура",
+                "place": "место"
+            }
+        },
         "results": {
             "alerts": {
                 "not_finalized": "Данные результаты не являются окончательными."

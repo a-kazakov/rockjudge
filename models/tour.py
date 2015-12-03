@@ -271,6 +271,7 @@ class Tour(BaseModel):
         self.check_next_tour_not_finalized()
         self.finalized = False
         self.save()
+        ws_message.add_message("tour_results_changed", {"tour_id": self.id})
         ws_message.add_model_update(
             model_type=self.__class__,
             model_id=self.id

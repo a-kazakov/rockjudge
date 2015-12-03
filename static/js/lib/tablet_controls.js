@@ -4,11 +4,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
@@ -23,19 +21,57 @@ function onTouchOrClick(handler) {
     };
 }
 
+function onTouchEndOrClick(handler) {
+    var _handler = function _handler() {};
+    var distance = 0;
+    var latest_pos = [0, 0];
+    var fire = function fire(event) {
+        event.preventDefault();
+        return _handler();
+    };
+    var discard = function discard() {
+        _handler = function () {};
+    };
+    var move = function move(event) {
+        var current_pos = [event.touches[0].pageX, event.touches[0].pageY];
+        var sqr = function sqr(x) {
+            return x * x;
+        };
+        distance += Math.sqrt(sqr(current_pos[0] - latest_pos[0]) + sqr(current_pos[1] - latest_pos[1]));
+        latest_pos = current_pos;
+        if (distance > 20) {
+            discard();
+        }
+    };
+    var start = function start(event) {
+        _handler = handler;
+        distance = 0;
+        latest_pos = [event.touches[0].pageX, event.touches[0].pageY];
+    };
+    return {
+        onTouchStart: start,
+        onTouchEnd: fire,
+        onTouchMove: move,
+        onTouchCancel: discard,
+        onClick: handler
+    };
+}
+
 var Slider = (function (_React$Component) {
     _inherits(Slider, _React$Component);
 
     function Slider(props) {
         _classCallCheck(this, Slider);
 
-        _get(Object.getPrototypeOf(Slider.prototype), "constructor", this).call(this, props);
-        this.state = {
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Slider).call(this, props));
+
+        _this.state = {
             position: 0,
             touch: false,
             finished: false
         };
-        this.pin = null;
+        _this.pin = null;
+        return _this;
     }
 
     _createClass(Slider, [{
@@ -191,7 +227,7 @@ var TabletSelectorInput = (function (_React$Component2) {
     function TabletSelectorInput() {
         _classCallCheck(this, TabletSelectorInput);
 
-        _get(Object.getPrototypeOf(TabletSelectorInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TabletSelectorInput).apply(this, arguments));
     }
 
     _createClass(TabletSelectorInput, [{
@@ -210,23 +246,23 @@ var TabletSelectorInput = (function (_React$Component2) {
     }, {
         key: "render",
         value: function render() {
-            var _this = this;
+            var _this3 = this;
 
             var result = [];
             this.props.choices.forEach(function (el, idx) {
                 var key = el[0];
                 var text = el[1];
-                var active_class_name = _this.props.active === key ? " active" : "";
+                var active_class_name = _this3.props.active === key ? " active" : "";
                 result.push(React.createElement(
                     "button",
                     _extends({
                         key: key
-                    }, onTouchOrClick(_this.onClick.bind(_this, key)), {
+                    }, onTouchOrClick(_this3.onClick.bind(_this3, key)), {
                         className: "tbtn score-btn" + active_class_name
                     }),
                     text
                 ));
-                if (_this.props.style === "grid" && (idx + 1) % _this.props.row_size === 0) {
+                if (_this3.props.style === "grid" && (idx + 1) % _this3.props.row_size === 0) {
                     result.push(React.createElement("br", { key: "br" + idx }));
                 }
             });
@@ -254,7 +290,7 @@ var TabletIntegerSelectInput = (function (_React$Component3) {
     function TabletIntegerSelectInput() {
         _classCallCheck(this, TabletIntegerSelectInput);
 
-        _get(Object.getPrototypeOf(TabletIntegerSelectInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TabletIntegerSelectInput).apply(this, arguments));
     }
 
     _createClass(TabletIntegerSelectInput, [{
@@ -269,13 +305,7 @@ var TabletIntegerSelectInput = (function (_React$Component3) {
     }, {
         key: "render",
         value: function render() {
-            var _props = this.props;
-            var min = _props.min;
-            var max = _props.max;
-
-            var other = _objectWithoutProperties(_props, ["min", "max"]);
-
-            return React.createElement(TabletSelectorInput, _extends({}, other, { choices: this.createArray(min, max) }));
+            return React.createElement(TabletSelectorInput, _extends({}, this.props, { choices: this.createArray(this.props.min, this.props.max) }));
         }
     }]);
 
@@ -288,7 +318,7 @@ var TabletPointFiveSelectInput = (function (_React$Component4) {
     function TabletPointFiveSelectInput() {
         _classCallCheck(this, TabletPointFiveSelectInput);
 
-        _get(Object.getPrototypeOf(TabletPointFiveSelectInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TabletPointFiveSelectInput).apply(this, arguments));
     }
 
     _createClass(TabletPointFiveSelectInput, [{
@@ -303,13 +333,7 @@ var TabletPointFiveSelectInput = (function (_React$Component4) {
     }, {
         key: "render",
         value: function render() {
-            var _props2 = this.props;
-            var min = _props2.min;
-            var max = _props2.max;
-
-            var other = _objectWithoutProperties(_props2, ["min", "max"]);
-
-            return React.createElement(TabletSelectorInput, _extends({}, other, { choices: this.createArray(min, max) }));
+            return React.createElement(TabletSelectorInput, _extends({}, this.props, { choices: this.createArray(this.props.min, this.props.max) }));
         }
     }]);
 
@@ -322,7 +346,7 @@ var TabletIntegerInput = (function (_React$Component5) {
     function TabletIntegerInput() {
         _classCallCheck(this, TabletIntegerInput);
 
-        _get(Object.getPrototypeOf(TabletIntegerInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TabletIntegerInput).apply(this, arguments));
     }
 
     _createClass(TabletIntegerInput, [{
@@ -377,7 +401,7 @@ var TabletPoint5Input = (function (_React$Component6) {
     function TabletPoint5Input() {
         _classCallCheck(this, TabletPoint5Input);
 
-        _get(Object.getPrototypeOf(TabletPoint5Input.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TabletPoint5Input).apply(this, arguments));
     }
 
     _createClass(TabletPoint5Input, [{
@@ -434,15 +458,17 @@ var StopWatch = (function (_React$Component7) {
     function StopWatch(props) {
         _classCallCheck(this, StopWatch);
 
-        _get(Object.getPrototypeOf(StopWatch.prototype), "constructor", this).call(this, props);
-        this.state = stopwatches[props.score_id] || {
+        var _this8 = _possibleConstructorReturn(this, Object.getPrototypeOf(StopWatch).call(this, props));
+
+        _this8.state = stopwatches[props.score_id] || {
             active: false,
             value: 0,
             str_value: "0:00"
         };
-        if (this.state.active) {
-            this.state.interval = setInterval(this.tick.bind(this), 10);
+        if (_this8.state.active) {
+            _this8.state.interval = setInterval(_this8.tick.bind(_this8), 10);
         }
+        return _this8;
     }
 
     _createClass(StopWatch, [{

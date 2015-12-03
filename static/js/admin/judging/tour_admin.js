@@ -4,9 +4,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
@@ -18,11 +18,13 @@ var TourAdminHeatValue = (function (_React$Component) {
     function TourAdminHeatValue(props) {
         _classCallCheck(this, TourAdminHeatValue);
 
-        _get(Object.getPrototypeOf(TourAdminHeatValue.prototype), "constructor", this).call(this, props);
-        this.state = {
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TourAdminHeatValue).call(this, props));
+
+        _this.state = {
             editing: false,
             current_value: null
         };
+        return _this;
     }
 
     _createClass(TourAdminHeatValue, [{
@@ -114,16 +116,16 @@ var TourAdminButtons = (function (_React$Component2) {
     function TourAdminButtons() {
         _classCallCheck(this, TourAdminButtons);
 
-        _get(Object.getPrototypeOf(TourAdminButtons.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TourAdminButtons).apply(this, arguments));
     }
 
     _createClass(TourAdminButtons, [{
         key: "signal",
         value: function signal(message) {
-            var _this = this;
+            var _this3 = this;
 
             return (function () {
-                return _this.props.onSignal(message);
+                return _this3.props.onSignal(message);
             }).bind(this);
         }
     }, {
@@ -167,11 +169,13 @@ var TourAdminScoreCellWrapper = (function (_React$Component3) {
     function TourAdminScoreCellWrapper(props) {
         _classCallCheck(this, TourAdminScoreCellWrapper);
 
-        _get(Object.getPrototypeOf(TourAdminScoreCellWrapper.prototype), "constructor", this).call(this, props);
-        this.state = {
+        var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(TourAdminScoreCellWrapper).call(this, props));
+
+        _this4.state = {
             editing: false,
-            current_value: this.props.value
+            current_value: _this4.props.value
         };
+        return _this4;
     }
 
     _createClass(TourAdminScoreCellWrapper, [{
@@ -259,7 +263,7 @@ var TourAdminScoresRow = (function (_React$Component4) {
     function TourAdminScoresRow() {
         _classCallCheck(this, TourAdminScoresRow);
 
-        _get(Object.getPrototypeOf(TourAdminScoresRow.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TourAdminScoresRow).apply(this, arguments));
     }
 
     _createClass(TourAdminScoresRow, [{
@@ -327,7 +331,7 @@ var TourAdminStartStopTourButton = (function (_React$Component5) {
     function TourAdminStartStopTourButton() {
         _classCallCheck(this, TourAdminStartStopTourButton);
 
-        _get(Object.getPrototypeOf(TourAdminStartStopTourButton.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TourAdminStartStopTourButton).apply(this, arguments));
     }
 
     _createClass(TourAdminStartStopTourButton, [{
@@ -358,7 +362,7 @@ var TourAdminAcrobaticEditorRow = (function (_React$Component6) {
     function TourAdminAcrobaticEditorRow() {
         _classCallCheck(this, TourAdminAcrobaticEditorRow);
 
-        _get(Object.getPrototypeOf(TourAdminAcrobaticEditorRow.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TourAdminAcrobaticEditorRow).apply(this, arguments));
     }
 
     _createClass(TourAdminAcrobaticEditorRow, [{
@@ -443,7 +447,7 @@ var TourAdminAcrobaticLoader = (function (_React$Component7) {
     function TourAdminAcrobaticLoader() {
         _classCallCheck(this, TourAdminAcrobaticLoader);
 
-        _get(Object.getPrototypeOf(TourAdminAcrobaticLoader.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TourAdminAcrobaticLoader).apply(this, arguments));
     }
 
     _createClass(TourAdminAcrobaticLoader, [{
@@ -502,7 +506,7 @@ var TourAdminAcrobaticEditor = (function (_React$Component8) {
     function TourAdminAcrobaticEditor() {
         _classCallCheck(this, TourAdminAcrobaticEditor);
 
-        _get(Object.getPrototypeOf(TourAdminAcrobaticEditor.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TourAdminAcrobaticEditor).apply(this, arguments));
     }
 
     _createClass(TourAdminAcrobaticEditor, [{
@@ -513,7 +517,7 @@ var TourAdminAcrobaticEditor = (function (_React$Component8) {
     }, {
         key: "renderBody",
         value: function renderBody() {
-            var _this2 = this;
+            var _this10 = this;
 
             return React.createElement(
                 "div",
@@ -553,7 +557,7 @@ var TourAdminAcrobaticEditor = (function (_React$Component8) {
                             return React.createElement(TourAdminAcrobaticEditorRow, {
                                 acrobatic: acro,
                                 acro_idx: idx,
-                                run_id: _this2.props.run_id,
+                                run_id: _this10.props.run_id,
                                 key: idx });
                         })
                     )
@@ -598,10 +602,12 @@ var TourAdminAcrobaticsCell = (function (_React$Component9) {
     function TourAdminAcrobaticsCell(props) {
         _classCallCheck(this, TourAdminAcrobaticsCell);
 
-        _get(Object.getPrototypeOf(TourAdminAcrobaticsCell.prototype), "constructor", this).call(this, props);
-        this.state = {
+        var _this11 = _possibleConstructorReturn(this, Object.getPrototypeOf(TourAdminAcrobaticsCell).call(this, props));
+
+        _this11.state = {
             editing: false
         };
+        return _this11;
     }
 
     _createClass(TourAdminAcrobaticsCell, [{
@@ -667,7 +673,7 @@ var TourAdminPerformedCell = (function (_React$Component10) {
     function TourAdminPerformedCell() {
         _classCallCheck(this, TourAdminPerformedCell);
 
-        _get(Object.getPrototypeOf(TourAdminPerformedCell.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TourAdminPerformedCell).apply(this, arguments));
     }
 
     _createClass(TourAdminPerformedCell, [{
@@ -701,10 +707,12 @@ var TourAdminBody = (function (_React$Component11) {
     function TourAdminBody(props) {
         _classCallCheck(this, TourAdminBody);
 
-        _get(Object.getPrototypeOf(TourAdminBody.prototype), "constructor", this).call(this, props);
-        this.state = {
+        var _this13 = _possibleConstructorReturn(this, Object.getPrototypeOf(TourAdminBody).call(this, props));
+
+        _this13.state = {
             name: null
         };
+        return _this13;
     }
 
     _createClass(TourAdminBody, [{

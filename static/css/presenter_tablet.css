@@ -1,61 +1,201 @@
-header .header {
-  text-align: center;
-  margin-left: 150px;
-  margin-right: 150px;
+html,
+body {
+  height: 100%;
+  flex-direction: row;
+  flex-wrap: nowrap;
 }
-header .header h1 {
+.presenter-tablet {
+  display: flex;
+  align-content: stretch;
+  width: 100%;
+  height: 100%;
+}
+.presenter-tablet .left-bar {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: space-around;
+  width: 40px;
+  background-color: #2b3a42;
+}
+.presenter-tablet .left-bar .item {
+  flex-grow: 1;
+  font-weight: bold;
+  color: #efefef;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  overflow: visible;
+  position: relative;
+}
+.presenter-tablet .left-bar .item.active {
+  background-color: #3f5765;
+}
+.presenter-tablet .left-bar .item span {
+  transform-origin: 0 0;
+  transform: rotate(-90deg) translate(-50%, 0);
+  width: 150px;
+  text-align: center;
+  line-height: 40px;
+  display: block;
+  position: absolute;
+  top: 50%;
+}
+.presenter-tablet .content {
+  display: flex;
+  align-items: stretch;
+  flex-grow: 1;
+  font-size: 18px;
+}
+.presenter-tablet .content .info {
+  padding: 20px;
+  overflow: auto;
+  flex-grow: 1;
+}
+.presenter-tablet .content .info h2 {
+  text-align: center;
+}
+.presenter-tablet .content .info .competition-info,
+.presenter-tablet .content .info .judges {
+  width: 100%;
+}
+.presenter-tablet .content .info .competition-info tr:nth-child(2n+1),
+.presenter-tablet .content .info .judges tr:nth-child(2n+1) {
+  background-color: #fff;
+}
+.presenter-tablet .content .info .competition-info tr:nth-child(2n),
+.presenter-tablet .content .info .judges tr:nth-child(2n) {
+  background-color: #ddd;
+}
+.presenter-tablet .content .info .competition-info th,
+.presenter-tablet .content .info .judges th {
+  text-align: left;
+  width: 350px;
+}
+.presenter-tablet .content .info .competition-info th,
+.presenter-tablet .content .info .judges th,
+.presenter-tablet .content .info .competition-info td,
+.presenter-tablet .content .info .judges td {
+  padding: 2px 5px;
+}
+.presenter-tablet .content .heats {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  align-items: stretch;
+}
+.presenter-tablet .content .heats .splash-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-size: 24px;
+  flex-grow: 1;
+}
+.presenter-tablet .content .heats .splash-screen .spacer {
+  height: 50px;
+}
+.presenter-tablet .content .heats header {
+  text-align: center;
+}
+.presenter-tablet .content .heats header .header {
+  margin: 0 100px;
+}
+.presenter-tablet .content .heats header .header h1 {
+  font-size: 16px;
+}
+.presenter-tablet .content .heats .heat {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.presenter-tablet .content .heats .heat table {
+  width: 80%;
+  margin: 10px auto;
+}
+.presenter-tablet .content .heats .heat table td {
+  border: 2px solid black;
+  padding: 5px;
+}
+.presenter-tablet .content .heats .heat table td.number {
+  width: 70px;
+  text-align: center;
+  font-weight: bold;
   font-size: 20px;
 }
-.presenter-splash {
-  margin-top: 200px;
-  font-weight: 400;
-  font-size: 40px;
-  text-align: center;
-}
-.heat {
-  margin: 20px auto;
-  text-align: center;
-  width: 85%;
-  height: 135px;
-  color: #777;
-  padding: 5px 20px 20px 20px;
-}
-.heat table {
-  width: 100%;
-}
-.heat table.outer {
-  height: 100%;
-  table-layout: fixed;
-}
-.heat .number {
-  font-size: 50px;
-  font-weight: light;
-}
-.heat .name {
-  font-size: 16px;
+.presenter-tablet .content .heats .heat table td.name {
   font-weight: bold;
 }
-.heat .club,
-.heat .city {
-  font-size: 14px;
-  font-weight: normal;
+.presenter-tablet .content .heats .heat .spacer {
+  height: 100px;
 }
-.heat.current-heat {
+.presenter-tablet .content .results {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  align-items: stretch;
+  justify-content: space-around;
+}
+.presenter-tablet .content .results .disciplines {
+  width: 350px;
+  background-color: #bdd4de;
+}
+.presenter-tablet .content .results .disciplines .item {
+  cursor: pointer;
+  padding: 7px;
+  font-size: 15px;
+  font-weight: bold;
+}
+.presenter-tablet .content .results .disciplines .item.active {
+  background-color: #ff530d;
+}
+.presenter-tablet .content .results .discipline-results {
+  flex-grow: 1;
+  overflow: auto;
+}
+.presenter-tablet .content .results .discipline-results .tour-name,
+.presenter-tablet .content .results .discipline-results .row {
+  width: 90%;
+  margin: 5px auto;
+}
+.presenter-tablet .content .results .discipline-results .tour-name {
   background-color: #2b3a42;
   color: #efefef;
-  width: 100%;
-  height: 200px;
+  font-weight: bold;
+  text-align: center;
+  padding: 5px;
 }
-.heat.current-heat .number {
-  font-size: 60px;
-  font-weight: light;
+.presenter-tablet .content .results .discipline-results .row {
+  cursor: pointer;
 }
-.heat.current-heat .name {
-  font-size: 17px;
+.presenter-tablet .content .results .discipline-results .row.active {
+  background-color: #ffe4d9;
+}
+.presenter-tablet .content .results .discipline-results .row td {
+  font-size: 15px;
+  border: 2px solid black;
+  padding: 1px 5px;
+}
+.presenter-tablet .content .results .discipline-results .row td.place {
+  width: 70px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 20px;
+}
+.presenter-tablet .content .results .discipline-results .row td.place .place-label {
+  font-size: 12px;
+  line-height: 12px;
+  color: black;
+  padding: 0;
+}
+.presenter-tablet .content .results .discipline-results .row td.number {
+  width: 70px;
+  text-align: center;
   font-weight: bold;
 }
-.heat.current-heat .club,
-.heat.current-heat .city {
-  font-size: 15px;
-  font-weight: normal;
+.presenter-tablet .content .results .discipline-results .row td.name {
+  font-weight: bold;
 }

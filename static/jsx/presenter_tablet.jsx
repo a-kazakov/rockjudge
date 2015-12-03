@@ -1,4 +1,91 @@
-class PresenterTablet extends React.Component {
+class PresenterTabletLeftBar extends React.Component {
+    render() {
+        return <div className="left-bar">
+            <div className={ "item" + (this.props.active == "info" ? " active" : "") }
+                 { ...onTouchOrClick(() => this.props.onPageSwitch("info")) }>
+                <span>{ _("presenter.headers.info") }</span>
+            </div>
+            <div className={ "item" + (this.props.active == "heats" ? " active" : "") }
+                 { ...onTouchOrClick(() => this.props.onPageSwitch("heats")) }>
+                <span>{ _("presenter.headers.heats") }</span>
+            </div>
+            <div className={ "item" + (this.props.active == "results" ? " active" : "") }
+                 { ...onTouchOrClick(() => this.props.onPageSwitch("results")) }>
+                <span>{ _("presenter.headers.results") }</span>
+            </div>
+        </div>
+    }
+}
+
+class PresenterTabletInfoCompetitionInfo extends React.Component {
+    renderRow(row, idx) {
+        return <tr key={ idx }>
+            <th>{ row[0] }</th>
+            <td>{ row[1] }</td>
+        </tr>
+    }
+    render() {
+        return <table className="competition-info"><tbody>
+            { this.props.competition.info.map(this.renderRow.bind(this)) }
+        </tbody></table>
+    }
+}
+
+class PresenterTabletInfoJudges extends React.Component {
+    renderRow(judge) {
+        return <tr key={ judge.id }>
+            <th>{ judge.role_description || _("global.phrases.judge_n", judge.number) }</th>
+            <td>{ judge.name } &mdash; { judge.category }</td>
+        </tr>
+    }
+    render() {
+        return <table className="judges"><tbody>
+            { this.props.judges.map(this.renderRow.bind(this)) }
+        </tbody></table>
+    }
+}
+
+class PresenterTabletInfoClubs extends React.Component {
+    renderRow(city) {
+        return <tr key={ city.name }>
+            <th>{ city.name }</th>
+            <td>{ city.clubs.map((club) => <div key={ club.id }>{ club.name }</div>) }</td>
+        </tr>
+    }
+    regroupClubs() {
+        let cities = {};
+        this.props.clubs.forEach((club) => {
+            if (!cities[club.city]) {
+                cities[club.city] = [];
+            }
+            cities[club.city].push(club);
+        })
+        return Object.keys(cities).map((city) => ({
+            name: city,
+            clubs: cities[city],
+        }));
+    }
+    render() {
+        return <table className="judges"><tbody>
+            { this.regroupClubs().map(this.renderRow.bind(this)) }
+        </tbody></table>
+    }
+}
+
+class PresenterTabletInfo extends React.Component {
+    render() {
+        return <div className="info">
+            <h2>{ this.props.competition.name }</h2>
+            <PresenterTabletInfoCompetitionInfo competition={ this.props.competition } />
+            <h3>{ _("presenter.headers.judges") }</h3>
+            <PresenterTabletInfoJudges judges={ this.props.competition.judges } />
+            <h3>{ _("presenter.headers.clubs") }</h3>
+            <PresenterTabletInfoClubs clubs={ this.props.competition.clubs } />
+        </div>
+    }
+}
+
+class PresenterTabletHeats extends React.Component {
 
     // Intiialization
 
@@ -126,8 +213,8 @@ class PresenterTablet extends React.Component {
         }
         var current_tour = (this.state.tour === null) ? null :
             <div className="header">
-                <h1>{ this.state.tour.discipline.name }: { this.state.tour.name }</h1>
-                <h2>{ _("tablet.headers.heat") }: { this.state.current_heat } / { this.getHeatsCount() }</h2>
+                <h1>{ this.state.tour.discipline.name }</h1>
+                <h2>{ this.state.tour.name }</h2>
             </div>
         return <header>
             { btn_prev }
@@ -136,48 +223,136 @@ class PresenterTablet extends React.Component {
         </header>
     }
     renderSplashScreen() {
-        return <div>
-            <header>
-                <a className="btn btn-primary pull-left" href="/">
-                    { _("tablet.buttons.to_start_page") }
-                </a>
-                <div className="clearfix"></div>
-            </header>
-            <div className="presenter-splash">{ _("tablet.headers.presenter") }</div>
+        return <div className="splash-screen">
+            <div>{ _("presenter.labels.no_active_tour") }</div>
+            <div className="spacer"></div>
         </div>;
     }
-    renderHeat(heat, is_current) {
-        let runs = this.state.tour.runs.filter((run) => run.heat == heat);
-        return <div className={ "heat" + (is_current ? " current-heat" : "") }>
-            <table className="outer"><tbody><tr>
-            { runs.map(function(run) {
-                return <td key={ run.id }><table><tbody>
-                    <tr><td className="number">{ run.participant.number }</td></tr>
-                    <tr><td className="name">{ run.participant.name }</td></tr>
-                    <tr><td className="club">{ run.participant.club.name }</td></tr>
-                    <tr><td className="city">{ run.participant.club.city }</td></tr>
-                </tbody></table></td>;
-            }) }
-            </tr></tbody></table>
+    renderHeat() {
+        let runs = this.state.tour.runs.filter((run) => run.heat == this.state.current_heat);
+        return <div className="heat">
+            <h3>{ _("tablet.headers.heat") }: { this.state.current_heat } / { this.getHeatsCount() }</h3>
+            { runs.map((run) =>
+                <table key={ run.id }><tbody>
+                    <tr>
+                        <td className="number" rowSpan="2">{ run.participant.number }</td>
+                        <td className="name">{ run.participant.name }</td>
+                    </tr><tr>
+                        <td className="club">{ run.participant.club.name }, { run.participant.club.city }</td>
+                    </tr>
+                </tbody></table>
+            ) }
+            <div className="spacer"></div>
         </div>;
-    }
-    renderBody() {
-        return <div>
-            { this.renderHeat(this.state.current_heat - 1, false) }
-            { this.renderHeat(this.state.current_heat, true) }
-            { this.renderHeat(this.state.current_heat + 1, false) }
-        </div>
     }
     render() {
         if (this.state.judge === null) {
             return <Loader />
         }
         if (this.state.tour === null) {
-            return this.renderSplashScreen();
+            return <div className="heats">{ this.renderSplashScreen() }</div>;
         }
-        return <div>
+        return <div className="heats">
             { this.renderHeader() }
-            { this.renderBody() }
+            { this.renderHeat() }
+        </div>
+    }
+}
+
+class PresenterTabletResultsDisciplineSelector extends React.Component {
+    render() {
+        return <div className="disciplines">
+            { this.props.disciplines.map((discipline) =>
+                <div className={ "item" + (this.props.active === discipline.id ? " active" : "")}
+                     key={ discipline.id }
+                     {...onTouchOrClick(() => this.props.onDisciplineChange(discipline.id))}>
+                    { discipline.name }
+                </div>
+            ) }
+        </div>
+    }
+}
+
+class PresenterTabletResults extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            active_discipline: null,
+        }
+    }
+    render() {
+        return <div className="results">
+            <PresenterTabletResultsDisciplineSelector
+                active={ this.state.active_discipline }
+                disciplines={ this.props.competition.disciplines }
+                onDisciplineChange={ (new_discipline) => this.setState({ active_discipline: new_discipline }) } />
+            { this.state.active_discipline !== null
+                ? <DisciplineResults discipline_id={ this.state.active_discipline }
+                                     renderer="presenter"
+                                     key={ this.state.active_discipline } />
+                : <div className="discipline-results"></div> }
+        </div>
+    }
+}
+
+class PresenterTablet extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            page: "info",
+            competition: null,
+        };
+        message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
+        message_dispatcher.addListener("reload_data", this.loadData.bind(this));
+       this.loadData();
+    }
+    reloadFromStorage() {
+        this.setState({
+            "competition": storage.get("Competition")
+                .by_id(this.props.competition_id)
+                .serialize({
+                    clubs: {},
+                    disciplines: {},
+                    judges: {},
+                }),
+        });
+    }
+    loadData() {
+        Api("competition.get", { competition_id: this.props.competition_id, children: {
+            clubs: {},
+            disciplines: {},
+            judges: {},
+        } })
+            .addToDB("Competition", this.props.competition_id)
+            .onSuccess(this.reloadFromStorage.bind(this))
+            .send();
+    }
+    switchPage(new_page) {
+        this.setState({
+            page: new_page,
+        });
+    }
+    renderBody() {
+        if (this.state.competition === null) {
+            return <Loader />
+        }
+        switch (this.state.page) {
+        case "info":
+            return <PresenterTabletInfo competition={ this.state.competition } />
+        case "heats":
+            return <PresenterTabletHeats />
+        case "results":
+            return <PresenterTabletResults competition={ this.state.competition } />
+        }
+    }
+    render() {
+        return <div className="presenter-tablet">
+            <PresenterTabletLeftBar
+                active={ this.state.page }
+                onPageSwitch={ this.switchPage.bind(this) } />
+            <div className="content">
+                { this.renderBody() }
+            </div>
         </div>
     }
 }

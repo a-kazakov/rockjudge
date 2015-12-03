@@ -4,9 +4,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
@@ -16,7 +16,7 @@ var ClubsSelector = (function (_React$Component) {
     function ClubsSelector() {
         _classCallCheck(this, ClubsSelector);
 
-        _get(Object.getPrototypeOf(ClubsSelector.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(ClubsSelector).apply(this, arguments));
     }
 
     _createClass(ClubsSelector, [{
@@ -53,16 +53,16 @@ var ParticipantEditorRowGeneralInfo = (function (_React$Component2) {
     function ParticipantEditorRowGeneralInfo() {
         _classCallCheck(this, ParticipantEditorRowGeneralInfo);
 
-        _get(Object.getPrototypeOf(ParticipantEditorRowGeneralInfo.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantEditorRowGeneralInfo).apply(this, arguments));
     }
 
     _createClass(ParticipantEditorRowGeneralInfo, [{
         key: "genOnChange",
         value: function genOnChange(field) {
-            var _this = this;
+            var _this3 = this;
 
             return function (event) {
-                return _this.props.onChange(field, event.target.value);
+                return _this3.props.onChange(field, event.target.value);
             };
         }
     }, {
@@ -110,16 +110,16 @@ var ParticipantEditorRowSportsman = (function (_React$Component3) {
     function ParticipantEditorRowSportsman() {
         _classCallCheck(this, ParticipantEditorRowSportsman);
 
-        _get(Object.getPrototypeOf(ParticipantEditorRowSportsman.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantEditorRowSportsman).apply(this, arguments));
     }
 
     _createClass(ParticipantEditorRowSportsman, [{
         key: "genOnChange",
         value: function genOnChange(field) {
-            var _this2 = this;
+            var _this5 = this;
 
             return function (event) {
-                return _this2.props.onChange(field, event.target.value);
+                return _this5.props.onChange(field, event.target.value);
             };
         }
     }, {
@@ -184,18 +184,18 @@ var ParticipantEditorRowSportsmenList = (function (_React$Component4) {
     function ParticipantEditorRowSportsmenList() {
         _classCallCheck(this, ParticipantEditorRowSportsmenList);
 
-        _get(Object.getPrototypeOf(ParticipantEditorRowSportsmenList.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantEditorRowSportsmenList).apply(this, arguments));
     }
 
     _createClass(ParticipantEditorRowSportsmenList, [{
         key: "genOnChange",
         value: function genOnChange(idx) {
-            var _this3 = this;
+            var _this7 = this;
 
             return function (field, value) {
-                var list = clone(_this3.props.sportsmen);
+                var list = clone(_this7.props.sportsmen);
                 list[idx][field] = value;
-                _this3.props.onChange("sportsmen", list);
+                _this7.props.onChange("sportsmen", list);
             };
         }
     }, {
@@ -220,7 +220,7 @@ var ParticipantEditorRowSportsmenList = (function (_React$Component4) {
     }, {
         key: "render",
         value: function render() {
-            var _this4 = this;
+            var _this8 = this;
 
             return React.createElement(
                 "div",
@@ -234,8 +234,8 @@ var ParticipantEditorRowSportsmenList = (function (_React$Component4) {
                     return React.createElement(ParticipantEditorRowSportsman, {
                         key: idx,
                         sportsman: sp,
-                        onSportsmanRemove: _this4.removeSportsman.bind(_this4, idx),
-                        onChange: _this4.genOnChange(idx) });
+                        onSportsmanRemove: _this8.removeSportsman.bind(_this8, idx),
+                        onChange: _this8.genOnChange(idx) });
                 }),
                 React.createElement(
                     "button",
@@ -258,16 +258,16 @@ var ParticipantEditorRowProgramEditorElement = (function (_React$Component5) {
     function ParticipantEditorRowProgramEditorElement() {
         _classCallCheck(this, ParticipantEditorRowProgramEditorElement);
 
-        _get(Object.getPrototypeOf(ParticipantEditorRowProgramEditorElement.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantEditorRowProgramEditorElement).apply(this, arguments));
     }
 
     _createClass(ParticipantEditorRowProgramEditorElement, [{
         key: "genOnChange",
         value: function genOnChange(field) {
-            var _this5 = this;
+            var _this10 = this;
 
             return function (event) {
-                return _this5.props.onChange(field, event.target.value);
+                return _this10.props.onChange(field, event.target.value);
             };
         }
     }, {
@@ -309,10 +309,12 @@ var ParticipantEditorRowProgramEditorElements = (function (_React$Component6) {
     function ParticipantEditorRowProgramEditorElements(props) {
         _classCallCheck(this, ParticipantEditorRowProgramEditorElements);
 
-        _get(Object.getPrototypeOf(ParticipantEditorRowProgramEditorElements.prototype), "constructor", this).call(this, props);
-        this.state = {
-            elements: clone(this.props.elements)
+        var _this11 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantEditorRowProgramEditorElements).call(this, props));
+
+        _this11.state = {
+            elements: clone(_this11.props.elements)
         };
+        return _this11;
     }
 
     _createClass(ParticipantEditorRowProgramEditorElements, [{
@@ -352,7 +354,7 @@ var ParticipantEditorRowProgramEditorElements = (function (_React$Component6) {
     }, {
         key: "render",
         value: function render() {
-            var _this6 = this;
+            var _this12 = this;
 
             return React.createElement(
                 "div",
@@ -361,8 +363,8 @@ var ParticipantEditorRowProgramEditorElements = (function (_React$Component6) {
                     return React.createElement(ParticipantEditorRowProgramEditorElement, {
                         key: idx,
                         element: element,
-                        onChange: _this6.onChange.bind(_this6, idx),
-                        onElementRemove: _this6.removeElement.bind(_this6, idx) });
+                        onChange: _this12.onChange.bind(_this12, idx),
+                        onElementRemove: _this12.removeElement.bind(_this12, idx) });
                 }),
                 React.createElement(
                     "button",
@@ -392,13 +394,13 @@ var ParticipantEditorRowProgramEditor = (function (_React$Component7) {
     function ParticipantEditorRowProgramEditor() {
         _classCallCheck(this, ParticipantEditorRowProgramEditor);
 
-        _get(Object.getPrototypeOf(ParticipantEditorRowProgramEditor.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantEditorRowProgramEditor).apply(this, arguments));
     }
 
     _createClass(ParticipantEditorRowProgramEditor, [{
         key: "render",
         value: function render() {
-            var _this7 = this;
+            var _this14 = this;
 
             var classes = ["program-editor"];
             if (this.props.creating) {
@@ -406,8 +408,8 @@ var ParticipantEditorRowProgramEditor = (function (_React$Component7) {
             }
             return React.createElement(
                 "form",
-                { className: classes.join(" "), onSubmit: function (e) {
-                        e.preventDefault();_this7.props.onSubmit(_this7.serialize());
+                { className: classes.join(" "), onSubmit: function onSubmit(e) {
+                        e.preventDefault();_this14.props.onSubmit(_this14.serialize());
                     } },
                 React.createElement("input", {
                     ref: "name",
@@ -454,10 +456,12 @@ var ParticipantEditorRowProgramCreator = (function (_React$Component8) {
     function ParticipantEditorRowProgramCreator(props) {
         _classCallCheck(this, ParticipantEditorRowProgramCreator);
 
-        _get(Object.getPrototypeOf(ParticipantEditorRowProgramCreator.prototype), "constructor", this).call(this, props);
-        this.state = {
+        var _this15 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantEditorRowProgramCreator).call(this, props));
+
+        _this15.state = {
             editing: false
         };
+        return _this15;
     }
 
     _createClass(ParticipantEditorRowProgramCreator, [{
@@ -515,10 +519,12 @@ var ParticipantEditorRowProgram = (function (_React$Component9) {
     function ParticipantEditorRowProgram(props) {
         _classCallCheck(this, ParticipantEditorRowProgram);
 
-        _get(Object.getPrototypeOf(ParticipantEditorRowProgram.prototype), "constructor", this).call(this, props);
-        this.state = {
+        var _this16 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantEditorRowProgram).call(this, props));
+
+        _this16.state = {
             editing: false
         };
+        return _this16;
     }
 
     _createClass(ParticipantEditorRowProgram, [{
@@ -551,7 +557,7 @@ var ParticipantEditorRowProgram = (function (_React$Component9) {
     }, {
         key: "render",
         value: function render() {
-            var _this8 = this;
+            var _this17 = this;
 
             if (this.state.editing) {
                 return React.createElement(ParticipantEditorRowProgramEditor, _extends({
@@ -576,8 +582,8 @@ var ParticipantEditorRowProgram = (function (_React$Component9) {
                     " / ",
                     React.createElement(
                         "a",
-                        { href: "#", onClick: function (e) {
-                                e.preventDefault();_this8.startEditing();
+                        { href: "#", onClick: function onClick(e) {
+                                e.preventDefault();_this17.startEditing();
                             } },
                         "Редактировать"
                     ),
@@ -625,7 +631,7 @@ var ParticipantEditorRowPrograms = (function (_React$Component10) {
     function ParticipantEditorRowPrograms() {
         _classCallCheck(this, ParticipantEditorRowPrograms);
 
-        _get(Object.getPrototypeOf(ParticipantEditorRowPrograms.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantEditorRowPrograms).apply(this, arguments));
     }
 
     _createClass(ParticipantEditorRowPrograms, [{
@@ -659,9 +665,10 @@ var ParticipantEditorRow = (function (_React$Component11) {
     function ParticipantEditorRow(props) {
         _classCallCheck(this, ParticipantEditorRow);
 
-        _get(Object.getPrototypeOf(ParticipantEditorRow.prototype), "constructor", this).call(this, props);
-        var p = this.props.participant;
-        this.state = {
+        var _this19 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantEditorRow).call(this, props));
+
+        var p = _this19.props.participant;
+        _this19.state = {
             participant: {
                 number: p.number,
                 club_id: p.club.id,
@@ -670,6 +677,7 @@ var ParticipantEditorRow = (function (_React$Component11) {
                 sportsmen: clone(p.sportsmen)
             }
         };
+        return _this19;
     }
 
     _createClass(ParticipantEditorRow, [{
@@ -779,10 +787,12 @@ var ParticipantRow = (function (_React$Component12) {
     function ParticipantRow(props) {
         _classCallCheck(this, ParticipantRow);
 
-        _get(Object.getPrototypeOf(ParticipantRow.prototype), "constructor", this).call(this, props);
-        this.state = {
+        var _this20 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantRow).call(this, props));
+
+        _this20.state = {
             editing: false
         };
+        return _this20;
     }
 
     _createClass(ParticipantRow, [{
@@ -875,10 +885,12 @@ var ParticipantCreationRow = (function (_React$Component13) {
     function ParticipantCreationRow(props) {
         _classCallCheck(this, ParticipantCreationRow);
 
-        _get(Object.getPrototypeOf(ParticipantCreationRow.prototype), "constructor", this).call(this, props);
-        this.state = {
+        var _this21 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantCreationRow).call(this, props));
+
+        _this21.state = {
             editing: false
         };
+        return _this21;
     }
 
     _createClass(ParticipantCreationRow, [{
@@ -948,13 +960,15 @@ var ParticipantsManager = (function (_React$Component14) {
     function ParticipantsManager(props) {
         _classCallCheck(this, ParticipantsManager);
 
-        _get(Object.getPrototypeOf(ParticipantsManager.prototype), "constructor", this).call(this, props);
-        this.state = {
+        var _this22 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantsManager).call(this, props));
+
+        _this22.state = {
             name: null
         };
-        message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
-        message_dispatcher.addListener("reload_data competition_list_update", this.loadData.bind(this));
-        this.loadData();
+        message_dispatcher.addListener("db_update", _this22.reloadFromStorage.bind(_this22));
+        message_dispatcher.addListener("reload_data competition_list_update", _this22.loadData.bind(_this22));
+        _this22.loadData();
+        return _this22;
     }
 
     _createClass(ParticipantsManager, [{

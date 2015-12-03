@@ -32,7 +32,7 @@ class JudgeEditorRow extends React.Component {
                             <label className="full-width">
                                 { _("models.judge.number") }
                                 <input
-                                    ref={ (e) => { if (e) { e.select(); this._number = e; } }.bind(this) }
+                                    ref={ (e) => { if (e) { e.select(); this._number = e; } } }
                                     className="full-width"
                                     defaultValue={ this.props.judge.number } />
                             </label>

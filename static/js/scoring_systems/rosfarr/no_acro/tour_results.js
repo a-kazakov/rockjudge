@@ -2,9 +2,9 @@
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
@@ -22,7 +22,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
     function TourResultsVerboseTableRow() {
         _classCallCheck(this, TourResultsVerboseTableRow);
 
-        _get(Object.getPrototypeOf(TourResultsVerboseTableRow.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TourResultsVerboseTableRow).apply(this, arguments));
     }
 
     _createClass(TourResultsVerboseTableRow, [{
@@ -713,14 +713,14 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var _this = this;
+            var _this2 = this;
 
             var judges_scores = this.props.scores.map(function (score, idx) {
                 return React.createElement(
                     "td",
                     { className: "w-13", key: idx },
                     " ",
-                    _this.renderScore(_this.props.discipline_judges[idx], score, _this.props.results_info.additional_data),
+                    _this2.renderScore(_this2.props.discipline_judges[idx], score, _this2.props.results_info.additional_data),
                     " "
                 );
             });
@@ -764,7 +764,7 @@ var TourResultsVerboseTable = (function (_React$Component2) {
     function TourResultsVerboseTable() {
         _classCallCheck(this, TourResultsVerboseTable);
 
-        _get(Object.getPrototypeOf(TourResultsVerboseTable.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TourResultsVerboseTable).apply(this, arguments));
     }
 
     _createClass(TourResultsVerboseTable, [{
@@ -850,7 +850,7 @@ var TourResultsSemiVerboseTableRow = (function (_React$Component3) {
     function TourResultsSemiVerboseTableRow() {
         _classCallCheck(this, TourResultsSemiVerboseTableRow);
 
-        _get(Object.getPrototypeOf(TourResultsSemiVerboseTableRow.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TourResultsSemiVerboseTableRow).apply(this, arguments));
     }
 
     _createClass(TourResultsSemiVerboseTableRow, [{
@@ -886,14 +886,14 @@ var TourResultsSemiVerboseTableRow = (function (_React$Component3) {
     }, {
         key: "render",
         value: function render() {
-            var _this2 = this;
+            var _this5 = this;
 
             var judges_scores = this.props.scores.map(function (score, idx) {
                 return React.createElement(
                     "td",
                     { className: "w-9", key: idx },
                     " ",
-                    _this2.renderScore(_this2.props.discipline_judges[idx], score, _this2.props.results_info.additional_data),
+                    _this5.renderScore(_this5.props.discipline_judges[idx], score, _this5.props.results_info.additional_data),
                     " "
                 );
             });
@@ -941,14 +941,14 @@ var TourResultsSemiVerboseTableRow = (function (_React$Component3) {
                     "td",
                     { className: "w-14 total-score" },
                     (function () {
-                        if (!_this2.props.run.performed) {
+                        if (!_this5.props.run.performed) {
                             return React.createElement(
                                 "p",
                                 { className: "text-center" },
                                 "—"
                             );
                         }
-                        if (_this2.props.tour.scoring_system_name == "rosfarr.am_final_acro") {
+                        if (_this5.props.tour.scoring_system_name == "rosfarr.am_final_acro") {
                             return React.createElement(
                                 "p",
                                 { className: "text-center" },
@@ -1013,7 +1013,7 @@ var TourSemiVerboseResultsTable = (function (_React$Component4) {
     function TourSemiVerboseResultsTable() {
         _classCallCheck(this, TourSemiVerboseResultsTable);
 
-        _get(Object.getPrototypeOf(TourSemiVerboseResultsTable.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TourSemiVerboseResultsTable).apply(this, arguments));
     }
 
     _createClass(TourSemiVerboseResultsTable, [{
@@ -1161,7 +1161,7 @@ var TourResultsTableRow = (function (_React$Component5) {
     function TourResultsTableRow() {
         _classCallCheck(this, TourResultsTableRow);
 
-        _get(Object.getPrototypeOf(TourResultsTableRow.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TourResultsTableRow).apply(this, arguments));
     }
 
     _createClass(TourResultsTableRow, [{
@@ -1250,7 +1250,7 @@ var TourResultsTable = (function (_React$Component6) {
     function TourResultsTable() {
         _classCallCheck(this, TourResultsTable);
 
-        _get(Object.getPrototypeOf(TourResultsTable.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TourResultsTable).apply(this, arguments));
     }
 
     _createClass(TourResultsTable, [{

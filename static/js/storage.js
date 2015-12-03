@@ -2,6 +2,8 @@
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Ref = (function () {
@@ -60,7 +62,7 @@ var Model = (function () {
                             var back_ref = new Ref(_this.__storage, _this.__model_storage.model_name, _this.id);
                             var back_ref_key = data[idx].back_ref;
                             data[idx].children.forEach((function (nested_data) {
-                                if (typeof nested_data.data == "object") {
+                                if (_typeof(nested_data.data) == "object") {
                                     this.__storage.get(nested_data.model).add(nested_data.id, nested_data.data);
                                 }
                                 var ref = new Ref(this.__storage, nested_data.model, nested_data.id);
@@ -72,7 +74,7 @@ var Model = (function () {
                     } else if (idx.charAt(0) === "^") {
                         var key = idx.slice(1);
                         var nested_data = data[idx];
-                        if (typeof nested_data == "object") {
+                        if ((typeof nested_data === "undefined" ? "undefined" : _typeof(nested_data)) == "object") {
                             this.__storage.get(nested_data.model).add(nested_data.id, nested_data.data);
                         }
                         this[key] = new Ref(this.__storage, nested_data.model, nested_data.id);
@@ -91,7 +93,7 @@ var Model = (function () {
 
             var result = {};
 
-            var _loop = function (key) {
+            var _loop = function _loop(key) {
                 if (_this2.__key_types.hasOwnProperty(key)) {
                     switch (_this2.__key_types[key]) {
                         case "*":

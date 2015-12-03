@@ -2,9 +2,9 @@
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
@@ -14,16 +14,16 @@ var DisciplineResultsButtons = (function (_React$Component) {
     function DisciplineResultsButtons() {
         _classCallCheck(this, DisciplineResultsButtons);
 
-        _get(Object.getPrototypeOf(DisciplineResultsButtons.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(DisciplineResultsButtons).apply(this, arguments));
     }
 
     _createClass(DisciplineResultsButtons, [{
         key: "signal",
         value: function signal(message) {
-            var _this = this;
+            var _this2 = this;
 
             return (function () {
-                return _this.props.onSignal(message);
+                return _this2.props.onSignal(message);
             }).bind(this);
         }
     }, {
@@ -52,17 +52,19 @@ var DisciplineResults = (function (_React$Component2) {
     function DisciplineResults(props) {
         _classCallCheck(this, DisciplineResults);
 
-        _get(Object.getPrototypeOf(DisciplineResults.prototype), "constructor", this).call(this, props);
-        this.state = {
+        var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(DisciplineResults).call(this, props));
+
+        _this3.state = {
             loaded: false
         };
-        this.runs_loaded = false;
+        _this3.runs_loaded = false;
+        return _this3;
     }
 
     _createClass(DisciplineResults, [{
         key: "componentWillMount",
         value: function componentWillMount() {
-            this.storage = storage.getDomain("discipline_results_" + this.props.tour_id);
+            this.storage = storage.getDomain("discipline_results_" + this.props.discipline_id);
             this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData.bind(this));
             this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadState.bind(this));
             this.results_change_listener = message_dispatcher.addListener("tour_results_changed reload_data", (function (message) {
@@ -87,7 +89,7 @@ var DisciplineResults = (function (_React$Component2) {
             message_dispatcher.removeListener(this.reload_listener);
             message_dispatcher.removeListener(this.db_update_listener);
             message_dispatcher.removeListener(this.results_change_listener);
-            storage.delDomain("discipline_results_" + this.props.tour_id);
+            storage.delDomain("discipline_results_" + this.props.discipline_id);
         }
     }, {
         key: "reloadState",
@@ -172,15 +174,30 @@ var DisciplineResults = (function (_React$Component2) {
         // Rendering
 
     }, {
+        key: "renderBody",
+        value: function renderBody() {
+            switch (this.props.renderer) {
+                case "presenter":
+                    return React.createElement(DisciplineResultsPresenterTable, { table: this.state.table, ref: "main_table" });
+                case "report":
+                default:
+                    return React.createElement(DisciplineResultsTable, { table: this.state.table, ref: "main_table" });
+            }
+        }
+    }, {
         key: "render",
         value: function render() {
             if (!this.state.loaded) {
-                return React.createElement(Loader, null);
+                return React.createElement(
+                    "div",
+                    { className: "discipline-results" },
+                    React.createElement(Loader, null)
+                );
             }
             return React.createElement(
                 "div",
                 { className: "discipline-results" },
-                React.createElement(DisciplineResultsTable, { table: this.state.table, ref: "main_table" })
+                this.renderBody()
             );
         }
     }, {

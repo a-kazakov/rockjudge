@@ -32,7 +32,7 @@ handlers = [
     (r"/conn$", ConnectionTesterHandler),
     (r"/ic/(\d+)/results", DisciplineResultsHandler),
     (r"/participants/(\d+)$", ManageParticipantsHandler),
-    (r"/presenter$", PresenterHandler),
+    (r"/presenter/(\d+)$", PresenterHandler),
     (r"/report/(\d+)$", CompetitionReportHandler),
     (r"/start_list/(\d+)$", StartListHandler),
     (r"/static/(.*)", StaticFilesHandlerNoCache, {"path": STATIC_PATH}),

@@ -2,9 +2,11 @@
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
@@ -14,16 +16,18 @@ var CompetitionLoadingUI = (function (_React$Component) {
     function CompetitionLoadingUI(props) {
         _classCallCheck(this, CompetitionLoadingUI);
 
-        _get(Object.getPrototypeOf(CompetitionLoadingUI.prototype), "constructor", this).call(this, props);
-        this.state = {
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CompetitionLoadingUI).call(this, props));
+
+        _this.state = {
             raw_text: ""
         };
+        return _this;
     }
 
     _createClass(CompetitionLoadingUI, [{
         key: "render",
         value: function render() {
-            var _this = this;
+            var _this2 = this;
 
             return React.createElement(
                 "div",
@@ -42,8 +46,8 @@ var CompetitionLoadingUI = (function (_React$Component) {
                     { onSubmit: this.onSubmit.bind(this), className: "load-competition" },
                     React.createElement("textarea", {
                         defaultValue: "",
-                        ref: function (c) {
-                            return _this._input = c;
+                        ref: function ref(c) {
+                            return _this2._input = c;
                         },
                         placeholder: "Insert serialized data here ..." }),
                     React.createElement(
@@ -85,11 +89,13 @@ var ManagementUI = (function (_React$Component2) {
     function ManagementUI(props) {
         _classCallCheck(this, ManagementUI);
 
-        _get(Object.getPrototypeOf(ManagementUI.prototype), "constructor", this).call(this, props);
-        this.state = {
-            "page": this.getPageFromHash(),
-            "page_props": this.getPagePropsFromHash()
+        var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(ManagementUI).call(this, props));
+
+        _this3.state = {
+            "page": _this3.getPageFromHash(),
+            "page_props": _this3.getPagePropsFromHash()
         };
+        return _this3;
     }
 
     _createClass(ManagementUI, [{
@@ -132,7 +138,7 @@ var ManagementUI = (function (_React$Component2) {
                     };
                 })();
 
-                if (typeof _ret === "object") return _ret.v;
+                if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
             }
             return {};
         }
@@ -246,7 +252,7 @@ var ManagementUI = (function (_React$Component2) {
                                 { className: "block", open: !!parseInt(sessionStorage.getItem("D_TOURS")) },
                                 React.createElement(
                                     "summary",
-                                    { className: "level-1", onClick: function (e) {
+                                    { className: "level-1", onClick: function onClick(e) {
                                             return sessionStorage.setItem("D_TOURS", e.target.parentNode.open ? 0 : 1);
                                         } },
                                     _("admin.menu.manage_tours")
@@ -258,7 +264,7 @@ var ManagementUI = (function (_React$Component2) {
                                 { className: "block", open: !!parseInt(sessionStorage.getItem("D_SPORTSMEN")) },
                                 React.createElement(
                                     "summary",
-                                    { className: "level-1", onClick: function (e) {
+                                    { className: "level-1", onClick: function onClick(e) {
                                             return sessionStorage.setItem("D_SPORTSMEN", e.target.parentNode.open ? 0 : 1);
                                         } },
                                     _("admin.menu.manage_sportsmen")
@@ -334,7 +340,7 @@ var ServiceUI = (function (_React$Component3) {
     function ServiceUI(props) {
         _classCallCheck(this, ServiceUI);
 
-        _get(Object.getPrototypeOf(ServiceUI.prototype), "constructor", this).call(this, props);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(ServiceUI).call(this, props));
     }
 
     _createClass(ServiceUI, [{
@@ -354,7 +360,7 @@ var ServiceUI = (function (_React$Component3) {
     }, {
         key: "unfinalizeTour",
         value: function unfinalizeTour(event) {
-            var _this2 = this;
+            var _this5 = this;
 
             event.preventDefault();
             var passcode = swal({
@@ -370,7 +376,7 @@ var ServiceUI = (function (_React$Component3) {
                     return false;
                 }
                 Api("tour.unfinalize", {
-                    tour_id: _this2.refs.select_unfinalize.value
+                    tour_id: _this5.refs.select_unfinalize.value
                 }).onSuccess(function (event) {
                     swal({
                         title: _("global.messages.success"),
@@ -485,14 +491,16 @@ var AdminUI = (function (_React$Component4) {
     function AdminUI(props) {
         _classCallCheck(this, AdminUI);
 
-        _get(Object.getPrototypeOf(AdminUI.prototype), "constructor", this).call(this, props);
-        this.state = {
-            active_app: this.getActiveAppFromHash(),
+        var _this6 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdminUI).call(this, props));
+
+        _this6.state = {
+            active_app: _this6.getActiveAppFromHash(),
             name: null
         };
-        message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
-        message_dispatcher.addListener("reload_data", this.loadData.bind(this));
-        this.loadData();
+        message_dispatcher.addListener("db_update", _this6.reloadFromStorage.bind(_this6));
+        message_dispatcher.addListener("reload_data", _this6.loadData.bind(_this6));
+        _this6.loadData();
+        return _this6;
     }
 
     _createClass(AdminUI, [{

@@ -4,11 +4,13 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
@@ -18,8 +20,9 @@ var JudgeTablet = (function (_React$Component) {
     function JudgeTablet(props) {
         _classCallCheck(this, JudgeTablet);
 
-        _get(Object.getPrototypeOf(JudgeTablet.prototype), "constructor", this).call(this, props);
-        this.TOUR_SCHEMA = {
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(JudgeTablet).call(this, props));
+
+        _this.TOUR_SCHEMA = {
             runs: {
                 participant: {},
                 scores: {},
@@ -31,18 +34,19 @@ var JudgeTablet = (function (_React$Component) {
                 }
             }
         };
-        this.state = {
+        _this.state = {
             tour: null,
             judge: null,
             discipline_judge: null,
             current_heat: 1,
             page: "dance"
         };
-        this.active_tour_id = null;
-        message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this, false));
-        message_dispatcher.addListener("reload_data", this.loadData.bind(this));
-        message_dispatcher.addListener("active_tour_update", this.dispatchActiveTourUpdate.bind(this, false));
-        this.loadData();
+        _this.active_tour_id = null;
+        message_dispatcher.addListener("db_update", _this.reloadFromStorage.bind(_this, false));
+        message_dispatcher.addListener("reload_data", _this.loadData.bind(_this));
+        message_dispatcher.addListener("active_tour_update", _this.dispatchActiveTourUpdate.bind(_this, false));
+        _this.loadData();
+        return _this;
     }
 
     // Loaders
@@ -168,8 +172,10 @@ var JudgeTablet = (function (_React$Component) {
     }, {
         key: "getHeatsCount",
         value: function getHeatsCount(runs) {
+            var _Math;
+
             runs = runs || this.state.tour.runs;
-            return Math.max.apply(Math, _toConsumableArray(runs.map(function (run) {
+            return (_Math = Math).max.apply(_Math, _toConsumableArray(runs.map(function (run) {
                 return run.heat;
             })));
         }
@@ -433,7 +439,7 @@ var JudgeTablet = (function (_React$Component) {
                     };
                 })();
 
-                if (typeof _ret === "object") return _ret.v;
+                if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
             }
             return React.createElement(
                 "table",

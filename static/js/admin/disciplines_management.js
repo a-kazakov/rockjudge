@@ -4,9 +4,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
@@ -16,8 +16,9 @@ var DisciplineEditorRow = (function (_React$Component) {
     function DisciplineEditorRow(props) {
         _classCallCheck(this, DisciplineEditorRow);
 
-        _get(Object.getPrototypeOf(DisciplineEditorRow.prototype), "constructor", this).call(this, props);
-        this.state = {
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DisciplineEditorRow).call(this, props));
+
+        _this.state = {
             discipline_judges: props.discipline.discipline_judges.map(function (dj) {
                 return {
                     judge_id: dj.judge.id,
@@ -25,6 +26,7 @@ var DisciplineEditorRow = (function (_React$Component) {
                 };
             })
         };
+        return _this;
     }
 
     _createClass(DisciplineEditorRow, [{
@@ -112,7 +114,7 @@ var DisciplineEditorRow = (function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var _this = this;
+            var _this2 = this;
 
             return React.createElement(
                 "tr",
@@ -153,8 +155,8 @@ var DisciplineEditorRow = (function (_React$Component) {
                                             { className: "full-width" },
                                             _("models.discipline.sp"),
                                             React.createElement("input", {
-                                                ref: function (e) {
-                                                    return e && (_this._sp = e);
+                                                ref: function ref(e) {
+                                                    return e && (_this2._sp = e);
                                                 },
                                                 className: "full-width",
                                                 defaultValue: this.props.discipline.sp })
@@ -169,8 +171,8 @@ var DisciplineEditorRow = (function (_React$Component) {
                                             _("models.discipline.external_id"),
                                             React.createElement("br", null),
                                             React.createElement("input", {
-                                                ref: function (e) {
-                                                    return e && (_this._external_id = e);
+                                                ref: function ref(e) {
+                                                    return e && (_this2._external_id = e);
                                                 },
                                                 className: "full-width",
                                                 defaultValue: this.props.discipline.external_id })
@@ -192,8 +194,8 @@ var DisciplineEditorRow = (function (_React$Component) {
                                         { key: idx },
                                         React.createElement(
                                             "select",
-                                            { value: dj.judge_id, className: "judge", onChange: _this.onDisciplineJudgeChange.bind(_this, idx, "judge_id") },
-                                            _this.props.judges.map(function (j) {
+                                            { value: dj.judge_id, className: "judge", onChange: _this2.onDisciplineJudgeChange.bind(_this2, idx, "judge_id") },
+                                            _this2.props.judges.map(function (j) {
                                                 return React.createElement(
                                                     "option",
                                                     { value: j.id, key: j.id },
@@ -203,7 +205,7 @@ var DisciplineEditorRow = (function (_React$Component) {
                                         ),
                                         React.createElement(
                                             "select",
-                                            { value: dj.role, className: "judge-role", onChange: _this.onDisciplineJudgeChange.bind(_this, idx, "role") },
+                                            { value: dj.role, className: "judge-role", onChange: _this2.onDisciplineJudgeChange.bind(_this2, idx, "role") },
                                             GL.judge_roles.map(function (jr) {
                                                 return React.createElement(
                                                     "option",
@@ -217,7 +219,7 @@ var DisciplineEditorRow = (function (_React$Component) {
                                             {
                                                 type: "button",
                                                 className: "del btn btn-danger",
-                                                onClick: _this.removeDisciplineJudge.bind(_this, idx) },
+                                                onClick: _this2.removeDisciplineJudge.bind(_this2, idx) },
                                             "X"
                                         )
                                     );
@@ -276,10 +278,12 @@ var DisciplineRow = (function (_React$Component2) {
     function DisciplineRow(props) {
         _classCallCheck(this, DisciplineRow);
 
-        _get(Object.getPrototypeOf(DisciplineRow.prototype), "constructor", this).call(this, props);
-        this.state = {
+        var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(DisciplineRow).call(this, props));
+
+        _this3.state = {
             editing: false
         };
+        return _this3;
     }
 
     _createClass(DisciplineRow, [{
@@ -367,10 +371,12 @@ var DisciplineCreationRow = (function (_React$Component3) {
     function DisciplineCreationRow(props) {
         _classCallCheck(this, DisciplineCreationRow);
 
-        _get(Object.getPrototypeOf(DisciplineCreationRow.prototype), "constructor", this).call(this, props);
-        this.state = {
+        var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(DisciplineCreationRow).call(this, props));
+
+        _this4.state = {
             editing: false
         };
+        return _this4;
     }
 
     _createClass(DisciplineCreationRow, [{
@@ -438,10 +444,12 @@ var DisciplinesManagementUI = (function (_React$Component4) {
     function DisciplinesManagementUI(props) {
         _classCallCheck(this, DisciplinesManagementUI);
 
-        _get(Object.getPrototypeOf(DisciplinesManagementUI.prototype), "constructor", this).call(this, props);
-        this.state = {
+        var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(DisciplinesManagementUI).call(this, props));
+
+        _this5.state = {
             creating: false
         };
+        return _this5;
     }
 
     _createClass(DisciplinesManagementUI, [{

@@ -1,64 +1,195 @@
 @import "variables.less";
 
-header .header {
-  text-align: center;
-  margin-left: 150px;
-  margin-right: 150px;
-  h1 {
-    font-size: 20px;
-  }
+html, body {
+    height: 100%;
+    flex-direction: row;
+    flex-wrap: nowrap;
 }
 
-.presenter-splash {
-  margin-top: 200px;
-  font-weight: 400;
-  font-size: 40px;
-  text-align: center;
-}
-
-.heat {
-    margin: 20px auto;
-    text-align: center;
-    width: 85%;
-    height: 135px;
-    table {
-        width: 100%;
-        &.outer {
-            height: 100%;
-            table-layout: fixed;
+.presenter-tablet {
+    display: flex;
+    align-content: stretch;
+    width: 100%;
+    height: 100%;
+    .left-bar {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: space-around;
+        width: 40px;
+        background-color: @ui-dark;
+        .item {
+            flex-grow: 1;
+            font-weight: bold;
+            color: @ui-white;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            overflow: visible;
+            position: relative;
+            &.active {
+                background-color: @ui-medium;
+            }
+            span {
+                transform-origin: 0 0;
+                transform: rotate(-90deg) translate(-50%, 0);
+                width: 150px;
+                text-align: center;
+                line-height: 40px;
+                display: block;
+                position: absolute;
+                top: 50%;
+            }
         }
     }
-    color: #777;
-    padding: 5px 20px 20px 20px;
-    .number {
-        font-size: 50px;
-        font-weight: light;
-    }
-    .name {
-        font-size: 16px;
-        font-weight: bold;
-    }
-    .club, .city {
-        font-size: 14px;
-        font-weight: normal;
-    }
-}
-
-.heat.current-heat {
-    background-color: @ui-dark;
-    color: @ui-white;
-    width: 100%;
-    height: 200px;
-    .number {
-        font-size: 60px;
-        font-weight: light;
-    }
-    .name {
-        font-size: 17px;
-        font-weight: bold;
-    }
-    .club, .city {
-        font-size: 15px;
-        font-weight: normal;
+    .content {
+        display: flex;
+        align-items: stretch;
+        flex-grow: 1;
+        font-size: 18px;
+        .info {
+            padding: 20px;
+            overflow: auto;
+            flex-grow: 1;
+            h2 {
+                text-align: center;
+            }
+            .competition-info, .judges {
+                width: 100%;
+                tr:nth-child(2n+1) {
+                    background-color: #fff;
+                }
+                tr:nth-child(2n) {
+                    background-color: #ddd;
+                }
+                th {
+                    text-align: left;
+                    width: 350px;
+                }
+                th, td {
+                    padding: 2px 5px;
+                }
+            }
+        }
+        .heats {
+            display: flex;
+            flex-grow: 1;
+            flex-direction: column;
+            align-items: stretch;
+            .splash-screen {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                font-size: 24px;
+                flex-grow: 1;
+                .spacer {
+                    height: 50px;
+                }
+            }
+            header {
+                text-align: center;
+                .header {
+                    margin: 0 100px;
+                    h1 {
+                        font-size: 16px;
+                    }
+                }
+            }
+            .heat {
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                table {
+                    width: 80%;
+                    margin: 10px auto;
+                    td {
+                        border: 2px solid black;
+                        padding: 5px;
+                        &.number {
+                            width: 70px;
+                            text-align: center;
+                            font-weight: bold;
+                            font-size: 20px;
+                        }
+                        &.name {
+                            font-weight: bold;
+                        }
+                    }
+                }
+                .spacer {
+                    height: 100px;
+                }
+            }
+        }
+        .results {
+            display: flex;
+            flex-direction: row;
+            flex-grow: 1;
+            align-items: stretch;
+            justify-content: space-around;
+            .disciplines {
+                width: 350px;
+                background-color: @ui-light;
+                .item {
+                    cursor: pointer;
+                    padding: 7px;
+                    font-size: 15px;
+                    font-weight: bold;
+                    &.active {
+                        background-color: @ui-contrast;
+                    }
+                }
+            }
+            .discipline-results {
+                flex-grow: 1;
+                overflow: auto;
+                .tour-name, .row {
+                    width: 90%;
+                    margin: 5px auto;
+                }
+                .tour-name {
+                    background-color: @ui-dark;
+                    color: @ui-white;
+                    font-weight: bold;
+                    text-align: center;
+                    padding: 5px;
+                }
+                .row {
+                    cursor: pointer;
+                    &.active {
+                        background-color: lighten(@ui-contrast, 40%);
+                    }
+                    td {
+                        font-size: 15px;
+                        border: 2px solid black;
+                        padding: 1px 5px;
+                        &.place {
+                            width: 70px;
+                            text-align: center;
+                            font-weight: bold;
+                            font-size: 20px;
+                            line-height: 20px;
+                            .place-label {
+                                font-size: 12px;
+                                line-height: 12px;
+                                color: black;
+                                padding: 0;
+                            }
+                        }
+                        &.number {
+                            width: 70px;
+                            text-align: center;
+                            font-weight: bold;
+                        }
+                        &.name {
+                            font-weight: bold;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

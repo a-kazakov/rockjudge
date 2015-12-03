@@ -23,7 +23,7 @@ class DisciplineResults extends React.Component {
         this.runs_loaded = false;
     }
     componentWillMount() {
-        this.storage = storage.getDomain("discipline_results_" + this.props.tour_id);
+        this.storage = storage.getDomain("discipline_results_" + this.props.discipline_id);
         this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData.bind(this));
         this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadState.bind(this));
         this.results_change_listener = message_dispatcher.addListener("tour_results_changed reload_data", function(message) {
@@ -46,7 +46,7 @@ class DisciplineResults extends React.Component {
         message_dispatcher.removeListener(this.reload_listener);
         message_dispatcher.removeListener(this.db_update_listener);
         message_dispatcher.removeListener(this.results_change_listener);
-        storage.delDomain("discipline_results_" + this.props.tour_id);
+        storage.delDomain("discipline_results_" + this.props.discipline_id);
     }
     reloadState() {
         if (!this.state.discipline_results) {
@@ -127,12 +127,22 @@ class DisciplineResults extends React.Component {
 
     // Rendering
 
+    renderBody() {
+        switch (this.props.renderer) {
+        case "presenter":
+            return <DisciplineResultsPresenterTable table={ this.state.table } ref="main_table" />
+        case "report":
+        default:
+            return <DisciplineResultsTable table={ this.state.table } ref="main_table" />
+        }
+    }
+
     render() {
         if (!this.state.loaded) {
-            return <Loader />
+            return <div className="discipline-results"><Loader /></div>
         }
         return <div className="discipline-results">
-            <DisciplineResultsTable table={ this.state.table } ref="main_table" />
+            { this.renderBody() }
         </div>
     }
     createDocx() {

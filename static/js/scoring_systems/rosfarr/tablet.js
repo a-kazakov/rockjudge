@@ -4,9 +4,11 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
@@ -26,7 +28,7 @@ var HeadJudgeActobaticOverrides = (function (_React$Component) {
     function HeadJudgeActobaticOverrides() {
         _classCallCheck(this, HeadJudgeActobaticOverrides);
 
-        _get(Object.getPrototypeOf(HeadJudgeActobaticOverrides.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(HeadJudgeActobaticOverrides).apply(this, arguments));
     }
 
     _createClass(HeadJudgeActobaticOverrides, [{
@@ -106,7 +108,7 @@ var HeadJudgePreviousPenlties = (function (_React$Component2) {
     function HeadJudgePreviousPenlties() {
         _classCallCheck(this, HeadJudgePreviousPenlties);
 
-        _get(Object.getPrototypeOf(HeadJudgePreviousPenlties.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(HeadJudgePreviousPenlties).apply(this, arguments));
     }
 
     _createClass(HeadJudgePreviousPenlties, [{
@@ -166,7 +168,7 @@ var HeadJudgeTechJudgeScore = (function (_React$Component3) {
     function HeadJudgeTechJudgeScore() {
         _classCallCheck(this, HeadJudgeTechJudgeScore);
 
-        _get(Object.getPrototypeOf(HeadJudgeTechJudgeScore.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(HeadJudgeTechJudgeScore).apply(this, arguments));
     }
 
     _createClass(HeadJudgeTechJudgeScore, [{
@@ -246,7 +248,7 @@ var HeadJudgeTechJudgesScores = (function (_React$Component4) {
     function HeadJudgeTechJudgesScores() {
         _classCallCheck(this, HeadJudgeTechJudgesScores);
 
-        _get(Object.getPrototypeOf(HeadJudgeTechJudgesScores.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(HeadJudgeTechJudgesScores).apply(this, arguments));
     }
 
     _createClass(HeadJudgeTechJudgesScores, [{
@@ -259,13 +261,13 @@ var HeadJudgeTechJudgesScores = (function (_React$Component4) {
     }, {
         key: "renderContent",
         value: function renderContent() {
-            var _this = this;
+            var _this5 = this;
 
             return this.getTechDisciplineJudges().map(function (tech_judge) {
                 return React.createElement(HeadJudgeTechJudgeScore, {
                     key: tech_judge.id,
                     discipline_judge: tech_judge,
-                    score: _this.props.all_scores[tech_judge.id] });
+                    score: _this5.props.all_scores[tech_judge.id] });
             });
         }
     }, {
@@ -289,7 +291,7 @@ var HeadJudgeDanceJudgeScore = (function (_React$Component5) {
     function HeadJudgeDanceJudgeScore() {
         _classCallCheck(this, HeadJudgeDanceJudgeScore);
 
-        _get(Object.getPrototypeOf(HeadJudgeDanceJudgeScore.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(HeadJudgeDanceJudgeScore).apply(this, arguments));
     }
 
     _createClass(HeadJudgeDanceJudgeScore, [{
@@ -312,7 +314,7 @@ var HeadJudgeDanceJudgesScores = (function (_React$Component6) {
     function HeadJudgeDanceJudgesScores() {
         _classCallCheck(this, HeadJudgeDanceJudgesScores);
 
-        _get(Object.getPrototypeOf(HeadJudgeDanceJudgesScores.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(HeadJudgeDanceJudgesScores).apply(this, arguments));
     }
 
     _createClass(HeadJudgeDanceJudgesScores, [{
@@ -325,13 +327,13 @@ var HeadJudgeDanceJudgesScores = (function (_React$Component6) {
     }, {
         key: "renderContent",
         value: function renderContent() {
-            var _this2 = this;
+            var _this8 = this;
 
             return this.getDanceDisciplineJudges().map(function (judge) {
                 return React.createElement(HeadJudgeDanceJudgeScore, {
                     key: judge.id,
                     discipline_judge: judge,
-                    score: _this2.props.all_scores[judge.id] });
+                    score: _this8.props.all_scores[judge.id] });
             });
         }
     }, {
@@ -371,7 +373,7 @@ var HeadJudgeNotPerformedSwitch = (function (_React$Component7) {
     function HeadJudgeNotPerformedSwitch() {
         _classCallCheck(this, HeadJudgeNotPerformedSwitch);
 
-        _get(Object.getPrototypeOf(HeadJudgeNotPerformedSwitch.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(HeadJudgeNotPerformedSwitch).apply(this, arguments));
     }
 
     _createClass(HeadJudgeNotPerformedSwitch, [{
@@ -421,10 +423,8 @@ var HeadJudgeScoreInput = (function (_React$Component8) {
     function HeadJudgeScoreInput() {
         _classCallCheck(this, HeadJudgeScoreInput);
 
-        _get(Object.getPrototypeOf(HeadJudgeScoreInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(HeadJudgeScoreInput).apply(this, arguments));
     }
-
-    // Tech Judge
 
     _createClass(HeadJudgeScoreInput, [{
         key: "getPenaltyCoices",
@@ -434,10 +434,10 @@ var HeadJudgeScoreInput = (function (_React$Component8) {
     }, {
         key: "genOnPenaltyUpdate",
         value: function genOnPenaltyUpdate() {
-            var _this3 = this;
+            var _this11 = this;
 
             return function (new_value) {
-                return _this3.props.onScoreUpdate("penalty", new_value);
+                return _this11.props.onScoreUpdate("penalty", new_value);
             };
         }
     }, {
@@ -480,13 +480,15 @@ var HeadJudgeScoreInput = (function (_React$Component8) {
     return HeadJudgeScoreInput;
 })(React.Component);
 
+// Tech Judge
+
 var TechJudgeAcrobaticOverride = (function (_React$Component9) {
     _inherits(TechJudgeAcrobaticOverride, _React$Component9);
 
     function TechJudgeAcrobaticOverride() {
         _classCallCheck(this, TechJudgeAcrobaticOverride);
 
-        _get(Object.getPrototypeOf(TechJudgeAcrobaticOverride.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TechJudgeAcrobaticOverride).apply(this, arguments));
     }
 
     _createClass(TechJudgeAcrobaticOverride, [{
@@ -528,28 +530,28 @@ var TechJudgeAcroScoreInput = (function (_React$Component10) {
     function TechJudgeAcroScoreInput() {
         _classCallCheck(this, TechJudgeAcroScoreInput);
 
-        _get(Object.getPrototypeOf(TechJudgeAcroScoreInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TechJudgeAcroScoreInput).apply(this, arguments));
     }
 
     _createClass(TechJudgeAcroScoreInput, [{
         key: "genOnAcroOverride",
         value: function genOnAcroOverride(acro_idx) {
-            var _this4 = this;
+            var _this14 = this;
 
             return function (new_value) {
-                return _this4.props.onAcroOverride(acro_idx, new_value);
+                return _this14.props.onAcroOverride(acro_idx, new_value);
             };
         }
     }, {
         key: "renderContent",
         value: function renderContent() {
-            var _this5 = this;
+            var _this15 = this;
 
             return this.props.acrobatics.map(function (acro, idx) {
                 return React.createElement(TechJudgeAcrobaticOverride, {
                     key: idx,
                     acro: acro,
-                    onAcroOverride: _this5.genOnAcroOverride(idx) });
+                    onAcroOverride: _this15.genOnAcroOverride(idx) });
             });
         }
     }, {
@@ -572,16 +574,16 @@ var TechJudgeDanceScoreInput = (function (_React$Component11) {
     function TechJudgeDanceScoreInput() {
         _classCallCheck(this, TechJudgeDanceScoreInput);
 
-        _get(Object.getPrototypeOf(TechJudgeDanceScoreInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TechJudgeDanceScoreInput).apply(this, arguments));
     }
 
     _createClass(TechJudgeDanceScoreInput, [{
         key: "genOnScoreUpdate",
         value: function genOnScoreUpdate(score_part) {
-            var _this6 = this;
+            var _this17 = this;
 
             return function (new_value) {
-                return _this6.props.onScoreUpdate(score_part, new_value);
+                return _this17.props.onScoreUpdate(score_part, new_value);
             };
         }
     }, {
@@ -624,10 +626,8 @@ var TechJudgeScoreInput = (function (_React$Component12) {
     function TechJudgeScoreInput() {
         _classCallCheck(this, TechJudgeScoreInput);
 
-        _get(Object.getPrototypeOf(TechJudgeScoreInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TechJudgeScoreInput).apply(this, arguments));
     }
-
-    // Dance judge
 
     _createClass(TechJudgeScoreInput, [{
         key: "render",
@@ -647,22 +647,24 @@ var TechJudgeScoreInput = (function (_React$Component12) {
     return TechJudgeScoreInput;
 })(React.Component);
 
+// Dance judge
+
 var DanceJudgeScorePartInput = (function (_React$Component13) {
     _inherits(DanceJudgeScorePartInput, _React$Component13);
 
     function DanceJudgeScorePartInput() {
         _classCallCheck(this, DanceJudgeScorePartInput);
 
-        _get(Object.getPrototypeOf(DanceJudgeScorePartInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(DanceJudgeScorePartInput).apply(this, arguments));
     }
 
     _createClass(DanceJudgeScorePartInput, [{
         key: "genOnScoreUpdate",
         value: function genOnScoreUpdate() {
-            var _this7 = this;
+            var _this20 = this;
 
             return function (new_value) {
-                return _this7.props.onScoreUpdate(_this7.props.part, new_value);
+                return _this20.props.onScoreUpdate(_this20.props.part, new_value);
             };
         }
     }, {
@@ -702,16 +704,16 @@ var DanceJudgeScoreMistakes = (function (_React$Component14) {
     function DanceJudgeScoreMistakes() {
         _classCallCheck(this, DanceJudgeScoreMistakes);
 
-        _get(Object.getPrototypeOf(DanceJudgeScoreMistakes.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(DanceJudgeScoreMistakes).apply(this, arguments));
     }
 
     _createClass(DanceJudgeScoreMistakes, [{
         key: "genOnScoreUpdate",
         value: function genOnScoreUpdate(score_part) {
-            var _this8 = this;
+            var _this22 = this;
 
             return function (new_value) {
-                return _this8.props.onScoreUpdate(score_part, new_value);
+                return _this22.props.onScoreUpdate(score_part, new_value);
             };
         }
     }, {
@@ -766,7 +768,7 @@ var DanceJudgeFinalDanceScoreInput = (function (_React$Component15) {
     function DanceJudgeFinalDanceScoreInput() {
         _classCallCheck(this, DanceJudgeFinalDanceScoreInput);
 
-        _get(Object.getPrototypeOf(DanceJudgeFinalDanceScoreInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(DanceJudgeFinalDanceScoreInput).apply(this, arguments));
     }
 
     _createClass(DanceJudgeFinalDanceScoreInput, [{
@@ -813,7 +815,7 @@ var DanceJudgeDanceScoreInput = (function (_React$Component16) {
     function DanceJudgeDanceScoreInput() {
         _classCallCheck(this, DanceJudgeDanceScoreInput);
 
-        _get(Object.getPrototypeOf(DanceJudgeDanceScoreInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(DanceJudgeDanceScoreInput).apply(this, arguments));
     }
 
     _createClass(DanceJudgeDanceScoreInput, [{
@@ -860,7 +862,7 @@ var DanceJudgeFormationScoreInput = (function (_React$Component17) {
     function DanceJudgeFormationScoreInput() {
         _classCallCheck(this, DanceJudgeFormationScoreInput);
 
-        _get(Object.getPrototypeOf(DanceJudgeFormationScoreInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(DanceJudgeFormationScoreInput).apply(this, arguments));
     }
 
     _createClass(DanceJudgeFormationScoreInput, [{
@@ -907,7 +909,7 @@ var DanceJudgeSimplifiedScoreInput = (function (_React$Component18) {
     function DanceJudgeSimplifiedScoreInput() {
         _classCallCheck(this, DanceJudgeSimplifiedScoreInput);
 
-        _get(Object.getPrototypeOf(DanceJudgeSimplifiedScoreInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(DanceJudgeSimplifiedScoreInput).apply(this, arguments));
     }
 
     _createClass(DanceJudgeSimplifiedScoreInput, [{
@@ -939,10 +941,8 @@ var DanceJudgeScoreInput = (function (_React$Component19) {
     function DanceJudgeScoreInput() {
         _classCallCheck(this, DanceJudgeScoreInput);
 
-        _get(Object.getPrototypeOf(DanceJudgeScoreInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(DanceJudgeScoreInput).apply(this, arguments));
     }
-
-    // Acro judge
 
     _createClass(DanceJudgeScoreInput, [{
         key: "render",
@@ -971,13 +971,15 @@ var DanceJudgeScoreInput = (function (_React$Component19) {
     return DanceJudgeScoreInput;
 })(React.Component);
 
+// Acro judge
+
 var AcroJudgeAcrobaticInput = (function (_React$Component20) {
     _inherits(AcroJudgeAcrobaticInput, _React$Component20);
 
     function AcroJudgeAcrobaticInput() {
         _classCallCheck(this, AcroJudgeAcrobaticInput);
 
-        _get(Object.getPrototypeOf(AcroJudgeAcrobaticInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(AcroJudgeAcrobaticInput).apply(this, arguments));
     }
 
     _createClass(AcroJudgeAcrobaticInput, [{
@@ -1008,7 +1010,7 @@ var AcroJudgeScoreMistakes = (function (_React$Component21) {
     function AcroJudgeScoreMistakes() {
         _classCallCheck(this, AcroJudgeScoreMistakes);
 
-        _get(Object.getPrototypeOf(AcroJudgeScoreMistakes.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(AcroJudgeScoreMistakes).apply(this, arguments));
     }
 
     _createClass(AcroJudgeScoreMistakes, [{
@@ -1038,33 +1040,31 @@ var AcroJudgeInput = (function (_React$Component22) {
     function AcroJudgeInput() {
         _classCallCheck(this, AcroJudgeInput);
 
-        _get(Object.getPrototypeOf(AcroJudgeInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(AcroJudgeInput).apply(this, arguments));
     }
-
-    // Common
 
     _createClass(AcroJudgeInput, [{
         key: "genOnAcroReductionUpdate",
         value: function genOnAcroReductionUpdate(acro_idx) {
-            var _this9 = this;
+            var _this31 = this;
 
             return function (new_value) {
-                return _this9.props.onAcroReductionUpdate(acro_idx, new_value);
+                return _this31.props.onAcroReductionUpdate(acro_idx, new_value);
             };
         }
     }, {
         key: "genOnMistakesUpdate",
         value: function genOnMistakesUpdate() {
-            var _this10 = this;
+            var _this32 = this;
 
             return function (new_value) {
-                return _this10.props.onScoreUpdate("mistakes", new_value);
+                return _this32.props.onScoreUpdate("mistakes", new_value);
             };
         }
     }, {
         key: "render",
         value: function render() {
-            var _this11 = this;
+            var _this33 = this;
 
             var score_data = this.props.score.data.raw_data;
             return React.createElement(
@@ -1075,7 +1075,7 @@ var AcroJudgeInput = (function (_React$Component22) {
                         key: acro_idx,
                         reduction: reduction,
                         acro_idx: acro_idx,
-                        onAcroReductionUpdate: _this11.genOnAcroReductionUpdate(acro_idx) });
+                        onAcroReductionUpdate: _this33.genOnAcroReductionUpdate(acro_idx) });
                 }),
                 React.createElement(AcroJudgeScoreMistakes, {
                     mistakes: score_data.mistakes,
@@ -1087,13 +1087,15 @@ var AcroJudgeInput = (function (_React$Component22) {
     return AcroJudgeInput;
 })(React.Component);
 
+// Common
+
 var NotPerformingMessage = (function (_React$Component23) {
     _inherits(NotPerformingMessage, _React$Component23);
 
     function NotPerformingMessage() {
         _classCallCheck(this, NotPerformingMessage);
 
-        _get(Object.getPrototypeOf(NotPerformingMessage.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(NotPerformingMessage).apply(this, arguments));
     }
 
     _createClass(NotPerformingMessage, [{
@@ -1116,7 +1118,7 @@ var ScorePartScale = (function (_React$Component24) {
     function ScorePartScale() {
         _classCallCheck(this, ScorePartScale);
 
-        _get(Object.getPrototypeOf(ScorePartScale.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(ScorePartScale).apply(this, arguments));
     }
 
     _createClass(ScorePartScale, [{
@@ -1152,7 +1154,7 @@ var TabletScoreTotalScore = (function (_React$Component25) {
     function TabletScoreTotalScore() {
         _classCallCheck(this, TabletScoreTotalScore);
 
-        _get(Object.getPrototypeOf(TabletScoreTotalScore.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TabletScoreTotalScore).apply(this, arguments));
     }
 
     _createClass(TabletScoreTotalScore, [{
@@ -1184,7 +1186,7 @@ var TabletScoreConfirmationButton = (function (_React$Component26) {
     function TabletScoreConfirmationButton() {
         _classCallCheck(this, TabletScoreConfirmationButton);
 
-        _get(Object.getPrototypeOf(TabletScoreConfirmationButton.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TabletScoreConfirmationButton).apply(this, arguments));
     }
 
     _createClass(TabletScoreConfirmationButton, [{
@@ -1202,7 +1204,7 @@ var TabletScoreConfirmationButton = (function (_React$Component26) {
                     if (score_data[keys[idx]] === null) {
                         return false;
                     }
-                    if (typeof score_data[keys[idx]] == "object") {
+                    if (_typeof(score_data[keys[idx]]) == "object") {
                         var arr = score_data[keys[idx]];
                         for (var j in Object.keys(arr)) {
                             if (arr[j] === null) {
@@ -1244,7 +1246,7 @@ var TabletScoreInput = (function (_React$Component27) {
     function TabletScoreInput() {
         _classCallCheck(this, TabletScoreInput);
 
-        _get(Object.getPrototypeOf(TabletScoreInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TabletScoreInput).apply(this, arguments));
     }
 
     _createClass(TabletScoreInput, [{

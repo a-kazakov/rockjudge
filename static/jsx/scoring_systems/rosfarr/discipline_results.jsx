@@ -64,3 +64,72 @@ class DisciplineResultsTable extends React.Component {
         </div>;
     }
 }
+
+class DisciplineResultsPresenterTableRow extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            active: false,
+        }
+    }
+    toggleActive() {
+        this.setState({
+            active: !this.state.active,
+        });
+    }
+    render() {
+        let p = this.props.participant;
+        return <table className={ "row" + ( this.state.active ? " active" : "") }
+                      {...onTouchEndOrClick(this.toggleActive.bind(this))}><tbody>
+            <tr>
+                <td className="place" rowSpan="3">
+                    { this.props.place === null ? "" :
+                        <div>{ this.props.place }
+                            <div className="place-label">{ _("presenter.labels.place") }</div>
+                        </div> }
+                </td>
+                <td className="number">{ p.number }</td>
+                <td className="name">{ p.name }</td>
+            </tr>
+            <tr>
+                <td className="club" colSpan="2">{ p.club.name }</td>
+            </tr>
+            <tr>
+                <td className="coaches" colSpan="2">{ p.coaches }</td>
+            </tr>
+        </tbody></table>
+    }
+}
+
+class DisciplineResultsPresenterTable extends React.Component {
+    renderRowHeader(prev_row, next_row) {
+        let need_render = (typeof prev_row == "undefined") || (prev_row.run.tour.id != next_row.run.tour.id)
+        if (!need_render) {
+            return null;
+        }
+        return <div className="tour-name" key={ "H" + next_row.run.id }>
+            { next_row.run.tour.name }
+        </div>
+    }
+    renderRow(row) {
+        return <DisciplineResultsPresenterTableRow key={ "R" + row.run.id }
+                                                   participant={ row.run.participant }
+                                                   place={ row.place } />
+    }
+    renderRows() {
+        let result = [];
+        let table = this.props.table;
+        for (let i = table.length - 1; i >= 0; --i) {
+            let header = this.renderRowHeader(table[i + 1], table[i]);
+            header && result.push(header);
+            result.push(this.renderRow(table[i]));
+        }
+        return result;
+    }
+    render() {
+        return <div>
+            { this.renderRows() }
+        </div>
+    }
+}
+

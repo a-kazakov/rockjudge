@@ -2,9 +2,11 @@
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
@@ -14,7 +16,7 @@ var BaseScoreInput = (function (_React$Component) {
     function BaseScoreInput() {
         _classCallCheck(this, BaseScoreInput);
 
-        _get(Object.getPrototypeOf(BaseScoreInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(BaseScoreInput).apply(this, arguments));
     }
 
     _createClass(BaseScoreInput, [{
@@ -54,7 +56,7 @@ var BaseScoreInput = (function (_React$Component) {
     }, {
         key: "onChange",
         value: function onChange(key, event) {
-            if (typeof key != "object") {
+            if ((typeof key === "undefined" ? "undefined" : _typeof(key)) != "object") {
                 key = [key];
             }
             var score = this.serialize();
@@ -95,7 +97,7 @@ var DanceScoreInput = (function (_BaseScoreInput) {
     function DanceScoreInput() {
         _classCallCheck(this, DanceScoreInput);
 
-        _get(Object.getPrototypeOf(DanceScoreInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(DanceScoreInput).apply(this, arguments));
     }
 
     _createClass(DanceScoreInput, [{
@@ -229,7 +231,7 @@ var AcroScoreInput = (function (_BaseScoreInput2) {
     function AcroScoreInput() {
         _classCallCheck(this, AcroScoreInput);
 
-        _get(Object.getPrototypeOf(AcroScoreInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(AcroScoreInput).apply(this, arguments));
     }
 
     _createClass(AcroScoreInput, [{
@@ -304,7 +306,7 @@ var FormationScoreInput = (function (_BaseScoreInput3) {
     function FormationScoreInput() {
         _classCallCheck(this, FormationScoreInput);
 
-        _get(Object.getPrototypeOf(FormationScoreInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(FormationScoreInput).apply(this, arguments));
     }
 
     _createClass(FormationScoreInput, [{
@@ -427,7 +429,7 @@ var HeadScoreInput = (function (_BaseScoreInput4) {
     function HeadScoreInput() {
         _classCallCheck(this, HeadScoreInput);
 
-        _get(Object.getPrototypeOf(HeadScoreInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(HeadScoreInput).apply(this, arguments));
     }
 
     _createClass(HeadScoreInput, [{
@@ -493,7 +495,7 @@ var TechScoreInput = (function (_BaseScoreInput5) {
     function TechScoreInput() {
         _classCallCheck(this, TechScoreInput);
 
-        _get(Object.getPrototypeOf(TechScoreInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TechScoreInput).apply(this, arguments));
     }
 
     _createClass(TechScoreInput, [{
@@ -536,7 +538,7 @@ var TechScoreInput = (function (_BaseScoreInput5) {
                                 checked: !!this.props.score.timing_violation,
                                 onChange: this.onChange.bind(this, "timing_violation"),
                                 onKeyUp: this.onKeyUp.bind(this),
-                                onClick: function (event) {
+                                onClick: function onClick(event) {
                                     var cb = event.target;
                                     if (cb.readOnly) {
                                         cb.checked = cb.readOnly = false;
@@ -575,7 +577,7 @@ var ConfirmationButton = (function (_React$Component2) {
     function ConfirmationButton() {
         _classCallCheck(this, ConfirmationButton);
 
-        _get(Object.getPrototypeOf(ConfirmationButton.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(ConfirmationButton).apply(this, arguments));
     }
 
     _createClass(ConfirmationButton, [{
@@ -605,7 +607,7 @@ var TourAdminScoreInput = (function (_React$Component3) {
     function TourAdminScoreInput() {
         _classCallCheck(this, TourAdminScoreInput);
 
-        _get(Object.getPrototypeOf(TourAdminScoreInput.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TourAdminScoreInput).apply(this, arguments));
     }
 
     _createClass(TourAdminScoreInput, [{
@@ -642,7 +644,7 @@ var TourAdminScoreCell = (function (_React$Component4) {
     function TourAdminScoreCell() {
         _classCallCheck(this, TourAdminScoreCell);
 
-        _get(Object.getPrototypeOf(TourAdminScoreCell.prototype), "constructor", this).apply(this, arguments);
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TourAdminScoreCell).apply(this, arguments));
     }
 
     _createClass(TourAdminScoreCell, [{

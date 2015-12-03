@@ -11,11 +11,15 @@
 {% end %}
 
 {% block scripts %}
+  <script src="/static/js/scoring_systems/rosfarr/discipline_results.js"></script>
+  <script src="/static/js/results/discipline_results.js"></script>
   <script src="/static/js/lib/tablet_controls.js"></script>
   <script src="/static/js/presenter_tablet.js"></script>
   <script>
     ReactDOM.render(
-      React.createElement(PresenterTablet, {}),
+      React.createElement(PresenterTablet, {
+        competition_id: {{ competition_id }}
+      }),
       document.getElementById("content")
     );
   </script>

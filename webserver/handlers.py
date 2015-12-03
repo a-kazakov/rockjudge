@@ -62,8 +62,10 @@ class ManageParticipantsHandler(tornado.web.RequestHandler):
 
 
 class PresenterHandler(tornado.web.RequestHandler):
-    def get(self):
-        return self.render("presenter.html", debug=settings.DEBUG)
+    def get(self, competition_id):
+        return self.render("presenter.html",
+            competition_id=competition_id,
+            debug=settings.DEBUG)
 
 
 class StartListHandler(tornado.web.RequestHandler):
