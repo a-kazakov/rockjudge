@@ -465,6 +465,9 @@ class ParticipantRow extends React.Component {
     }
     renderViewer() {
         let p = this.props.participant;
+        if (!p.programs) {
+            console.trace();
+        }
         return <tr className="viewer" onClick={ this.startEditing.bind(this) }>
             <td className="number">{ p.number }</td>
             <td className="name">{ p.name }</td>
@@ -509,6 +512,7 @@ class ParticipantCreationRow extends React.Component {
             "club": { "id": this.props.clubs[0] ? this.props.clubs[0].id : null },
             "sportsmen": [],
             "acrobatics": [],
+            "programs": [],
         }
         return <ParticipantEditorRow
             newParticipant={ true }
@@ -552,6 +556,7 @@ class ParticipantsManager extends React.Component {
         let serialized = storage.get("Discipline")
             .by_id(this.props.discipline_id)
             .serialize(SCHEMA);
+        console.log("S", serialized);
         this.setState(serialized);
     }
     loadData() {
@@ -572,12 +577,12 @@ class ParticipantsManager extends React.Component {
         .send();
     }
     renderTable() {
-        let rows = this.state.participants.map(function(participant) {
-            return <ParticipantRow
+        let rows = this.state.participants.map((participant) =>
+            <ParticipantRow
                 key={ participant.id }
                 participant={ participant }
                 clubs={ this.state.competition.clubs } />;
-        }.bind(this));
+        );
         return <div className="manage-participants">
             <table className="table table-striped">
                 <tbody>

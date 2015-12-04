@@ -831,6 +831,9 @@ var ParticipantRow = (function (_React$Component12) {
         key: "renderViewer",
         value: function renderViewer() {
             var p = this.props.participant;
+            if (!p.programs) {
+                console.trace();
+            }
             return React.createElement(
                 "tr",
                 { className: "viewer", onClick: this.startEditing.bind(this) },
@@ -916,7 +919,8 @@ var ParticipantCreationRow = (function (_React$Component13) {
                 "number": "",
                 "club": { "id": this.props.clubs[0] ? this.props.clubs[0].id : null },
                 "sportsmen": [],
-                "acrobatics": []
+                "acrobatics": [],
+                "programs": []
             };
             return React.createElement(ParticipantEditorRow, _extends({
                 newParticipant: true,
@@ -984,6 +988,7 @@ var ParticipantsManager = (function (_React$Component14) {
                 }
             };
             var serialized = storage.get("Discipline").by_id(this.props.discipline_id).serialize(SCHEMA);
+            console.log("S", serialized);
             this.setState(serialized);
         }
     }, {

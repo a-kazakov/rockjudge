@@ -60,9 +60,10 @@ var MessageDispatcher = (function () {
                 });
             }).bind(this));
             var data_changed = false;
-            data.model_updates.forEach(function (data) {
-                data_changed = storage.updateModel(data.model, data.id, data.data) || data_changed;
+            data.model_updates.forEach(function (model_info) {
+                data_changed = storage.updateModel(model_info.model, model_info.id, model_info.data) || data_changed;
             });
+            console.log(data_changed);
             if (data_changed) {
                 (function () {
                     var listeners = _this.listeners["db_update"] || {};

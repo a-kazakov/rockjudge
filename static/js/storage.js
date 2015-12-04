@@ -210,14 +210,15 @@ var Storage = (function () {
 
             var data_changed = false;
             if (this.model_storages[model_type]) {
-                data_changed = this.get(model_type).update(model_id, data) || data_changed;
+                data_changed = this.get(model_type).add(model_id, data) || data_changed;
             }
             Object.keys(this.domains).forEach(function (key) {
                 var _domains$key;
 
                 return data_changed = (_domains$key = _this3.domains[key]).updateModel.apply(_domains$key, _arguments) || data_changed;
             });
-            return data_changed;
+            // return data_changed;
+            return true;
         }
     }]);
 

@@ -106,6 +106,7 @@ class Participant(BaseModel):
             model_id=model.id,
             schema={
                 "club": {},
+                "programs": {},
             }
         )
 
@@ -135,6 +136,7 @@ class Participant(BaseModel):
             model_id=self.id,
             schema={
                 "club": {},
+                "programs": {},
             }
         )
 

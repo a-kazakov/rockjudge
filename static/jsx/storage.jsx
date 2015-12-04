@@ -136,11 +136,12 @@ class Storage {
     updateModel(model_type, model_id, data) {
         let data_changed = false;
         if (this.model_storages[model_type]) {
-            data_changed = this.get(model_type).update(model_id, data) || data_changed;
+            data_changed = this.get(model_type).add(model_id, data) || data_changed;
         }
         Object.keys(this.domains).forEach((key) =>
             data_changed = this.domains[key].updateModel(...arguments) || data_changed);
-        return data_changed;
+        // return data_changed;
+        return true;
     }
 }
 
