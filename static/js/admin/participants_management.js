@@ -831,9 +831,6 @@ var ParticipantRow = (function (_React$Component12) {
         key: "renderViewer",
         value: function renderViewer() {
             var p = this.props.participant;
-            if (!p.programs) {
-                console.trace();
-            }
             return React.createElement(
                 "tr",
                 { className: "viewer", onClick: this.startEditing.bind(this) },
@@ -988,7 +985,6 @@ var ParticipantsManager = (function (_React$Component14) {
                 }
             };
             var serialized = storage.get("Discipline").by_id(this.props.discipline_id).serialize(SCHEMA);
-            console.log("S", serialized);
             this.setState(serialized);
         }
     }, {
@@ -1010,12 +1006,14 @@ var ParticipantsManager = (function (_React$Component14) {
     }, {
         key: "renderTable",
         value: function renderTable() {
-            var rows = this.state.participants.map((function (participant) {
+            var _this23 = this;
+
+            var rows = this.state.participants.map(function (participant) {
                 return React.createElement(ParticipantRow, {
                     key: participant.id,
                     participant: participant,
-                    clubs: this.state.competition.clubs });
-            }).bind(this));
+                    clubs: _this23.state.competition.clubs });
+            });
             return React.createElement(
                 "div",
                 { className: "manage-participants" },

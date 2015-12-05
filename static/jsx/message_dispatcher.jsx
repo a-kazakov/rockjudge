@@ -46,7 +46,6 @@ class MessageDispatcher {
         data.model_updates.forEach((model_info) => {
             data_changed = storage.updateModel(model_info.model, model_info.id, model_info.data) || data_changed;
         });
-        console.log(data_changed);
         if (data_changed) {
             let listeners = this.listeners["db_update"] || {};
             Object.keys(listeners).forEach((key) => listeners[key]());

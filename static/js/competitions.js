@@ -468,6 +468,7 @@ var CompetitionsManager = (function (_React$Component4) {
             Api("competition.get_all", {
                 children: {}
             }).onSuccess((function (response) {
+                storage.del("Competition");
                 response.forEach(function (c) {
                     return storage.get("Competition").add(c.id, c.data);
                 });

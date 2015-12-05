@@ -48,7 +48,7 @@ class Model {
                     this.__storage.get(nested_data.model).add(nested_data.id, nested_data.data);
                 }
                 this[key] = new Ref(this.__storage, nested_data.model, nested_data.id);
-                this.__key_types[key] = "^"
+                this.__key_types[key] = "^";
             } else {
                 this[idx] = data[idx];
                 this.__key_types[idx] = "";

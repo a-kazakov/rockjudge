@@ -292,7 +292,8 @@ class CompetitionsManager extends React.Component {
             children: {},
         })
         .onSuccess(function(response) {
-            response.forEach((c) => storage.get("Competition").add(c.id, c.data))
+            storage.del("Competition");
+            response.forEach((c) => storage.get("Competition").add(c.id, c.data));
             this.reloadFromStorage();
         }.bind(this))
         .send();

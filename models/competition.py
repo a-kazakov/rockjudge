@@ -78,6 +78,7 @@ class Competition(BaseModel):
         if self.judges.count() > 0:
             raise ApiError("errors.competition.delete_non_empty")
         self.delete_instance()
+        ws_message.add_message("competition_list_update");
 
     def serialize(self, children={}):
         result = self.serialize_props()

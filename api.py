@@ -232,7 +232,7 @@ class Api:
 
     @classmethod
     def competition_delete(cls, request, ws_message):
-        competition = cls.get_model(Discipline, "competition_id", request)
+        competition = cls.get_model(Competition, "competition_id", request)
         competition.delete_model(ws_message=ws_message)
         return {}
 
