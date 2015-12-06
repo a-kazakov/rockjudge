@@ -142,6 +142,7 @@ class DocxImpl {
         let title1 = this.title1 ? '<h1>' + this.title1 + '</h1>' : "";
         let title2 = this.title2 ? '<h2>' + this.title2 + '</h2>' : "";
         let title3 = this.title3 ? '<h3>' + this.title3 + '</h3>' : "";
+        let spacer = (header || title1 || title2 || title3) ? '<p class="spacer">&nbsp;</p>' : "";
         return "<!DOCTYPE html>\n" +
             "<html><head>" +
                 "<meta charset=\"utf-8\">" +
@@ -151,7 +152,7 @@ class DocxImpl {
                 title1 +
                 title2 +
                 title3 +
-                '<p class="spacer">&nbsp;</p>' +
+                spacer +
                 this.body +
             "</body></html>";
     }

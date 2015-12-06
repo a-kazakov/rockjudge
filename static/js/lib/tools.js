@@ -1,5 +1,9 @@
 "use strict";
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
 function clone(obj) {
@@ -19,4 +23,37 @@ function showError(msg) {
         animation: false
     });
 }
+
+var CmpChainImpl = (function () {
+    function CmpChainImpl() {
+        _classCallCheck(this, CmpChainImpl);
+
+        this.result = 0;
+    }
+
+    _createClass(CmpChainImpl, [{
+        key: "cmp",
+        value: function cmp(a, b) {
+            if (this.result == 0) {
+                if (a < b) {
+                    this.result = -1;
+                } else if (a > b) {
+                    this.result = 1;
+                }
+            }
+            return this;
+        }
+    }, {
+        key: "end",
+        value: function end() {
+            return this.result;
+        }
+    }]);
+
+    return CmpChainImpl;
+})();
+
+var CmpChain = function CmpChain() {
+    return new CmpChainImpl();
+};
 //# sourceMappingURL=tools.js.map

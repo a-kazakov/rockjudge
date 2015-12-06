@@ -52,6 +52,7 @@ function _(src, arg) {
                 "add_tour": "Добавить тур",
                 "confirm_score": "Зафиксировать",
                 "docx_heats": "Заходы в DOCX",
+                "docx_numbers": "Номера в DOCX",
                 "docx_results": "Результаты в DOCX",
                 "import": "Импортировать",
                 "refresh_clients": "Перезагрузить все устройства",

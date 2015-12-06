@@ -8,23 +8,127 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var StartList = (function (_React$Component) {
-    _inherits(StartList, _React$Component);
+var ParticipantNumbersNumber = (function (_React$Component) {
+    _inherits(ParticipantNumbersNumber, _React$Component);
+
+    function ParticipantNumbersNumber() {
+        _classCallCheck(this, ParticipantNumbersNumber);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantNumbersNumber).apply(this, arguments));
+    }
+
+    _createClass(ParticipantNumbersNumber, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { className: "participant" },
+                React.createElement(
+                    "p",
+                    { className: "spacer-top" },
+                    " "
+                ),
+                React.createElement(
+                    "p",
+                    { className: "number" },
+                    this.props.participant.number
+                ),
+                React.createElement(
+                    "p",
+                    { className: "name" },
+                    this.props.participant.name
+                ),
+                React.createElement(
+                    "p",
+                    { className: "discipline" },
+                    this.props.participant.discipline_name
+                ),
+                React.createElement(
+                    "p",
+                    { className: "club" },
+                    this.props.participant.club.name,
+                    " — ",
+                    this.props.participant.club.city
+                ),
+                React.createElement(
+                    "p",
+                    { className: "spacer-bottom" },
+                    " "
+                )
+            );
+        }
+    }]);
+
+    return ParticipantNumbersNumber;
+})(React.Component);
+
+var ParticipantNumbers = (function (_React$Component2) {
+    _inherits(ParticipantNumbers, _React$Component2);
+
+    function ParticipantNumbers() {
+        _classCallCheck(this, ParticipantNumbers);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantNumbers).apply(this, arguments));
+    }
+
+    _createClass(ParticipantNumbers, [{
+        key: "makeParticipantsList",
+        value: function makeParticipantsList() {
+            var res = [];
+            this.props.disciplines.forEach(function (discipline, idx) {
+                return res = res.concat(discipline.participants.map(function (participant) {
+                    return {
+                        number: participant.number,
+                        name: participant.name,
+                        club: participant.club,
+                        discipline_idx: idx,
+                        discipline_name: discipline.name
+                    };
+                }));
+            });
+            res.sort(function (a, b) {
+                return CmpChain().cmp(a.club.city, b.club.city).cmp(a.club.name, b.club.name).cmp(a.discipline_idx, b.discipline_idx).cmp(a.number, b.number).end();
+            });
+            return res;
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { ref: "content", className: "print-only" },
+                this.makeParticipantsList().map(function (participant) {
+                    return React.createElement(ParticipantNumbersNumber, { participant: participant, key: participant.id });
+                })
+            );
+        }
+    }, {
+        key: "createDocx",
+        value: function createDocx() {
+            Docx("numbers").setMargins([0, 10, 0, 10]).setBody(this.refs.content.innerHTML).addStyle("div", "margin", "0").addStyle("div", "padding", "0").addStyle("p", "mso-line-height-rule", "exactly").addStyle(".participant", "text-align", "center").addStyle(".spacer-top", "line-height", "70pt").addStyle(".number", "line-height", "300pt").addStyle(".name", "line-height", "10pt").addStyle(".club", "line-height", "10pt").addStyle(".discipline", "line-height", "10pt").addStyle(".spacer-bottom", "line-height", "20pt").addStyle(".number", "font-size", "350pt").addStyle(".number", "letter-spacing:", "-20.0pt").addStyle(".name", "font-size", "10pt").addStyle(".name", "font-weight", "bold").addStyle(".club", "font-size", "10pt").addStyle(".discipline", "font-size", "10pt").save();
+        }
+    }]);
+
+    return ParticipantNumbers;
+})(React.Component);
+
+var StartList = (function (_React$Component3) {
+    _inherits(StartList, _React$Component3);
 
     function StartList(props) {
         _classCallCheck(this, StartList);
 
-        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(StartList).call(this, props));
+        var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(StartList).call(this, props));
 
-        _this.state = {
+        _this3.state = {
             name: null,
             include_formation_sportsmen: false,
             include_acrobatics: false
         };
-        message_dispatcher.addListener("db_update", _this.reloadFromStorage.bind(_this));
-        message_dispatcher.addListener("reload_data", _this.loadData.bind(_this));
-        _this.loadData();
-        return _this;
+        message_dispatcher.addListener("db_update", _this3.reloadFromStorage.bind(_this3));
+        message_dispatcher.addListener("reload_data", _this3.loadData.bind(_this3));
+        _this3.loadData();
+        return _this3;
     }
 
     _createClass(StartList, [{
@@ -82,7 +186,7 @@ var StartList = (function (_React$Component) {
     }, {
         key: "renderDiscipline",
         value: function renderDiscipline(ic) {
-            var _this2 = this;
+            var _this4 = this;
 
             if (this.state["hide_" + ic.id]) {
                 return null;
@@ -164,7 +268,7 @@ var StartList = (function (_React$Component) {
                             ic.participants.map(function (p) {
                                 return [React.createElement(
                                     "tr",
-                                    { key: p.id, className: !_this2.state.include_acrobatics || p.acrobatics.length == 0 ? "" : "has-acro" },
+                                    { key: p.id, className: !_this4.state.include_acrobatics || p.acrobatics.length == 0 ? "" : "has-acro" },
                                     React.createElement(
                                         "td",
                                         { className: "w-8 number" },
@@ -196,7 +300,7 @@ var StartList = (function (_React$Component) {
                                                         )
                                                     )
                                                 ) : null,
-                                                _this2.state.include_formation_sportsmen || !p.formation_name ? p.sportsmen.map(function (s, idx) {
+                                                _this4.state.include_formation_sportsmen || !p.formation_name ? p.sportsmen.map(function (s, idx) {
                                                     return React.createElement(
                                                         "tr",
                                                         { key: idx },
@@ -243,7 +347,7 @@ var StartList = (function (_React$Component) {
                                             })
                                         )
                                     )
-                                ), !_this2.state.include_acrobatics || p.acrobatics.length == 0 ? null : React.createElement(
+                                ), !_this4.state.include_acrobatics || p.acrobatics.length == 0 ? null : React.createElement(
                                     "tr",
                                     { key: "Acro" + p.id },
                                     React.createElement(
@@ -323,7 +427,7 @@ var StartList = (function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var _this3 = this;
+            var _this5 = this;
 
             if (this.state.name === null) {
                 return React.createElement(Loader, null);
@@ -341,6 +445,13 @@ var StartList = (function (_React$Component) {
                             "button",
                             { className: "btn btn-primary", onClick: this.createDocx.bind(this) },
                             "DOCX"
+                        ),
+                        React.createElement(
+                            "button",
+                            { className: "btn btn-primary", onClick: function onClick() {
+                                    return _this5.refs.numbers.createDocx();
+                                } },
+                            _("admin.buttons.docx_numbers")
                         )
                     ),
                     React.createElement(
@@ -374,8 +485,8 @@ var StartList = (function (_React$Component) {
                                         null,
                                         React.createElement("input", {
                                             type: "checkbox",
-                                            checked: !_this3.state["hide_" + d.id],
-                                            onChange: _this3.onDisciplineCbChange.bind(_this3, d.id) }),
+                                            checked: !_this5.state["hide_" + d.id],
+                                            onChange: _this5.onDisciplineCbChange.bind(_this5, d.id) }),
                                         d.name
                                     )
                                 );
@@ -421,10 +532,15 @@ var StartList = (function (_React$Component) {
                         "div",
                         { ref: "content" },
                         this.state.disciplines.map(function (ic) {
-                            return _this3.renderDiscipline(ic);
+                            return _this5.renderDiscipline(ic);
                         })
                     )
-                )
+                ),
+                React.createElement(ParticipantNumbers, {
+                    disciplines: this.state.disciplines.filter(function (dis) {
+                        return !_this5.state["hide_" + dis.id];
+                    }),
+                    ref: "numbers" })
             );
         }
     }, {

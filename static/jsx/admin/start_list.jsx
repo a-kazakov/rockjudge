@@ -1,3 +1,70 @@
+class ParticipantNumbersNumber extends React.Component {
+    render() {
+        return <div className="participant">
+            <p className="spacer-top">&nbsp;</p>
+            <p className="number">{ this.props.participant.number }</p>
+            <p className="name">{ this.props.participant.name }</p>
+            <p className="discipline">{ this.props.participant.discipline_name }</p>
+            <p className="club">{ this.props.participant.club.name } &mdash; { this.props.participant.club.city }</p>
+            <p className="spacer-bottom">&nbsp;</p>
+        </div>
+    }
+}
+
+class ParticipantNumbers extends React.Component {
+    makeParticipantsList() {
+        let res = [];
+        this.props.disciplines.forEach((discipline, idx) =>
+            res = res.concat(discipline.participants.map((participant) => ({
+                number: participant.number,
+                name: participant.name,
+                club: participant.club,
+                discipline_idx: idx,
+                discipline_name: discipline.name,
+            })))
+        );
+        res.sort((a, b) => CmpChain()
+            .cmp(a.club.city, b.club.city)
+            .cmp(a.club.name, b.club.name)
+            .cmp(a.discipline_idx, b.discipline_idx)
+            .cmp(a.number, b.number)
+            .end()
+        )
+        return res;
+    }
+    render() {
+        return <div ref="content" className="print-only">
+            { this.makeParticipantsList().map((participant) =>
+                <ParticipantNumbersNumber participant={ participant } key={ participant.id } />
+            ) }
+        </div>
+    }
+    createDocx() {
+        Docx("numbers")
+            .setMargins([0, 10, 0, 10])
+            .setBody(this.refs.content.innerHTML)
+            .addStyle("div", "margin", "0")
+            .addStyle("div", "padding", "0")
+            .addStyle("p", "mso-line-height-rule", "exactly")
+            .addStyle(".participant", "text-align", "center")
+
+            .addStyle(".spacer-top", "line-height", "70pt")
+            .addStyle(".number", "line-height", "300pt")
+            .addStyle(".name", "line-height", "10pt")
+            .addStyle(".club", "line-height", "10pt")
+            .addStyle(".discipline", "line-height", "10pt")
+            .addStyle(".spacer-bottom", "line-height", "20pt")
+
+            .addStyle(".number", "font-size", "350pt")
+            .addStyle(".number", "letter-spacing:", "-20.0pt")
+            .addStyle(".name", "font-size", "10pt")
+            .addStyle(".name", "font-weight", "bold")
+            .addStyle(".club", "font-size", "10pt")
+            .addStyle(".discipline", "font-size", "10pt")
+            .save();
+    }
+}
+
 class StartList extends React.Component {
     constructor(props) {
         super(props);
@@ -118,6 +185,7 @@ class StartList extends React.Component {
             <header>
                 <div className="controls">
                     <button className="btn btn-primary" onClick={ this.createDocx.bind(this) }>DOCX</button>
+                    <button className="btn btn-primary" onClick={ () => this.refs.numbers.createDocx() }>{ _("admin.buttons.docx_numbers") }</button>
                 </div>
                 <h1>{ _("admin.headers.start_list") }</h1>
             </header>
@@ -159,6 +227,9 @@ class StartList extends React.Component {
                     { this.state.disciplines.map((ic) => this.renderDiscipline(ic)) }
                 </div>
             </div>
+            <ParticipantNumbers
+                disciplines={ this.state.disciplines.filter((dis) => !this.state["hide_" + dis.id]) }
+                ref="numbers" />
         </div>;
     }
     createDocx() {
