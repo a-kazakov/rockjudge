@@ -174,7 +174,8 @@
 }
 .tour-admin .bordered-table .input-heat {
   width: 100%;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   height: 22px;
   margin: -2px;
   padding: 0;

@@ -176,13 +176,15 @@ div.mistakes {
   font-size: 13px;
   width: 100%;
   pading: 5px;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   vertical-align: top;
   margin-bottom: 10px;
   height: 29px;
 }
 .tech-judge-info .title {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   vertical-align: middle;
   width: 32.5%;
   padding-right: 5px;
@@ -219,7 +221,8 @@ button.score-btn {
   vertical-align: top;
   margin: 0.5%;
   padding: 10px 0;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   font-weight: bold;
   font-size: 12px;
 }
@@ -474,7 +477,8 @@ button.score-btn.active {
   cursor: pointer;
 }
 .slider .free {
-  transition: all 1s ease;
+  -webkit-transition: all 1s ease;
+          transition: all 1s ease;
 }
 .slider .slide-text {
   margin-left: 35px;

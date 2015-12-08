@@ -59,7 +59,7 @@ class Participant(BaseModel):
 
     def get_default_program(self, program_key):
         for program in self.programs:
-            if program.default_for == program_key:
+            if program.default_for is not None and program_key in program.default_for.split(","):
                 return program
         return None
 
