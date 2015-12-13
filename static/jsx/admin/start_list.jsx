@@ -2,6 +2,7 @@ class ParticipantNumbersNumber extends React.Component {
     render() {
         return <div className="participant">
             <p className="spacer-top">&nbsp;</p>
+            <p className="competition">{ this.props.competition_name }</p>
             <p className="number">{ this.props.participant.number }</p>
             <p className="name">{ this.props.participant.name }</p>
             <p className="discipline">{ this.props.participant.discipline_name }</p>
@@ -35,7 +36,7 @@ class ParticipantNumbers extends React.Component {
     render() {
         return <div ref="content" className="print-only">
             { this.makeParticipantsList().map((participant) =>
-                <ParticipantNumbersNumber participant={ participant } key={ participant.id } />
+                <ParticipantNumbersNumber participant={ participant } competition_name={ this.props.competition_name } key={ participant.id } />
             ) }
         </div>
     }
@@ -48,19 +49,21 @@ class ParticipantNumbers extends React.Component {
             .addStyle("p", "mso-line-height-rule", "exactly")
             .addStyle(".participant", "text-align", "center")
 
-            .addStyle(".spacer-top", "line-height", "70pt")
+            .addStyle(".spacer-top", "line-height", "55pt")
             .addStyle(".number", "line-height", "300pt")
+            .addStyle(".competition", "line-height", "10pt")
             .addStyle(".name", "line-height", "10pt")
             .addStyle(".club", "line-height", "10pt")
             .addStyle(".discipline", "line-height", "10pt")
-            .addStyle(".spacer-bottom", "line-height", "20pt")
+            .addStyle(".spacer-bottom", "line-height", "17pt")
 
             .addStyle(".number", "font-size", "350pt")
             .addStyle(".number", "letter-spacing:", "-20.0pt")
-            .addStyle(".name", "font-size", "10pt")
+            .addStyle(".competition", "font-size", "12pt")
+            .addStyle(".name", "font-size", "12pt")
             .addStyle(".name", "font-weight", "bold")
-            .addStyle(".club", "font-size", "10pt")
-            .addStyle(".discipline", "font-size", "10pt")
+            .addStyle(".club", "font-size", "12pt")
+            .addStyle(".discipline", "font-size", "12pt")
             .save();
     }
 }
@@ -228,6 +231,7 @@ class StartList extends React.Component {
                 </div>
             </div>
             <ParticipantNumbers
+                competition_name={ this.state.name }
                 disciplines={ this.state.disciplines.filter((dis) => !this.state["hide_" + dis.id]) }
                 ref="numbers" />
         </div>;

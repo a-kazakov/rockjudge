@@ -30,6 +30,11 @@ var ParticipantNumbersNumber = (function (_React$Component) {
                 ),
                 React.createElement(
                     "p",
+                    { className: "competition" },
+                    this.props.competition_name
+                ),
+                React.createElement(
+                    "p",
                     { className: "number" },
                     this.props.participant.number
                 ),
@@ -94,18 +99,20 @@ var ParticipantNumbers = (function (_React$Component2) {
     }, {
         key: "render",
         value: function render() {
+            var _this3 = this;
+
             return React.createElement(
                 "div",
                 { ref: "content", className: "print-only" },
                 this.makeParticipantsList().map(function (participant) {
-                    return React.createElement(ParticipantNumbersNumber, { participant: participant, key: participant.id });
+                    return React.createElement(ParticipantNumbersNumber, { participant: participant, competition_name: _this3.props.competition_name, key: participant.id });
                 })
             );
         }
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("numbers").setMargins([0, 10, 0, 10]).setBody(this.refs.content.innerHTML).addStyle("div", "margin", "0").addStyle("div", "padding", "0").addStyle("p", "mso-line-height-rule", "exactly").addStyle(".participant", "text-align", "center").addStyle(".spacer-top", "line-height", "70pt").addStyle(".number", "line-height", "300pt").addStyle(".name", "line-height", "10pt").addStyle(".club", "line-height", "10pt").addStyle(".discipline", "line-height", "10pt").addStyle(".spacer-bottom", "line-height", "20pt").addStyle(".number", "font-size", "350pt").addStyle(".number", "letter-spacing:", "-20.0pt").addStyle(".name", "font-size", "10pt").addStyle(".name", "font-weight", "bold").addStyle(".club", "font-size", "10pt").addStyle(".discipline", "font-size", "10pt").save();
+            Docx("numbers").setMargins([0, 10, 0, 10]).setBody(this.refs.content.innerHTML).addStyle("div", "margin", "0").addStyle("div", "padding", "0").addStyle("p", "mso-line-height-rule", "exactly").addStyle(".participant", "text-align", "center").addStyle(".spacer-top", "line-height", "55pt").addStyle(".number", "line-height", "300pt").addStyle(".competition", "line-height", "10pt").addStyle(".name", "line-height", "10pt").addStyle(".club", "line-height", "10pt").addStyle(".discipline", "line-height", "10pt").addStyle(".spacer-bottom", "line-height", "17pt").addStyle(".number", "font-size", "350pt").addStyle(".number", "letter-spacing:", "-20.0pt").addStyle(".competition", "font-size", "12pt").addStyle(".name", "font-size", "12pt").addStyle(".name", "font-weight", "bold").addStyle(".club", "font-size", "12pt").addStyle(".discipline", "font-size", "12pt").save();
         }
     }]);
 
@@ -118,17 +125,17 @@ var StartList = (function (_React$Component3) {
     function StartList(props) {
         _classCallCheck(this, StartList);
 
-        var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(StartList).call(this, props));
+        var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(StartList).call(this, props));
 
-        _this3.state = {
+        _this4.state = {
             name: null,
             include_formation_sportsmen: false,
             include_acrobatics: false
         };
-        message_dispatcher.addListener("db_update", _this3.reloadFromStorage.bind(_this3));
-        message_dispatcher.addListener("reload_data", _this3.loadData.bind(_this3));
-        _this3.loadData();
-        return _this3;
+        message_dispatcher.addListener("db_update", _this4.reloadFromStorage.bind(_this4));
+        message_dispatcher.addListener("reload_data", _this4.loadData.bind(_this4));
+        _this4.loadData();
+        return _this4;
     }
 
     _createClass(StartList, [{
@@ -186,7 +193,7 @@ var StartList = (function (_React$Component3) {
     }, {
         key: "renderDiscipline",
         value: function renderDiscipline(ic) {
-            var _this4 = this;
+            var _this5 = this;
 
             if (this.state["hide_" + ic.id]) {
                 return null;
@@ -268,7 +275,7 @@ var StartList = (function (_React$Component3) {
                             ic.participants.map(function (p) {
                                 return [React.createElement(
                                     "tr",
-                                    { key: p.id, className: !_this4.state.include_acrobatics || p.acrobatics.length == 0 ? "" : "has-acro" },
+                                    { key: p.id, className: !_this5.state.include_acrobatics || p.acrobatics.length == 0 ? "" : "has-acro" },
                                     React.createElement(
                                         "td",
                                         { className: "w-8 number" },
@@ -300,7 +307,7 @@ var StartList = (function (_React$Component3) {
                                                         )
                                                     )
                                                 ) : null,
-                                                _this4.state.include_formation_sportsmen || !p.formation_name ? p.sportsmen.map(function (s, idx) {
+                                                _this5.state.include_formation_sportsmen || !p.formation_name ? p.sportsmen.map(function (s, idx) {
                                                     return React.createElement(
                                                         "tr",
                                                         { key: idx },
@@ -347,7 +354,7 @@ var StartList = (function (_React$Component3) {
                                             })
                                         )
                                     )
-                                ), !_this4.state.include_acrobatics || p.acrobatics.length == 0 ? null : React.createElement(
+                                ), !_this5.state.include_acrobatics || p.acrobatics.length == 0 ? null : React.createElement(
                                     "tr",
                                     { key: "Acro" + p.id },
                                     React.createElement(
@@ -427,7 +434,7 @@ var StartList = (function (_React$Component3) {
     }, {
         key: "render",
         value: function render() {
-            var _this5 = this;
+            var _this6 = this;
 
             if (this.state.name === null) {
                 return React.createElement(Loader, null);
@@ -449,7 +456,7 @@ var StartList = (function (_React$Component3) {
                         React.createElement(
                             "button",
                             { className: "btn btn-primary", onClick: function onClick() {
-                                    return _this5.refs.numbers.createDocx();
+                                    return _this6.refs.numbers.createDocx();
                                 } },
                             _("admin.buttons.docx_numbers")
                         )
@@ -485,8 +492,8 @@ var StartList = (function (_React$Component3) {
                                         null,
                                         React.createElement("input", {
                                             type: "checkbox",
-                                            checked: !_this5.state["hide_" + d.id],
-                                            onChange: _this5.onDisciplineCbChange.bind(_this5, d.id) }),
+                                            checked: !_this6.state["hide_" + d.id],
+                                            onChange: _this6.onDisciplineCbChange.bind(_this6, d.id) }),
                                         d.name
                                     )
                                 );
@@ -532,13 +539,14 @@ var StartList = (function (_React$Component3) {
                         "div",
                         { ref: "content" },
                         this.state.disciplines.map(function (ic) {
-                            return _this5.renderDiscipline(ic);
+                            return _this6.renderDiscipline(ic);
                         })
                     )
                 ),
                 React.createElement(ParticipantNumbers, {
+                    competition_name: this.state.name,
                     disciplines: this.state.disciplines.filter(function (dis) {
-                        return !_this5.state["hide_" + dis.id];
+                        return !_this6.state["hide_" + dis.id];
                     }),
                     ref: "numbers" })
             );
