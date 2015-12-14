@@ -380,4 +380,131 @@ var DisciplineResultsPresenterTable = (function (_React$Component3) {
 
     return DisciplineResultsPresenterTable;
 })(React.Component);
+
+var DisciplineResultsScreenOperatorTableRow = (function (_React$Component4) {
+    _inherits(DisciplineResultsScreenOperatorTableRow, _React$Component4);
+
+    function DisciplineResultsScreenOperatorTableRow() {
+        _classCallCheck(this, DisciplineResultsScreenOperatorTableRow);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(DisciplineResultsScreenOperatorTableRow).apply(this, arguments));
+    }
+
+    _createClass(DisciplineResultsScreenOperatorTableRow, [{
+        key: "render",
+        value: function render() {
+            var p = this.props.participant;
+            return React.createElement(
+                "table",
+                _extends({ className: "row" + (this.props.selected ? " selected" : "")
+                }, onTouchEndOrClick(this.props.onClick)),
+                React.createElement(
+                    "tbody",
+                    null,
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "td",
+                            { className: "place", rowSpan: "2" },
+                            this.props.place === null ? "" : React.createElement(
+                                "div",
+                                null,
+                                this.props.place,
+                                React.createElement(
+                                    "div",
+                                    { className: "place-label" },
+                                    _("presenter.labels.place")
+                                )
+                            )
+                        ),
+                        React.createElement(
+                            "td",
+                            { className: "number" },
+                            p.number
+                        ),
+                        React.createElement(
+                            "td",
+                            { className: "name" },
+                            p.name
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "td",
+                            { className: "club", colSpan: "2" },
+                            p.club.name
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return DisciplineResultsScreenOperatorTableRow;
+})(React.Component);
+
+var DisciplineResultsScreenOperatorTable = (function (_React$Component5) {
+    _inherits(DisciplineResultsScreenOperatorTable, _React$Component5);
+
+    function DisciplineResultsScreenOperatorTable() {
+        _classCallCheck(this, DisciplineResultsScreenOperatorTable);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(DisciplineResultsScreenOperatorTable).apply(this, arguments));
+    }
+
+    _createClass(DisciplineResultsScreenOperatorTable, [{
+        key: "renderRowHeader",
+        value: function renderRowHeader(prev_row, next_row) {
+            var need_render = typeof prev_row == "undefined" || prev_row.run.tour.id != next_row.run.tour.id;
+            if (!need_render) {
+                return null;
+            }
+            return React.createElement(
+                "div",
+                { className: "tour-name", key: "H" + next_row.run.id },
+                next_row.run.tour.name
+            );
+        }
+    }, {
+        key: "renderRow",
+        value: function renderRow(row, place) {
+            var _this6 = this;
+
+            return React.createElement(DisciplineResultsScreenOperatorTableRow, {
+                key: "R" + row.run.id,
+                participant: row.run.participant,
+                place: row.place,
+                onClick: function onClick() {
+                    return _this6.props.onPlaceSelect(place);
+                },
+                selected: this.props.selectedPlace !== null && place >= this.props.selectedPlace });
+        }
+    }, {
+        key: "renderRows",
+        value: function renderRows() {
+            var result = [];
+            var table = this.props.table;
+            for (var i = table.length - 1; i >= 0; --i) {
+                var header = this.renderRowHeader(table[i + 1], table[i]);
+                header && result.push(header);
+                result.push(this.renderRow(table[i], i + 1));
+            }
+            return result;
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                null,
+                this.renderRows()
+            );
+        }
+    }]);
+
+    return DisciplineResultsScreenOperatorTable;
+})(React.Component);
 //# sourceMappingURL=discipline_results.js.map

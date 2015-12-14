@@ -75,6 +75,11 @@ var RoleSelector = (function (_React$Component) {
                             ),
                             React.createElement(
                                 "a",
+                                { href: "/screen_operator/" + this.props.competition.id.toString(), className: "btn btn-default btn-lg" },
+                                _("start_page.roles.screen_operator")
+                            ),
+                            React.createElement(
+                                "a",
                                 { href: "/admin/" + this.props.competition.id.toString(), className: "btn btn-default btn-lg" },
                                 _("start_page.roles.administrator")
                             )

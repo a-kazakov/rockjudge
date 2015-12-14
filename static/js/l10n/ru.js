@@ -312,6 +312,22 @@ function _(src, arg) {
                 "scoring_system_name": "Система судейства"
             }
         },
+        "screen_operator": {
+            "buttons": {
+                "reset_heat": "Сброс номера захода",
+                "reset_place": "Сброс места"
+            },
+            "headers": {
+                "discipline": "Дисциплина",
+                "heat": "Заход",
+                "places": "Места для вывода",
+                "tour": "Тур"
+            },
+            "labels": {
+                "place": "место",
+                "heat": "заход"
+            }
+        },
         "presenter": {
             "headers": {
                 "clubs": "Клубы-участники",
@@ -356,8 +372,10 @@ function _(src, arg) {
                 }
             },
             "roles": {
+                "administrator": "Администратор",
                 "presenter": "Ведущий",
-                "administrator": "Администратор"
+                "screen": "Экран",
+                "screen_operator": "Оператор"
             }
         },
         "tablet": {

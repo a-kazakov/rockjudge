@@ -1,0 +1,26 @@
+html,
+body,
+#content {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: white;
+}
+.outer {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+iframe.preloading {
+  display: none;
+}

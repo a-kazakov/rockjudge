@@ -179,6 +179,12 @@ var DisciplineResults = (function (_React$Component2) {
             switch (this.props.renderer) {
                 case "presenter":
                     return React.createElement(DisciplineResultsPresenterTable, { table: this.state.table, ref: "main_table" });
+                case "screen_operator":
+                    return React.createElement(DisciplineResultsScreenOperatorTable, {
+                        table: this.state.table,
+                        selectedPlace: this.props.selectedPlace,
+                        onPlaceSelect: this.props.onPlaceSelect,
+                        ref: "main_table" });
                 case "report":
                 default:
                     return React.createElement(DisciplineResultsTable, { table: this.state.table, ref: "main_table" });

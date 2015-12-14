@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% autoescape None %}
+
+{% block title %}
+  Screen operator
+{% end %}
+
+{% block styles %}
+  <link rel="stylesheet" href="/static/css/tablet.css">
+  <link rel="stylesheet" href="/static/css/screen_operator.css">
+{% end %}
+
+{% block scripts %}
+  <script src="/static/js/scoring_systems/rosfarr/discipline_results.js"></script>
+  <script src="/static/js/results/discipline_results.js"></script>
+  <script src="/static/js/lib/tablet_controls.js"></script>
+  <script src="/static/js/screen.js"></script>
+  <script src="/static/js/screen_operator.js"></script>
+  <script>
+    ReactDOM.render(
+      React.createElement(ScreenOperator, {
+        competition_id: {{ competition_id }},
+        manifest: {{ manifest }}
+      }),
+      document.getElementById("content")
+    );
+  </script>
+{% end %}
+
+{% block body %}
+  <div id="content"></div>
+{% end %}

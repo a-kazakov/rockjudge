@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% autoescape None %}
+
+{% block title %}
+  Screen
+{% end %}
+
+{% block styles %}
+  <link rel="stylesheet" href="/static/css/screen.css">
+{% end %}
+
+{% block scripts %}
+  <script src="/static/js/screen.js"></script>
+  <script>
+    ReactDOM.render(
+      React.createElement(Screen, {
+        competition_id: {{ competition_id }},
+        manifest: {{ manifest }}
+      }),
+      document.getElementById("content")
+    );
+  </script>
+{% end %}
+
+{% block body %}
+  <div id="content"></div>
+{% end %}

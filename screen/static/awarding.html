@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Screen</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-image: url("images/awarding.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: verdana;
+            overflow: hidden;
+        }
+        #discipline-name {
+            text-align: center;
+            font-size: 4vh;
+            font-weight: bold;
+            margin: 10vh 1vh 10vh;
+        }
+        .results {
+            font-size: 3vh;
+            width: 90vw;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+        .results td {
+            border-top: 0.3vh solid #ccc;
+        }
+        .results td, .results th {
+            padding: 2vh;
+        }
+        .number, .place, .next-tour {
+            text-align: center;
+        }
+    </style>
+    <script>
+        window.addEventListener("load", function() {
+            console.log("Starting inner frame script...");
+            function ge(id) {
+                return document.getElementById(id)
+            }
+            var competition_id = parseInt(window.location.hash.substr(1));
+            var state = {
+                current_discipline_id: null,
+                results: null,
+            };
+            var discipline_storage = null;
+
+            function loadResults() {
+                if (state.current_discipline_id === null) {
+                    return;
+                }
+                state.results = null;
+                Api("discipline.get_results", { discipline_id: state.current_discipline_id })
+                    .onSuccess(function(new_results) {
+                        state.results = new_results;
+                        updateData();
+                    }.bind(this))
+                    .onError(console.error.bind(console))
+                    .send();
+            }
+
+            function updateData() {
+                console.log("Updating data...")
+                var competition = storage.get("Competition").by_id(competition_id);
+                if (!competition) {
+                    console.log("No competition");
+                    return;
+                }
+                competition = competition.serialize({});
+                var screen_data = competition.screen_data;
+                var screen_id = screen_data.screen_id;
+                if (screen_id != "awarding") {
+                    console.log("Wrong screen ID");
+                    return;
+                }
+                var discipline_id = screen_data.controls_state.discipline_id;
+                if (discipline_id !== state.current_discipline_id || discipline_id === null) {
+                    if (discipline_id !== null) {
+                        Api("discipline.get", { discipline_id: discipline_id, children: {
+                            tours: {
+                                runs: {
+                                    participant: {
+                                        club: {},
+                                    },
+                                },
+                            }
+                        } })
+                            .addToDB("Tour", discipline_id, storage.getDomain(discipline_id))
+                            .onSuccess(function() {
+                                if (state.current_discipline_id !== discipline_id) {
+                                    storage.delDomain(state.current_discipline_id)
+                                    state.current_discipline_id = discipline_id;
+                                    discipline_storage = storage.getDomain(discipline_id);
+                                }
+                                loadResults();
+                            })
+                            .onError(console.error.bind(console))
+                            .send();
+                            console.log("Incoerrect discipline id");
+                    } else {
+                        console.log("Null discipline ID");
+                        state.current_discipline_id = null;
+                    }
+                    return;
+                }
+                if (!discipline_storage) {
+                    console.log("No discipline storage");
+                    return;
+                }
+                var discipline = discipline_storage.get("Tour").by_id(discipline_id);
+                if (!discipline) {
+                    console.log("No discipline");
+                    return;
+                }
+                discipline = discipline.serialize({ tours: { runs: { participant: { club: {}}}}});
+                if (!state.results) {
+                    console.log("No results");
+                    return;
+                }
+                var place = screen_data.controls_state.place;
+                var results = state.results.slice(place - 1, place + 5);
+                runs_by_id = {};
+                discipline.tours.forEach(function(tour) {
+                    tour.runs.forEach(function(run) {
+                        runs_by_id[run.id] = run;
+                    });
+                });
+                var output = $("<table>");
+                results.forEach(function(result) {
+                    var run = runs_by_id[result.run_id];
+                    var item = $("#templates .row").clone();
+                    item.find(".place").text(result.place);
+                    item.find(".number").text(run.participant.number);
+                    item.find(".name").text(run.participant.name);
+                    item.find(".club").text(run.participant.club.name);
+                    output.append(item);
+                });
+                $("#data").html(output.find("tbody").html());
+                $("#discipline-name").text(discipline.name);
+            }
+
+            function init() {
+                Api("competition.get", { competition_id: competition_id, children: {} })
+                    .addToDB("Competition", competition_id)
+                    .onSuccess(updateData)
+                    .onError(console.error.bind(console))
+                    .send();
+            }
+
+            message_dispatcher.addListener("db_update", updateData);
+            message_dispatcher.addListener("reload_data", init);
+            message_dispatcher.addListener("tour_results_changed", function(message) {
+                loadResults();
+            });
+
+            init();
+        });
+    </script>
+</head>
+<body>
+    <h1 id="discipline-name"></h1>
+    <table class="results">
+        <thead>
+            <tr>
+                <th>Место</th>
+                <th>Участник</th>
+                <th>Клуб</th>
+            </tr>
+        </thead>
+        <tbody id="data"></tbody>
+    </table>
+    <div id="templates" style="display:none">
+        <table>
+            <tr class="row">
+                <td class="place"></td>
+                <td class="name"></td>
+                <td class="club"></td>
+            </tr>
+        </table>
+    </div>
+    <script src="/static/thirdparty/jquery/jquery.js"></script>
+    <script src="/static/thirdparty/sockjs/sockjs.js"></script>
+    <script src="/static/js/storage.js"></script>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/message_dispatcher.js"></script>
+</body>
+</html>

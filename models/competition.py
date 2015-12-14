@@ -23,8 +23,9 @@ class Competition(BaseModel):
     date = peewee.CharField()
     info = postgres_ext.BinaryJSONField(default=[], dumps=serialize_competition_info)
     active = peewee.BooleanField(default=True)
+    screen_data = postgres_ext.BinaryJSONField(default={})
 
-    RW_PROPS = ["name", "date", "active", "info"]
+    RW_PROPS = ["name", "date", "active", "info", "screen_data"]
 
     PF_CHILDREN = {
         "disciplines": None,

@@ -131,6 +131,12 @@ class DisciplineResults extends React.Component {
         switch (this.props.renderer) {
         case "presenter":
             return <DisciplineResultsPresenterTable table={ this.state.table } ref="main_table" />
+        case "screen_operator":
+            return <DisciplineResultsScreenOperatorTable
+                table={ this.state.table }
+                selectedPlace={ this.props.selectedPlace }
+                onPlaceSelect={ this.props.onPlaceSelect }
+                ref="main_table" />
         case "report":
         default:
             return <DisciplineResultsTable table={ this.state.table } ref="main_table" />

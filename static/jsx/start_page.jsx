@@ -27,6 +27,9 @@ class RoleSelector extends React.Component {
                         <a href={ "/presenter/" + this.props.competition.id.toString() } className="btn btn-default btn-lg">
                             { _("start_page.roles.presenter") }
                         </a>
+                        <a href={ "/screen_operator/" + this.props.competition.id.toString() } className="btn btn-default btn-lg">
+                            { _("start_page.roles.screen_operator") }
+                        </a>
                         <a href={ "/admin/" + this.props.competition.id.toString() } className="btn btn-default btn-lg">
                             { _("start_page.roles.administrator") }
                         </a>

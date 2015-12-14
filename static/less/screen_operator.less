@@ -1,0 +1,137 @@
+@import "variables.less";
+
+.screen-operator {
+    display: flex;
+    align-items: stretch;
+    flex-directon: row;
+    height: 100%;
+    select {
+        width: 90%;
+        margin: 5px auto 30px;
+    }
+    .left-col {
+        overflow: auto;
+        background-color: @ui-dark;
+        color: @ui-light;
+        font-weight: bold;
+        width: 350px;
+        .item {
+            padding: 10px;
+            cursor: pointer;
+            &.active {
+                background-color: @ui-contrast;
+                color: @ui-dark;
+            }
+        }
+    }
+    .body {
+        display: flex;
+        align-items: streth;
+        flex-direction: column;
+        flex-grow: 1;
+        height: 100%;
+        .btn-reset-place, .btn-reset-heat {
+            display: block;
+            width: 90%;
+            font-weight: bold;
+            margin: 5px auto;
+        }
+        .controls {
+            overflow: auto;
+            padding: 10px;
+            flex-grow: 1;
+            .heat-selector {
+                .heat {
+                    margin: 5px auto;
+                    cursor: pointer;
+                    width: 90%;
+                    td {
+                        border: 2px solid black;
+                        padding: 3px 5px;
+                    }
+                    &.selected {
+                        background-color: lighten(@ui-contrast, 40%);
+                    }
+                    .heat-number {
+                        width: 60px;
+                        text-align: center;
+                        font-weight: bold;
+                        font-size: 18px;
+                        vertical-align: middle;
+                        .heat-label {
+                            font-size: 10px;
+                            line-height: 10px;
+                            color: black;
+                            padding: 0;
+                        }
+                    }
+                    .participants {
+                        vertical-align: middle;
+                        .participant {
+                            .number {
+                                display: inline-block;
+                                font-weight: bold;
+                                width: 50px;
+                                text-align: center;
+                            }
+                            .name {
+                                display: inline-block;
+                                text-align: left;
+                            }
+                        }
+                    }
+                }
+            }
+            .discipline-results {
+                .tour-name, .row {
+                    width: 90%;
+                    margin: 5px auto;
+                }
+                .tour-name {
+                    background-color: @ui-dark;
+                    color: @ui-white;
+                    font-weight: bold;
+                    text-align: center;
+                    padding: 5px;
+                }
+                .row {
+                    cursor: pointer;
+                    &.selected {
+                        background-color: lighten(@ui-contrast, 40%);
+                    }
+                    td {
+                        font-size: 15px;
+                        border: 2px solid black;
+                        padding: 1px 5px;
+                        &.place {
+                            width: 60px;
+                            text-align: center;
+                            font-weight: bold;
+                            font-size: 18px;
+                            line-height: 18px;
+                            .place-label {
+                                font-size: 10px;
+                                line-height: 10px;
+                                color: black;
+                                padding: 0;
+                            }
+                        }
+                        &.number {
+                            width: 70px;
+                            text-align: center;
+                            font-weight: bold;
+                        }
+                        &.name {
+                            font-weight: bold;
+                        }
+                    }
+                }
+            }
+        }
+        .buttons {
+            button {
+                width: 50%;
+            }
+        }
+    }
+}

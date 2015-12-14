@@ -1,0 +1,29 @@
+{
+    "screens": [{
+        "id": "splash",
+        "name": "Заставка, название турнира",
+        "template": "splash.html",
+        "controls": "none"
+    }, {
+        "id": "sponsors",
+        "name": "Заставка, спонсоры",
+        "template": "sponsors.html",
+        "controls": "none"
+    }, {
+        "id": "heats",
+        "name": "Заходы",
+        "template": "heats.html",
+        "controls": "tour-heat"
+    }, {
+        "id": "tour_results",
+        "name": "Результаты тура",
+        "template": "tour-results.html",
+        "controls": "tour"
+    }, {
+        "id": "awarding",
+        "name": "Награждение",
+        "template": "awarding.html",
+        "controls": "discipline-place"
+    }],
+    "default": "splash"
+}

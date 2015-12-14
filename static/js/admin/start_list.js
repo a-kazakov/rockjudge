@@ -31,7 +31,8 @@ var ParticipantNumbersNumber = (function (_React$Component) {
                 React.createElement(
                     "p",
                     { className: "competition" },
-                    this.props.competition_name
+                    this.props.competition_name,
+                    " "
                 ),
                 React.createElement(
                     "p",
@@ -41,12 +42,14 @@ var ParticipantNumbersNumber = (function (_React$Component) {
                 React.createElement(
                     "p",
                     { className: "name" },
-                    this.props.participant.name
+                    this.props.participant.name,
+                    " "
                 ),
                 React.createElement(
                     "p",
                     { className: "discipline" },
-                    this.props.participant.discipline_name
+                    this.props.participant.discipline_name,
+                    " "
                 ),
                 React.createElement(
                     "p",

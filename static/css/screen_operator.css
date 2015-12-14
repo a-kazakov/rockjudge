@@ -1,0 +1,151 @@
+.screen-operator {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  flex-directon: row;
+  height: 100%;
+}
+.screen-operator select {
+  width: 90%;
+  margin: 5px auto 30px;
+}
+.screen-operator .left-col {
+  overflow: auto;
+  background-color: #2b3a42;
+  color: #bdd4de;
+  font-weight: bold;
+  width: 350px;
+}
+.screen-operator .left-col .item {
+  padding: 10px;
+  cursor: pointer;
+}
+.screen-operator .left-col .item.active {
+  background-color: #ff530d;
+  color: #2b3a42;
+}
+.screen-operator .body {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: streth;
+  -webkit-align-items: streth;
+      -ms-flex-align: streth;
+          align-items: streth;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  height: 100%;
+}
+.screen-operator .body .btn-reset-place,
+.screen-operator .body .btn-reset-heat {
+  display: block;
+  width: 90%;
+  font-weight: bold;
+  margin: 5px auto;
+}
+.screen-operator .body .controls {
+  overflow: auto;
+  padding: 10px;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+}
+.screen-operator .body .controls .heat-selector .heat {
+  margin: 5px auto;
+  cursor: pointer;
+  width: 90%;
+}
+.screen-operator .body .controls .heat-selector .heat td {
+  border: 2px solid black;
+  padding: 3px 5px;
+}
+.screen-operator .body .controls .heat-selector .heat.selected {
+  background-color: #ffe4d9;
+}
+.screen-operator .body .controls .heat-selector .heat .heat-number {
+  width: 60px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+  vertical-align: middle;
+}
+.screen-operator .body .controls .heat-selector .heat .heat-number .heat-label {
+  font-size: 10px;
+  line-height: 10px;
+  color: black;
+  padding: 0;
+}
+.screen-operator .body .controls .heat-selector .heat .participants {
+  vertical-align: middle;
+}
+.screen-operator .body .controls .heat-selector .heat .participants .participant .number {
+  display: inline-block;
+  font-weight: bold;
+  width: 50px;
+  text-align: center;
+}
+.screen-operator .body .controls .heat-selector .heat .participants .participant .name {
+  display: inline-block;
+  text-align: left;
+}
+.screen-operator .body .controls .discipline-results .tour-name,
+.screen-operator .body .controls .discipline-results .row {
+  width: 90%;
+  margin: 5px auto;
+}
+.screen-operator .body .controls .discipline-results .tour-name {
+  background-color: #2b3a42;
+  color: #efefef;
+  font-weight: bold;
+  text-align: center;
+  padding: 5px;
+}
+.screen-operator .body .controls .discipline-results .row {
+  cursor: pointer;
+}
+.screen-operator .body .controls .discipline-results .row.selected {
+  background-color: #ffe4d9;
+}
+.screen-operator .body .controls .discipline-results .row td {
+  font-size: 15px;
+  border: 2px solid black;
+  padding: 1px 5px;
+}
+.screen-operator .body .controls .discipline-results .row td.place {
+  width: 60px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 18px;
+}
+.screen-operator .body .controls .discipline-results .row td.place .place-label {
+  font-size: 10px;
+  line-height: 10px;
+  color: black;
+  padding: 0;
+}
+.screen-operator .body .controls .discipline-results .row td.number {
+  width: 70px;
+  text-align: center;
+  font-weight: bold;
+}
+.screen-operator .body .controls .discipline-results .row td.name {
+  font-weight: bold;
+}
+.screen-operator .body .buttons button {
+  width: 50%;
+}

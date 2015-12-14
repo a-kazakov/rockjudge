@@ -14,7 +14,7 @@ from models import (
 from webserver.websocket import WsMessage
 
 
-class StaticFilesHandlerNoCache(tornado.web.StaticFileHandler):
+class StaticFileHandlerNoCache(tornado.web.StaticFileHandler):
     def set_extra_headers(self, path):
         self.set_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
 
@@ -65,6 +65,22 @@ class PresenterHandler(tornado.web.RequestHandler):
     def get(self, competition_id):
         return self.render("presenter.html",
             competition_id=competition_id,
+            debug=settings.DEBUG)
+
+
+class ScreenHandler(tornado.web.RequestHandler):
+    def get(self, competition_id):
+        return self.render("screen.html",
+            competition_id=competition_id,
+            manifest=json.load(open("screen/manifest.json", "rt", encoding="utf-8")),
+            debug=settings.DEBUG)
+
+
+class ScreenOperatorHandler(tornado.web.RequestHandler):
+    def get(self, competition_id):
+        return self.render("screen_operator.html",
+            competition_id=competition_id,
+            manifest=json.load(open("screen/manifest.json", "rt", encoding="utf-8")),
             debug=settings.DEBUG)
 
 
