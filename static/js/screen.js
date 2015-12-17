@@ -38,7 +38,7 @@ var ScreenManifest = (function () {
     }, {
         key: "getDefaultScreenData",
         value: function getDefaultScreenData() {
-            return this.getScreenDataById(this.raw_data.default, true);
+            return this.getScreenDataById(this.raw_data["default"], true);
         }
     }]);
 
