@@ -17,6 +17,7 @@ class ParticipantNumbers extends React.Component {
         let res = [];
         this.props.disciplines.forEach((discipline, idx) =>
             res = res.concat(discipline.participants.map((participant) => ({
+                id: participant.id,
                 number: participant.number,
                 name: participant.name,
                 club: participant.club,
@@ -36,7 +37,10 @@ class ParticipantNumbers extends React.Component {
     render() {
         return <div ref="content" className="print-only">
             { this.makeParticipantsList().map((participant) =>
-                <ParticipantNumbersNumber participant={ participant } competition_name={ this.props.competition_name } key={ participant.id } />
+                <ParticipantNumbersNumber
+                    participant={ participant }
+                    competition_name={ this.props.competition_name }
+                    key={ participant.id } />
             ) }
         </div>
     }
@@ -85,7 +89,7 @@ class StartList extends React.Component {
             disciplines: {
                 participants: {
                     club: {},
-                    sportsmen: {},
+                    programs: {},
                 },
             },
         };
@@ -101,6 +105,7 @@ class StartList extends React.Component {
                 disciplines: {
                     participants: {
                         club: {},
+                        programs: {},
                     },
                 },
             }
@@ -143,7 +148,7 @@ class StartList extends React.Component {
                     </tr>
                 </thead><tbody>
                     { ic.participants.map((p) => [
-                        <tr key={ p.id } className={ !this.state.include_acrobatics || p.acrobatics.length == 0 ? "" : "has-acro" }>
+                        <tr key={ p.id } className={ !this.state.include_acrobatics || p.programs.length == 0 ? "" : "has-acro" }>
                             <td className="w-8 number"><p className="text-center">{ p.number }</p></td>
                             <td className="w-36 name" colSpan="2">
                                 <table className="inner"><tbody>
@@ -157,18 +162,20 @@ class StartList extends React.Component {
                             <td className="w-28 club"><p>{ p.club.name }</p></td>
                             <td className="w-28 coaches"><p>{ p.coaches.split(",").map((c) => [c.trim(), <br />]) }</p></td>
                         </tr>,
-                        !this.state.include_acrobatics || p.acrobatics.length == 0 ? null :
+                        !this.state.include_acrobatics || p.programs.length == 0 ? null :
                             <tr key={ "Acro" + p.id } ><td className="acro" colSpan="5">
                                 <table className="inner"><tbody>
-                                    <tr>
-                                        <th className="w-93"><p className="text-left">{ _("models.participant.acro_descriptions") }</p></th>
-                                        <th className="w-7"><p className="text-right">{ _("models.participant.acro_score") }</p></th>
-                                    </tr>
-                                    { p.acrobatics.map((a, idx) =>
-                                        <tr key={ idx }>
-                                            <td className="w-93"><p className="text-left">{ a.description }</p></td>
-                                            <td className="w-7"><p className="text-right">{ a.score.toFixed(1) }</p></td>
-                                        </tr>
+                                    { p.programs.map((pr, pr_idx) =>
+                                        [<tr key={ "H" + pr_idx }>
+                                            <th colSpan="2"><p className="text-left">{ pr.name }</p></th>
+                                        </tr>].concat(
+                                            pr.acrobatics.map((a, a_idx) =>
+                                                <tr key={ `A_${pr_idx}_${a_idx}` }>
+                                                    <td className="w-93"><p className="text-left">{ a.description }</p></td>
+                                                    <td className="w-7"><p className="text-right">{ a.score.toFixed(1) }</p></td>
+                                                </tr>
+                                            )
+                                        )
                                     ) }
                                 </tbody></table>
                             </td></tr>

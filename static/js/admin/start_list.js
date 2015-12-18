@@ -86,6 +86,7 @@ var ParticipantNumbers = (function (_React$Component2) {
             this.props.disciplines.forEach(function (discipline, idx) {
                 return res = res.concat(discipline.participants.map(function (participant) {
                     return {
+                        id: participant.id,
                         number: participant.number,
                         name: participant.name,
                         club: participant.club,
@@ -108,7 +109,10 @@ var ParticipantNumbers = (function (_React$Component2) {
                 "div",
                 { ref: "content", className: "print-only" },
                 this.makeParticipantsList().map(function (participant) {
-                    return React.createElement(ParticipantNumbersNumber, { participant: participant, competition_name: _this3.props.competition_name, key: participant.id });
+                    return React.createElement(ParticipantNumbersNumber, {
+                        participant: participant,
+                        competition_name: _this3.props.competition_name,
+                        key: participant.id });
                 })
             );
         }
@@ -148,7 +152,7 @@ var StartList = (function (_React$Component3) {
                 disciplines: {
                     participants: {
                         club: {},
-                        sportsmen: {}
+                        programs: {}
                     }
                 }
             };
@@ -162,7 +166,8 @@ var StartList = (function (_React$Component3) {
                 children: {
                     disciplines: {
                         participants: {
-                            club: {}
+                            club: {},
+                            programs: {}
                         }
                     }
                 }
@@ -278,7 +283,7 @@ var StartList = (function (_React$Component3) {
                             ic.participants.map(function (p) {
                                 return [React.createElement(
                                     "tr",
-                                    { key: p.id, className: !_this5.state.include_acrobatics || p.acrobatics.length == 0 ? "" : "has-acro" },
+                                    { key: p.id, className: !_this5.state.include_acrobatics || p.programs.length == 0 ? "" : "has-acro" },
                                     React.createElement(
                                         "td",
                                         { className: "w-8 number" },
@@ -357,7 +362,7 @@ var StartList = (function (_React$Component3) {
                                             })
                                         )
                                     )
-                                ), !_this5.state.include_acrobatics || p.acrobatics.length == 0 ? null : React.createElement(
+                                ), !_this5.state.include_acrobatics || p.programs.length == 0 ? null : React.createElement(
                                     "tr",
                                     { key: "Acro" + p.id },
                                     React.createElement(
@@ -369,51 +374,43 @@ var StartList = (function (_React$Component3) {
                                             React.createElement(
                                                 "tbody",
                                                 null,
-                                                React.createElement(
-                                                    "tr",
-                                                    null,
-                                                    React.createElement(
-                                                        "th",
-                                                        { className: "w-93" },
-                                                        React.createElement(
-                                                            "p",
-                                                            { className: "text-left" },
-                                                            _("models.participant.acro_descriptions")
-                                                        )
-                                                    ),
-                                                    React.createElement(
-                                                        "th",
-                                                        { className: "w-7" },
-                                                        React.createElement(
-                                                            "p",
-                                                            { className: "text-right" },
-                                                            _("models.participant.acro_score")
-                                                        )
-                                                    )
-                                                ),
-                                                p.acrobatics.map(function (a, idx) {
-                                                    return React.createElement(
+                                                p.programs.map(function (pr, pr_idx) {
+                                                    return [React.createElement(
                                                         "tr",
-                                                        { key: idx },
+                                                        { key: "H" + pr_idx },
                                                         React.createElement(
-                                                            "td",
-                                                            { className: "w-93" },
+                                                            "th",
+                                                            { colSpan: "2" },
                                                             React.createElement(
                                                                 "p",
                                                                 { className: "text-left" },
-                                                                a.description
-                                                            )
-                                                        ),
-                                                        React.createElement(
-                                                            "td",
-                                                            { className: "w-7" },
-                                                            React.createElement(
-                                                                "p",
-                                                                { className: "text-right" },
-                                                                a.score.toFixed(1)
+                                                                pr.name
                                                             )
                                                         )
-                                                    );
+                                                    )].concat(pr.acrobatics.map(function (a, a_idx) {
+                                                        return React.createElement(
+                                                            "tr",
+                                                            { key: "A_" + pr_idx + "_" + a_idx },
+                                                            React.createElement(
+                                                                "td",
+                                                                { className: "w-93" },
+                                                                React.createElement(
+                                                                    "p",
+                                                                    { className: "text-left" },
+                                                                    a.description
+                                                                )
+                                                            ),
+                                                            React.createElement(
+                                                                "td",
+                                                                { className: "w-7" },
+                                                                React.createElement(
+                                                                    "p",
+                                                                    { className: "text-right" },
+                                                                    a.score.toFixed(1)
+                                                                )
+                                                            )
+                                                        );
+                                                    }));
                                                 })
                                             )
                                         )

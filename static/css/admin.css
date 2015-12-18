@@ -66,6 +66,9 @@ body,
       -ms-flex-align: stretch;
           align-items: stretch;
   height: 30px;
+  -webkit-flex-shrink: 0;
+      -ms-flex-negative: 0;
+          flex-shrink: 0;
 }
 .wrapper .header .caption {
   -webkit-box-flex: 1;
@@ -187,6 +190,9 @@ body,
 }
 .wrapper .body .app .app-content .app-header {
   min-height: 50px;
+  -webkit-flex-shrink: 0;
+      -ms-flex-negative: 0;
+          flex-shrink: 0;
 }
 .wrapper .body .app .app-content .app-body {
   overflow-y: auto;
