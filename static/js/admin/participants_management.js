@@ -650,7 +650,11 @@ var ParticipantEditorRowPrograms = (function (_React$Component10) {
                         key: p.id,
                         program: p });
                 }),
-                React.createElement(ParticipantEditorRowProgramCreator, {
+                this.props.newParticipant ? React.createElement(
+                    "div",
+                    { className: "alert alert-info" },
+                    _("admin.alerts.add_programs_after_creation")
+                ) : React.createElement(ParticipantEditorRowProgramCreator, {
                     participant_id: this.props.participant_id })
             );
         }
@@ -768,6 +772,7 @@ var ParticipantEditorRow = (function (_React$Component11) {
                             "div",
                             { className: "col-md-5" },
                             React.createElement(ParticipantEditorRowPrograms, {
+                                newParticipant: this.props.newParticipant,
                                 participant_id: this.props.participant.id,
                                 programs: this.props.participant.programs,
                                 onChange: this.onChange.bind(this) })

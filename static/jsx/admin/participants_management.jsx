@@ -348,8 +348,11 @@ class ParticipantEditorRowPrograms extends React.Component {
                     key={ p.id }
                     program={ p } />
             ) }
-            <ParticipantEditorRowProgramCreator
-                participant_id={ this.props.participant_id }/>
+            { this.props.newParticipant
+                ? <div className="alert alert-info">{ _("admin.alerts.add_programs_after_creation") }</div>
+                : <ParticipantEditorRowProgramCreator
+                    participant_id={ this.props.participant_id }/>
+            }
         </div>
     }
 }
@@ -422,6 +425,7 @@ class ParticipantEditorRow extends React.Component {
                     </div>
                     <div className="col-md-5">
                         <ParticipantEditorRowPrograms
+                            newParticipant={ this.props.newParticipant }
                             participant_id={ this.props.participant.id }
                             programs={ this.props.participant.programs }
                             onChange={ this.onChange.bind(this) } />

@@ -18,6 +18,7 @@ function _(src, arg) {
     var PHRASES = {
         "admin": {
             "alerts": {
+                "add_programs_after_creation": "Программы можно будет добавить только после сохранения участника",
                 "no_finalized": "Отсутствуют финализированные туры",
                 "unfinalize_warning": React.createElement(
                     "div",
