@@ -271,9 +271,10 @@ class TourAdminAcrobaticLoader extends React.Component {
         if (value === "null") {
             value = null;
         }
-        if (confirm(_("judging.confirms.load_program"))) {
+        swal_confirm(_("judging.confirms.load_program"), () => {
             this.props.onLoad(value);
-        }
+            swal.close();
+        });
     }
     renderSelector() {
         return <select defaultValue="null" ref="selector">
@@ -468,19 +469,19 @@ class TourAdminBody extends React.Component {
     onSignal(message) {
         switch (message) {
         case "init_tour":
-            if (confirm(_("judging.confirms.init_tour"))) {
-                Api("tour.init", {tour_id: this.props.tour_id}).send();
-            }
+            swal_confirm(_("judging.confirms.init_tour"), () => {
+                Api("tour.init", {tour_id: this.props.tour_id}).onSuccess(() => swal.close()).send();
+            });
             break;
         case "finalize_tour":
-            if (confirm(_("judging.confirms.finalize_tour"))) {
-                Api("tour.finalize", {tour_id: this.props.tour_id}).send();
-            }
+            swal_confirm(_("judging.confirms.finalize_tour"), () => {
+                Api("tour.finalize", {tour_id: this.props.tour_id}).onSuccess(() => swal.close()).send();
+            });
             break;
         case "shuffle_heats":
-            if (confirm(_("judging.confirms.shuffle_heats"))) {
-                Api("tour.shuffle_heats", {tour_id: this.props.tour_id}).send();
-            }
+            swal_confirm(_("judging.confirms.shuffle_heats"), () => {
+                Api("tour.shuffle_heats", {tour_id: this.props.tour_id}).onSuccess(() => swal.close()).send();
+            });
             break;
         case "start_tour":
             Api("tour.start", {tour_id: this.props.tour_id}).send();

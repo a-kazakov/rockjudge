@@ -453,13 +453,16 @@ var TourAdminAcrobaticLoader = (function (_React$Component7) {
     _createClass(TourAdminAcrobaticLoader, [{
         key: "onSubmit",
         value: function onSubmit() {
+            var _this9 = this;
+
             var value = this.refs.selector.value;
             if (value === "null") {
                 value = null;
             }
-            if (confirm(_("judging.confirms.load_program"))) {
-                this.props.onLoad(value);
-            }
+            swal_confirm(_("judging.confirms.load_program"), function () {
+                _this9.props.onLoad(value);
+                swal.close();
+            });
         }
     }, {
         key: "renderSelector",
@@ -517,7 +520,7 @@ var TourAdminAcrobaticEditor = (function (_React$Component8) {
     }, {
         key: "renderBody",
         value: function renderBody() {
-            var _this10 = this;
+            var _this11 = this;
 
             return React.createElement(
                 "div",
@@ -557,7 +560,7 @@ var TourAdminAcrobaticEditor = (function (_React$Component8) {
                             return React.createElement(TourAdminAcrobaticEditorRow, {
                                 acrobatic: acro,
                                 acro_idx: idx,
-                                run_id: _this10.props.run_id,
+                                run_id: _this11.props.run_id,
                                 key: idx });
                         })
                     )
@@ -602,12 +605,12 @@ var TourAdminAcrobaticsCell = (function (_React$Component9) {
     function TourAdminAcrobaticsCell(props) {
         _classCallCheck(this, TourAdminAcrobaticsCell);
 
-        var _this11 = _possibleConstructorReturn(this, Object.getPrototypeOf(TourAdminAcrobaticsCell).call(this, props));
+        var _this12 = _possibleConstructorReturn(this, Object.getPrototypeOf(TourAdminAcrobaticsCell).call(this, props));
 
-        _this11.state = {
+        _this12.state = {
             editing: false
         };
-        return _this11;
+        return _this12;
     }
 
     _createClass(TourAdminAcrobaticsCell, [{
@@ -707,12 +710,12 @@ var TourAdminBody = (function (_React$Component11) {
     function TourAdminBody(props) {
         _classCallCheck(this, TourAdminBody);
 
-        var _this13 = _possibleConstructorReturn(this, Object.getPrototypeOf(TourAdminBody).call(this, props));
+        var _this14 = _possibleConstructorReturn(this, Object.getPrototypeOf(TourAdminBody).call(this, props));
 
-        _this13.state = {
+        _this14.state = {
             name: null
         };
-        return _this13;
+        return _this14;
     }
 
     _createClass(TourAdminBody, [{
@@ -778,21 +781,29 @@ var TourAdminBody = (function (_React$Component11) {
     }, {
         key: "onSignal",
         value: function onSignal(message) {
+            var _this15 = this;
+
             switch (message) {
                 case "init_tour":
-                    if (confirm(_("judging.confirms.init_tour"))) {
-                        Api("tour.init", { tour_id: this.props.tour_id }).send();
-                    }
+                    swal_confirm(_("judging.confirms.init_tour"), function () {
+                        Api("tour.init", { tour_id: _this15.props.tour_id }).onSuccess(function () {
+                            return swal.close();
+                        }).send();
+                    });
                     break;
                 case "finalize_tour":
-                    if (confirm(_("judging.confirms.finalize_tour"))) {
-                        Api("tour.finalize", { tour_id: this.props.tour_id }).send();
-                    }
+                    swal_confirm(_("judging.confirms.finalize_tour"), function () {
+                        Api("tour.finalize", { tour_id: _this15.props.tour_id }).onSuccess(function () {
+                            return swal.close();
+                        }).send();
+                    });
                     break;
                 case "shuffle_heats":
-                    if (confirm(_("judging.confirms.shuffle_heats"))) {
-                        Api("tour.shuffle_heats", { tour_id: this.props.tour_id }).send();
-                    }
+                    swal_confirm(_("judging.confirms.shuffle_heats"), function () {
+                        Api("tour.shuffle_heats", { tour_id: _this15.props.tour_id }).onSuccess(function () {
+                            return swal.close();
+                        }).send();
+                    });
                     break;
                 case "start_tour":
                     Api("tour.start", { tour_id: this.props.tour_id }).send();

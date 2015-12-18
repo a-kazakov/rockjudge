@@ -304,9 +304,9 @@ class ParticipantEditorRowProgram extends React.Component {
     }
     onDelClick(event) {
         event.preventDefault();
-        if (confirm(_("admin.confirms.delete_program"))) {
-            Api("program.delete", { program_id: this.props.program.id }).send();
-        }
+        swal_confirm(_("admin.confirms.delete_program"), () => {
+            Api("program.delete", { program_id: this.props.program.id }).onSuccess(() => swal.close()).send();
+        });
     }
     onSubmit(data) {
         Api("program.set", { program_id: this.props.program.id, data: data })
@@ -455,11 +455,11 @@ class ParticipantRow extends React.Component {
     }
     onDelete(event) {
         event.stopPropagation();
-        if (confirm(_("admin.confirms.delete_participant"))) {
+        swal_confirm(_("admin.confirms.delete_participant"), () => {
             Api("participant.delete", {
                 participant_id: this.props.participant.id,
-            }).send();
-        }
+            }).onSuccess(() => swal.close()).send();
+        });
     }
     renderEditor() {
         return <ParticipantEditorRow

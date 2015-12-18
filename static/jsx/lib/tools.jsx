@@ -16,6 +16,18 @@ function showError(msg) {
     })
 }
 
+
+function swal_confirm(message, action) {
+    return swal({
+        title: message,
+        animation: false,
+        showCancelButton: true,
+        confirmButtonText: _("global.labels.yes"),
+        cancelButtonText: _("global.labels.no"),
+        closeOnConfirm: false,
+    }, action);
+}
+
 class CmpChainImpl {
     constructor() {
         this.result = 0;

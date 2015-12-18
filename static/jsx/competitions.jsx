@@ -192,11 +192,11 @@ class CompetitionRow extends React.Component {
     }
     onDelete(event) {
         event.stopPropagation();
-        if (confirm(_("admin.confirms.delete_competition"))) {
+        swal_confirm(_("admin.confirms.delete_competition"), () => {
             Api("competition.delete", {
                 competition_id: this.props.competition.id,
-            }).send();
-        }
+            }).onSuccess(() => swal.close()).send();
+        })
     }
     renderEditor() {
         return <CompetitionEditorRow

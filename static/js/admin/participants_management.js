@@ -544,10 +544,14 @@ var ParticipantEditorRowProgram = (function (_React$Component9) {
     }, {
         key: "onDelClick",
         value: function onDelClick(event) {
+            var _this17 = this;
+
             event.preventDefault();
-            if (confirm(_("admin.confirms.delete_program"))) {
-                Api("program.delete", { program_id: this.props.program.id }).send();
-            }
+            swal_confirm(_("admin.confirms.delete_program"), function () {
+                Api("program.delete", { program_id: _this17.props.program.id }).onSuccess(function () {
+                    return swal.close();
+                }).send();
+            });
         }
     }, {
         key: "onSubmit",
@@ -557,7 +561,7 @@ var ParticipantEditorRowProgram = (function (_React$Component9) {
     }, {
         key: "render",
         value: function render() {
-            var _this17 = this;
+            var _this18 = this;
 
             if (this.state.editing) {
                 return React.createElement(ParticipantEditorRowProgramEditor, _extends({
@@ -583,7 +587,7 @@ var ParticipantEditorRowProgram = (function (_React$Component9) {
                     React.createElement(
                         "a",
                         { href: "#", onClick: function onClick(e) {
-                                e.preventDefault();_this17.startEditing();
+                                e.preventDefault();_this18.startEditing();
                             } },
                         "Редактировать"
                     ),
@@ -669,10 +673,10 @@ var ParticipantEditorRow = (function (_React$Component11) {
     function ParticipantEditorRow(props) {
         _classCallCheck(this, ParticipantEditorRow);
 
-        var _this19 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantEditorRow).call(this, props));
+        var _this20 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantEditorRow).call(this, props));
 
-        var p = _this19.props.participant;
-        _this19.state = {
+        var p = _this20.props.participant;
+        _this20.state = {
             participant: {
                 number: p.number,
                 club_id: p.club.id,
@@ -681,7 +685,7 @@ var ParticipantEditorRow = (function (_React$Component11) {
                 sportsmen: clone(p.sportsmen)
             }
         };
-        return _this19;
+        return _this20;
     }
 
     _createClass(ParticipantEditorRow, [{
@@ -792,12 +796,12 @@ var ParticipantRow = (function (_React$Component12) {
     function ParticipantRow(props) {
         _classCallCheck(this, ParticipantRow);
 
-        var _this20 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantRow).call(this, props));
+        var _this21 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantRow).call(this, props));
 
-        _this20.state = {
+        _this21.state = {
             editing: false
         };
-        return _this20;
+        return _this21;
     }
 
     _createClass(ParticipantRow, [{
@@ -817,12 +821,16 @@ var ParticipantRow = (function (_React$Component12) {
     }, {
         key: "onDelete",
         value: function onDelete(event) {
+            var _this22 = this;
+
             event.stopPropagation();
-            if (confirm(_("admin.confirms.delete_participant"))) {
+            swal_confirm(_("admin.confirms.delete_participant"), function () {
                 Api("participant.delete", {
-                    participant_id: this.props.participant.id
+                    participant_id: _this22.props.participant.id
+                }).onSuccess(function () {
+                    return swal.close();
                 }).send();
-            }
+            });
         }
     }, {
         key: "renderEditor",
@@ -890,12 +898,12 @@ var ParticipantCreationRow = (function (_React$Component13) {
     function ParticipantCreationRow(props) {
         _classCallCheck(this, ParticipantCreationRow);
 
-        var _this21 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantCreationRow).call(this, props));
+        var _this23 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantCreationRow).call(this, props));
 
-        _this21.state = {
+        _this23.state = {
             editing: false
         };
-        return _this21;
+        return _this23;
     }
 
     _createClass(ParticipantCreationRow, [{
@@ -966,15 +974,15 @@ var ParticipantsManager = (function (_React$Component14) {
     function ParticipantsManager(props) {
         _classCallCheck(this, ParticipantsManager);
 
-        var _this22 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantsManager).call(this, props));
+        var _this24 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantsManager).call(this, props));
 
-        _this22.state = {
+        _this24.state = {
             name: null
         };
-        message_dispatcher.addListener("db_update", _this22.reloadFromStorage.bind(_this22));
-        message_dispatcher.addListener("reload_data competition_list_update", _this22.loadData.bind(_this22));
-        _this22.loadData();
-        return _this22;
+        message_dispatcher.addListener("db_update", _this24.reloadFromStorage.bind(_this24));
+        message_dispatcher.addListener("reload_data competition_list_update", _this24.loadData.bind(_this24));
+        _this24.loadData();
+        return _this24;
     }
 
     _createClass(ParticipantsManager, [{
@@ -1011,13 +1019,13 @@ var ParticipantsManager = (function (_React$Component14) {
     }, {
         key: "renderTable",
         value: function renderTable() {
-            var _this23 = this;
+            var _this25 = this;
 
             var rows = this.state.participants.map(function (participant) {
                 return React.createElement(ParticipantRow, {
                     key: participant.id,
                     participant: participant,
-                    clubs: _this23.state.competition.clubs });
+                    clubs: _this25.state.competition.clubs });
             });
             return React.createElement(
                 "div",

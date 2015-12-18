@@ -155,10 +155,9 @@ class TourEditingUI extends React.Component {
         }.bind(this)).send();
     }
     deleteTour() {
-        if (!confirm(_("admin.confirms.delete_tour"))) {
-            return false;
-        }
-        Api("tour.delete", { tour_id: this.props.tour.id }).send();
+        swal_confirm(_("admin.confirms.delete_tour"), () => {
+            Api("tour.delete", { tour_id: this.props.tour.id }).onSuccess(() => swal.close()).send();
+        });
     }
 }
 

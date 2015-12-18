@@ -303,12 +303,16 @@ var DisciplineRow = (function (_React$Component2) {
     }, {
         key: "onDelete",
         value: function onDelete(event) {
+            var _this4 = this;
+
             event.stopPropagation();
-            if (confirm(_("admin.confirms.delete_discipline"))) {
+            swal_confirm(_("admin.confirms.delete_discipline"), function () {
                 Api("discipline.delete", {
-                    discipline_id: this.props.discipline.id
+                    discipline_id: _this4.props.discipline.id
+                }).onSuccess(function () {
+                    return swal.close();
                 }).send();
-            }
+            });
         }
     }, {
         key: "renderEditor",
@@ -371,12 +375,12 @@ var DisciplineCreationRow = (function (_React$Component3) {
     function DisciplineCreationRow(props) {
         _classCallCheck(this, DisciplineCreationRow);
 
-        var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(DisciplineCreationRow).call(this, props));
+        var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(DisciplineCreationRow).call(this, props));
 
-        _this4.state = {
+        _this5.state = {
             editing: false
         };
-        return _this4;
+        return _this5;
     }
 
     _createClass(DisciplineCreationRow, [{
@@ -444,12 +448,12 @@ var DisciplinesManagementUI = (function (_React$Component4) {
     function DisciplinesManagementUI(props) {
         _classCallCheck(this, DisciplinesManagementUI);
 
-        var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(DisciplinesManagementUI).call(this, props));
+        var _this6 = _possibleConstructorReturn(this, Object.getPrototypeOf(DisciplinesManagementUI).call(this, props));
 
-        _this5.state = {
+        _this6.state = {
             creating: false
         };
-        return _this5;
+        return _this6;
     }
 
     _createClass(DisciplinesManagementUI, [{

@@ -178,11 +178,11 @@ class DisciplineRow extends React.Component {
     }
     onDelete(event) {
         event.stopPropagation();
-        if (confirm(_("admin.confirms.delete_discipline"))) {
+        swal_confirm(_("admin.confirms.delete_discipline"), () => {
             Api("discipline.delete", {
                 discipline_id: this.props.discipline.id,
-            }).send();
-        }
+            }).onSuccess(() => swal.close()).send();
+        });
     }
     renderEditor() {
         return <DisciplineEditorRow

@@ -172,12 +172,16 @@ var ClubRow = (function (_React$Component2) {
     }, {
         key: "onDelete",
         value: function onDelete(event) {
+            var _this4 = this;
+
             event.stopPropagation();
-            if (confirm(_("admin.confirms.delete_club"))) {
+            swal_confirm(_("admin.confirms.delete_club"), function () {
                 Api("club.delete", {
-                    club_id: this.props.club.id
+                    club_id: _this4.props.club.id
+                }).onSuccess(function () {
+                    return swal.close();
                 }).send();
-            }
+            });
         }
     }, {
         key: "renderEditor",
@@ -240,12 +244,12 @@ var ClubCreationRow = (function (_React$Component3) {
     function ClubCreationRow(props) {
         _classCallCheck(this, ClubCreationRow);
 
-        var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(ClubCreationRow).call(this, props));
+        var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(ClubCreationRow).call(this, props));
 
-        _this4.state = {
+        _this5.state = {
             editing: false
         };
-        return _this4;
+        return _this5;
     }
 
     _createClass(ClubCreationRow, [{
@@ -312,12 +316,12 @@ var ClubsManagementUI = (function (_React$Component4) {
     function ClubsManagementUI(props) {
         _classCallCheck(this, ClubsManagementUI);
 
-        var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(ClubsManagementUI).call(this, props));
+        var _this6 = _possibleConstructorReturn(this, Object.getPrototypeOf(ClubsManagementUI).call(this, props));
 
-        _this5.state = {
+        _this6.state = {
             creating: false
         };
-        return _this5;
+        return _this6;
     }
 
     _createClass(ClubsManagementUI, [{

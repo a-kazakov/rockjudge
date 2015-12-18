@@ -335,16 +335,20 @@ var ServiceUI = (function (_React$Component3) {
     _createClass(ServiceUI, [{
         key: "reloadClients",
         value: function reloadClients() {
-            if (confirm(_("admin.confirms.reload_clients"))) {
-                Api("service.reload_clients", {}).send();
-            }
+            swal_confirm(_("admin.confirms.reload_clients"), function () {
+                Api("service.reload_clients", {}).onSuccess(function () {
+                    return swal.close();
+                }).send();
+            });
         }
     }, {
         key: "refreshClients",
         value: function refreshClients() {
-            if (confirm(_("admin.confirms.refresh_clients"))) {
-                Api("service.refresh_clients", {}).send();
-            }
+            swal_confirm(_("admin.confirms.refresh_clients"), function () {
+                Api("service.refresh_clients", {}).onSuccess(function () {
+                    return swal.close();
+                }).send();
+            });
         }
     }, {
         key: "unfinalizeTour",

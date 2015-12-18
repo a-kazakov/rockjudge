@@ -88,11 +88,11 @@ class ClubRow extends React.Component {
     }
     onDelete(event) {
         event.stopPropagation();
-        if (confirm(_("admin.confirms.delete_club"))) {
+        swal_confirm(_("admin.confirms.delete_club"), () => {
             Api("club.delete", {
                 club_id: this.props.club.id,
-            }).send();
-        }
+            }).onSuccess(() => swal.close()).send();
+        });
     }
     renderEditor() {
         return <ClubEditorRow

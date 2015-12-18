@@ -210,14 +210,14 @@ class ServiceUI extends React.Component {
         super(props);
     }
     reloadClients() {
-        if (confirm(_("admin.confirms.reload_clients"))) {
-            Api("service.reload_clients", {}).send();
-        }
+        swal_confirm(_("admin.confirms.reload_clients"), () => {
+            Api("service.reload_clients", {}).onSuccess(() => swal.close()).send();
+        });
     }
     refreshClients() {
-        if (confirm(_("admin.confirms.refresh_clients"))) {
-            Api("service.refresh_clients", {}).send();
-        }
+        swal_confirm(_("admin.confirms.refresh_clients"), () => {
+            Api("service.refresh_clients", {}).onSuccess(() => swal.close()).send();
+        });
     }
     unfinalizeTour(event) {
         event.preventDefault();

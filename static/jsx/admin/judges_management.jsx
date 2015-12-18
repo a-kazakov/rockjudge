@@ -119,11 +119,11 @@ class JudgeRow extends React.Component {
     }
     onDelete(event) {
         event.stopPropagation();
-        if (confirm(_("admin.confirms.delete_judge"))) {
+        swal_confirm(_("admin.confirms.delete_judge"), () => {
             Api("judge.delete", {
                 judge_id: this.props.judge.id,
-            }).send();
-        }
+            }).onSuccess(() => swal.close()).send();
+        });
     }
     renderEditor() {
         return <JudgeEditorRow

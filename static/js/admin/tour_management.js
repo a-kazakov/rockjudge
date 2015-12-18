@@ -363,10 +363,13 @@ var TourEditingUI = (function (_React$Component2) {
     }, {
         key: "deleteTour",
         value: function deleteTour() {
-            if (!confirm(_("admin.confirms.delete_tour"))) {
-                return false;
-            }
-            Api("tour.delete", { tour_id: this.props.tour.id }).send();
+            var _this3 = this;
+
+            swal_confirm(_("admin.confirms.delete_tour"), function () {
+                Api("tour.delete", { tour_id: _this3.props.tour.id }).onSuccess(function () {
+                    return swal.close();
+                }).send();
+            });
         }
     }]);
 
@@ -412,12 +415,12 @@ var ToursManagementUI = (function (_React$Component4) {
     function ToursManagementUI(props) {
         _classCallCheck(this, ToursManagementUI);
 
-        var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(ToursManagementUI).call(this, props));
+        var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(ToursManagementUI).call(this, props));
 
-        _this4.state = {
+        _this5.state = {
             new_tour_after_id: -1
         };
-        return _this4;
+        return _this5;
     }
 
     _createClass(ToursManagementUI, [{

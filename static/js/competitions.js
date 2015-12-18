@@ -299,12 +299,16 @@ var CompetitionRow = (function (_React$Component2) {
     }, {
         key: "onDelete",
         value: function onDelete(event) {
+            var _this3 = this;
+
             event.stopPropagation();
-            if (confirm(_("admin.confirms.delete_competition"))) {
+            swal_confirm(_("admin.confirms.delete_competition"), function () {
                 Api("competition.delete", {
-                    competition_id: this.props.competition.id
+                    competition_id: _this3.props.competition.id
+                }).onSuccess(function () {
+                    return swal.close();
                 }).send();
-            }
+            });
         }
     }, {
         key: "renderEditor",
@@ -367,12 +371,12 @@ var CompetitionCreationRow = (function (_React$Component3) {
     function CompetitionCreationRow(props) {
         _classCallCheck(this, CompetitionCreationRow);
 
-        var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(CompetitionCreationRow).call(this, props));
+        var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(CompetitionCreationRow).call(this, props));
 
-        _this3.state = {
+        _this4.state = {
             editing: false
         };
-        return _this3;
+        return _this4;
     }
 
     _createClass(CompetitionCreationRow, [{
@@ -440,16 +444,16 @@ var CompetitionsManager = (function (_React$Component4) {
     function CompetitionsManager(props) {
         _classCallCheck(this, CompetitionsManager);
 
-        var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(CompetitionsManager).call(this, props));
+        var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(CompetitionsManager).call(this, props));
 
-        _this4.state = {
+        _this5.state = {
             competitions: null
         };
-        message_dispatcher.addListener("db_update", _this4.reloadFromStorage.bind(_this4));
-        message_dispatcher.addListener("competition_list_update", _this4.loadData.bind(_this4));
-        message_dispatcher.addListener("reload_data", _this4.loadData.bind(_this4));
-        _this4.loadData();
-        return _this4;
+        message_dispatcher.addListener("db_update", _this5.reloadFromStorage.bind(_this5));
+        message_dispatcher.addListener("competition_list_update", _this5.loadData.bind(_this5));
+        message_dispatcher.addListener("reload_data", _this5.loadData.bind(_this5));
+        _this5.loadData();
+        return _this5;
     }
 
     _createClass(CompetitionsManager, [{
