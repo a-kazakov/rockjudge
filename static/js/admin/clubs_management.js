@@ -60,7 +60,7 @@ var ClubEditorRow = (function (_React$Component) {
                         { onSubmit: this.onSubmit.bind(this) },
                         React.createElement(
                             "div",
-                            { className: "row" },
+                            { className: "rows" },
                             React.createElement(
                                 "div",
                                 { className: "col-md-5" },
@@ -284,7 +284,7 @@ var ClubCreationRow = (function (_React$Component3) {
                 null,
                 React.createElement(
                     "td",
-                    { colSpan: "5" },
+                    { colSpan: "4" },
                     React.createElement(
                         "button",
                         {
@@ -368,17 +368,21 @@ var ClubsManagementUI = (function (_React$Component4) {
         value: function render() {
             return React.createElement(
                 "div",
-                null,
+                { className: "app-content" },
                 React.createElement(
                     "header",
-                    null,
+                    { className: "app-header" },
                     React.createElement(
                         "h1",
                         null,
                         _("admin.headers.clubs_management")
                     )
                 ),
-                this.renderTable()
+                React.createElement(
+                    "div",
+                    { className: "app-body" },
+                    this.renderTable()
+                )
             );
         }
     }]);

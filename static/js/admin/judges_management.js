@@ -417,17 +417,21 @@ var JudgesManagementUI = (function (_React$Component4) {
         value: function render() {
             return React.createElement(
                 "div",
-                null,
+                { className: "app-content" },
                 React.createElement(
                     "header",
-                    null,
+                    { className: "app-header" },
                     React.createElement(
                         "h1",
                         null,
                         _("admin.headers.judges_management")
                     )
                 ),
-                this.renderTable()
+                React.createElement(
+                    "div",
+                    { className: "app-body" },
+                    this.renderTable()
+                )
             );
         }
     }]);

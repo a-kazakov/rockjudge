@@ -286,11 +286,13 @@ class DisciplinesManagementUI extends React.Component {
         </div>
     }
     render() {
-        return <div>
-            <header>
+        return <div className="app-content">
+            <header className="app-header">
                 <h1>{ _("admin.headers.disciplines_management") }</h1>
             </header>
-            { this.renderTable() }
+            <div className="app-body">
+                { this.renderTable() }
+            </div>
         </div>;
     }
 }

@@ -31,10 +31,10 @@ var CompetitionLoadingUI = (function (_React$Component) {
 
             return React.createElement(
                 "div",
-                { className: "load-competition-page" },
+                { className: "app-content load-competition-page" },
                 React.createElement(
                     "header",
-                    null,
+                    { className: "app-head" },
                     React.createElement(
                         "h1",
                         null,
@@ -43,7 +43,7 @@ var CompetitionLoadingUI = (function (_React$Component) {
                 ),
                 React.createElement(
                     "form",
-                    { onSubmit: this.onSubmit.bind(this), className: "load-competition" },
+                    { onSubmit: this.onSubmit.bind(this), className: "load-competition app-body" },
                     React.createElement("textarea", {
                         defaultValue: "",
                         ref: function ref(c) {
@@ -174,7 +174,7 @@ var ManagementUI = (function (_React$Component2) {
                 case "manage_participants":
                     return React.createElement(
                         "div",
-                        { className: "ifw" },
+                        { className: "app-content" },
                         React.createElement("iframe", { src: "/participants/" + this.state.page_props.discipline_id.toString() })
                     );
                 case "manage_judges":
@@ -193,20 +193,20 @@ var ManagementUI = (function (_React$Component2) {
                 case "start_list":
                     return React.createElement(
                         "div",
-                        { className: "ifw" },
+                        { className: "app-content" },
                         React.createElement("iframe", { src: "/start_list/" + this.props.competition_id })
                     );
                 case "competition_report":
                     return React.createElement(
                         "div",
-                        { className: "ifw" },
+                        { className: "app-content" },
                         React.createElement("iframe", { src: "/report/" + this.props.competition_id })
                     );
             }
         }
     }, {
-        key: "render",
-        value: function render() {
+        key: "renderSideMenu",
+        value: function renderSideMenu() {
             var ics_tours = this.props.disciplines.map((function (ic) {
                 return this.renderDiscipline(ic, "manage_tours");
             }).bind(this));
@@ -214,119 +214,108 @@ var ManagementUI = (function (_React$Component2) {
                 return this.renderDiscipline(ic, "manage_participants");
             }).bind(this));
             return React.createElement(
-                "table",
-                { className: "app-content" },
+                "div",
+                { className: "side-menu" },
                 React.createElement(
-                    "tbody",
-                    null,
+                    "div",
+                    { className: "block" },
                     React.createElement(
-                        "tr",
-                        null,
-                        React.createElement(
-                            "td",
-                            { className: "side-panel" },
-                            React.createElement(
-                                "div",
-                                { className: "block" },
-                                React.createElement(
-                                    "div",
-                                    {
-                                        className: "level-1" + (this.state.page == "load_competition" ? " active" : ""),
-                                        onClick: this.switchPage.bind(this, "load_competition", {}) },
-                                    _("admin.menu.load_competition")
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "block" },
-                                React.createElement(
-                                    "div",
-                                    {
-                                        className: "level-1" + (this.state.page == "manage_disciplines" ? " active" : ""),
-                                        onClick: this.switchPage.bind(this, "manage_disciplines", {}) },
-                                    _("admin.menu.manage_disciplines")
-                                )
-                            ),
-                            React.createElement(
-                                "details",
-                                { className: "block", open: !!parseInt(sessionStorage.getItem("D_TOURS")) },
-                                React.createElement(
-                                    "summary",
-                                    { className: "level-1", onClick: function onClick(e) {
-                                            return sessionStorage.setItem("D_TOURS", e.target.parentNode.open ? 0 : 1);
-                                        } },
-                                    _("admin.menu.manage_tours")
-                                ),
-                                ics_tours
-                            ),
-                            React.createElement(
-                                "details",
-                                { className: "block", open: !!parseInt(sessionStorage.getItem("D_SPORTSMEN")) },
-                                React.createElement(
-                                    "summary",
-                                    { className: "level-1", onClick: function onClick(e) {
-                                            return sessionStorage.setItem("D_SPORTSMEN", e.target.parentNode.open ? 0 : 1);
-                                        } },
-                                    _("admin.menu.manage_sportsmen")
-                                ),
-                                ics_participants
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "block" },
-                                React.createElement(
-                                    "div",
-                                    {
-                                        className: "level-1" + (this.state.page == "manage_clubs" ? " active" : ""),
-                                        onClick: this.switchPage.bind(this, "manage_clubs", {}) },
-                                    _("admin.menu.manage_clubs")
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "block" },
-                                React.createElement(
-                                    "div",
-                                    {
-                                        className: "level-1" + (this.state.page == "manage_judges" ? " active" : ""),
-                                        onClick: this.switchPage.bind(this, "manage_judges", {}) },
-                                    _("admin.menu.manage_judges")
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "block" },
-                                React.createElement(
-                                    "div",
-                                    {
-                                        className: "level-1" + (this.state.page == "start_list" ? " active" : ""),
-                                        onClick: this.switchPage.bind(this, "start_list", {}) },
-                                    _("admin.menu.start_list")
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "block" },
-                                React.createElement(
-                                    "div",
-                                    {
-                                        className: "level-1" + (this.state.page == "competition_report" ? " active" : ""),
-                                        onClick: this.switchPage.bind(this, "competition_report", {}) },
-                                    _("admin.menu.competition_report")
-                                )
-                            )
-                        ),
-                        React.createElement(
-                            "td",
-                            { className: "" },
-                            React.createElement(
-                                "div",
-                                { className: "app-page scroller" },
-                                this.renderContent()
-                            )
-                        )
+                        "div",
+                        {
+                            className: "level-1" + (this.state.page == "load_competition" ? " active" : ""),
+                            onClick: this.switchPage.bind(this, "load_competition", {}) },
+                        _("admin.menu.load_competition")
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "block" },
+                    React.createElement(
+                        "div",
+                        {
+                            className: "level-1" + (this.state.page == "manage_disciplines" ? " active" : ""),
+                            onClick: this.switchPage.bind(this, "manage_disciplines", {}) },
+                        _("admin.menu.manage_disciplines")
+                    )
+                ),
+                React.createElement(
+                    "details",
+                    { className: "block", open: !!parseInt(sessionStorage.getItem("D_TOURS")) },
+                    React.createElement(
+                        "summary",
+                        { className: "level-1", onClick: function onClick(e) {
+                                return sessionStorage.setItem("D_TOURS", e.target.parentNode.open ? 0 : 1);
+                            } },
+                        _("admin.menu.manage_tours")
+                    ),
+                    ics_tours
+                ),
+                React.createElement(
+                    "details",
+                    { className: "block", open: !!parseInt(sessionStorage.getItem("D_SPORTSMEN")) },
+                    React.createElement(
+                        "summary",
+                        { className: "level-1", onClick: function onClick(e) {
+                                return sessionStorage.setItem("D_SPORTSMEN", e.target.parentNode.open ? 0 : 1);
+                            } },
+                        _("admin.menu.manage_sportsmen")
+                    ),
+                    ics_participants
+                ),
+                React.createElement(
+                    "div",
+                    { className: "block" },
+                    React.createElement(
+                        "div",
+                        {
+                            className: "level-1" + (this.state.page == "manage_clubs" ? " active" : ""),
+                            onClick: this.switchPage.bind(this, "manage_clubs", {}) },
+                        _("admin.menu.manage_clubs")
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "block" },
+                    React.createElement(
+                        "div",
+                        {
+                            className: "level-1" + (this.state.page == "manage_judges" ? " active" : ""),
+                            onClick: this.switchPage.bind(this, "manage_judges", {}) },
+                        _("admin.menu.manage_judges")
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "block" },
+                    React.createElement(
+                        "div",
+                        {
+                            className: "level-1" + (this.state.page == "start_list" ? " active" : ""),
+                            onClick: this.switchPage.bind(this, "start_list", {}) },
+                        _("admin.menu.start_list")
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "block" },
+                    React.createElement(
+                        "div",
+                        {
+                            className: "level-1" + (this.state.page == "competition_report" ? " active" : ""),
+                            onClick: this.switchPage.bind(this, "competition_report", {}) },
+                        _("admin.menu.competition_report")
                     )
                 )
+            );
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { className: "app" },
+                this.renderSideMenu(),
+                this.renderContent()
             );
         }
     }]);
@@ -441,40 +430,44 @@ var ServiceUI = (function (_React$Component3) {
         value: function render() {
             return React.createElement(
                 "div",
-                { className: "app-content" },
-                React.createElement(
-                    "header",
-                    null,
-                    React.createElement(
-                        "h1",
-                        null,
-                        _("admin.headers.service_menu")
-                    )
-                ),
+                { className: "app" },
                 React.createElement(
                     "div",
-                    { className: "service-menu" },
+                    { className: "app-content" },
                     React.createElement(
-                        "h3",
-                        null,
-                        _("admin.headers.clients_management")
+                        "header",
+                        { className: "app-header" },
+                        React.createElement(
+                            "h1",
+                            null,
+                            _("admin.headers.service_menu")
+                        )
                     ),
                     React.createElement(
-                        "button",
-                        { className: "btn btn-primary control-btn", onClick: this.reloadClients.bind(this) },
-                        _("admin.buttons.reload_clients")
-                    ),
-                    React.createElement(
-                        "button",
-                        { className: "btn btn-primary control-btn", onClick: this.refreshClients.bind(this) },
-                        _("admin.buttons.refresh_clients")
-                    ),
-                    React.createElement(
-                        "h3",
-                        null,
-                        _("admin.headers.unfinalize_tour")
-                    ),
-                    this.renderUnfinalize()
+                        "div",
+                        { className: "service-menu app-body" },
+                        React.createElement(
+                            "h3",
+                            null,
+                            _("admin.headers.clients_management")
+                        ),
+                        React.createElement(
+                            "button",
+                            { className: "btn btn-primary control-btn", onClick: this.reloadClients.bind(this) },
+                            _("admin.buttons.reload_clients")
+                        ),
+                        React.createElement(
+                            "button",
+                            { className: "btn btn-primary control-btn", onClick: this.refreshClients.bind(this) },
+                            _("admin.buttons.refresh_clients")
+                        ),
+                        React.createElement(
+                            "h3",
+                            null,
+                            _("admin.headers.unfinalize_tour")
+                        ),
+                        this.renderUnfinalize()
+                    )
                 )
             );
         }
@@ -583,83 +576,71 @@ var AdminUI = (function (_React$Component4) {
                 return React.createElement(Loader, null);
             }
             return React.createElement(
-                "table",
-                { className: "outer-table" },
+                "div",
+                { className: "wrapper" },
                 React.createElement(
-                    "tbody",
-                    null,
+                    "div",
+                    { className: "header" },
                     React.createElement(
-                        "tr",
-                        null,
-                        React.createElement(
-                            "th",
-                            { colSpan: "2", className: "caption" },
-                            this.state.name,
-                            " (",
-                            this.state.date,
-                            ")"
-                        )
-                    ),
+                        "div",
+                        { className: "caption" },
+                        this.state.name,
+                        " (",
+                        this.state.date,
+                        ")"
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "body" },
                     React.createElement(
-                        "tr",
-                        null,
+                        "div",
+                        { className: "left-col noselect" },
                         React.createElement(
-                            "td",
-                            { className: "left-col noselect" },
+                            "div",
+                            { className: "button" + (this.state.active_app == "management" ? " active" : ""), onClick: this.setApp.bind(this, "management") },
                             React.createElement(
                                 "div",
-                                { className: "app" + (this.state.active_app == "management" ? " active" : ""), onClick: this.setApp.bind(this, "management") },
-                                React.createElement(
-                                    "div",
-                                    { className: "icon" },
-                                    "M"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "label" },
-                                    "Management"
-                                )
+                                { className: "icon" },
+                                "M"
                             ),
                             React.createElement(
                                 "div",
-                                { className: "app" + (this.state.active_app == "judging" ? " active" : ""), onClick: this.setApp.bind(this, "judging") },
-                                React.createElement(
-                                    "div",
-                                    { className: "icon" },
-                                    "J"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "label" },
-                                    "Judging"
-                                )
-                            ),
-                            React.createElement(
-                                "div",
-                                { className: "app" + (this.state.active_app == "service" ? " active" : ""), onClick: this.setApp.bind(this, "service") },
-                                React.createElement(
-                                    "div",
-                                    { className: "icon" },
-                                    "S"
-                                ),
-                                React.createElement(
-                                    "div",
-                                    { className: "label" },
-                                    "Service"
-                                )
+                                { className: "label" },
+                                "Management"
                             )
                         ),
                         React.createElement(
-                            "td",
-                            { rowSpan: "2" },
-                            this.renderActiveApp()
-                        )
-                    ),
-                    React.createElement(
-                        "tr",
-                        null,
+                            "div",
+                            { className: "button" + (this.state.active_app == "judging" ? " active" : ""), onClick: this.setApp.bind(this, "judging") },
+                            React.createElement(
+                                "div",
+                                { className: "icon" },
+                                "J"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "label" },
+                                "Judging"
+                            )
+                        ),
                         React.createElement(
-                            "td",
+                            "div",
+                            { className: "button" + (this.state.active_app == "service" ? " active" : ""), onClick: this.setApp.bind(this, "service") },
+                            React.createElement(
+                                "div",
+                                { className: "icon" },
+                                "S"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "label" },
+                                "Service"
+                            )
+                        ),
+                        React.createElement("div", { className: "spacer" }),
+                        React.createElement(
+                            "div",
                             { className: "bottom-cell" },
                             React.createElement(
                                 "a",
@@ -667,7 +648,8 @@ var AdminUI = (function (_React$Component4) {
                                 _("admin.buttons.to_start_page")
                             )
                         )
-                    )
+                    ),
+                    this.renderActiveApp()
                 )
             );
         }

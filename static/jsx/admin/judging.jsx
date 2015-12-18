@@ -152,62 +152,58 @@ class JudgingUI extends React.Component {
             console.log("Unknown page:", this.getPage());
         }
     }
-    render() {
+    renderHeader() {
         let active_tour = this.getActiveTour();
-        return <table className="app-content"><tbody>
-            <tr>
-                <td className="side-panel" rowSpan="2">
-                    <div className="scroller">
-                        <CompetitionSchema
-                            updateTour={ this.switchActiveTour.bind(this) }
-                            current_tour_id={ this.state.active_tour_id }
-                            disciplines={ this.props.disciplines } />
-                    </div>
-                </td>
-                <td className="header">
-                    { active_tour
-                        ? <header className="with-tabs">
-                            <div className="controls">
-                                { this.renderButtons() }
-                            </div>
-                            <h1>{ this.getActiveDiscipline().name }</h1>
-                            <h2>{ active_tour.name }</h2>
-                            <div className="clearfix"></div>
-                            <ul className="pull-right nav nav-tabs">
-                                { !active_tour.finalized
-                                    ? <li className={ this.getPage() == "tour-admin" ? "active" : ""}>
-                                        <a href="#" onClick={ this.switchPage.bind(this, "tour-admin") }>{ _("admin.judging-tabs.tour-admin") }</a>
-                                    </li>
-                                    : null
-                                }
-                                <li className={ this.getPage() == "heats" ? "active" : ""}>
-                                    <a href="#" onClick={ this.switchPage.bind(this, "heats") }>{ _("admin.judging-tabs.heats") }</a>
-                                </li>
-                                <li className={ this.getPage() == "results-1" ? "active" : ""}>
-                                    <a href="#" onClick={ this.switchPage.bind(this, "results-1") }>{ _("admin.judging-tabs.results-1") }</a>
-                                </li>
-                                <li className={ this.getPage() == "results-2" ? "active" : ""}>
-                                    <a href="#" onClick={ this.switchPage.bind(this, "results-2") }>{ _("admin.judging-tabs.results-2") }</a>
-                                </li>
-                                <li className={ this.getPage() == "results-3" ? "active" : ""}>
-                                    <a href="#" onClick={ this.switchPage.bind(this, "results-3") }>{ _("admin.judging-tabs.results-3") }</a>
-                                </li>
-                                <li className={ this.getPage() == "discipline-results" ? "active" : ""}>
-                                    <a href="#" onClick={ this.switchPage.bind(this, "discipline-results") }>{ _("admin.judging-tabs.discipline-results") }</a>
-                                </li>
-                            </ul>
-                            <div className="clearfix"></div>
-                        </header>
-                        : null
-                    }
-                </td>
-            </tr><tr>
-                <td className="body">
-                    <div className="scroller">
-                        { this.renderBody() }
-                    </div>
-                </td>
-            </tr></tbody>
-        </table>
+        if (!active_tour) {
+            return null;
+        }
+        return <header className="app-header with-tabs">
+            <div className="controls">
+                { this.renderButtons() }
+            </div>
+            <h1>{ this.getActiveDiscipline().name }</h1>
+            <h2>{ active_tour.name }</h2>
+            <div className="clearfix"></div>
+            <ul className="pull-right nav nav-tabs">
+                { !active_tour.finalized
+                    ? <li className={ this.getPage() == "tour-admin" ? "active" : ""}>
+                        <a href="#" onClick={ this.switchPage.bind(this, "tour-admin") }>{ _("admin.judging-tabs.tour-admin") }</a>
+                    </li>
+                    : null
+                }
+                <li className={ this.getPage() == "heats" ? "active" : ""}>
+                    <a href="#" onClick={ this.switchPage.bind(this, "heats") }>{ _("admin.judging-tabs.heats") }</a>
+                </li>
+                <li className={ this.getPage() == "results-1" ? "active" : ""}>
+                    <a href="#" onClick={ this.switchPage.bind(this, "results-1") }>{ _("admin.judging-tabs.results-1") }</a>
+                </li>
+                <li className={ this.getPage() == "results-2" ? "active" : ""}>
+                    <a href="#" onClick={ this.switchPage.bind(this, "results-2") }>{ _("admin.judging-tabs.results-2") }</a>
+                </li>
+                <li className={ this.getPage() == "results-3" ? "active" : ""}>
+                    <a href="#" onClick={ this.switchPage.bind(this, "results-3") }>{ _("admin.judging-tabs.results-3") }</a>
+                </li>
+                <li className={ this.getPage() == "discipline-results" ? "active" : ""}>
+                    <a href="#" onClick={ this.switchPage.bind(this, "discipline-results") }>{ _("admin.judging-tabs.discipline-results") }</a>
+                </li>
+            </ul>
+            <div className="clearfix"></div>
+        </header>
+    }
+    render() {
+        return <div className="app">
+            <div className="side-menu">
+                <CompetitionSchema
+                    updateTour={ this.switchActiveTour.bind(this) }
+                    current_tour_id={ this.state.active_tour_id }
+                    disciplines={ this.props.disciplines } />
+            </div>
+            <div className="app-content">
+                { this.renderHeader() }
+                <div className="app-body">
+                    { this.renderBody() }
+                </div>
+            </div>
+        </div>
     }
 }

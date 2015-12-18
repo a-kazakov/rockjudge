@@ -217,11 +217,11 @@ class ToursManagementUI extends React.Component {
         }.bind(this));
     }
     render() {
-        return <div>
-            <header>
+        return <div className="app-content">
+            <header className="app-header">
                 <h1>{ this.props.discipline.name }</h1>
             </header>
-            <div className="ic-management-ui">
+            <div className="app-body ic-management-ui">
                 { this.renderTourCreation(null, this.props.discipline.tours[0]) }
                 { this.renderTours() }
             </div>

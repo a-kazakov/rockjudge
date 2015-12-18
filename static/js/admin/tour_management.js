@@ -458,10 +458,10 @@ var ToursManagementUI = (function (_React$Component4) {
         value: function render() {
             return React.createElement(
                 "div",
-                null,
+                { className: "app-content" },
                 React.createElement(
                     "header",
-                    null,
+                    { className: "app-header" },
                     React.createElement(
                         "h1",
                         null,
@@ -470,7 +470,7 @@ var ToursManagementUI = (function (_React$Component4) {
                 ),
                 React.createElement(
                     "div",
-                    { className: "ic-management-ui" },
+                    { className: "app-body ic-management-ui" },
                     this.renderTourCreation(null, this.props.discipline.tours[0]),
                     this.renderTours()
                 ),

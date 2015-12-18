@@ -1,152 +1,324 @@
 html,
 body,
 #content {
+  height: 100%;
   overflow: hidden;
 }
-table.outer-table {
+.flex-row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+}
+.flex-col {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+}
+.wrapper {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
   width: 100%;
   height: 100%;
-  background-color: #2b3a42;
 }
-table.outer-table td {
-  vertical-align: top;
-}
-table.outer-table th.caption {
+.wrapper .header {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
   height: 30px;
-  vertical-align: middle;
-  text-align: center;
-  background-color: #2b3a42;
-  color: #efefef;
-  font-weight: bold;
 }
-table.outer-table .left-col {
+.wrapper .header .caption {
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  line-height: 30px;
+}
+.wrapper .body {
+  min-height: 0px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+}
+.wrapper .body .left-col {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
   width: 100px;
-  background-color: #2b3a42;
-  border: none;
 }
-table.outer-table .left-col div.app {
+.wrapper .body .left-col .button {
   width: 100px;
   height: 100px;
-  cursor: pointer;
   position: relative;
-  color: #bdd4de;
   margin-bottom: 30px;
 }
-table.outer-table .left-col div.app .icon {
+.wrapper .body .left-col .button .icon {
   line-height: 1;
-  text-align: center;
-  font-size: 90px;
-  font-weight: 900;
+  height: 100px;
 }
-table.outer-table .left-col div.app .label {
-  text-align: center;
-  font-size: 12px;
-  font-weight: bold;
+.wrapper .body .left-col .button .label {
   position: absolute;
   bottom: 3px;
   left: 0;
   right: 0;
   height: 15px;
 }
-table.outer-table .left-col div.app:hover {
+.wrapper .body .left-col .spacer {
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+}
+.wrapper .body .app {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+}
+.wrapper .body .app .side-menu {
+  width: 350px;
+  min-width: 350px;
+  overflow-y: auto;
+}
+.wrapper .body .app .side-menu .block {
+  margin-bottom: 10px;
+}
+.wrapper .body .app .side-menu .level-1 {
+  padding: 5px 10px;
+}
+.wrapper .body .app .side-menu .level-2 {
+  padding: 2px 5px 3px 30px;
+}
+.wrapper .body .app .app-content {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+}
+.wrapper .body .app .app-content .app-header {
+  min-height: 50px;
+}
+.wrapper .body .app .app-content .app-body {
+  overflow-y: auto;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+}
+.wrapper .body .app .app-content iframe {
+  width: 100%;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  margin: 0;
+}
+.wrapper .header .caption {
+  text-align: center;
+  background-color: #2b3a42;
+  color: #efefef;
+  font-weight: bold;
+}
+.wrapper .body .left-col {
+  background-color: #2b3a42;
+}
+.wrapper .body .left-col .button {
+  color: #bdd4de;
+  cursor: pointer;
+}
+.wrapper .body .left-col .button .icon {
+  line-height: 1;
+  text-align: center;
+  font-size: 90px;
+  font-weight: 900;
+}
+.wrapper .body .left-col .button .label {
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+.wrapper .body .left-col .button:hover {
   background-color: #3f5561;
 }
-table.outer-table .left-col div.app.active,
-table.outer-table .left-col div.app.active:hover {
+.wrapper .body .left-col .button.active,
+.wrapper .body .left-col .button.active:hover {
   background-color: #171f23;
 }
-table.outer-table .bottom-cell {
+.wrapper .body .left-col .bottom-cell {
   background-color: #2b3a42;
-  vertical-align: bottom;
-  height: 40px;
   border: none;
 }
-table.outer-table .bottom-cell .btn-back {
-  display: block;
+.wrapper .body .left-col .bottom-cell .btn-back {
   font-size: 12px;
   font-weight: bold;
   color: #efefef;
   text-align: center;
   text-decoration: none;
+  display: block;
 }
-table.outer-table .bottom-cell .btn-back:hover {
+.wrapper .body .left-col .bottom-cell .btn-back:hover {
   text-decoration: underline;
 }
-.scroller {
-  height: 100%;
-  overflow-y: auto;
-}
-.app-content {
+.wrapper .body .app {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
   background-color: #efefef;
-  width: 100%;
-  height: 100%;
 }
-table.app-content .side-panel {
-  width: 350px;
+.wrapper .body .app .side-menu {
   background-color: #bdd4de;
-  overflow: hidden;
 }
-table.app-content .side-panel .block {
-  margin-bottom: 10px;
-}
-table.app-content .side-panel .level-1 {
+.wrapper .body .app .side-menu .level-1 {
   font-weight: bold;
-  padding: 5px 10px;
   cursor: pointer;
 }
-table.app-content .side-panel .level-2 {
-  padding: 2px 5px 3px 30px;
+.wrapper .body .app .side-menu .level-2 {
   cursor: pointer;
 }
-table.app-content .side-panel .level-2.new-ic {
-  margin-top: 10px;
-  font-style: italic;
-}
-table.app-content .side-panel .level-1:hover,
-table.app-content .side-panel .level-2:hover {
+.wrapper .body .app .side-menu .level-1:hover,
+.wrapper .body .app .side-menu .level-2:hover {
   background-color: #537284 !important;
 }
-table.app-content .side-panel .level-1.grey,
-table.app-content .side-panel .level-2.grey {
+.wrapper .body .app .side-menu .level-1.grey,
+.wrapper .body .app .side-menu .level-2.grey {
   color: #999;
 }
-table.app-content .side-panel .level-1.active,
-table.app-content .side-panel .level-2.active {
+.wrapper .body .app .side-menu .level-1.active,
+.wrapper .body .app .side-menu .level-2.active {
   background-color: #ff530d;
 }
-table.app-content .header {
-  height: 0;
-}
-table.app-content .body {
-  height: 100%;
-}
-table.app-content .app-page {
-  width: 100%;
-  height: 100%;
-}
-table.app-content iframe {
-  width: 100%;
-  height: 100%;
+.wrapper .body .app .app-content iframe {
   border: none;
-  margin: 0;
-}
-div.load-competition-page {
-  width: 100%;
-  height: 100%;
 }
 div.load-competition-page form.load-competition {
-  height: -webkit-calc(100% - 60px);
-  height: calc(100% - 60px);
   text-align: center;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
 }
 div.load-competition-page form.load-competition textarea {
-  width: 100%;
-  height: -webkit-calc(100% - 60px);
-  height: calc(100% - 60px);
-  margin-bottom: 10px;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  margin: 10px;
 }
 div.load-competition-page form.load-competition button {
+  -webkit-align-self: center;
+      -ms-flex-item-align: center;
+          align-self: center;
   width: 200px;
+  margin: 0 10px 10px;
 }
 .ic-management-ui {
   padding: 10px;

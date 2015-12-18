@@ -24,7 +24,7 @@ class ClubEditorRow extends React.Component {
         return <tr className={ "editor" + (this.props.newClub ? " create" : "" ) }>
             <td colSpan="4">
                 <form onSubmit={ this.onSubmit.bind(this) }>
-                    <div className="row">
+                    <div className="rows">
                         <div className="col-md-5">
                             <label className="full-width">
                                 { _("models.club.name") }
@@ -150,7 +150,7 @@ class ClubCreationRow extends React.Component {
             { ...this.props } />;
     }
     renderButton() {
-        return <tr><td colSpan="5">
+        return <tr><td colSpan="4">
             <button
                 type="button"
                 className="btn btn-default full-width"
@@ -191,11 +191,13 @@ class ClubsManagementUI extends React.Component {
         </div>
     }
     render() {
-        return <div>
-            <header>
+        return <div className="app-content">
+            <header className="app-header">
                 <h1>{ _("admin.headers.clubs_management") }</h1>
             </header>
-            { this.renderTable() }
+            <div className="app-body">
+                { this.renderTable() }
+            </div>
         </div>;
     }
 }
