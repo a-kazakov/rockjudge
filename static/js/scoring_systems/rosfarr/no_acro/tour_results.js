@@ -482,8 +482,8 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                     return this.renderFormationScore(score, additiolal_data);
                 default:
                     return React.createElement(
-                        "span",
-                        null,
+                        "p",
+                        { className: "text-center" },
                         score.data.total_score.toFixed(2)
                     );
             }
@@ -646,6 +646,9 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
         key: "renderTotalScore",
         value: function renderTotalScore() {
             if (!this.props.run.performed) {
+                return null;
+            }
+            if (this.props.tour.scoring_system_name === "rosfarr.formation") {
                 return null;
             }
             return React.createElement(

@@ -60,7 +60,7 @@ class TourResultsVerboseTableRow extends React.Component {
         case "formation":
             return this.renderFormationScore(score, additiolal_data);
         default:
-            return <span>{ score.data.total_score.toFixed(2) }</span>;
+            return <p className="text-center">{ score.data.total_score.toFixed(2) }</p>;
         }
     }
     renderParticipantInfo() {
@@ -140,6 +140,9 @@ class TourResultsVerboseTableRow extends React.Component {
     }
     renderTotalScore() {
         if (!this.props.run.performed) {
+            return null;
+        }
+        if (this.props.tour.scoring_system_name === "rosfarr.formation") {
             return null;
         }
         return <p><strong>{ __("results.labels.total_score") }: { this.props.run.total_score }</strong></p>;

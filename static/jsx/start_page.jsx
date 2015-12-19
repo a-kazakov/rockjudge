@@ -1,6 +1,6 @@
 class RoleSelector extends React.Component {
     render() {
-        let all_judges = this.props.competition.judges;
+        let all_judges = this.props.competition.judges.filter((judge) => judge.discipline_judges.length > 0);
         let line_judges = all_judges
             .filter((judge) => judge.role_description == "")
             .map(function(judge) {
@@ -58,7 +58,9 @@ class StartPage extends React.Component {
         Api("competition.get", {
             competition_id: competition_id,
             children: {
-                judges: {},
+                judges: {
+                    discipline_judges: {},
+                },
             },
         })
         .addToDB("Competition", competition_id)
@@ -72,7 +74,9 @@ class StartPage extends React.Component {
     }
     reloadFromStorage() {
         var SCHEMA = {
-            judges: {},
+            judges: {
+                discipline_judges: {},
+            },
         }
         let all_loaded = true;
         let competitions = this.props.competition_ids.map(function(competition_id) {
@@ -114,7 +118,7 @@ class StartPage extends React.Component {
                     <h3>{ _("start_page.messages.no_competitions") }</h3>
                     <h4>{ _("start_page.messages.competitions_management_link", link) }</h4>
                 </div>
-            </div>;
+            </div>
         }
         if (!this.state.all_loaded) {
             return <Loader />

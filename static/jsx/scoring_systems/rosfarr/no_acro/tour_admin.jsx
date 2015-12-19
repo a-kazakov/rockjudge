@@ -302,7 +302,7 @@ class TourAdminScoreCell extends React.Component {
     render() {
         if (!this.props.editing) {
             if (this.props.discipline_judge.role == "head_judge" && this.props.value.raw_data.nexttour) {
-                return <div onClick={ this.props.startEditing }>[{ this.props.value.total_score.toFixed(1) }]</div>
+                return <div onClick={ this.props.startEditing }>[{ this.props.value.total_score.toFixed(2) }]</div>
             }
             if (this.props.discipline_judge.role == "tech_judge") {
                 let tv_str = this.props.value.raw_data.timing_violation === null ? " ?" : (

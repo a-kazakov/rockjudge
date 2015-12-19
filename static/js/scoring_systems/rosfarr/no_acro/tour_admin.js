@@ -656,7 +656,7 @@ var TourAdminScoreCell = (function (_React$Component4) {
                         "div",
                         { onClick: this.props.startEditing },
                         "[",
-                        this.props.value.total_score.toFixed(1),
+                        this.props.value.total_score.toFixed(2),
                         "]"
                     );
                 }

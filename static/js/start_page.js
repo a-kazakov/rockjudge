@@ -20,7 +20,9 @@ var RoleSelector = (function (_React$Component) {
     _createClass(RoleSelector, [{
         key: "render",
         value: function render() {
-            var all_judges = this.props.competition.judges;
+            var all_judges = this.props.competition.judges.filter(function (judge) {
+                return judge.discipline_judges.length > 0;
+            });
             var line_judges = all_judges.filter(function (judge) {
                 return judge.role_description == "";
             }).map(function (judge) {
@@ -124,7 +126,9 @@ var StartPage = (function (_React$Component2) {
             Api("competition.get", {
                 competition_id: competition_id,
                 children: {
-                    judges: {}
+                    judges: {
+                        discipline_judges: {}
+                    }
                 }
             }).addToDB("Competition", competition_id).onSuccess(this.reloadFromStorage.bind(this)).send();
         }
@@ -139,7 +143,9 @@ var StartPage = (function (_React$Component2) {
         key: "reloadFromStorage",
         value: function reloadFromStorage() {
             var SCHEMA = {
-                judges: {}
+                judges: {
+                    discipline_judges: {}
+                }
             };
             var all_loaded = true;
             var competitions = this.props.competition_ids.map(function (competition_id) {

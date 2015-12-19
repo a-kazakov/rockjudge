@@ -24,7 +24,7 @@ class DisciplineJudge(BaseModel):
     RW_PROPS = ["role"]
 
     discipline = peewee.ForeignKeyField(Discipline, related_name="discipline_judges", null=True)
-    judge = peewee.ForeignKeyField(Judge, related_name="discipline_judges")
+    judge = peewee.ForeignKeyField(Judge, related_name="discipline_judges", null=True)
     role = peewee.CharField()
 
     @classmethod
@@ -65,6 +65,7 @@ class DisciplineJudge(BaseModel):
         if self.get_attr_count("score_set") > 0:
             raise ApiError("errors.discipline_judge.delete_with_scores")
         self.discipline = None
+        self.judge = None
         self.save()
         ws_message.add_message("reload_data")
 

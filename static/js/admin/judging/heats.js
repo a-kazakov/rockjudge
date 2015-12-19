@@ -157,7 +157,7 @@ var HeatsBody = (function (_React$Component2) {
                 ),
                 React.createElement(
                     "td",
-                    { className: "w-50" },
+                    null,
                     React.createElement(
                         "p",
                         null,
@@ -166,7 +166,7 @@ var HeatsBody = (function (_React$Component2) {
                 ),
                 React.createElement(
                     "td",
-                    { className: "w-42" },
+                    null,
                     React.createElement(
                         "p",
                         null,
@@ -216,7 +216,7 @@ var HeatsBody = (function (_React$Component2) {
                             ),
                             React.createElement(
                                 "th",
-                                { className: "w-46" },
+                                null,
                                 React.createElement(
                                     "p",
                                     null,
@@ -225,7 +225,7 @@ var HeatsBody = (function (_React$Component2) {
                             ),
                             React.createElement(
                                 "th",
-                                { className: "w-46" },
+                                null,
                                 React.createElement(
                                     "p",
                                     null,

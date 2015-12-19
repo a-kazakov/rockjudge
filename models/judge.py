@@ -58,4 +58,5 @@ class Judge(BaseModel):
     def serialize(self, children={}):
         result = self.serialize_props()
         result = self.serialize_upper_child(result, "competition", children)
+        result = self.serialize_lower_child(result, "discipline_judges", children)
         return result
