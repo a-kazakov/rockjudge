@@ -60,6 +60,7 @@ class DocxImpl {
             ".header": {
                 "border-bottom": "1px solid black",
                 "font-size": "10pt",
+                "font-weight": "bold",
                 "margin": 0,
                 "padding-bottom": "2pt",
                 "margin-bottom": "20pt",
