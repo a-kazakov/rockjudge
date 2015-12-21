@@ -257,7 +257,7 @@ class CompetitionPlanManagementUI extends React.Component {
             discipline.tours.forEach((tour) =>
                 result.push({
                     id: tour.id,
-                    name: `${discipline.name} - ${tour.name}`,
+                    name: `${discipline.name} — ${tour.name}`,
                 })
             )
         )

@@ -533,7 +533,7 @@ var CompetitionPlanManagementUI = (function (_React$Component6) {
                 return discipline.tours.forEach(function (tour) {
                     return result.push({
                         id: tour.id,
-                        name: discipline.name + " - " + tour.name
+                        name: discipline.name + " — " + tour.name
                     });
                 });
             });

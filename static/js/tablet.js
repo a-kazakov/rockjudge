@@ -67,23 +67,25 @@ var JudgeTablet = (function (_React$Component) {
                 var st_tour = storage.get("Tour").by_id(this.active_tour_id);
                 if (st_tour) {
                     var tour = st_tour.serialize(this.TOUR_SCHEMA);
-                    state_upd["tour"] = tour;
-                    // Find discipline judge
-                    state_upd["discipline_judge"] = null;
-                    tour.discipline.discipline_judges.forEach((function (dj) {
-                        if (dj.judge.id == this.props.judge_id) {
-                            state_upd["discipline_judge"] = dj;
+                    if (tour.discipline && tour.discipline.discipline_judges) {
+                        state_upd["tour"] = tour;
+                        // Find discipline judge
+                        state_upd["discipline_judge"] = null;
+                        tour.discipline.discipline_judges.forEach((function (dj) {
+                            if (dj.judge.id == this.props.judge_id) {
+                                state_upd["discipline_judge"] = dj;
+                            }
+                        }).bind(this));
+                        if (reset_heat) {
+                            var discipline_judge = state_upd["discipline_judge"];
+                            if (!discipline_judge || discipline_judge.role == "head_judge") {
+                                state_upd["current_heat"] = 1;
+                            } else {
+                                var discipline_judge_id = discipline_judge && discipline_judge.id;
+                                state_upd["current_heat"] = this.getFirstNonConfirmedHeat(tour.runs, discipline_judge_id) || 1;
+                            }
+                            state_upd["page"] = "default";
                         }
-                    }).bind(this));
-                    if (reset_heat) {
-                        var discipline_judge = state_upd["discipline_judge"];
-                        if (!discipline_judge || discipline_judge.role == "head_judge") {
-                            state_upd["current_heat"] = 1;
-                        } else {
-                            var discipline_judge_id = discipline_judge && discipline_judge.id;
-                            state_upd["current_heat"] = this.getFirstNonConfirmedHeat(tour.runs, discipline_judge_id) || 1;
-                        }
-                        state_upd["page"] = "default";
                     }
                 }
             }
@@ -265,7 +267,7 @@ var JudgeTablet = (function (_React$Component) {
         value: function renderResults() {
             return React.createElement(
                 "div",
-                null,
+                { className: "body results" },
                 React.createElement(TourResultsBody, { tour_id: this.state.tour.id, verbosity: "2" })
             );
         }
@@ -274,45 +276,49 @@ var JudgeTablet = (function (_React$Component) {
         value: function renderActions() {
             return React.createElement(
                 "div",
-                { className: "head-judge-actions" },
+                { className: "body" },
                 React.createElement(
                     "div",
-                    { className: "item" },
+                    { className: "actions" },
                     React.createElement(
-                        "button",
-                        _extends({ className: "tbtn btn-primary", type: "button"
-                        }, onTouchOrClick(this.stopTour.bind(this))),
-                        _("tablet.buttons.stop_tour")
-                    )
-                ),
-                React.createElement(
-                    "div",
-                    { className: "item" },
+                        "div",
+                        { className: "item" },
+                        React.createElement(
+                            "button",
+                            _extends({ className: "tbtn btn-primary", type: "button"
+                            }, onTouchOrClick(this.stopTour.bind(this))),
+                            _("tablet.buttons.stop_tour")
+                        )
+                    ),
                     React.createElement(
-                        "button",
-                        _extends({ className: "tbtn btn-primary", type: "button"
-                        }, onTouchOrClick(this.finalizeTour.bind(this))),
-                        _("tablet.buttons.finalize_tour")
-                    )
-                ),
-                React.createElement(
-                    "div",
-                    { className: "item" },
+                        "div",
+                        { className: "item" },
+                        React.createElement(
+                            "button",
+                            _extends({ className: "tbtn btn-primary", type: "button"
+                            }, onTouchOrClick(this.finalizeTour.bind(this))),
+                            _("tablet.buttons.finalize_tour")
+                        )
+                    ),
                     React.createElement(
-                        "button",
-                        _extends({ className: "tbtn btn-primary", type: "button"
-                        }, onTouchOrClick(this.stopTourAndStartNext.bind(this))),
-                        _("tablet.buttons.stop_tour_and_start_next")
-                    )
-                ),
-                React.createElement(
-                    "div",
-                    { className: "item" },
+                        "div",
+                        { className: "item" },
+                        React.createElement(
+                            "button",
+                            _extends({ className: "tbtn btn-primary", type: "button"
+                            }, onTouchOrClick(this.stopTourAndStartNext.bind(this))),
+                            _("tablet.buttons.stop_tour_and_start_next")
+                        )
+                    ),
                     React.createElement(
-                        "button",
-                        _extends({ className: "tbtn btn-primary", type: "button"
-                        }, onTouchOrClick(this.finalizeTourAndStartNext.bind(this))),
-                        _("tablet.buttons.finalize_tour_and_start_next")
+                        "div",
+                        { className: "item" },
+                        React.createElement(
+                            "button",
+                            _extends({ className: "tbtn btn-primary", type: "button"
+                            }, onTouchOrClick(this.finalizeTourAndStartNext.bind(this))),
+                            _("tablet.buttons.finalize_tour_and_start_next")
+                        )
                     )
                 )
             );
@@ -405,7 +411,7 @@ var JudgeTablet = (function (_React$Component) {
             var judge_number = judge.role_description || _("global.phrases.judge_n", judge.number);
             return React.createElement(
                 "div",
-                null,
+                { className: "judge-tablet" },
                 React.createElement(
                     "header",
                     null,
@@ -427,33 +433,37 @@ var JudgeTablet = (function (_React$Component) {
                 ),
                 React.createElement(
                     "div",
-                    { className: "judge-number" },
-                    judge_number
-                ),
-                React.createElement(
-                    "div",
-                    { className: "judge-name" },
-                    this.state.judge.name
-                ),
-                this.state.tour ? React.createElement(
-                    "div",
-                    null,
+                    { className: "splash-screen" },
                     React.createElement(
                         "div",
-                        { className: "not-judging-discipline" },
-                        this.state.tour.discipline.name
+                        { className: "judge-number" },
+                        judge_number
                     ),
                     React.createElement(
                         "div",
-                        { className: "not-judging-tour" },
-                        this.state.tour.name
+                        { className: "judge-name" },
+                        this.state.judge.name
                     ),
-                    React.createElement(
+                    this.state.tour ? React.createElement(
                         "div",
-                        { className: "not-judging-message" },
-                        _("tablet.messages.not_judging_discipline")
-                    )
-                ) : null
+                        null,
+                        React.createElement(
+                            "div",
+                            { className: "not-judging-discipline" },
+                            this.state.tour.discipline.name
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "not-judging-tour" },
+                            this.state.tour.name
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "not-judging-message" },
+                            _("tablet.messages.not_judging_discipline")
+                        )
+                    ) : null
+                )
             );
         }
     }, {
@@ -536,10 +546,10 @@ var JudgeTablet = (function (_React$Component) {
                     return {
                         v: React.createElement(
                             "div",
-                            null,
+                            { className: "body" },
                             React.createElement(
                                 "table",
-                                { className: "tablet-main-table", style: { width: first_width + "%", "margin-left": 0 } },
+                                { className: "main-table", style: { width: first_width + "%", "marginLeft": 0 } },
                                 React.createElement(
                                     "tbody",
                                     null,
@@ -552,7 +562,7 @@ var JudgeTablet = (function (_React$Component) {
                             ),
                             React.createElement(
                                 "table",
-                                { className: "tablet-main-table", style: { width: second_width + "%", "margin-right": first_row.length === second_row.length ? 0 : "auto" } },
+                                { className: "main-table", style: { width: second_width + "%", "marginRight": first_row.length === second_row.length ? 0 : "auto" } },
                                 React.createElement(
                                     "tbody",
                                     null,
@@ -570,17 +580,22 @@ var JudgeTablet = (function (_React$Component) {
                 if ((typeof _ret3 === "undefined" ? "undefined" : _typeof(_ret3)) === "object") return _ret3.v;
             }
             return React.createElement(
-                "table",
-                { className: "tablet-main-table" + single_run_class },
+                "div",
+                { className: "body" },
                 React.createElement(
-                    "tbody",
-                    null,
+                    "table",
+                    { className: "main-table" + single_run_class },
                     React.createElement(
-                        "tr",
+                        "tbody",
                         null,
-                        cells
+                        React.createElement(
+                            "tr",
+                            null,
+                            cells
+                        )
                     )
-                )
+                ),
+                ";"
             );
         }
     }, {
@@ -593,11 +608,6 @@ var JudgeTablet = (function (_React$Component) {
                 return React.createElement(
                     "div",
                     { className: "footer page-selector" },
-                    React.createElement(
-                        "h3",
-                        null,
-                        _("tablet.headers.select_page")
-                    ),
                     React.createElement(
                         "button",
                         _extends({
@@ -628,11 +638,6 @@ var JudgeTablet = (function (_React$Component) {
                 "div",
                 { className: "footer page-selector" },
                 React.createElement(
-                    "h3",
-                    null,
-                    _("tablet.headers.select_page")
-                ),
-                React.createElement(
                     "button",
                     _extends({
                         className: "btn" + (this.state.page == "default" ? " active" : "")
@@ -662,7 +667,7 @@ var JudgeTablet = (function (_React$Component) {
             }
             return React.createElement(
                 "div",
-                null,
+                { className: "judge-tablet" },
                 this.renderHeader(),
                 this.renderScoringLayout(),
                 this.renderFooter()

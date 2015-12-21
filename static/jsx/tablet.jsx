@@ -43,23 +43,25 @@ class JudgeTablet extends React.Component {
             let st_tour = storage.get("Tour").by_id(this.active_tour_id);
             if (st_tour) {
                 let tour = st_tour.serialize(this.TOUR_SCHEMA);
-                state_upd["tour"] = tour;
-                // Find discipline judge
-                state_upd["discipline_judge"] = null;
-                tour.discipline.discipline_judges.forEach(function(dj) {
-                    if (dj.judge.id == this.props.judge_id) {
-                        state_upd["discipline_judge"] = dj;
+                if (tour.discipline && tour.discipline.discipline_judges) {
+                    state_upd["tour"] = tour;
+                    // Find discipline judge
+                    state_upd["discipline_judge"] = null;
+                    tour.discipline.discipline_judges.forEach(function(dj) {
+                        if (dj.judge.id == this.props.judge_id) {
+                            state_upd["discipline_judge"] = dj;
+                        }
+                    }.bind(this));
+                    if (reset_heat) {
+                        let discipline_judge = state_upd["discipline_judge"];
+                        if (!discipline_judge || discipline_judge.role == "head_judge") {
+                            state_upd["current_heat"] = 1;
+                        } else {
+                            let discipline_judge_id = discipline_judge && discipline_judge.id;
+                            state_upd["current_heat"] = this.getFirstNonConfirmedHeat(tour.runs, discipline_judge_id) || 1;
+                        }
+                        state_upd["page"] = "default";
                     }
-                }.bind(this));
-                if (reset_heat) {
-                    let discipline_judge = state_upd["discipline_judge"];
-                    if (!discipline_judge || discipline_judge.role == "head_judge") {
-                        state_upd["current_heat"] = 1;
-                    } else {
-                        let discipline_judge_id = discipline_judge && discipline_judge.id;
-                        state_upd["current_heat"] = this.getFirstNonConfirmedHeat(tour.runs, discipline_judge_id) || 1;
-                    }
-                    state_upd["page"] = "default";
                 }
             }
         }
@@ -194,35 +196,37 @@ class JudgeTablet extends React.Component {
     // Rendering
 
     renderResults() {
-        return <div>
+        return <div className="body results">
             <TourResultsBody tour_id={ this.state.tour.id } verbosity="2" />
         </div>
     }
     renderActions() {
-        return <div className="head-judge-actions">
-            <div className="item">
-                <button className="tbtn btn-primary" type="button"
-                        {...onTouchOrClick(this.stopTour.bind(this))}>
-                    { _("tablet.buttons.stop_tour") }
-                </button>
-            </div>
-            <div className="item">
-                <button className="tbtn btn-primary" type="button"
-                        {...onTouchOrClick(this.finalizeTour.bind(this))}>
-                    { _("tablet.buttons.finalize_tour") }
-                </button>
-            </div>
-            <div className="item">
-                <button className="tbtn btn-primary" type="button"
-                        {...onTouchOrClick(this.stopTourAndStartNext.bind(this))}>
-                    { _("tablet.buttons.stop_tour_and_start_next") }
-                </button>
-            </div>
-            <div className="item">
-                <button className="tbtn btn-primary" type="button"
-                         {...onTouchOrClick(this.finalizeTourAndStartNext.bind(this))}>
-                    { _("tablet.buttons.finalize_tour_and_start_next") }
-                </button>
+        return <div className="body">
+            <div className="actions">
+                <div className="item">
+                    <button className="tbtn btn-primary" type="button"
+                            {...onTouchOrClick(this.stopTour.bind(this))}>
+                        { _("tablet.buttons.stop_tour") }
+                    </button>
+                </div>
+                <div className="item">
+                    <button className="tbtn btn-primary" type="button"
+                            {...onTouchOrClick(this.finalizeTour.bind(this))}>
+                        { _("tablet.buttons.finalize_tour") }
+                    </button>
+                </div>
+                <div className="item">
+                    <button className="tbtn btn-primary" type="button"
+                            {...onTouchOrClick(this.stopTourAndStartNext.bind(this))}>
+                        { _("tablet.buttons.stop_tour_and_start_next") }
+                    </button>
+                </div>
+                <div className="item">
+                    <button className="tbtn btn-primary" type="button"
+                             {...onTouchOrClick(this.finalizeTourAndStartNext.bind(this))}>
+                        { _("tablet.buttons.finalize_tour_and_start_next") }
+                    </button>
+                </div>
             </div>
         </div>
     }
@@ -267,7 +271,7 @@ class JudgeTablet extends React.Component {
     renderSplashScreen() {
         let judge = this.state.judge;
         let judge_number = judge.role_description || _("global.phrases.judge_n", judge.number);
-        return <div>
+        return <div className="judge-tablet">
             <header>
                 <a className="btn btn-primary pull-left" href="/">
                     { _("tablet.buttons.to_start_page") }
@@ -277,16 +281,18 @@ class JudgeTablet extends React.Component {
                 </div>
                 <div className="clearfix"></div>
             </header>
-            <div className="judge-number">{ judge_number }</div>
-            <div className="judge-name">{ this.state.judge.name }</div>
-            {
-                this.state.tour ? <div>
-                    <div className="not-judging-discipline">{ this.state.tour.discipline.name }</div>
-                    <div className="not-judging-tour">{ this.state.tour.name }</div>
-                    <div className="not-judging-message">{ _("tablet.messages.not_judging_discipline") }</div>
-                </div> : null
-            }
-        </div>;
+            <div className="splash-screen">
+                <div className="judge-number">{ judge_number }</div>
+                <div className="judge-name">{ this.state.judge.name }</div>
+                {
+                    this.state.tour ? <div>
+                        <div className="not-judging-discipline">{ this.state.tour.discipline.name }</div>
+                        <div className="not-judging-tour">{ this.state.tour.name }</div>
+                        <div className="not-judging-message">{ _("tablet.messages.not_judging_discipline") }</div>
+                    </div> : null
+                }
+            </div>
+        </div>
     }
     renderScoringLayout() {
         if (this.state.page == "results") {
@@ -345,18 +351,20 @@ class JudgeTablet extends React.Component {
             } else {
                 [first_width, second_width] = [100, 100 - 2 * half_width];
             }
-            return <div>
-                <table className="tablet-main-table" style={{ width: first_width + "%", "margin-left": 0 }}><tbody><tr>
+            return <div className="body">
+                <table className="main-table" style={{ width: first_width + "%", "marginLeft": 0 }}><tbody><tr>
                     { first_row }
                 </tr></tbody></table>
-                <table className="tablet-main-table" style={{ width: second_width + "%", "margin-right": first_row.length === second_row.length ? 0 : "auto" }}><tbody><tr>
+                <table className="main-table" style={{ width: second_width + "%", "marginRight": first_row.length === second_row.length ? 0 : "auto" }}><tbody><tr>
                     { second_row }
                 </tr></tbody></table>
             </div>
         }
-        return <table className={ "tablet-main-table" + single_run_class }><tbody><tr>
-            { cells }
-        </tr></tbody></table>;
+        return <div className="body">
+            <table className={ "main-table" + single_run_class }><tbody><tr>
+                { cells }
+            </tr></tbody></table>;
+        </div>
     }
     renderFooter() {
         if (this.state.discipline_judge === null) {
@@ -364,7 +372,6 @@ class JudgeTablet extends React.Component {
         }
         if (this.state.discipline_judge.role == "head_judge") {
             return <div className="footer page-selector">
-                <h3>{ _("tablet.headers.select_page") }</h3>
                 <button
                     className={ "btn" + (this.state.page == "default" ? " active" : "") }
                     {...onTouchOrClick(this.switchPage.bind(this, "default"))}>{ _("tablet.pages.heats") }
@@ -385,7 +392,6 @@ class JudgeTablet extends React.Component {
             return null;
         }
         return <div className="footer page-selector">
-            <h3>{ _("tablet.headers.select_page") }</h3>
             <button
                 className={ "btn" + (this.state.page == "default" ? " active" : "") }
                 {...onTouchOrClick(this.switchPage.bind(this, "default"))}>{ _("tablet.pages.dance") }
@@ -406,7 +412,7 @@ class JudgeTablet extends React.Component {
         if (this.state.discipline_judge === null) {
             return this.renderSplashScreen();
         }
-        return <div>
+        return <div className="judge-tablet">
             { this.renderHeader() }
             { this.renderScoringLayout() }
             { this.renderFooter() }
