@@ -28,6 +28,7 @@ function _(src, arg) {
             "buttons": {
                 "add_club": "Добавить клуб",
                 "add_competition": "Создать соревнование",
+                "add_competition_plan_item": "Добавить элемент",
                 "add_discipline": "Добавить дисциплину",
                 "add_judge": "Добавить судью",
                 "add_participant": "Добавить участника",
@@ -60,6 +61,8 @@ function _(src, arg) {
                 "clubs": "Клубы-участники",
                 "clubs_management": "Управление клубами",
                 "competitions_management": "Управление соревнованиями",
+                "competition_plan": "Программа соревнований",
+                "competition_plan_management": "Программа соревнований",
                 "competition_report": "Протокол соревнований",
                 "competition_results": "Результаты соревнований",
                 "discipline_results": "Результаты дисциплины",
@@ -88,6 +91,7 @@ function _(src, arg) {
                 "discipline_results": "Результаты дисциплины",
                 "load_competition": "Импорт данных",
                 "manage_clubs": "Управление клубами",
+                "manage_competition_plan": "Программа соревнований",
                 "manage_disciplines": "Управление дисциплинами",
                 "manage_judges": "Управление судьями",
                 "manage_sportsmen": "Управление спортсменами",
@@ -146,6 +150,7 @@ function _(src, arg) {
             "tour": {
                 "add_before_finalized": "Невозможно добавить новый тур перед финализированным",
                 "delete_finalized": "Невозможно удалить финализированный тур",
+                "delete_in_competition_plan": "Невозможно удалить тур, присутствующий в программе соревнований",
                 "init_finailzed": "Невозможно пересоздать финализированный тур",
                 "invalid_add_after_id": "Попытка добаить тур в несуществующее место",
                 "next_is_finailzed": "Следующий тур не должен быть финализирован",
@@ -237,6 +242,14 @@ function _(src, arg) {
                 "info_item_title": "Заголовок",
                 "info_item_value": "Значение",
                 "name": "Название",
+            },
+            "competition_plan_item": {
+                "estimated_beginning": "Начало",
+                "estimated_duration": "Длительность",
+                "name": "Название",
+                "sp": "Приоритет",
+                "tour": "Тур",
+                "verbose_name": "Название",
             },
             "discipline": {
                 "discipline_judges": "Судьи",

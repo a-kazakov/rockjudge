@@ -370,9 +370,11 @@ div.load-competition-page form.load-competition button {
 .manage-judges .role {
   width: 25%;
 }
+.manage-competition-plan .buttons,
 .manage-judges .buttons {
   padding-top: 17px;
 }
+.manage-competition-plan .buttons button,
 .manage-judges .buttons button,
 .manage-clubs .buttons button {
   width: 50%;
@@ -391,75 +393,91 @@ div.load-competition-page form.load-competition button {
 .manage-disciplines .buttons button {
   width: 100%;
 }
+.manage-competition-plan,
 .manage-judges,
 .manage-clubs,
 .manage-disciplines {
   padding: 10px;
 }
+.manage-competition-plan table tr.viewer,
 .manage-judges table tr.viewer,
 .manage-clubs table tr.viewer,
 .manage-disciplines table tr.viewer {
   cursor: pointer;
 }
+.manage-competition-plan table tr.viewer .delete,
 .manage-judges table tr.viewer .delete,
 .manage-clubs table tr.viewer .delete,
 .manage-disciplines table tr.viewer .delete {
   width: 50px;
   text-align: center;
 }
+.manage-competition-plan table tr.viewer .delete button,
 .manage-judges table tr.viewer .delete button,
 .manage-clubs table tr.viewer .delete button,
 .manage-disciplines table tr.viewer .delete button {
   padding: 0 7px;
 }
+.manage-competition-plan table tr.editor,
 .manage-judges table tr.editor,
 .manage-clubs table tr.editor,
 .manage-disciplines table tr.editor {
   padding: 15px;
   background-color: #bdd4de;
 }
+.manage-competition-plan table tr.editor.create,
 .manage-judges table tr.editor.create,
 .manage-clubs table tr.editor.create,
 .manage-disciplines table tr.editor.create {
   background-color: #f0ad4e;
 }
+.manage-competition-plan table tr.editor input,
 .manage-judges table tr.editor input,
 .manage-clubs table tr.editor input,
 .manage-disciplines table tr.editor input,
+.manage-competition-plan table tr.editor select,
 .manage-judges table tr.editor select,
 .manage-clubs table tr.editor select,
 .manage-disciplines table tr.editor select {
   height: 25px;
   border: 1px solid #ccc;
 }
+.manage-competition-plan table tr.editor input,
 .manage-judges table tr.editor input,
 .manage-clubs table tr.editor input,
 .manage-disciplines table tr.editor input,
+.manage-competition-plan table tr.editor select,
 .manage-judges table tr.editor select,
 .manage-clubs table tr.editor select,
 .manage-disciplines table tr.editor select,
+.manage-competition-plan table tr.editor input button,
 .manage-judges table tr.editor input button,
 .manage-clubs table tr.editor input button,
 .manage-disciplines table tr.editor input button,
+.manage-competition-plan table tr.editor select button,
 .manage-judges table tr.editor select button,
 .manage-clubs table tr.editor select button,
 .manage-disciplines table tr.editor select button {
   vertical-align: middle;
 }
+.manage-competition-plan table tr.editor input,
 .manage-judges table tr.editor input,
 .manage-clubs table tr.editor input,
 .manage-disciplines table tr.editor input {
   padding-left: 5px;
   padding-right: 5px;
 }
+.manage-competition-plan table tr.editor input,
 .manage-judges table tr.editor input,
 .manage-clubs table tr.editor input,
 .manage-disciplines table tr.editor input,
+.manage-competition-plan table tr.editor select,
 .manage-judges table tr.editor select,
 .manage-clubs table tr.editor select,
 .manage-disciplines table tr.editor select {
   font-weight: normal;
 }
+.manage-competition-plan table tr.editor .del,
 .manage-judges table tr.editor .del,
 .manage-clubs table tr.editor .del,
 .manage-disciplines table tr.editor .del {
@@ -469,9 +487,11 @@ div.load-competition-page form.load-competition button {
   height: 24px;
   font-weight: bold;
 }
+.manage-competition-plan table tr.editor input,
 .manage-judges table tr.editor input,
 .manage-clubs table tr.editor input,
 .manage-disciplines table tr.editor input,
+.manage-competition-plan table tr.editor select,
 .manage-judges table tr.editor select,
 .manage-clubs table tr.editor select,
 .manage-disciplines table tr.editor select {

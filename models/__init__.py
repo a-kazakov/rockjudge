@@ -10,3 +10,4 @@ from models.program import Program  # NOQA
 from models.run import Run  # NOQA
 from models.score import Score  # NOQA
 from models.tour import Tour  # NOQA
+from models.competition_plan_item import CompetitionPlanItem  # NOQA

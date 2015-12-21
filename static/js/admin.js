@@ -117,7 +117,7 @@ var ManagementUI = (function (_React$Component2) {
         key: "getPageFromHash",
         value: function getPageFromHash() {
             var chunks = window.location.hash.substr(1).split("/");
-            if (chunks[1] && ["load_competition", "manage_tours", "manage_participants", "manage_judges", "manage_clubs", "manage_disciplines", "start_list", "competition_report"].indexOf(chunks[1]) >= 0) {
+            if (chunks[1] && ["load_competition", "manage_competition_plan", "manage_tours", "manage_participants", "manage_judges", "manage_clubs", "manage_disciplines", "start_list", "competition_report"].indexOf(chunks[1]) >= 0) {
                 return chunks[1];
             }
             return null;
@@ -184,6 +184,13 @@ var ManagementUI = (function (_React$Component2) {
                 case "manage_clubs":
                     return React.createElement(ClubsManagementUI, {
                         clubs: this.props.clubs,
+                        competition_id: this.props.competition_id });
+                case "manage_competition_plan":
+                    return React.createElement(CompetitionPlanManagementUI, {
+                        items: this.props.competition_plan,
+                        disciplines: this.props.disciplines,
+                        competition_name: this.props.competition_name,
+                        competition_date: this.props.competition_date,
                         competition_id: this.props.competition_id });
                 case "manage_disciplines":
                     return React.createElement(DisciplinesManagementUI, {
@@ -282,6 +289,17 @@ var ManagementUI = (function (_React$Component2) {
                             className: "level-1" + (this.state.page == "manage_judges" ? " active" : ""),
                             onClick: this.switchPage.bind(this, "manage_judges", {}) },
                         _("admin.menu.manage_judges")
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "block" },
+                    React.createElement(
+                        "div",
+                        {
+                            className: "level-1" + (this.state.page == "manage_competition_plan" ? " active" : ""),
+                            onClick: this.switchPage.bind(this, "manage_competition_plan", {}) },
+                        _("admin.menu.manage_competition_plan")
                     )
                 ),
                 React.createElement(
@@ -506,6 +524,7 @@ var AdminUI = (function (_React$Component4) {
             var SCHEMA = {
                 clubs: {},
                 judges: {},
+                plan: {},
                 disciplines: {
                     discipline_judges: {
                         judge: {}
@@ -523,6 +542,7 @@ var AdminUI = (function (_React$Component4) {
                 children: {
                     clubs: {},
                     judges: {},
+                    plan: {},
                     disciplines: {
                         discipline_judges: {
                             judge: {}
@@ -567,6 +587,10 @@ var AdminUI = (function (_React$Component4) {
                         disciplines: this.state.disciplines,
                         clubs: this.state.clubs,
                         judges: this.state.judges,
+                        disciplines: this.state.disciplines,
+                        competition_plan: this.state.plan,
+                        competition_name: this.state.name,
+                        competition_date: this.state.date,
                         competition_id: this.props.competition_id });
                 case "service":
                     return React.createElement(ServiceUI, {

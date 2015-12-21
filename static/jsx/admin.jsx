@@ -61,6 +61,7 @@ class ManagementUI extends React.Component {
         let chunks = window.location.hash.substr(1).split("/");
         if (chunks[1] && [
                 "load_competition",
+                "manage_competition_plan",
                 "manage_tours",
                 "manage_participants",
                 "manage_judges",
@@ -122,6 +123,13 @@ class ManagementUI extends React.Component {
             return <ClubsManagementUI
                 clubs={ this.props.clubs }
                 competition_id={ this.props.competition_id } />
+        case "manage_competition_plan":
+            return <CompetitionPlanManagementUI
+                items={ this.props.competition_plan }
+                disciplines={ this.props.disciplines }
+                competition_name={ this.props.competition_name }
+                competition_date={ this.props.competition_date }
+                competition_id={ this.props.competition_id } />
         case "manage_disciplines":
             return <DisciplinesManagementUI
                 disciplines={ this.props.disciplines }
@@ -179,6 +187,13 @@ class ManagementUI extends React.Component {
                         className={ "level-1" + (this.state.page == "manage_judges" ? " active" : "") }
                         onClick={ this.switchPage.bind(this, "manage_judges", {}) }>
                     { _("admin.menu.manage_judges") }
+                </div>
+            </div>
+            <div className="block">
+                <div
+                        className={ "level-1" + (this.state.page == "manage_competition_plan" ? " active" : "") }
+                        onClick={ this.switchPage.bind(this, "manage_competition_plan", {}) }>
+                    { _("admin.menu.manage_competition_plan") }
                 </div>
             </div>
             <div className="block">
@@ -314,6 +329,7 @@ class AdminUI extends React.Component {
         var SCHEMA = {
             clubs: {},
             judges: {},
+            plan: {},
             disciplines: {
                 discipline_judges: {
                     judge: {},
@@ -332,6 +348,7 @@ class AdminUI extends React.Component {
             children: {
                 clubs: {},
                 judges: {},
+                plan: {},
                 disciplines: {
                     discipline_judges: {
                         judge: {},
@@ -373,6 +390,10 @@ class AdminUI extends React.Component {
                 disciplines={ this.state.disciplines }
                 clubs={ this.state.clubs }
                 judges={ this.state.judges }
+                disciplines={ this.state.disciplines }
+                competition_plan={ this.state.plan }
+                competition_name={ this.state.name }
+                competition_date={ this.state.date }
                 competition_id={ this.props.competition_id } />;
         case "service":
             return <ServiceUI

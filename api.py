@@ -10,6 +10,7 @@ from log import log_api
 from models import (
     Club,
     Competition,
+    CompetitionPlanItem,
     Discipline,
     DisciplineJudge,
     Judge,
@@ -154,6 +155,12 @@ class Api:
         return {}
 
     @classmethod
+    def competition_plan_item_set(cls, request, ws_message):
+        model = cls.get_model(CompetitionPlanItem, "competition_plan_item_id", request)
+        model.update_model(request["data"], ws_message=ws_message)
+        return {}
+
+    @classmethod
     def participant_set(cls, request, ws_message):
         model = cls.get_model(Participant, "participant_id", request)
         model.update_model(request["data"], ws_message=ws_message)
@@ -220,6 +227,15 @@ class Api:
         return {}
 
     @classmethod
+    def competition_plan_item_create(cls, request, ws_message):
+        competition = cls.get_model(Competition, "competition_id", request)
+        CompetitionPlanItem.create_model(
+            competition=competition,
+            data=request["data"],
+            ws_message=ws_message)
+        return {}
+
+    @classmethod
     def participant_create(cls, request, ws_message):
         discipline = cls.get_model(Discipline, "discipline_id", request)
         Participant.create_model(
@@ -276,6 +292,12 @@ class Api:
     def participant_delete(cls, request, ws_message):
         participant = cls.get_model(Participant, "participant_id", request)
         participant.delete_model(ws_message=ws_message)
+        return {}
+
+    @classmethod
+    def competition_plan_item_delete(cls, request, ws_message):
+        item = cls.get_model(CompetitionPlanItem, "competition_plan_item_id", request)
+        item.delete_model(ws_message=ws_message)
         return {}
 
     # Custom actions

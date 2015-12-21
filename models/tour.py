@@ -326,6 +326,8 @@ class Tour(BaseModel):
     def delete_model(self, ws_message):
         if self.finalized:
             raise ApiError("errors.tour.delete_finalized")
+        if len(self.competition_plan_entries) > 0:
+            raise ApiError("errors.tour.delete_in_competition_plan")
         # We don't actually delete the tour. Just removing it from linked list.
         discipline = self.discipline
         prev_tour = self.get_prev_tour()
