@@ -8,6 +8,7 @@
 
 {% block styles %}
   <link rel="stylesheet" href="/static/css/tablet.css">
+  <link rel="stylesheet" href="/static/css/tour_results.css">
 {% end %}
 
 {% block scripts %}
@@ -15,6 +16,8 @@
   <script src="/static/js/tablet.js"></script>
   <script src="/static/js/scoring_systems/rosfarr/base.js"></script>
   <script src="/static/js/scoring_systems/rosfarr/tablet.js"></script>
+  <script src="/static/js/scoring_systems/rosfarr/no_acro/tour_results.js"></script>
+  <script src="/static/js/admin/judging/results.js"></script>
   <script>
     ReactDOM.render(
       React.createElement(JudgeTablet, {

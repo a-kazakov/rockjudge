@@ -29,7 +29,7 @@
   font-weight: bold;
 }
 .tour-results .bordered-table {
-  width: 750px;
+  width: 100%;
 }
 .tour-results .bordered-table td.participant,
 .tour-results .bordered-table td.club {

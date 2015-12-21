@@ -39,7 +39,7 @@ var JudgeTablet = (function (_React$Component) {
             judge: null,
             discipline_judge: null,
             current_heat: 1,
-            page: "dance"
+            page: "default"
         };
         _this.active_tour_id = null;
         message_dispatcher.addListener("db_update", _this.reloadFromStorage.bind(_this, false));
@@ -83,6 +83,7 @@ var JudgeTablet = (function (_React$Component) {
                             var discipline_judge_id = discipline_judge && discipline_judge.id;
                             state_upd["current_heat"] = this.getFirstNonConfirmedHeat(tour.runs, discipline_judge_id) || 1;
                         }
+                        state_upd["page"] = "default";
                     }
                 }
             }
@@ -166,6 +167,68 @@ var JudgeTablet = (function (_React$Component) {
                 page: page
             });
         }
+    }, {
+        key: "stopTour",
+        value: function stopTour() {
+            var _this2 = this;
+
+            swal_confirm(_("tablet.confirms.stop_tour"), function () {
+                if (_this2.state.tour) {
+                    Api("tour.stop", { tour_id: _this2.state.tour.id }).onSuccess(function () {
+                        return swal.close();
+                    }).send();
+                }
+            });
+        }
+    }, {
+        key: "finalizeTour",
+        value: function finalizeTour() {
+            var _this3 = this;
+
+            swal_confirm(_("tablet.confirms.finalize_tour"), function () {
+                if (_this3.state.tour) {
+                    Api("tour.finalize", { tour_id: _this3.state.tour.id }).onSuccess(function () {
+                        return swal.close();
+                    }).send();
+                }
+            });
+        }
+    }, {
+        key: "stopTourAndStartNext",
+        value: function stopTourAndStartNext() {
+            var _this4 = this;
+
+            swal_confirm(_("tablet.confirms.stop_tour_and_start_next"), function () {
+                if (_this4.state.tour) {
+                    (function () {
+                        var tour_id = _this4.state.tour.id;
+                        Api("tour.stop", { tour_id: tour_id }).onSuccess(function () {
+                            Api("tour.start_next_after", { tour_id: tour_id }).onSuccess(function () {
+                                return swal.close();
+                            }).send();
+                        }).send();
+                    })();
+                }
+            });
+        }
+    }, {
+        key: "finalizeTourAndStartNext",
+        value: function finalizeTourAndStartNext() {
+            var _this5 = this;
+
+            swal_confirm(_("tablet.confirms.finalize_tour_and_start_next"), function () {
+                if (_this5.state.tour) {
+                    (function () {
+                        var tour_id = _this5.state.tour.id;
+                        Api("tour.finalize", { tour_id: tour_id }).onSuccess(function () {
+                            Api("tour.start_next_after", { tour_id: tour_id }).onSuccess(function () {
+                                return swal.close();
+                            }).send();
+                        }).send();
+                    })();
+                }
+            });
+        }
 
         // Helpers
 
@@ -198,25 +261,84 @@ var JudgeTablet = (function (_React$Component) {
         // Rendering
 
     }, {
+        key: "renderResults",
+        value: function renderResults() {
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(TourResultsBody, { tour_id: this.state.tour.id, verbosity: "2" })
+            );
+        }
+    }, {
+        key: "renderActions",
+        value: function renderActions() {
+            return React.createElement(
+                "div",
+                { className: "head-judge-actions" },
+                React.createElement(
+                    "div",
+                    { className: "item" },
+                    React.createElement(
+                        "button",
+                        _extends({ className: "tbtn btn-primary", type: "button"
+                        }, onTouchOrClick(this.stopTour.bind(this))),
+                        _("tablet.buttons.stop_tour")
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "item" },
+                    React.createElement(
+                        "button",
+                        _extends({ className: "tbtn btn-primary", type: "button"
+                        }, onTouchOrClick(this.finalizeTour.bind(this))),
+                        _("tablet.buttons.finalize_tour")
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "item" },
+                    React.createElement(
+                        "button",
+                        _extends({ className: "tbtn btn-primary", type: "button"
+                        }, onTouchOrClick(this.stopTourAndStartNext.bind(this))),
+                        _("tablet.buttons.stop_tour_and_start_next")
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "item" },
+                    React.createElement(
+                        "button",
+                        _extends({ className: "tbtn btn-primary", type: "button"
+                        }, onTouchOrClick(this.finalizeTourAndStartNext.bind(this))),
+                        _("tablet.buttons.finalize_tour_and_start_next")
+                    )
+                )
+            );
+        }
+    }, {
         key: "renderHeader",
         value: function renderHeader() {
             var btn_prev = null;
             var btn_next = null;
             var judge = this.state.judge;
             var judge_number = judge.role_description || _("global.phrases.judge_n", judge.number);
-            if (this.state.current_heat > 1) {
-                btn_prev = React.createElement(
-                    "button",
-                    _extends({ className: "btn btn-primary pull-left" }, onTouchOrClick(this.toPrevHeat.bind(this))),
-                    _("tablet.buttons.prev_heat")
-                );
-            }
-            if (this.state.current_heat < this.getHeatsCount() && (this.state.discipline_judge.role == "head_judge" || this.getFirstNonConfirmedHeat() > this.state.current_heat)) {
-                btn_next = React.createElement(
-                    "button",
-                    _extends({ className: "btn btn-primary pull-right" }, onTouchOrClick(this.toNextHeat.bind(this))),
-                    _("tablet.buttons.next_heat")
-                );
+            if (this.state.page !== "results" && this.state.page !== "actions") {
+                if (this.state.current_heat > 1) {
+                    btn_prev = React.createElement(
+                        "button",
+                        _extends({ className: "btn btn-primary pull-left" }, onTouchOrClick(this.toPrevHeat.bind(this))),
+                        _("tablet.buttons.prev_heat")
+                    );
+                }
+                if (this.state.current_heat < this.getHeatsCount() && (this.state.discipline_judge.role == "head_judge" || this.getFirstNonConfirmedHeat() > this.state.current_heat)) {
+                    btn_next = React.createElement(
+                        "button",
+                        _extends({ className: "btn btn-primary pull-right" }, onTouchOrClick(this.toNextHeat.bind(this))),
+                        _("tablet.buttons.next_heat")
+                    );
+                }
             }
             var current_tour = React.createElement(
                 "div",
@@ -337,6 +459,12 @@ var JudgeTablet = (function (_React$Component) {
     }, {
         key: "renderScoringLayout",
         value: function renderScoringLayout() {
+            if (this.state.page == "results") {
+                return this.renderResults();
+            }
+            if (this.state.page == "actions") {
+                return this.renderActions();
+            }
             var cells = this.state.tour.runs.filter((function (run) {
                 return run.heat == this.state.current_heat;
             }).bind(this)).map((function (run) {
@@ -385,7 +513,7 @@ var JudgeTablet = (function (_React$Component) {
             }).bind(this));
             var single_run_class = cells.length == 1 ? " single-run" : "";
             if (cells.length > 3) {
-                var _ret = (function () {
+                var _ret3 = (function () {
                     var first_row = [];
                     var second_row = [];
                     cells.forEach(function (cell, idx) {
@@ -439,7 +567,7 @@ var JudgeTablet = (function (_React$Component) {
                     };
                 })();
 
-                if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
+                if ((typeof _ret3 === "undefined" ? "undefined" : _typeof(_ret3)) === "object") return _ret3.v;
             }
             return React.createElement(
                 "table",
@@ -461,6 +589,38 @@ var JudgeTablet = (function (_React$Component) {
             if (this.state.discipline_judge === null) {
                 return null;
             }
+            if (this.state.discipline_judge.role == "head_judge") {
+                return React.createElement(
+                    "div",
+                    { className: "footer page-selector" },
+                    React.createElement(
+                        "h3",
+                        null,
+                        _("tablet.headers.select_page")
+                    ),
+                    React.createElement(
+                        "button",
+                        _extends({
+                            className: "btn" + (this.state.page == "default" ? " active" : "")
+                        }, onTouchOrClick(this.switchPage.bind(this, "default"))),
+                        _("tablet.pages.heats")
+                    ),
+                    React.createElement(
+                        "button",
+                        _extends({
+                            className: "btn" + (this.state.page == "results" ? " active" : "")
+                        }, onTouchOrClick(this.switchPage.bind(this, "results"))),
+                        _("tablet.pages.results")
+                    ),
+                    React.createElement(
+                        "button",
+                        _extends({
+                            className: "btn" + (this.state.page == "actions" ? " active" : "")
+                        }, onTouchOrClick(this.switchPage.bind(this, "actions"))),
+                        _("tablet.pages.actions")
+                    )
+                );
+            }
             if (this.state.discipline_judge.role != "tech_judge" || this.state.tour.scoring_system_name != "rosfarr.acro" && this.state.tour.scoring_system_name != "rosfarr.am_final_acro") {
                 return null;
             }
@@ -475,8 +635,8 @@ var JudgeTablet = (function (_React$Component) {
                 React.createElement(
                     "button",
                     _extends({
-                        className: "btn" + (this.state.page == "dance" ? " active" : "")
-                    }, onTouchOrClick(this.switchPage.bind(this, "dance"))),
+                        className: "btn" + (this.state.page == "default" ? " active" : "")
+                    }, onTouchOrClick(this.switchPage.bind(this, "default"))),
                     _("tablet.pages.dance")
                 ),
                 React.createElement(

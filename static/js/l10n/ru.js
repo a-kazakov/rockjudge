@@ -179,6 +179,8 @@ function _(src, arg) {
                 "init_finailzed": "Невозможно пересоздать финализированный тур",
                 "invalid_add_after_id": "Попытка добаить тур в несуществующее место",
                 "next_is_finailzed": "Следующий тур не должен быть финализирован",
+                "no_next_tour": "Данный тур последний в программе соревнований",
+                "not_in_competition_plan": "Данный тур не содержится в программе соревнований",
                 "prev_not_finailzed": "Предыдущий тур должен быть финализирован",
                 "start_finalized": "Невозможно запустить финализированный тур",
                 "update_finalized": "Для финализированного тура не допускается изменение квоты вывода, типа тура или системы судейства"
@@ -394,6 +396,8 @@ function _(src, arg) {
         },
         "tablet": {
             "buttons": {
+                "finalize_tour": "Финализировать тур",
+                "finalize_tour_and_start_next": "Финализировать тур и перейти к следующему",
                 "next_heat": "След. заход",
                 "not_performed": "Невыход на площадку",
                 "performed": "Отмена невыхода на площадку",
@@ -401,7 +405,15 @@ function _(src, arg) {
                 "reset_stopwatch": "Сброс",
                 "start_stopwatch": "Старт",
                 "stop_stopwatch": "Стоп",
+                "stop_tour": "Завершить тур",
+                "stop_tour_and_start_next": "Перейти к следующему туру",
                 "to_start_page": "На главную"
+            },
+            "confirms": {
+                "finalize_tour": "Вы действительно хотите финализировать этот тур?",
+                "finalize_tour_and_start_next": "Вы действительно хотите финализировать этот тур и перейти к следующему туру?",
+                "stop_tour": "Вы действительно хотите остановить этот тур?",
+                "stop_tour_and_start_next": "Вы действительно хотите перейти к следующему туру?"
             },
             "headers": {
                 "acro_n": function acro_n(n) {
@@ -418,8 +430,11 @@ function _(src, arg) {
                 "not_performing": "Не выступает"
             },
             "pages": {
+                "acrobatics": "Акробатика",
+                "actions": "Действия",
                 "dance": "Танец",
-                "acrobatics": "Акробатика"
+                "heats": "Заходы",
+                "results": "Результаты"
             }
         },
 

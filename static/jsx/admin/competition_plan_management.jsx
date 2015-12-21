@@ -98,7 +98,7 @@ class CompetitionPlanItemEditorRow extends React.Component {
                                     defaultValue={ this.props.item.tour_id || "" }>
                                         <option value="">----------</option>
                                         { this.props.tours.map((tour) =>
-                                            <option value={ tour.id }>{ tour.name }</option>
+                                            <option value={ tour.id } key={ tour.id }>{ tour.name }</option>
                                         ) }
                                 </select>
                             </label>

@@ -18,7 +18,7 @@ class JudgeTablet extends React.Component {
             judge: null,
             discipline_judge: null,
             current_heat: 1,
-            page: "dance",
+            page: "default",
         };
         this.active_tour_id = null;
         message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this, false));
@@ -59,6 +59,7 @@ class JudgeTablet extends React.Component {
                         let discipline_judge_id = discipline_judge && discipline_judge.id;
                         state_upd["current_heat"] = this.getFirstNonConfirmedHeat(tour.runs, discipline_judge_id) || 1;
                     }
+                    state_upd["page"] = "default";
                 }
             }
         }
@@ -135,6 +136,40 @@ class JudgeTablet extends React.Component {
             page: page,
         });
     }
+    stopTour() {
+        swal_confirm(_("tablet.confirms.stop_tour"), () => {
+            if (this.state.tour) {
+                Api("tour.stop", { tour_id: this.state.tour.id }).onSuccess(() => swal.close()).send();
+            }
+        });
+    }
+    finalizeTour() {
+        swal_confirm(_("tablet.confirms.finalize_tour"), () => {
+            if (this.state.tour) {
+                Api("tour.finalize", { tour_id: this.state.tour.id }).onSuccess(() => swal.close()).send();
+            }
+        });
+    }
+    stopTourAndStartNext() {
+        swal_confirm(_("tablet.confirms.stop_tour_and_start_next"), () => {
+            if (this.state.tour) {
+                let tour_id = this.state.tour.id;
+                Api("tour.stop", { tour_id }).onSuccess(() => {
+                    Api("tour.start_next_after", { tour_id }).onSuccess(() => swal.close()).send();
+                }).send();
+            }
+        });
+    }
+    finalizeTourAndStartNext() {
+        swal_confirm(_("tablet.confirms.finalize_tour_and_start_next"), () => {
+            if (this.state.tour) {
+                let tour_id = this.state.tour.id;
+                Api("tour.finalize", { tour_id }).onSuccess(() => {
+                    Api("tour.start_next_after", { tour_id }).onSuccess(() => swal.close()).send();
+                }).send();
+            }
+        });
+    }
 
     // Helpers
 
@@ -158,24 +193,59 @@ class JudgeTablet extends React.Component {
 
     // Rendering
 
+    renderResults() {
+        return <div>
+            <TourResultsBody tour_id={ this.state.tour.id } verbosity="2" />
+        </div>
+    }
+    renderActions() {
+        return <div className="head-judge-actions">
+            <div className="item">
+                <button className="tbtn btn-primary" type="button"
+                        {...onTouchOrClick(this.stopTour.bind(this))}>
+                    { _("tablet.buttons.stop_tour") }
+                </button>
+            </div>
+            <div className="item">
+                <button className="tbtn btn-primary" type="button"
+                        {...onTouchOrClick(this.finalizeTour.bind(this))}>
+                    { _("tablet.buttons.finalize_tour") }
+                </button>
+            </div>
+            <div className="item">
+                <button className="tbtn btn-primary" type="button"
+                        {...onTouchOrClick(this.stopTourAndStartNext.bind(this))}>
+                    { _("tablet.buttons.stop_tour_and_start_next") }
+                </button>
+            </div>
+            <div className="item">
+                <button className="tbtn btn-primary" type="button"
+                         {...onTouchOrClick(this.finalizeTourAndStartNext.bind(this))}>
+                    { _("tablet.buttons.finalize_tour_and_start_next") }
+                </button>
+            </div>
+        </div>
+    }
     renderHeader() {
-        var btn_prev = null;
-        var btn_next = null;
+        let btn_prev = null;
+        let btn_next = null;
         let judge = this.state.judge;
         let judge_number = judge.role_description || _("global.phrases.judge_n", judge.number);
-        if (this.state.current_heat > 1) {
-            btn_prev = <button className="btn btn-primary pull-left" {...onTouchOrClick(this.toPrevHeat.bind(this))}>
-                { _("tablet.buttons.prev_heat") }
-            </button>;
+        if (this.state.page !== "results" && this.state.page !== "actions") {
+            if (this.state.current_heat > 1) {
+                btn_prev = <button className="btn btn-primary pull-left" {...onTouchOrClick(this.toPrevHeat.bind(this))}>
+                    { _("tablet.buttons.prev_heat") }
+                </button>;
+            }
+            if (this.state.current_heat < this.getHeatsCount() && (
+                    this.state.discipline_judge.role == "head_judge"
+                    || this.getFirstNonConfirmedHeat() > this.state.current_heat)) {
+                btn_next = <button className="btn btn-primary pull-right" {...onTouchOrClick(this.toNextHeat.bind(this))}>
+                    { _("tablet.buttons.next_heat") }
+                </button>;
+            }
         }
-        if (this.state.current_heat < this.getHeatsCount() && (
-                this.state.discipline_judge.role == "head_judge"
-                || this.getFirstNonConfirmedHeat() > this.state.current_heat)) {
-            btn_next = <button className="btn btn-primary pull-right" {...onTouchOrClick(this.toNextHeat.bind(this))}>
-                { _("tablet.buttons.next_heat") }
-            </button>;
-        }
-        var current_tour = <div className="header">
+        let current_tour = <div className="header">
             <table className="full-width"><tbody><tr>
                 <td>
                     <h1>{ judge_number }</h1>
@@ -219,6 +289,12 @@ class JudgeTablet extends React.Component {
         </div>;
     }
     renderScoringLayout() {
+        if (this.state.page == "results") {
+            return this.renderResults();
+        }
+        if (this.state.page == "actions") {
+            return this.renderActions();
+        }
         let cells = this.state.tour.runs
             .filter(function(run) {
                 return run.heat == this.state.current_heat;
@@ -286,17 +362,33 @@ class JudgeTablet extends React.Component {
         if (this.state.discipline_judge === null) {
             return null;
         }
+        if (this.state.discipline_judge.role == "head_judge") {
+            return <div className="footer page-selector">
+                <h3>{ _("tablet.headers.select_page") }</h3>
+                <button
+                    className={ "btn" + (this.state.page == "default" ? " active" : "") }
+                    {...onTouchOrClick(this.switchPage.bind(this, "default"))}>{ _("tablet.pages.heats") }
+                </button>
+                <button
+                    className={ "btn" + (this.state.page == "results" ? " active" : "") }
+                    {...onTouchOrClick(this.switchPage.bind(this, "results"))}>{ _("tablet.pages.results") }
+                </button>
+                <button
+                    className={ "btn" + (this.state.page == "actions" ? " active" : "") }
+                    {...onTouchOrClick(this.switchPage.bind(this, "actions"))}>{ _("tablet.pages.actions") }
+                </button>
+            </div>;
+        }
         if (this.state.discipline_judge.role != "tech_judge" || (
                 this.state.tour.scoring_system_name != "rosfarr.acro" &&
-                    this.state.tour.scoring_system_name != "rosfarr.am_final_acro")
-        ) {
+                    this.state.tour.scoring_system_name != "rosfarr.am_final_acro")) {
             return null;
         }
         return <div className="footer page-selector">
             <h3>{ _("tablet.headers.select_page") }</h3>
             <button
-                className={ "btn" + (this.state.page == "dance" ? " active" : "") }
-                {...onTouchOrClick(this.switchPage.bind(this, "dance"))}>{ _("tablet.pages.dance") }
+                className={ "btn" + (this.state.page == "default" ? " active" : "") }
+                {...onTouchOrClick(this.switchPage.bind(this, "default"))}>{ _("tablet.pages.dance") }
             </button>
             <button
                 className={ "btn" + (this.state.page == "acro" ? " active" : "") }

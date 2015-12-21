@@ -37,7 +37,7 @@ class HeadJudgeActobaticOverrides extends React.Component {
     }
 }
 
-class HeadJudgePreviousPenlties extends React.Component {
+class HeadJudgePreviousPenalties extends React.Component {
     render() {
         if (!this.props.penalties || this.props.penalties.length == 0) {
             return null;
@@ -202,7 +202,7 @@ class HeadJudgeScoreInput extends React.Component {
                 all_scores={ this.props.all_scores } />
             <HeadJudgeActobaticOverrides
                 acrobatics={ this.props.run.acrobatics } />
-            <HeadJudgePreviousPenlties
+            <HeadJudgePreviousPenalties
                 penalties={ this.props.run.inherited_data.penalties } />
             <HeadJudgeNotPerformedSwitch
                 run_id={ this.props.run.id }

@@ -354,6 +354,29 @@ class Api:
         return {}
 
     @classmethod
+    def tour_start_next_after(cls, request, ws_message):
+        tour_id = request["tour_id"]
+        try:
+            current_competition_plan_item = \
+                (CompetitionPlanItem.select()
+                    .where(CompetitionPlanItem.tour == tour_id)
+                    .get())
+        except CompetitionPlanItem.DoesNotExist:
+            raise ApiError("errors.tour.not_in_competition_plan")
+        try:
+            next_competition_plan_item = \
+                (CompetitionPlanItem.select()
+                    .where(
+                        (CompetitionPlanItem.sp > current_competition_plan_item.sp) &
+                        ~(CompetitionPlanItem.tour >> None))
+                    .order_by(CompetitionPlanItem.sp.asc())
+                    .get())
+        except CompetitionPlanItem.DoesNotExist:
+            raise ApiError("errors.tour.no_next_tour")
+        next_competition_plan_item.tour.start(ws_message=ws_message)
+        return {}
+
+    @classmethod
     def tour_stop(cls, request, ws_message):
         tour = cls.get_model(Tour, "tour_id", request)
         tour.stop(ws_message=ws_message)

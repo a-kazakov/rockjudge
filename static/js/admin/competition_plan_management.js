@@ -260,7 +260,7 @@ var CompetitionPlanItemEditorRow = (function (_React$Component3) {
                                         this.props.tours.map(function (tour) {
                                             return React.createElement(
                                                 "option",
-                                                { value: tour.id },
+                                                { value: tour.id, key: tour.id },
                                                 tour.name
                                             );
                                         })

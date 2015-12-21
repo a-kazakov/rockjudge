@@ -102,16 +102,16 @@ var HeadJudgeActobaticOverrides = (function (_React$Component) {
     return HeadJudgeActobaticOverrides;
 })(React.Component);
 
-var HeadJudgePreviousPenlties = (function (_React$Component2) {
-    _inherits(HeadJudgePreviousPenlties, _React$Component2);
+var HeadJudgePreviousPenalties = (function (_React$Component2) {
+    _inherits(HeadJudgePreviousPenalties, _React$Component2);
 
-    function HeadJudgePreviousPenlties() {
-        _classCallCheck(this, HeadJudgePreviousPenlties);
+    function HeadJudgePreviousPenalties() {
+        _classCallCheck(this, HeadJudgePreviousPenalties);
 
-        return _possibleConstructorReturn(this, Object.getPrototypeOf(HeadJudgePreviousPenlties).apply(this, arguments));
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(HeadJudgePreviousPenalties).apply(this, arguments));
     }
 
-    _createClass(HeadJudgePreviousPenlties, [{
+    _createClass(HeadJudgePreviousPenalties, [{
         key: "render",
         value: function render() {
             if (!this.props.penalties || this.props.penalties.length == 0) {
@@ -159,7 +159,7 @@ var HeadJudgePreviousPenlties = (function (_React$Component2) {
         }
     }]);
 
-    return HeadJudgePreviousPenlties;
+    return HeadJudgePreviousPenalties;
 })(React.Component);
 
 var HeadJudgeTechJudgeScore = (function (_React$Component3) {
@@ -468,7 +468,7 @@ var HeadJudgeScoreInput = (function (_React$Component8) {
                     all_scores: this.props.all_scores }),
                 React.createElement(HeadJudgeActobaticOverrides, {
                     acrobatics: this.props.run.acrobatics }),
-                React.createElement(HeadJudgePreviousPenlties, {
+                React.createElement(HeadJudgePreviousPenalties, {
                     penalties: this.props.run.inherited_data.penalties }),
                 React.createElement(HeadJudgeNotPerformedSwitch, {
                     run_id: this.props.run.id,
