@@ -276,49 +276,45 @@ var JudgeTablet = (function (_React$Component) {
         value: function renderActions() {
             return React.createElement(
                 "div",
-                { className: "body" },
+                { className: "body actions" },
                 React.createElement(
                     "div",
-                    { className: "actions" },
+                    { className: "item" },
                     React.createElement(
-                        "div",
-                        { className: "item" },
-                        React.createElement(
-                            "button",
-                            _extends({ className: "tbtn btn-primary", type: "button"
-                            }, onTouchOrClick(this.stopTour.bind(this))),
-                            _("tablet.buttons.stop_tour")
-                        )
-                    ),
+                        "button",
+                        _extends({ className: "tbtn btn-primary", type: "button"
+                        }, onTouchOrClick(this.stopTour.bind(this))),
+                        _("tablet.buttons.stop_tour")
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "item" },
                     React.createElement(
-                        "div",
-                        { className: "item" },
-                        React.createElement(
-                            "button",
-                            _extends({ className: "tbtn btn-primary", type: "button"
-                            }, onTouchOrClick(this.finalizeTour.bind(this))),
-                            _("tablet.buttons.finalize_tour")
-                        )
-                    ),
+                        "button",
+                        _extends({ className: "tbtn btn-primary", type: "button"
+                        }, onTouchOrClick(this.finalizeTour.bind(this))),
+                        _("tablet.buttons.finalize_tour")
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "item" },
                     React.createElement(
-                        "div",
-                        { className: "item" },
-                        React.createElement(
-                            "button",
-                            _extends({ className: "tbtn btn-primary", type: "button"
-                            }, onTouchOrClick(this.stopTourAndStartNext.bind(this))),
-                            _("tablet.buttons.stop_tour_and_start_next")
-                        )
-                    ),
+                        "button",
+                        _extends({ className: "tbtn btn-primary", type: "button"
+                        }, onTouchOrClick(this.stopTourAndStartNext.bind(this))),
+                        _("tablet.buttons.stop_tour_and_start_next")
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "item" },
                     React.createElement(
-                        "div",
-                        { className: "item" },
-                        React.createElement(
-                            "button",
-                            _extends({ className: "tbtn btn-primary", type: "button"
-                            }, onTouchOrClick(this.finalizeTourAndStartNext.bind(this))),
-                            _("tablet.buttons.finalize_tour_and_start_next")
-                        )
+                        "button",
+                        _extends({ className: "tbtn btn-primary", type: "button"
+                        }, onTouchOrClick(this.finalizeTourAndStartNext.bind(this))),
+                        _("tablet.buttons.finalize_tour_and_start_next")
                     )
                 )
             );

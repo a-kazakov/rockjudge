@@ -201,32 +201,30 @@ class JudgeTablet extends React.Component {
         </div>
     }
     renderActions() {
-        return <div className="body">
-            <div className="actions">
-                <div className="item">
-                    <button className="tbtn btn-primary" type="button"
-                            {...onTouchOrClick(this.stopTour.bind(this))}>
-                        { _("tablet.buttons.stop_tour") }
-                    </button>
-                </div>
-                <div className="item">
-                    <button className="tbtn btn-primary" type="button"
-                            {...onTouchOrClick(this.finalizeTour.bind(this))}>
-                        { _("tablet.buttons.finalize_tour") }
-                    </button>
-                </div>
-                <div className="item">
-                    <button className="tbtn btn-primary" type="button"
-                            {...onTouchOrClick(this.stopTourAndStartNext.bind(this))}>
-                        { _("tablet.buttons.stop_tour_and_start_next") }
-                    </button>
-                </div>
-                <div className="item">
-                    <button className="tbtn btn-primary" type="button"
-                             {...onTouchOrClick(this.finalizeTourAndStartNext.bind(this))}>
-                        { _("tablet.buttons.finalize_tour_and_start_next") }
-                    </button>
-                </div>
+        return <div className="body actions">
+            <div className="item">
+                <button className="tbtn btn-primary" type="button"
+                        {...onTouchOrClick(this.stopTour.bind(this))}>
+                    { _("tablet.buttons.stop_tour") }
+                </button>
+            </div>
+            <div className="item">
+                <button className="tbtn btn-primary" type="button"
+                        {...onTouchOrClick(this.finalizeTour.bind(this))}>
+                    { _("tablet.buttons.finalize_tour") }
+                </button>
+            </div>
+            <div className="item">
+                <button className="tbtn btn-primary" type="button"
+                        {...onTouchOrClick(this.stopTourAndStartNext.bind(this))}>
+                    { _("tablet.buttons.stop_tour_and_start_next") }
+                </button>
+            </div>
+            <div className="item">
+                <button className="tbtn btn-primary" type="button"
+                         {...onTouchOrClick(this.finalizeTourAndStartNext.bind(this))}>
+                    { _("tablet.buttons.finalize_tour_and_start_next") }
+                </button>
             </div>
         </div>
     }

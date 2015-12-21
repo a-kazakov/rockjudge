@@ -50,7 +50,8 @@ html, body {
         font-size: 18px;
         .info {
             padding: 20px;
-            overflow: auto;
+            overflow: scroll;
+            -webkit-overflow-scrolling: touch;
             flex-grow: 1;
             h2 {
                 text-align: center;
@@ -146,7 +147,8 @@ html, body {
             }
             .discipline-results {
                 flex-grow: 1;
-                overflow: auto;
+                overflow: scroll;
+                -webkit-overflow-scrolling: touch;
                 .tour-name, .row {
                     width: 90%;
                     margin: 5px auto;
