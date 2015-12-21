@@ -1,24 +1,25 @@
 class PrintableCompetitionPlanRow extends React.Component {
     renderName() {
         if (this.props.item.verbose_name) {
-            return <p><strong>{ this.props.item.verbose_name }</strong></p>
+            return <td colSpan="2"><p><strong>{ this.props.item.verbose_name }</strong></p></td>
         }
         if (this.props.item.tour_id) {
             let result = "";
             this.props.tours.forEach((tour) => {
                 if (tour.id == this.props.item.tour_id) {
-                    result = tour.name;
+                    result = tour;
                 }
             })
-            return <p>{ result }</p>;
+            return [<td key="D"><p>{ result.discipline_name }</p></td>,
+                    <td key="T"><p className="text-center">{ result.tour_name }</p></td>];
         }
-        return <p></p>
+        return <td colSpan="2"><p></p></td>
     }
     render() {
         return <tr>
-            <td><p>{ this.props.item.estimated_beginning }</p></td>
-            <td>{ this.renderName() }</td>
-            <td><p>{ this.props.item.estimated_duration }</p></td>
+            <td><p className="text-center">{ this.props.item.estimated_beginning || <span>&nbsp;</span> }</p></td>
+            { this.renderName() }
+            <td><p className="text-center">{ this.props.item.estimated_duration || <span>&nbsp;</span> }</p></td>
         </tr>
     }
 }
@@ -30,7 +31,8 @@ class PrintableCompetitionPlan extends React.Component {
                 <thead>
                     <tr>
                         <th><p>{ _("models.competition_plan_item.estimated_beginning") }</p></th>
-                        <th><p>{ _("models.competition_plan_item.name") }</p></th>
+                        <th><p>{ _("models.competition_plan_item.discipline") }</p></th>
+                        <th><p>{ _("models.competition_plan_item.tour") }</p></th>
                         <th><p>{ _("models.competition_plan_item.estimated_duration") }</p></th>
                     </tr>
                 </thead>
@@ -258,6 +260,8 @@ class CompetitionPlanManagementUI extends React.Component {
                 result.push({
                     id: tour.id,
                     name: `${discipline.name} — ${tour.name}`,
+                    discipline_name: discipline.name,
+                    tour_name: tour.name,
                 })
             )
         )

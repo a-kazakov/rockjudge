@@ -26,12 +26,16 @@ var PrintableCompetitionPlanRow = (function (_React$Component) {
 
             if (this.props.item.verbose_name) {
                 return React.createElement(
-                    "p",
-                    null,
+                    "td",
+                    { colSpan: "2" },
                     React.createElement(
-                        "strong",
+                        "p",
                         null,
-                        this.props.item.verbose_name
+                        React.createElement(
+                            "strong",
+                            null,
+                            this.props.item.verbose_name
+                        )
                     )
                 );
             }
@@ -39,16 +43,32 @@ var PrintableCompetitionPlanRow = (function (_React$Component) {
                 var result = "";
                 this.props.tours.forEach(function (tour) {
                     if (tour.id == _this2.props.item.tour_id) {
-                        result = tour.name;
+                        result = tour;
                     }
                 });
-                return React.createElement(
-                    "p",
-                    null,
-                    result
-                );
+                return [React.createElement(
+                    "td",
+                    { key: "D" },
+                    React.createElement(
+                        "p",
+                        null,
+                        result.discipline_name
+                    )
+                ), React.createElement(
+                    "td",
+                    { key: "T" },
+                    React.createElement(
+                        "p",
+                        { className: "text-center" },
+                        result.tour_name
+                    )
+                )];
             }
-            return React.createElement("p", null);
+            return React.createElement(
+                "td",
+                { colSpan: "2" },
+                React.createElement("p", null)
+            );
         }
     }, {
         key: "render",
@@ -61,22 +81,26 @@ var PrintableCompetitionPlanRow = (function (_React$Component) {
                     null,
                     React.createElement(
                         "p",
-                        null,
-                        this.props.item.estimated_beginning
+                        { className: "text-center" },
+                        this.props.item.estimated_beginning || React.createElement(
+                            "span",
+                            null,
+                            " "
+                        )
                     )
                 ),
-                React.createElement(
-                    "td",
-                    null,
-                    this.renderName()
-                ),
+                this.renderName(),
                 React.createElement(
                     "td",
                     null,
                     React.createElement(
                         "p",
-                        null,
-                        this.props.item.estimated_duration
+                        { className: "text-center" },
+                        this.props.item.estimated_duration || React.createElement(
+                            "span",
+                            null,
+                            " "
+                        )
                     )
                 )
             );
@@ -127,7 +151,16 @@ var PrintableCompetitionPlan = (function (_React$Component2) {
                                 React.createElement(
                                     "p",
                                     null,
-                                    _("models.competition_plan_item.name")
+                                    _("models.competition_plan_item.discipline")
+                                )
+                            ),
+                            React.createElement(
+                                "th",
+                                null,
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    _("models.competition_plan_item.tour")
                                 )
                             ),
                             React.createElement(
@@ -533,7 +566,9 @@ var CompetitionPlanManagementUI = (function (_React$Component6) {
                 return discipline.tours.forEach(function (tour) {
                     return result.push({
                         id: tour.id,
-                        name: discipline.name + " — " + tour.name
+                        name: discipline.name + " — " + tour.name,
+                        discipline_name: discipline.name,
+                        tour_name: tour.name
                     });
                 });
             });

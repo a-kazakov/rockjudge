@@ -246,6 +246,7 @@ function _(src, arg) {
                 "name": "Название",
             },
             "competition_plan_item": {
+                "discipline": "Дисциплина",
                 "estimated_beginning": "Начало",
                 "estimated_duration": "Длительность",
                 "name": "Название",
