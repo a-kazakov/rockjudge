@@ -581,6 +581,7 @@ var AdminUI = (function (_React$Component4) {
             switch (this.state.active_app) {
                 case "judging":
                     return React.createElement(JudgingUI, {
+                        competition_plan: this.state.plan,
                         disciplines: this.state.disciplines });
                 case "management":
                     return React.createElement(ManagementUI, {

@@ -67,7 +67,9 @@ var MessageDispatcher = (function () {
                 (function () {
                     var listeners = _this.listeners["db_update"] || {};
                     Object.keys(listeners).forEach(function (key) {
-                        return listeners[key]();
+                        if (listeners[key]) {
+                            listeners[key]();
+                        }
                     });
                 })();
             }

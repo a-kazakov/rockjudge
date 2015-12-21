@@ -40,6 +40,8 @@ function _(src, arg) {
                 "import": "Импортировать",
                 "refresh_clients": "Перезагрузить все устройства",
                 "reload_clients": "Обновить данные на всех устройствах",
+                "switch_to_plan": "Сортирока по программе",
+                "switch_to_disciplines": "Сортирока по дисциплинам",
                 "to_start_page": "На главную",
                 "unconfirm_score": "Отмена фиксации",
                 "unfinalize": "Отменить финализацию",

@@ -1,15 +1,31 @@
 class CompetitionSchema extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            sort_by_plan: !!parseInt(sessionStorage["sort_by_plan"]),
+        };
     }
     activateTour(tour) {
         this.props.updateTour(tour.id);
     }
-    renderTour(tour) {
+    switchToPlan() {
+        this.setState({
+            sort_by_plan: true,
+        });
+        sessionStorage["sort_by_plan"] = "1";
+    }
+    switchToDisciplines() {
+        this.setState({
+            sort_by_plan: false,
+        });
+        sessionStorage["sort_by_plan"] = "0";
+    }
+    renderTour(tour, discipline_name=null) {
         var className = "level-2" +
             (tour.finalized ? " grey" : "") +
             (tour.id == this.props.current_tour_id ? " active" : "");
         return <div className={ className } onClick={ this.activateTour.bind(this, tour) } key={ tour.id } >
+            { discipline_name ? <small><strong>{ discipline_name }</strong><br /></small> : null}
             { tour.name }
         </div>
     }
@@ -18,14 +34,47 @@ class CompetitionSchema extends React.Component {
             <summary className="level-1" onClick={ (e) => sessionStorage.setItem("D_J_" + ic.id, e.target.parentNode.open ? 0 : 1) }>
                 { ic.name }
             </summary>
-            { ic.tours.map(this.renderTour.bind(this)) }
+            { ic.tours.map((tour) => this.renderTour(tour)) }
         </details>
     }
-    render() {
+    renderByDiscipline() {
         var data = this.props.disciplines.map(function(ic) {
             return this.renderDiscipline(ic);
         }.bind(this));
         return <div className="noselect">{ data }</div>;
+    }
+    renderByPlan() {
+        let tours = {};
+        this.props.disciplines.forEach((discipline) =>
+            discipline.tours.forEach((tour) => tours[tour.id] = {
+                tour: tour,
+                discipline_name: discipline.name,
+            })
+        )
+        let result = this.props.competition_plan.filter((item) => item.tour_id !== null).map((item) =>
+            this.renderTour(tours[item.tour_id].tour, tours[item.tour_id].discipline_name)
+        );
+        return <div>{ result }</div>;
+    }
+    renderList() {
+        return <div>
+            { this.state.sort_by_plan ? this.renderByPlan() : this.renderByDiscipline() }
+        </div>
+    }
+    renderButton() {
+        return this.state.sort_by_plan
+            ? <button className="btn btn-default btn-sm full-width" onClick={ this.switchToDisciplines.bind(this) }>
+                { _("admin.buttons.switch_to_disciplines") }
+            </button>
+            : <button className="btn btn-default btn-sm full-width" onClick={ this.switchToPlan.bind(this) }>
+                { _("admin.buttons.switch_to_plan") }
+            </button>
+    }
+    render() {
+        return <div className="competition-schema">
+            { this.renderList() }
+            { this.renderButton() }
+        </div>
     }
 }
 
@@ -196,6 +245,7 @@ class JudgingUI extends React.Component {
                 <CompetitionSchema
                     updateTour={ this.switchActiveTour.bind(this) }
                     current_tour_id={ this.state.active_tour_id }
+                    competition_plan={ this.props.competition_plan }
                     disciplines={ this.props.disciplines } />
             </div>
             <div className="app-content">

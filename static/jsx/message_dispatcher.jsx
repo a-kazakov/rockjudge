@@ -48,7 +48,11 @@ class MessageDispatcher {
         });
         if (data_changed) {
             let listeners = this.listeners["db_update"] || {};
-            Object.keys(listeners).forEach((key) => listeners[key]());
+            Object.keys(listeners).forEach((key) => {
+                if (listeners[key]) {
+                    listeners[key]();
+                }
+            });
         }
     }
     getListenerId() {

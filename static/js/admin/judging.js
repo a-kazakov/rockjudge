@@ -16,7 +16,12 @@ var CompetitionSchema = (function (_React$Component) {
     function CompetitionSchema(props) {
         _classCallCheck(this, CompetitionSchema);
 
-        return _possibleConstructorReturn(this, Object.getPrototypeOf(CompetitionSchema).call(this, props));
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CompetitionSchema).call(this, props));
+
+        _this.state = {
+            sort_by_plan: !!parseInt(sessionStorage["sort_by_plan"])
+        };
+        return _this;
     }
 
     _createClass(CompetitionSchema, [{
@@ -25,18 +30,48 @@ var CompetitionSchema = (function (_React$Component) {
             this.props.updateTour(tour.id);
         }
     }, {
+        key: "switchToPlan",
+        value: function switchToPlan() {
+            this.setState({
+                sort_by_plan: true
+            });
+            sessionStorage["sort_by_plan"] = "1";
+        }
+    }, {
+        key: "switchToDisciplines",
+        value: function switchToDisciplines() {
+            this.setState({
+                sort_by_plan: false
+            });
+            sessionStorage["sort_by_plan"] = "0";
+        }
+    }, {
         key: "renderTour",
         value: function renderTour(tour) {
+            var discipline_name = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+
             var className = "level-2" + (tour.finalized ? " grey" : "") + (tour.id == this.props.current_tour_id ? " active" : "");
             return React.createElement(
                 "div",
                 { className: className, onClick: this.activateTour.bind(this, tour), key: tour.id },
+                discipline_name ? React.createElement(
+                    "small",
+                    null,
+                    React.createElement(
+                        "strong",
+                        null,
+                        discipline_name
+                    ),
+                    React.createElement("br", null)
+                ) : null,
                 tour.name
             );
         }
     }, {
         key: "renderDiscipline",
         value: function renderDiscipline(ic) {
+            var _this2 = this;
+
             return React.createElement(
                 "details",
                 { className: "block", key: ic.id, open: !!parseInt(sessionStorage.getItem("D_J_" + ic.id)) },
@@ -47,12 +82,14 @@ var CompetitionSchema = (function (_React$Component) {
                         } },
                     ic.name
                 ),
-                ic.tours.map(this.renderTour.bind(this))
+                ic.tours.map(function (tour) {
+                    return _this2.renderTour(tour);
+                })
             );
         }
     }, {
-        key: "render",
-        value: function render() {
+        key: "renderByDiscipline",
+        value: function renderByDiscipline() {
             var data = this.props.disciplines.map((function (ic) {
                 return this.renderDiscipline(ic);
             }).bind(this));
@@ -60,6 +97,63 @@ var CompetitionSchema = (function (_React$Component) {
                 "div",
                 { className: "noselect" },
                 data
+            );
+        }
+    }, {
+        key: "renderByPlan",
+        value: function renderByPlan() {
+            var _this3 = this;
+
+            var tours = {};
+            this.props.disciplines.forEach(function (discipline) {
+                return discipline.tours.forEach(function (tour) {
+                    return tours[tour.id] = {
+                        tour: tour,
+                        discipline_name: discipline.name
+                    };
+                });
+            });
+            var result = this.props.competition_plan.filter(function (item) {
+                return item.tour_id !== null;
+            }).map(function (item) {
+                return _this3.renderTour(tours[item.tour_id].tour, tours[item.tour_id].discipline_name);
+            });
+            return React.createElement(
+                "div",
+                null,
+                result
+            );
+        }
+    }, {
+        key: "renderList",
+        value: function renderList() {
+            return React.createElement(
+                "div",
+                null,
+                this.state.sort_by_plan ? this.renderByPlan() : this.renderByDiscipline()
+            );
+        }
+    }, {
+        key: "renderButton",
+        value: function renderButton() {
+            return this.state.sort_by_plan ? React.createElement(
+                "button",
+                { className: "btn btn-default btn-sm full-width", onClick: this.switchToDisciplines.bind(this) },
+                _("admin.buttons.switch_to_disciplines")
+            ) : React.createElement(
+                "button",
+                { className: "btn btn-default btn-sm full-width", onClick: this.switchToPlan.bind(this) },
+                _("admin.buttons.switch_to_plan")
+            );
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { className: "competition-schema" },
+                this.renderList(),
+                this.renderButton()
             );
         }
     }]);
@@ -73,13 +167,13 @@ var JudgingUI = (function (_React$Component2) {
     function JudgingUI(props) {
         _classCallCheck(this, JudgingUI);
 
-        var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(JudgingUI).call(this, props));
+        var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(JudgingUI).call(this, props));
 
-        _this2.state = {
-            active_tour_id: _this2.getTourIdFromHash(),
-            page: _this2.getPageFromHash()
+        _this4.state = {
+            active_tour_id: _this4.getTourIdFromHash(),
+            page: _this4.getPageFromHash()
         };
-        return _this2;
+        return _this4;
     }
 
     _createClass(JudgingUI, [{
@@ -140,12 +234,12 @@ var JudgingUI = (function (_React$Component2) {
     }, {
         key: "getActiveDiscipline",
         value: function getActiveDiscipline() {
-            var _this3 = this;
+            var _this5 = this;
 
             var result = null;
             this.props.disciplines.forEach(function (discipline) {
                 discipline.tours.forEach(function (tour) {
-                    if (tour.id == _this3.state.active_tour_id) {
+                    if (tour.id == _this5.state.active_tour_id) {
                         result = discipline;
                     }
                 });
@@ -320,6 +414,7 @@ var JudgingUI = (function (_React$Component2) {
                     React.createElement(CompetitionSchema, {
                         updateTour: this.switchActiveTour.bind(this),
                         current_tour_id: this.state.active_tour_id,
+                        competition_plan: this.props.competition_plan,
                         disciplines: this.props.disciplines })
                 ),
                 React.createElement(

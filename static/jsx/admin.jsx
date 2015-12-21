@@ -384,6 +384,7 @@ class AdminUI extends React.Component {
         switch (this.state.active_app) {
         case "judging":
             return <JudgingUI
+                competition_plan={ this.state.plan }
                 disciplines={ this.state.disciplines } />;
         case "management":
             return <ManagementUI

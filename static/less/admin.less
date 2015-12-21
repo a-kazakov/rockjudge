@@ -68,6 +68,8 @@ html, body, #content {
                 width: 350px;
                 min-width: 350px;
                 overflow-y: auto;
+                display: flex;
+                flex-direction: column;
                 .block {
                     margin-bottom: 10px;
                 }
@@ -327,6 +329,18 @@ div.load-competition-page {
                 margin-bottom: 10px;
             }
         }
+    }
+}
+
+.competition-schema {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    div {
+        flex-grow: 1;
+    }
+    button {
+        flex-shrink: 1;
     }
 }
 
