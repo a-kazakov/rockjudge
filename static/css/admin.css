@@ -393,6 +393,11 @@ div.load-competition-page form.load-competition button {
 .manage-disciplines .buttons button {
   width: 100%;
 }
+.manage-competition-plan .error {
+  color: #c00;
+  font-weight: bold;
+  font-style: italic;
+}
 .manage-competition-plan,
 .manage-judges,
 .manage-clubs,

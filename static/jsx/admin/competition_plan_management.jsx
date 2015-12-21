@@ -72,7 +72,7 @@ class CompetitionPlanItemEditorRow extends React.Component {
     }
     render() {
         return <tr className={ "editor" + (this.props.newCompetitionPlanItem ? " create" : "" ) }>
-            <td colSpan="5">
+            <td colSpan="6">
                 <form onSubmit={ this.onSubmit.bind(this) }>
                     <div className="rows">
                         <div className="col-md-2">
@@ -165,12 +165,12 @@ class CompetitionPlanItemRow extends React.Component {
     getName() {
         let c = this.props.item;
         if (c.verbose_name) {
-            return c.verbose_name;
+            return <td colSpan="2"><b>{ c.verbose_name }</b></td>;
         }
-        let result = "";
+        let result = <td colSpan="2"></td>;
         this.props.tours.forEach((tour) => {
             if (tour.id == c.tour_id) {
-                result = tour.name;
+                result = [<td key="D">{ tour.discipline_name }</td>, <td key="T">{ tour.tour_name }</td>];
             }
         })
         return result;
@@ -183,9 +183,9 @@ class CompetitionPlanItemRow extends React.Component {
     }
     renderViewer() {
         let c = this.props.item;
-        return <tr className="viewer" onClick={ this.startEditing.bind(this) }>
+        return <tr className={ "viewer" + (this.props.error ? " error" : "") } onClick={ this.startEditing.bind(this) }>
             <td className="sp">{ c.sp }</td>
-            <td className="name">{ this.getName() }</td>
+            { this.getName() }
             <td className="estimated_beginning">{ c.estimated_beginning }</td>
             <td className="estimated_duration">{ c.estimated_duration }</td>
             <td className="delete">
@@ -234,7 +234,7 @@ class CompetitionPlanItemCreationRow extends React.Component {
             { ...this.props } />;
     }
     renderButton() {
-        return <tr><td colSpan="5">
+        return <tr><td colSpan="6">
             <button
                 type="button"
                 className="btn btn-default full-width"
@@ -260,6 +260,7 @@ class CompetitionPlanManagementUI extends React.Component {
                 result.push({
                     id: tour.id,
                     name: `${discipline.name} — ${tour.name}`,
+                    discipline_id: discipline.id,
                     discipline_name: discipline.name,
                     tour_name: tour.name,
                 })
@@ -268,18 +269,59 @@ class CompetitionPlanManagementUI extends React.Component {
         return result;
     }
     renderTable(tours) {
-        let rows = this.props.items.map(function(item) {
+        let tours_count = {};
+        let tours_index = {};
+        let disciplines_index = {};
+        tours.forEach((tour) => tours_index[tour.id] = tour);
+        this.props.items.forEach((item) => {
+            if (item.tour_id) {
+                tours_count[item.tour_id] = tours_count[item.tour_id] ? tours_count[item.tour_id] + 1 : 1;
+            }
+        });
+        let discipline_cursors = {};
+        this.props.disciplines.forEach((discipline) => discipline_cursors[discipline.id] = 0);
+        this.props.disciplines.forEach((discipline) => disciplines_index[discipline.id] = discipline);
+        let rows = this.props.items.map((item) => {
+            let error = (tours_count[item.tour_id] || 0) > 2;
+            if (item.tour_id) {
+                let discipline_id = tours_index[item.tour_id].discipline_id;
+                let tour_idx = discipline_cursors[discipline_id];
+                if (!disciplines_index[discipline_id].tours[tour_idx] ||
+                        item.tour_id != disciplines_index[discipline_id].tours[tour_idx].id) {
+                    error = true;
+                    disciplines_index[discipline_id].tours.forEach((tour, idx) => {
+                        if (tour.id == item.tour_id) {
+                            tour_idx = idx;
+                        }
+                    });
+                }
+                discipline_cursors[discipline_id] = tour_idx + 1;
+            }
             return <CompetitionPlanItemRow
                 key={ item.id }
+                error={ error }
                 tours={ tours }
                 item={ item } />;
-        }.bind(this));
+        });
+        let unpicked_tours = tours.filter((tour) => !tours_count[tour.id]);
+        let unpicked_tours_html = !unpicked_tours.length ? null :
+            <div>
+                <h4>{ _("admin.headers.unpicked_tours") }</h4>
+                <ul className="unpicked-tours">
+                    { unpicked_tours.map((tour) =>
+                        <li className="item" key={ tour.id }>
+                            { tour.name }
+                        </li>
+                    ) }
+                </ul>
+            </div>;
         return <div className="manage-competition-plan">
             <table className="table table-striped">
                 <tbody>
                     <tr>
                         <th className="sp">{ _("models.competition_plan_item.sp") }</th>
-                        <th className="name">{ _("models.competition_plan_item.name") }</th>
+                        <th className="discipline">{ _("models.competition_plan_item.discipline") }</th>
+                        <th className="tour">{ _("models.competition_plan_item.tour") }</th>
                         <th className="estimated_beginning">{ _("models.competition_plan_item.estimated_beginning") }</th>
                         <th className="estimated_duration">{ _("models.competition_plan_item.estimated_duration") }</th>
                         <th className="delete"></th>
@@ -288,6 +330,7 @@ class CompetitionPlanManagementUI extends React.Component {
                     <CompetitionPlanItemCreationRow competition_id={ this.props.competition_id } tours={ tours } />
                 </tbody>
             </table>
+            { unpicked_tours_html }
         </div>
     }
     render() {

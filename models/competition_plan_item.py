@@ -42,7 +42,7 @@ class CompetitionPlanItem(BaseModel):
         sp_updated = "sp" in new_data and new_data["sp"] != self.sp
         additional_kwargs = {}
         if "tour_id" in new_data:
-            additional_kwargs["tour_id"] = None if new_data["tour_id"] is None else Tour.get(id=new_data["tour_id"])
+            additional_kwargs["tour"] = None if new_data["tour_id"] is None else Tour.get(id=new_data["tour_id"])
         self.update_model_base(new_data, **additional_kwargs)
         if sp_updated:
             ws_message.add_model_update(

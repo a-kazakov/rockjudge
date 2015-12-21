@@ -76,6 +76,7 @@ function _(src, arg) {
                 "tour_heats": "Заходы участников",
                 "tour_results": "Результаты тура",
                 "unfinalize_tour": "Отмена финализации тура",
+                "unpicked_tours": "Не включены в программу",
             },
             "labels": {
                 "competition_name": "Наименование соревнования",

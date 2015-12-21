@@ -235,7 +235,7 @@ var CompetitionPlanItemEditorRow = (function (_React$Component3) {
                 { className: "editor" + (this.props.newCompetitionPlanItem ? " create" : "") },
                 React.createElement(
                     "td",
-                    { colSpan: "5" },
+                    { colSpan: "6" },
                     React.createElement(
                         "form",
                         { onSubmit: this.onSubmit.bind(this) },
@@ -400,12 +400,28 @@ var CompetitionPlanItemRow = (function (_React$Component4) {
         value: function getName() {
             var c = this.props.item;
             if (c.verbose_name) {
-                return c.verbose_name;
+                return React.createElement(
+                    "td",
+                    { colSpan: "2" },
+                    React.createElement(
+                        "b",
+                        null,
+                        c.verbose_name
+                    )
+                );
             }
-            var result = "";
+            var result = React.createElement("td", { colSpan: "2" });
             this.props.tours.forEach(function (tour) {
                 if (tour.id == c.tour_id) {
-                    result = tour.name;
+                    result = [React.createElement(
+                        "td",
+                        { key: "D" },
+                        tour.discipline_name
+                    ), React.createElement(
+                        "td",
+                        { key: "T" },
+                        tour.tour_name
+                    )];
                 }
             });
             return result;
@@ -424,17 +440,13 @@ var CompetitionPlanItemRow = (function (_React$Component4) {
             var c = this.props.item;
             return React.createElement(
                 "tr",
-                { className: "viewer", onClick: this.startEditing.bind(this) },
+                { className: "viewer" + (this.props.error ? " error" : ""), onClick: this.startEditing.bind(this) },
                 React.createElement(
                     "td",
                     { className: "sp" },
                     c.sp
                 ),
-                React.createElement(
-                    "td",
-                    { className: "name" },
-                    this.getName()
-                ),
+                this.getName(),
                 React.createElement(
                     "td",
                     { className: "estimated_beginning" },
@@ -522,7 +534,7 @@ var CompetitionPlanItemCreationRow = (function (_React$Component5) {
                 null,
                 React.createElement(
                     "td",
-                    { colSpan: "5" },
+                    { colSpan: "6" },
                     React.createElement(
                         "button",
                         {
@@ -567,6 +579,7 @@ var CompetitionPlanManagementUI = (function (_React$Component6) {
                     return result.push({
                         id: tour.id,
                         name: discipline.name + " — " + tour.name,
+                        discipline_id: discipline.id,
                         discipline_name: discipline.name,
                         tour_name: tour.name
                     });
@@ -577,12 +590,68 @@ var CompetitionPlanManagementUI = (function (_React$Component6) {
     }, {
         key: "renderTable",
         value: function renderTable(tours) {
-            var rows = this.props.items.map((function (item) {
+            var tours_count = {};
+            var tours_index = {};
+            var disciplines_index = {};
+            tours.forEach(function (tour) {
+                return tours_index[tour.id] = tour;
+            });
+            this.props.items.forEach(function (item) {
+                if (item.tour_id) {
+                    tours_count[item.tour_id] = tours_count[item.tour_id] ? tours_count[item.tour_id] + 1 : 1;
+                }
+            });
+            var discipline_cursors = {};
+            this.props.disciplines.forEach(function (discipline) {
+                return discipline_cursors[discipline.id] = 0;
+            });
+            this.props.disciplines.forEach(function (discipline) {
+                return disciplines_index[discipline.id] = discipline;
+            });
+            var rows = this.props.items.map(function (item) {
+                var error = (tours_count[item.tour_id] || 0) > 2;
+                if (item.tour_id) {
+                    var discipline_id = tours_index[item.tour_id].discipline_id;
+                    var tour_idx = discipline_cursors[discipline_id];
+                    if (!disciplines_index[discipline_id].tours[tour_idx] || item.tour_id != disciplines_index[discipline_id].tours[tour_idx].id) {
+                        error = true;
+                        disciplines_index[discipline_id].tours.forEach(function (tour, idx) {
+                            if (tour.id == item.tour_id) {
+                                tour_idx = idx;
+                            }
+                        });
+                    }
+                    discipline_cursors[discipline_id] = tour_idx + 1;
+                }
                 return React.createElement(CompetitionPlanItemRow, {
                     key: item.id,
+                    error: error,
                     tours: tours,
                     item: item });
-            }).bind(this));
+            });
+            var unpicked_tours = tours.filter(function (tour) {
+                return !tours_count[tour.id];
+            });
+            var unpicked_tours_html = !unpicked_tours.length ? null : React.createElement(
+                "div",
+                null,
+                React.createElement(
+                    "h4",
+                    null,
+                    _("admin.headers.unpicked_tours")
+                ),
+                React.createElement(
+                    "ul",
+                    { className: "unpicked-tours" },
+                    unpicked_tours.map(function (tour) {
+                        return React.createElement(
+                            "li",
+                            { className: "item", key: tour.id },
+                            tour.name
+                        );
+                    })
+                )
+            );
             return React.createElement(
                 "div",
                 { className: "manage-competition-plan" },
@@ -602,8 +671,13 @@ var CompetitionPlanManagementUI = (function (_React$Component6) {
                             ),
                             React.createElement(
                                 "th",
-                                { className: "name" },
-                                _("models.competition_plan_item.name")
+                                { className: "discipline" },
+                                _("models.competition_plan_item.discipline")
+                            ),
+                            React.createElement(
+                                "th",
+                                { className: "tour" },
+                                _("models.competition_plan_item.tour")
                             ),
                             React.createElement(
                                 "th",
@@ -620,7 +694,8 @@ var CompetitionPlanManagementUI = (function (_React$Component6) {
                         rows,
                         React.createElement(CompetitionPlanItemCreationRow, { competition_id: this.props.competition_id, tours: tours })
                     )
-                )
+                ),
+                unpicked_tours_html
             );
         }
     }, {
