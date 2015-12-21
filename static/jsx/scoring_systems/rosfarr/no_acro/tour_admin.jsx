@@ -193,6 +193,25 @@ class FormationScoreInput extends BaseScoreInput {
     }
 }
 
+class SimplifiedScoreInput extends BaseScoreInput {
+    renderTable() {
+        return <table><tbody>
+            <tr><th>S:</th><td>
+                <input
+                    type="text"
+                    value={ this.props.score.points }
+                    onChange={ this.onChange.bind(this, "points") }
+                    onKeyUp={ this.onKeyUp.bind(this) } />
+            </td></tr>
+        </tbody></table>
+    }
+    serialize() {
+        return {
+            points: !this.isEmpty(this.props.score.points) ? parseInt(this.props.score.points) || 0 : null,
+        }
+    }
+}
+
 class HeadScoreInput extends BaseScoreInput {
     renderTable() {
         return <table><tbody>
@@ -285,6 +304,9 @@ class TourAdminScoreInput extends React.Component {
         case "dance_judge":
             if (this.props.scoring_system_name == "rosfarr.formation") {
                 return <FormationScoreInput {...this.props} />
+            }
+            if (this.props.scoring_system_name == "rosfarr.simplified") {
+                return <SimplifiedScoreInput {...this.props} />
             }
             return <DanceScoreInput {...this.props} />
         case "head_judge":

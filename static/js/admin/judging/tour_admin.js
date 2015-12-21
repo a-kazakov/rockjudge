@@ -694,7 +694,7 @@ var TourAdminPerformedCell = (function (_React$Component10) {
                 React.createElement("input", {
                     type: "checkbox",
                     checked: this.props.run.performed,
-                    onClick: this.toggleState.bind(this) })
+                    onChange: this.toggleState.bind(this) })
             );
         }
     }]);

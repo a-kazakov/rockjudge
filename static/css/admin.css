@@ -111,6 +111,9 @@ body,
   -webkit-align-items: stretch;
       -ms-flex-align: stretch;
           align-items: stretch;
+  -webkit-flex-shrink: 0;
+      -ms-flex-negative: 0;
+          flex-shrink: 0;
   width: 100px;
 }
 .wrapper .body .left-col .button {

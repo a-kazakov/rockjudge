@@ -364,9 +364,9 @@ class TourAdminAcrobaticsCell extends React.Component {
             </td>
         }
         if (this.props.program_name === null) {
-        return <td className="acrobatics" onClick={ this.startEditing.bind(this) }>
-            &mdash;
-        </td>
+            return <td className="acrobatics" onClick={ this.startEditing.bind(this) }>
+                &mdash;
+            </td>
         }
         let has_overrides = false;
         let original_score = 0;
@@ -394,7 +394,7 @@ class TourAdminPerformedCell extends React.Component {
             <input
                 type="checkbox"
                 checked={ this.props.run.performed }
-                onClick={ this.toggleState.bind(this) } />
+                onChange={ this.toggleState.bind(this) } />
         </td>
     }
 }

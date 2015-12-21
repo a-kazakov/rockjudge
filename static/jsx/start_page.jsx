@@ -4,14 +4,14 @@ class RoleSelector extends React.Component {
         let line_judges = all_judges
             .filter((judge) => judge.role_description == "")
             .map(function(judge) {
-                return <a href={ "/tablet/" + judge.id.toString() } className="btn btn-default btn-lg" key={ judge.id }>
+                return <a href={ "/tablet/" + judge.id.toString() } className="btn btn-default" key={ judge.id }>
                     { _("global.phrases.judge_n", judge.number) }: { judge.name }
                 </a>
             });
         let staff = all_judges
             .filter((judge) => judge.role_description != "")
             .map(function(judge) {
-                return <a href={ "/tablet/" + judge.id.toString() } className="btn btn-default btn-lg" key={ judge.id }>
+                return <a href={ "/tablet/" + judge.id.toString() } className="btn btn-default" key={ judge.id }>
                     { judge.role_description }: { judge.name }
                 </a>
             });
@@ -24,13 +24,13 @@ class RoleSelector extends React.Component {
                     </div>
                     <br /><br /><br />
                     <div className="btn-group-vertical full-width">
-                        <a href={ "/presenter/" + this.props.competition.id.toString() } className="btn btn-default btn-lg">
+                        <a href={ "/presenter/" + this.props.competition.id.toString() } className="btn btn-default">
                             { _("start_page.roles.presenter") }
                         </a>
-                        <a href={ "/screen_operator/" + this.props.competition.id.toString() } className="btn btn-default btn-lg">
+                        <a href={ "/screen_operator/" + this.props.competition.id.toString() } className="btn btn-default">
                             { _("start_page.roles.screen_operator") }
                         </a>
-                        <a href={ "/admin/" + this.props.competition.id.toString() } className="btn btn-default btn-lg">
+                        <a href={ "/admin/" + this.props.competition.id.toString() } className="btn btn-default">
                             { _("start_page.roles.administrator") }
                         </a>
                     </div>

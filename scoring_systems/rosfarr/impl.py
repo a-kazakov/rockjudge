@@ -39,6 +39,8 @@ class BaseScore:
 
     @classmethod
     def clear_value(cls, key, value, original_value=None):
+        if value is None:
+            return None
         if not cls.SCORES_VALIDATORS[key](value):
             # Probably delta?
             if original_value is None:
@@ -57,7 +59,7 @@ class BaseScore:
     def update(self, new_data):
         self.data = {
             key: (self.clear_value(key, new_data[key],
-                                   old_value if old_value is not None else self.DEFAULT_SCORES[key])
+                                   old_value if old_value is not None else None)
                   if key in new_data else old_value)
             for key, old_value in self.data.items()
         }

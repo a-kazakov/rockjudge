@@ -28,7 +28,7 @@ var RoleSelector = (function (_React$Component) {
             }).map(function (judge) {
                 return React.createElement(
                     "a",
-                    { href: "/tablet/" + judge.id.toString(), className: "btn btn-default btn-lg", key: judge.id },
+                    { href: "/tablet/" + judge.id.toString(), className: "btn btn-default", key: judge.id },
                     _("global.phrases.judge_n", judge.number),
                     ": ",
                     judge.name
@@ -39,7 +39,7 @@ var RoleSelector = (function (_React$Component) {
             }).map(function (judge) {
                 return React.createElement(
                     "a",
-                    { href: "/tablet/" + judge.id.toString(), className: "btn btn-default btn-lg", key: judge.id },
+                    { href: "/tablet/" + judge.id.toString(), className: "btn btn-default", key: judge.id },
                     judge.role_description,
                     ": ",
                     judge.name
@@ -72,17 +72,17 @@ var RoleSelector = (function (_React$Component) {
                             { className: "btn-group-vertical full-width" },
                             React.createElement(
                                 "a",
-                                { href: "/presenter/" + this.props.competition.id.toString(), className: "btn btn-default btn-lg" },
+                                { href: "/presenter/" + this.props.competition.id.toString(), className: "btn btn-default" },
                                 _("start_page.roles.presenter")
                             ),
                             React.createElement(
                                 "a",
-                                { href: "/screen_operator/" + this.props.competition.id.toString(), className: "btn btn-default btn-lg" },
+                                { href: "/screen_operator/" + this.props.competition.id.toString(), className: "btn btn-default" },
                                 _("start_page.roles.screen_operator")
                             ),
                             React.createElement(
                                 "a",
-                                { href: "/admin/" + this.props.competition.id.toString(), className: "btn btn-default btn-lg" },
+                                { href: "/admin/" + this.props.competition.id.toString(), className: "btn btn-default" },
                                 _("start_page.roles.administrator")
                             )
                         )

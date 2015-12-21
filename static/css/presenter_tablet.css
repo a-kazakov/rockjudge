@@ -38,6 +38,9 @@ body {
       -ms-flex-pack: distribute;
           justify-content: space-around;
   width: 40px;
+  -webkit-flex-shrink: 0;
+      -ms-flex-negative: 0;
+          flex-shrink: 0;
   background-color: #2b3a42;
 }
 .presenter-tablet .left-bar .item {

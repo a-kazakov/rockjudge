@@ -423,8 +423,59 @@ var FormationScoreInput = (function (_BaseScoreInput3) {
     return FormationScoreInput;
 })(BaseScoreInput);
 
-var HeadScoreInput = (function (_BaseScoreInput4) {
-    _inherits(HeadScoreInput, _BaseScoreInput4);
+var SimplifiedScoreInput = (function (_BaseScoreInput4) {
+    _inherits(SimplifiedScoreInput, _BaseScoreInput4);
+
+    function SimplifiedScoreInput() {
+        _classCallCheck(this, SimplifiedScoreInput);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(SimplifiedScoreInput).apply(this, arguments));
+    }
+
+    _createClass(SimplifiedScoreInput, [{
+        key: "renderTable",
+        value: function renderTable() {
+            return React.createElement(
+                "table",
+                null,
+                React.createElement(
+                    "tbody",
+                    null,
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            "S:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement("input", {
+                                type: "text",
+                                value: this.props.score.points,
+                                onChange: this.onChange.bind(this, "points"),
+                                onKeyUp: this.onKeyUp.bind(this) })
+                        )
+                    )
+                )
+            );
+        }
+    }, {
+        key: "serialize",
+        value: function serialize() {
+            return {
+                points: !this.isEmpty(this.props.score.points) ? parseInt(this.props.score.points) || 0 : null
+            };
+        }
+    }]);
+
+    return SimplifiedScoreInput;
+})(BaseScoreInput);
+
+var HeadScoreInput = (function (_BaseScoreInput5) {
+    _inherits(HeadScoreInput, _BaseScoreInput5);
 
     function HeadScoreInput() {
         _classCallCheck(this, HeadScoreInput);
@@ -489,8 +540,8 @@ var HeadScoreInput = (function (_BaseScoreInput4) {
     return HeadScoreInput;
 })(BaseScoreInput);
 
-var TechScoreInput = (function (_BaseScoreInput5) {
-    _inherits(TechScoreInput, _BaseScoreInput5);
+var TechScoreInput = (function (_BaseScoreInput6) {
+    _inherits(TechScoreInput, _BaseScoreInput6);
 
     function TechScoreInput() {
         _classCallCheck(this, TechScoreInput);
@@ -622,6 +673,9 @@ var TourAdminScoreInput = (function (_React$Component3) {
                 case "dance_judge":
                     if (this.props.scoring_system_name == "rosfarr.formation") {
                         return React.createElement(FormationScoreInput, this.props);
+                    }
+                    if (this.props.scoring_system_name == "rosfarr.simplified") {
+                        return React.createElement(SimplifiedScoreInput, this.props);
                     }
                     return React.createElement(DanceScoreInput, this.props);
                 case "head_judge":
