@@ -95,15 +95,23 @@ html, body, #content {
                 table-layout: fixed;
                 border-collapse: separate;
                 border-spacing: 5px;
-                td {
-                    background-color: lighten(@ui-dark, 50%);
-                    padding: 5px;
-                    text-align: center;
-                    font-weight: bold;
-                    font-size: 14px;
-                    &.confirmed {
-                        color: @ui-white;
-                        background-color: #090;
+                .numbers {
+                        padding: 0;
+                        text-align: center;
+                        font-weight: bold;
+                        font-size: 14px;
+                }
+                .scores {
+                    td {
+                        background-color: lighten(@ui-dark, 50%);
+                        padding: 5px;
+                        text-align: center;
+                        font-weight: bold;
+                        font-size: 14px;
+                        &.confirmed {
+                            color: @ui-white;
+                            background-color: #090;
+                        }
                     }
                 }
             }

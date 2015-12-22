@@ -325,8 +325,20 @@ var HeadJudgeDanceJudgesScores = (function (_React$Component6) {
             });
         }
     }, {
-        key: "renderContent",
-        value: function renderContent() {
+        key: "renderNumbers",
+        value: function renderNumbers() {
+            return this.getDanceDisciplineJudges().map(function (judge) {
+                return React.createElement(
+                    "td",
+                    null,
+                    judge.judge.number,
+                    judge.role == "acro_judge" ? " (A)" : ""
+                );
+            });
+        }
+    }, {
+        key: "renderScores",
+        value: function renderScores() {
             var _this8 = this;
 
             return this.getDanceDisciplineJudges().map(function (judge) {
@@ -355,8 +367,13 @@ var HeadJudgeDanceJudgesScores = (function (_React$Component6) {
                         null,
                         React.createElement(
                             "tr",
-                            null,
-                            this.renderContent()
+                            { className: "numbers" },
+                            this.renderNumbers()
+                        ),
+                        React.createElement(
+                            "tr",
+                            { className: "scores" },
+                            this.renderScores()
                         )
                     )
                 )
@@ -392,13 +409,13 @@ var HeadJudgeNotPerformedSwitch = (function (_React$Component7) {
             if (this.props.performed) {
                 return React.createElement(
                     "button",
-                    { type: "button", className: "btn btn-sm btn-danger", onClick: this.markNotPerformed.bind(this) },
+                    _extends({ type: "button", className: "btn btn-sm btn-danger" }, onTouchOrClick(this.markNotPerformed.bind(this))),
                     _("tablet.buttons.not_performed")
                 );
             } else {
                 return React.createElement(
                     "button",
-                    { type: "button", className: "btn btn-sm btn-success", onClick: this.markPerformed.bind(this) },
+                    _extends({ type: "button", className: "btn btn-sm btn-success" }, onTouchOrClick(this.markPerformed.bind(this))),
                     _("tablet.buttons.performed")
                 );
             }

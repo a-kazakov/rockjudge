@@ -122,14 +122,20 @@ body,
   border-collapse: separate;
   border-spacing: 5px;
 }
-.judge-tablet .body .main-table .dance-judge-scores td {
+.judge-tablet .body .main-table .dance-judge-scores .numbers {
+  padding: 0;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+.judge-tablet .body .main-table .dance-judge-scores .scores td {
   background-color: #a7bbc5;
   padding: 5px;
   text-align: center;
   font-weight: bold;
   font-size: 14px;
 }
-.judge-tablet .body .main-table .dance-judge-scores td.confirmed {
+.judge-tablet .body .main-table .dance-judge-scores .scores td.confirmed {
   color: #efefef;
   background-color: #090;
 }

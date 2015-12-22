@@ -126,7 +126,12 @@ class HeadJudgeDanceJudgesScores extends React.Component {
     getDanceDisciplineJudges() {
         return this.props.all_discipline_judges.filter((dj) => dj.role == "dance_judge" || dj.role == "acro_judge");
     }
-    renderContent() {
+    renderNumbers() {
+        return this.getDanceDisciplineJudges().map((judge) =>
+            <td>{ judge.judge.number }{ judge.role == "acro_judge" ? " (A)" : "" }</td>
+        );
+    }
+    renderScores() {
         return this.getDanceDisciplineJudges().map((judge) =>
             <HeadJudgeDanceJudgeScore
                 key={ judge.id }
@@ -137,9 +142,10 @@ class HeadJudgeDanceJudgesScores extends React.Component {
     render() {
         return <div>
             <h3>{ __("tablet.head_judge.dance_judge_scores") }</h3>
-            <table className="dance-judge-scores"><tbody><tr>
-                { this.renderContent() }
-            </tr></tbody></table>
+            <table className="dance-judge-scores"><tbody>
+                <tr className="numbers">{ this.renderNumbers() }</tr>
+                <tr className="scores">{ this.renderScores() }</tr>
+            </tbody></table>
         </div>
     }
 }
@@ -153,11 +159,11 @@ class HeadJudgeNotPerformedSwitch extends React.Component {
     }
     renderButton() {
         if (this.props.performed) {
-            return <button type="button" className="btn btn-sm btn-danger" onClick={ this.markNotPerformed.bind(this) }>
+            return <button type="button" className="btn btn-sm btn-danger" { ...onTouchOrClick(this.markNotPerformed.bind(this)) }>
                 { _("tablet.buttons.not_performed") }
             </button>
         } else {
-            return <button type="button" className="btn btn-sm btn-success" onClick={ this.markPerformed.bind(this) }>
+            return <button type="button" className="btn btn-sm btn-success" { ...onTouchOrClick(this.markPerformed.bind(this)) }>
                 { _("tablet.buttons.performed") }
             </button>
         }
