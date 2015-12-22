@@ -2,7 +2,8 @@ class ParticipantNumbersNumber extends React.Component {
     render() {
         return <div className="participant">
             <p className="spacer-top">&nbsp;</p>
-            <p className="competition">{ this.props.competition_name }&nbsp;</p>
+            <div className="competition"><p>{ this.props.competition_name }&nbsp;</p></div>
+            <p className="spacer-top2">&nbsp;</p>
             <p className="number">{ this.props.participant.number }</p>
             <p className="name">{ this.props.participant.name }&nbsp;</p>
             <p className="discipline">{ this.props.participant.discipline_name }&nbsp;</p>
@@ -51,19 +52,23 @@ class ParticipantNumbers extends React.Component {
             .addStyle("div", "margin", "0")
             .addStyle("div", "padding", "0")
             .addStyle("p", "mso-line-height-rule", "exactly")
+            .addStyle("div", "mso-line-height-rule", "exactly")
             .addStyle(".participant", "text-align", "center")
 
-            .addStyle(".spacer-top", "line-height", "55pt")
+            .addStyle(".spacer-top", "line-height", "20pt")
+            .addStyle(".competition", "line-height", "15pt")
+            .addStyle(".spacer-top2", "line-height", "30pt")
             .addStyle(".number", "line-height", "300pt")
-            .addStyle(".competition", "line-height", "10pt")
             .addStyle(".name", "line-height", "10pt")
             .addStyle(".club", "line-height", "10pt")
             .addStyle(".discipline", "line-height", "10pt")
-            .addStyle(".spacer-bottom", "line-height", "17pt")
+            .addStyle(".spacer-bottom", "line-height", "16pt")
 
             .addStyle(".number", "font-size", "350pt")
             .addStyle(".number", "letter-spacing:", "-20.0pt")
             .addStyle(".competition", "font-size", "12pt")
+            .addStyle(".competition", "font-weight", "bold")
+            .addStyle(".competition", "border-bottom", "1pt solid black")
             .addStyle(".name", "font-size", "12pt")
             .addStyle(".name", "font-weight", "bold")
             .addStyle(".club", "font-size", "12pt")

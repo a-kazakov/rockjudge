@@ -29,9 +29,18 @@ var ParticipantNumbersNumber = (function (_React$Component) {
                     " "
                 ),
                 React.createElement(
-                    "p",
+                    "div",
                     { className: "competition" },
-                    this.props.competition_name,
+                    React.createElement(
+                        "p",
+                        null,
+                        this.props.competition_name,
+                        " "
+                    )
+                ),
+                React.createElement(
+                    "p",
+                    { className: "spacer-top2" },
                     " "
                 ),
                 React.createElement(
@@ -119,7 +128,7 @@ var ParticipantNumbers = (function (_React$Component2) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("numbers").setMargins([0, 10, 0, 10]).setBody(this.refs.content.innerHTML).addStyle("div", "margin", "0").addStyle("div", "padding", "0").addStyle("p", "mso-line-height-rule", "exactly").addStyle(".participant", "text-align", "center").addStyle(".spacer-top", "line-height", "55pt").addStyle(".number", "line-height", "300pt").addStyle(".competition", "line-height", "10pt").addStyle(".name", "line-height", "10pt").addStyle(".club", "line-height", "10pt").addStyle(".discipline", "line-height", "10pt").addStyle(".spacer-bottom", "line-height", "17pt").addStyle(".number", "font-size", "350pt").addStyle(".number", "letter-spacing:", "-20.0pt").addStyle(".competition", "font-size", "12pt").addStyle(".name", "font-size", "12pt").addStyle(".name", "font-weight", "bold").addStyle(".club", "font-size", "12pt").addStyle(".discipline", "font-size", "12pt").save();
+            Docx("numbers").setMargins([0, 10, 0, 10]).setBody(this.refs.content.innerHTML).addStyle("div", "margin", "0").addStyle("div", "padding", "0").addStyle("p", "mso-line-height-rule", "exactly").addStyle("div", "mso-line-height-rule", "exactly").addStyle(".participant", "text-align", "center").addStyle(".spacer-top", "line-height", "20pt").addStyle(".competition", "line-height", "15pt").addStyle(".spacer-top2", "line-height", "30pt").addStyle(".number", "line-height", "300pt").addStyle(".name", "line-height", "10pt").addStyle(".club", "line-height", "10pt").addStyle(".discipline", "line-height", "10pt").addStyle(".spacer-bottom", "line-height", "16pt").addStyle(".number", "font-size", "350pt").addStyle(".number", "letter-spacing:", "-20.0pt").addStyle(".competition", "font-size", "12pt").addStyle(".competition", "font-weight", "bold").addStyle(".competition", "border-bottom", "1pt solid black").addStyle(".name", "font-size", "12pt").addStyle(".name", "font-weight", "bold").addStyle(".club", "font-size", "12pt").addStyle(".discipline", "font-size", "12pt").save();
         }
     }]);
 
