@@ -24,38 +24,33 @@
             width: 1120px;
             height: 784px;
         }
-        #discipline-name {
+        td {
+            vertical-align: top;
+        }
+        #data {
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .tour-heat {
+            text-align: center;
+            font-size: 35px;
+        }
+        .discipline {
             text-align: center;
             font-size: 35px;
             font-weight: bold;
-            margin: 220px 0 0 0;
+            margin: 290px 0 0 0;
         }
-        #tour-name {
-            text-align: center;
-            font-size: 30px;
-            font-weight: normal;
-            margin: 0 0 40px 0;
+        .discipline.no-info {
+            margin: 375px 0 0 0;
         }
-        .results {
-            font-size: 20px;
-            width: 70%;
-            margin: 0 auto;
-            border-collapse: collapse;
+        .participant {
+            margin: 50px 0 0 0;
+            font-size: 35px;
         }
-        .results td {
-            border-top: 1px solid #ccc;
-        }
-        .results td, .results th {
-            padding: 3px 10px;
-        }
-        .number, .place, .next-tour, .score {
-            text-align: center;
-        }
-        .place, .number {
-            width: 6%;
-        }
-        .next-tour, .score {
-            width: 12%;
+        .participant .number {
+            font-weight: bold;
         }
     </style>
     <script>
@@ -67,24 +62,8 @@
             var competition_id = parseInt(window.location.hash.substr(1));
             var state = {
                 current_tour_id: null,
-                results: null,
-                page: 0,
             };
             var tour_storage = null;
-
-            function loadResults() {
-                if (state.current_tour_id === null) {
-                    return;
-                }
-                state.results = null;
-                Api("tour.get_results", { tour_id: state.current_tour_id })
-                    .onSuccess(function(new_results) {
-                        state.results = new_results;
-                        updateData();
-                    }.bind(this))
-                    .onError(console.error.bind(console))
-                    .send();
-            }
 
             function updateData() {
                 console.log("Updating data...")
@@ -96,7 +75,7 @@
                 competition = competition.serialize({});
                 var screen_data = competition.screen_data;
                 var screen_id = screen_data.screen_id;
-                if (screen_id != "tour_results") {
+                if (screen_id != "heats_formation") {
                     console.log("Wrong screen ID");
                     return;
                 }
@@ -109,6 +88,7 @@
                                 participant: {
                                     club: {},
                                 },
+                                scores: {},
                             },
                         } })
                             .addToDB("Tour", tour_id, storage.getDomain(tour_id))
@@ -118,11 +98,11 @@
                                     state.current_tour_id = tour_id;
                                     tour_storage = storage.getDomain(tour_id);
                                 }
-                                loadResults();
+                                updateData();
                             })
                             .onError(console.error.bind(console))
                             .send();
-                            console.log("Incoerrect tour id");
+                            console.log("Incorrect tour id");
                     } else {
                         console.log("Null tour ID");
                         state.current_tour_id = null;
@@ -138,32 +118,32 @@
                     console.log("No tour");
                     return;
                 }
-                tour = tour.serialize({ discipline: {}, runs: { participant: { club: {}}}});
-                if (!state.results) {
-                    console.log("No results");
-                    return;
-                }
-                runs_by_id = {};
-                tour.runs.forEach(function(run) {
-                    runs_by_id[run.id] = run;
-                });
-                var output = $("<table>");
-                var num_pages = Math.ceil(state.results.length / 6 - 0.00001);
-                var page_n = state.page % num_pages;
-                var page_data = state.results.slice(6 * page_n, 6 * page_n + 6);
-                page_data.forEach(function(result) {
-                    var run = runs_by_id[result.run_id];
-                    var item = $("#templates .row").clone();
-                    item.find(".place").text(result.place);
-                    item.find(".number").text(run.participant.number);
-                    item.find(".name").text(run.participant.name);
-                    item.find(".score").text(run.performed ? run.verbose_total_score.primary_score.toFixed(2) : "—");
-                    item.find(".next-tour").html(result.advances ? "<b>Да</b>" : "Нет");
+                tour = tour.serialize({ discipline: {}, runs: { scores: {}, participant: { club: {}}}});
+                var heat = screen_data.controls_state.heat;
+                var heat_runs = tour.runs.filter((run) => run.heat == heat);
+                var output = $("<div>");
+                heat_runs.forEach(function(run) {
+                    var participant = run.participant;
+                    var item = $("#templates .participant").clone();
+                    item.find(".number").text("№" + participant.number);
+                    item.find(".name").text(participant.name);
+                    item.find(".club").text(participant.club.name + ", " + participant.club.city);
                     output.append(item);
                 });
-                $("#data").html(output.find("tbody").html());
-                $("#tour-name").text(tour.name);
-                $("#discipline-name").text(tour.discipline.name);
+                $("#data").html(output.html());
+                $("#discipline").html(tour.discipline.name);
+                $("#tour").html(tour.name);
+                $("#heat_value").text(heat);
+                $("#total_heats").text(tour.runs[tour.runs.length - 1].heat);
+                if (!heat) {
+                    $("#heat").hide();
+                    $(".discipline").addClass("no-info");
+                } else {
+                    $("#heat").show();
+                    $(".discipline").removeClass("no-info");
+                }
+                $("#content").show();
+                console.log("Done.");
             }
 
             function init() {
@@ -172,51 +152,33 @@
                     .onSuccess(updateData)
                     .onError(console.error.bind(console))
                     .send();
-                setInterval(function() {
-                    ++state.page;
-                    updateData();
-                }, 10000);
             }
 
             message_dispatcher.addListener("db_update", updateData);
             message_dispatcher.addListener("reload_data", init);
-            message_dispatcher.addListener("tour_results_changed", function(message) {
-                if (!message || message.tour_id == state.current_tour_id) {
-                    loadResults();
-                }
-            });
 
             init();
         });
     </script>
 </head>
 <body>
-    <div class="content outer">
-        <h1 id="discipline-name"></h1>
-        <h2 id="tour-name"></h2>
-        <table class="results">
-            <thead>
-                <tr>
-                    <th>М</th>
-                    <th>№</th>
-                    <th>Участник</th>
-                    <th>Баллы</th>
-                    <th>Сл. тур</th>
-                </tr>
-            </thead>
-            <tbody id="data"></tbody>
-        </table>
-    </div>
+    <table class="outer" id="content" style="display:none">
+        <tr><td>
+            <div class="discipline">
+                <span id="discipline"></span>
+            </div>
+            <div class="tour-heat">
+                <span id="tour"></span><span id="heat">. Заход <span id="heat_value"></span>/<span id="total_heats"></span></span>
+            </div>
+            <div id="data"></div>
+        </td>
+    </tr>
     <div id="templates" style="display:none;">
-        <table>
-            <tr class="row">
-                <td class="place"></td>
-                <td class="number"></td>
-                <td class="name"></td>
-                <td class="score"></td>
-                <td class="next-tour"></td>
-            </tr>
-        </table>
+        <div class="participant">
+            <div class="number"></div>
+            <div class="name"></div>
+            <div class="club"></div>
+        </div>
     </div>
     <script src="/static/thirdparty/jquery/jquery.js"></script>
     <script src="/static/thirdparty/sockjs/sockjs.js"></script>

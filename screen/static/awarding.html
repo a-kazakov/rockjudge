@@ -6,34 +6,48 @@
         html, body {
             margin: 0;
             padding: 0;
-            background-image: url("images/awarding.jpg");
-            background-size: cover;
+            height: 100%;
+            background-color: black;
+            background-image: url("images/bg.jpg");
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            font-family: verdana;
-            overflow: hidden;
+            color: #0006c3;
+            font-family: Tahoma;
+            text-shadow: 1px 1px 0px rgba(250, 250, 250, 1), 2px 2px 0px rgba(100, 100, 100, 0.7);
+            line-height: 1.3;
+        }
+        .outer {
+            position: absolute;
+            left: calc(50% - 560px);
+            top: calc(50% - 392px);
+            width: 1120px;
+            height: 784px;
         }
         #discipline-name {
             text-align: center;
-            font-size: 4vh;
+            font-size: 35px;
             font-weight: bold;
-            margin: 10vh 1vh 10vh;
+            margin: 250px 0 60px 0;
         }
-        .results {
-            font-size: 3vh;
-            width: 90vw;
-            margin: 0 auto;
-            border-collapse: collapse;
+        #discipline-name.no-info {
+            margin: 375px 0 0 0;
         }
-        .results td {
-            border-top: 0.3vh solid #ccc;
-        }
-        .results td, .results th {
-            padding: 2vh;
-        }
-        .number, .place, .next-tour {
+        .place {
             text-align: center;
+            font-size: 45px;
+        }
+        .name {
+            text-align: center;
+            font-size: 35px;
+        }
+        .club {
+            text-align: center;
+            font-size: 35px;
+            margin: 6px 0 0 0;
+        }
+        .place {
+            font-weight: bold;
         }
     </style>
     <script>
@@ -121,26 +135,38 @@
                     console.log("No results");
                     return;
                 }
+                $("#discipline-name").text(discipline.name);
                 var place = screen_data.controls_state.place;
-                var results = state.results.slice(place - 1, place + 5);
-                runs_by_id = {};
+                if (!place) {
+                    $(".place, .name, .club").hide();
+                    $("#discipline-name").addClass("no-info");
+                    $("#content").show();
+                    return;
+                } else {
+                    $("#discipline-name").removeClass("no-info");
+                    $(".place, .name, .club").show();
+                }
+                var result = state.results[place - 1];
+                var runs_by_id = {};
                 discipline.tours.forEach(function(tour) {
                     tour.runs.forEach(function(run) {
                         runs_by_id[run.id] = run;
                     });
                 });
                 var output = $("<table>");
-                results.forEach(function(result) {
-                    var run = runs_by_id[result.run_id];
-                    var item = $("#templates .row").clone();
-                    item.find(".place").text(result.place);
-                    item.find(".number").text(run.participant.number);
-                    item.find(".name").text(run.participant.name);
-                    item.find(".club").text(run.participant.club.name);
-                    output.append(item);
-                });
-                $("#data").html(output.find("tbody").html());
-                $("#discipline-name").text(discipline.name);
+                var run = runs_by_id[result.run_id];
+                var item = $("#templates .row").clone();
+                $("#place").text(result.place);
+                $("#name").text(run.participant.name);
+                $("#club").text(run.participant.club.name + ", " + run.participant.club.city);
+
+                if (!result.place) {
+                    $(".place").hide();
+                } else {
+                    $(".place").show();
+                }
+
+                $("#content").show();
             }
 
             function init() {
@@ -162,25 +188,11 @@
     </script>
 </head>
 <body>
-    <h1 id="discipline-name"></h1>
-    <table class="results">
-        <thead>
-            <tr>
-                <th>Место</th>
-                <th>Участник</th>
-                <th>Клуб</th>
-            </tr>
-        </thead>
-        <tbody id="data"></tbody>
-    </table>
-    <div id="templates" style="display:none">
-        <table>
-            <tr class="row">
-                <td class="place"></td>
-                <td class="name"></td>
-                <td class="club"></td>
-            </tr>
-        </table>
+    <div class="outer" id="content" style="display:none">
+        <h1 id="discipline-name"></h1>
+        <div class="place"><span id="place"></span> место</div>
+        <div class="name" id="name"></div>
+        <div class="club" id="club"></div>
     </div>
     <script src="/static/thirdparty/jquery/jquery.js"></script>
     <script src="/static/thirdparty/sockjs/sockjs.js"></script>

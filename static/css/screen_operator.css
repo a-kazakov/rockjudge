@@ -15,7 +15,8 @@
   margin: 5px auto 30px;
 }
 .screen-operator .left-col {
-  overflow: auto;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
   background-color: #2b3a42;
   color: #bdd4de;
   font-weight: bold;
@@ -57,7 +58,8 @@
   margin: 5px auto;
 }
 .screen-operator .body .controls {
-  overflow: auto;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
   padding: 10px;
   -webkit-box-flex: 1;
   -webkit-flex-grow: 1;
@@ -145,6 +147,11 @@
 }
 .screen-operator .body .controls .discipline-results .row td.name {
   font-weight: bold;
+}
+.screen-operator .body .buttons {
+  -webkit-flex-shrink: 0;
+      -ms-flex-negative: 0;
+          flex-shrink: 0;
 }
 .screen-operator .body .buttons button {
   width: 50%;

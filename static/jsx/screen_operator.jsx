@@ -1,4 +1,11 @@
 class ScreenOperatorTourSelector extends React.Component {
+    expandSelect(original_event) {
+        original_event.preventDefault();
+        original_event.stopPropagation();
+        var e = document.createEvent("MouseEvents");
+        e.initMouseEvent("mousedown", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        this.refs.select.dispatchEvent(e);
+    }
     render() {
         let options = [];
         this.props.competition.disciplines.forEach((discipline) =>
@@ -10,7 +17,9 @@ class ScreenOperatorTourSelector extends React.Component {
         );
         return <select value={ this.props.value }
                        className="form-control"
-                       onChange={ (e) => this.props.onChange(e.target.value || null ) }>
+                       ref="select"
+                       onChange={ (e) => this.props.onChange(e.target.value || null ) }
+                       onTouchStart={ this.expandSelect.bind(this) }>
             <option value="">----------</option>
             { options }
         </select>
@@ -250,6 +259,10 @@ class ScreenOperator extends React.Component {
             .send();
     }
     submitData() {
+        let data = this.state.pending_data || this.state.competition.screen_data;
+        if (!this.validateControls(data)) {
+            return;
+        }
         Api("competition.set", {
             competition_id: this.props.competition_id,
             data: { screen_data: this.state.pending_data }
@@ -338,16 +351,19 @@ class ScreenOperator extends React.Component {
                 return null
             case "tour-heat":
                 return <ScreenOperatorTourHeatControls
+                    key={ data.screen_id }
                     competition={ this.state.competition }
                     controls_state={ data.controls_state }
                     onChange={ this.onControlsStateChange.bind(this) } />
             case "tour":
                 return <ScreenOperatorTourControls
+                    key={ data.screen_id }
                     competition={ this.state.competition }
                     controls_state={ data.controls_state }
                     onChange={ this.onControlsStateChange.bind(this) } />
             case "discipline-place":
                 return <ScreenOperatorDisciplinePlaceControls
+                    key={ data.screen_id }
                     competition={ this.state.competition }
                     controls_state={ data.controls_state }
                     onChange={ this.onControlsStateChange.bind(this) } />

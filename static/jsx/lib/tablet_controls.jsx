@@ -1,15 +1,15 @@
 function onTouchOrClick(handler) {
-    let f = function(event) {
+    let f = (event) => {
         event.preventDefault();
-        return handler();
-    }
+        return handler(event);
+    };
     return {
         onTouchStart: f,
         onClick: f,
     }
 }
 
-function onTouchEndOrClick(handler) {
+function onTouchEndOrClick(handler, prevent_default) {
     let _handler = () => {};
     let distance = 0;
     let latest_pos = [0, 0];

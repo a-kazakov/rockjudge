@@ -22,6 +22,15 @@ var ScreenOperatorTourSelector = (function (_React$Component) {
     }
 
     _createClass(ScreenOperatorTourSelector, [{
+        key: "expandSelect",
+        value: function expandSelect(original_event) {
+            original_event.preventDefault();
+            original_event.stopPropagation();
+            var e = document.createEvent("MouseEvents");
+            e.initMouseEvent("mousedown", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            this.refs.select.dispatchEvent(e);
+        }
+    }, {
         key: "render",
         value: function render() {
             var _this2 = this;
@@ -42,9 +51,11 @@ var ScreenOperatorTourSelector = (function (_React$Component) {
                 "select",
                 { value: this.props.value,
                     className: "form-control",
+                    ref: "select",
                     onChange: function onChange(e) {
                         return _this2.props.onChange(e.target.value || null);
-                    } },
+                    },
+                    onTouchStart: this.expandSelect.bind(this) },
                 React.createElement(
                     "option",
                     { value: "" },
@@ -502,6 +513,10 @@ var ScreenOperator = (function (_React$Component9) {
         value: function submitData() {
             var _this14 = this;
 
+            var data = this.state.pending_data || this.state.competition.screen_data;
+            if (!this.validateControls(data)) {
+                return;
+            }
             Api("competition.set", {
                 competition_id: this.props.competition_id,
                 data: { screen_data: this.state.pending_data }
@@ -608,16 +623,19 @@ var ScreenOperator = (function (_React$Component9) {
                     return null;
                 case "tour-heat":
                     return React.createElement(ScreenOperatorTourHeatControls, {
+                        key: data.screen_id,
                         competition: this.state.competition,
                         controls_state: data.controls_state,
                         onChange: this.onControlsStateChange.bind(this) });
                 case "tour":
                     return React.createElement(ScreenOperatorTourControls, {
+                        key: data.screen_id,
                         competition: this.state.competition,
                         controls_state: data.controls_state,
                         onChange: this.onControlsStateChange.bind(this) });
                 case "discipline-place":
                     return React.createElement(ScreenOperatorDisciplinePlaceControls, {
+                        key: data.screen_id,
                         competition: this.state.competition,
                         controls_state: data.controls_state,
                         onChange: this.onControlsStateChange.bind(this) });

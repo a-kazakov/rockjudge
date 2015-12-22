@@ -13,7 +13,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function onTouchOrClick(handler) {
     var f = function f(event) {
         event.preventDefault();
-        return handler();
+        return handler(event);
     };
     return {
         onTouchStart: f,
@@ -21,7 +21,7 @@ function onTouchOrClick(handler) {
     };
 }
 
-function onTouchEndOrClick(handler) {
+function onTouchEndOrClick(handler, prevent_default) {
     var _handler = function _handler() {};
     var distance = 0;
     var latest_pos = [0, 0];

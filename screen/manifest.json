@@ -5,14 +5,19 @@
         "template": "splash.html",
         "controls": "none"
     }, {
-        "id": "sponsors",
-        "name": "Заставка, спонсоры",
-        "template": "sponsors.html",
-        "controls": "none"
+        "id": "heats_one_participant",
+        "name": "Заходы, одна пара на площадке",
+        "template": "heats-one-participant.html",
+        "controls": "tour-heat"
     }, {
-        "id": "heats",
-        "name": "Заходы",
-        "template": "heats.html",
+        "id": "heats_two_participants",
+        "name": "Заходы, две пары на площадке",
+        "template": "heats-two-participants.html",
+        "controls": "tour-heat"
+    }, {
+        "id": "heats_formation",
+        "name": "Заходы, формейшн",
+        "template": "heats-formation.html",
         "controls": "tour-heat"
     }, {
         "id": "tour_results",

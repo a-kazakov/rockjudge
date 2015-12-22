@@ -10,7 +10,8 @@
         margin: 5px auto 30px;
     }
     .left-col {
-        overflow: auto;
+        overflow: scroll;
+        -webkit-overflow-scrolling: touch;
         background-color: @ui-dark;
         color: @ui-light;
         font-weight: bold;
@@ -37,7 +38,8 @@
             margin: 5px auto;
         }
         .controls {
-            overflow: auto;
+            overflow: scroll;
+            -webkit-overflow-scrolling: touch;
             padding: 10px;
             flex-grow: 1;
             .heat-selector {
@@ -129,6 +131,7 @@
             }
         }
         .buttons {
+            flex-shrink: 0;
             button {
                 width: 50%;
             }
