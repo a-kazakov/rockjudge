@@ -70,9 +70,9 @@ var TourScoresWrapper = (function () {
         key: "getDisciplineJudgesByRoles",
         value: function getDisciplineJudgesByRoles() {
             if (arguments.length == 1) {
-                return this.discipline_judges_by_roles[arguments[0]].map(function (b) {
+                return this.discipline_judges_by_roles[arguments[0]] ? this.discipline_judges_by_roles[arguments[0]].map(function (b) {
                     return b.discipline_judge;
-                });
+                }) : [];
             }
             var res = [];
             for (var i = 0; i < arguments.length; ++i) {

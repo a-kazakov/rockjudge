@@ -37,7 +37,9 @@ class TourScoresWrapper {
     }
     getDisciplineJudgesByRoles() {
         if (arguments.length == 1) {
-            return this.discipline_judges_by_roles[arguments[0]].map((b) => b.discipline_judge);
+            return this.discipline_judges_by_roles[arguments[0]]
+                ? this.discipline_judges_by_roles[arguments[0]].map((b) => b.discipline_judge)
+                : [];
         }
         let res = [];
         for (let i = 0; i < arguments.length; ++i) {
