@@ -4,40 +4,51 @@ class RoleSelector extends React.Component {
         let line_judges = all_judges
             .filter((judge) => judge.role_description == "")
             .map(function(judge) {
-                return <a href={ "/tablet/" + judge.id.toString() } className="btn btn-default" key={ judge.id }>
-                    { _("global.phrases.judge_n", judge.number) }: { judge.name }
+                return <a className="mbtn" href={ "/tablet/" + judge.id.toString() }>
+                    <div className="title">
+                        { _("global.phrases.judge_n", judge.number) }
+                    </div>
+                    <div className="name">
+                        { judge.name }
+                    </div>
                 </a>
             });
         let staff = all_judges
             .filter((judge) => judge.role_description != "")
             .map(function(judge) {
-                return <a href={ "/tablet/" + judge.id.toString() } className="btn btn-default" key={ judge.id }>
-                    { judge.role_description }: { judge.name }
+                return <a className="mbtn" href={ "/tablet/" + judge.id.toString() }>
+                    <div className="title">
+                        { judge.role_description }
+                    </div>
+                    <div className="name">
+                        { judge.name }
+                    </div>
                 </a>
             });
         return <div className="role-selector">
             <h3>{ _("start_page.headers.select_role") }</h3>
             <div className="row">
-                <div className="col-sm-6">
+                <div className="col-md-4 group">
+                    <div className="btn-group-vertical full-width">
+                        { staff }
+                    </div>
+                </div>
+                <div className="col-md-4 group">
                     <div className="btn-group-vertical full-width">
                         { line_judges }
                     </div>
-                    <br /><br /><br />
+                </div>
+                <div className="col-md-4 group">
                     <div className="btn-group-vertical full-width">
-                        <a href={ "/presenter/" + this.props.competition.id.toString() } className="btn btn-default">
+                        <a href={ "/presenter/" + this.props.competition.id.toString() } className="mbtn no-title">
                             { _("start_page.roles.presenter") }
                         </a>
-                        <a href={ "/screen_operator/" + this.props.competition.id.toString() } className="btn btn-default">
-                            { _("start_page.roles.screen_operator") }
-                        </a>
-                        <a href={ "/admin/" + this.props.competition.id.toString() } className="btn btn-default">
+                        <a href={ "/admin/" + this.props.competition.id.toString() } className="mbtn no-title">
                             { _("start_page.roles.administrator") }
                         </a>
-                    </div>
-                </div>
-                <div className="col-sm-6">
-                    <div className="btn-group-vertical full-width">
-                        { staff }
+                        <a href={ "/screen_operator/" + this.props.competition.id.toString() } className="mbtn no-title">
+                            { _("start_page.roles.screen_operator") }
+                        </a>
                     </div>
                 </div>
             </div>

@@ -28,10 +28,17 @@ var RoleSelector = (function (_React$Component) {
             }).map(function (judge) {
                 return React.createElement(
                     "a",
-                    { href: "/tablet/" + judge.id.toString(), className: "btn btn-default", key: judge.id },
-                    _("global.phrases.judge_n", judge.number),
-                    ": ",
-                    judge.name
+                    { className: "mbtn", href: "/tablet/" + judge.id.toString() },
+                    React.createElement(
+                        "div",
+                        { className: "title" },
+                        _("global.phrases.judge_n", judge.number)
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "name" },
+                        judge.name
+                    )
                 );
             });
             var staff = all_judges.filter(function (judge) {
@@ -39,10 +46,17 @@ var RoleSelector = (function (_React$Component) {
             }).map(function (judge) {
                 return React.createElement(
                     "a",
-                    { href: "/tablet/" + judge.id.toString(), className: "btn btn-default", key: judge.id },
-                    judge.role_description,
-                    ": ",
-                    judge.name
+                    { className: "mbtn", href: "/tablet/" + judge.id.toString() },
+                    React.createElement(
+                        "div",
+                        { className: "title" },
+                        judge.role_description
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "name" },
+                        judge.name
+                    )
                 );
             });
             return React.createElement(
@@ -58,42 +72,43 @@ var RoleSelector = (function (_React$Component) {
                     { className: "row" },
                     React.createElement(
                         "div",
-                        { className: "col-sm-6" },
-                        React.createElement(
-                            "div",
-                            { className: "btn-group-vertical full-width" },
-                            line_judges
-                        ),
-                        React.createElement("br", null),
-                        React.createElement("br", null),
-                        React.createElement("br", null),
-                        React.createElement(
-                            "div",
-                            { className: "btn-group-vertical full-width" },
-                            React.createElement(
-                                "a",
-                                { href: "/presenter/" + this.props.competition.id.toString(), className: "btn btn-default" },
-                                _("start_page.roles.presenter")
-                            ),
-                            React.createElement(
-                                "a",
-                                { href: "/screen_operator/" + this.props.competition.id.toString(), className: "btn btn-default" },
-                                _("start_page.roles.screen_operator")
-                            ),
-                            React.createElement(
-                                "a",
-                                { href: "/admin/" + this.props.competition.id.toString(), className: "btn btn-default" },
-                                _("start_page.roles.administrator")
-                            )
-                        )
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "col-sm-6" },
+                        { className: "col-md-4 group" },
                         React.createElement(
                             "div",
                             { className: "btn-group-vertical full-width" },
                             staff
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "col-md-4 group" },
+                        React.createElement(
+                            "div",
+                            { className: "btn-group-vertical full-width" },
+                            line_judges
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "col-md-4 group" },
+                        React.createElement(
+                            "div",
+                            { className: "btn-group-vertical full-width" },
+                            React.createElement(
+                                "a",
+                                { href: "/presenter/" + this.props.competition.id.toString(), className: "mbtn no-title" },
+                                _("start_page.roles.presenter")
+                            ),
+                            React.createElement(
+                                "a",
+                                { href: "/admin/" + this.props.competition.id.toString(), className: "mbtn no-title" },
+                                _("start_page.roles.administrator")
+                            ),
+                            React.createElement(
+                                "a",
+                                { href: "/screen_operator/" + this.props.competition.id.toString(), className: "mbtn no-title" },
+                                _("start_page.roles.screen_operator")
+                            )
                         )
                     )
                 )

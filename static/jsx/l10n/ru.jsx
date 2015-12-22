@@ -363,7 +363,7 @@ function _(src, arg) {
                 "administrator": "Администратор",
                 "presenter": "Ведущий",
                 "screen": "Экран",
-                "screen_operator": "Оператор",
+                "screen_operator": "Оператор экрана",
             },
         },
         "tablet": {
