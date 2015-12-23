@@ -1,0 +1,76 @@
+.auto-printer {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+.auto-printer .section-table {
+  display: inline-block;
+  vertical-align: top;
+  width: 70%;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+}
+.auto-printer .section-queue {
+  display: inline-block;
+  vertical-align: top;
+  width: 30%;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+}
+.auto-printer table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+}
+.auto-printer table .discipline {
+  width: 500px;
+}
+.auto-printer table tr:nth-child(2n) {
+  background-color: #fff;
+}
+.auto-printer table td,
+.auto-printer table th {
+  padding: 2px 5px;
+  border: 2px solid black;
+}
+.auto-printer table td.input {
+  padding: 0;
+}
+.auto-printer table td.input input {
+  margin: 0;
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  text-align: center;
+}
+.auto-printer table th {
+  text-align: center;
+}
+.auto-printer .queue .row {
+  background-color: #bdd4de;
+  margin: 5px;
+  padding: 5px;
+}
+.auto-printer .queue .row div {
+  display: inline-block;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  vertical-align: top;
+}
+.auto-printer .queue .row .name {
+  width: 100%;
+  font-weight: bold;
+}
+.auto-printer .queue .row .type {
+  width: 90%;
+}
+.auto-printer .queue .row .copies {
+  width: 10%;
+  text-align: center;
+}
+.auto-printer .queue .hidden-container {
+  display: none;
+}

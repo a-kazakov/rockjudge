@@ -23,6 +23,15 @@ class HeatsBody extends React.Component {
         this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData.bind(this));
         this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
         this.loadData();
+        if (this.props.autoDocx) {
+            let interval_id = setInterval(() => {
+                if (this.refs.printable_heats) {
+                    clearInterval(interval_id);
+                    this.createDocx(this.props.autoDocx.filename);
+                    this.props.autoDocx.callback(this.props.autoDocx.filename);
+                }
+            }, 500);
+        }
     }
     componentWillUnmount() {
         message_dispatcher.removeListener(this.reload_listener);
@@ -117,8 +126,8 @@ class HeatsBody extends React.Component {
             </tbody></table>
         </div>
     }
-    createDocx() {
-        Docx("tour-heats")
+    createDocx(filename="tour-heats.docx") {
+        Docx(filename)
             .setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date)
             .setTitle1(_("admin.headers.tour_heats"))
             .setTitle2(this.state.tour.discipline.name)

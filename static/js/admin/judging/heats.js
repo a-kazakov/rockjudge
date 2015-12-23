@@ -61,10 +61,23 @@ var HeatsBody = (function (_React$Component2) {
     _createClass(HeatsBody, [{
         key: "componentWillMount",
         value: function componentWillMount() {
+            var _this4 = this;
+
             this.storage = storage.getDomain("heats_" + this.props.tour_id);
             this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData.bind(this));
             this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
             this.loadData();
+            if (this.props.autoDocx) {
+                (function () {
+                    var interval_id = setInterval(function () {
+                        if (_this4.refs.printable_heats) {
+                            clearInterval(interval_id);
+                            _this4.createDocx(_this4.props.autoDocx.filename);
+                            _this4.props.autoDocx.callback(_this4.props.autoDocx.filename);
+                        }
+                    }, 500);
+                })();
+            }
         }
     }, {
         key: "componentWillUnmount",
@@ -245,7 +258,9 @@ var HeatsBody = (function (_React$Component2) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("tour-heats").setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date).setTitle1(_("admin.headers.tour_heats")).setTitle2(this.state.tour.discipline.name).setTitle3(this.state.tour.name).setBody(ReactDOM.findDOMNode(this.refs.printable_heats).innerHTML).addStyle(".heat-number", "background", "#ccc").addStyle(".heat-number", "text-align", "left").addStyle("td, th", "font-size", "12pt").save();
+            var filename = arguments.length <= 0 || arguments[0] === undefined ? "tour-heats.docx" : arguments[0];
+
+            Docx(filename).setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date).setTitle1(_("admin.headers.tour_heats")).setTitle2(this.state.tour.discipline.name).setTitle3(this.state.tour.name).setBody(ReactDOM.findDOMNode(this.refs.printable_heats).innerHTML).addStyle(".heat-number", "background", "#ccc").addStyle(".heat-number", "text-align", "left").addStyle("td, th", "font-size", "12pt").save();
         }
     }]);
 

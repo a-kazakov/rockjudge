@@ -41,6 +41,15 @@ class DisciplineResults extends React.Component {
         }.bind(this));
         this.loadData();
         this.loadResults();
+        if (this.props.autoDocx) {
+            let interval_id = setInterval(() => {
+                if (this.refs.main_table) {
+                    clearInterval(interval_id);
+                    this.createDocx(this.props.autoDocx.filename);
+                    this.props.autoDocx.callback(this.props.autoDocx.filename);
+                }
+            }, 500);
+        }
     }
     componentWillUnmount() {
         message_dispatcher.removeListener(this.reload_listener);
@@ -151,8 +160,8 @@ class DisciplineResults extends React.Component {
             { this.renderBody() }
         </div>
     }
-    createDocx() {
-        Docx("discipline-results")
+    createDocx(filename="discipline-results.docx") {
+        Docx(filename)
             .setHeader(this.state.discipline.competition.name + ", " + this.state.discipline.competition.date)
             .setTitle1(_("admin.headers.discipline_results"))
             .setTitle3(this.state.discipline.name)

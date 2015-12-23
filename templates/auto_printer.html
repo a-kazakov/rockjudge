@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% autoescape None %}
+
+{% block title %}
+  RockJudge
+{% end %}
+
+{% block styles %}
+  <link rel="stylesheet" href="/static/css/auto_printer.css">
+{% end %}
+
+{% block scripts %}
+  <script src="/static/thirdparty/html-docx-js/filesaver.js"></script>
+  <script src="/static/thirdparty/html-docx-js/html-docx.js"></script>
+  <script src="/static/js/docx.js"></script>
+  <script src="/static/js/scoring_systems/rosfarr/base.js"></script>
+  <script src="/static/js/scoring_systems/rosfarr/discipline_results.js"></script>
+  <script src="/static/js/scoring_systems/rosfarr/no_acro/tour_results.js"></script>
+  <script src="/static/js/admin/judging/heats.js"></script>
+  <script src="/static/js/admin/judging/results.js"></script>
+  <script src="/static/js/admin/auto_printer.js"></script>
+  <script src="/static/js/results/discipline_results.js"></script>
+  <script>
+    ReactDOM.render(
+      React.createElement(AutoPrinter, { competition_id: {{ competition_id }} }),
+      document.getElementById("content")
+    );
+  </script>
+{% end %}
+
+{% block body %}
+  <div id="content"></div>
+{% end %}

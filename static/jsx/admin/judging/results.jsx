@@ -48,6 +48,15 @@ class TourResultsBody extends React.Component {
         }.bind(this));
         this.loadData();
         this.loadResults();
+        if (this.props.autoDocx) {
+            let interval_id = setInterval(() => {
+                if (this.refs.content) {
+                    clearInterval(interval_id);
+                    this.createDocx(this.props.autoDocx.filename);
+                    this.props.autoDocx.callback(this.props.autoDocx.filename);
+                }
+            }, 500);
+        }
     }
     componentWillUnmount() {
         message_dispatcher.removeListener(this.reload_listener);
@@ -111,13 +120,14 @@ class TourResultsBody extends React.Component {
         } else {
             table = <TourResultsTable {...this.state} />
         }
+        this.rendered = true;
         return <div className="tour-results" ref="content">
             { this.renderNonFinalizedWarning() }
             { table }
         </div>
     }
-    createDocx() {
-        Docx("tour-results")
+    createDocx(filename="tour-results.docx") {
+        Docx(filename)
             .setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date)
             .setTitle1(_("admin.headers.tour_results"))
             .setTitle2(this.state.tour.discipline.name)

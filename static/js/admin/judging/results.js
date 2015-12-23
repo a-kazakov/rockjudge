@@ -79,6 +79,8 @@ var TourResultsBody = (function (_React$Component2) {
     _createClass(TourResultsBody, [{
         key: "componentWillMount",
         value: function componentWillMount() {
+            var _this4 = this;
+
             this.storage = storage.getDomain("results_" + this.props.tour_id);
             this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData.bind(this));
             this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
@@ -89,6 +91,17 @@ var TourResultsBody = (function (_React$Component2) {
             }).bind(this));
             this.loadData();
             this.loadResults();
+            if (this.props.autoDocx) {
+                (function () {
+                    var interval_id = setInterval(function () {
+                        if (_this4.refs.content) {
+                            clearInterval(interval_id);
+                            _this4.createDocx(_this4.props.autoDocx.filename);
+                            _this4.props.autoDocx.callback(_this4.props.autoDocx.filename);
+                        }
+                    }, 500);
+                })();
+            }
         }
     }, {
         key: "componentWillUnmount",
@@ -163,6 +176,7 @@ var TourResultsBody = (function (_React$Component2) {
             } else {
                 table = React.createElement(TourResultsTable, this.state);
             }
+            this.rendered = true;
             return React.createElement(
                 "div",
                 { className: "tour-results", ref: "content" },
@@ -173,7 +187,9 @@ var TourResultsBody = (function (_React$Component2) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("tour-results").setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date).setTitle1(_("admin.headers.tour_results")).setTitle2(this.state.tour.discipline.name).setTitle3(this.state.tour.name).setBody(ReactDOM.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table", "font-size", this.props.verbosity == "1" ? "12pt" : "9pt").addStyle(".bordered-table .acro-table td", "font-size", "9pt").addStyle(".bordered-table .acro-table td", "padding", "0 3pt").addStyle(".bordered-table .acro-table td", "border", "0.5pt solid black").addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "font-size", "9pt").addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none").addStyle(".bordered-table .score-breakdown th", "padding", "0 1pt 0 0").addStyle(".bordered-table .score-breakdown td", "padding", "0 0 0 1pt").addStyle(".score-breakdown th", "text-align", "right").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown", "width", "50pt").addStyle(".total-score", "font-weight", "bold").addStyle(".advances-header", "background-color", "#ddd").addStyle(".head_judge", "width", "5%").addStyle(".dance_judge", "width", "8%").addStyle(".acro_judge", "width", "8%").save();
+            var filename = arguments.length <= 0 || arguments[0] === undefined ? "tour-results.docx" : arguments[0];
+
+            Docx(filename).setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date).setTitle1(_("admin.headers.tour_results")).setTitle2(this.state.tour.discipline.name).setTitle3(this.state.tour.name).setBody(ReactDOM.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table", "font-size", this.props.verbosity == "1" ? "12pt" : "9pt").addStyle(".bordered-table .acro-table td", "font-size", "9pt").addStyle(".bordered-table .acro-table td", "padding", "0 3pt").addStyle(".bordered-table .acro-table td", "border", "0.5pt solid black").addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "font-size", "9pt").addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none").addStyle(".bordered-table .score-breakdown th", "padding", "0 1pt 0 0").addStyle(".bordered-table .score-breakdown td", "padding", "0 0 0 1pt").addStyle(".score-breakdown th", "text-align", "right").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown td", "text-align", "left").addStyle(".score-breakdown", "width", "50pt").addStyle(".total-score", "font-weight", "bold").addStyle(".advances-header", "background-color", "#ddd").addStyle(".head_judge", "width", "5%").addStyle(".dance_judge", "width", "8%").addStyle(".acro_judge", "width", "8%").save();
         }
     }]);
 

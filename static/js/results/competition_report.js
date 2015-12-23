@@ -322,7 +322,9 @@ var CompetitionReport = (function (_React$Component) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("report").setMargins([10, 15, 10, 25]).setTitle1(_("admin.headers.competition_report")).setBody(this.refs.main_table.innerHTML).addStyle(".spacer td", "height", "5pt").addStyle(".tour-name", "background", "#ddd").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0").addStyle(".sportsmen", "width", "100%").save();
+            var filename = arguments.length <= 0 || arguments[0] === undefined ? "report.docx" : arguments[0];
+
+            Docx(filename).setMargins([10, 15, 10, 25]).setTitle1(_("admin.headers.competition_report")).setBody(this.refs.main_table.innerHTML).addStyle(".spacer td", "height", "5pt").addStyle(".tour-name", "background", "#ddd").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0").addStyle(".sportsmen", "width", "100%").save();
         }
     }]);
 

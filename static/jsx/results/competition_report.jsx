@@ -115,8 +115,8 @@ class CompetitionReport extends React.Component {
             </div>
         </div>
     }
-    createDocx() {
-        Docx("report")
+    createDocx(filename="report.docx") {
+        Docx(filename)
             .setMargins([10, 15, 10, 25])
             .setTitle1(_("admin.headers.competition_report"))
             .setBody(this.refs.main_table.innerHTML)

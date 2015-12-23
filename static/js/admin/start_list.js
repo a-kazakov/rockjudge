@@ -128,7 +128,9 @@ var ParticipantNumbers = (function (_React$Component2) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("numbers").setMargins([0, 10, 0, 10]).setBody(this.refs.content.innerHTML).addStyle("div", "margin", "0").addStyle("div", "padding", "0").addStyle("p", "mso-line-height-rule", "exactly").addStyle("div", "mso-line-height-rule", "exactly").addStyle(".participant", "text-align", "center").addStyle(".spacer-top", "line-height", "20pt").addStyle(".competition", "line-height", "15pt").addStyle(".spacer-top2", "line-height", "30pt").addStyle(".number", "line-height", "300pt").addStyle(".name", "line-height", "10pt").addStyle(".club", "line-height", "10pt").addStyle(".discipline", "line-height", "10pt").addStyle(".spacer-bottom", "line-height", "16pt").addStyle(".number", "font-size", "350pt").addStyle(".number", "letter-spacing:", "-20.0pt").addStyle(".competition", "font-size", "12pt").addStyle(".competition", "font-weight", "bold").addStyle(".competition", "border-bottom", "1pt solid black").addStyle(".name", "font-size", "12pt").addStyle(".name", "font-weight", "bold").addStyle(".club", "font-size", "12pt").addStyle(".discipline", "font-size", "12pt").save();
+            var filename = arguments.length <= 0 || arguments[0] === undefined ? "numbers.docx" : arguments[0];
+
+            Docx(filename).setMargins([0, 10, 0, 10]).setBody(this.refs.content.innerHTML).addStyle("div", "margin", "0").addStyle("div", "padding", "0").addStyle("p", "mso-line-height-rule", "exactly").addStyle("div", "mso-line-height-rule", "exactly").addStyle(".participant", "text-align", "center").addStyle(".spacer-top", "line-height", "20pt").addStyle(".competition", "line-height", "15pt").addStyle(".spacer-top2", "line-height", "30pt").addStyle(".number", "line-height", "300pt").addStyle(".name", "line-height", "10pt").addStyle(".club", "line-height", "10pt").addStyle(".discipline", "line-height", "10pt").addStyle(".spacer-bottom", "line-height", "16pt").addStyle(".number", "font-size", "350pt").addStyle(".number", "letter-spacing:", "-20.0pt").addStyle(".competition", "font-size", "12pt").addStyle(".competition", "font-weight", "bold").addStyle(".competition", "border-bottom", "1pt solid black").addStyle(".name", "font-size", "12pt").addStyle(".name", "font-weight", "bold").addStyle(".club", "font-size", "12pt").addStyle(".discipline", "font-size", "12pt").save();
         }
     }]);
 
@@ -563,7 +565,9 @@ var StartList = (function (_React$Component3) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("start-list").setMargins([10, 15, 10, 25]).setHeader(this.state.name + ", " + this.state.date).setTitle1(_("admin.headers.start_list")).setBody(ReactDOM.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table .inner td, .bordered-table .inner th", "border", "none").addStyle(".bordered-table .inner td, .bordered-table .inner th", "padding", "0").addStyle(".inner", "width", "100%").addStyle(".acro", "border-top", "none !important").addStyle(".has-acro td", "border-bottom", "1px solid #555 !important").addStyle(".has-acro td td", "border-bottom", "none !important").save();
+            var filename = arguments.length <= 0 || arguments[0] === undefined ? "start-list.docx" : arguments[0];
+
+            Docx(filename).setMargins([10, 15, 10, 25]).setHeader(this.state.name + ", " + this.state.date).setTitle1(_("admin.headers.start_list")).setBody(ReactDOM.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table .inner td, .bordered-table .inner th", "border", "none").addStyle(".bordered-table .inner td, .bordered-table .inner th", "padding", "0").addStyle(".inner", "width", "100%").addStyle(".acro", "border-top", "none !important").addStyle(".has-acro td", "border-bottom", "1px solid #555 !important").addStyle(".has-acro td td", "border-bottom", "none !important").save();
         }
     }]);
 

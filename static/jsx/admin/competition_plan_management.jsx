@@ -350,8 +350,8 @@ class CompetitionPlanManagementUI extends React.Component {
             </div>
         </div>;
     }
-    createDocx() {
-        Docx("program")
+    createDocx(filename="program.docx") {
+        Docx()
             .setMargins([10, 15, 10, 15])
             .setHeader(this.props.competition_name + ", " + this.props.competition_date)
             .setTitle1(_("admin.headers.competition_plan"))

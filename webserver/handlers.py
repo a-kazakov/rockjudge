@@ -24,6 +24,13 @@ class AdminHandler(tornado.web.RequestHandler):
         self.render("admin.html", competition_id=competition_id, debug=settings.DEBUG)
 
 
+class AutoPrinterHandler(tornado.web.RequestHandler):
+    def get(self, competition_id):
+        return self.render("auto_printer.html",
+            competition_id=competition_id,
+            debug=settings.DEBUG)
+
+
 class CompetitionReportHandler(tornado.web.RequestHandler):
     def get(self, competition_id):
         self.render(

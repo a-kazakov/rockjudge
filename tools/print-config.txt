@@ -1,0 +1,4 @@
+{
+    "downloads": "C:\\Users\\Artem\\Downloads",
+    "word": "C:\\Program Files\\Microsoft Office\\Office16\\winword.exe"
+}

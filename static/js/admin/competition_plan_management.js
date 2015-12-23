@@ -734,7 +734,9 @@ var CompetitionPlanManagementUI = (function (_React$Component6) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("program").setMargins([10, 15, 10, 15]).setHeader(this.props.competition_name + ", " + this.props.competition_date).setTitle1(_("admin.headers.competition_plan")).setBody(ReactDOM.findDOMNode(this.refs.printable_competition_plan).innerHTML).save();
+            var filename = arguments.length <= 0 || arguments[0] === undefined ? "program.docx" : arguments[0];
+
+            Docx().setMargins([10, 15, 10, 15]).setHeader(this.props.competition_name + ", " + this.props.competition_date).setTitle1(_("admin.headers.competition_plan")).setBody(ReactDOM.findDOMNode(this.refs.printable_competition_plan).innerHTML).save();
         }
     }]);
 

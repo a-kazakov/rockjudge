@@ -197,7 +197,7 @@ var DocxImpl = (function () {
                     left: Math.floor(margins[3] * 56.659).toString()
                 }
             });
-            saveAs(converted, this.filename + ".docx");
+            saveAs(converted, this.filename);
         }
     }]);
 

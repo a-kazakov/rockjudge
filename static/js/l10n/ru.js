@@ -44,6 +44,14 @@ function _(src, arg) {
                     )
                 )
             },
+            "auto_printer": {
+                "discipline": "Дисциплина",
+                "heats": "Заходы",
+                "results_1": "Краткая таблица",
+                "results_2": "Средняя таблица",
+                "results_3": "Подробная таблица",
+                "discipline_results": "Результаты дисциплины"
+            },
             "buttons": {
                 "add_club": "Добавить клуб",
                 "add_competition": "Создать соревнование",

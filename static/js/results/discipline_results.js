@@ -64,6 +64,8 @@ var DisciplineResults = (function (_React$Component2) {
     _createClass(DisciplineResults, [{
         key: "componentWillMount",
         value: function componentWillMount() {
+            var _this4 = this;
+
             this.storage = storage.getDomain("discipline_results_" + this.props.discipline_id);
             this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData.bind(this));
             this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadState.bind(this));
@@ -82,6 +84,17 @@ var DisciplineResults = (function (_React$Component2) {
             }).bind(this));
             this.loadData();
             this.loadResults();
+            if (this.props.autoDocx) {
+                (function () {
+                    var interval_id = setInterval(function () {
+                        if (_this4.refs.main_table) {
+                            clearInterval(interval_id);
+                            _this4.createDocx(_this4.props.autoDocx.filename);
+                            _this4.props.autoDocx.callback(_this4.props.autoDocx.filename);
+                        }
+                    }, 500);
+                })();
+            }
         }
     }, {
         key: "componentWillUnmount",
@@ -209,7 +222,9 @@ var DisciplineResults = (function (_React$Component2) {
     }, {
         key: "createDocx",
         value: function createDocx() {
-            Docx("discipline-results").setHeader(this.state.discipline.competition.name + ", " + this.state.discipline.competition.date).setTitle1(_("admin.headers.discipline_results")).setTitle3(this.state.discipline.name).setBody(ReactDOM.findDOMNode(this.refs.main_table).innerHTML).addStyle(".tour-name", "background", "#ddd").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0").addStyle(".sportsmen", "width", "100%").save();
+            var filename = arguments.length <= 0 || arguments[0] === undefined ? "discipline-results.docx" : arguments[0];
+
+            Docx(filename).setHeader(this.state.discipline.competition.name + ", " + this.state.discipline.competition.date).setTitle1(_("admin.headers.discipline_results")).setTitle3(this.state.discipline.name).setBody(ReactDOM.findDOMNode(this.refs.main_table).innerHTML).addStyle(".tour-name", "background", "#ddd").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0").addStyle(".sportsmen", "width", "100%").save();
         }
     }]);
 

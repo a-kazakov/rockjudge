@@ -45,8 +45,8 @@ class ParticipantNumbers extends React.Component {
             ) }
         </div>
     }
-    createDocx() {
-        Docx("numbers")
+    createDocx(filename="numbers.docx") {
+        Docx(filename)
             .setMargins([0, 10, 0, 10])
             .setBody(this.refs.content.innerHTML)
             .addStyle("div", "margin", "0")
@@ -248,8 +248,8 @@ class StartList extends React.Component {
                 ref="numbers" />
         </div>;
     }
-    createDocx() {
-        Docx("start-list")
+    createDocx(filename="start-list.docx") {
+        Docx(filename)
             .setMargins([10, 15, 10, 25])
             .setHeader(this.state.name + ", " + this.state.date)
             .setTitle1(_("admin.headers.start_list"))

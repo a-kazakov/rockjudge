@@ -6,6 +6,7 @@ from tornado.web import StaticFileHandler
 from webserver.handlers import (
     ApiHandler,
     AdminHandler,
+    AutoPrinterHandler,
     CompetitionReportHandler,
     CompetitionsHandler,
     ConnectionTesterHandler,
@@ -38,6 +39,7 @@ handlers = [
     (r"/media/screen/(.*)", StaticFileHandler, {"path": SCREEN_STATIC_PATH}),
     (r"/participants/(\d+)$", ManageParticipantsHandler),
     (r"/presenter/(\d+)$", PresenterHandler),
+    (r"/printer/(\d+)$", AutoPrinterHandler),
     (r"/report/(\d+)$", CompetitionReportHandler),
     (r"/start_list/(\d+)$", StartListHandler),
     (r"/screen/(\d+)", ScreenHandler),

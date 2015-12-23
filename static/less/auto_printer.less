@@ -1,0 +1,73 @@
+@import "variables.less";
+
+.auto-printer {
+    display: flex;
+    .section-table {
+        display: inline-block;
+        vertical-align: top;
+        width: 70%;
+        box-sizing: border-box;
+        padding: 10px;
+    }
+    .section-queue {
+        display: inline-block;
+        vertical-align: top;
+        width: 30%;
+        box-sizing: border-box;
+        padding: 10px;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        table-layout: fixed;
+        .discipline {
+            width: 500px;
+        }
+        tr:nth-child(2n) {
+            background-color: #fff;
+        }
+        td, th {
+            padding: 2px 5px;
+            border: 2px solid black;
+        }
+        td.input {
+            padding: 0;
+            input {
+                margin: 0;
+                width: 100%;
+                background-color: transparent;
+                border: none;
+                text-align: center;
+            }
+        }
+        th {
+            text-align: center;
+        }
+    }
+    .queue {
+        .row {
+            background-color: @ui-light;
+            margin: 5px;
+            padding: 5px;
+            div {
+                display: inline-block;
+                box-sizing: border-box;
+                vertical-align: top;
+            }
+            .name {
+                width: 100%;
+                font-weight: bold;
+            }
+            .type {
+                width: 90%;
+            }
+            .copies {
+                width: 10%;
+                text-align: center;
+            }
+        }
+        .hidden-container {
+            display: none;
+        }
+    }
+}
