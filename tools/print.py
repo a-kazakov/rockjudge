@@ -29,6 +29,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.do_print(args["filename"][0], int(args["copies"][0]))
         self.send_response(200)
         self.send_header("Content-type", "text/html")
+        self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
         self.wfile.write(bytes("", "utf-8"))
 

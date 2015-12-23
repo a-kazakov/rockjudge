@@ -1,7 +1,6 @@
 @import "variables.less";
 
 .auto-printer {
-    display: flex;
     .section-table {
         display: inline-block;
         vertical-align: top;
@@ -21,7 +20,7 @@
         width: 100%;
         table-layout: fixed;
         .discipline {
-            width: 500px;
+            width: 450px;
         }
         tr:nth-child(2n) {
             background-color: #fff;
@@ -29,6 +28,8 @@
         td, th {
             padding: 2px 5px;
             border: 2px solid black;
+            font-size: 13px;
+            overflow: hidden;
         }
         td.input {
             padding: 0;
@@ -45,6 +46,10 @@
         }
     }
     .queue {
+        &.queue-empty {
+            text-align: center;
+            font-style: italic;
+        }
         .row {
             background-color: @ui-light;
             margin: 5px;

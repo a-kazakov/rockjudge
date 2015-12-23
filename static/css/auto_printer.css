@@ -1,9 +1,3 @@
-.auto-printer {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-}
 .auto-printer .section-table {
   display: inline-block;
   vertical-align: top;
@@ -26,7 +20,7 @@
   table-layout: fixed;
 }
 .auto-printer table .discipline {
-  width: 500px;
+  width: 450px;
 }
 .auto-printer table tr:nth-child(2n) {
   background-color: #fff;
@@ -35,6 +29,8 @@
 .auto-printer table th {
   padding: 2px 5px;
   border: 2px solid black;
+  font-size: 13px;
+  overflow: hidden;
 }
 .auto-printer table td.input {
   padding: 0;
@@ -48,6 +44,10 @@
 }
 .auto-printer table th {
   text-align: center;
+}
+.auto-printer .queue.queue-empty {
+  text-align: center;
+  font-style: italic;
 }
 .auto-printer .queue .row {
   background-color: #bdd4de;

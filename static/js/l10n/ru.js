@@ -19,6 +19,8 @@ function _(src, arg) {
         "admin": {
             "alerts": {
                 "add_programs_after_creation": "Программы можно будет добавить только после сохранения участника",
+                "auto_printer_available": "Автоматическая печать корректно настроена и может быть использована.",
+                "auto_printer_not_available": "Автоматическая печать недоступна на этом компьтере.",
                 "no_finalized": "Отсутствуют финализированные туры",
                 "unfinalize_warning": React.createElement(
                     "div",
@@ -46,11 +48,14 @@ function _(src, arg) {
             },
             "auto_printer": {
                 "discipline": "Дисциплина",
+                "discipline_results": "Результаты дисциплины",
                 "heats": "Заходы",
+                "queue": "Очередь печати",
+                "queue_empty": "Очередь пуста",
                 "results_1": "Краткая таблица",
                 "results_2": "Средняя таблица",
                 "results_3": "Подробная таблица",
-                "discipline_results": "Результаты дисциплины"
+                "rules": "Задания"
             },
             "buttons": {
                 "add_club": "Добавить клуб",
@@ -65,6 +70,7 @@ function _(src, arg) {
                 "docx_numbers": "Номера в DOCX",
                 "docx_results": "Результаты в DOCX",
                 "import": "Импортировать",
+                "launch_auto_printer": "Запуск автоматической печати",
                 "refresh_clients": "Перезагрузить все устройства",
                 "reload_clients": "Обновить данные на всех устройствах",
                 "switch_to_plan": "Сортирока по программе",
@@ -86,6 +92,7 @@ function _(src, arg) {
                 "unfinalize_tour": "Вы действительно хотите отменить финализацию тура? Введите «unfinalize», чтобы продолжить"
             },
             "headers": {
+                "auto_printer": "Автоматическая печать",
                 "clients_management": "Управление подключенными устройствами",
                 "clubs": "Клубы-участники",
                 "clubs_management": "Управление клубами",

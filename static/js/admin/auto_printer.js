@@ -225,19 +225,18 @@ var AutoPrinterJobQueue = (function (_React$Component4) {
     }, {
         key: "continueJob",
         value: function continueJob(filename) {
+            var _this9 = this;
+
             clearTimeout(this.timer);
-            this.setState({
-                nowRendering: {
-                    type: "send-data",
-                    filename: filename,
-                    copies: this.state.nowRendering.copies
-                }
-            });
-            setTimeout(this.endJob.bind(this), 5000);
-        }
-    }, {
-        key: "endJob",
-        value: function endJob() {
+            var job = this.state.nowRendering;
+            var xhr = new XMLHttpRequest();
+            var address = "http://127.0.0.1:5949/print-docx?filename=" + filename + "&copies=" + job.copies;
+            xhr.open("GET", address, true);
+            xhr.onload = function () {};
+            xhr.onerror = function () {
+                return _this9.addJob(job);
+            };
+            xhr.send();
             this.setState({
                 nowRendering: null
             });
@@ -255,8 +254,6 @@ var AutoPrinterJobQueue = (function (_React$Component4) {
                 return null;
             }
             switch (this.state.nowRendering.type) {
-                case "send-data":
-                    return React.createElement("iframe", { src: "http://127.0.0.1:5949/print-docx?filename=" + this.state.nowRendering.filename + "&copies=" + this.state.nowRendering.copies });
                 case "heats":
                     return React.createElement(HeatsBody, {
                         tour_id: this.state.nowRendering.tour.id,
@@ -280,12 +277,26 @@ var AutoPrinterJobQueue = (function (_React$Component4) {
                     return React.createElement(DisciplineResults, {
                         discipline_id: this.state.nowRendering.tour.discipline.id,
                         autoDocx: { filename: this.createFilename(), callback: this.continueJob.bind(this) } });
+                default:
+                    console.error("Invalid job type:", this.state.nowRendering.type);
             }
             return null;
         }
     }, {
         key: "render",
         value: function render() {
+            if (this.state.queue.length == 0) {
+                return React.createElement(
+                    "div",
+                    { className: "queue queue-empty" },
+                    _("admin.auto_printer.queue_empty"),
+                    React.createElement(
+                        "div",
+                        { className: "hidden-container" },
+                        this.renderActiveJob()
+                    )
+                );
+            }
             return React.createElement(
                 "div",
                 { className: "queue" },
@@ -328,25 +339,35 @@ var AutoPrinter = (function (_React$Component5) {
     function AutoPrinter(props) {
         _classCallCheck(this, AutoPrinter);
 
-        var _this9 = _possibleConstructorReturn(this, Object.getPrototypeOf(AutoPrinter).call(this, props));
+        var _this10 = _possibleConstructorReturn(this, Object.getPrototypeOf(AutoPrinter).call(this, props));
 
-        _this9.state = {
+        _this10.state = {
             competition: null,
             actions: {}
         };
-        _this9.SCHEMA = {
+        _this10.SCHEMA = {
             disciplines: {
                 tours: {}
             }
         };
-        _this9.POSSIBLE_ACTIONS = ["heats", "results_1", "results_2", "results_3", "discipline_results"];
-        _this9.loadData();
-        message_dispatcher.addListener("db_update", _this9.reloadFromStorage.bind(_this9));
-        message_dispatcher.addListener("reload_data", _this9.loadData.bind(_this9));
-        return _this9;
+        _this10.POSSIBLE_ACTIONS = ["heats", "results_1", "results_2", "results_3", "discipline_results"];
+        return _this10;
     }
 
     _createClass(AutoPrinter, [{
+        key: "componentWillMount",
+        value: function componentWillMount() {
+            this.loadData();
+            this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
+            this.reload_data_listener = message_dispatcher.addListener("reload_data", this.loadData.bind(this));
+        }
+    }, {
+        key: "componentWillUnmount",
+        value: function componentWillUnmount() {
+            message_dispatcher.removeListener(this.db_update_listener);
+            message_dispatcher.removeListener(this.reload_data_listener);
+        }
+    }, {
         key: "loadData",
         value: function loadData() {
             Api("competition.get", { competition_id: this.props.competition_id, children: this.SCHEMA }).addToDB("Competition", this.props.competition_id).onSuccess(this.reloadFromStorage.bind(this)).send();
@@ -391,7 +412,7 @@ var AutoPrinter = (function (_React$Component5) {
     }, {
         key: "dispatchCompetitionUpdate",
         value: function dispatchCompetitionUpdate(old_competition, new_competition) {
-            var _this10 = this;
+            var _this11 = this;
 
             var old_tours = this.getToursMap(this.getToursFromCompetition(old_competition));
             var new_tours = this.getToursMap(this.getToursFromCompetition(new_competition));
@@ -400,7 +421,7 @@ var AutoPrinter = (function (_React$Component5) {
                     return;
                 }
                 if (!old_tours[tour_id].finalized && new_tours[tour_id].finalized) {
-                    _this10.doActionsForTour(new_tours[tour_id]);
+                    _this11.doActionsForTour(new_tours[tour_id]);
                 }
             });
         }
@@ -437,7 +458,7 @@ var AutoPrinter = (function (_React$Component5) {
     }, {
         key: "doActionsForTour",
         value: function doActionsForTour(tour) {
-            var _this11 = this;
+            var _this12 = this;
 
             var actions = this.state.actions[tour.id];
             if (!actions) {
@@ -445,14 +466,14 @@ var AutoPrinter = (function (_React$Component5) {
             }
             this.POSSIBLE_ACTIONS.forEach(function (action_type) {
                 if (actions[action_type]) {
-                    _this11.doTheJob(tour, action_type, actions[action_type]);
+                    _this12.doTheJob(tour, action_type, actions[action_type]);
                 }
             });
         }
     }, {
         key: "render",
         value: function render() {
-            var _this12 = this;
+            var _this13 = this;
 
             if (!this.state.competition) {
                 return React.createElement(Loader, null);
@@ -461,20 +482,43 @@ var AutoPrinter = (function (_React$Component5) {
                 "div",
                 { className: "auto-printer" },
                 React.createElement(
-                    "div",
-                    { className: "section-table" },
-                    React.createElement(AutoPrinterTable, {
-                        tours: this.getToursFromCompetition(this.state.competition),
-                        actions: this.state.actions,
-                        onChange: function onChange(new_actions) {
-                            return _this12.setState({ actions: new_actions });
-                        },
-                        possibleActions: this.POSSIBLE_ACTIONS })
+                    "header",
+                    null,
+                    React.createElement(
+                        "h1",
+                        null,
+                        _("admin.headers.auto_printer")
+                    )
                 ),
                 React.createElement(
                     "div",
-                    { className: "section-queue" },
-                    React.createElement(AutoPrinterJobQueue, { ref: "queue" })
+                    null,
+                    React.createElement(
+                        "div",
+                        { className: "section-table" },
+                        React.createElement(
+                            "h3",
+                            null,
+                            _("admin.auto_printer.rules")
+                        ),
+                        React.createElement(AutoPrinterTable, {
+                            tours: this.getToursFromCompetition(this.state.competition),
+                            actions: this.state.actions,
+                            onChange: function onChange(new_actions) {
+                                return _this13.setState({ actions: new_actions });
+                            },
+                            possibleActions: this.POSSIBLE_ACTIONS })
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "section-queue" },
+                        React.createElement(
+                            "h3",
+                            null,
+                            _("admin.auto_printer.queue")
+                        ),
+                        React.createElement(AutoPrinterJobQueue, { ref: "queue" })
+                    )
                 )
             );
         }

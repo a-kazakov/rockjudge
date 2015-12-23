@@ -104,16 +104,13 @@ class AutoPrinterJobQueue extends React.Component {
     }
     continueJob(filename) {
         clearTimeout(this.timer);
-        this.setState({
-            nowRendering: {
-                type: "send-data",
-                filename: filename,
-                copies: this.state.nowRendering.copies,
-            },
-        });
-        setTimeout(this.endJob.bind(this), 5000);
-    }
-    endJob() {
+        let job = this.state.nowRendering;
+        let xhr = new XMLHttpRequest();
+        let address = `http://127.0.0.1:5949/print-docx?filename=${ filename }&copies=${ job.copies }`;
+        xhr.open("GET", address, true);
+        xhr.onload = () => {};
+        xhr.onerror = () => this.addJob(job);
+        xhr.send();
         this.setState({
             nowRendering: null,
         });
@@ -127,9 +124,6 @@ class AutoPrinterJobQueue extends React.Component {
             return null;
         }
         switch (this.state.nowRendering.type) {
-        case "send-data":
-            return <iframe src={ "http://127.0.0.1:5949/print-docx?filename=" +
-                this.state.nowRendering.filename + "&copies=" + this.state.nowRendering.copies } />
         case "heats":
             return <HeatsBody
                 tour_id={ this.state.nowRendering.tour.id}
@@ -153,10 +147,20 @@ class AutoPrinterJobQueue extends React.Component {
             return <DisciplineResults
                 discipline_id={ this.state.nowRendering.tour.discipline.id }
                 autoDocx={{ filename: this.createFilename(), callback: this.continueJob.bind(this) }} />
+        default:
+            console.error("Invalid job type:", this.state.nowRendering.type);
         }
         return null;
     }
     render() {
+        if (this.state.queue.length == 0) {
+            return <div className="queue queue-empty">
+                { _("admin.auto_printer.queue_empty") }
+                <div className="hidden-container">
+                    { this.renderActiveJob() }
+                </div>
+            </div>
+        }
         return <div className="queue">
             { this.state.queue.map((item) =>
                 <div className="row" key={ item.id }>
@@ -191,9 +195,15 @@ class AutoPrinter extends React.Component {
             },
         };
         this.POSSIBLE_ACTIONS = ["heats", "results_1", "results_2", "results_3", "discipline_results"];
+    }
+    componentWillMount() {
         this.loadData();
-        message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
-        message_dispatcher.addListener("reload_data", this.loadData.bind(this));
+        this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
+        this.reload_data_listener = message_dispatcher.addListener("reload_data", this.loadData.bind(this));
+    }
+    componentWillUnmount() {
+        message_dispatcher.removeListener(this.db_update_listener);
+        message_dispatcher.removeListener(this.reload_data_listener);
     }
     loadData() {
         Api("competition.get", { competition_id: this.props.competition_id, children: this.SCHEMA })
@@ -284,15 +294,22 @@ class AutoPrinter extends React.Component {
             return <Loader />
         }
         return <div className="auto-printer">
-            <div className="section-table">
-                <AutoPrinterTable
-                    tours={ this.getToursFromCompetition(this.state.competition) }
-                    actions={ this.state.actions }
-                    onChange={ (new_actions) => this.setState({ actions: new_actions }) }
-                    possibleActions={ this.POSSIBLE_ACTIONS } />
-            </div>
-            <div className="section-queue">
-                <AutoPrinterJobQueue ref="queue" />
+            <header>
+                <h1>{ _("admin.headers.auto_printer") }</h1>
+            </header>
+            <div>
+                <div className="section-table">
+                    <h3>{ _("admin.auto_printer.rules") }</h3>
+                    <AutoPrinterTable
+                        tours={ this.getToursFromCompetition(this.state.competition) }
+                        actions={ this.state.actions }
+                        onChange={ (new_actions) => this.setState({ actions: new_actions }) }
+                        possibleActions={ this.POSSIBLE_ACTIONS } />
+                </div>
+                <div className="section-queue">
+                    <h3>{ _("admin.auto_printer.queue") }</h3>
+                    <AutoPrinterJobQueue ref="queue" />
+                </div>
             </div>
         </div>
     }

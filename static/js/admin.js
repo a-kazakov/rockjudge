@@ -341,8 +341,81 @@ var ManagementUI = (function (_React$Component2) {
     return ManagementUI;
 })(React.Component);
 
-var ServiceUI = (function (_React$Component3) {
-    _inherits(ServiceUI, _React$Component3);
+var AutoPrinterStatus = (function (_React$Component3) {
+    _inherits(AutoPrinterStatus, _React$Component3);
+
+    function AutoPrinterStatus(props) {
+        _classCallCheck(this, AutoPrinterStatus);
+
+        var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(AutoPrinterStatus).call(this, props));
+
+        _this4.state = {
+            available: null
+        };
+        return _this4;
+    }
+
+    _createClass(AutoPrinterStatus, [{
+        key: "componentDidMount",
+        value: function componentDidMount() {
+            var _this5 = this;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "http://127.0.0.1:5949", true);
+            xhr.onload = function () {
+                return _this5.setState({ available: true });
+            };
+            xhr.onerror = function () {
+                return _this5.setState({ available: false });
+            };
+            xhr.send();
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this6 = this;
+
+            if (this.state.available === null) {
+                return React.createElement(Loader, null);
+            }
+            if (!this.state.available) {
+                return React.createElement(
+                    "div",
+                    { className: "alert alert-danger" },
+                    React.createElement(
+                        "p",
+                        null,
+                        _("admin.alerts.auto_printer_not_available")
+                    )
+                );
+            }
+            return React.createElement(
+                "div",
+                { className: "alert alert-success" },
+                React.createElement(
+                    "p",
+                    null,
+                    _("admin.alerts.auto_printer_available")
+                ),
+                React.createElement("br", null),
+                React.createElement(
+                    "button",
+                    { className: "btn btn-default",
+                        type: "button",
+                        onClick: function onClick() {
+                            return window.printer_window ? window.printer_window.focus() : window.printer_window = window.open("/printer/" + _this6.props.competition_id, "printer", "resizable=yes,location=no");
+                        } },
+                    _("admin.buttons.launch_auto_printer")
+                )
+            );
+        }
+    }]);
+
+    return AutoPrinterStatus;
+})(React.Component);
+
+var ServiceUI = (function (_React$Component4) {
+    _inherits(ServiceUI, _React$Component4);
 
     function ServiceUI(props) {
         _classCallCheck(this, ServiceUI);
@@ -371,7 +444,7 @@ var ServiceUI = (function (_React$Component3) {
     }, {
         key: "unfinalizeTour",
         value: function unfinalizeTour(event) {
-            var _this5 = this;
+            var _this8 = this;
 
             event.preventDefault();
             var passcode = swal({
@@ -387,7 +460,7 @@ var ServiceUI = (function (_React$Component3) {
                     return false;
                 }
                 Api("tour.unfinalize", {
-                    tour_id: _this5.refs.select_unfinalize.value
+                    tour_id: _this8.refs.select_unfinalize.value
                 }).onSuccess(function (event) {
                     swal({
                         title: _("global.messages.success"),
@@ -488,7 +561,13 @@ var ServiceUI = (function (_React$Component3) {
                             null,
                             _("admin.headers.unfinalize_tour")
                         ),
-                        this.renderUnfinalize()
+                        this.renderUnfinalize(),
+                        React.createElement(
+                            "h3",
+                            null,
+                            _("admin.headers.auto_printer")
+                        ),
+                        React.createElement(AutoPrinterStatus, { competition_id: this.props.competition_id })
                     )
                 )
             );
@@ -498,24 +577,24 @@ var ServiceUI = (function (_React$Component3) {
     return ServiceUI;
 })(React.Component);
 
-var AdminUI = (function (_React$Component4) {
-    _inherits(AdminUI, _React$Component4);
+var AdminUI = (function (_React$Component5) {
+    _inherits(AdminUI, _React$Component5);
 
     // Intialization
 
     function AdminUI(props) {
         _classCallCheck(this, AdminUI);
 
-        var _this6 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdminUI).call(this, props));
+        var _this9 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdminUI).call(this, props));
 
-        _this6.state = {
-            active_app: _this6.getActiveAppFromHash(),
+        _this9.state = {
+            active_app: _this9.getActiveAppFromHash(),
             name: null
         };
-        message_dispatcher.addListener("db_update", _this6.reloadFromStorage.bind(_this6));
-        message_dispatcher.addListener("reload_data", _this6.loadData.bind(_this6));
-        _this6.loadData();
-        return _this6;
+        message_dispatcher.addListener("db_update", _this9.reloadFromStorage.bind(_this9));
+        message_dispatcher.addListener("reload_data", _this9.loadData.bind(_this9));
+        _this9.loadData();
+        return _this9;
     }
 
     _createClass(AdminUI, [{
@@ -595,6 +674,7 @@ var AdminUI = (function (_React$Component4) {
                         competition_id: this.props.competition_id });
                 case "service":
                     return React.createElement(ServiceUI, {
+                        competition_id: this.props.competition_id,
                         disciplines: this.state.disciplines });
             }
         }
