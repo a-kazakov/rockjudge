@@ -176,7 +176,8 @@ class TourResultsVerboseTableRow extends React.Component {
         </td>
     }
     render() {
-        let judges_scores = this.props.scores.map((score, idx) => <td className="w-13" key={ idx }> {
+        let w_class = this.props.scores > 5 ? "w-11" : "w-13";
+        let judges_scores = this.props.scores.map((score, idx) => <td className={ w_class } key={ idx }> {
             this.renderScore(this.props.discipline_judges[idx], score, this.props.results_info.additional_data)
         } </td>);
         if (!this.props.run.performed) {

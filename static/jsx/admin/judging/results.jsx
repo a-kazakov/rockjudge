@@ -128,6 +128,7 @@ class TourResultsBody extends React.Component {
     }
     createDocx(filename="tour-results.docx") {
         Docx(filename)
+            .setMargins([10, 7, 15, 7])
             .setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date)
             .setTitle1(_("admin.headers.tour_results"))
             .setTitle2(this.state.tour.discipline.name)

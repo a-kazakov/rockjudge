@@ -718,10 +718,11 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
         value: function render() {
             var _this2 = this;
 
+            var w_class = this.props.scores > 5 ? "w-11" : "w-13";
             var judges_scores = this.props.scores.map(function (score, idx) {
                 return React.createElement(
                     "td",
-                    { className: "w-13", key: idx },
+                    { className: w_class, key: idx },
                     " ",
                     _this2.renderScore(_this2.props.discipline_judges[idx], score, _this2.props.results_info.additional_data),
                     " "

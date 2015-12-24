@@ -493,11 +493,11 @@ function _(src, arg) {
                         "participant_club": "Клуб",
                         "participant_coaches": "Тренеры",
                         "participant_name": "Участник",
-                        "penalty": "Штраф главного судьи",
+                        "penalty": "Штраф гл. судьи",
                         "place": "Место",
                         "sportsmen": "Спортсмены",
                         "sportsmen_year_of_birth": "Г.р.",
-                        "total_score": "Итоговый балл",
+                        "total_score": "Итог",
                     },
                 }
             }
