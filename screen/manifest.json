@@ -11,7 +11,7 @@
         "controls": "tour-heat"
     }, {
         "id": "heats_two_participants",
-        "name": "Заходы, две пары на площадке",
+        "name": "Заходы, до трех пар на площадке",
         "template": "heats-two-participants.html",
         "controls": "tour-heat"
     }, {

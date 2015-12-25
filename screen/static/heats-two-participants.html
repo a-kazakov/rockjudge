@@ -45,6 +45,13 @@
         .discipline.no-info {
             margin: 375px 0 0 0;
         }
+        .participant.compact {
+            display: inline-block;
+            vertical-align: top;
+            width: 25%;
+            margin: 80px 0 0 0;
+            font-size: 23px;
+        }
         .participant {
             display: inline-block;
             vertical-align: top;
@@ -142,6 +149,9 @@
                 heat_runs.forEach(function(run) {
                     var participant = run.participant;
                     var item = $("#templates .participant").clone();
+                    if (heat_runs.length >= 3) {
+                        item.addClass("compact");
+                    }
                     var score = run.verbose_total_score.primary_score;
                     item.find(".name").text(participant.verbose_name || participant.sportsmen.map(function(s) { return s.last_name + " " + s.first_name; }).join("\n"));
                     item.find(".number").text("№" + participant.number);
