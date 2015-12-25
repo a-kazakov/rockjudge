@@ -9,7 +9,7 @@ class CompetitionPlanItem(BaseModel):
     class Meta:
         order_by = ["sp"]
         indexes = (
-            (("sp",), True),
+            (("competition", "sp",), True),
         )
 
     competition = peewee.ForeignKeyField(Competition, related_name="plan")
