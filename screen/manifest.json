@@ -29,6 +29,26 @@
         "name": "Награждение",
         "template": "awarding.html",
         "controls": "discipline-place"
+    }, {
+        "id": "sponsors",
+        "name": "Спонсоры, все",
+        "template": "sponsors.html",
+        "controls": "none"
+    }, {
+        "id": "sponsors_adm",
+        "name": "Спонсоры, администрация",
+        "template": "sponsors-adm.html",
+        "controls": "none"
+    }, {
+        "id": "sponsors_dep",
+        "name": "Спонсоры, департамент",
+        "template": "sponsors-dep.html",
+        "controls": "none"
+    }, {
+        "id": "sponsors_fed",
+        "name": "Спонсоры, федерация",
+        "template": "sponsors-fed.html",
+        "controls": "none"
     }],
     "default": "splash"
 }

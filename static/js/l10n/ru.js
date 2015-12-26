@@ -531,7 +531,7 @@ function _(src, arg) {
                         "participant_club": "Клуб",
                         "participant_coaches": "Тренеры",
                         "participant_name": "Участник",
-                        "penalty": "Штраф гл. судьи",
+                        "penalty": "Штраф главного судьи",
                         "place": "Место",
                         "sportsmen": "Спортсмены",
                         "sportsmen_year_of_birth": "Г.р.",
