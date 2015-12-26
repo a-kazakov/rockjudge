@@ -6,6 +6,29 @@ function __() {
     return _("scoring_systems.rosfarr." + arguments[0], ...args);
 }
 
+class TourResultsVerboseTableColumnWidths {
+    constructor(n_judges) {
+        this.judge_width = Math.round(70 / n_judges);
+        this.place_width = 7
+        this.info_width = 100 - this.judge_width * n_judges - this.place_width;
+    }
+    genPlaceStyle() {
+        return {
+            width: `${this.place_width}%`,
+        }
+    }
+    genInfoStyle() {
+        return {
+            width: `${this.info_width}%`,
+        }
+    }
+    genJudgeStyle() {
+        return {
+            width: `${this.judge_width}%`,
+        }
+    }
+}
+
 class TourResultsVerboseTableRow extends React.Component {
     formatScore(score, template) {
         if (!template) {
@@ -164,7 +187,7 @@ class TourResultsVerboseTableRow extends React.Component {
         }</p>
     }
     renderInfoBlock() {
-        return <td className="info-block">
+        return <td className="info-block" style={ this.props.widths.genInfoStyle() }>
             { this.renderParticipantInfo() }
             { this.renderHeadJudgePenalty() }
             { this.renderAcroTable() }
@@ -176,16 +199,19 @@ class TourResultsVerboseTableRow extends React.Component {
         </td>
     }
     render() {
-        let w_class = this.props.scores > 5 ? "w-11" : "w-13";
-        let judges_scores = this.props.scores.map((score, idx) => <td className={ w_class } key={ idx }> {
-            this.renderScore(this.props.discipline_judges[idx], score, this.props.results_info.additional_data)
-        } </td>);
+        let judges_scores = this.props.scores.map((score, idx) =>
+            <td key={ idx } style={ this.props.widths.genJudgeStyle() }>
+                { this.renderScore(this.props.discipline_judges[idx], score, this.props.results_info.additional_data) }
+            </td>);
         if (!this.props.run.performed) {
             judges_scores = this.props.scores.map((score, idx) =>
-                <td className="w-13" key={ idx }><p className="text-center">&mdash;</p></td>);
+                <td style={ this.props.widths.genJudgeStyle() } key={ idx }>
+                    <p className="text-center">&mdash;</p></td>);
         }
         return <tr>
-            <td className="w-3 place"><p className="text-center">{ this.props.results_info.place }</p></td>
+            <td className="place" style={ this.props.widths.genPlaceStyle() }>
+                <p className="text-center">{ this.props.results_info.place }</p>
+            </td>
             { this.renderInfoBlock() }
             { judges_scores }
         </tr>
@@ -202,12 +228,14 @@ class TourResultsVerboseTable extends React.Component {
         let runs = tour_wrapper.getRuns();
         let has_next_tour = this.props.tour.next_tour_id !== null;
         let rows = [];
+        let widths = new TourResultsVerboseTableColumnWidths(discipline_judges.length);
         for (let idx = 0; idx < runs.length; ++idx) {
             rows.push(<TourResultsVerboseTableRow
                 key={ runs[idx].id }
                 tour={ this.props.tour }
                 run={ runs[idx] }
                 scores={ scores_table[idx] }
+                widths={ widths }
                 head_judge_score={ head_judge_scores[idx] }
                 results_info={ results_info[idx] }
                 discipline_judges={ discipline_judges }
@@ -215,13 +243,13 @@ class TourResultsVerboseTable extends React.Component {
             );
         };
         let judges_header = discipline_judges.map(function(dj) {
-            return <th key={ dj.id }><p>{ dj.judge.number }</p></th>
+            return <th key={ dj.id } width={ widths.genJudgeStyle() }><p>{ dj.judge.number }</p></th>
         });
         return <table className="bordered-table" style={{ width: "100%" }}>
             <thead>
                 <tr>
-                    <th className="w-3 place"><p>{ __("results.labels.place") }</p></th>
-                    <th className="participant"><p>
+                    <th className="place" width={ widths.genPlaceStyle() }><p>{ __("results.labels.place") }</p></th>
+                    <th className="participant" width={ widths.genInfoStyle() }><p>
                         { __("results.labels.info") }
                     </p></th>
                     { judges_header }
@@ -231,6 +259,42 @@ class TourResultsVerboseTable extends React.Component {
                 { rows }
             </tbody>
         </table>
+    }
+}
+
+class TourResultsSemiVerboseTableColumnWidths {
+    constructor(n_judges) {
+        this.judge_width = Math.round(55 / n_judges);
+        this.total_score_width = 14;
+        this.place_width = 6;
+        this.number_width = 3;
+        this.name_width = 100 - this.judge_width * n_judges -
+            this.total_score_width - this.place_width - this.number_width;
+    }
+    genPlaceStyle() {
+        return {
+            width: `${this.place_width}%`,
+        }
+    }
+    genNumberStyle() {
+        return {
+            width: `${this.number_width}%`,
+        }
+    }
+    genNameStyle() {
+        return {
+            width: `${this.name_width}%`,
+        }
+    }
+    genTotalScoreStyle() {
+        return {
+            width: `${this.total_score_width}%`,
+        }
+    }
+    genJudgeStyle() {
+        return {
+            width: `${this.judge_width}%`,
+        }
     }
 }
 
@@ -247,20 +311,20 @@ class TourResultsSemiVerboseTableRow extends React.Component {
         return <p className="text-center">{ score.data.total_score.toFixed(2) }</p>;
     }
     render() {
-        let judges_scores = this.props.scores.map((score, idx) => <td className="w-9" key={ idx }> {
+        let judges_scores = this.props.scores.map((score, idx) => <td key={ idx }> {
             this.renderScore(this.props.discipline_judges[idx], score, this.props.results_info.additional_data)
         } </td>);
         if (!this.props.run.performed) {
             judges_scores = this.props.scores.map((score, idx) =>
-                <td className="w-9" key={ idx }><p className="text-center">&mdash;</p></td>);
+                <td key={ idx }><p className="text-center">&mdash;</p></td>);
         }
         let total_score = this.props.run.verbose_total_score;
         return <tr>
-            <td className="w-5 place"><p className="text-center">{ this.props.results_info.place }</p></td>
-            <td className="w-5 number"><p className="text-center">{ this.props.run.participant.number }</p></td>
+            <td className="place"><p className="text-center">{ this.props.results_info.place }</p></td>
+            <td className="number"><p className="text-center">{ this.props.run.participant.number }</p></td>
             <td className="participant">{ getParticipantDisplay(this.props.run.participant) }</td>
             { this.props.tour.scoring_system_name !== "rosfarr.formation"
-                ? <td className="w-14 total-score">
+                ? <td className="total-score">
                     { (() => {
                         if (!this.props.run.performed) {
                             return <p className="text-center">&mdash;</p>;
@@ -283,7 +347,7 @@ class TourResultsSemiVerboseTableRow extends React.Component {
                     })() }
                 </td> : null }
             { judges_scores }
-            <td className="w-7 card"><p className="text-center">{
+            <td className="card"><p className="text-center">{
                 this.props.head_judge_score && this.props.run.performed
                     ? this.props.head_judge_score.data.total_score
                     : <span>&mdash;</span>
@@ -331,9 +395,10 @@ class TourSemiVerboseResultsTable extends React.Component {
         let runs = tour_wrapper.getRuns();
         let has_next_tour = this.props.tour.next_tour_id !== null;
         let has_total_score = this.props.tour.scoring_system_name !== "rosfarr.formation";
+        let widths = new TourResultsSemiVerboseTableColumnWidths(discipline_judges.length + 1);
         let judges_header = discipline_judges.map(function(dj) {
             let suffix = getScoringType(dj, this.props.tour.scoring_system_name) == "acro" ? " (A)" : "";
-            return <th key={ dj.id } className="w-9"><p>{ dj.judge.number + suffix }</p></th>
+            return <th key={ dj.id } style={ widths.genJudgeStyle() }><p>{ dj.judge.number + suffix }</p></th>
         }.bind(this));
         let rows = [];
         for (let idx = 0; idx < runs.length; ++idx) {
@@ -361,12 +426,12 @@ class TourSemiVerboseResultsTable extends React.Component {
         return <table className="bordered-table">
             <thead>
                 <tr>
-                    <th className="w-5 place"><p>{ __("results.labels.place") }</p></th>
-                    <th className="w-5 number"><p>{ __("results.labels.number") }</p></th>
-                    <th className="participant"><p>{ __("results.labels.participant_name") }</p></th>
-                    { has_total_score ? <th className="w-14 total-score"><p>{ __("results.labels.total_score") }</p></th> : null }
+                    <th className="place" style={ widths.genPlaceStyle() }><p>{ __("results.labels.place") }</p></th>
+                    <th className="number" style={ widths.genNumberStyle() }><p>{ __("results.labels.number") }</p></th>
+                    <th className="participant" style={ widths.genNameStyle() }><p>{ __("results.labels.participant_name") }</p></th>
+                    { has_total_score ? <th className="total-score" style={ widths.genTotalScoreStyle() }><p>{ __("results.labels.total_score") }</p></th> : null }
                     { judges_header }
-                    <th className="w-7 card"><p className="text-center">{ __("results.labels.card") }</p></th>
+                    <th className="card" style={ widths.genJudgeStyle() }><p className="text-center">{ __("results.labels.card") }</p></th>
                 </tr>
             </thead>
             <tbody>

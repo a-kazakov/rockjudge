@@ -2,11 +2,11 @@
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function __() {
     var args = [];
@@ -15,6 +15,41 @@ function __() {
     }
     return _.apply(undefined, ["scoring_systems.rosfarr." + arguments[0]].concat(args));
 }
+
+var TourResultsVerboseTableColumnWidths = (function () {
+    function TourResultsVerboseTableColumnWidths(n_judges) {
+        _classCallCheck(this, TourResultsVerboseTableColumnWidths);
+
+        this.judge_width = Math.round(70 / n_judges);
+        this.place_width = 7;
+        this.info_width = 100 - this.judge_width * n_judges - this.place_width;
+    }
+
+    _createClass(TourResultsVerboseTableColumnWidths, [{
+        key: "genPlaceStyle",
+        value: function genPlaceStyle() {
+            return {
+                width: this.place_width + "%"
+            };
+        }
+    }, {
+        key: "genInfoStyle",
+        value: function genInfoStyle() {
+            return {
+                width: this.info_width + "%"
+            };
+        }
+    }, {
+        key: "genJudgeStyle",
+        value: function genJudgeStyle() {
+            return {
+                width: this.judge_width + "%"
+            };
+        }
+    }]);
+
+    return TourResultsVerboseTableColumnWidths;
+})();
 
 var TourResultsVerboseTableRow = (function (_React$Component) {
     _inherits(TourResultsVerboseTableRow, _React$Component);
@@ -702,7 +737,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
         value: function renderInfoBlock() {
             return React.createElement(
                 "td",
-                { className: "info-block" },
+                { className: "info-block", style: this.props.widths.genInfoStyle() },
                 this.renderParticipantInfo(),
                 this.renderHeadJudgePenalty(),
                 this.renderAcroTable(),
@@ -718,21 +753,18 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
         value: function render() {
             var _this2 = this;
 
-            var w_class = this.props.scores > 5 ? "w-11" : "w-13";
             var judges_scores = this.props.scores.map(function (score, idx) {
                 return React.createElement(
                     "td",
-                    { className: w_class, key: idx },
-                    " ",
-                    _this2.renderScore(_this2.props.discipline_judges[idx], score, _this2.props.results_info.additional_data),
-                    " "
+                    { key: idx, style: _this2.props.widths.genJudgeStyle() },
+                    _this2.renderScore(_this2.props.discipline_judges[idx], score, _this2.props.results_info.additional_data)
                 );
             });
             if (!this.props.run.performed) {
                 judges_scores = this.props.scores.map(function (score, idx) {
                     return React.createElement(
                         "td",
-                        { className: "w-13", key: idx },
+                        { style: _this2.props.widths.genJudgeStyle(), key: idx },
                         React.createElement(
                             "p",
                             { className: "text-center" },
@@ -746,7 +778,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                 null,
                 React.createElement(
                     "td",
-                    { className: "w-3 place" },
+                    { className: "place", style: this.props.widths.genPlaceStyle() },
                     React.createElement(
                         "p",
                         { className: "text-center" },
@@ -784,12 +816,14 @@ var TourResultsVerboseTable = (function (_React$Component2) {
             var runs = tour_wrapper.getRuns();
             var has_next_tour = this.props.tour.next_tour_id !== null;
             var rows = [];
+            var widths = new TourResultsVerboseTableColumnWidths(discipline_judges.length);
             for (var idx = 0; idx < runs.length; ++idx) {
                 rows.push(React.createElement(TourResultsVerboseTableRow, {
                     key: runs[idx].id,
                     tour: this.props.tour,
                     run: runs[idx],
                     scores: scores_table[idx],
+                    widths: widths,
                     head_judge_score: head_judge_scores[idx],
                     results_info: results_info[idx],
                     discipline_judges: discipline_judges,
@@ -798,7 +832,7 @@ var TourResultsVerboseTable = (function (_React$Component2) {
             var judges_header = discipline_judges.map(function (dj) {
                 return React.createElement(
                     "th",
-                    { key: dj.id },
+                    { key: dj.id, width: widths.genJudgeStyle() },
                     React.createElement(
                         "p",
                         null,
@@ -817,7 +851,7 @@ var TourResultsVerboseTable = (function (_React$Component2) {
                         null,
                         React.createElement(
                             "th",
-                            { className: "w-3 place" },
+                            { className: "place", width: widths.genPlaceStyle() },
                             React.createElement(
                                 "p",
                                 null,
@@ -826,7 +860,7 @@ var TourResultsVerboseTable = (function (_React$Component2) {
                         ),
                         React.createElement(
                             "th",
-                            { className: "participant" },
+                            { className: "participant", width: widths.genInfoStyle() },
                             React.createElement(
                                 "p",
                                 null,
@@ -847,6 +881,57 @@ var TourResultsVerboseTable = (function (_React$Component2) {
 
     return TourResultsVerboseTable;
 })(React.Component);
+
+var TourResultsSemiVerboseTableColumnWidths = (function () {
+    function TourResultsSemiVerboseTableColumnWidths(n_judges) {
+        _classCallCheck(this, TourResultsSemiVerboseTableColumnWidths);
+
+        this.judge_width = Math.round(55 / n_judges);
+        this.total_score_width = 14;
+        this.place_width = 6;
+        this.number_width = 3;
+        this.name_width = 100 - this.judge_width * n_judges - this.total_score_width - this.place_width - this.number_width;
+    }
+
+    _createClass(TourResultsSemiVerboseTableColumnWidths, [{
+        key: "genPlaceStyle",
+        value: function genPlaceStyle() {
+            return {
+                width: this.place_width + "%"
+            };
+        }
+    }, {
+        key: "genNumberStyle",
+        value: function genNumberStyle() {
+            return {
+                width: this.number_width + "%"
+            };
+        }
+    }, {
+        key: "genNameStyle",
+        value: function genNameStyle() {
+            return {
+                width: this.name_width + "%"
+            };
+        }
+    }, {
+        key: "genTotalScoreStyle",
+        value: function genTotalScoreStyle() {
+            return {
+                width: this.total_score_width + "%"
+            };
+        }
+    }, {
+        key: "genJudgeStyle",
+        value: function genJudgeStyle() {
+            return {
+                width: this.judge_width + "%"
+            };
+        }
+    }]);
+
+    return TourResultsSemiVerboseTableColumnWidths;
+})();
 
 var TourResultsSemiVerboseTableRow = (function (_React$Component3) {
     _inherits(TourResultsSemiVerboseTableRow, _React$Component3);
@@ -895,7 +980,7 @@ var TourResultsSemiVerboseTableRow = (function (_React$Component3) {
             var judges_scores = this.props.scores.map(function (score, idx) {
                 return React.createElement(
                     "td",
-                    { className: "w-9", key: idx },
+                    { key: idx },
                     " ",
                     _this5.renderScore(_this5.props.discipline_judges[idx], score, _this5.props.results_info.additional_data),
                     " "
@@ -905,7 +990,7 @@ var TourResultsSemiVerboseTableRow = (function (_React$Component3) {
                 judges_scores = this.props.scores.map(function (score, idx) {
                     return React.createElement(
                         "td",
-                        { className: "w-9", key: idx },
+                        { key: idx },
                         React.createElement(
                             "p",
                             { className: "text-center" },
@@ -920,7 +1005,7 @@ var TourResultsSemiVerboseTableRow = (function (_React$Component3) {
                 null,
                 React.createElement(
                     "td",
-                    { className: "w-5 place" },
+                    { className: "place" },
                     React.createElement(
                         "p",
                         { className: "text-center" },
@@ -929,7 +1014,7 @@ var TourResultsSemiVerboseTableRow = (function (_React$Component3) {
                 ),
                 React.createElement(
                     "td",
-                    { className: "w-5 number" },
+                    { className: "number" },
                     React.createElement(
                         "p",
                         { className: "text-center" },
@@ -943,7 +1028,7 @@ var TourResultsSemiVerboseTableRow = (function (_React$Component3) {
                 ),
                 this.props.tour.scoring_system_name !== "rosfarr.formation" ? React.createElement(
                     "td",
-                    { className: "w-14 total-score" },
+                    { className: "total-score" },
                     (function () {
                         if (!_this5.props.run.performed) {
                             return React.createElement(
@@ -993,7 +1078,7 @@ var TourResultsSemiVerboseTableRow = (function (_React$Component3) {
                 judges_scores,
                 React.createElement(
                     "td",
-                    { className: "w-7 card" },
+                    { className: "card" },
                     React.createElement(
                         "p",
                         { className: "text-center" },
@@ -1064,11 +1149,12 @@ var TourSemiVerboseResultsTable = (function (_React$Component4) {
             var runs = tour_wrapper.getRuns();
             var has_next_tour = this.props.tour.next_tour_id !== null;
             var has_total_score = this.props.tour.scoring_system_name !== "rosfarr.formation";
+            var widths = new TourResultsSemiVerboseTableColumnWidths(discipline_judges.length + 1);
             var judges_header = discipline_judges.map((function (dj) {
                 var suffix = getScoringType(dj, this.props.tour.scoring_system_name) == "acro" ? " (A)" : "";
                 return React.createElement(
                     "th",
-                    { key: dj.id, className: "w-9" },
+                    { key: dj.id, style: widths.genJudgeStyle() },
                     React.createElement(
                         "p",
                         null,
@@ -1101,7 +1187,7 @@ var TourSemiVerboseResultsTable = (function (_React$Component4) {
                         null,
                         React.createElement(
                             "th",
-                            { className: "w-5 place" },
+                            { className: "place", style: widths.genPlaceStyle() },
                             React.createElement(
                                 "p",
                                 null,
@@ -1110,7 +1196,7 @@ var TourSemiVerboseResultsTable = (function (_React$Component4) {
                         ),
                         React.createElement(
                             "th",
-                            { className: "w-5 number" },
+                            { className: "number", style: widths.genNumberStyle() },
                             React.createElement(
                                 "p",
                                 null,
@@ -1119,7 +1205,7 @@ var TourSemiVerboseResultsTable = (function (_React$Component4) {
                         ),
                         React.createElement(
                             "th",
-                            { className: "participant" },
+                            { className: "participant", style: widths.genNameStyle() },
                             React.createElement(
                                 "p",
                                 null,
@@ -1128,7 +1214,7 @@ var TourSemiVerboseResultsTable = (function (_React$Component4) {
                         ),
                         has_total_score ? React.createElement(
                             "th",
-                            { className: "w-14 total-score" },
+                            { className: "total-score", style: widths.genTotalScoreStyle() },
                             React.createElement(
                                 "p",
                                 null,
@@ -1138,7 +1224,7 @@ var TourSemiVerboseResultsTable = (function (_React$Component4) {
                         judges_header,
                         React.createElement(
                             "th",
-                            { className: "w-7 card" },
+                            { className: "card", style: widths.genJudgeStyle() },
                             React.createElement(
                                 "p",
                                 { className: "text-center" },

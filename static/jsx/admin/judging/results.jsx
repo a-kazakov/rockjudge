@@ -128,7 +128,7 @@ class TourResultsBody extends React.Component {
     }
     createDocx(filename="tour-results.docx") {
         Docx(filename)
-            .setMargins([10, 7, 15, 7])
+            .setMargins([10, 10, 15, 10])
             .setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date)
             .setTitle1(_("admin.headers.tour_results"))
             .setTitle2(this.state.tour.discipline.name)
@@ -146,7 +146,6 @@ class TourResultsBody extends React.Component {
             .addStyle(".score-breakdown td", "text-align", "left")
             .addStyle(".score-breakdown td", "text-align", "left")
             .addStyle(".score-breakdown", "width", "50pt")
-            .addStyle(".total-score", "font-weight", "bold")
             .addStyle(".advances-header", "background-color", "#ddd")
             .addStyle(".head_judge", "width", "5%")
             .addStyle(".dance_judge", "width", "8%")
