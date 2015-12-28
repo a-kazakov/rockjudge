@@ -234,7 +234,7 @@ var AutoPrinterJobQueue = (function (_React$Component4) {
             xhr.open("GET", address, true);
             xhr.onload = function () {};
             xhr.onerror = function () {
-                return _this9.addJob(job);
+                return _this9.addJob(job.type, job.tour, job.copies);
             };
             xhr.send();
             this.setState({

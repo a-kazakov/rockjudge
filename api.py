@@ -356,10 +356,11 @@ class Api:
     @classmethod
     def tour_start_next_after(cls, request, ws_message):
         tour_id = request["tour_id"]
+        tour = Tour.get(id=tour_id)
         try:
             current_competition_plan_item = \
                 (CompetitionPlanItem.select()
-                    .where(CompetitionPlanItem.tour == tour_id)
+                    .where(CompetitionPlanItem.tour == tour)
                     .get())
         except CompetitionPlanItem.DoesNotExist:
             raise ApiError("errors.tour.not_in_competition_plan")
@@ -368,6 +369,7 @@ class Api:
                 (CompetitionPlanItem.select()
                     .where(
                         (CompetitionPlanItem.sp > current_competition_plan_item.sp) &
+                        (CompetitionPlanItem.competition == tour.discipline.competition_id) &
                         ~(CompetitionPlanItem.tour >> None))
                     .order_by(CompetitionPlanItem.sp.asc())
                     .get())

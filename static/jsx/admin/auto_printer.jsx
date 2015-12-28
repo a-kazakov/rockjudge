@@ -109,7 +109,7 @@ class AutoPrinterJobQueue extends React.Component {
         let address = `http://127.0.0.1:5949/print-docx?filename=${ filename }&copies=${ job.copies }`;
         xhr.open("GET", address, true);
         xhr.onload = () => {};
-        xhr.onerror = () => this.addJob(job);
+        xhr.onerror = () => this.addJob(job.type, job.tour, job.copies);
         xhr.send();
         this.setState({
             nowRendering: null,

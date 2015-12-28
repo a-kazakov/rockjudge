@@ -29,7 +29,7 @@
             text-align: center;
             font-size: 35px;
             font-weight: bold;
-            margin: 250px 0 60px 0;
+            margin: 300px 0 60px 0;
         }
         #discipline-name.no-info {
             margin: 375px 0 0 0;
@@ -104,7 +104,7 @@
                                 },
                             }
                         } })
-                            .addToDB("Tour", discipline_id, storage.getDomain(discipline_id))
+                            .addToDB("Discipline", discipline_id, storage.getDomain(discipline_id))
                             .onSuccess(function() {
                                 if (state.current_discipline_id !== discipline_id) {
                                     storage.delDomain(state.current_discipline_id)
@@ -126,7 +126,7 @@
                     console.log("No discipline storage");
                     return;
                 }
-                var discipline = discipline_storage.get("Tour").by_id(discipline_id);
+                var discipline = discipline_storage.get("Discipline").by_id(discipline_id);
                 if (!discipline) {
                     console.log("No discipline");
                     return;
