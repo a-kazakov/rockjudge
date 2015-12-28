@@ -214,10 +214,14 @@ class Tour(BaseModel):
             return None
         return prev_tours_list[0]
 
-    def check_prev_tour_finalized(self):
+    def check_prev_tour_finalized(self, strict=True):
         prev_tour = self.get_prev_tour()
         if prev_tour is None:
             return
+        if not strict:
+            prev_tour_size = prev_tour.get_attr_count("runs")
+            if prev_tour_size <= prev_tour.num_advances:
+                return
         if not prev_tour.finalized:
             raise ApiError("errors.tour.prev_not_finailzed")
 
@@ -230,7 +234,7 @@ class Tour(BaseModel):
     def init(self, ws_message):
         if self.finalized:
             raise ApiError("error.tour.init_finalized")
-        self.check_prev_tour_finalized()
+        self.check_prev_tour_finalized(False)
         self.create_participant_runs()
         ws_message.add_message("tour_results_changed", {"tour_id": self.id})
         ws_message.add_model_update(
