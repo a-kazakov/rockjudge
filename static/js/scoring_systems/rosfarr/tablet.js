@@ -330,7 +330,7 @@ var HeadJudgeDanceJudgesScores = (function (_React$Component6) {
             return this.getDanceDisciplineJudges().map(function (judge) {
                 return React.createElement(
                     "td",
-                    null,
+                    { key: judge.id },
                     judge.judge.number,
                     judge.role == "acro_judge" ? " (A)" : ""
                 );
@@ -446,6 +446,9 @@ var HeadJudgeScoreInput = (function (_React$Component8) {
     _createClass(HeadJudgeScoreInput, [{
         key: "getPenaltyCoices",
         value: function getPenaltyCoices() {
+            if (this.props.scoring_system_name == "rosfarr.formation") {
+                return [[0, __("tablet.head_judge.ok")], [-5, __("tablet.head_judge.form_yellow_card")], [-15, __("tablet.head_judge.form_red_card")], [-100, __("tablet.head_judge.black_card")]];
+            }
             return [[0, __("tablet.head_judge.ok")], [-3, __("tablet.head_judge.yellow_card")], [-30, __("tablet.head_judge.red_card")], [-100, __("tablet.head_judge.black_card")]];
         }
     }, {
@@ -779,8 +782,39 @@ var DanceJudgeScoreMistakes = (function (_React$Component14) {
     return DanceJudgeScoreMistakes;
 })(React.Component);
 
-var DanceJudgeFinalDanceScoreInput = (function (_React$Component15) {
-    _inherits(DanceJudgeFinalDanceScoreInput, _React$Component15);
+var DanceJudgeScoreFormationMistakes = (function (_React$Component15) {
+    _inherits(DanceJudgeScoreFormationMistakes, _React$Component15);
+
+    function DanceJudgeScoreFormationMistakes() {
+        _classCallCheck(this, DanceJudgeScoreFormationMistakes);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(DanceJudgeScoreFormationMistakes).apply(this, arguments));
+    }
+
+    _createClass(DanceJudgeScoreFormationMistakes, [{
+        key: "render",
+        value: function render() {
+            var score_data = this.props.score.data.raw_data;
+            return React.createElement(
+                "div",
+                { className: "mistakes" },
+                React.createElement(
+                    "h3",
+                    null,
+                    __("tablet.dance_judge.form_mistakes")
+                ),
+                React.createElement(TabletIntegerInput, {
+                    value: score_data.mistakes,
+                    onValueUpdate: this.props.onScoreUpdate.bind(this, "mistakes") })
+            );
+        }
+    }]);
+
+    return DanceJudgeScoreFormationMistakes;
+})(React.Component);
+
+var DanceJudgeFinalDanceScoreInput = (function (_React$Component16) {
+    _inherits(DanceJudgeFinalDanceScoreInput, _React$Component16);
 
     function DanceJudgeFinalDanceScoreInput() {
         _classCallCheck(this, DanceJudgeFinalDanceScoreInput);
@@ -826,8 +860,8 @@ var DanceJudgeFinalDanceScoreInput = (function (_React$Component15) {
     return DanceJudgeFinalDanceScoreInput;
 })(React.Component);
 
-var DanceJudgeDanceScoreInput = (function (_React$Component16) {
-    _inherits(DanceJudgeDanceScoreInput, _React$Component16);
+var DanceJudgeDanceScoreInput = (function (_React$Component17) {
+    _inherits(DanceJudgeDanceScoreInput, _React$Component17);
 
     function DanceJudgeDanceScoreInput() {
         _classCallCheck(this, DanceJudgeDanceScoreInput);
@@ -873,8 +907,8 @@ var DanceJudgeDanceScoreInput = (function (_React$Component16) {
     return DanceJudgeDanceScoreInput;
 })(React.Component);
 
-var DanceJudgeFormationScoreInput = (function (_React$Component17) {
-    _inherits(DanceJudgeFormationScoreInput, _React$Component17);
+var DanceJudgeFormationScoreInput = (function (_React$Component18) {
+    _inherits(DanceJudgeFormationScoreInput, _React$Component18);
 
     function DanceJudgeFormationScoreInput() {
         _classCallCheck(this, DanceJudgeFormationScoreInput);
@@ -912,7 +946,7 @@ var DanceJudgeFormationScoreInput = (function (_React$Component17) {
                         max: 10
                     }
                 }, this.props)),
-                React.createElement(DanceJudgeScoreMistakes, this.props)
+                React.createElement(DanceJudgeScoreFormationMistakes, this.props)
             );
         }
     }]);
@@ -920,8 +954,8 @@ var DanceJudgeFormationScoreInput = (function (_React$Component17) {
     return DanceJudgeFormationScoreInput;
 })(React.Component);
 
-var DanceJudgeSimplifiedScoreInput = (function (_React$Component18) {
-    _inherits(DanceJudgeSimplifiedScoreInput, _React$Component18);
+var DanceJudgeSimplifiedScoreInput = (function (_React$Component19) {
+    _inherits(DanceJudgeSimplifiedScoreInput, _React$Component19);
 
     function DanceJudgeSimplifiedScoreInput() {
         _classCallCheck(this, DanceJudgeSimplifiedScoreInput);
@@ -952,8 +986,8 @@ var DanceJudgeSimplifiedScoreInput = (function (_React$Component18) {
     return DanceJudgeSimplifiedScoreInput;
 })(React.Component);
 
-var DanceJudgeScoreInput = (function (_React$Component19) {
-    _inherits(DanceJudgeScoreInput, _React$Component19);
+var DanceJudgeScoreInput = (function (_React$Component20) {
+    _inherits(DanceJudgeScoreInput, _React$Component20);
 
     function DanceJudgeScoreInput() {
         _classCallCheck(this, DanceJudgeScoreInput);
@@ -990,8 +1024,8 @@ var DanceJudgeScoreInput = (function (_React$Component19) {
 
 // Acro judge
 
-var AcroJudgeAcrobaticInput = (function (_React$Component20) {
-    _inherits(AcroJudgeAcrobaticInput, _React$Component20);
+var AcroJudgeAcrobaticInput = (function (_React$Component21) {
+    _inherits(AcroJudgeAcrobaticInput, _React$Component21);
 
     function AcroJudgeAcrobaticInput() {
         _classCallCheck(this, AcroJudgeAcrobaticInput);
@@ -1021,8 +1055,8 @@ var AcroJudgeAcrobaticInput = (function (_React$Component20) {
     return AcroJudgeAcrobaticInput;
 })(React.Component);
 
-var AcroJudgeScoreMistakes = (function (_React$Component21) {
-    _inherits(AcroJudgeScoreMistakes, _React$Component21);
+var AcroJudgeScoreMistakes = (function (_React$Component22) {
+    _inherits(AcroJudgeScoreMistakes, _React$Component22);
 
     function AcroJudgeScoreMistakes() {
         _classCallCheck(this, AcroJudgeScoreMistakes);
@@ -1051,8 +1085,8 @@ var AcroJudgeScoreMistakes = (function (_React$Component21) {
     return AcroJudgeScoreMistakes;
 })(React.Component);
 
-var AcroJudgeInput = (function (_React$Component22) {
-    _inherits(AcroJudgeInput, _React$Component22);
+var AcroJudgeInput = (function (_React$Component23) {
+    _inherits(AcroJudgeInput, _React$Component23);
 
     function AcroJudgeInput() {
         _classCallCheck(this, AcroJudgeInput);
@@ -1063,25 +1097,25 @@ var AcroJudgeInput = (function (_React$Component22) {
     _createClass(AcroJudgeInput, [{
         key: "genOnAcroReductionUpdate",
         value: function genOnAcroReductionUpdate(acro_idx) {
-            var _this31 = this;
+            var _this32 = this;
 
             return function (new_value) {
-                return _this31.props.onAcroReductionUpdate(acro_idx, new_value);
+                return _this32.props.onAcroReductionUpdate(acro_idx, new_value);
             };
         }
     }, {
         key: "genOnMistakesUpdate",
         value: function genOnMistakesUpdate() {
-            var _this32 = this;
+            var _this33 = this;
 
             return function (new_value) {
-                return _this32.props.onScoreUpdate("mistakes", new_value);
+                return _this33.props.onScoreUpdate("mistakes", new_value);
             };
         }
     }, {
         key: "render",
         value: function render() {
-            var _this33 = this;
+            var _this34 = this;
 
             var score_data = this.props.score.data.raw_data;
             return React.createElement(
@@ -1092,7 +1126,7 @@ var AcroJudgeInput = (function (_React$Component22) {
                         key: acro_idx,
                         reduction: reduction,
                         acro_idx: acro_idx,
-                        onAcroReductionUpdate: _this33.genOnAcroReductionUpdate(acro_idx) });
+                        onAcroReductionUpdate: _this34.genOnAcroReductionUpdate(acro_idx) });
                 }),
                 React.createElement(AcroJudgeScoreMistakes, {
                     mistakes: score_data.mistakes,
@@ -1106,8 +1140,8 @@ var AcroJudgeInput = (function (_React$Component22) {
 
 // Common
 
-var NotPerformingMessage = (function (_React$Component23) {
-    _inherits(NotPerformingMessage, _React$Component23);
+var NotPerformingMessage = (function (_React$Component24) {
+    _inherits(NotPerformingMessage, _React$Component24);
 
     function NotPerformingMessage() {
         _classCallCheck(this, NotPerformingMessage);
@@ -1129,8 +1163,8 @@ var NotPerformingMessage = (function (_React$Component23) {
     return NotPerformingMessage;
 })(React.Component);
 
-var ScorePartScale = (function (_React$Component24) {
-    _inherits(ScorePartScale, _React$Component24);
+var ScorePartScale = (function (_React$Component25) {
+    _inherits(ScorePartScale, _React$Component25);
 
     function ScorePartScale() {
         _classCallCheck(this, ScorePartScale);
@@ -1165,8 +1199,8 @@ var ScorePartScale = (function (_React$Component24) {
     return ScorePartScale;
 })(React.Component);
 
-var TabletScoreTotalScore = (function (_React$Component25) {
-    _inherits(TabletScoreTotalScore, _React$Component25);
+var TabletScoreTotalScore = (function (_React$Component26) {
+    _inherits(TabletScoreTotalScore, _React$Component26);
 
     function TabletScoreTotalScore() {
         _classCallCheck(this, TabletScoreTotalScore);
@@ -1197,8 +1231,8 @@ var TabletScoreTotalScore = (function (_React$Component25) {
     return TabletScoreTotalScore;
 })(React.Component);
 
-var TabletScoreConfirmationButton = (function (_React$Component26) {
-    _inherits(TabletScoreConfirmationButton, _React$Component26);
+var TabletScoreConfirmationButton = (function (_React$Component27) {
+    _inherits(TabletScoreConfirmationButton, _React$Component27);
 
     function TabletScoreConfirmationButton() {
         _classCallCheck(this, TabletScoreConfirmationButton);
@@ -1257,8 +1291,8 @@ var TabletScoreConfirmationButton = (function (_React$Component26) {
     return TabletScoreConfirmationButton;
 })(React.Component);
 
-var TabletScoreInput = (function (_React$Component27) {
-    _inherits(TabletScoreInput, _React$Component27);
+var TabletScoreInput = (function (_React$Component28) {
+    _inherits(TabletScoreInput, _React$Component28);
 
     function TabletScoreInput() {
         _classCallCheck(this, TabletScoreInput);
@@ -1320,6 +1354,7 @@ var TabletScoreInput = (function (_React$Component27) {
                     return React.createElement(HeadJudgeScoreInput, {
                         run: this.props.run,
                         score: this.props.score,
+                        scoring_system_name: this.props.scoring_system_name,
                         all_discipline_judges: this.props.all_discipline_judges,
                         all_scores: this.props.all_scores,
                         onScoreUpdate: this.updateScores.bind(this) });

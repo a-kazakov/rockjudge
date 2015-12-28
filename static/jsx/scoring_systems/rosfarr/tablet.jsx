@@ -128,7 +128,7 @@ class HeadJudgeDanceJudgesScores extends React.Component {
     }
     renderNumbers() {
         return this.getDanceDisciplineJudges().map((judge) =>
-            <td>{ judge.judge.number }{ judge.role == "acro_judge" ? " (A)" : "" }</td>
+            <td key={ judge.id }>{ judge.judge.number }{ judge.role == "acro_judge" ? " (A)" : "" }</td>
         );
     }
     renderScores() {
@@ -177,6 +177,14 @@ class HeadJudgeNotPerformedSwitch extends React.Component {
 
 class HeadJudgeScoreInput extends React.Component {
     getPenaltyCoices() {
+        if (this.props.scoring_system_name == "rosfarr.formation") {
+            return [
+                [0,    __("tablet.head_judge.ok")],
+                [-5,   __("tablet.head_judge.form_yellow_card")],
+                [-15,  __("tablet.head_judge.form_red_card")],
+                [-100, __("tablet.head_judge.black_card")]
+            ];
+        }
         return [
             [0,    __("tablet.head_judge.ok")],
             [-3,   __("tablet.head_judge.yellow_card")],
@@ -339,6 +347,18 @@ class DanceJudgeScoreMistakes extends React.Component {
     }
 }
 
+class DanceJudgeScoreFormationMistakes extends React.Component {
+    render() {
+        let score_data = this.props.score.data.raw_data;
+        return <div className="mistakes">
+            <h3>{ __("tablet.dance_judge.form_mistakes") }</h3>
+            <TabletIntegerInput
+                value={ score_data.mistakes }
+                onValueUpdate={ this.props.onScoreUpdate.bind(this, "mistakes") } />
+        </div>
+    }
+}
+
 class DanceJudgeFinalDanceScoreInput extends React.Component {
     render() {
         return <div>
@@ -432,7 +452,7 @@ class DanceJudgeFormationScoreInput extends React.Component {
                     max: 10,
                 }}
                 {...this.props} />
-            <DanceJudgeScoreMistakes
+            <DanceJudgeScoreFormationMistakes
                 {...this.props} />
         </div>
     }
@@ -667,6 +687,7 @@ class TabletScoreInput extends React.Component {
             return <HeadJudgeScoreInput
                 run={ this.props.run }
                 score={ this.props.score }
+                scoring_system_name={ this.props.scoring_system_name }
                 all_discipline_judges={ this.props.all_discipline_judges }
                 all_scores={ this.props.all_scores }
                 onScoreUpdate={ this.updateScores.bind(this) } />

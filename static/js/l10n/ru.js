@@ -468,6 +468,8 @@ function _(src, arg) {
                         "composition": "Композиция",
                         "dance_figs": "Танцевальные фигуры",
                         "dance_tech": "Техника танцевания",
+                        "form_fall_down": "Падения (-3)",
+                        "form_mistakes": "Ошибки (-2)",
                         "fw_man": "Основной ход, партнёр (сбавка в %)",
                         "fw_woman": "Основной ход, партнёрша (сбавка в %)",
                         "impression": "Общее впечатление",
@@ -485,7 +487,9 @@ function _(src, arg) {
                         "penalty_type": "Штрафные санкции",
                         "previous_penalties": "Предыдущие штрафы",
                         "red_card": "-30",
-                        "yellow_card": "-3"
+                        "yellow_card": "-3",
+                        "form_yellow_card": "-5",
+                        "form_red_card": "-15"
                     },
                     "tech_judge": {
                         "jump_steps": "Основные ходы",
@@ -508,6 +512,7 @@ function _(src, arg) {
                         "fm": "ОХм",
                         "fw": "ОХж",
                         "i": "ОВ",
+                        "m": "Ош",
                         "p": "М",
                         "sm": "МО",
                         "t": "Σ"

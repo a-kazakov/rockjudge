@@ -162,7 +162,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                             React.createElement(
                                 "p",
                                 null,
-                                __("results.breakdown.sm"),
+                                __("results.breakdown.m"),
                                 ":"
                             )
                         ),
@@ -172,30 +172,7 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                             React.createElement(
                                 "p",
                                 null,
-                                this.formatScore(score.data.raw_data.small_mistakes)
-                            )
-                        )
-                    ),
-                    React.createElement(
-                        "tr",
-                        null,
-                        React.createElement(
-                            "th",
-                            null,
-                            React.createElement(
-                                "p",
-                                null,
-                                __("results.breakdown.bm"),
-                                ":"
-                            )
-                        ),
-                        React.createElement(
-                            "td",
-                            null,
-                            React.createElement(
-                                "p",
-                                null,
-                                this.formatScore(score.data.raw_data.big_mistakes)
+                                this.formatScore(score.data.raw_data.mistakes)
                             )
                         )
                     ),

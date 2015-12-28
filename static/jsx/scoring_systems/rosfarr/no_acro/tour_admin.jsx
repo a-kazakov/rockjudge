@@ -142,42 +142,32 @@ class AcroScoreInput extends BaseScoreInput {
 class FormationScoreInput extends BaseScoreInput {
     renderTable() {
         return <table><tbody>
-            <tr><th></th><td></td>
-            <th>DT:</th><td>
+            <tr><th>DT:</th><td>
                 <input
                     type="text"
                     value={ this.props.score.dance_tech }
                     onChange={ this.onChange.bind(this, "dance_tech") }
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td>
-            <th></th><td>
-            </td></tr>
-            <tr><th>DF:</th><td>
+            <th>DF:</th><td>
                 <input
                     type="text"
                     value={ this.props.score.dance_figs }
                     onChange={ this.onChange.bind(this, "dance_figs") }
                     onKeyUp={ this.onKeyUp.bind(this) } />
-            </td>
-            <th>I:</th><td>
+            </td></tr>
+            <tr><th>I:</th><td>
                 <input
                     type="text"
                     value={ this.props.score.impression }
                     onChange={ this.onChange.bind(this, "impression") }
                     onKeyUp={ this.onKeyUp.bind(this) } />
-            </td></tr>
-            <tr><th>SM:</th><td>
+            </td>
+            <th>M:</th><td>
                 <input
                     type="text"
                     value={ this.props.score.small_mistakes }
                     onChange={ this.onChange.bind(this, "small_mistakes") }
-                    onKeyUp={ this.onKeyUp.bind(this) } />
-            </td>
-            <th>BM:</th><td>
-                <input
-                    type="text"
-                    value={ this.props.score.big_mistakes }
-                    onChange={ this.onChange.bind(this, "big_mistakes") }
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td></tr>
         </tbody></table>
@@ -187,8 +177,7 @@ class FormationScoreInput extends BaseScoreInput {
             dance_tech: !this.isEmpty(this.props.score.dance_tech) ? parseFloat(this.props.score.dance_tech) || 0 : null,
             dance_figs: !this.isEmpty(this.props.score.dance_figs) ? parseFloat(this.props.score.dance_figs) || 0 : null,
             impression: !this.isEmpty(this.props.score.impression) ? parseFloat(this.props.score.impression) || 0 : null,
-            small_mistakes: !this.isEmpty(this.props.score.small_mistakes) ? parseInt(this.props.score.small_mistakes) || 0 : null,
-            big_mistakes: !this.isEmpty(this.props.score.big_mistakes) ? parseInt(this.props.score.big_mistakes) || 0 : null,
+            mistakes: !this.isEmpty(this.props.score.mistakes) ? parseInt(this.props.score.mistakes) || 0 : null,
         }
     }
 }

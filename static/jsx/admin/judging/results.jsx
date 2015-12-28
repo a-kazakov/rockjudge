@@ -147,6 +147,7 @@ class TourResultsBody extends React.Component {
             .addStyle(".score-breakdown td", "text-align", "left")
             .addStyle(".score-breakdown", "width", "50pt")
             .addStyle(".advances-header", "background-color", "#ddd")
+            .addStyle(".total-score", "font-weight", "bold")
             .addStyle(".head_judge", "width", "5%")
             .addStyle(".dance_judge", "width", "8%")
             .addStyle(".acro_judge", "width", "8%")

@@ -1,7 +1,9 @@
 import copy
 
 from fractions import Fraction as frac
+from itertools import count
 
+from scoring_systems.common import SkatingSystem
 from exceptions import ApiError
 
 
@@ -77,19 +79,16 @@ class FormationScore(BaseScore):
         "dance_tech": 0,
         "dance_figs": 0,
         "impression": 0,
-        "small_mistakes": 0,
-        "big_mistakes": 0,
+        "mistakes": 0,
     }
     INITIAL_SCORES = {
-        "small_mistakes": 0,
-        "big_mistakes": 0,
+        "mistakes": 0,
     }
     SCORES_VALIDATORS = {
         "dance_tech": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
         "dance_figs": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
         "impression": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
-        "small_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
-        "big_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+        "mistakes": lambda x: type(x) is int and 0 <= x <= 100,
     }
 
     @staticmethod
@@ -98,8 +97,7 @@ class FormationScore(BaseScore):
             m100(raw_scores["dance_tech"]),
             m100(raw_scores["dance_figs"]),
             m100(raw_scores["impression"]),
-             -5 * m100(raw_scores["small_mistakes"]),  # NOQA
-            -30 * m100(raw_scores["big_mistakes"]),
+            -2 * m100(raw_scores["mistakes"]),  # NOQA
         ])
 
 
@@ -628,9 +626,8 @@ class FormationRunScore:
                 p_idx += 1
         return places
 
-    def populate_with_places(self, places, places_counts):
+    def populate_with_places(self, places):
         self.places = places
-        self.places_counts = list(places_counts)
 
     @property
     def penalties(self):
@@ -645,38 +642,15 @@ class FormationRunScore:
             return 0
         return -1 if self.has_next_tour else 1
 
-    def set_sorting_score(self, place):
-        if not self.run.scores:
-            return (10000000000000000, )
-        self.sorting_score = (
-            place,
-            -self.places_counts[place],
-            sum([p for p in self.places if p <= place]),
-            self.nexttour_score,
-        )
-
     @property
     def verbose_display_score(self):
-        if not self.run.performed:
-            return {}
-        sorting_score = self.sorting_score
-        if sorting_score is None:
-            return {}
-        return {
-            "quorum": sorting_score[0],
-            "places_with_quorum": -sorting_score[1],
-            "sum_places_with_quorum": sorting_score[2],
-            "nexttour": bool(sorting_score[3] == -1),
-        }
+        return {}
 
     @property
     def display_score(self):
         if not self.run.performed:
             return "—"
-        if self.sorting_score is None:
-            return "SK"
-        ss = self.sorting_score
-        return "{} / {} / {}".format(ss[0], -ss[1], ss[2])
+        return "SK"
 
 
 class FormationTourScores:
@@ -684,102 +658,33 @@ class FormationTourScores:
         self.tour = tour
         self.discipline_judges = list(tour.discipline_judges)
         self.dance_discipline_judges = [judge for judge in self.discipline_judges if judge.role == "dance_judge"]
-        self._table = None
         self.run_scores = [
             FormationRunScore(run, scoring_system, discipline_judges=self.discipline_judges)
             for run in self.tour.runs
         ]
+        self.skating = SkatingSystem([rs.dance_judges_total_scores for rs in self.run_scores])
+        for run_score, places in zip(self.run_scores, self.skating.places_by_runs):
+            run_score.populate_with_places(places)
+        self.calc_places()
 
-    @staticmethod
-    def sort_table(table, kv_judges):
-        rows_left = {row["run_score"].run.id: row for row in table}
-        yielded = 0
-        for place in range(1, len(table) + 1):
-            rows_with_kv = []
-            for row_id, row in rows_left.items():
-                if row["run_score"].places_counts[place] >= kv_judges:
-                    rows_with_kv.append(row)
-            for row in rows_with_kv:
-                row["run_score"].set_sorting_score(place)
-            rows_with_kv = sorted(rows_with_kv, key=lambda x: x["run_score"].sorting_score)
-            to_yield = rows_with_kv[:max(0, place - yielded)]
-            if len(to_yield) > 0:
-                for idx in range(len(to_yield), len(rows_with_kv)):
-                    if rows_with_kv[idx]["run_score"].sorting_score == rows_with_kv[idx - 1]["run_score"].sorting_score:
-                        to_yield.append(rows_with_kv[idx])
-                    else:
-                        break
-            yield from to_yield
-            yielded += len(to_yield)
-            for row in to_yield:
-                del rows_left[row["run_score"].run.id]
-
-    @staticmethod
-    def scores_to_places(scores):
-        tmp = zip(scores, range(len(scores)))
-        tmp = sorted(tmp, key=lambda y: y[0])
-        place = 1
-        latest_score = None
-        for idx in range(len(tmp)):
-            if idx > 0 and latest_score != tmp[idx][0]:
-                place = idx + 1
-            latest_score = tmp[idx][0]
-            tmp[idx] = (place, tmp[idx][1])
-        result = [x[0] for x in sorted(tmp, key=lambda y: y[1])]
-        return result
-
-    def places_to_counts(self, places, n_forms):
-        res = [0] * (n_forms + 1)
-        for place in places:
-            res[place] += 1
-        for idx in range(1, len(res)):
-            res[idx] += res[idx - 1]
-        return res
-
-    def create_table(self):
-        table = []
-        scores_by_runs = [
-            [
-                (0, -judge_score) if run_score.run.performed else (1, )
-                for judge_score in run_score.dance_judges_total_scores
-            ] for run_score in self.run_scores
-        ]
-        scores_by_judges = zip(*scores_by_runs)
-        places_by_judges = [self.scores_to_places(scores) for scores in scores_by_judges]
-        places_by_runs = list(zip(*places_by_judges))
-        places_counts = [self.places_to_counts(places, len(scores_by_runs)) for places in places_by_runs]
-        for run_score, run_places, run_places_counts in zip(self.run_scores, places_by_runs, places_counts):
-            run_score.populate_with_places(run_places, run_places_counts)
-        for run_score in self.run_scores:
-            table.append({
-                "run_score": run_score,
-            })
-        table = list(self.sort_table(table, len(self.dance_discipline_judges) // 2 + 1))
-        place = 1
-        lastest_sorting_score = None
-        num_advances = self.tour.get_actual_num_advances()
-        for idx, row in enumerate(table, start=1):
-            if lastest_sorting_score != row["run_score"].sorting_score:
-                place = idx
-            lastest_sorting_score = row["run_score"].sorting_score
-            row.update({
-                "place": place,
-                "advances": num_advances >= place,
-                "scores": row["run_score"].serialize(),
-            })
-        return table
-
-    def table(self):
-        if not self._table:
-            self._table = self.create_table()
-        return self._table
+    def calc_places(self):
+        tmp = zip(self.skating.places, [rs.nexttour_score for rs in self.run_scores], count())
+        tmp = sorted(tmp, key=lambda x: (x[0], x[1],))
+        current_place = 1
+        latest_row = None
+        self.places = [0] * len(tmp)
+        for idx, (place, nt, row_idx) in enumerate(tmp):
+            if (place, nt,) != latest_row:
+                current_place = idx + 1
+            latest_row = (place, nt,)
+            self.places[row_idx] = current_place
 
     def get_results(self):
         return [{
-            "run": row["run_score"].run,
-            "place": row["place"],
-            "advances": row["advances"],
+            "run": run_score.run,
+            "place": place,
+            "advances": place <= self.tour.num_advances,
             "additional_data": {
-                "places": row["run_score"].get_places(),
+                "places": run_score.get_places(),
             }
-        } for row in self.table()]
+        } for run_score, place in zip(self.run_scores, self.places)]

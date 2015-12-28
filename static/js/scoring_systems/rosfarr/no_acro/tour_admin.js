@@ -321,8 +321,6 @@ var FormationScoreInput = (function (_BaseScoreInput3) {
                     React.createElement(
                         "tr",
                         null,
-                        React.createElement("th", null),
-                        React.createElement("td", null),
                         React.createElement(
                             "th",
                             null,
@@ -337,12 +335,6 @@ var FormationScoreInput = (function (_BaseScoreInput3) {
                                 onChange: this.onChange.bind(this, "dance_tech"),
                                 onKeyUp: this.onKeyUp.bind(this) })
                         ),
-                        React.createElement("th", null),
-                        React.createElement("td", null)
-                    ),
-                    React.createElement(
-                        "tr",
-                        null,
                         React.createElement(
                             "th",
                             null,
@@ -356,7 +348,11 @@ var FormationScoreInput = (function (_BaseScoreInput3) {
                                 value: this.props.score.dance_figs,
                                 onChange: this.onChange.bind(this, "dance_figs"),
                                 onKeyUp: this.onKeyUp.bind(this) })
-                        ),
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
                         React.createElement(
                             "th",
                             null,
@@ -370,15 +366,11 @@ var FormationScoreInput = (function (_BaseScoreInput3) {
                                 value: this.props.score.impression,
                                 onChange: this.onChange.bind(this, "impression"),
                                 onKeyUp: this.onKeyUp.bind(this) })
-                        )
-                    ),
-                    React.createElement(
-                        "tr",
-                        null,
+                        ),
                         React.createElement(
                             "th",
                             null,
-                            "SM:"
+                            "M:"
                         ),
                         React.createElement(
                             "td",
@@ -387,20 +379,6 @@ var FormationScoreInput = (function (_BaseScoreInput3) {
                                 type: "text",
                                 value: this.props.score.small_mistakes,
                                 onChange: this.onChange.bind(this, "small_mistakes"),
-                                onKeyUp: this.onKeyUp.bind(this) })
-                        ),
-                        React.createElement(
-                            "th",
-                            null,
-                            "BM:"
-                        ),
-                        React.createElement(
-                            "td",
-                            null,
-                            React.createElement("input", {
-                                type: "text",
-                                value: this.props.score.big_mistakes,
-                                onChange: this.onChange.bind(this, "big_mistakes"),
                                 onKeyUp: this.onKeyUp.bind(this) })
                         )
                     )
@@ -414,8 +392,7 @@ var FormationScoreInput = (function (_BaseScoreInput3) {
                 dance_tech: !this.isEmpty(this.props.score.dance_tech) ? parseFloat(this.props.score.dance_tech) || 0 : null,
                 dance_figs: !this.isEmpty(this.props.score.dance_figs) ? parseFloat(this.props.score.dance_figs) || 0 : null,
                 impression: !this.isEmpty(this.props.score.impression) ? parseFloat(this.props.score.impression) || 0 : null,
-                small_mistakes: !this.isEmpty(this.props.score.small_mistakes) ? parseInt(this.props.score.small_mistakes) || 0 : null,
-                big_mistakes: !this.isEmpty(this.props.score.big_mistakes) ? parseInt(this.props.score.big_mistakes) || 0 : null
+                mistakes: !this.isEmpty(this.props.score.mistakes) ? parseInt(this.props.score.mistakes) || 0 : null
             };
         }
     }]);
