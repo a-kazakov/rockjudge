@@ -247,11 +247,6 @@ var JudgingUI = (function (_React$Component2) {
             return result;
         }
     }, {
-        key: "getPage",
-        value: function getPage() {
-            return this.state.page === "tour-admin" && this.getActiveTour().finalized ? "results-1" : this.state.page;
-        }
-    }, {
         key: "passSignal",
         value: function passSignal(message) {
             if (this.refs.active_body) {
@@ -269,11 +264,8 @@ var JudgingUI = (function (_React$Component2) {
                 onSignal: this.passSignal.bind(this),
                 key: this.state.active_tour_id
             };
-            switch (this.getPage()) {
+            switch (this.state.page) {
                 case "tour-admin":
-                    if (this.getActiveTour().finalized) {
-                        return null;
-                    }
                     return React.createElement(TourAdminButtons, props);
                 case "heats":
                     return React.createElement(HeatsButtons, props);
@@ -284,21 +276,26 @@ var JudgingUI = (function (_React$Component2) {
                 case "discipline-results":
                     return React.createElement(DisciplineResultsButtons, props);
                 default:
-                    console.log("Unknown page:", this.getPage());
+                    console.log("Unknown page:", this.state.page);
             }
         }
     }, {
         key: "renderBody",
         value: function renderBody() {
+            var _this6 = this;
+
             if (this.state.active_tour_id === null) {
                 return null;
             }
             var props = {
                 tour_id: this.state.active_tour_id,
                 ref: "active_body",
+                switchPage: function switchPage(page) {
+                    return _this6.setState({ page: page });
+                },
                 key: this.state.active_tour_id
             };
-            switch (this.getPage()) {
+            switch (this.state.page) {
                 case "tour-admin":
                     return React.createElement(TourAdminBody, props);
                 case "heats":
@@ -312,7 +309,7 @@ var JudgingUI = (function (_React$Component2) {
                 case "discipline-results":
                     return React.createElement(DisciplineResults, { discipline_id: this.getActiveDiscipline().id, ref: "active_body" });
                 default:
-                    console.log("Unknown page:", this.getPage());
+                    console.log("Unknown page:", this.state.page);
             }
         }
     }, {
@@ -344,18 +341,18 @@ var JudgingUI = (function (_React$Component2) {
                 React.createElement(
                     "ul",
                     { className: "pull-right nav nav-tabs" },
-                    !active_tour.finalized ? React.createElement(
+                    React.createElement(
                         "li",
-                        { className: this.getPage() == "tour-admin" ? "active" : "" },
+                        { className: this.state.page == "tour-admin" ? "active" : "" },
                         React.createElement(
                             "a",
                             { href: "#", onClick: this.switchPage.bind(this, "tour-admin") },
                             _("admin.judging-tabs.tour-admin")
                         )
-                    ) : null,
+                    ),
                     React.createElement(
                         "li",
-                        { className: this.getPage() == "heats" ? "active" : "" },
+                        { className: this.state.page == "heats" ? "active" : "" },
                         React.createElement(
                             "a",
                             { href: "#", onClick: this.switchPage.bind(this, "heats") },
@@ -364,7 +361,7 @@ var JudgingUI = (function (_React$Component2) {
                     ),
                     React.createElement(
                         "li",
-                        { className: this.getPage() == "results-1" ? "active" : "" },
+                        { className: this.state.page == "results-1" ? "active" : "" },
                         React.createElement(
                             "a",
                             { href: "#", onClick: this.switchPage.bind(this, "results-1") },
@@ -373,7 +370,7 @@ var JudgingUI = (function (_React$Component2) {
                     ),
                     React.createElement(
                         "li",
-                        { className: this.getPage() == "results-2" ? "active" : "" },
+                        { className: this.state.page == "results-2" ? "active" : "" },
                         React.createElement(
                             "a",
                             { href: "#", onClick: this.switchPage.bind(this, "results-2") },
@@ -382,7 +379,7 @@ var JudgingUI = (function (_React$Component2) {
                     ),
                     React.createElement(
                         "li",
-                        { className: this.getPage() == "results-3" ? "active" : "" },
+                        { className: this.state.page == "results-3" ? "active" : "" },
                         React.createElement(
                             "a",
                             { href: "#", onClick: this.switchPage.bind(this, "results-3") },
@@ -391,7 +388,7 @@ var JudgingUI = (function (_React$Component2) {
                     ),
                     React.createElement(
                         "li",
-                        { className: this.getPage() == "discipline-results" ? "active" : "" },
+                        { className: this.state.page == "discipline-results" ? "active" : "" },
                         React.createElement(
                             "a",
                             { href: "#", onClick: this.switchPage.bind(this, "discipline-results") },

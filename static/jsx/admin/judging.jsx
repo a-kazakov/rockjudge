@@ -140,9 +140,6 @@ class JudgingUI extends React.Component {
         });
         return result;
     }
-    getPage() {
-        return (this.state.page === "tour-admin" && this.getActiveTour().finalized) ? "results-1" : this.state.page;
-    }
     passSignal(message) {
         if (this.refs.active_body) {
             this.refs.active_body.onSignal(message);
@@ -157,11 +154,8 @@ class JudgingUI extends React.Component {
             onSignal: this.passSignal.bind(this),
             key: this.state.active_tour_id,
         };
-        switch (this.getPage()) {
+        switch (this.state.page) {
         case "tour-admin":
-            if (this.getActiveTour().finalized) {
-                return null;
-            }
             return <TourAdminButtons {...props} />
         case "heats":
             return <HeatsButtons {...props} />
@@ -172,7 +166,7 @@ class JudgingUI extends React.Component {
         case "discipline-results":
             return <DisciplineResultsButtons {...props} />
         default:
-            console.log("Unknown page:", this.getPage());
+            console.log("Unknown page:", this.state.page);
         }
     }
     renderBody() {
@@ -182,9 +176,10 @@ class JudgingUI extends React.Component {
         let props = {
             tour_id: this.state.active_tour_id,
             ref: "active_body",
+            switchPage: page => this.setState({ page }),
             key: this.state.active_tour_id,
         };
-        switch (this.getPage()) {
+        switch (this.state.page) {
         case "tour-admin":
             return <TourAdminBody {...props} />
         case "heats":
@@ -198,7 +193,7 @@ class JudgingUI extends React.Component {
         case "discipline-results":
             return <DisciplineResults discipline_id={ this.getActiveDiscipline().id } ref="active_body" />
         default:
-            console.log("Unknown page:", this.getPage());
+            console.log("Unknown page:", this.state.page);
         }
     }
     renderHeader() {
@@ -214,25 +209,22 @@ class JudgingUI extends React.Component {
             <h2>{ active_tour.name }</h2>
             <div className="clearfix"></div>
             <ul className="pull-right nav nav-tabs">
-                { !active_tour.finalized
-                    ? <li className={ this.getPage() == "tour-admin" ? "active" : ""}>
-                        <a href="#" onClick={ this.switchPage.bind(this, "tour-admin") }>{ _("admin.judging-tabs.tour-admin") }</a>
-                    </li>
-                    : null
-                }
-                <li className={ this.getPage() == "heats" ? "active" : ""}>
+                <li className={ this.state.page == "tour-admin" ? "active" : ""}>
+                    <a href="#" onClick={ this.switchPage.bind(this, "tour-admin") }>{ _("admin.judging-tabs.tour-admin") }</a>
+                </li>
+                <li className={ this.state.page == "heats" ? "active" : ""}>
                     <a href="#" onClick={ this.switchPage.bind(this, "heats") }>{ _("admin.judging-tabs.heats") }</a>
                 </li>
-                <li className={ this.getPage() == "results-1" ? "active" : ""}>
+                <li className={ this.state.page == "results-1" ? "active" : ""}>
                     <a href="#" onClick={ this.switchPage.bind(this, "results-1") }>{ _("admin.judging-tabs.results-1") }</a>
                 </li>
-                <li className={ this.getPage() == "results-2" ? "active" : ""}>
+                <li className={ this.state.page == "results-2" ? "active" : ""}>
                     <a href="#" onClick={ this.switchPage.bind(this, "results-2") }>{ _("admin.judging-tabs.results-2") }</a>
                 </li>
-                <li className={ this.getPage() == "results-3" ? "active" : ""}>
+                <li className={ this.state.page == "results-3" ? "active" : ""}>
                     <a href="#" onClick={ this.switchPage.bind(this, "results-3") }>{ _("admin.judging-tabs.results-3") }</a>
                 </li>
-                <li className={ this.getPage() == "discipline-results" ? "active" : ""}>
+                <li className={ this.state.page == "discipline-results" ? "active" : ""}>
                     <a href="#" onClick={ this.switchPage.bind(this, "discipline-results") }>{ _("admin.judging-tabs.discipline-results") }</a>
                 </li>
             </ul>

@@ -70,6 +70,9 @@ var TourAdminHeatValue = (function (_React$Component) {
     }, {
         key: "startEditing",
         value: function startEditing() {
+            if (this.props.readOnly) {
+                return;
+            }
             if (current_editing_cell !== null) {
                 current_editing_cell.stopEditing();
             }
@@ -131,6 +134,9 @@ var TourAdminButtons = (function (_React$Component2) {
     }, {
         key: "render",
         value: function render() {
+            if (this.props.tour.finalized) {
+                return React.createElement("div", null);
+            }
             var result = [];
             if (!this.props.tour.active) {
                 result = result.concat([React.createElement(
@@ -193,6 +199,7 @@ var TourAdminScoreCellWrapper = (function (_React$Component3) {
                 "td",
                 { className: classes.join(" ") },
                 React.createElement(TourAdminScoreCell, {
+                    readOnly: this.props.readOnly,
                     discipline_judge: this.props.discipline_judge,
                     scoring_system_name: this.props.scoring_system_name,
                     startEditing: this.startEditing.bind(this),
@@ -276,6 +283,7 @@ var TourAdminScoresRow = (function (_React$Component4) {
             var scores = this.props.discipline_judges.map((function (discipline_judge, idx) {
                 var score = scores_map[discipline_judge.id];
                 return React.createElement(TourAdminScoreCellWrapper, {
+                    readOnly: this.props.readOnly,
                     key: score && score.id || "I" + idx,
                     discipline_judge: discipline_judge,
                     scoring_system_name: this.props.scoring_system_name,
@@ -287,6 +295,7 @@ var TourAdminScoresRow = (function (_React$Component4) {
                 "tr",
                 { className: this.props.run.heat % 2 ? "odd-heat" : "" },
                 React.createElement(TourAdminHeatValue, {
+                    readOnly: this.props.readOnly,
                     run_id: this.props.run.id,
                     value: this.props.run.heat,
                     updateValue: this.updateHeat.bind(this) }),
@@ -301,11 +310,13 @@ var TourAdminScoresRow = (function (_React$Component4) {
                     this.props.run.participant.name
                 ),
                 React.createElement(TourAdminAcrobaticsCell, {
+                    readOnly: this.props.readOnly,
                     run_id: this.props.run.id,
                     program_name: this.props.run.program_name,
                     acrobatics: this.props.run.acrobatics,
                     programs: this.props.run.participant.programs }),
                 React.createElement(TourAdminPerformedCell, {
+                    readOnly: this.props.readOnly,
                     run: this.props.run }),
                 React.createElement(
                     "td",
@@ -395,6 +406,32 @@ var TourAdminAcrobaticEditorRow = (function (_React$Component6) {
             }).send();
         }
     }, {
+        key: "renderControls",
+        value: function renderControls() {
+            if (this.props.readOnly) {
+                return null;
+            }
+            return React.createElement(
+                "td",
+                { className: "controls" },
+                this.props.acrobatic.has_override ? React.createElement(
+                    "button",
+                    { className: "btn btn-default btn-sm", onClick: this.onReset.bind(this) },
+                    _("judging.buttons.reset_acrobatic_override")
+                ) : null,
+                React.createElement(
+                    "button",
+                    { className: "btn btn-default btn-sm", onClick: this.onMinus.bind(this) },
+                    "−"
+                ),
+                React.createElement(
+                    "button",
+                    { className: "btn btn-default btn-sm", onClick: this.onPlus.bind(this) },
+                    "+"
+                )
+            );
+        }
+    }, {
         key: "render",
         value: function render() {
             return React.createElement(
@@ -415,25 +452,7 @@ var TourAdminAcrobaticEditorRow = (function (_React$Component6) {
                     { className: "new-score" },
                     this.props.acrobatic.has_override ? this.props.acrobatic.score.toFixed(1) : null
                 ),
-                React.createElement(
-                    "td",
-                    { className: "controls" },
-                    this.props.acrobatic.has_override ? React.createElement(
-                        "button",
-                        { className: "btn btn-default btn-sm", onClick: this.onReset.bind(this) },
-                        _("judging.buttons.reset_acrobatic_override")
-                    ) : null,
-                    React.createElement(
-                        "button",
-                        { className: "btn btn-default btn-sm", onClick: this.onMinus.bind(this) },
-                        "−"
-                    ),
-                    React.createElement(
-                        "button",
-                        { className: "btn btn-default btn-sm", onClick: this.onPlus.bind(this) },
-                        "+"
-                    )
-                )
+                this.renderControls()
             );
         }
     }]);
@@ -555,10 +574,11 @@ var TourAdminAcrobaticEditor = (function (_React$Component8) {
                                 { className: "new-score" },
                                 _("judging.labels.new_score")
                             ),
-                            React.createElement("th", { className: "controls" })
+                            this.props.readOnly ? null : React.createElement("th", { className: "controls" })
                         ),
                         this.props.acrobatics.map(function (acro, idx) {
                             return React.createElement(TourAdminAcrobaticEditorRow, {
+                                readOnly: _this11.props.readOnly,
                                 acrobatic: acro,
                                 acro_idx: idx,
                                 run_id: _this11.props.run_id,
@@ -578,15 +598,23 @@ var TourAdminAcrobaticEditor = (function (_React$Component8) {
             );
         }
     }, {
+        key: "renderLoader",
+        value: function renderLoader() {
+            if (this.props.readOnly) {
+                return null;
+            }
+            return React.createElement(TourAdminAcrobaticLoader, {
+                onLoad: this.loadAcrobatics.bind(this),
+                programs: this.props.programs });
+        }
+    }, {
         key: "render",
         value: function render() {
             return React.createElement(
                 "div",
                 { className: "form-acro-input" },
                 this.props.program_name === null ? this.renderMock() : this.renderBody(),
-                React.createElement(TourAdminAcrobaticLoader, {
-                    onLoad: this.loadAcrobatics.bind(this),
-                    programs: this.props.programs }),
+                this.renderLoader(),
                 React.createElement(
                     "button",
                     { className: "btn btn-primary btn-sm pull-right", onClick: this.props.stopEditing },
@@ -641,6 +669,7 @@ var TourAdminAcrobaticsCell = (function (_React$Component9) {
                     "td",
                     { className: "acrobatics editing" },
                     React.createElement(TourAdminAcrobaticEditor, _extends({
+                        readOnly: this.props.readOnly,
                         stopEditing: this.stopEditing.bind(this)
                     }, this.props))
                 );
@@ -683,6 +712,9 @@ var TourAdminPerformedCell = (function (_React$Component10) {
     _createClass(TourAdminPerformedCell, [{
         key: "toggleState",
         value: function toggleState() {
+            if (this.props.readOnly) {
+                return;
+            }
             var method = this.props.run.performed ? "run.mark_not_performed" : "run.mark_performed";
             Api(method, { run_id: this.props.run.id }).send();
         }
@@ -714,7 +746,7 @@ var TourAdminBody = (function (_React$Component11) {
         var _this14 = _possibleConstructorReturn(this, Object.getPrototypeOf(TourAdminBody).call(this, props));
 
         _this14.state = {
-            name: null
+            tour: null
         };
         return _this14;
     }
@@ -752,7 +784,9 @@ var TourAdminBody = (function (_React$Component11) {
                 }
             };
             var serialized = this.storage.get("Tour").by_id(this.props.tour_id).serialize(SCHEMA);
-            this.setState(serialized);
+            this.setState({
+                tour: serialized
+            });
         }
     }, {
         key: "loadData",
@@ -795,7 +829,8 @@ var TourAdminBody = (function (_React$Component11) {
                 case "finalize_tour":
                     swal_confirm(_("judging.confirms.finalize_tour"), function () {
                         Api("tour.finalize", { tour_id: _this15.props.tour_id }).onSuccess(function () {
-                            return swal.close();
+                            swal.close();
+                            _this15.props.switchPage("results-1");
                         }).send();
                     });
                     break;
@@ -823,7 +858,7 @@ var TourAdminBody = (function (_React$Component11) {
         key: "getAcrobaticOverrides",
         value: function getAcrobaticOverrides() {
             var result = [];
-            this.state.runs.forEach(function (run) {
+            this.state.tour.runs.forEach(function (run) {
                 run.acrobatics.forEach(function (acro, idx) {
                     if (acro.original_score != acro.score) {
                         result.push({
@@ -844,15 +879,16 @@ var TourAdminBody = (function (_React$Component11) {
     }, {
         key: "render",
         value: function render() {
-            if (this.state.name === null) {
+            if (this.state.tour === null) {
                 return React.createElement(Loader, null);
             }
-            var discipline_judges = this.state.discipline.discipline_judges;
-            var rows = this.state.runs.map((function (run) {
+            var discipline_judges = this.state.tour.discipline.discipline_judges;
+            var rows = this.state.tour.runs.map((function (run) {
                 return React.createElement(TourAdminScoresRow, {
+                    readOnly: this.state.tour.finalized,
                     key: run.id,
                     run: run,
-                    scoring_system_name: this.state.scoring_system_name,
+                    scoring_system_name: this.state.tour.scoring_system_name,
                     discipline_judges: discipline_judges });
             }).bind(this));
             var judges_header = discipline_judges.map((function (discipline_judge) {

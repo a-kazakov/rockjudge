@@ -26,6 +26,22 @@ var BaseScoreInput = (function (_React$Component) {
                 "form",
                 { onSubmit: this.onSubmit.bind(this), className: "form-score-input" },
                 this.renderTable(),
+                this.renderButtons()
+            );
+        }
+    }, {
+        key: "renderButtons",
+        value: function renderButtons() {
+            if (this.props.readOnly) {
+                return React.createElement(
+                    "button",
+                    { className: "btn btn-primary", type: "button", onClick: this.props.stopEditing },
+                    _("global.buttons.close")
+                );
+            }
+            return React.createElement(
+                "div",
+                null,
                 React.createElement(
                     "button",
                     { className: "btn btn-primary", type: "submit" },
@@ -123,6 +139,7 @@ var DanceScoreInput = (function (_BaseScoreInput) {
                             React.createElement("input", {
                                 type: "text",
                                 value: this.props.score.fw_woman,
+                                readOnly: this.props.readOnly,
                                 onChange: this.onChange.bind(this, "fw_woman"),
                                 onKeyUp: this.onKeyUp.bind(this) })
                         ),
@@ -137,6 +154,7 @@ var DanceScoreInput = (function (_BaseScoreInput) {
                             React.createElement("input", {
                                 type: "text",
                                 value: this.props.score.fw_man,
+                                readOnly: this.props.readOnly,
                                 onChange: this.onChange.bind(this, "fw_man"),
                                 onKeyUp: this.onKeyUp.bind(this) })
                         )
@@ -155,6 +173,7 @@ var DanceScoreInput = (function (_BaseScoreInput) {
                             React.createElement("input", {
                                 type: "text",
                                 value: this.props.score.dance_figs,
+                                readOnly: this.props.readOnly,
                                 onChange: this.onChange.bind(this, "dance_figs"),
                                 onKeyUp: this.onKeyUp.bind(this) })
                         ),
@@ -169,6 +188,7 @@ var DanceScoreInput = (function (_BaseScoreInput) {
                             React.createElement("input", {
                                 type: "text",
                                 value: this.props.score.composition,
+                                readOnly: this.props.readOnly,
                                 onChange: this.onChange.bind(this, "composition"),
                                 onKeyUp: this.onKeyUp.bind(this) })
                         )
@@ -187,6 +207,7 @@ var DanceScoreInput = (function (_BaseScoreInput) {
                             React.createElement("input", {
                                 type: "text",
                                 value: this.props.score.small_mistakes,
+                                readOnly: this.props.readOnly,
                                 onChange: this.onChange.bind(this, "small_mistakes"),
                                 onKeyUp: this.onKeyUp.bind(this) })
                         ),
@@ -201,6 +222,7 @@ var DanceScoreInput = (function (_BaseScoreInput) {
                             React.createElement("input", {
                                 type: "text",
                                 value: this.props.score.big_mistakes,
+                                readOnly: this.props.readOnly,
                                 onChange: this.onChange.bind(this, "big_mistakes"),
                                 onKeyUp: this.onKeyUp.bind(this) })
                         )
@@ -250,6 +272,7 @@ var AcroScoreInput = (function (_BaseScoreInput2) {
                     React.createElement("input", {
                         type: "text",
                         value: this.props.score.reductions[idx],
+                        readOnly: this.props.readOnly,
                         onChange: this.onChange.bind(this, ["reductions", idx]),
                         onKeyUp: this.onKeyUp.bind(this) })
                 )];
@@ -264,6 +287,7 @@ var AcroScoreInput = (function (_BaseScoreInput2) {
                 React.createElement("input", {
                     type: "text",
                     value: this.props.score.mistakes,
+                    readOnly: this.props.readOnly,
                     onChange: this.onChange.bind(this, "mistakes"),
                     onKeyUp: this.onKeyUp.bind(this) })
             )]);
@@ -332,6 +356,7 @@ var FormationScoreInput = (function (_BaseScoreInput3) {
                             React.createElement("input", {
                                 type: "text",
                                 value: this.props.score.dance_tech,
+                                readOnly: this.props.readOnly,
                                 onChange: this.onChange.bind(this, "dance_tech"),
                                 onKeyUp: this.onKeyUp.bind(this) })
                         ),
@@ -346,6 +371,7 @@ var FormationScoreInput = (function (_BaseScoreInput3) {
                             React.createElement("input", {
                                 type: "text",
                                 value: this.props.score.dance_figs,
+                                readOnly: this.props.readOnly,
                                 onChange: this.onChange.bind(this, "dance_figs"),
                                 onKeyUp: this.onKeyUp.bind(this) })
                         )
@@ -364,6 +390,7 @@ var FormationScoreInput = (function (_BaseScoreInput3) {
                             React.createElement("input", {
                                 type: "text",
                                 value: this.props.score.impression,
+                                readOnly: this.props.readOnly,
                                 onChange: this.onChange.bind(this, "impression"),
                                 onKeyUp: this.onKeyUp.bind(this) })
                         ),
@@ -378,6 +405,7 @@ var FormationScoreInput = (function (_BaseScoreInput3) {
                             React.createElement("input", {
                                 type: "text",
                                 value: this.props.score.small_mistakes,
+                                readOnly: this.props.readOnly,
                                 onChange: this.onChange.bind(this, "small_mistakes"),
                                 onKeyUp: this.onKeyUp.bind(this) })
                         )
@@ -432,6 +460,7 @@ var SimplifiedScoreInput = (function (_BaseScoreInput4) {
                             React.createElement("input", {
                                 type: "text",
                                 value: this.props.score.points,
+                                readOnly: this.props.readOnly,
                                 onChange: this.onChange.bind(this, "points"),
                                 onKeyUp: this.onKeyUp.bind(this) })
                         )
@@ -483,6 +512,7 @@ var HeadScoreInput = (function (_BaseScoreInput5) {
                             React.createElement("input", {
                                 type: "text",
                                 value: this.props.score.penalty,
+                                readOnly: this.props.readOnly,
                                 onChange: this.onChange.bind(this, "penalty"),
                                 onKeyUp: this.onKeyUp.bind(this) })
                         ),
@@ -497,6 +527,7 @@ var HeadScoreInput = (function (_BaseScoreInput5) {
                             React.createElement("input", {
                                 type: "checkbox",
                                 checked: this.props.score.nexttour,
+                                readOnly: this.props.readOnly,
                                 onChange: this.onChange.bind(this, "nexttour"),
                                 onKeyUp: this.onKeyUp.bind(this) })
                         )
@@ -529,6 +560,8 @@ var TechScoreInput = (function (_BaseScoreInput6) {
     _createClass(TechScoreInput, [{
         key: "renderTable",
         value: function renderTable() {
+            var _this8 = this;
+
             return React.createElement(
                 "table",
                 null,
@@ -549,6 +582,7 @@ var TechScoreInput = (function (_BaseScoreInput6) {
                             React.createElement("input", {
                                 type: "text",
                                 value: this.props.score.jump_steps,
+                                readOnly: this.props.readOnly,
                                 onChange: this.onChange.bind(this, "jump_steps"),
                                 onKeyUp: this.onKeyUp.bind(this) })
                         ),
@@ -563,10 +597,15 @@ var TechScoreInput = (function (_BaseScoreInput6) {
                             React.createElement("input", {
                                 type: "checkbox",
                                 ref: "cb",
+                                readOnly: this.props.readOnly,
                                 checked: !!this.props.score.timing_violation,
-                                onChange: this.onChange.bind(this, "timing_violation"),
+                                onChange: !this.props.readOnly && this.onChange.bind(this, "timing_violation"),
                                 onKeyUp: this.onKeyUp.bind(this),
                                 onClick: function onClick(event) {
+                                    event.preventDefault();
+                                    if (_this8.props.readOnly) {
+                                        return;
+                                    }
                                     var cb = event.target;
                                     if (cb.readOnly) {
                                         cb.checked = cb.readOnly = false;
@@ -706,6 +745,7 @@ var TourAdminScoreCell = (function (_React$Component4) {
                 );
             } else {
                 return React.createElement(TourAdminScoreInput, {
+                    readOnly: this.props.readOnly,
                     score: this.props.value.raw_data,
                     confirmed: this.props.confirmed,
                     discipline_judge: this.props.discipline_judge,

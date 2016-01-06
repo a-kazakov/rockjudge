@@ -2,6 +2,16 @@ class BaseScoreInput extends React.Component {
     render() {
         return <form onSubmit={ this.onSubmit.bind(this) } className="form-score-input">
             { this.renderTable() }
+            { this.renderButtons() }
+        </form>
+    }
+    renderButtons() {
+        if (this.props.readOnly) {
+            return <button className="btn btn-primary" type="button" onClick={ this.props.stopEditing }>
+                { _("global.buttons.close") }
+            </button>
+        }
+        return <div>
             <button className="btn btn-primary" type="submit">{ _("global.buttons.submit") }</button>&nbsp;
             <button className="btn btn-primary" type="button" onClick={ this.props.stopEditing }>{ _("global.buttons.discard") }</button>
             <ConfirmationButton
@@ -9,7 +19,7 @@ class BaseScoreInput extends React.Component {
                 confirmed={ this.props.confirmed }
                 toggleConfirmation={ this.props.toggleConfirmation }
                 onKeyUp={ this.onKeyUp.bind(this) } />
-        </form>
+        </div>
     }
     componentDidMount() {
         ReactDOM.findDOMNode(this).querySelectorAll("input")[0].select();
@@ -51,6 +61,7 @@ class DanceScoreInput extends BaseScoreInput {
                 <input
                     type="text"
                     value={ this.props.score.fw_woman }
+                    readOnly={ this.props.readOnly }
                     onChange={ this.onChange.bind(this, "fw_woman") }
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td>
@@ -58,6 +69,7 @@ class DanceScoreInput extends BaseScoreInput {
                 <input
                     type="text"
                     value={ this.props.score.fw_man }
+                    readOnly={ this.props.readOnly }
                     onChange={ this.onChange.bind(this, "fw_man") }
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td></tr>
@@ -65,6 +77,7 @@ class DanceScoreInput extends BaseScoreInput {
                 <input
                     type="text"
                     value={ this.props.score.dance_figs }
+                    readOnly={ this.props.readOnly }
                     onChange={ this.onChange.bind(this, "dance_figs") }
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td>
@@ -72,6 +85,7 @@ class DanceScoreInput extends BaseScoreInput {
                 <input
                     type="text"
                     value={ this.props.score.composition }
+                    readOnly={ this.props.readOnly }
                     onChange={ this.onChange.bind(this, "composition") }
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td></tr>
@@ -79,6 +93,7 @@ class DanceScoreInput extends BaseScoreInput {
                 <input
                     type="text"
                     value={ this.props.score.small_mistakes }
+                    readOnly={ this.props.readOnly }
                     onChange={ this.onChange.bind(this, "small_mistakes") }
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td>
@@ -86,6 +101,7 @@ class DanceScoreInput extends BaseScoreInput {
                 <input
                     type="text"
                     value={ this.props.score.big_mistakes }
+                    readOnly={ this.props.readOnly }
                     onChange={ this.onChange.bind(this, "big_mistakes") }
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td></tr>
@@ -110,6 +126,7 @@ class AcroScoreInput extends BaseScoreInput {
                 <input
                     type="text"
                     value={ this.props.score.reductions[idx] }
+                    readOnly={ this.props.readOnly }
                     onChange={ this.onChange.bind(this, ["reductions", idx]) }
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td>]
@@ -118,6 +135,7 @@ class AcroScoreInput extends BaseScoreInput {
             <input
                 type="text"
                 value={ this.props.score.mistakes }
+                readOnly={ this.props.readOnly }
                 onChange={ this.onChange.bind(this, "mistakes") }
                 onKeyUp={ this.onKeyUp.bind(this) } />
         </td>])
@@ -146,6 +164,7 @@ class FormationScoreInput extends BaseScoreInput {
                 <input
                     type="text"
                     value={ this.props.score.dance_tech }
+                    readOnly={ this.props.readOnly }
                     onChange={ this.onChange.bind(this, "dance_tech") }
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td>
@@ -153,6 +172,7 @@ class FormationScoreInput extends BaseScoreInput {
                 <input
                     type="text"
                     value={ this.props.score.dance_figs }
+                    readOnly={ this.props.readOnly }
                     onChange={ this.onChange.bind(this, "dance_figs") }
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td></tr>
@@ -160,6 +180,7 @@ class FormationScoreInput extends BaseScoreInput {
                 <input
                     type="text"
                     value={ this.props.score.impression }
+                    readOnly={ this.props.readOnly }
                     onChange={ this.onChange.bind(this, "impression") }
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td>
@@ -167,6 +188,7 @@ class FormationScoreInput extends BaseScoreInput {
                 <input
                     type="text"
                     value={ this.props.score.small_mistakes }
+                    readOnly={ this.props.readOnly }
                     onChange={ this.onChange.bind(this, "small_mistakes") }
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td></tr>
@@ -189,6 +211,7 @@ class SimplifiedScoreInput extends BaseScoreInput {
                 <input
                     type="text"
                     value={ this.props.score.points }
+                    readOnly={ this.props.readOnly }
                     onChange={ this.onChange.bind(this, "points") }
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td></tr>
@@ -208,12 +231,14 @@ class HeadScoreInput extends BaseScoreInput {
                 <input
                     type="text"
                     value={ this.props.score.penalty }
+                    readOnly={ this.props.readOnly }
                     onChange={ this.onChange.bind(this, "penalty") }
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td><th>NT:</th><td>
                 <input
                     type="checkbox"
                     checked={ this.props.score.nexttour }
+                    readOnly={ this.props.readOnly }
                     onChange={ this.onChange.bind(this, "nexttour") }
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td></tr>
@@ -234,16 +259,22 @@ class TechScoreInput extends BaseScoreInput {
                 <input
                     type="text"
                     value={ this.props.score.jump_steps }
+                    readOnly={ this.props.readOnly }
                     onChange={ this.onChange.bind(this, "jump_steps") }
                     onKeyUp={ this.onKeyUp.bind(this) } />
             </td><th>TV:</th><td>
                 <input
                     type="checkbox"
                     ref="cb"
+                    readOnly={ this.props.readOnly }
                     checked={ !!this.props.score.timing_violation }
-                    onChange={ this.onChange.bind(this, "timing_violation") }
+                    onChange={ !this.props.readOnly && this.onChange.bind(this, "timing_violation") }
                     onKeyUp={ this.onKeyUp.bind(this) }
-                    onClick={ function(event) {
+                    onClick={ event => {
+                        event.preventDefault();
+                        if (this.props.readOnly) {
+                            return;
+                        }
                         let cb = event.target;
                         if (cb.readOnly) {
                             cb.checked = cb.readOnly = false;
@@ -324,6 +355,7 @@ class TourAdminScoreCell extends React.Component {
             return <div onClick={ this.props.startEditing }>{ this.props.value.total_score.toFixed(2) }</div>
         } else {
             return <TourAdminScoreInput
+                readOnly={ this.props.readOnly }
                 score={ this.props.value.raw_data }
                 confirmed={ this.props.confirmed }
                 discipline_judge={ this.props.discipline_judge }
