@@ -74,7 +74,7 @@ class DisciplineResults extends React.Component {
                 club: {},
             },
         }
-        for (var i = 0; i < results.length; ++i) {
+        for (let i = 0; i < results.length; ++i) {
             new_state.push({
                 place: results[i].place,
                 run: storage_runs.by_id(results[i].run_id).serialize(SCHEMA),
@@ -92,12 +92,12 @@ class DisciplineResults extends React.Component {
         Api("discipline.get_results", {
             discipline_id: this.props.discipline_id,
         })
-        .onSuccess(function(response) {
+        .onSuccess(response => {
             this.setState({
                 discipline_results: response,
             });
             this.reloadState();
-        }.bind(this))
+        })
         .send();
     }
     loadData() {
@@ -115,10 +115,10 @@ class DisciplineResults extends React.Component {
             }
         })
         .addToDB("Discipline", this.props.discipline_id, this.storage)
-        .onSuccess(function() {
+        .onSuccess(() => {
             this.runs_loaded = true;
             this.reloadState(this)
-        }.bind(this))
+        })
         .send();
     }
 

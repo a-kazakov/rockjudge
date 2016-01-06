@@ -13,23 +13,29 @@ pushd dist
 
         copy %home%\*.py src
 
-        mkdir src\fixtures
-        copy %home%\fixtures\*.py src\fixtures
-
         mkdir src\helpers
         copy %home%\helpers\*.py src\helpers
 
         mkdir src\models
         copy %home%\models\*.py src\models
+        pushd src\models
+            py _compile.py build_ext --inplace
+        popd
 
         mkdir src\service
         copy %home%\service\*.py src\service
 
         mkdir src\scoring_systems
         robocopy %home%\scoring_systems src\scoring_systems *.py /s
+        pushd src\scoring_systems
+            py _compile.py build_ext --inplace
+        popd
 
         mkdir src\webserver
         copy %home%\webserver\*.py src\webserver
+        pushd src\webserver
+            py _compile.py build_ext --inplace
+        popd
 
         py %home%\control\internal\make_exe_spec.py
         py %home%\external-tools\pyinstaller\pyinstaller.py exe.spec

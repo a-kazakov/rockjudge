@@ -140,18 +140,22 @@ var DisciplineResults = (function (_React$Component2) {
     }, {
         key: "loadResults",
         value: function loadResults() {
+            var _this5 = this;
+
             Api("discipline.get_results", {
                 discipline_id: this.props.discipline_id
-            }).onSuccess((function (response) {
-                this.setState({
+            }).onSuccess(function (response) {
+                _this5.setState({
                     discipline_results: response
                 });
-                this.reloadState();
-            }).bind(this)).send();
+                _this5.reloadState();
+            }).send();
         }
     }, {
         key: "loadData",
         value: function loadData() {
+            var _this6 = this;
+
             Api("discipline.get", {
                 discipline_id: this.props.discipline_id,
                 children: {
@@ -164,10 +168,10 @@ var DisciplineResults = (function (_React$Component2) {
                         }
                     }
                 }
-            }).addToDB("Discipline", this.props.discipline_id, this.storage).onSuccess((function () {
-                this.runs_loaded = true;
-                this.reloadState(this);
-            }).bind(this)).send();
+            }).addToDB("Discipline", this.props.discipline_id, this.storage).onSuccess(function () {
+                _this6.runs_loaded = true;
+                _this6.reloadState(_this6);
+            }).send();
         }
 
         // Listeners

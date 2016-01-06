@@ -36,11 +36,6 @@ class Commands:
         db_setup.setup()
 
     @staticmethod
-    def setup():
-        from app import ModelManager
-        ModelManager.instance().reset("simple")
-
-    @staticmethod
     def reset():
         from app import ModelManager
         ModelManager.instance().reset()
@@ -73,3 +68,4 @@ class Commands:
 
 if __name__ == "__main__":
     getattr(Commands, argv[1])(*argv[2:])
+

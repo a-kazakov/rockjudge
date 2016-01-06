@@ -10,7 +10,6 @@ import settings
 import urls
 
 from db import Database
-from fixtures import apply_fixture
 
 
 class Application(tornado.web.Application):
@@ -68,8 +67,6 @@ class ModelManager:
                 raise latest_ex
             to_kill -= 1
 
-    def reset(self, fixture_name=None):
+    def reset(self):
         Database.instance().db.drop_tables(list(self.all_models), safe=True, cascade=True)
         self.create_models()
-        if fixture_name is not None:
-            return apply_fixture(fixture_name)
