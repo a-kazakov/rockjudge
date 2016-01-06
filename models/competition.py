@@ -45,6 +45,7 @@ class Competition(BaseModel):
     def load(self, data, ws_message):
         from models import (
             Club,
+            CompetitionPlanItem,
             Discipline,
             Judge,
         )
@@ -54,6 +55,8 @@ class Competition(BaseModel):
             Judge.load_models(self, data["judges"])
         if "disciplines" in data:
             Discipline.load_models(self, data["disciplines"])
+        if "plan" in data:
+            CompetitionPlanItem.load_models(self, data["plan"])
         ws_message.add_message("reload_data")
 
     @classmethod

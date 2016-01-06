@@ -452,9 +452,10 @@ var TourAdminAcrobaticLoader = (function (_React$Component7) {
 
     _createClass(TourAdminAcrobaticLoader, [{
         key: "onSubmit",
-        value: function onSubmit() {
+        value: function onSubmit(e) {
             var _this9 = this;
 
+            e.preventDefault();
             var value = this.refs.selector.value;
             if (value === "null") {
                 value = null;

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import json
 import openpyxl as xl
 import string
@@ -7,7 +8,7 @@ import time
 
 from contextlib import contextmanager
 from hashlib import md5
-from sys import argv, stdout
+from sys import stdout
 
 
 class Grid:
@@ -72,7 +73,7 @@ class Discipline:
     def has_participants(self):
         return len([
             None
-            for p in Couple.storage + Formation.storage
+            for p in list(Couple.storage.values()) + Formation.storage
             if p.discipline == self.name
         ]) > 0
 
@@ -84,11 +85,11 @@ class Discipline:
             if p.discipline == self.name
         ]) > 0
 
-    def serialize(self):
+    def serialize(self, add_tours=True):
         result = {k: getattr(self, k) for k in ["name", "external_id", "sp"]}
         result["participants"] = [
             p.serialize()
-            for p in Couple.storage + Formation.storage
+            for p in list(Couple.storage.values()) + Formation.storage
             if p.discipline == self.name
         ]
         result["discipline_judges"] = [
@@ -96,6 +97,12 @@ class Discipline:
             for dj in DisciplineJudge.storage
             if dj.discipline == self.name
         ]
+        if add_tours:
+            result["tours"] = [
+                t.serialize()
+                for t in Tour.storage
+                if t.discipline == self.name
+            ]
         return result
 
 
@@ -138,7 +145,7 @@ class DisciplineJudge:
 
 
 class Couple:
-    storage = []
+    storage = {}
 
     def __init__(self, grid, idx):
         row = grid.getRow(idx, 13 + 6 * 2)
@@ -159,10 +166,10 @@ class Couple:
                 "year_of_birth": int(row[6]),
                 "gender": "M",
             })
-        self.acrobatics = []
+        acrobatics = []
         for idx in range(12, 12 + 6 * 2, 2):
             if row[idx] is not None:
-                self.acrobatics.append({
+                acrobatics.append({
                     "description": str(row[idx]),
                     "score": float(row[idx + 1])
                 })
@@ -170,33 +177,30 @@ class Couple:
         self.discipline = str(row[7])
         self.club = Club.storage[row[8]].external_id
         self.coaches = str(row[9])
-        self.program_name = row[10]
-        self.default_for = str(row[11])
+        program_name = row[10]
+        default_for = row[11]
+        self.programs = [] if program_name is None else [{
+            "external_id": str(program_name),
+            "default_for": default_for,
+            "name": str(program_name),
+            "acrobatics": acrobatics,
+        }]
         self.external_id = md5((
             self.club + "|" +
             "|".join([s["first_name"] + "$" + s["last_name"] for s in self.sportsmen])
         ).encode("utf-8")).hexdigest()
-        self.storage.append(self)
+        if self.external_id in self.storage:
+            if len(self.programs) > 0:
+                self.storage[self.external_id].programs.append(self.programs[0])
+        else:
+            self.storage[self.external_id] = self
 
     def serialize(self):
         result = {
             k: getattr(self, k)
-            for k in ["sportsmen", "club", "coaches", "number", "external_id"]
+            for k in ["sportsmen", "club", "coaches", "number", "programs", "external_id"]
             if getattr(self, k) is not None
         }
-        if self.program_name is not None:
-            result.update({
-                "programs": [{
-                    "external_id": self.default_for,
-                    "default_for": self.default_for,
-                    "name": str(self.program_name),
-                    "acrobatics": self.acrobatics,
-                }]
-            })
-        else:
-            result.update({
-                "programs": [],
-            })
         return result
 
 
@@ -238,6 +242,47 @@ class Formation:
         return result
 
 
+class Tour:
+    storage = []
+
+    def __init__(self, grid, idx):
+        row = grid.getRow(idx, 7)
+        if row[0] is None:
+            return
+        self.discipline = row[0]
+        self.name = row[1]
+        self.hope_tour = row[2] == "Y"
+        self.scoring_system_name, self.num_advances, self.participants_per_heat = row[3:6]
+        self.default_program = "" if row[6] is None else row[6]
+        self.storage.append(self)
+
+    def serialize(self):
+        return {
+            k: getattr(self, k)
+            for k in ["name", "hope_tour", "scoring_system_name", "num_advances", "participants_per_heat", "default_program"]
+        }
+
+
+class CompetitionPlanItem:
+    storage = []
+
+    def __init__(self, grid, idx):
+        row = grid.getRow(idx, 6)
+        if row[0] is None:
+            return
+        self.sp = row[0]
+        self.verbose_name = row[1] if row[1] is not None else ""
+        self.discipline_external_id = Discipline.storage[row[2]].external_id if row[2] is not None else None
+        self.estimated_beginning, self.estimated_duration = ["" if x is None else x for x in row[4:6]]
+        self.storage.append(self)
+
+    def serialize(self):
+        return {
+            k: getattr(self, k)
+            for k in ["sp", "verbose_name", "discipline_external_id", "estimated_beginning", "estimated_duration"]
+        }
+
+
 @contextmanager
 def step(s):
     print("{} ... ".format(s), end="")
@@ -247,78 +292,103 @@ def step(s):
     print("\r{}: DONE ({:.3f}s)".format(s, time.time() - t))
 
 
-with step("Opening document"):
-    filename = argv[1]
-    wb = xl.load_workbook(filename)
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description='Converts Excel sheet to RockJudge import format')
+    parser.add_argument('infile', metavar='<input file>', type=str,
+                       help='Input XLSX file')
+    parser.add_argument('outfile', metavar='<output file>', type=str,
+                       help='Output TXT file')
+    parser.add_argument('-t','--no-tour', dest='add_tours', action='store_false', default=True,
+                       help='Do not include tours into output file')
+    parser.add_argument('-p','--no-plan', dest='add_plan', action='store_false', default=True,
+                       help='Do not include competition plan into output file')
+    args = parser.parse_args()
+    with step("Opening document"):
+        filename = args.infile
+        wb = xl.load_workbook(filename)
 
 
-with step("Loading data"):
-    grid_clubs = Grid(wb["Clubs"], first_row=2)
-    grid_disciplines = Grid(wb["Disciplines"], first_row=2)
-    grid_discipline_judges = Grid(wb["Discipline judges"], first_row=2)
-    grid_judges = Grid(wb["Judges"], first_row=2)
-    grid_couples = Grid(wb["Couples, solo"], first_row=3)
-    grid_forms = Grid(wb["Formations"], first_row=3)
+    with step("Loading data"):
+        grid_clubs = Grid(wb["Clubs"], first_row=2)
+        grid_disciplines = Grid(wb["Disciplines"], first_row=2)
+        grid_discipline_judges = Grid(wb["Discipline judges"], first_row=2)
+        grid_judges = Grid(wb["Judges"], first_row=2)
+        grid_couples = Grid(wb["Couples, solo"], first_row=3)
+        grid_forms = Grid(wb["Formations"], first_row=3)
+        grid_tours = Grid(wb["Tours"], first_row=2)
+        grid_plan = Grid(wb["Competition plan"], first_row=2)
 
 
-with step("Parsing clubs"):
-    for idx in range(1000):
-        try:
-            Club(grid_clubs, idx)
-        except StopIteration:
-            break
+    with step("Parsing clubs"):
+        for idx in range(1000):
+            try:
+                Club(grid_clubs, idx)
+            except StopIteration:
+                break
 
 
-with step("Parsing disciplines"):
-    for idx in range(1000):
-        try:
-            Discipline(grid_disciplines, idx)
-        except StopIteration:
-            break
+    with step("Parsing disciplines"):
+        for idx in range(1000):
+            try:
+                Discipline(grid_disciplines, idx)
+            except StopIteration:
+                break
 
 
-with step("Parsing judges"):
-    for idx in range(1000):
-        try:
-            Judge(grid_judges, idx)
-        except StopIteration:
-            break
+    with step("Parsing judges"):
+        for idx in range(1000):
+            try:
+                Judge(grid_judges, idx)
+            except StopIteration:
+                break
 
 
-with step("Parsing discipline judges"):
-    for idx in range(1000):
-        DisciplineJudge(grid_discipline_judges, idx)
+    with step("Parsing discipline judges"):
+        for idx in range(1000):
+            DisciplineJudge(grid_discipline_judges, idx)
 
 
-with step("Parsing couples"):
-    for idx in range(1000):
-        try:
-            Couple(grid_couples, idx)
-        except StopIteration:
-            break
+    with step("Parsing couples"):
+        for idx in range(1000):
+            try:
+                Couple(grid_couples, idx)
+            except StopIteration:
+                break
 
 
-with step("Parsing formations"):
-    formation_names = grid_forms.getCol(2, 1000)
-    latest_row = None
-    for idx in range(1000):
-        if formation_names[idx] is None:
-            continue
+    with step("Parsing formations"):
+        formation_names = grid_forms.getCol(2, 1000)
+        latest_row = None
+        for idx in range(1000):
+            if formation_names[idx] is None:
+                continue
+            if latest_row is not None:
+                Formation(grid_forms, latest_row, idx - latest_row)
+            latest_row = idx
         if latest_row is not None:
-            Formation(grid_forms, latest_row, idx - latest_row)
-        latest_row = idx
-    if latest_row is not None:
-        Formation(grid_forms, latest_row, 1000 - latest_row)
+            Formation(grid_forms, latest_row, 1000 - latest_row)
 
 
-with step("Saving"):
-    with open(argv[2], "wt", encoding="utf-8") as f:
-        f.write(json.dumps({
-            "judges": [x.serialize() for x in Judge.storage.values()],
-            "clubs": [x.serialize() for x in Club.storage.values()],
-            "disciplines": [
-                x.serialize()
-                for x in Discipline.storage.values()
-                if x.has_participants or x.has_judges
-            ],
-        }, sort_keys=True, indent=4, ensure_ascii=False))
+    with step("Parsing tours"):
+        for idx in range(1000):
+            Tour(grid_tours, idx)
+
+
+    with step("Parsing competition plan"):
+        for idx in range(1000):
+            CompetitionPlanItem(grid_plan, idx)
+
+
+    with step("Saving"):
+        with open(args.outfile, "wt", encoding="utf-8") as f:
+            f.write(json.dumps({
+                "judges": [x.serialize() for x in Judge.storage.values()],
+                "clubs": [x.serialize() for x in Club.storage.values()],
+                "disciplines": [
+                    x.serialize(add_tours=args.add_tours)
+                    for x in Discipline.storage.values()
+                    if x.has_participants or x.has_judges
+                ],
+                "plan": [x.serialize() for x in CompetitionPlanItem.storage] if args.add_plan else []
+            }, sort_keys=True, indent=4, ensure_ascii=False))

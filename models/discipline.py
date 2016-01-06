@@ -125,10 +125,15 @@ class Discipline(BaseModel):
         from models import (
             DisciplineJudge,
             Participant,
+            Tour,
         )
         for model, created, raw_data in cls.load_models_base(objects, competition=competition):
-            Participant.load_models(model, raw_data["participants"])
-            DisciplineJudge.load_models(model, raw_data["discipline_judges"])
+            if "participants" in raw_data:
+                Participant.load_models(model, raw_data["participants"])
+            if "discipline_judges" in raw_data:
+                DisciplineJudge.load_models(model, raw_data["discipline_judges"])
+            if "tours" in raw_data:
+                Tour.load_models(model, raw_data["tours"])
 
     @classmethod
     def create_model(cls, competition, data, ws_message):

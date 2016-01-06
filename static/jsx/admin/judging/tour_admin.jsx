@@ -266,7 +266,8 @@ class TourAdminAcrobaticEditorRow extends React.Component {
 }
 
 class TourAdminAcrobaticLoader extends React.Component {
-    onSubmit() {
+    onSubmit(e) {
+        e.preventDefault();
         let value = this.refs.selector.value;
         if (value === "null") {
             value = null;

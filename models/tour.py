@@ -286,6 +286,16 @@ class Tour(BaseModel):
         return get_scoring_system(self)
 
     @classmethod
+    def load_models(cls, discipline, objects):
+        if discipline.first_tour is not None:
+            raise ApiError("errors.tour.load_to_non_empty", discipline.name)
+        add_after = None
+        for obj in objects:
+            model = cls.create_model(discipline, add_after, obj, WsMessage())
+            discipline.tours.append(model)
+            add_after = model.id
+
+    @classmethod
     def create_model(cls, discipline, add_after, data, ws_message):
         create_kwargs = cls.gen_model_kwargs(data, discipline=discipline)
         tour = Tour.create(**create_kwargs)
@@ -315,6 +325,7 @@ class Tour(BaseModel):
                 "tours": {},
             }
         )
+        return tour
 
     def update_model(self, new_data, ws_message):
         if self.finalized:

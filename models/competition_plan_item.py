@@ -1,8 +1,11 @@
 import peewee
 
+from exceptions import ApiError
 from models.base_model import BaseModel
 from models.competition import Competition
 from models.tour import Tour
+
+from webserver.websocket import WsMessage
 
 
 class CompetitionPlanItem(BaseModel):
@@ -21,6 +24,37 @@ class CompetitionPlanItem(BaseModel):
 
     RW_PROPS = ["sp", "verbose_name", "estimated_beginning", "estimated_duration"]
     RO_PROPS = ["tour_id"]
+
+    @classmethod
+    def load_models(cls, competition, objects):
+        existing_items = {
+            item.sp: item
+            for item in competition.plan
+        }
+        tours_iterators = {
+            discipline.external_id: iter(discipline.tours)
+            for discipline in competition.disciplines
+        }
+        latest_discipline_external_id = None
+        try:
+            for obj in objects:
+                if obj["discipline_external_id"] is not None:
+                    latest_discipline_external_id = obj["discipline_external_id"]
+                    tour_id = next(tours_iterators[obj["discipline_external_id"]]).id
+                    obj["tour_id"] = tour_id
+                else:
+                    obj["tour_id"] = None
+                if obj["sp"] in existing_items:
+                    existing_items[obj["sp"]].update_model(obj, WsMessage())
+                else:
+                    cls.create_model(competition, obj, WsMessage())
+        except StopIteration:
+            failed_discipline = None
+            for discipline in competition.disciplines:
+                if discipline.external_id == latest_discipline_external_id:
+                    failed_discipline = discipline
+                    break
+            raise ApiError("errors.competition_plan.too_many_tours", failed_discipline.name)
 
     @classmethod
     def create_model(cls, competition, data, ws_message):
