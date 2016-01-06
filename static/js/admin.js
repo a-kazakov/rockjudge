@@ -240,22 +240,32 @@ var ManagementUI = (function (_React$Component2) {
                     React.createElement(
                         "div",
                         {
+                            className: "level-1" + (this.state.page == "manage_judges" ? " active" : ""),
+                            onClick: this.switchPage.bind(this, "manage_judges", {}) },
+                        _("admin.menu.manage_judges")
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { className: "block" },
+                    React.createElement(
+                        "div",
+                        {
                             className: "level-1" + (this.state.page == "manage_disciplines" ? " active" : ""),
                             onClick: this.switchPage.bind(this, "manage_disciplines", {}) },
                         _("admin.menu.manage_disciplines")
                     )
                 ),
                 React.createElement(
-                    "details",
-                    { className: "block", open: !!parseInt(sessionStorage.getItem("D_TOURS")) },
+                    "div",
+                    { className: "block" },
                     React.createElement(
-                        "summary",
-                        { className: "level-1", onClick: function onClick(e) {
-                                return sessionStorage.setItem("D_TOURS", e.target.parentNode.open ? 0 : 1);
-                            } },
-                        _("admin.menu.manage_tours")
-                    ),
-                    ics_tours
+                        "div",
+                        {
+                            className: "level-1" + (this.state.page == "manage_clubs" ? " active" : ""),
+                            onClick: this.switchPage.bind(this, "manage_clubs", {}) },
+                        _("admin.menu.manage_clubs")
+                    )
                 ),
                 React.createElement(
                     "details",
@@ -270,26 +280,16 @@ var ManagementUI = (function (_React$Component2) {
                     ics_participants
                 ),
                 React.createElement(
-                    "div",
-                    { className: "block" },
+                    "details",
+                    { className: "block", open: !!parseInt(sessionStorage.getItem("D_TOURS")) },
                     React.createElement(
-                        "div",
-                        {
-                            className: "level-1" + (this.state.page == "manage_clubs" ? " active" : ""),
-                            onClick: this.switchPage.bind(this, "manage_clubs", {}) },
-                        _("admin.menu.manage_clubs")
-                    )
-                ),
-                React.createElement(
-                    "div",
-                    { className: "block" },
-                    React.createElement(
-                        "div",
-                        {
-                            className: "level-1" + (this.state.page == "manage_judges" ? " active" : ""),
-                            onClick: this.switchPage.bind(this, "manage_judges", {}) },
-                        _("admin.menu.manage_judges")
-                    )
+                        "summary",
+                        { className: "level-1", onClick: function onClick(e) {
+                                return sessionStorage.setItem("D_TOURS", e.target.parentNode.open ? 0 : 1);
+                            } },
+                        _("admin.menu.manage_tours")
+                    ),
+                    ics_tours
                 ),
                 React.createElement(
                     "div",
