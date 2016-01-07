@@ -1375,7 +1375,7 @@ var TourResultsTable = (function (_React$Component6) {
             };
             return React.createElement(
                 "table",
-                { className: "bordered-table" },
+                { className: "bordered-table brief-table" },
                 React.createElement(
                     "thead",
                     null,

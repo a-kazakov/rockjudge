@@ -1,9 +1,16 @@
 .tour-results {
-  margin: 10px;
-  width: 750px;
+  width: 100%;
+  font-size: 9pt;
+}
+.tour-results .brief-table {
+  font-size: 12pt;
 }
 .tour-results td {
   vertical-align: top;
+}
+.tour-results td,
+.tour-results th {
+  padding: 1px 3px;
 }
 .tour-results .info-block {
   text-align: left;

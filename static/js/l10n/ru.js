@@ -118,13 +118,14 @@ function _(src, arg) {
                 "competition_name": "Наименование соревнования",
                 "competition_date": "Дата проведения",
                 "include_acrobatics": "Включить акробатику",
-                "include_formation_sportsmen": "Включить состав формейшнов"
+                "include_formation_sportsmen": "Включить состав формейшнов",
+                "insert_serialized": "Вставьте сюда данные о турнире ..."
             },
             "messages": {
                 "invalid_passcode": "Введён неверный код потверждения"
             },
             "menu": {
-                "competition_report": "Протокол соревнования",
+                "competition_report": "Протокол соревнований",
                 "discipline_results": "Результаты дисциплины",
                 "load_competition": "Импорт данных",
                 "manage_clubs": "Управление клубами",

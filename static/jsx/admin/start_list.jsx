@@ -205,42 +205,45 @@ class StartList extends React.Component {
                 <h1>{ _("admin.headers.start_list") }</h1>
             </header>
             <div className="start-list">
-                <h3>{ this.state.name }, { this.state.date }</h3>
-                <div className="row">
-                    <div className="col-md-6">
-                        { this.state.disciplines.map((d) =>
-                            <div className="switch" key={ d.id }>
+                <div className="controls">
+                    <div className="row">
+                        <div className="col-md-6">
+                            { this.state.disciplines.map((d) =>
+                                <div className="switch" key={ d.id }>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            checked={ !this.state["hide_" + d.id] }
+                                            onChange={ this.onDisciplineCbChange.bind(this, d.id) } />
+                                        { d.name }
+                                    </label>
+                                </div>
+                            ) }
+                            <a href="#" onClick={ this.setAllDisciplines.bind(this, false) }>{ _("global.buttons.select_all") }</a>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <a href="#" onClick={ this.setAllDisciplines.bind(this, true) }>{ _("global.buttons.deselect_all") }</a>
+                        </div>
+                        <div className="col-md-6">
+                            <div className="switch">
                                 <label>
-                                    <input
-                                        type="checkbox"
-                                        checked={ !this.state["hide_" + d.id] }
-                                        onChange={ this.onDisciplineCbChange.bind(this, d.id) } />
-                                    { d.name }
+                                    <input type="checkbox" ref="cb_acro" onChange={ this.onCbChange.bind(this) } />
+                                    { _("admin.labels.include_acrobatics") }
                                 </label>
                             </div>
-                        ) }
-                        <a href="#" onClick={ this.setAllDisciplines.bind(this, false) }>{ _("global.buttons.select_all") }</a>
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        <a href="#" onClick={ this.setAllDisciplines.bind(this, true) }>{ _("global.buttons.deselect_all") }</a>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="switch">
-                            <label>
-                                <input type="checkbox" ref="cb_acro" onChange={ this.onCbChange.bind(this) } />
-                                { _("admin.labels.include_acrobatics") }
-                            </label>
-                        </div>
-                        <div className="switch">
-                            <label>
-                                <input type="checkbox" ref="cb_forms" onChange={ this.onCbChange.bind(this) } />
-                                { _("admin.labels.include_formation_sportsmen") }
-                            </label>
+                            <div className="switch">
+                                <label>
+                                    <input type="checkbox" ref="cb_forms" onChange={ this.onCbChange.bind(this) } />
+                                    { _("admin.labels.include_formation_sportsmen") }
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div ref="content">
-                    { this.state.disciplines.map((ic) => this.renderDiscipline(ic)) }
-                </div>
+                <Printable
+                    ref="printable"
+                    header={ this.state.name + ", " + this.state.date }
+                    title1={ _("admin.headers.start_list") }
+                    body={ this.state.disciplines.map((dis) => this.renderDiscipline(dis)) } />
             </div>
             <ParticipantNumbers
                 competition_name={ this.state.name }
@@ -253,7 +256,7 @@ class StartList extends React.Component {
             .setMargins([10, 15, 10, 25])
             .setHeader(this.state.name + ", " + this.state.date)
             .setTitle1(_("admin.headers.start_list"))
-            .setBody(ReactDOM.findDOMNode(this.refs.content).innerHTML)
+            .setBody(this.refs.printable.fetchPrintableData())
             .addStyle(".bordered-table .inner td, .bordered-table .inner th", "border", "none")
             .addStyle(".bordered-table .inner td, .bordered-table .inner th", "padding", "0")
             .addStyle(".inner", "width", "100%")

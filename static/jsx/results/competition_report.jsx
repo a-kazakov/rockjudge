@@ -89,7 +89,7 @@ class CompetitionReport extends React.Component {
                 <h5><p>{ ic.name }</p></h5>
                 <DisciplineResults
                     discipline_id={ ic.id }
-                    table_only={ true } />
+                    renderer="table" />
             </div>
         );
     }
@@ -97,6 +97,15 @@ class CompetitionReport extends React.Component {
         if (this.state.competition === null) {
             return <Loader />
         }
+        let body = <div className="competition-report">
+            { this.renderInfoTable() }
+            <h4><p>{ _("admin.headers.clubs") }</p></h4>
+            { this.renderClubs() }
+            <h4><p>{ _("admin.headers.judges") }</p></h4>
+            { this.renderJudges() }
+            <h4><p>{ _("admin.headers.competition_results") }</p></h4>
+            { this.renderResults() }
+        </div>;
         return <div>
             <header>
                 <div className="controls">
@@ -104,22 +113,17 @@ class CompetitionReport extends React.Component {
                 </div>
                 <h1>{ _("admin.headers.competition_report") }</h1>
             </header>
-            <div className="competition-report" ref="main_table">
-                { this.renderInfoTable() }
-                <h4><p>{ _("admin.headers.clubs") }</p></h4>
-                { this.renderClubs() }
-                <h4><p>{ _("admin.headers.judges") }</p></h4>
-                { this.renderJudges() }
-                <h4><p>{ _("admin.headers.competition_results") }</p></h4>
-                { this.renderResults() }
-            </div>
+            <Printable
+                ref="printable"
+                title1={ _("admin.headers.competition_report") }
+                body={ body } />
         </div>
     }
     createDocx(filename="report.docx") {
         Docx(filename)
             .setMargins([10, 15, 10, 25])
             .setTitle1(_("admin.headers.competition_report"))
-            .setBody(this.refs.main_table.innerHTML)
+            .setBody(this.refs.printable.fetchPrintableData())
             .addStyle(".spacer td", "height", "5pt")
             .addStyle(".tour-name", "background", "#ddd")
             .addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none")

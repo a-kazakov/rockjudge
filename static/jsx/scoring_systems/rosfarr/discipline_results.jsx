@@ -45,7 +45,7 @@ class DisciplineResultsTable extends React.Component {
         return result;
     }
     render() {
-        return <div className="ic-results">
+        return <div className="discipline-results">
             <table className="bordered-table">
                 <thead>
                     <tr>

@@ -121,10 +121,26 @@ class TourResultsBody extends React.Component {
             table = <TourResultsTable {...this.state} />
         }
         this.rendered = true;
-        return <div className="tour-results" ref="content">
+        if (this.props.tableOnly) {
+            return <div className="tour-results" ref="content">
+                { this.renderNonFinalizedWarning() }
+                { table }
+            </div>
+        }
+        let body = <div className="tour-results p-content" ref="content">
             { this.renderNonFinalizedWarning() }
             { table }
         </div>
+        return this.props.printable
+            ? <Printable
+                ref="printable"
+                header={ this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date }
+                title1={ _("admin.headers.tour_results") }
+                title2={ this.state.tour.discipline.name }
+                title3={ this.state.tour.name }
+                body={ body } />
+            : body;
+
     }
     createDocx(filename="tour-results.docx") {
         Docx(filename)

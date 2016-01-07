@@ -268,7 +268,7 @@ var JudgeTablet = (function (_React$Component) {
             return React.createElement(
                 "div",
                 { className: "body results" },
-                React.createElement(TourResultsBody, { tour_id: this.state.tour.id, verbosity: "2" })
+                React.createElement(TourResultsBody, { tour_id: this.state.tour.id, verbosity: "2", tableOnly: true })
             );
         }
     }, {

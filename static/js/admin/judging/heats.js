@@ -206,9 +206,9 @@ var HeatsBody = (function (_React$Component2) {
             if (this.state.tour === null) {
                 return React.createElement(Loader, null);
             }
-            return React.createElement(
+            var body = React.createElement(
                 "div",
-                { className: "tour-heats", ref: "printable_heats" },
+                { className: "tour-heats" },
                 React.createElement(
                     "table",
                     { className: "bordered-table" },
@@ -254,13 +254,20 @@ var HeatsBody = (function (_React$Component2) {
                     )
                 )
             );
+            return React.createElement(Printable, {
+                header: this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date,
+                title1: _("admin.headers.tour_heats"),
+                title2: this.state.tour.discipline.name,
+                title3: this.state.tour.name,
+                body: body,
+                ref: "printable" });
         }
     }, {
         key: "createDocx",
         value: function createDocx() {
             var filename = arguments.length <= 0 || arguments[0] === undefined ? "tour-heats.docx" : arguments[0];
 
-            Docx(filename).setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date).setTitle1(_("admin.headers.tour_heats")).setTitle2(this.state.tour.discipline.name).setTitle3(this.state.tour.name).setBody(ReactDOM.findDOMNode(this.refs.printable_heats).innerHTML).addStyle(".heat-number", "background", "#ccc").addStyle(".heat-number", "text-align", "left").addStyle("td, th", "font-size", "12pt").save();
+            Docx(filename).setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date).setTitle1(_("admin.headers.tour_heats")).setTitle2(this.state.tour.discipline.name).setTitle3(this.state.tour.name).setBody(this.refs.printable.fetchPrintableData()).addStyle(".heat-number", "background", "#ccc").addStyle(".heat-number", "text-align", "left").addStyle("td, th", "font-size", "12pt").save();
         }
     }]);
 

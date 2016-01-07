@@ -523,7 +523,7 @@ class TourResultsTable extends React.Component {
                 has_total_score={ has_total_score } />
             );
         };
-        return <table className="bordered-table">
+        return <table className="bordered-table brief-table">
             <thead>
                 <tr>
                     <th className="w-7 place"><p>{ __("results.labels.place") }</p></th>

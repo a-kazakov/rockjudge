@@ -684,7 +684,7 @@ var ScreenOperator = (function (_React$Component9) {
                             _extends({ type: "button",
                                 className: "btn btn-danger"
                             }, onTouchOrClick(this.resetData.bind(this))),
-                            "Reset"
+                            _("global.buttons.discard")
                         ),
                         React.createElement(
                             "button",
@@ -692,7 +692,7 @@ var ScreenOperator = (function (_React$Component9) {
                                 className: "btn btn-primary",
                                 disabled: !this.validateControls(data)
                             }, onTouchOrClick(this.submitData.bind(this))),
-                            "Submit"
+                            _("global.buttons.submit")
                         )
                     ) : null
                 )

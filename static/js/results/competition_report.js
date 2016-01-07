@@ -251,7 +251,7 @@ var CompetitionReport = (function (_React$Component) {
                     ),
                     React.createElement(DisciplineResults, {
                         discipline_id: ic.id,
-                        table_only: true })
+                        renderer: "table" })
                 );
             });
         }
@@ -261,6 +261,41 @@ var CompetitionReport = (function (_React$Component) {
             if (this.state.competition === null) {
                 return React.createElement(Loader, null);
             }
+            var body = React.createElement(
+                "div",
+                { className: "competition-report" },
+                this.renderInfoTable(),
+                React.createElement(
+                    "h4",
+                    null,
+                    React.createElement(
+                        "p",
+                        null,
+                        _("admin.headers.clubs")
+                    )
+                ),
+                this.renderClubs(),
+                React.createElement(
+                    "h4",
+                    null,
+                    React.createElement(
+                        "p",
+                        null,
+                        _("admin.headers.judges")
+                    )
+                ),
+                this.renderJudges(),
+                React.createElement(
+                    "h4",
+                    null,
+                    React.createElement(
+                        "p",
+                        null,
+                        _("admin.headers.competition_results")
+                    )
+                ),
+                this.renderResults()
+            );
             return React.createElement(
                 "div",
                 null,
@@ -282,41 +317,10 @@ var CompetitionReport = (function (_React$Component) {
                         _("admin.headers.competition_report")
                     )
                 ),
-                React.createElement(
-                    "div",
-                    { className: "competition-report", ref: "main_table" },
-                    this.renderInfoTable(),
-                    React.createElement(
-                        "h4",
-                        null,
-                        React.createElement(
-                            "p",
-                            null,
-                            _("admin.headers.clubs")
-                        )
-                    ),
-                    this.renderClubs(),
-                    React.createElement(
-                        "h4",
-                        null,
-                        React.createElement(
-                            "p",
-                            null,
-                            _("admin.headers.judges")
-                        )
-                    ),
-                    this.renderJudges(),
-                    React.createElement(
-                        "h4",
-                        null,
-                        React.createElement(
-                            "p",
-                            null,
-                            _("admin.headers.competition_results")
-                        )
-                    ),
-                    this.renderResults()
-                )
+                React.createElement(Printable, {
+                    ref: "printable",
+                    title1: _("admin.headers.competition_report"),
+                    body: body })
             );
         }
     }, {
@@ -324,7 +328,7 @@ var CompetitionReport = (function (_React$Component) {
         value: function createDocx() {
             var filename = arguments.length <= 0 || arguments[0] === undefined ? "report.docx" : arguments[0];
 
-            Docx(filename).setMargins([10, 15, 10, 25]).setTitle1(_("admin.headers.competition_report")).setBody(this.refs.main_table.innerHTML).addStyle(".spacer td", "height", "5pt").addStyle(".tour-name", "background", "#ddd").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0").addStyle(".sportsmen", "width", "100%").save();
+            Docx(filename).setMargins([10, 15, 10, 25]).setTitle1(_("admin.headers.competition_report")).setBody(this.refs.printable.fetchPrintableData()).addStyle(".spacer td", "height", "5pt").addStyle(".tour-name", "background", "#ddd").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0").addStyle(".sportsmen", "width", "100%").save();
         }
     }]);
 

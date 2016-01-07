@@ -146,9 +146,16 @@ class DisciplineResults extends React.Component {
                 selectedPlace={ this.props.selectedPlace }
                 onPlaceSelect={ this.props.onPlaceSelect }
                 ref="main_table" />
-        case "report":
-        default:
+        case "page":
+            return <Printable
+                ref="printable"
+                header={ this.state.discipline.competition.name + ", " + this.state.discipline.competition.date }
+                title1={ _("admin.headers.discipline_results") }
+                title3={ this.state.discipline.name }
+                body={ <DisciplineResultsTable table={ this.state.table } /> } />
+        case "table":
             return <DisciplineResultsTable table={ this.state.table } ref="main_table" />
+        default:
         }
     }
 
@@ -165,7 +172,7 @@ class DisciplineResults extends React.Component {
             .setHeader(this.state.discipline.competition.name + ", " + this.state.discipline.competition.date)
             .setTitle1(_("admin.headers.discipline_results"))
             .setTitle3(this.state.discipline.name)
-            .setBody(ReactDOM.findDOMNode(this.refs.main_table).innerHTML)
+            .setBody(this.refs.printable.fetchPrintableData())
             .addStyle(".tour-name", "background", "#ddd")
             .addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none")
             .addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0")

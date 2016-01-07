@@ -114,7 +114,7 @@ class HeatsBody extends React.Component {
         if (this.state.tour === null) {
             return <Loader />
         }
-        return <div className="tour-heats" ref="printable_heats">
+        let body = <div className="tour-heats">
             <table className="bordered-table"><thead>
                 <tr>
                     <th className="w-8"><p>{ _("judging.labels.number") }</p></th>
@@ -124,7 +124,14 @@ class HeatsBody extends React.Component {
             </thead><tbody>
                 { this.renderHeatRows() }
             </tbody></table>
-        </div>
+        </div>;
+        return <Printable
+            header={ this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date }
+            title1={ _("admin.headers.tour_heats") }
+            title2={ this.state.tour.discipline.name }
+            title3={ this.state.tour.name }
+            body={ body }
+            ref="printable" />
     }
     createDocx(filename="tour-heats.docx") {
         Docx(filename)
@@ -132,7 +139,7 @@ class HeatsBody extends React.Component {
             .setTitle1(_("admin.headers.tour_heats"))
             .setTitle2(this.state.tour.discipline.name)
             .setTitle3(this.state.tour.name)
-            .setBody(ReactDOM.findDOMNode(this.refs.printable_heats).innerHTML)
+            .setBody(this.refs.printable.fetchPrintableData())
             .addStyle(".heat-number", "background", "#ccc")
             .addStyle(".heat-number", "text-align", "left")
             .addStyle("td, th", "font-size", "12pt")

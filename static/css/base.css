@@ -6900,9 +6900,6 @@ body,
   height: 100%;
   overflow: hidden;
 }
-.bordered-table {
-  font-size: 12px;
-}
 .bordered-table td,
 .bordered-table th {
   border: 2px solid black;
@@ -6961,6 +6958,65 @@ header .controls .current-heat {
 header .controls button {
   margin-right: 0;
   margin-left: 10px;
+}
+.printable {
+  width: 595pt;
+  min-height: 841.5pt;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 27.5pt 41pt;
+  background-color: #fff;
+  margin: 10px auto;
+  -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+          box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+  font-family: Calibri, Tahoma;
+}
+.printable .p-header {
+  font-size: 10pt;
+  font-weight: bold;
+  border-bottom: 1pt solid black;
+  text-align: center;
+  margin-bottom: 20pt;
+}
+.printable h1 {
+  font-weight: bold;
+  text-align: center;
+  font-size: 20pt;
+  margin-top: 10pt;
+}
+.printable h2 {
+  font-weight: bold;
+  text-align: center;
+  font-size: 16pt;
+  margin-top: 6pt;
+}
+.printable h3 {
+  font-weight: bold;
+  text-align: center;
+  font-size: 16pt;
+  margin-top: 4pt;
+}
+.printable h4 {
+  font-size: 14pt;
+  font-weight: bold;
+  margin: 10pt 0 6pt;
+}
+.printable h5 {
+  font-size: 12pt;
+  font-weight: bold;
+  margin: 6pt 0;
+}
+.printable .p-content {
+  margin-top: 18pt;
+}
+.printable .p-content .bordered-table > tbody > tr > td,
+.printable .p-content .bordered-table > thead > tr > td,
+.printable .p-content .bordered-table > tbody > tr > th,
+.printable .p-content .bordered-table > thead > tr > th {
+  border: 1pt solid black;
+}
+.printable .va-top {
+  vertical-align: top;
 }
 .w-1 {
   width: 1%;

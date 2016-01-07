@@ -185,13 +185,16 @@ class JudgingUI extends React.Component {
         case "heats":
             return <HeatsBody {...props} />
         case "results-1":
-            return <TourResultsBody verbosity="1" {...props} />
+            return <TourResultsBody printable={ true } verbosity="1" {...props} />
         case "results-2":
-            return <TourResultsBody verbosity="2" {...props} />
+            return <TourResultsBody printable={ true } verbosity="2" {...props} />
         case "results-3":
-            return <TourResultsBody verbosity="3" {...props} />
+            return <TourResultsBody printable={ true } verbosity="3" {...props} />
         case "discipline-results":
-            return <DisciplineResults discipline_id={ this.getActiveDiscipline().id } ref="active_body" />
+            return <DisciplineResults
+                discipline_id={ this.getActiveDiscipline().id }
+                ref="active_body"
+                renderer="page" />
         default:
             console.log("Unknown page:", this.state.page);
         }

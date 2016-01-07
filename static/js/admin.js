@@ -49,7 +49,7 @@ var CompetitionLoadingUI = (function (_React$Component) {
                         ref: function ref(c) {
                             return _this2._input = c;
                         },
-                        placeholder: "Insert serialized data here ..." }),
+                        placeholder: _("admin.labels.insert_serialized") }),
                     React.createElement(
                         "button",
                         { className: "btn btn-primary", type: "submit" },

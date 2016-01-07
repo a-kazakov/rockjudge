@@ -301,13 +301,16 @@ var JudgingUI = (function (_React$Component2) {
                 case "heats":
                     return React.createElement(HeatsBody, props);
                 case "results-1":
-                    return React.createElement(TourResultsBody, _extends({ verbosity: "1" }, props));
+                    return React.createElement(TourResultsBody, _extends({ printable: true, verbosity: "1" }, props));
                 case "results-2":
-                    return React.createElement(TourResultsBody, _extends({ verbosity: "2" }, props));
+                    return React.createElement(TourResultsBody, _extends({ printable: true, verbosity: "2" }, props));
                 case "results-3":
-                    return React.createElement(TourResultsBody, _extends({ verbosity: "3" }, props));
+                    return React.createElement(TourResultsBody, _extends({ printable: true, verbosity: "3" }, props));
                 case "discipline-results":
-                    return React.createElement(DisciplineResults, { discipline_id: this.getActiveDiscipline().id, ref: "active_body" });
+                    return React.createElement(DisciplineResults, {
+                        discipline_id: this.getActiveDiscipline().id,
+                        ref: "active_body",
+                        renderer: "page" });
                 default:
                     console.log("Unknown page:", this.state.page);
             }

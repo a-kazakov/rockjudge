@@ -1,8 +1,10 @@
 .competition-report {
-  padding: 10px;
+  font-size: 10pt;
 }
-.competition-report h2 {
-  text-align: center;
+.competition-report .info,
+.competition-report .judges,
+.competition-report .clubs {
+  width: 100%;
 }
 .competition-report .info td,
 .competition-report .judges td,
@@ -10,13 +12,7 @@
 .competition-report .info th,
 .competition-report .judges th,
 .competition-report .clubs th {
-  padding: 2px 20px 2px 0px;
-}
-.competition-report .info,
-.competition-report .clubs,
-.competition-report .judges {
-  width: 750px;
-  font-size: 12px;
+  padding: 0px 20px 0px 0px;
 }
 table.sportsmen {
   width: 100%;

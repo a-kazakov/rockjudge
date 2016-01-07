@@ -197,7 +197,7 @@ class JudgeTablet extends React.Component {
 
     renderResults() {
         return <div className="body results">
-            <TourResultsBody tour_id={ this.state.tour.id } verbosity="2" />
+            <TourResultsBody tour_id={ this.state.tour.id } verbosity="2" tableOnly={ true } />
         </div>
     }
     renderActions() {

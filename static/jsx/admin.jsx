@@ -14,7 +14,7 @@ class CompetitionLoadingUI extends React.Component {
                 <textarea
                     defaultValue=""
                     ref={(c) => this._input = c}
-                    placeholder="Insert serialized data here ..." />
+                    placeholder={ _("admin.labels.insert_serialized") } />
                 <button className="btn btn-primary" type="submit">{ _("admin.buttons.import") }</button>
             </form>
         </div>

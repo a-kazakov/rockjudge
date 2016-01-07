@@ -279,6 +279,7 @@ div.judge-tablet .body .main-table .mistakes {
 }
 .judge-tablet .body .tour-results {
   width: auto !important;
+  margin: 10px !important;
 }
 .judge-tablet .body.actions {
   margin: 20px;

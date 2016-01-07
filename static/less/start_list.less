@@ -1,10 +1,19 @@
 @import "variables.less";
 
 .start-list {
-  padding: 10px;
-  width: @print-width;
-  h2 {
-    text-align: center;
+  font-size: 10pt;
+  .controls {
+    width: @print-width;
+    box-sizing: border-box;
+    margin: 10px auto;
+    padding: 10px;
+    background-color: @ui-medium;
+    color: @ui-white;
+    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+    a {
+      color: @ui-white;
+      text-decoration: underline;
+    }
   }
   .discipline {
     > table {

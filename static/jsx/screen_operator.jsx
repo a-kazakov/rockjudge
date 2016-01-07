@@ -393,13 +393,13 @@ class ScreenOperator extends React.Component {
                         <button type="button"
                                 className="btn btn-danger"
                                 {...onTouchOrClick(this.resetData.bind(this))}>
-                            Reset
+                            { _("global.buttons.discard") }
                         </button>
                         <button type="button"
                                 className="btn btn-primary"
                                 disabled={ !this.validateControls(data) }
                                 {...onTouchOrClick(this.submitData.bind(this))}>
-                            Submit
+                            { _("global.buttons.submit") }
                         </button>
                     </div>
                     : null }

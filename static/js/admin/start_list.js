@@ -482,77 +482,74 @@ var StartList = (function (_React$Component3) {
                     "div",
                     { className: "start-list" },
                     React.createElement(
-                        "h3",
-                        null,
-                        this.state.name,
-                        ", ",
-                        this.state.date
-                    ),
-                    React.createElement(
                         "div",
-                        { className: "row" },
+                        { className: "controls" },
                         React.createElement(
                             "div",
-                            { className: "col-md-6" },
-                            this.state.disciplines.map(function (d) {
-                                return React.createElement(
-                                    "div",
-                                    { className: "switch", key: d.id },
-                                    React.createElement(
-                                        "label",
-                                        null,
-                                        React.createElement("input", {
-                                            type: "checkbox",
-                                            checked: !_this6.state["hide_" + d.id],
-                                            onChange: _this6.onDisciplineCbChange.bind(_this6, d.id) }),
-                                        d.name
-                                    )
-                                );
-                            }),
-                            React.createElement(
-                                "a",
-                                { href: "#", onClick: this.setAllDisciplines.bind(this, false) },
-                                _("global.buttons.select_all")
-                            ),
-                            "    ",
-                            React.createElement(
-                                "a",
-                                { href: "#", onClick: this.setAllDisciplines.bind(this, true) },
-                                _("global.buttons.deselect_all")
-                            )
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "col-md-6" },
+                            { className: "row" },
                             React.createElement(
                                 "div",
-                                { className: "switch" },
+                                { className: "col-md-6" },
+                                this.state.disciplines.map(function (d) {
+                                    return React.createElement(
+                                        "div",
+                                        { className: "switch", key: d.id },
+                                        React.createElement(
+                                            "label",
+                                            null,
+                                            React.createElement("input", {
+                                                type: "checkbox",
+                                                checked: !_this6.state["hide_" + d.id],
+                                                onChange: _this6.onDisciplineCbChange.bind(_this6, d.id) }),
+                                            d.name
+                                        )
+                                    );
+                                }),
                                 React.createElement(
-                                    "label",
-                                    null,
-                                    React.createElement("input", { type: "checkbox", ref: "cb_acro", onChange: this.onCbChange.bind(this) }),
-                                    _("admin.labels.include_acrobatics")
+                                    "a",
+                                    { href: "#", onClick: this.setAllDisciplines.bind(this, false) },
+                                    _("global.buttons.select_all")
+                                ),
+                                "    ",
+                                React.createElement(
+                                    "a",
+                                    { href: "#", onClick: this.setAllDisciplines.bind(this, true) },
+                                    _("global.buttons.deselect_all")
                                 )
                             ),
                             React.createElement(
                                 "div",
-                                { className: "switch" },
+                                { className: "col-md-6" },
                                 React.createElement(
-                                    "label",
-                                    null,
-                                    React.createElement("input", { type: "checkbox", ref: "cb_forms", onChange: this.onCbChange.bind(this) }),
-                                    _("admin.labels.include_formation_sportsmen")
+                                    "div",
+                                    { className: "switch" },
+                                    React.createElement(
+                                        "label",
+                                        null,
+                                        React.createElement("input", { type: "checkbox", ref: "cb_acro", onChange: this.onCbChange.bind(this) }),
+                                        _("admin.labels.include_acrobatics")
+                                    )
+                                ),
+                                React.createElement(
+                                    "div",
+                                    { className: "switch" },
+                                    React.createElement(
+                                        "label",
+                                        null,
+                                        React.createElement("input", { type: "checkbox", ref: "cb_forms", onChange: this.onCbChange.bind(this) }),
+                                        _("admin.labels.include_formation_sportsmen")
+                                    )
                                 )
                             )
                         )
                     ),
-                    React.createElement(
-                        "div",
-                        { ref: "content" },
-                        this.state.disciplines.map(function (ic) {
-                            return _this6.renderDiscipline(ic);
-                        })
-                    )
+                    React.createElement(Printable, {
+                        ref: "printable",
+                        header: this.state.name + ", " + this.state.date,
+                        title1: _("admin.headers.start_list"),
+                        body: this.state.disciplines.map(function (dis) {
+                            return _this6.renderDiscipline(dis);
+                        }) })
                 ),
                 React.createElement(ParticipantNumbers, {
                     competition_name: this.state.name,
@@ -567,7 +564,7 @@ var StartList = (function (_React$Component3) {
         value: function createDocx() {
             var filename = arguments.length <= 0 || arguments[0] === undefined ? "start-list.docx" : arguments[0];
 
-            Docx(filename).setMargins([10, 15, 10, 25]).setHeader(this.state.name + ", " + this.state.date).setTitle1(_("admin.headers.start_list")).setBody(ReactDOM.findDOMNode(this.refs.content).innerHTML).addStyle(".bordered-table .inner td, .bordered-table .inner th", "border", "none").addStyle(".bordered-table .inner td, .bordered-table .inner th", "padding", "0").addStyle(".inner", "width", "100%").addStyle(".acro", "border-top", "none !important").addStyle(".has-acro td", "border-bottom", "1px solid #555 !important").addStyle(".has-acro td td", "border-bottom", "none !important").save();
+            Docx(filename).setMargins([10, 15, 10, 25]).setHeader(this.state.name + ", " + this.state.date).setTitle1(_("admin.headers.start_list")).setBody(this.refs.printable.fetchPrintableData()).addStyle(".bordered-table .inner td, .bordered-table .inner th", "border", "none").addStyle(".bordered-table .inner td, .bordered-table .inner th", "padding", "0").addStyle(".inner", "width", "100%").addStyle(".acro", "border-top", "none !important").addStyle(".has-acro td", "border-bottom", "1px solid #555 !important").addStyle(".has-acro td td", "border-bottom", "none !important").save();
         }
     }]);
 

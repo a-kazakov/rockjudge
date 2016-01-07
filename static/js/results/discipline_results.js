@@ -202,9 +202,16 @@ var DisciplineResults = (function (_React$Component2) {
                         selectedPlace: this.props.selectedPlace,
                         onPlaceSelect: this.props.onPlaceSelect,
                         ref: "main_table" });
-                case "report":
-                default:
+                case "page":
+                    return React.createElement(Printable, {
+                        ref: "printable",
+                        header: this.state.discipline.competition.name + ", " + this.state.discipline.competition.date,
+                        title1: _("admin.headers.discipline_results"),
+                        title3: this.state.discipline.name,
+                        body: React.createElement(DisciplineResultsTable, { table: this.state.table }) });
+                case "table":
                     return React.createElement(DisciplineResultsTable, { table: this.state.table, ref: "main_table" });
+                default:
             }
         }
     }, {
@@ -228,7 +235,7 @@ var DisciplineResults = (function (_React$Component2) {
         value: function createDocx() {
             var filename = arguments.length <= 0 || arguments[0] === undefined ? "discipline-results.docx" : arguments[0];
 
-            Docx(filename).setHeader(this.state.discipline.competition.name + ", " + this.state.discipline.competition.date).setTitle1(_("admin.headers.discipline_results")).setTitle3(this.state.discipline.name).setBody(ReactDOM.findDOMNode(this.refs.main_table).innerHTML).addStyle(".tour-name", "background", "#ddd").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0").addStyle(".sportsmen", "width", "100%").save();
+            Docx(filename).setHeader(this.state.discipline.competition.name + ", " + this.state.discipline.competition.date).setTitle1(_("admin.headers.discipline_results")).setTitle3(this.state.discipline.name).setBody(this.refs.printable.fetchPrintableData()).addStyle(".tour-name", "background", "#ddd").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none").addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0").addStyle(".sportsmen", "width", "100%").save();
         }
     }]);
 

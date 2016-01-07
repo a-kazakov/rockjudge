@@ -177,12 +177,27 @@ var TourResultsBody = (function (_React$Component2) {
                 table = React.createElement(TourResultsTable, this.state);
             }
             this.rendered = true;
-            return React.createElement(
+            if (this.props.tableOnly) {
+                return React.createElement(
+                    "div",
+                    { className: "tour-results", ref: "content" },
+                    this.renderNonFinalizedWarning(),
+                    table
+                );
+            }
+            var body = React.createElement(
                 "div",
-                { className: "tour-results", ref: "content" },
+                { className: "tour-results p-content", ref: "content" },
                 this.renderNonFinalizedWarning(),
                 table
             );
+            return this.props.printable ? React.createElement(Printable, {
+                ref: "printable",
+                header: this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date,
+                title1: _("admin.headers.tour_results"),
+                title2: this.state.tour.discipline.name,
+                title3: this.state.tour.name,
+                body: body }) : body;
         }
     }, {
         key: "createDocx",

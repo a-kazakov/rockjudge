@@ -1,9 +1,20 @@
 .start-list {
-  padding: 10px;
-  width: 750px;
+  font-size: 10pt;
 }
-.start-list h2 {
-  text-align: center;
+.start-list .controls {
+  width: 595pt;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  margin: 10px auto;
+  padding: 10px;
+  background-color: #3f5765;
+  color: #efefef;
+  -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+          box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+}
+.start-list .controls a {
+  color: #efefef;
+  text-decoration: underline;
 }
 .start-list .discipline > table {
   width: 100%;
