@@ -71,6 +71,7 @@ function _(src, arg) {
                 "docx_results": "Результаты в DOCX",
                 "import": "Импортировать",
                 "launch_auto_printer": "Запуск автоматической печати",
+                "load_acro": "Загрузить акробатику",
                 "refresh_clients": "Перезагрузить все устройства",
                 "reload_clients": "Обновить данные на всех устройствах",
                 "switch_to_plan": "Сортирока по программе",
@@ -105,6 +106,7 @@ function _(src, arg) {
                 "disciplines_management": "Управление дисциплинами",
                 "judges": "Судейская бригада",
                 "judges_management": "Управление судьями",
+                "load_acrobatics": "Загрузка акробатики",
                 "load_competition": "Импорт данных соревнований",
                 "participants_management": "Управление участниками",
                 "service_menu": "Сервисное меню",
@@ -119,7 +121,8 @@ function _(src, arg) {
                 "competition_date": "Дата проведения",
                 "include_acrobatics": "Включить акробатику",
                 "include_formation_sportsmen": "Включить состав формейшнов",
-                "insert_serialized": "Вставьте сюда данные о турнире ..."
+                "insert_serialized": "Вставьте сюда данные о турнире ...",
+                "paste_acro": "Вставьте данные из калькулятора акробатики"
             },
             "messages": {
                 "invalid_passcode": "Введён неверный код потверждения"

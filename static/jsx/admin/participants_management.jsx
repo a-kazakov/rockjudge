@@ -185,6 +185,14 @@ class ParticipantEditorRowProgramEditorElements extends React.Component {
             return elements;
         });
     }
+    load(data) {
+        this.setState({
+            elements: data.map(e => ({
+                description: e[0],
+                score: e[1],
+            })),
+        });
+    }
     render() {
         return <div className="elements">
             { this.state.elements.map((element, idx) =>
@@ -208,6 +216,25 @@ class ParticipantEditorRowProgramEditorElements extends React.Component {
 }
 
 class ParticipantEditorRowProgramEditor extends React.Component {
+    loadAcrobatics() {
+        swal({
+            title: _("admin.headers.load_acrobatics"),
+            text: _("admin.labels.paste_acro"),
+            showCancelButton: true,
+            closeOnConfirm: false,
+            type: "input",
+            animation: false,
+        }, value => {
+            try {
+                let data = JSON.parse(value);
+                this.refs.elements_editor.load(data);
+                swal.close();
+            }
+            catch (SyntaxError) {
+                showError(_("errors.admin.load_syntax_error"));
+            }
+        });
+    }
     render() {
         let classes = ["program-editor"];
         if (this.props.creating) {
@@ -227,6 +254,11 @@ class ParticipantEditorRowProgramEditor extends React.Component {
             <ParticipantEditorRowProgramEditorElements
                 ref="elements_editor"
                 elements={ this.props.program.acrobatics || [] } />
+            <div className="pull-right">
+                <button type="button" className="btn btn-sm btn-default" onClick={ this.loadAcrobatics.bind(this) }>
+                    { _("admin.buttons.load_acro") }
+                </button>
+            </div>
             <button className="btn btn-sm btn-primary">
                 { _("global.buttons.submit") }
             </button>

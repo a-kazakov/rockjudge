@@ -352,6 +352,18 @@ var ParticipantEditorRowProgramEditorElements = (function (_React$Component6) {
             });
         }
     }, {
+        key: "load",
+        value: function load(data) {
+            this.setState({
+                elements: data.map(function (e) {
+                    return {
+                        description: e[0],
+                        score: e[1]
+                    };
+                })
+            });
+        }
+    }, {
         key: "render",
         value: function render() {
             var _this12 = this;
@@ -398,9 +410,31 @@ var ParticipantEditorRowProgramEditor = (function (_React$Component7) {
     }
 
     _createClass(ParticipantEditorRowProgramEditor, [{
+        key: "loadAcrobatics",
+        value: function loadAcrobatics() {
+            var _this14 = this;
+
+            swal({
+                title: _("admin.headers.load_acrobatics"),
+                text: _("admin.labels.paste_acro"),
+                showCancelButton: true,
+                closeOnConfirm: false,
+                type: "input",
+                animation: false
+            }, function (value) {
+                try {
+                    var data = JSON.parse(value);
+                    _this14.refs.elements_editor.load(data);
+                    swal.close();
+                } catch (SyntaxError) {
+                    showError(_("errors.admin.load_syntax_error"));
+                }
+            });
+        }
+    }, {
         key: "render",
         value: function render() {
-            var _this14 = this;
+            var _this15 = this;
 
             var classes = ["program-editor"];
             if (this.props.creating) {
@@ -409,7 +443,7 @@ var ParticipantEditorRowProgramEditor = (function (_React$Component7) {
             return React.createElement(
                 "form",
                 { className: classes.join(" "), onSubmit: function onSubmit(e) {
-                        e.preventDefault();_this14.props.onSubmit(_this14.serialize());
+                        e.preventDefault();_this15.props.onSubmit(_this15.serialize());
                     } },
                 React.createElement("input", {
                     ref: "name",
@@ -424,6 +458,15 @@ var ParticipantEditorRowProgramEditor = (function (_React$Component7) {
                 React.createElement(ParticipantEditorRowProgramEditorElements, {
                     ref: "elements_editor",
                     elements: this.props.program.acrobatics || [] }),
+                React.createElement(
+                    "div",
+                    { className: "pull-right" },
+                    React.createElement(
+                        "button",
+                        { type: "button", className: "btn btn-sm btn-default", onClick: this.loadAcrobatics.bind(this) },
+                        _("admin.buttons.load_acro")
+                    )
+                ),
                 React.createElement(
                     "button",
                     { className: "btn btn-sm btn-primary" },
@@ -456,12 +499,12 @@ var ParticipantEditorRowProgramCreator = (function (_React$Component8) {
     function ParticipantEditorRowProgramCreator(props) {
         _classCallCheck(this, ParticipantEditorRowProgramCreator);
 
-        var _this15 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantEditorRowProgramCreator).call(this, props));
+        var _this16 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantEditorRowProgramCreator).call(this, props));
 
-        _this15.state = {
+        _this16.state = {
             editing: false
         };
-        return _this15;
+        return _this16;
     }
 
     _createClass(ParticipantEditorRowProgramCreator, [{
@@ -519,12 +562,12 @@ var ParticipantEditorRowProgram = (function (_React$Component9) {
     function ParticipantEditorRowProgram(props) {
         _classCallCheck(this, ParticipantEditorRowProgram);
 
-        var _this16 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantEditorRowProgram).call(this, props));
+        var _this17 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantEditorRowProgram).call(this, props));
 
-        _this16.state = {
+        _this17.state = {
             editing: false
         };
-        return _this16;
+        return _this17;
     }
 
     _createClass(ParticipantEditorRowProgram, [{
@@ -544,11 +587,11 @@ var ParticipantEditorRowProgram = (function (_React$Component9) {
     }, {
         key: "onDelClick",
         value: function onDelClick(event) {
-            var _this17 = this;
+            var _this18 = this;
 
             event.preventDefault();
             swal_confirm(_("admin.confirms.delete_program"), function () {
-                Api("program.delete", { program_id: _this17.props.program.id }).onSuccess(function () {
+                Api("program.delete", { program_id: _this18.props.program.id }).onSuccess(function () {
                     return swal.close();
                 }).send();
             });
@@ -561,7 +604,7 @@ var ParticipantEditorRowProgram = (function (_React$Component9) {
     }, {
         key: "render",
         value: function render() {
-            var _this18 = this;
+            var _this19 = this;
 
             if (this.state.editing) {
                 return React.createElement(ParticipantEditorRowProgramEditor, _extends({
@@ -587,7 +630,7 @@ var ParticipantEditorRowProgram = (function (_React$Component9) {
                     React.createElement(
                         "a",
                         { href: "#", onClick: function onClick(e) {
-                                e.preventDefault();_this18.startEditing();
+                                e.preventDefault();_this19.startEditing();
                             } },
                         "Редактировать"
                     ),
@@ -673,10 +716,10 @@ var ParticipantEditorRow = (function (_React$Component11) {
     function ParticipantEditorRow(props) {
         _classCallCheck(this, ParticipantEditorRow);
 
-        var _this20 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantEditorRow).call(this, props));
+        var _this21 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantEditorRow).call(this, props));
 
-        var p = _this20.props.participant;
-        _this20.state = {
+        var p = _this21.props.participant;
+        _this21.state = {
             participant: {
                 number: p.number,
                 club_id: p.club.id,
@@ -685,7 +728,7 @@ var ParticipantEditorRow = (function (_React$Component11) {
                 sportsmen: clone(p.sportsmen)
             }
         };
-        return _this20;
+        return _this21;
     }
 
     _createClass(ParticipantEditorRow, [{
@@ -796,12 +839,12 @@ var ParticipantRow = (function (_React$Component12) {
     function ParticipantRow(props) {
         _classCallCheck(this, ParticipantRow);
 
-        var _this21 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantRow).call(this, props));
+        var _this22 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantRow).call(this, props));
 
-        _this21.state = {
+        _this22.state = {
             editing: false
         };
-        return _this21;
+        return _this22;
     }
 
     _createClass(ParticipantRow, [{
@@ -821,12 +864,12 @@ var ParticipantRow = (function (_React$Component12) {
     }, {
         key: "onDelete",
         value: function onDelete(event) {
-            var _this22 = this;
+            var _this23 = this;
 
             event.stopPropagation();
             swal_confirm(_("admin.confirms.delete_participant"), function () {
                 Api("participant.delete", {
-                    participant_id: _this22.props.participant.id
+                    participant_id: _this23.props.participant.id
                 }).onSuccess(function () {
                     return swal.close();
                 }).send();
@@ -898,12 +941,12 @@ var ParticipantCreationRow = (function (_React$Component13) {
     function ParticipantCreationRow(props) {
         _classCallCheck(this, ParticipantCreationRow);
 
-        var _this23 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantCreationRow).call(this, props));
+        var _this24 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantCreationRow).call(this, props));
 
-        _this23.state = {
+        _this24.state = {
             editing: false
         };
-        return _this23;
+        return _this24;
     }
 
     _createClass(ParticipantCreationRow, [{
@@ -974,15 +1017,15 @@ var ParticipantsManager = (function (_React$Component14) {
     function ParticipantsManager(props) {
         _classCallCheck(this, ParticipantsManager);
 
-        var _this24 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantsManager).call(this, props));
+        var _this25 = _possibleConstructorReturn(this, Object.getPrototypeOf(ParticipantsManager).call(this, props));
 
-        _this24.state = {
+        _this25.state = {
             name: null
         };
-        message_dispatcher.addListener("db_update", _this24.reloadFromStorage.bind(_this24));
-        message_dispatcher.addListener("reload_data competition_list_update", _this24.loadData.bind(_this24));
-        _this24.loadData();
-        return _this24;
+        message_dispatcher.addListener("db_update", _this25.reloadFromStorage.bind(_this25));
+        message_dispatcher.addListener("reload_data competition_list_update", _this25.loadData.bind(_this25));
+        _this25.loadData();
+        return _this25;
     }
 
     _createClass(ParticipantsManager, [{
@@ -1019,13 +1062,13 @@ var ParticipantsManager = (function (_React$Component14) {
     }, {
         key: "renderTable",
         value: function renderTable() {
-            var _this25 = this;
+            var _this26 = this;
 
             var rows = this.state.participants.map(function (participant) {
                 return React.createElement(ParticipantRow, {
                     key: participant.id,
                     participant: participant,
-                    clubs: _this25.state.competition.clubs });
+                    clubs: _this26.state.competition.clubs });
             });
             return React.createElement(
                 "div",
