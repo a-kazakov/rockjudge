@@ -4,6 +4,7 @@ import peewee
 from playhouse import postgres_ext
 
 from exceptions import ApiError
+from protection import import_file_protector
 from models.base_model import BaseModel
 from models.proxies import competition_proxy
 
@@ -42,13 +43,16 @@ class Competition(BaseModel):
             "judges": {},
         })
 
-    def load(self, data, ws_message):
+    def load(self, encoded_data, ws_message):
         from models import (
             Club,
             CompetitionPlanItem,
             Discipline,
             Judge,
         )
+        data = import_file_protector.decode(encoded_data)
+        if data is None:
+            raise ApiError("errors.admin.load_syntax_error")
         if "clubs" in data:
             Club.load_models(self, data["clubs"])
         if "judges" in data:

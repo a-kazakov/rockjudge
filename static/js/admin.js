@@ -62,21 +62,17 @@ var CompetitionLoadingUI = (function (_React$Component) {
         key: "onSubmit",
         value: function onSubmit(event) {
             event.preventDefault();
-            try {
-                var data = JSON.parse(this._input.value);
-                Api("competition.load", {
-                    competition_id: this.props.competition_id,
-                    data: data
-                }).onSuccess(function () {
-                    return swal({
-                        title: _("global.messages.success"),
-                        type: "success",
-                        "animation": false
-                    });
-                }).send();
-            } catch (SyntaxError) {
-                showError(_("errors.admin.load_syntax_error"));
-            }
+            var data = this._input.value;
+            Api("competition.load", {
+                competition_id: this.props.competition_id,
+                data: data
+            }).onSuccess(function () {
+                return swal({
+                    title: _("global.messages.success"),
+                    type: "success",
+                    "animation": false
+                });
+            }).send();
         }
     }]);
 

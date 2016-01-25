@@ -21,20 +21,15 @@ class CompetitionLoadingUI extends React.Component {
     }
     onSubmit(event) {
         event.preventDefault();
-        try {
-            let data = JSON.parse(this._input.value);
-            Api("competition.load", {
-                competition_id: this.props.competition_id,
-                data: data,
-            }).onSuccess(() => swal({
-                title: _("global.messages.success"),
-                type: "success",
-                "animation": false
-            })).send();
-        }
-        catch (SyntaxError) {
-            showError(_("errors.admin.load_syntax_error"));
-        }
+        let data = this._input.value;
+        Api("competition.load", {
+            competition_id: this.props.competition_id,
+            data: data,
+        }).onSuccess(() => swal({
+            title: _("global.messages.success"),
+            type: "success",
+            "animation": false
+        })).send();
     }
 }
 

@@ -330,6 +330,7 @@ div.load-competition-page form.load-competition textarea {
       -ms-flex-positive: 1;
           flex-grow: 1;
   margin: 10px;
+  font-family: "Lucida Console", monospace;
 }
 div.load-competition-page form.load-competition button {
   -webkit-align-self: center;
