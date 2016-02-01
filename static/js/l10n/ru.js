@@ -482,6 +482,8 @@ function _(src, arg) {
                         "dance_tech": "Техника танцевания",
                         "form_fall_down": "Падения (-3)",
                         "form_mistakes": "Ошибки (-2)",
+                        "form_small_mistakes": "Маленькие ошибки (-2)",
+                        "form_big_mistakes": "Большие ошибки (-3)",
                         "fw_man": "Основной ход, партнёр (сбавка в %)",
                         "fw_woman": "Основной ход, партнёрша (сбавка в %)",
                         "impression": "Общее впечатление",
@@ -513,6 +515,7 @@ function _(src, arg) {
                 },
                 "results": {
                     "breakdown": {
+                        "a": "A",
                         "acro_n": function acro_n(n) {
                             return "A" + n.toString();
                         },
@@ -564,6 +567,7 @@ function _(src, arg) {
                 "am_final_acro": "РосФАРР, A и M классы, финал, акробатика",
                 "am_final_fw": "РосФАРР, A и M классы, финал, техника ног",
                 "formation": "РосФАРР, формейшн без акробатики",
+                "formation_acro": "РосФАРР, формейшн с акробатикой",
                 "no_acro": "РосФАРР, танцевальные программы",
                 "simplified": "РосФАРР, упрощенная система (1–40)"
             }

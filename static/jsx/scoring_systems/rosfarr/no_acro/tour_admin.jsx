@@ -204,6 +204,71 @@ class FormationScoreInput extends BaseScoreInput {
     }
 }
 
+class FormationAcroScoreInput extends BaseScoreInput {
+    renderTable() {
+        return <table><tbody>
+            <tr><th>A:</th><td>
+                <input
+                    type="text"
+                    value={ this.props.score.acrobatics }
+                    readOnly={ this.props.readOnly }
+                    onChange={ this.onChange.bind(this, "acrobatics") }
+                    onKeyUp={ this.onKeyUp.bind(this) } />
+            </td>
+            <th>DT:</th><td>
+                <input
+                    type="text"
+                    value={ this.props.score.dance_tech }
+                    readOnly={ this.props.readOnly }
+                    onChange={ this.onChange.bind(this, "dance_tech") }
+                    onKeyUp={ this.onKeyUp.bind(this) } />
+            </td></tr>
+            <tr><th>DF:</th><td>
+                <input
+                    type="text"
+                    value={ this.props.score.dance_figs }
+                    readOnly={ this.props.readOnly }
+                    onChange={ this.onChange.bind(this, "dance_figs") }
+                    onKeyUp={ this.onKeyUp.bind(this) } />
+            </td>
+            <th>I:</th><td>
+                <input
+                    type="text"
+                    value={ this.props.score.impression }
+                    readOnly={ this.props.readOnly }
+                    onChange={ this.onChange.bind(this, "impression") }
+                    onKeyUp={ this.onKeyUp.bind(this) } />
+            </td></tr>
+            <tr><th>SM:</th><td>
+                <input
+                    type="text"
+                    value={ this.props.score.small_mistakes }
+                    readOnly={ this.props.readOnly }
+                    onChange={ this.onChange.bind(this, "small_mistakes") }
+                    onKeyUp={ this.onKeyUp.bind(this) } />
+            </td>
+            <th>BM:</th><td>
+                <input
+                    type="text"
+                    value={ this.props.score.small_mistakes }
+                    readOnly={ this.props.readOnly }
+                    onChange={ this.onChange.bind(this, "small_mistakes") }
+                    onKeyUp={ this.onKeyUp.bind(this) } />
+            </td></tr>
+        </tbody></table>
+    }
+    serialize() {
+        return {
+            acrobatics: !this.isEmpty(this.props.score.acrobatics) ? parseFloat(this.props.score.acrobatics) || 0 : null,
+            dance_tech: !this.isEmpty(this.props.score.dance_tech) ? parseFloat(this.props.score.dance_tech) || 0 : null,
+            dance_figs: !this.isEmpty(this.props.score.dance_figs) ? parseFloat(this.props.score.dance_figs) || 0 : null,
+            impression: !this.isEmpty(this.props.score.impression) ? parseFloat(this.props.score.impression) || 0 : null,
+            small_mistakes: !this.isEmpty(this.props.score.small_mistakes) ? parseInt(this.props.score.small_mistakes) || 0 : null,
+            big_mistakes: !this.isEmpty(this.props.score.big_mistakes) ? parseInt(this.props.score.big_mistakes) || 0 : null,
+        }
+    }
+}
+
 class SimplifiedScoreInput extends BaseScoreInput {
     renderTable() {
         return <table><tbody>
@@ -324,6 +389,9 @@ class TourAdminScoreInput extends React.Component {
         case "dance_judge":
             if (this.props.scoring_system_name == "rosfarr.formation") {
                 return <FormationScoreInput {...this.props} />
+            }
+            if (this.props.scoring_system_name == "rosfarr.formation_acro") {
+                return <FormationAcroScoreInput {...this.props} />
             }
             if (this.props.scoring_system_name == "rosfarr.simplified") {
                 return <SimplifiedScoreInput {...this.props} />

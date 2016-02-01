@@ -226,6 +226,202 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
             );
         }
     }, {
+        key: "renderFormationAcroScore",
+        value: function renderFormationAcroScore(score, additiolal_data) {
+            return React.createElement(
+                "table",
+                { className: "score-breakdown" },
+                React.createElement(
+                    "tbody",
+                    null,
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.a"),
+                                ":"
+                            )
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement(
+                                "p",
+                                null,
+                                this.formatScore(score.data.raw_data.acrobatics, "@")
+                            )
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.dt"),
+                                ":"
+                            )
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement(
+                                "p",
+                                null,
+                                this.formatScore(score.data.raw_data.dance_tech, "@")
+                            )
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.df"),
+                                ":"
+                            )
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement(
+                                "p",
+                                null,
+                                this.formatScore(score.data.raw_data.dance_figs, "@")
+                            )
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.i"),
+                                ":"
+                            )
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement(
+                                "p",
+                                null,
+                                this.formatScore(score.data.raw_data.impression, "@")
+                            )
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.sm"),
+                                ":"
+                            )
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement(
+                                "p",
+                                null,
+                                this.formatScore(score.data.raw_data.small_mistakes)
+                            )
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.bm"),
+                                ":"
+                            )
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement(
+                                "p",
+                                null,
+                                this.formatScore(score.data.raw_data.big_mistakes)
+                            )
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.t"),
+                                ":"
+                            )
+                        ),
+                        React.createElement(
+                            "td",
+                            { className: "total-score" },
+                            React.createElement(
+                                "p",
+                                null,
+                                score.data.total_score
+                            )
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            React.createElement(
+                                "p",
+                                null,
+                                __("results.breakdown.p"),
+                                ":"
+                            )
+                        ),
+                        React.createElement(
+                            "td",
+                            { className: "total-score" },
+                            React.createElement(
+                                "p",
+                                null,
+                                additiolal_data.places[score.id]
+                            )
+                        )
+                    )
+                )
+            );
+        }
+    }, {
         key: "renderDanceScore",
         value: function renderDanceScore(score) {
             return React.createElement(
@@ -492,6 +688,8 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                     return this.renderAcroScore(score, additiolal_data);
                 case "formation":
                     return this.renderFormationScore(score, additiolal_data);
+                case "formation_acro":
+                    return this.renderFormationAcroScore(score, additiolal_data);
                 default:
                     return React.createElement(
                         "p",
@@ -661,6 +859,9 @@ var TourResultsVerboseTableRow = (function (_React$Component) {
                 return null;
             }
             if (this.props.tour.scoring_system_name === "rosfarr.formation") {
+                return null;
+            }
+            if (this.props.tour.scoring_system_name === "rosfarr.formation_acro") {
                 return null;
             }
             return React.createElement(
@@ -939,7 +1140,7 @@ var TourResultsSemiVerboseTableRow = (function (_React$Component3) {
         key: "renderScore",
         value: function renderScore(judge, score, additiolal_data) {
             if (judge.role == "dance_judge") {
-                if (this.props.tour.scoring_system_name == "rosfarr.formation") {
+                if (this.props.tour.scoring_system_name == "rosfarr.formation" || this.props.tour.scoring_system_name == "rosfarr.formation_acro") {
                     return this.renderFormationScore(score, additiolal_data);
                 }
             }
@@ -1003,7 +1204,7 @@ var TourResultsSemiVerboseTableRow = (function (_React$Component3) {
                     { className: "participant" },
                     getParticipantDisplay(this.props.run.participant)
                 ),
-                this.props.tour.scoring_system_name !== "rosfarr.formation" ? React.createElement(
+                this.props.tour.scoring_system_name !== "rosfarr.formation" && this.props.tour.scoring_system_name !== "rosfarr.formation_acro" ? React.createElement(
                     "td",
                     { className: "total-score" },
                     (function () {
@@ -1125,7 +1326,7 @@ var TourSemiVerboseResultsTable = (function (_React$Component4) {
             var results_info = tour_wrapper.getResultsInfo();
             var runs = tour_wrapper.getRuns();
             var has_next_tour = this.props.tour.next_tour_id !== null;
-            var has_total_score = this.props.tour.scoring_system_name !== "rosfarr.formation";
+            var has_total_score = this.props.tour.scoring_system_name !== "rosfarr.formation" && this.props.tour.scoring_system_name !== "rosfarr.formation_acro";
             var widths = new TourResultsSemiVerboseTableColumnWidths(discipline_judges.length + 1);
             var judges_header = discipline_judges.map((function (dj) {
                 var suffix = getScoringType(dj, this.props.tour.scoring_system_name) == "acro" ? " (A)" : "";
@@ -1361,7 +1562,7 @@ var TourResultsTable = (function (_React$Component6) {
             var results_info = tour_wrapper.getResultsInfo();
             var runs = tour_wrapper.getRuns();
             var has_next_tour = this.props.tour.next_tour_id !== null;
-            var has_total_score = this.props.tour.scoring_system_name !== "rosfarr.formation";
+            var has_total_score = this.props.tour.scoring_system_name !== "rosfarr.formation" && this.props.tour.scoring_system_name !== "rosfarr.formation_acro";
             var rows = [];
             for (var idx = 0; idx < runs.length; ++idx) {
                 rows.push(this.renderAdvancesHeader(has_next_tour, results_info[idx - 1], results_info[idx], runs[idx - 1], runs[idx], idx, 5 + has_total_score));

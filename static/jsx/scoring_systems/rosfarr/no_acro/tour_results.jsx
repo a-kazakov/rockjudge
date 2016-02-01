@@ -49,6 +49,18 @@ class TourResultsVerboseTableRow extends React.Component {
             <tr><th><p>{ __("results.breakdown.p")  }:</p></th><td className="total-score"><p>{ additiolal_data.places[score.id] }</p></td></tr>
         </tbody></table>
     }
+    renderFormationAcroScore(score, additiolal_data) {
+        return <table className="score-breakdown"><tbody>
+            <tr><th><p>{ __("results.breakdown.a") }:</p></th><td><p>{ this.formatScore(score.data.raw_data.acrobatics, "@") }</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.dt") }:</p></th><td><p>{ this.formatScore(score.data.raw_data.dance_tech, "@") }</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.df") }:</p></th><td><p>{ this.formatScore(score.data.raw_data.dance_figs, "@") }</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.i")  }:</p></th><td><p>{ this.formatScore(score.data.raw_data.impression, "@") }</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.sm") }:</p></th><td><p>{ this.formatScore(score.data.raw_data.small_mistakes) }</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.bm") }:</p></th><td><p>{ this.formatScore(score.data.raw_data.big_mistakes) }</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.t")  }:</p></th><td className="total-score"><p>{ score.data.total_score }</p></td></tr>
+            <tr><th><p>{ __("results.breakdown.p")  }:</p></th><td className="total-score"><p>{ additiolal_data.places[score.id] }</p></td></tr>
+        </tbody></table>
+    }
     renderDanceScore(score) {
         return <table className="score-breakdown"><tbody>
             <tr><th><p>{ __("results.breakdown.fw") }:</p></th><td><p>{ this.formatScore(score.data.raw_data.fw_woman, "-$%") }</p></td></tr>
@@ -81,6 +93,8 @@ class TourResultsVerboseTableRow extends React.Component {
             return this.renderAcroScore(score, additiolal_data);
         case "formation":
             return this.renderFormationScore(score, additiolal_data);
+        case "formation_acro":
+            return this.renderFormationAcroScore(score, additiolal_data);
         default:
             return <p className="text-center">{ score.data.total_score.toFixed(2) }</p>;
         }
@@ -165,6 +179,9 @@ class TourResultsVerboseTableRow extends React.Component {
             return null;
         }
         if (this.props.tour.scoring_system_name === "rosfarr.formation") {
+            return null;
+        }
+        if (this.props.tour.scoring_system_name === "rosfarr.formation_acro") {
             return null;
         }
         return <p><strong>{ __("results.labels.total_score") }: { this.props.run.total_score }</strong></p>;
@@ -303,7 +320,7 @@ class TourResultsSemiVerboseTableRow extends React.Component {
     }
     renderScore(judge, score, additiolal_data) {
         if (judge.role == "dance_judge") {
-            if (this.props.tour.scoring_system_name == "rosfarr.formation") {
+            if (this.props.tour.scoring_system_name == "rosfarr.formation" || this.props.tour.scoring_system_name == "rosfarr.formation_acro") {
                 return this.renderFormationScore(score, additiolal_data)
             }
         }
@@ -322,7 +339,7 @@ class TourResultsSemiVerboseTableRow extends React.Component {
             <td className="place"><p className="text-center">{ this.props.results_info.place }</p></td>
             <td className="number"><p className="text-center">{ this.props.run.participant.number }</p></td>
             <td className="participant">{ getParticipantDisplay(this.props.run.participant) }</td>
-            { this.props.tour.scoring_system_name !== "rosfarr.formation"
+            { this.props.tour.scoring_system_name !== "rosfarr.formation" && this.props.tour.scoring_system_name !== "rosfarr.formation_acro"
                 ? <td className="total-score">
                     { (() => {
                         if (!this.props.run.performed) {
@@ -393,7 +410,7 @@ class TourSemiVerboseResultsTable extends React.Component {
         let results_info = tour_wrapper.getResultsInfo();
         let runs = tour_wrapper.getRuns();
         let has_next_tour = this.props.tour.next_tour_id !== null;
-        let has_total_score = this.props.tour.scoring_system_name !== "rosfarr.formation";
+        let has_total_score = this.props.tour.scoring_system_name !== "rosfarr.formation" && this.props.tour.scoring_system_name !== "rosfarr.formation_acro";
         let widths = new TourResultsSemiVerboseTableColumnWidths(discipline_judges.length + 1);
         let judges_header = discipline_judges.map(function(dj) {
             let suffix = getScoringType(dj, this.props.tour.scoring_system_name) == "acro" ? " (A)" : "";
@@ -502,7 +519,7 @@ class TourResultsTable extends React.Component {
         let results_info = tour_wrapper.getResultsInfo();
         let runs = tour_wrapper.getRuns();
         let has_next_tour = this.props.tour.next_tour_id !== null;
-        let has_total_score = this.props.tour.scoring_system_name !== "rosfarr.formation";
+        let has_total_score = this.props.tour.scoring_system_name !== "rosfarr.formation" && this.props.tour.scoring_system_name !== "rosfarr.formation_acro";
         let rows = [];
         for (let idx = 0; idx < runs.length; ++idx) {
             rows.push(this.renderAdvancesHeader(

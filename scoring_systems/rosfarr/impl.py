@@ -101,6 +101,40 @@ class FormationScore(BaseScore):
         ])
 
 
+class FormationAcroScore(BaseScore):
+    DEFAULT_SCORES = {
+        "acrobatics": 0,
+        "dance_tech": 0,
+        "dance_figs": 0,
+        "impression": 0,
+        "small_mistakes": 0,
+        "big_mistakes": 0,
+    }
+    INITIAL_SCORES = {
+        "small_mistakes": 0,
+        "big_mistakes": 0,
+    }
+    SCORES_VALIDATORS = {
+        "acrobatics": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "dance_tech": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "dance_figs": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "impression": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "small_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+        "big_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+    }
+
+    @staticmethod
+    def get_total_score(raw_scores):
+        return sum([
+            m100(raw_scores["acrobatics"]),
+            m100(raw_scores["dance_tech"]),
+            m100(raw_scores["dance_figs"]),
+            m100(raw_scores["impression"]),
+            -2 * m100(raw_scores["small_mistakes"]),  # NOQA
+            -3 * m100(raw_scores["big_mistakes"]),  # NOQA
+        ])
+
+
 class SimplifiedScore(BaseScore):
     DEFAULT_SCORES = {
         "points": 0,
@@ -291,6 +325,8 @@ def ScoreWrapper(score, scoring_system, discipline_judge=None):
             return DanceScore(score) if role == "dance_judge" else AcroScore(score)
         if scoring_system == "rosfarr.formation":
             return FormationScore(score)
+        if scoring_system == "rosfarr.formation_acro":
+            return FormationAcroScore(score)
         if scoring_system == "rosfarr.simplified":
             return SimplifiedScore(score)
     raise ApiError("errors.score.score_not_exist")

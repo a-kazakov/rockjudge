@@ -428,8 +428,148 @@ var FormationScoreInput = (function (_BaseScoreInput3) {
     return FormationScoreInput;
 })(BaseScoreInput);
 
-var SimplifiedScoreInput = (function (_BaseScoreInput4) {
-    _inherits(SimplifiedScoreInput, _BaseScoreInput4);
+var FormationAcroScoreInput = (function (_BaseScoreInput4) {
+    _inherits(FormationAcroScoreInput, _BaseScoreInput4);
+
+    function FormationAcroScoreInput() {
+        _classCallCheck(this, FormationAcroScoreInput);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(FormationAcroScoreInput).apply(this, arguments));
+    }
+
+    _createClass(FormationAcroScoreInput, [{
+        key: "renderTable",
+        value: function renderTable() {
+            return React.createElement(
+                "table",
+                null,
+                React.createElement(
+                    "tbody",
+                    null,
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            "A:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement("input", {
+                                type: "text",
+                                value: this.props.score.acrobatics,
+                                readOnly: this.props.readOnly,
+                                onChange: this.onChange.bind(this, "acrobatics"),
+                                onKeyUp: this.onKeyUp.bind(this) })
+                        ),
+                        React.createElement(
+                            "th",
+                            null,
+                            "DT:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement("input", {
+                                type: "text",
+                                value: this.props.score.dance_tech,
+                                readOnly: this.props.readOnly,
+                                onChange: this.onChange.bind(this, "dance_tech"),
+                                onKeyUp: this.onKeyUp.bind(this) })
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            "DF:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement("input", {
+                                type: "text",
+                                value: this.props.score.dance_figs,
+                                readOnly: this.props.readOnly,
+                                onChange: this.onChange.bind(this, "dance_figs"),
+                                onKeyUp: this.onKeyUp.bind(this) })
+                        ),
+                        React.createElement(
+                            "th",
+                            null,
+                            "I:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement("input", {
+                                type: "text",
+                                value: this.props.score.impression,
+                                readOnly: this.props.readOnly,
+                                onChange: this.onChange.bind(this, "impression"),
+                                onKeyUp: this.onKeyUp.bind(this) })
+                        )
+                    ),
+                    React.createElement(
+                        "tr",
+                        null,
+                        React.createElement(
+                            "th",
+                            null,
+                            "SM:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement("input", {
+                                type: "text",
+                                value: this.props.score.small_mistakes,
+                                readOnly: this.props.readOnly,
+                                onChange: this.onChange.bind(this, "small_mistakes"),
+                                onKeyUp: this.onKeyUp.bind(this) })
+                        ),
+                        React.createElement(
+                            "th",
+                            null,
+                            "BM:"
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            React.createElement("input", {
+                                type: "text",
+                                value: this.props.score.small_mistakes,
+                                readOnly: this.props.readOnly,
+                                onChange: this.onChange.bind(this, "small_mistakes"),
+                                onKeyUp: this.onKeyUp.bind(this) })
+                        )
+                    )
+                )
+            );
+        }
+    }, {
+        key: "serialize",
+        value: function serialize() {
+            return {
+                acrobatics: !this.isEmpty(this.props.score.acrobatics) ? parseFloat(this.props.score.acrobatics) || 0 : null,
+                dance_tech: !this.isEmpty(this.props.score.dance_tech) ? parseFloat(this.props.score.dance_tech) || 0 : null,
+                dance_figs: !this.isEmpty(this.props.score.dance_figs) ? parseFloat(this.props.score.dance_figs) || 0 : null,
+                impression: !this.isEmpty(this.props.score.impression) ? parseFloat(this.props.score.impression) || 0 : null,
+                small_mistakes: !this.isEmpty(this.props.score.small_mistakes) ? parseInt(this.props.score.small_mistakes) || 0 : null,
+                big_mistakes: !this.isEmpty(this.props.score.big_mistakes) ? parseInt(this.props.score.big_mistakes) || 0 : null
+            };
+        }
+    }]);
+
+    return FormationAcroScoreInput;
+})(BaseScoreInput);
+
+var SimplifiedScoreInput = (function (_BaseScoreInput5) {
+    _inherits(SimplifiedScoreInput, _BaseScoreInput5);
 
     function SimplifiedScoreInput() {
         _classCallCheck(this, SimplifiedScoreInput);
@@ -480,8 +620,8 @@ var SimplifiedScoreInput = (function (_BaseScoreInput4) {
     return SimplifiedScoreInput;
 })(BaseScoreInput);
 
-var HeadScoreInput = (function (_BaseScoreInput5) {
-    _inherits(HeadScoreInput, _BaseScoreInput5);
+var HeadScoreInput = (function (_BaseScoreInput6) {
+    _inherits(HeadScoreInput, _BaseScoreInput6);
 
     function HeadScoreInput() {
         _classCallCheck(this, HeadScoreInput);
@@ -548,8 +688,8 @@ var HeadScoreInput = (function (_BaseScoreInput5) {
     return HeadScoreInput;
 })(BaseScoreInput);
 
-var TechScoreInput = (function (_BaseScoreInput6) {
-    _inherits(TechScoreInput, _BaseScoreInput6);
+var TechScoreInput = (function (_BaseScoreInput7) {
+    _inherits(TechScoreInput, _BaseScoreInput7);
 
     function TechScoreInput() {
         _classCallCheck(this, TechScoreInput);
@@ -560,7 +700,7 @@ var TechScoreInput = (function (_BaseScoreInput6) {
     _createClass(TechScoreInput, [{
         key: "renderTable",
         value: function renderTable() {
-            var _this8 = this;
+            var _this9 = this;
 
             return React.createElement(
                 "table",
@@ -603,7 +743,7 @@ var TechScoreInput = (function (_BaseScoreInput6) {
                                 onKeyUp: this.onKeyUp.bind(this),
                                 onClick: function onClick(event) {
                                     event.preventDefault();
-                                    if (_this8.props.readOnly) {
+                                    if (_this9.props.readOnly) {
                                         return;
                                     }
                                     var cb = event.target;
@@ -689,6 +829,9 @@ var TourAdminScoreInput = (function (_React$Component3) {
                 case "dance_judge":
                     if (this.props.scoring_system_name == "rosfarr.formation") {
                         return React.createElement(FormationScoreInput, this.props);
+                    }
+                    if (this.props.scoring_system_name == "rosfarr.formation_acro") {
+                        return React.createElement(FormationAcroScoreInput, this.props);
                     }
                     if (this.props.scoring_system_name == "rosfarr.simplified") {
                         return React.createElement(SimplifiedScoreInput, this.props);

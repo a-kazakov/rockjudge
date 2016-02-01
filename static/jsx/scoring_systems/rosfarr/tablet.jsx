@@ -359,6 +359,28 @@ class DanceJudgeScoreFormationMistakes extends React.Component {
     }
 }
 
+class DanceJudgeScoreFormationAcroMistakes extends React.Component {
+    genOnScoreUpdate(score_part) {
+        return (new_value) => this.props.onScoreUpdate(score_part, new_value);
+    }
+    render() {
+        let score_data = this.props.score.data.raw_data;
+        return <table className="mistakes full-width"><tbody><tr>
+            <td>
+                <h3>{ __("tablet.dance_judge.form_small_mistakes") }</h3>
+                <TabletIntegerInput
+                    value={ score_data.small_mistakes }
+                    onValueUpdate={ this.genOnScoreUpdate("small_mistakes") } />
+            </td><td>
+                <h3>{ __("tablet.dance_judge.form_big_mistakes") }</h3>
+                <TabletIntegerInput
+                    value={ score_data.big_mistakes }
+                    onValueUpdate={ this.genOnScoreUpdate("big_mistakes") } />
+            </td>
+        </tr></tbody></table>
+    }
+}
+
 class DanceJudgeFinalDanceScoreInput extends React.Component {
     render() {
         return <div>
@@ -458,6 +480,47 @@ class DanceJudgeFormationScoreInput extends React.Component {
     }
 }
 
+class DanceJudgeFormationAcroScoreInput extends React.Component {
+    render() {
+        return <div>
+            <DanceJudgeScorePartInput
+                part="acrobatics"
+                scale="point5"
+                scale_props={{
+                    min: 0,
+                    max: 10,
+                }}
+                {...this.props} />
+            <DanceJudgeScorePartInput
+                part="dance_tech"
+                scale="point5"
+                scale_props={{
+                    min: 0,
+                    max: 10,
+                }}
+                {...this.props} />
+            <DanceJudgeScorePartInput
+                part="dance_figs"
+                scale="point5"
+                scale_props={{
+                    min: 0,
+                    max: 10,
+                }}
+                {...this.props} />
+            <DanceJudgeScorePartInput
+                part="impression"
+                scale="point5"
+                scale_props={{
+                    min: 0,
+                    max: 10,
+                }}
+                {...this.props} />
+            <DanceJudgeScoreFormationAcroMistakes
+                {...this.props} />
+        </div>
+    }
+}
+
 class DanceJudgeSimplifiedScoreInput extends React.Component {
     render() {
         return <div>
@@ -490,6 +553,8 @@ class DanceJudgeScoreInput extends React.Component {
             return <DanceJudgeFinalDanceScoreInput {...props} />
         case "rosfarr.formation":
             return <DanceJudgeFormationScoreInput {...props} />
+        case "rosfarr.formation_acro":
+            return <DanceJudgeFormationAcroScoreInput {...props} />
         case "rosfarr.simplified":
             return <DanceJudgeSimplifiedScoreInput {...props} />
         default:
@@ -678,6 +743,7 @@ class TabletScoreInput extends React.Component {
                 onScoreUpdate={ this.updateScores.bind(this) } />
         case "dance":
         case "formation":
+        case "formation_acro":
         case "simplified":
             return <DanceJudgeScoreInput
                 score={ this.props.score }
