@@ -45,6 +45,7 @@ spec = gen(
     chipher="".join(random.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits) for _ in range(50)),
     exe_name="rockjudge",
     hidden_imports=[
+        'protection._imports',
         'models._imports',
         'webserver._imports',
         'scoring_systems._imports',

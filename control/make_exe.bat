@@ -16,6 +16,12 @@ pushd dist
         mkdir src\helpers
         copy %home%\helpers\*.py src\helpers
 
+        mkdir src\protection
+        copy %home%\protection\*.py src\protection
+        pushd src\protection
+            py _compile.py build_ext --inplace
+        popd
+
         mkdir src\models
         copy %home%\models\*.py src\models
         pushd src\models

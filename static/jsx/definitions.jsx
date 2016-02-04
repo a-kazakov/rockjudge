@@ -17,6 +17,7 @@ var GL = {
     "suggested_programs": [
         "default",
         "qualification",
+        "quarterfinal",
         "final",
     ],
 }
