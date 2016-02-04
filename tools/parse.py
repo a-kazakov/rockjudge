@@ -296,18 +296,17 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Converts Excel sheet to RockJudge import format')
     parser.add_argument('infile', metavar='<input file>', type=str,
-                       help='Input XLSX file')
+                        help='Input XLSX file')
     parser.add_argument('outfile', metavar='<output file>', type=str,
-                       help='Output TXT file')
-    parser.add_argument('-t','--no-tour', dest='add_tours', action='store_false', default=True,
-                       help='Do not include tours into output file')
-    parser.add_argument('-p','--no-plan', dest='add_plan', action='store_false', default=True,
-                       help='Do not include competition plan into output file')
+                        help='Output TXT file')
+    parser.add_argument('-t', '--no-tour', dest='add_tours', action='store_false', default=True,
+                        help='Do not include tours into output file')
+    parser.add_argument('-p', '--no-plan', dest='add_plan', action='store_false', default=True,
+                        help='Do not include competition plan into output file')
     args = parser.parse_args()
     with step("Opening document"):
         filename = args.infile
         wb = xl.load_workbook(filename)
-
 
     with step("Loading data"):
         grid_clubs = Grid(wb["Clubs"], first_row=2)
@@ -319,14 +318,12 @@ if __name__ == "__main__":
         grid_tours = Grid(wb["Tours"], first_row=2)
         grid_plan = Grid(wb["Competition plan"], first_row=2)
 
-
     with step("Parsing clubs"):
         for idx in range(1000):
             try:
                 Club(grid_clubs, idx)
             except StopIteration:
                 break
-
 
     with step("Parsing disciplines"):
         for idx in range(1000):
@@ -335,7 +332,6 @@ if __name__ == "__main__":
             except StopIteration:
                 break
 
-
     with step("Parsing judges"):
         for idx in range(1000):
             try:
@@ -343,11 +339,9 @@ if __name__ == "__main__":
             except StopIteration:
                 break
 
-
     with step("Parsing discipline judges"):
         for idx in range(1000):
             DisciplineJudge(grid_discipline_judges, idx)
-
 
     with step("Parsing couples"):
         for idx in range(1000):
@@ -355,7 +349,6 @@ if __name__ == "__main__":
                 Couple(grid_couples, idx)
             except StopIteration:
                 break
-
 
     with step("Parsing formations"):
         formation_names = grid_forms.getCol(2, 1000)
@@ -369,16 +362,13 @@ if __name__ == "__main__":
         if latest_row is not None:
             Formation(grid_forms, latest_row, 1000 - latest_row)
 
-
     with step("Parsing tours"):
         for idx in range(1000):
             Tour(grid_tours, idx)
 
-
     with step("Parsing competition plan"):
         for idx in range(1000):
             CompetitionPlanItem(grid_plan, idx)
-
 
     with step("Saving"):
         with open(args.outfile, "wt", encoding="utf-8") as f:
