@@ -534,6 +534,7 @@ div.load-competition-page form.load-competition button {
           flex-grow: 1;
 }
 .competition-schema button {
+  min-height: 30px;
   -webkit-flex-shrink: 1;
       -ms-flex-negative: 1;
           flex-shrink: 1;

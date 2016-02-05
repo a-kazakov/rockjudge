@@ -13,7 +13,7 @@ class DisciplineJudge(BaseModel):
     )
 
     PF_SCHEMA = {
-        "judge": {}
+        "judge": {},
     }
 
     PF_CHILDREN = {

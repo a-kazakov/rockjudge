@@ -44,10 +44,12 @@ class SqlLoggingHandler(logging.StreamHandler):
 
     def emit(self, record):
         import re
+        # import traceback
         record = record.msg[0]
         record = re.sub(r'SELECT.+?FROM', 'SELECT * FROM', record)
         record = re.sub(r'(%s, )+%s', '...', record)
         # print(record)
+        # print(traceback.print_stack())
         self.cnt += 1
 
 
@@ -370,7 +372,7 @@ class Api:
                     .where(
                         (CompetitionPlanItem.sp > current_competition_plan_item.sp) &
                         (CompetitionPlanItem.competition == tour.discipline.competition_id) &
-                        ~(CompetitionPlanItem.tour >> None))
+                        (~(CompetitionPlanItem.tour >> None)))
                     .order_by(CompetitionPlanItem.sp.asc())
                     .get())
         except CompetitionPlanItem.DoesNotExist:

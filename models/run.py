@@ -158,7 +158,9 @@ class Run(BaseModel):
         result = self.serialize_lower_child(
             result, "scores", children,
             lambda x, c: x.serialize(
-                discipline_judge=(rev_discipline_judges[x.discipline_judge_id] if discipline_judges else None),
+                discipline_judge=(rev_discipline_judges[x.discipline_judge_id]
+                                  if discipline_judges is not None
+                                  else None),
                 children=c))
         if "acrobatics" in children:
             result["acrobatics"] = self.serialize_acrobatics(children=children["acrobatics"])

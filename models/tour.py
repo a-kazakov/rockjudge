@@ -28,11 +28,10 @@ class Tour(BaseModel):
 
     PF_CHILDREN = {
         "discipline": None,
-        "judges": None,
         "runs": {
             "runs": None,
             "discipline": {
-                "discipline_judges": {},
+                "discipline_judges": None,
             },
         }
     }
@@ -145,7 +144,12 @@ class Tour(BaseModel):
             run.create_scores()
             run.inherited_data = inherited_data[run.participant_id] if run.participant_id in inherited_data else {}
             run.save()
-        self.shuffle_heats(ws_message=None, broadcast=False, shuffle=(len(existing_participant_ids) == 0))
+        prev_tour = self.get_prev_tour(throw=False)
+        if prev_tour is None or prev_tour.finalized:
+            need_shuffle = len(existing_participant_ids) == 0
+            self.shuffle_heats(ws_message=None, broadcast=False, shuffle=need_shuffle)
+        else:
+            self.clone_heats(prev_tour, ws_message=None, broadcast=False)
 
     def shuffle_heats(self, ws_message, shuffle=True, broadcast=True):
         self.smart_prefetch({
@@ -160,6 +164,26 @@ class Tour(BaseModel):
             run.heat = idx // self.participants_per_heat + 1
             if len(self.runs) - idx <= last_heat:
                 run.heat = (len(self.runs) - 1) // self.participants_per_heat + 1
+            run.save()
+        if broadcast:
+            ws_message.add_model_update(
+                model_type=self.__class__,
+                model_id=self.id,
+                schema={
+                    "runs": {},
+                },
+            )
+
+    def clone_heats(self, source, ws_message, broadcast=True):
+        self.smart_prefetch({
+            "runs": {},
+        })
+        source.smart_prefetch({
+            "runs": {},
+        })
+        runs_map = {run.participant.id: run.heat for run in source.runs}
+        for run in self.runs:
+            run.heat = runs_map[run.participant_id]
             run.save()
         if broadcast:
             ws_message.add_model_update(
@@ -375,7 +399,6 @@ class Tour(BaseModel):
         result = self.serialize_props()
         result["next_tour_id"] = self.next_tour_id
         result = self.serialize_upper_child(result, "discipline", children)
-        result = self.serialize_lower_child(result, "judges", children)
         result = self.serialize_lower_child(
             result, "runs", children,
             lambda x, c: x.serialize(discipline_judges=list(self.discipline_judges), children=c))

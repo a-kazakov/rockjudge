@@ -21,7 +21,7 @@ class Score(BaseModel):
     score_data = postgres_ext.BinaryJSONField(default={})
     confirmed = peewee.BooleanField(default=False)
 
-    def get_sorting_key(self):
+    def get_sorting_key(self, discipline_judge=None):
         return self.discipline_judge.get_sorting_key()
 
     def get_data(self):
@@ -65,6 +65,8 @@ class Score(BaseModel):
         ws_message.add_message("tour_results_changed", {"tour_id": self.run.tour_id})
 
     def serialize(self, children={}, discipline_judge=None):
+        if discipline_judge is not None:
+            self.discipline_judge = discipline_judge
         return {
             "discipline_judge_id": self.discipline_judge_id,
             "data": self.run.tour.scoring_system.serialize_score(self, discipline_judge=discipline_judge),
