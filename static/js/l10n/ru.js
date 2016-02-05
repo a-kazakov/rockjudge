@@ -476,6 +476,7 @@ function _(src, arg) {
                         "fall_down": "Падения (-30)"
                     },
                     "dance_judge": {
+                        "acrobatics": "Акробатика",
                         "big_mistakes": "Большие ошибки (-30)",
                         "composition": "Композиция",
                         "dance_figs": "Танцевальные фигуры",
