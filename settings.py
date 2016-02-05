@@ -11,6 +11,8 @@ DB_CONFIG = {
     "host": "127.0.0.1",
 }
 
+VERSION = "v0_5"
+
 try:
     from settings_prod import *  # NOQA
     print("Loaded production settings")
