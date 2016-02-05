@@ -13,5 +13,6 @@ DB_CONFIG = {
 
 try:
     from settings_prod import *  # NOQA
+    print("Loaded production settings")
 except ImportError:
-    pass
+    print("Loaded develoment settings")

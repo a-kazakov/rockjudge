@@ -44,7 +44,7 @@ class Judge(BaseModel):
         from models import DisciplineJudge
         discipline_judges_count = DisciplineJudge.select().where(
             (DisciplineJudge.judge == self) &
-            ~(DisciplineJudge.discipline >> None)
+            (~(DisciplineJudge.discipline >> None))
         ).count()
         if discipline_judges_count > 0:
             raise ApiError("errors.judge.delete_with_disciplines")

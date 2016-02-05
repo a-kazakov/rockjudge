@@ -151,6 +151,8 @@ class Discipline(BaseModel):
             model_type=cls,
             model_id=new_model.id,
             schema={
+                "tours": {},
+                "participants": {},
                 "discipline_judges": {
                     "judge": {},
                 }

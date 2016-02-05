@@ -12,6 +12,7 @@ pushd dist
         mkdir src
 
         copy %home%\*.py src
+        del %home%\settings_prod.py
 
         mkdir src\helpers
         copy %home%\helpers\*.py src\helpers
