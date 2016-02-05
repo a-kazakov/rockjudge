@@ -1,6 +1,8 @@
 import peewee
 import random
 
+from collections import defaultdict
+
 from exceptions import ApiError
 from models.base_model import BaseModel
 from models.discipline import Discipline
@@ -134,7 +136,7 @@ class Tour(BaseModel):
         for participant_id in participant_ids_to_create:
             run = Run.create(
                 participant=participant_id,
-                heat=1,
+                heat=0,
                 tour=self,
             )
             if self.default_program != "":
@@ -146,25 +148,53 @@ class Tour(BaseModel):
             run.save()
         prev_tour = self.get_prev_tour(throw=False)
         if prev_tour is None or prev_tour.finalized:
-            need_shuffle = len(existing_participant_ids) == 0
-            self.shuffle_heats(ws_message=None, broadcast=False, shuffle=need_shuffle)
+            self.shuffle_heats(ws_message=None, broadcast=False, preserve_existing=True)
         else:
             self.clone_heats(prev_tour, ws_message=None, broadcast=False)
 
-    def shuffle_heats(self, ws_message, shuffle=True, broadcast=True):
+    def shuffle_heats(self, ws_message, preserve_existing=False, broadcast=True):
         self.smart_prefetch({
             "runs": {},
         })
-        if shuffle:
-            random.shuffle(self.runs)
-        last_heat = len(self.runs) % self.participants_per_heat
-        if last_heat == 1:
-            last_heat = (self.participants_per_heat + 1) // 2
-        for idx, run in enumerate(self.runs):
-            run.heat = idx // self.participants_per_heat + 1
-            if len(self.runs) - idx <= last_heat:
-                run.heat = (len(self.runs) - 1) // self.participants_per_heat + 1
-            run.save()
+        heats = defaultdict(list)
+        # Assertions
+        if self.participants_per_heat <= 0:
+            return
+        # Adding fake runs to last but one heat
+        if self.participants_per_heat >= 3 and len(self.runs) % self.participants_per_heat == 1:
+            heats[len(self.runs) // self.participants_per_heat] = \
+                [None] * (self.participants_per_heat - (self.participants_per_heat + 1) // 2)
+        print(heats)
+        # Filling with existing heats (only if preserving evisting)
+        if preserve_existing:
+            for run in self.runs:
+                if run.heat > 0:
+                    heats[run.heat].append(run.id)
+        # Adding new runs to heats
+        new_runs = [run for run in self.runs if run.heat <= 0 or not preserve_existing]
+        random.shuffle(new_runs)
+        current_filling_heat = 1
+        for run in new_runs:
+            while len(heats[current_filling_heat]) >= self.participants_per_heat:
+                current_filling_heat += 1
+            heats[current_filling_heat].append(run.id)
+        # Trimming empty heats
+        result_heats = []
+        current_heat = 1
+        while len(heats) > 0:
+            heat = [x for x in heats.pop(current_heat, []) if x is not None]
+            if len(heat) != 0:
+                result_heats.append(heat)
+            current_heat += 1
+        # Assigning heats
+        rev_runs = {run.id: run for run in self.runs}
+        for heat, run_ids in enumerate(result_heats, start=1):
+            for run_id in run_ids:
+                run = rev_runs[run_id]
+                if run.heat != heat:
+                    run.heat = heat
+                    run.save()
+        # Broadcasting
         if broadcast:
             ws_message.add_model_update(
                 model_type=self.__class__,
