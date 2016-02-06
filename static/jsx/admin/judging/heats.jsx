@@ -25,7 +25,7 @@ class HeatsBody extends React.Component {
         this.loadData();
         if (this.props.autoDocx) {
             let interval_id = setInterval(() => {
-                if (this.refs.printable_heats) {
+                if (this.refs.printable) {
                     clearInterval(interval_id);
                     this.createDocx(this.props.autoDocx.filename);
                     this.props.autoDocx.callback(this.props.autoDocx.filename);

@@ -94,7 +94,7 @@ var TourResultsBody = (function (_React$Component2) {
             if (this.props.autoDocx) {
                 (function () {
                     var interval_id = setInterval(function () {
-                        if (_this4.refs.content) {
+                        if (_this4.refs.printable) {
                             clearInterval(interval_id);
                             _this4.createDocx(_this4.props.autoDocx.filename);
                             _this4.props.autoDocx.callback(_this4.props.autoDocx.filename);

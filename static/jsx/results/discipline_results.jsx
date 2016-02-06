@@ -43,7 +43,7 @@ class DisciplineResults extends React.Component {
         this.loadResults();
         if (this.props.autoDocx) {
             let interval_id = setInterval(() => {
-                if (this.refs.main_table) {
+                if (this.refs.printable) {
                     clearInterval(interval_id);
                     this.createDocx(this.props.autoDocx.filename);
                     this.props.autoDocx.callback(this.props.autoDocx.filename);
