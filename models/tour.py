@@ -342,7 +342,7 @@ class Tour(BaseModel):
     @classmethod
     def load_models(cls, discipline, objects):
         if discipline.first_tour is not None:
-            raise ApiError("errors.tour.load_to_non_empty", discipline.name)
+            return  # Skip import
         add_after = None
         for obj in objects:
             model = cls.create_model(discipline, add_after, obj, WsMessage())
