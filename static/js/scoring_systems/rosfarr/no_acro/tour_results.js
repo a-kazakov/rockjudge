@@ -1575,74 +1575,78 @@ var TourResultsTable = (function (_React$Component6) {
                     has_total_score: has_total_score }));
             };
             return React.createElement(
-                "table",
-                { className: "bordered-table brief-table" },
+                "div",
+                { className: "brief-table" },
                 React.createElement(
-                    "thead",
-                    null,
+                    "table",
+                    { className: "bordered-table" },
                     React.createElement(
-                        "tr",
+                        "thead",
                         null,
                         React.createElement(
-                            "th",
-                            { className: "w-7 place" },
+                            "tr",
+                            null,
                             React.createElement(
-                                "p",
-                                null,
-                                __("results.labels.place")
-                            )
-                        ),
-                        React.createElement(
-                            "th",
-                            { className: "w-6 number" },
+                                "th",
+                                { className: "w-7 place" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    __("results.labels.place")
+                                )
+                            ),
                             React.createElement(
-                                "p",
-                                null,
-                                __("results.labels.number")
-                            )
-                        ),
-                        React.createElement(
-                            "th",
-                            { className: "w-30 participant" },
+                                "th",
+                                { className: "w-6 number" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    __("results.labels.number")
+                                )
+                            ),
                             React.createElement(
-                                "p",
-                                null,
-                                __("results.labels.participant_name")
-                            )
-                        ),
-                        React.createElement(
-                            "th",
-                            { className: "club" },
+                                "th",
+                                { className: "w-30 participant" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    __("results.labels.participant_name")
+                                )
+                            ),
                             React.createElement(
-                                "p",
-                                null,
-                                __("results.labels.participant_club")
-                            )
-                        ),
-                        has_total_score ? React.createElement(
-                            "th",
-                            { className: "w-18 score" },
+                                "th",
+                                { className: "club" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    __("results.labels.participant_club")
+                                )
+                            ),
+                            has_total_score ? React.createElement(
+                                "th",
+                                { className: "w-18 score" },
+                                React.createElement(
+                                    "p",
+                                    null,
+                                    __("results.labels.total_score")
+                                )
+                            ) : null,
                             React.createElement(
-                                "p",
-                                null,
-                                __("results.labels.total_score")
-                            )
-                        ) : null,
-                        React.createElement(
-                            "th",
-                            { className: "w-8 card" },
-                            React.createElement(
-                                "p",
-                                { className: "text-center" },
-                                __("results.labels.card")
+                                "th",
+                                { className: "w-8 card" },
+                                React.createElement(
+                                    "p",
+                                    { className: "text-center" },
+                                    __("results.labels.card")
+                                )
                             )
                         )
+                    ),
+                    React.createElement(
+                        "tbody",
+                        null,
+                        rows
                     )
-                ),
-                React.createElement(
-                    "tbody",
-                    null,
-                    rows
                 )
             );
         }

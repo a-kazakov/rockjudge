@@ -540,20 +540,22 @@ class TourResultsTable extends React.Component {
                 has_total_score={ has_total_score } />
             );
         };
-        return <table className="bordered-table brief-table">
-            <thead>
-                <tr>
-                    <th className="w-7 place"><p>{ __("results.labels.place") }</p></th>
-                    <th className="w-6 number"><p>{ __("results.labels.number") }</p></th>
-                    <th className="w-30 participant"><p>{ __("results.labels.participant_name") }</p></th>
-                    <th className="club"><p>{ __("results.labels.participant_club") }</p></th>
-                    { has_total_score ? <th className="w-18 score"><p>{ __("results.labels.total_score") }</p></th> : null }
-                    <th className="w-8 card"><p className="text-center">{ __("results.labels.card") }</p></th>
-                </tr>
-            </thead>
-            <tbody>
-                { rows }
-            </tbody>
-        </table>
+        return <div className="brief-table">
+            <table className="bordered-table">
+                <thead>
+                    <tr>
+                        <th className="w-7 place"><p>{ __("results.labels.place") }</p></th>
+                        <th className="w-6 number"><p>{ __("results.labels.number") }</p></th>
+                        <th className="w-30 participant"><p>{ __("results.labels.participant_name") }</p></th>
+                        <th className="club"><p>{ __("results.labels.participant_club") }</p></th>
+                        { has_total_score ? <th className="w-18 score"><p>{ __("results.labels.total_score") }</p></th> : null }
+                        <th className="w-8 card"><p className="text-center">{ __("results.labels.card") }</p></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    { rows }
+                </tbody>
+            </table>
+        </div>
     }
 }
