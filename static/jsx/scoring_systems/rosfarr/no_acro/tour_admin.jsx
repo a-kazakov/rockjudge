@@ -331,13 +331,12 @@ class TechScoreInput extends BaseScoreInput {
                 <input
                     type="checkbox"
                     ref="cb"
-                    readOnly={ this.props.readOnly }
                     checked={ !!this.props.score.timing_violation }
-                    onChange={ !this.props.readOnly && this.onChange.bind(this, "timing_violation") }
+                    onChange={ event => {} }
                     onKeyUp={ this.onKeyUp.bind(this) }
                     onClick={ event => {
-                        event.preventDefault();
                         if (this.props.readOnly) {
+                            event.preventDefault();
                             return;
                         }
                         let cb = event.target;
@@ -346,6 +345,7 @@ class TechScoreInput extends BaseScoreInput {
                         } else if (!cb.checked) {
                             cb.readOnly = cb.indeterminate = true;
                         }
+                        this.onChange("timing_violation", event);
                     }} />
             </td></tr>
         </tbody></table>

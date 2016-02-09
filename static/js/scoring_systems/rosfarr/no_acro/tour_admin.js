@@ -737,13 +737,12 @@ var TechScoreInput = (function (_BaseScoreInput7) {
                             React.createElement("input", {
                                 type: "checkbox",
                                 ref: "cb",
-                                readOnly: this.props.readOnly,
                                 checked: !!this.props.score.timing_violation,
-                                onChange: !this.props.readOnly && this.onChange.bind(this, "timing_violation"),
+                                onChange: function onChange(event) {},
                                 onKeyUp: this.onKeyUp.bind(this),
                                 onClick: function onClick(event) {
-                                    event.preventDefault();
                                     if (_this9.props.readOnly) {
+                                        event.preventDefault();
                                         return;
                                     }
                                     var cb = event.target;
@@ -752,6 +751,7 @@ var TechScoreInput = (function (_BaseScoreInput7) {
                                     } else if (!cb.checked) {
                                         cb.readOnly = cb.indeterminate = true;
                                     }
+                                    _this9.onChange("timing_violation", event);
                                 } })
                         )
                     )
