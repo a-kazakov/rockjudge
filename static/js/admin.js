@@ -10,24 +10,59 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var CompetitionLoadingUI = (function (_React$Component) {
-    _inherits(CompetitionLoadingUI, _React$Component);
+var CompetitionImportExportUI = (function (_React$Component) {
+    _inherits(CompetitionImportExportUI, _React$Component);
 
-    function CompetitionLoadingUI(props) {
-        _classCallCheck(this, CompetitionLoadingUI);
+    function CompetitionImportExportUI(props) {
+        _classCallCheck(this, CompetitionImportExportUI);
 
-        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CompetitionLoadingUI).call(this, props));
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CompetitionImportExportUI).call(this, props));
 
         _this.state = {
-            raw_text: ""
+            import_files: [],
+            submitting: false
         };
         return _this;
     }
 
-    _createClass(CompetitionLoadingUI, [{
+    _createClass(CompetitionImportExportUI, [{
+        key: "import",
+        value: function _import() {
+            var _this2 = this;
+
+            var reader = new FileReader();
+            reader.onload = function (f) {
+                _this2.setState({
+                    submitting: true
+                });
+                Api("competition.load", {
+                    competition_id: _this2.props.competition_id,
+                    data: f.target.result
+                }).onSuccess(function () {
+                    swal({
+                        title: _("global.messages.success"),
+                        type: "success",
+                        animation: false
+                    });
+                }).onDone(function () {
+                    _this2.setState({
+                        submitting: false
+                    });
+                }).send();
+            };
+            reader.readAsText(this.state.import_files[0]);
+        }
+    }, {
+        key: "export",
+        value: function _export() {
+            Api("competition.export", { competition_id: this.props.competition_id }).onSuccess(function (r) {
+                return saveAs(new Blob([JSON.stringify(r)], { type: 'application/json' }), "rockjudge.export.json");
+            }).send();
+        }
+    }, {
         key: "render",
         value: function render() {
-            var _this2 = this;
+            var _this3 = this;
 
             return React.createElement(
                 "div",
@@ -38,22 +73,56 @@ var CompetitionLoadingUI = (function (_React$Component) {
                     React.createElement(
                         "h1",
                         null,
-                        _("admin.headers.load_competition")
+                        _("admin.headers.import_export")
                     )
                 ),
                 React.createElement(
-                    "form",
-                    { onSubmit: this.onSubmit.bind(this), className: "load-competition app-body" },
-                    React.createElement("textarea", {
-                        defaultValue: "",
-                        ref: function ref(c) {
-                            return _this2._input = c;
-                        },
-                        placeholder: _("admin.labels.insert_serialized") }),
+                    "div",
+                    { className: "import-export" },
+                    React.createElement(
+                        "h3",
+                        null,
+                        _("admin.headers.import_competition")
+                    ),
+                    React.createElement(
+                        "form",
+                        { className: "import-form", onSubmit: function onSubmit(e) {
+                                e.preventDefault();_this3.import();
+                            } },
+                        React.createElement(
+                            "label",
+                            null,
+                            React.createElement(
+                                "div",
+                                null,
+                                _("global.labels.browse")
+                            ),
+                            this.state.import_files.length == 0 ? _("admin.labels.no_files_selected") : this.state.import_files[0].name,
+                            React.createElement("input", { type: "file",
+                                onChange: function onChange(e) {
+                                    return _this3.setState({ import_files: e.target.files });
+                                } })
+                        ),
+                        React.createElement("br", null),
+                        React.createElement(
+                            "button",
+                            { type: "submit",
+                                className: "btn btn-primary",
+                                disabled: this.state.import_files.length !== 1 || this.state.submitting },
+                            _("admin.buttons.import")
+                        )
+                    ),
+                    React.createElement(
+                        "h3",
+                        null,
+                        _("admin.headers.export_competition")
+                    ),
                     React.createElement(
                         "button",
-                        { className: "btn btn-primary", type: "submit" },
-                        _("admin.buttons.import")
+                        { type: "button",
+                            className: "btn btn-primary",
+                            onClick: this.export.bind(this) },
+                        _("admin.buttons.export")
                     )
                 )
             );
@@ -63,20 +132,10 @@ var CompetitionLoadingUI = (function (_React$Component) {
         value: function onSubmit(event) {
             event.preventDefault();
             var data = this._input.value;
-            Api("competition.load", {
-                competition_id: this.props.competition_id,
-                data: data
-            }).onSuccess(function () {
-                return swal({
-                    title: _("global.messages.success"),
-                    type: "success",
-                    "animation": false
-                });
-            }).send();
         }
     }]);
 
-    return CompetitionLoadingUI;
+    return CompetitionImportExportUI;
 })(React.Component);
 
 var ManagementUI = (function (_React$Component2) {
@@ -85,13 +144,13 @@ var ManagementUI = (function (_React$Component2) {
     function ManagementUI(props) {
         _classCallCheck(this, ManagementUI);
 
-        var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(ManagementUI).call(this, props));
+        var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(ManagementUI).call(this, props));
 
-        _this3.state = {
-            "page": _this3.getPageFromHash(),
-            "page_props": _this3.getPagePropsFromHash()
+        _this4.state = {
+            "page": _this4.getPageFromHash(),
+            "page_props": _this4.getPagePropsFromHash()
         };
-        return _this3;
+        return _this4;
     }
 
     _createClass(ManagementUI, [{
@@ -113,7 +172,7 @@ var ManagementUI = (function (_React$Component2) {
         key: "getPageFromHash",
         value: function getPageFromHash() {
             var chunks = window.location.hash.substr(1).split("/");
-            if (chunks[1] && ["load_competition", "manage_competition_plan", "manage_tours", "manage_participants", "manage_judges", "manage_clubs", "manage_disciplines", "start_list", "competition_report"].indexOf(chunks[1]) >= 0) {
+            if (chunks[1] && ["import_export", "manage_competition_plan", "manage_tours", "manage_participants", "manage_judges", "manage_clubs", "manage_disciplines", "start_list", "competition_report"].indexOf(chunks[1]) >= 0) {
                 return chunks[1];
             }
             return null;
@@ -154,8 +213,8 @@ var ManagementUI = (function (_React$Component2) {
         key: "renderContent",
         value: function renderContent() {
             switch (this.state.page) {
-                case "load_competition":
-                    return React.createElement(CompetitionLoadingUI, { competition_id: this.props.competition_id });
+                case "import_export":
+                    return React.createElement(CompetitionImportExportUI, { competition_id: this.props.competition_id });
                 case "manage_tours":
                     // Seeking for discipline with given ID
                     var ic = null;
@@ -225,9 +284,9 @@ var ManagementUI = (function (_React$Component2) {
                     React.createElement(
                         "div",
                         {
-                            className: "level-1" + (this.state.page == "load_competition" ? " active" : ""),
-                            onClick: this.switchPage.bind(this, "load_competition", {}) },
-                        _("admin.menu.load_competition")
+                            className: "level-1" + (this.state.page == "import_export" ? " active" : ""),
+                            onClick: this.switchPage.bind(this, "import_export", {}) },
+                        _("admin.menu.import_export")
                     )
                 ),
                 React.createElement(
@@ -343,33 +402,33 @@ var AutoPrinterStatus = (function (_React$Component3) {
     function AutoPrinterStatus(props) {
         _classCallCheck(this, AutoPrinterStatus);
 
-        var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(AutoPrinterStatus).call(this, props));
+        var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(AutoPrinterStatus).call(this, props));
 
-        _this4.state = {
+        _this5.state = {
             available: null
         };
-        return _this4;
+        return _this5;
     }
 
     _createClass(AutoPrinterStatus, [{
         key: "componentDidMount",
         value: function componentDidMount() {
-            var _this5 = this;
+            var _this6 = this;
 
             var xhr = new XMLHttpRequest();
             xhr.open("GET", "http://127.0.0.1:5949", true);
             xhr.onload = function () {
-                return _this5.setState({ available: true });
+                return _this6.setState({ available: true });
             };
             xhr.onerror = function () {
-                return _this5.setState({ available: false });
+                return _this6.setState({ available: false });
             };
             xhr.send();
         }
     }, {
         key: "render",
         value: function render() {
-            var _this6 = this;
+            var _this7 = this;
 
             if (this.state.available === null) {
                 return React.createElement(Loader, null);
@@ -399,7 +458,7 @@ var AutoPrinterStatus = (function (_React$Component3) {
                     { className: "btn btn-default",
                         type: "button",
                         onClick: function onClick() {
-                            return window.printer_window ? window.printer_window.focus() : window.printer_window = window.open("/printer/" + _this6.props.competition_id, "printer", "resizable=yes,location=no");
+                            return window.printer_window ? window.printer_window.focus() : window.printer_window = window.open("/printer/" + _this7.props.competition_id, "printer", "resizable=yes,location=no");
                         } },
                     _("admin.buttons.launch_auto_printer")
                 )
@@ -440,7 +499,7 @@ var ServiceUI = (function (_React$Component4) {
     }, {
         key: "unfinalizeTour",
         value: function unfinalizeTour(event) {
-            var _this8 = this;
+            var _this9 = this;
 
             event.preventDefault();
             var passcode = swal({
@@ -456,7 +515,7 @@ var ServiceUI = (function (_React$Component4) {
                     return false;
                 }
                 Api("tour.unfinalize", {
-                    tour_id: _this8.refs.select_unfinalize.value
+                    tour_id: _this9.refs.select_unfinalize.value
                 }).onSuccess(function (event) {
                     swal({
                         title: _("global.messages.success"),
@@ -581,16 +640,16 @@ var AdminUI = (function (_React$Component5) {
     function AdminUI(props) {
         _classCallCheck(this, AdminUI);
 
-        var _this9 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdminUI).call(this, props));
+        var _this10 = _possibleConstructorReturn(this, Object.getPrototypeOf(AdminUI).call(this, props));
 
-        _this9.state = {
-            active_app: _this9.getActiveAppFromHash(),
+        _this10.state = {
+            active_app: _this10.getActiveAppFromHash(),
             name: null
         };
-        message_dispatcher.addListener("db_update", _this9.reloadFromStorage.bind(_this9));
-        message_dispatcher.addListener("reload_data", _this9.loadData.bind(_this9));
-        _this9.loadData();
-        return _this9;
+        message_dispatcher.addListener("db_update", _this10.reloadFromStorage.bind(_this10));
+        message_dispatcher.addListener("reload_data", _this10.loadData.bind(_this10));
+        _this10.loadData();
+        return _this10;
     }
 
     _createClass(AdminUI, [{

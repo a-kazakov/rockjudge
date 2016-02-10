@@ -223,5 +223,19 @@ class Discipline(BaseModel):
         result = self.serialize_lower_child(result, "participants", children)
         return result
 
+    def export(self):
+        result = self.serialize_props()
+        result.update({
+            "id": self.id,
+            "results": self.get_serialized_results(),
+            "tours": [tour.export() for tour in self.tours],
+            "discipline_judges": [dj.export() for dj in self.discipline_judges],
+            "participants": [
+                participant.export()
+                for participant in self.participants
+            ],
+        })
+        return result
+
 
 discipline_proxy.initialize(Discipline)

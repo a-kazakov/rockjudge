@@ -60,3 +60,10 @@ class Judge(BaseModel):
         result = self.serialize_upper_child(result, "competition", children)
         result = self.serialize_lower_child(result, "discipline_judges", children)
         return result
+
+    def export(self):
+        result = self.serialize_props()
+        result.update({
+            "id": self.id,
+        })
+        return result

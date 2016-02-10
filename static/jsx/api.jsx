@@ -2,10 +2,15 @@ class ApiImpl {
     constructor(method, data) {
         this.method = method;
         this.data = data;
-        this.cb_success = null;
+        this.cb_success = () => {};
         this.cb_error = (msg, code, args) => showError(code ? _(code, ...args) : msg);
-        this.cb_fail = null;
-        this.update_db = null;
+        this.cb_fail = (...data) => console.error("API fail", ...data);
+        this.cb_done = () => {};
+        this.update_db = () => {};
+    }
+    onDone(callback) {
+        this.cb_done = callback;
+        return this;
     }
     onSuccess(callback) {
         this.cb_success = callback;
@@ -26,32 +31,32 @@ class ApiImpl {
         return this;
     }
     send() {
-        $.ajax({
-            url: "/api",
-            method: "post",
-            dataType: "json",
-            data: {
-                method: this.method,
-                data: JSON.stringify(this.data),
-                client_id: window.client_id,
-            },
-            success: function(response) {
-                if (response.success) {
-                    this.update_db && this.update_db(response.response);
-                    this.cb_success && this.cb_success(response.response);
-                } else {
-                    console.error("Api error:", response.message);
-                    this.cb_error && this.cb_error(response.message, response.code, response.args);
-                }
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(xhr, status, err.toString());
-                this.cb_fail && this.cb_fail(xhr, status, err);
-            },
-        });
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/api", true);
+        xhr.onload = () => {
+            this.cb_done();
+            if (xhr.status !== 200) {
+                this.cb_fail();
+                return;
+            }
+            let response = JSON.parse(xhr.responseText);
+            if (response.success) {
+                this.update_db(response.response);
+                this.cb_success(response.response);
+            } else {
+                this.cb_error(response.message, response.code, response.args);
+            }
+        };
+        xhr.onerror = () => {
+            this.cb_done();
+            this.cb_fail();
+        };
+        let data = new FormData();
+        data.append("client_id", window.client_id);
+        data.append("data", JSON.stringify(this.data));
+        data.append("method", this.method);
+        xhr.send(data);
     }
 }
 
-function Api(method, data) {
-    return new ApiImpl(method, data);
-}
+var Api = (...args) => new ApiImpl(...args);

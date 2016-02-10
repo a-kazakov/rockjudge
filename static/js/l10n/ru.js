@@ -69,6 +69,7 @@ function _(src, arg) {
                 "docx_heats": "Заходы в DOCX",
                 "docx_numbers": "Номера в DOCX",
                 "docx_results": "Результаты в DOCX",
+                "export": "Экспортировать",
                 "import": "Импортировать",
                 "launch_auto_printer": "Запуск автоматической печати",
                 "load_acro": "Загрузить акробатику",
@@ -97,17 +98,19 @@ function _(src, arg) {
                 "clients_management": "Управление подключенными устройствами",
                 "clubs": "Клубы-участники",
                 "clubs_management": "Управление клубами",
-                "competitions_management": "Управление соревнованиями",
                 "competition_plan": "Программа соревнований",
                 "competition_plan_management": "Программа соревнований",
                 "competition_report": "Протокол соревнований",
                 "competition_results": "Результаты соревнований",
+                "competitions_management": "Управление соревнованиями",
                 "discipline_results": "Результаты дисциплины",
                 "disciplines_management": "Управление дисциплинами",
+                "export_competition": "Экспорт данных турнира и результатов",
+                "import_competition": "Импорт данных турнира",
+                "import_export": "Импорт / экспорт",
                 "judges": "Судейская бригада",
                 "judges_management": "Управление судьями",
                 "load_acrobatics": "Загрузка акробатики",
-                "load_competition": "Импорт данных соревнований",
                 "participants_management": "Управление участниками",
                 "service_menu": "Сервисное меню",
                 "start_list": "Стартовый лист",
@@ -121,7 +124,7 @@ function _(src, arg) {
                 "competition_date": "Дата проведения",
                 "include_acrobatics": "Включить акробатику",
                 "include_formation_sportsmen": "Включить состав формейшнов",
-                "insert_serialized": "Вставьте сюда данные о турнире ...",
+                "no_files_selected": "Выберите файл...",
                 "paste_acro": "Вставьте данные из калькулятора акробатики"
             },
             "messages": {
@@ -130,7 +133,7 @@ function _(src, arg) {
             "menu": {
                 "competition_report": "Протокол соревнований",
                 "discipline_results": "Результаты дисциплины",
-                "load_competition": "Импорт данных",
+                "import_export": "Импорт / экспорт",
                 "manage_clubs": "Управление клубами",
                 "manage_competition_plan": "Программа соревнований",
                 "manage_disciplines": "Управление дисциплинами",
@@ -230,6 +233,7 @@ function _(src, arg) {
                 "submit": "Сохранить"
             },
             "labels": {
+                "browse": "Обзор...",
                 "yes": "Да",
                 "no": "Нет"
             },

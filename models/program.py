@@ -98,5 +98,7 @@ class Program(BaseModel):
     def serialize(self, children={}):
         result = self.serialize_props()
         result = self.serialize_upper_child(result, "participant", children)
-        result = self.serialize_lower_child(result, "runs", children)
         return result
+
+    def export(self):
+        return self.serialize_props()

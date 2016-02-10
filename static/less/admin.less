@@ -185,19 +185,38 @@ html, body, #content {
     }
 }
 
-div.load-competition-page {
-    form.load-competition {
-        text-align: center;
-        .flex-col;
-        textarea {
-            flex-grow: 1;
-            margin: 10px;
-            font-family: "Lucida Console", monospace
+div.import-export {
+    padding: 10px;
+    label {
+        cursor: pointer;
+        width: 500px;
+        margin-right: 5px;
+        background-color: @ui-light;
+        padding: 6px 12px;
+        line-height: 22px;
+        position: relative;
+        white-space: pre;
+        overflow: hidden;
+        div {
+            .flex-col;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            padding: 0 20px;
+            background-color: @ui-dark;
+            color: @ui-white;
+            span {
+                display: block;
+            }
         }
-        button {
-            align-self: center;
-            width: 200px;
-            margin: 0 10px 10px;
+        input {
+            margin-bottom: 10px;
+            position: absolute;
+            width: 0.1px;
+            height: 0.1px;
+            left: -10000px;
         }
     }
 }

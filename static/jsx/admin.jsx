@@ -1,35 +1,76 @@
-class CompetitionLoadingUI extends React.Component {
+class CompetitionImportExportUI extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            raw_text: "",
+            import_files: [],
+            submitting: false,
+        };
+    }
+    import() {
+        let reader = new FileReader();
+        reader.onload = (f) => {
+            this.setState({
+                submitting: true,
+            });
+            Api("competition.load", {
+                competition_id: this.props.competition_id,
+                data: f.target.result,
+            }).onSuccess(() => {
+                swal({
+                    title: _("global.messages.success"),
+                    type: "success",
+                    animation: false
+                });
+            }).onDone(() => {
+                this.setState({
+                    submitting: false,
+                });
+            }).send();
         }
+        reader.readAsText(this.state.import_files[0]);
+    }
+    export() {
+        Api("competition.export", { competition_id: this.props.competition_id })
+            .onSuccess(r => saveAs(new Blob([JSON.stringify(r)], {type : 'application/json'}), "rockjudge.export.json"))
+            .send();
     }
     render() {
         return <div className="app-content load-competition-page">
             <header className="app-head">
-                <h1>{ _("admin.headers.load_competition") }</h1>
+                <h1>{ _("admin.headers.import_export") }</h1>
             </header>
-            <form onSubmit={ this.onSubmit.bind(this) } className="load-competition app-body">
-                <textarea
-                    defaultValue=""
-                    ref={(c) => this._input = c}
-                    placeholder={ _("admin.labels.insert_serialized") } />
-                <button className="btn btn-primary" type="submit">{ _("admin.buttons.import") }</button>
-            </form>
+            <div className="import-export">
+                <h3>{ _("admin.headers.import_competition") }</h3>
+                <form className="import-form" onSubmit={ e => { e.preventDefault(); this.import(); } }>
+                    <label>
+                        <div>
+                            { _("global.labels.browse") }
+                        </div>
+                        { this.state.import_files.length == 0
+                            ? _("admin.labels.no_files_selected")
+                            : this.state.import_files[0].name }
+                        <input type="file"
+                               onChange={ e => this.setState({ import_files: e.target.files }) } />
+                    </label>
+                    <br />
+                    <button type="submit"
+                            className="btn btn-primary"
+                            disabled={ this.state.import_files.length !== 1 || this.state.submitting }>
+                        { _("admin.buttons.import") }
+                    </button>
+                </form>
+                <h3>{ _("admin.headers.export_competition") }</h3>
+                <button type="button"
+                        className="btn btn-primary"
+                        onClick={ this.export.bind(this) }>
+                    { _("admin.buttons.export") }
+                </button>
+            </div>
         </div>
     }
     onSubmit(event) {
         event.preventDefault();
         let data = this._input.value;
-        Api("competition.load", {
-            competition_id: this.props.competition_id,
-            data: data,
-        }).onSuccess(() => swal({
-            title: _("global.messages.success"),
-            type: "success",
-            "animation": false
-        })).send();
     }
 }
 
@@ -55,7 +96,7 @@ class ManagementUI extends React.Component {
     getPageFromHash() {
         let chunks = window.location.hash.substr(1).split("/");
         if (chunks[1] && [
-                "load_competition",
+                "import_export",
                 "manage_competition_plan",
                 "manage_tours",
                 "manage_participants",
@@ -93,8 +134,8 @@ class ManagementUI extends React.Component {
     }
     renderContent() {
         switch (this.state.page) {
-        case "load_competition":
-            return <CompetitionLoadingUI competition_id={ this.props.competition_id } />
+        case "import_export":
+            return <CompetitionImportExportUI competition_id={ this.props.competition_id } />
         case "manage_tours":
             // Seeking for discipline with given ID
             let ic = null;
@@ -146,9 +187,9 @@ class ManagementUI extends React.Component {
         return <div className="side-menu">
             <div className="block">
                 <div
-                        className={ "level-1" + (this.state.page == "load_competition" ? " active" : "") }
-                        onClick= { this.switchPage.bind(this, "load_competition", {}) } >
-                    { _("admin.menu.load_competition") }
+                        className={ "level-1" + (this.state.page == "import_export" ? " active" : "") }
+                        onClick= { this.switchPage.bind(this, "import_export", {}) } >
+                    { _("admin.menu.import_export") }
                 </div>
             </div>
             <div className="block">

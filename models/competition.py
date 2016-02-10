@@ -8,6 +8,8 @@ from protection import import_file_protector
 from models.base_model import BaseModel
 from models.proxies import competition_proxy
 
+import settings
+
 
 def serialize_competition_info(raw_data):
     return json.dumps([
@@ -86,7 +88,7 @@ class Competition(BaseModel):
         if self.judges.count() > 0:
             raise ApiError("errors.competition.delete_non_empty")
         self.delete_instance()
-        ws_message.add_message("competition_list_update");
+        ws_message.add_message("competition_list_update")
 
     def serialize(self, children={}):
         result = self.serialize_props()
@@ -94,7 +96,46 @@ class Competition(BaseModel):
         result = self.serialize_lower_child(result, "judges", children)
         result = self.serialize_lower_child(result, "clubs", children)
         result = self.serialize_lower_child(result, "plan", children)
-        result = self.serialize_lower_child(result, "participants", children)
+        return result
+
+    def export(self):
+        SCHEMA = {
+            "disciplines": {
+                "tours": {
+                    "runs": {
+                        "scores": {},
+                    }
+                },
+                "discipline_judges": {},
+                "participants": {
+                    "programs": {},
+                },
+            },
+            "judges": {},
+            "clubs": {},
+            "plan": {}
+        }
+        self.smart_prefetch(SCHEMA)
+        result = self.serialize_props()
+        result.update({
+            "version": settings.VERSION,
+            "disciplines": [
+                discipline.export()
+                for discipline in self.disciplines
+            ],
+            "judges": [
+                judge.export()
+                for judge in self.judges
+            ],
+            "clubs": [
+                club.export()
+                for club in self.clubs
+            ],
+            "plan": [
+                item.export()
+                for item in self.plan
+            ]
+        })
         return result
 
 

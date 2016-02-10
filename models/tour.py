@@ -434,5 +434,14 @@ class Tour(BaseModel):
             lambda x, c: x.serialize(discipline_judges=list(self.discipline_judges), children=c))
         return result
 
+    def export(self):
+        result = self.serialize_props()
+        result.update({
+            "id": self.id,
+            "results": self.get_serialized_results(),
+            "runs": [run.export() for run in self.runs],
+        })
+        return result
+
 
 tour_proxy.initialize(Tour)

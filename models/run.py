@@ -165,3 +165,13 @@ class Run(BaseModel):
         if "acrobatics" in children:
             result["acrobatics"] = self.serialize_acrobatics(children=children["acrobatics"])
         return result
+
+    def export(self):
+        result = self.serialize_props()
+        result.update({
+            "id": self.id,
+            "participant_id": self.participant_id,
+            "acrobatics": self.serialize_acrobatics(),
+            "scores": [score.export() for score in self.scores]
+        })
+        return result

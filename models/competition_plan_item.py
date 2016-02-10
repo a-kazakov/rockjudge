@@ -108,3 +108,10 @@ class CompetitionPlanItem(BaseModel):
         result = self.serialize_props()
         result = self.serialize_upper_child(result, "competition", children)
         return result
+
+    def export(self):
+        result = self.serialize_props()
+        result.update({
+            "id": self.id,
+        })
+        return result

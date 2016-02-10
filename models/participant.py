@@ -158,3 +158,12 @@ class Participant(BaseModel):
         result = self.serialize_upper_child(result, "club", children)
         result = self.serialize_lower_child(result, "programs", children)
         return result
+
+    def export(self):
+        result = self.serialize_props()
+        result.update({
+            "id": self.id,
+            "club_id": self.club_id,
+            "programs": [program.export() for program in self.programs],
+        })
+        return result

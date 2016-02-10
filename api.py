@@ -442,6 +442,11 @@ class Api:
         return {}
 
     @classmethod
+    def competition_export(cls, request, ws_message):
+        competition = cls.get_model(Competition, "competition_id", request)
+        return competition.export()
+
+    @classmethod
     def service_reload_clients(cls, request, ws_message):
         ws_message.add_message("reload_data")
         return {}

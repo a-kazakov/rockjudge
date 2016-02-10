@@ -72,3 +72,6 @@ class Score(BaseModel):
             "data": self.run.tour.scoring_system.serialize_score(self, discipline_judge=discipline_judge),
             "confirmed": self.confirmed,
         }
+
+    def export(self):
+        return self.serialize()

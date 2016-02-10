@@ -77,3 +77,11 @@ class DisciplineJudge(BaseModel):
         result = self.serialize_upper_child(result, "judge", children)
         result = self.serialize_upper_child(result, "discipline", children)
         return result
+
+    def export(self):
+        result = self.serialize_props()
+        result.update({
+            "id": self.id,
+            "judge_id": self.judge_id,
+        })
+        return result
