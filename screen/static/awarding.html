@@ -69,7 +69,7 @@
                     return;
                 }
                 state.results = null;
-                Api("discipline.get_results", { discipline_id: state.current_discipline_id })
+                rockjudge.api("discipline.get_results", { discipline_id: state.current_discipline_id })
                     .onSuccess(function(new_results) {
                         state.results = new_results;
                         updateData();
@@ -80,7 +80,7 @@
 
             function updateData() {
                 console.log("Updating data...")
-                var competition = storage.get("Competition").by_id(competition_id);
+                var competition = rockjudge.storage.get("Competition").by_id(competition_id);
                 if (!competition) {
                     console.log("No competition");
                     return;
@@ -95,7 +95,7 @@
                 var discipline_id = screen_data.controls_state.discipline_id;
                 if (discipline_id !== state.current_discipline_id || discipline_id === null) {
                     if (discipline_id !== null) {
-                        Api("discipline.get", { discipline_id: discipline_id, children: {
+                        rockjudge.api("discipline.get", { discipline_id: discipline_id, children: {
                             tours: {
                                 runs: {
                                     participant: {
@@ -104,12 +104,12 @@
                                 },
                             }
                         } })
-                            .addToDB("Discipline", discipline_id, storage.getDomain(discipline_id))
+                            .addToDB("Discipline", discipline_id, rockjudge.storage.getDomain(discipline_id))
                             .onSuccess(function() {
                                 if (state.current_discipline_id !== discipline_id) {
-                                    storage.delDomain(state.current_discipline_id)
+                                    rockjudge.storage.delDomain(state.current_discipline_id)
                                     state.current_discipline_id = discipline_id;
-                                    discipline_storage = storage.getDomain(discipline_id);
+                                    discipline_storage = rockjudge.storage.getDomain(discipline_id);
                                 }
                                 loadResults();
                             })
@@ -123,7 +123,7 @@
                     return;
                 }
                 if (!discipline_storage) {
-                    console.log("No discipline storage");
+                    console.log("No discipline rockjudge.storage");
                     return;
                 }
                 var discipline = discipline_storage.get("Discipline").by_id(discipline_id);
@@ -171,16 +171,16 @@
             }
 
             function init() {
-                Api("competition.get", { competition_id: competition_id, children: {} })
+                rockjudge.api("competition.get", { competition_id: competition_id, children: {} })
                     .addToDB("Competition", competition_id)
                     .onSuccess(updateData)
                     .onError(console.error.bind(console))
                     .send();
             }
 
-            message_dispatcher.addListener("db_update", updateData);
-            message_dispatcher.addListener("reload_data", init);
-            message_dispatcher.addListener("tour_results_changed", function(message) {
+            rockjudge.message_dispatcher.addListener("db_update", updateData);
+            rockjudge.message_dispatcher.addListener("reload_data", init);
+            rockjudge.message_dispatcher.addListener("tour_results_changed", function(message) {
                 loadResults();
             });
 
@@ -197,8 +197,6 @@
     </div>
     <script src="/static/thirdparty/jquery/jquery.js"></script>
     <script src="/static/thirdparty/sockjs/sockjs.js"></script>
-    <script src="/static/js/storage.js"></script>
-    <script src="/static/js/api.js"></script>
-    <script src="/static/js/message_dispatcher.js"></script>
+    <script src="/static/js/lib.js"></script>
 </body>
 </html>

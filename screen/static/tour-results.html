@@ -78,7 +78,7 @@
                     return;
                 }
                 state.results = null;
-                Api("tour.get_results", { tour_id: state.current_tour_id })
+                rockjudge.api("tour.get_results", { tour_id: state.current_tour_id })
                     .onSuccess(function(new_results) {
                         state.results = new_results;
                         updateData();
@@ -89,7 +89,7 @@
 
             function updateData() {
                 console.log("Updating data...")
-                var competition = storage.get("Competition").by_id(competition_id);
+                var competition = rockjudge.storage.get("Competition").by_id(competition_id);
                 if (!competition) {
                     console.log("No competition");
                     return;
@@ -104,7 +104,7 @@
                 var tour_id = screen_data.controls_state.tour_id;
                 if (tour_id !== state.current_tour_id || tour_id === null) {
                     if (tour_id !== null) {
-                        Api("tour.get", { tour_id: tour_id, children: {
+                        rockjudge.api("tour.get", { tour_id: tour_id, children: {
                             discipline: {},
                             runs: {
                                 participant: {
@@ -112,12 +112,12 @@
                                 },
                             },
                         } })
-                            .addToDB("Tour", tour_id, storage.getDomain(tour_id))
+                            .addToDB("Tour", tour_id, rockjudge.storage.getDomain(tour_id))
                             .onSuccess(function() {
                                 if (state.current_tour_id !== tour_id) {
-                                    storage.delDomain(state.current_tour_id)
+                                    rockjudge.storage.delDomain(state.current_tour_id)
                                     state.current_tour_id = tour_id;
-                                    tour_storage = storage.getDomain(tour_id);
+                                    tour_storage = rockjudge.storage.getDomain(tour_id);
                                 }
                                 loadResults();
                             })
@@ -131,7 +131,7 @@
                     return;
                 }
                 if (!tour_storage) {
-                    console.log("No tour storage");
+                    console.log("No tour rockjudge.storage");
                     return;
                 }
                 var tour = tour_storage.get("Tour").by_id(tour_id);
@@ -168,7 +168,7 @@
             }
 
             function init() {
-                Api("competition.get", { competition_id: competition_id, children: {} })
+                rockjudge.api("competition.get", { competition_id: competition_id, children: {} })
                     .addToDB("Competition", competition_id)
                     .onSuccess(updateData)
                     .onError(console.error.bind(console))
@@ -179,9 +179,9 @@
                 }, 10000);
             }
 
-            message_dispatcher.addListener("db_update", updateData);
-            message_dispatcher.addListener("reload_data", init);
-            message_dispatcher.addListener("tour_results_changed", function(message) {
+            rockjudge.message_dispatcher.addListener("db_update", updateData);
+            rockjudge.message_dispatcher.addListener("reload_data", init);
+            rockjudge.message_dispatcher.addListener("tour_results_changed", function(message) {
                 if (!message || message.tour_id == state.current_tour_id) {
                     loadResults();
                 }
@@ -221,8 +221,6 @@
     </div>
     <script src="/static/thirdparty/jquery/jquery.js"></script>
     <script src="/static/thirdparty/sockjs/sockjs.js"></script>
-    <script src="/static/js/storage.js"></script>
-    <script src="/static/js/api.js"></script>
-    <script src="/static/js/message_dispatcher.js"></script>
+    <script src="/static/js/lib.js"></script>
 </body>
 </html>

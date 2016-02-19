@@ -11,15 +11,12 @@
 {% end %}
 
 {% block scripts %}
-  <script src="/static/js/start_page.js"></script>
   <script>
-    ReactDOM.render(
-      React.createElement(StartPage, {
-        competition_ids: {{ competition_ids }}
-      }),
-      document.getElementById("content")
-    );
+    window.page_props = {
+      competition_ids: {{ competition_ids }}
+    };
   </script>
+  <script src="/static/js/start_page.js"></script>
 {% end %}
 
 {% block body %}

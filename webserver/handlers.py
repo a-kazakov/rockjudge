@@ -9,7 +9,6 @@ from db import Database
 from models import (
     Competition,
     Judge,
-    Tour,
 )
 from webserver.websocket import WsMessage
 
@@ -21,63 +20,56 @@ class StaticFileHandlerNoCache(tornado.web.StaticFileHandler):
 
 class AdminHandler(tornado.web.RequestHandler):
     def get(self, competition_id):
-        self.render("admin.html", competition_id=competition_id, debug=settings.DEBUG)
-
-
-class AutoPrinterHandler(tornado.web.RequestHandler):
-    def get(self, competition_id):
-        return self.render("auto_printer.html",
+        self.render(
+            "admin.html",
             competition_id=competition_id,
             debug=settings.DEBUG)
 
 
-class CompetitionReportHandler(tornado.web.RequestHandler):
+class AutoPrinterHandler(tornado.web.RequestHandler):
     def get(self, competition_id):
-        self.render(
-            "competition_report.html",
+        return self.render(
+            "auto_printer.html",
             competition_id=competition_id,
-            debug=settings.DEBUG,
-        )
+            debug=settings.DEBUG)
 
 
 class CompetitionsHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("competitions.html", debug=settings.DEBUG)
+        self.render(
+            "competitions.html",
+            debug=settings.DEBUG)
 
 
 class ConnectionTesterHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("connection.html", debug=settings.DEBUG)
-
-
-class DisciplineResultsHandler(tornado.web.RequestHandler):
-    def get(self, discipline_id):
         self.render(
-            "discipline_results.html",
-            discipline_id=discipline_id,
-            debug=settings.DEBUG,
-        )
+            "connection_tester.html",
+            debug=settings.DEBUG)
 
 
-class ManageParticipantsHandler(tornado.web.RequestHandler):
-    def get(self, discipline_id):
-        self.render(
-            "manage_participants.html",
-            discipline_id=discipline_id,
-            debug=settings.DEBUG,
-        )
+class JudgeHandler(tornado.web.RequestHandler):
+    def get(self, judge_id):
+        judge = Judge.select().where(Judge.id == judge_id).get()
+        return self.render(
+            "judge.html",
+            judge_id=judge_id,
+            competition_id=judge.competition_id,
+            debug=settings.DEBUG)
 
 
 class PresenterHandler(tornado.web.RequestHandler):
     def get(self, competition_id):
-        return self.render("presenter.html",
+        return self.render(
+            "presenter.html",
             competition_id=competition_id,
             debug=settings.DEBUG)
 
 
 class ScreenHandler(tornado.web.RequestHandler):
     def get(self, competition_id):
-        return self.render("screen.html",
+        return self.render(
+            "screen.html",
             competition_id=competition_id,
             manifest=json.load(open("screen/manifest.json", "rt", encoding="utf-8")),
             debug=settings.DEBUG)
@@ -85,58 +77,20 @@ class ScreenHandler(tornado.web.RequestHandler):
 
 class ScreenOperatorHandler(tornado.web.RequestHandler):
     def get(self, competition_id):
-        return self.render("screen_operator.html",
+        return self.render(
+            "screen_operator.html",
             competition_id=competition_id,
             manifest=json.load(open("screen/manifest.json", "rt", encoding="utf-8")),
             debug=settings.DEBUG)
 
 
-class StartListHandler(tornado.web.RequestHandler):
-    def get(self, competition_id):
-        self.render(
-            "start_list.html",
-            competition_id=competition_id,
-            debug=settings.DEBUG,
-        )
-
-
 class StartPageHandler(tornado.web.RequestHandler):
     def get(self):
         competition_ids = [c.id for c in Competition.select().where(Competition.active == True)]  # NOQA
-        self.render("start_page.html", competition_ids=competition_ids, debug=settings.DEBUG)
-
-
-class TourAdminHandler(tornado.web.RequestHandler):
-    def get(self, tour_id):
-        tour = Tour.select().where(Tour.id == tour_id).get()
-        if tour.finalized:
-            self.redirect("/tour/{}/results".format(tour_id))
-        else:
-            return self.render(
-                "tour_admin.html",
-                tour_id=tour_id,
-                debug=settings.DEBUG,
-            )
-
-
-class TourResultsHandler(tornado.web.RequestHandler):
-    def get(self, tour_id):
         self.render(
-            "tour_results.html",
-            tour_id=tour_id,
-            debug=settings.DEBUG,
-        )
-
-
-class TabletHandler(tornado.web.RequestHandler):
-    def get(self, judge_id):
-        judge = Judge.select().where(Judge.id == judge_id).get()
-        return self.render(
-            "tablet.html",
-            judge_id=judge_id,
-            competition_id=judge.competition_id,
-            debug=settings.DEBUG,
-        )
+            "start_page.html",
+            competition_ids=competition_ids,
+            debug=settings.DEBUG)
 
 
 class ApiHandler(tornado.web.RequestHandler):

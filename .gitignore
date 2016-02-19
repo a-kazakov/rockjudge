@@ -7,3 +7,4 @@ no-sharing/**
 settings_prod.py
 dist/**
 external-tools/**
+static/src/node_modules/**

@@ -11,34 +11,20 @@
   <link rel="stylesheet" href="/static/css/tour_admin.css">
   <link rel="stylesheet" href="/static/css/tour_results.css">
   <link rel="stylesheet" href="/static/css/discipline_results.css">
+  <link rel="stylesheet" href="/static/css/manage_participants.css">
+  <link rel="stylesheet" href="/static/css/start_list.css">
+  <link rel="stylesheet" href="/static/css/competition_report.css">
 {% end %}
 
 {% block scripts %}
   <script src="/static/thirdparty/html-docx-js/filesaver.js"></script>
   <script src="/static/thirdparty/html-docx-js/html-docx.js"></script>
-  <script src="/static/js/docx.js"></script>
-  <script src="/static/js/admin/competition_plan_management.js"></script>
-  <script src="/static/js/admin/clubs_management.js"></script>
-  <script src="/static/js/admin/disciplines_management.js"></script>
-  <script src="/static/js/admin/judges_management.js"></script>
-  <script src="/static/js/admin/tour_management.js"></script>
-  <script src="/static/js/admin/judging.js"></script>
-  <script src="/static/js/admin/printable.js"></script>
-  <script src="/static/js/admin.js"></script>
-  <script src="/static/js/scoring_systems/rosfarr/base.js"></script>
-  <script src="/static/js/scoring_systems/rosfarr/discipline_results.js"></script>
-  <script src="/static/js/scoring_systems/rosfarr/no_acro/tour_admin.js"></script>
-  <script src="/static/js/scoring_systems/rosfarr/no_acro/tour_results.js"></script>
-  <script src="/static/js/admin/judging/tour_admin.js"></script>
-  <script src="/static/js/admin/judging/heats.js"></script>
-  <script src="/static/js/admin/judging/results.js"></script>
-  <script src="/static/js/results/discipline_results.js"></script>
   <script>
-    ReactDOM.render(
-      React.createElement(AdminUI, { competition_id: {{ competition_id }} }),
-      document.getElementById("content")
-    );
+    window.page_props = {
+      competition_id: {{ competition_id }}
+    };
   </script>
+  <script src="/static/js/admin.js"></script>
 {% end %}
 
 {% block body %}

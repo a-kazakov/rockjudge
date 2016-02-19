@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% autoescape None %}
+
+{% block title %}
+  Judge tablet
+{% end %}
+
+{% block styles %}
+  <link rel="stylesheet" href="/static/css/tablet.css">
+  <link rel="stylesheet" href="/static/css/tour_results.css">
+{% end %}
+
+{% block scripts %}
+  <script>
+    window.page_props = {
+      judge_id: {{ judge_id }},
+      competition_id: {{ competition_id }}
+    };
+  </script>
+  <script src="/static/js/judge.js"></script>
+{% end %}
+
+{% block body %}
+  <div id="content"></div>
+{% end %}

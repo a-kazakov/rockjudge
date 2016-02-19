@@ -12,20 +12,13 @@
 {% end %}
 
 {% block scripts %}
-  <script src="/static/js/scoring_systems/rosfarr/discipline_results.js"></script>
-  <script src="/static/js/results/discipline_results.js"></script>
-  <script src="/static/js/lib/tablet_controls.js"></script>
-  <script src="/static/js/screen.js"></script>
-  <script src="/static/js/screen_operator.js"></script>
   <script>
-    ReactDOM.render(
-      React.createElement(ScreenOperator, {
-        competition_id: {{ competition_id }},
-        manifest: {{ manifest }}
-      }),
-      document.getElementById("content")
-    );
+    window.page_props = {
+      competition_id: {{ competition_id }},
+      manifest: {{ manifest }}
+    };
   </script>
+  <script src="/static/js/screen_operator.js"></script>
 {% end %}
 
 {% block body %}

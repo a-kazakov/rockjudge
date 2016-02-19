@@ -50,16 +50,27 @@ pushd dist
         mkdir dist\rockjudge\templates
         copy %home%\templates\*.html dist\rockjudge\templates
 
+        pushd %home%\static
+            move js js_old
+        popd
+
+        pushd %home%\static\src
+            call gulp all --type production
+        popd
+
         mkdir dist\rockjudge\static
         robocopy %home%\static\thirdparty dist\rockjudge\static\thirdparty /s
         robocopy %home%\static\img dist\rockjudge\static\img /s
         robocopy %home%\static\js dist\rockjudge\static\js *.js /s
         robocopy %home%\static\css dist\rockjudge\static\css *.css /s
 
+        pushd %home%\static
+            rmdir js /S /Q
+            move js_old js
+        popd
+
         mkdir dist\rockjudge\screen
         robocopy %home%\screen dist\rockjudge\screen /s
-
-        forfiles /m *.js /p dist\rockjudge\static\js /s /c "cmd /C move @file tmp.js & java -jar %home%\external-tools\closure-compiler.jar --js tmp.js --js_output_file @file --compilation_level SIMPLE_OPTIMIZATIONS & del tmp.js"
 
     popd
 

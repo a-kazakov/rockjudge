@@ -11,13 +11,10 @@
 {% end %}
 
 {% block scripts %}
-  <script src="/static/js/competitions.js"></script>
   <script>
-    ReactDOM.render(
-      React.createElement(CompetitionsManager, {}),
-      document.getElementById("content")
-    );
+    window.page_props = {};
   </script>
+  <script src="/static/js/competitions.js"></script>
 {% end %}
 
 {% block body %}

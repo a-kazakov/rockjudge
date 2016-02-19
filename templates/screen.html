@@ -11,16 +11,13 @@
 {% end %}
 
 {% block scripts %}
-  <script src="/static/js/screen.js"></script>
   <script>
-    ReactDOM.render(
-      React.createElement(Screen, {
-        competition_id: {{ competition_id }},
-        manifest: {{ manifest }}
-      }),
-      document.getElementById("content")
-    );
+    window.page_props = {
+      competition_id: {{ competition_id }},
+      manifest: {{ manifest }}
+    };
   </script>
+  <script src="/static/js/screen.js"></script>
 {% end %}
 
 {% block body %}

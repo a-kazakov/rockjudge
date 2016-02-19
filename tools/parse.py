@@ -306,7 +306,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     with step("Opening document"):
         filename = args.infile
-        wb = xl.load_workbook(filename)
+        wb = xl.load_workbook(filename, data_only=True)
 
     with step("Loading data"):
         grid_clubs = Grid(wb["Clubs"], first_row=2)

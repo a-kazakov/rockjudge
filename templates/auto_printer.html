@@ -13,21 +13,12 @@
 {% block scripts %}
   <script src="/static/thirdparty/html-docx-js/filesaver.js"></script>
   <script src="/static/thirdparty/html-docx-js/html-docx.js"></script>
-  <script src="/static/js/docx.js"></script>
-  <script src="/static/js/scoring_systems/rosfarr/base.js"></script>
-  <script src="/static/js/scoring_systems/rosfarr/discipline_results.js"></script>
-  <script src="/static/js/scoring_systems/rosfarr/no_acro/tour_results.js"></script>
-  <script src="/static/js/admin/judging/heats.js"></script>
-  <script src="/static/js/admin/judging/results.js"></script>
-  <script src="/static/js/admin/printable.js"></script>
-  <script src="/static/js/admin/auto_printer.js"></script>
-  <script src="/static/js/results/discipline_results.js"></script>
   <script>
-    ReactDOM.render(
-      React.createElement(AutoPrinter, { competition_id: {{ competition_id }} }),
-      document.getElementById("content")
-    );
+    window.page_props = {
+      competition_id: {{ competition_id }}
+    };
   </script>
+  <script src="/static/js/auto_printer.js"></script>
 {% end %}
 
 {% block body %}
