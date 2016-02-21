@@ -11,7 +11,7 @@ DB_CONFIG = {
     "host": "127.0.0.1",
 }
 
-VERSION = "v0_5"
+VERSION = "v1_0"
 
 try:
     from settings_prod import *  # NOQA
