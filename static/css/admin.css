@@ -563,3 +563,6 @@ div.import-export label input {
   max-width: 500px;
   display: inline;
 }
+.service-menu p {
+  margin-bottom: 10px;
+}

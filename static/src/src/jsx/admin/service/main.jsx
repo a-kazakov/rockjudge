@@ -92,6 +92,8 @@ export class Service extends React.Component {
                     { this.renderUnfinalize() }
                     <h3>{ _("admin.headers.auto_printer") }</h3>
                     <AutoPrinterStatus competition_id={ this.props.competition_id } />
+                    <h3>{ _("admin.headers.about") }</h3>
+                    { _("admin.alerts.about", "v1.0 prerelease") }
                 </div>
             </div>
         </div>

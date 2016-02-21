@@ -16,6 +16,12 @@ export function translate(src, arg) {
     let PHRASES = {
         "admin": {
             "alerts": {
+                "about": version => <div className="about">
+                    <p><b>RockJudge {version}</b> &mdash; система для подсчета результатов соревнований по акробатическому рок-н-роллу.</p>
+                    <p>Авторские права на систему RockJudge полностью принадлежат разработчику Артему Казакову. Соавтор системы Антон Амелин.</p>
+                    <p>Система распространяется по лицензии Linum d.o.o (info@linum.hr). Для использования системы судейства RockJudge необходимо и достаточно иметь право использования системы Linum LPS.</p>
+                    <p>Официальный сайт: <a href="https://rockjudge.com/" target="_blank">https://rockjudge.com/</a></p>
+                </div>,
                 "add_programs_after_creation": "Программы можно будет добавить только после сохранения участника",
                 "auto_printer_available": "Автоматическая печать корректно настроена и может быть использована.",
                 "auto_printer_not_available": "Автоматическая печать недоступна на этом компьтере.",
@@ -79,6 +85,7 @@ export function translate(src, arg) {
                 "unfinalize_tour": "Вы действительно хотите отменить финализацию тура? Введите «unfinalize», чтобы продолжить",
             },
             "headers": {
+                "about": "О программе",
                 "auto_printer": "Автоматическая печать",
                 "clients_management": "Управление подключенными устройствами",
                 "clubs": "Клубы-участники",
