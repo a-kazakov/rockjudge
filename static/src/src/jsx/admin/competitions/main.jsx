@@ -16,7 +16,7 @@ class CompetitionEditorRow extends React.Component {
     }
     onChange(group, idx, field, type, event) {
         let new_value = field === "active" ? event.target.checked : event.target.value;
-        let state = clone(this.state, true);
+        let state = clone(this.state);
         switch (group) {
         case "info":
             state.info[idx][field] = new_value;

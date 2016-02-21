@@ -84,11 +84,12 @@ h5 {
 }
 .manage-participants table tr.editor .sportsman .first-name,
 .manage-participants table tr.editor .sportsman .last-name {
-  width: 32.5%;
+  width: 29.5%;
 }
 .manage-participants table tr.editor .sportsman .yob,
-.manage-participants table tr.editor .sportsman .gender {
-  width: 15%;
+.manage-participants table tr.editor .sportsman .gender,
+.manage-participants table tr.editor .sportsman .substitute {
+  width: 12%;
 }
 .manage-participants table tr.editor .acrobatic .description {
   width: 85%;

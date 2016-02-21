@@ -9,14 +9,17 @@ from models.proxies import discipline_proxy
 
 
 def serialize_participant_sportsmen(raw_data):
-    return json.dumps([
-        {
-            "first_name": str(sp["first_name"]),
-            "last_name": str(sp["last_name"]),
-            "year_of_birth": int(sp["year_of_birth"]),
-            "gender": "M" if sp["gender"] == "M" else "F"
-        } for sp in raw_data
-    ], check_circular=False)
+    return json.dumps(sorted(
+        [
+            {
+                "first_name": str(sp["first_name"]),
+                "last_name": str(sp["last_name"]),
+                "year_of_birth": int(sp["year_of_birth"]),
+                "gender": "M" if sp["gender"] == "M" else "F",
+                "substitute": bool(False if "substitute" not in sp else sp["substitute"]),
+            } for sp in raw_data
+        ], key=lambda x: (x["substitute"], x["gender"] == "M", x["last_name"], x["first_name"])
+    ), check_circular=False)
 
 
 class Participant(BaseModel):

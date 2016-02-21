@@ -71,11 +71,9 @@ class TourInputForm extends React.Component {
             default_program: this.refs.default_program.value,
         };
         if (!this.props.tour || !this.props.tour.finalized) {
-            clone(result, {
-                num_advances: this.refs.num_advances.value,
-                scoring_system_name: this.refs.scoring_system_name.value,
-                hope_tour: this.refs.hope_tour.checked,
-            })
+            result["num_advances"] = this.refs.num_advances.value;
+            result["scoring_system_name"] = this.refs.scoring_system_name.value;
+            result["hope_tour"] = this.refs.hope_tour.checked;
         }
         return result;
     }

@@ -151,7 +151,10 @@ class ParticipantEditorRowGeneralInfo extends React.Component {
 
 class ParticipantEditorRowSportsman extends React.Component {
     genOnChange(field) {
-        return (event) => this.props.onChange(field, event.target.value);
+        return event => this.props.onChange(field, event.target.value);
+    }
+    genOnSubstituteChange() {
+        return event => this.props.onChange("substitute", event.target.value === "Y");
     }
     render() {
         return <div className="sportsman">
@@ -180,6 +183,13 @@ class ParticipantEditorRowSportsman extends React.Component {
                 <option value="F">{ _("models.participant.gender_f") }</option>
                 <option value="M">{ _("models.participant.gender_m") }</option>
             </select>
+            <select
+                    className="substitute"
+                    value={ this.props.sportsman.substitute ? "Y" : "N" }
+                    onChange={ this.genOnSubstituteChange() }>
+                <option value="N">{ _("models.participant.substitute_n") }</option>
+                <option value="Y">{ _("models.participant.substitute_y") }</option>
+            </select>
             <button
                 type="button"
                 className="del btn btn-danger"
@@ -203,6 +213,7 @@ class ParticipantEditorRowSportsmenList extends React.Component {
             "first_name": "",
             "year_of_birth": "0",
             "gender": "F",
+            "substitute": false,
         });
         this.props.onChange("sportsmen", list);
     }

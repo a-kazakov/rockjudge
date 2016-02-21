@@ -29,7 +29,10 @@ export class DisciplineResultsTable extends React.Component {
                 <table className="sportsmen"><tbody>
                     { p.formation_name ? <tr><th colSpan="2"><p className="text-left">{ p.formation_name }</p></th></tr> : null }
                     { p.sportsmen.map((s, idx) => <tr key={ idx }>
-                        <td className="w-75"><p>{ s.last_name + " " + s.first_name }</p></td>
+                        <td className="w-75"><p>
+                            { s.last_name + " " + s.first_name }
+                            { s.substitute ? <i> ({ _("admin.labels.sub") }.)</i> : null }
+                        </p></td>
                         <td className="w-25"><p className="text-center">{ s.year_of_birth }</p></td>
                     </tr> ) }
                 </tbody></table>

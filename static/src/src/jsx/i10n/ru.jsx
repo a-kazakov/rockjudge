@@ -111,6 +111,7 @@ export function translate(src, arg) {
                 "include_formation_sportsmen": "Включить состав формейшнов",
                 "no_files_selected": "Выберите файл...",
                 "paste_acro": "Вставьте данные из калькулятора акробатики",
+                "sub": "зап",  // substitute
             },
             "messages": {
                 "invalid_passcode": "Введён неверный код потверждения",
@@ -323,6 +324,8 @@ export function translate(src, arg) {
                 "programs": "Программы",
                 "sportsmen": "Спортсмены",
                 "sportsmen_year_of_birth": "Г.р.",
+                "substitute_n": "Осн.",
+                "substitute_y": "Зап.",
                 "year_of_birth": "Год рождения",
                 "yob": "Г.р.",
             },
