@@ -11,7 +11,7 @@ hostPort = 5949
 
 def load_config():
     try:
-        with open("print-config.txt", "rt") as f:
+        with open("print-config.txt", "rt", encoding="utf-8-sig") as f:
             lines = f.read().split("\n")
             return {
                 "downloads": lines[0].strip(),
@@ -46,21 +46,21 @@ class MyServer(BaseHTTPRequestHandler):
 def main():
     global config
 
-    print("Checking word executable ({}): ".format(config["word"]), end="")
-    if not os.path.exists(config["word"]):
-        print("NOT FOUND")
-        return
-    if not os.path.isfile(config["word"]):
-        print("NOT A FILE")
-        return
-    print("OK")
-
     print("Checking downloads folder ({}): ".format(config["downloads"]), end="")
     if not os.path.exists(config["downloads"]):
         print("NOT FOUND")
         return
     if not os.path.isdir(config["downloads"]):
         print("NOT A DIRECTORY")
+        return
+    print("OK")
+
+    print("Checking word executable ({}): ".format(config["word"]), end="")
+    if not os.path.exists(config["word"]):
+        print("NOT FOUND")
+        return
+    if not os.path.isfile(config["word"]):
+        print("NOT A FILE")
         return
     print("OK")
 
