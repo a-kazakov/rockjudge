@@ -80,6 +80,20 @@ pushd dist
     rmdir tmp /S /Q
     robocopy %home%\control\internal\exe_controllers\ .
 
+    mkdir print_server
+    pushd print_server
+
+        copy %home%\tools\print.py .
+        copy %home%\tools\print-config-sample.txt .\print-config.txt
+        py %home%\external-tools\pyinstaller\pyinstaller.py -F print.py
+        rmdir build /S /Q
+        del print.py
+        del print.spec
+        copy dist\print.exe .
+        rmdir dist /S /Q
+
+    popd
+
 popd
 
 popd

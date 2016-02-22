@@ -68,4 +68,3 @@ class Commands:
 
 if __name__ == "__main__":
     getattr(Commands, argv[1])(*argv[2:])
-

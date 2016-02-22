@@ -3,6 +3,7 @@ import time
 import urllib.parse
 import subprocess as sp
 import os
+import re
 
 
 hostName = "127.0.0.1"
@@ -12,13 +13,37 @@ hostPort = 5949
 def load_config():
     try:
         with open("print-config.txt", "rt", encoding="utf-8-sig") as f:
-            lines = f.read().split("\n")
+            index = {}
+            for line in f.readlines():
+                line = line.split(";")[0].strip()
+                if not re.match(r"^\[[A-Z]+\][^\]]*$", line):
+                    continue
+                match = re.match(r"^\[(.+?)\](.*)$", line)
+                index[match.group(1).strip().lower()] = match.group(2).strip()
+            ok = True
+            if "downloads" not in index:
+                ok = False
+                print("ERROR: Missing [DOWNLOADS] section in config file.")
+            if "word" not in index:
+                ok = False
+                print("ERROR: Missing [WORD] section in config file.")
+            if index["downloads"] == "":
+                ok = False
+                print("ERROR: Downloads path is not set. Please set it print-config.txt.")
+            if index["word"] == "":
+                ok = False
+                print("ERROR: MS Word path is not set. Please set it print-config.txt.")
+            if not ok:
+                return None
             return {
-                "downloads": lines[0].strip(),
-                "word": lines[1].strip(),
+                "downloads": index["downloads"],
+                "word": index["word"],
             }
+    except FileNotFoundError:
+        print("Config file not found.")
+        return None
     except:
-        print("Config file not found!")
+        print("Config file is incorrect.")
         return None
 
 config = load_config()
