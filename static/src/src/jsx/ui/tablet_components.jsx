@@ -390,10 +390,11 @@ export class StopWatch extends React.Component {
             active: false,
             value: 0,
             str_value: "0:00",
-            interval: this.state.active
-                ? setInterval(this.tick.bind(this), 10)
-                : null,
+            interval: null,
         };
+        if (this.state.active) {
+            this.state.interval = setInterval(this.tick.bind(this), 10);  // eslint-disable-line react/no-direct-mutation-state
+        }
     }
     componentWillUnmount() {
         clearInterval(this.state.interval);
