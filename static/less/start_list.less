@@ -15,7 +15,7 @@
       text-decoration: underline;
     }
   }
-  .discipline {
+  .discipline, .club {
     > table {
       width: 100%;
       .inner {
@@ -25,7 +25,7 @@
           text-align: left;
         }
       }
-      td.name, td.club, td.coaches {
+      td.name, td.club, td.discipline, td.coaches {
         text-align: left !important;
       }
       td, th {
@@ -33,6 +33,22 @@
         padding: 2px 5px;
         vertical-align: top;
       }
+    }
+  }
+  .summary {
+    table {
+      width: 100%;
+      table-layout: fixed;
+      td, th {
+        border: 2px solid black;
+        padding: 2px 5px;
+        text-align: left;
+      }
+    }
+  }
+  .disciplines-shown {
+    ul {
+      margin-bottom: 15pt;
     }
   }
   td.acro {

@@ -16,25 +16,48 @@
   color: #efefef;
   text-decoration: underline;
 }
-.start-list .discipline > table {
+.start-list .discipline > table,
+.start-list .club > table {
   width: 100%;
 }
 .start-list .discipline > table .inner td,
-.start-list .discipline > table .inner th {
+.start-list .club > table .inner td,
+.start-list .discipline > table .inner th,
+.start-list .club > table .inner th {
   border: none;
   padding: 0;
   text-align: left;
 }
 .start-list .discipline > table td.name,
+.start-list .club > table td.name,
 .start-list .discipline > table td.club,
-.start-list .discipline > table td.coaches {
+.start-list .club > table td.club,
+.start-list .discipline > table td.discipline,
+.start-list .club > table td.discipline,
+.start-list .discipline > table td.coaches,
+.start-list .club > table td.coaches {
   text-align: left !important;
 }
 .start-list .discipline > table td,
-.start-list .discipline > table th {
+.start-list .club > table td,
+.start-list .discipline > table th,
+.start-list .club > table th {
   border: 2px solid black;
   padding: 2px 5px;
   vertical-align: top;
+}
+.start-list .summary table {
+  width: 100%;
+  table-layout: fixed;
+}
+.start-list .summary table td,
+.start-list .summary table th {
+  border: 2px solid black;
+  padding: 2px 5px;
+  text-align: left;
+}
+.start-list .disciplines-shown ul {
+  margin-bottom: 15pt;
 }
 .start-list td.acro {
   border-top: none !important;

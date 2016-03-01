@@ -90,6 +90,7 @@ export function translate(src, arg) {
                 "clients_management": "Управление подключенными устройствами",
                 "clubs": "Клубы-участники",
                 "clubs_management": "Управление клубами",
+                "clubs_summary": "Сводка по клубам",
                 "competition_plan": "Программа соревнований",
                 "competition_plan_management": "Программа соревнований",
                 "competition_report": "Протокол соревнований",
@@ -97,6 +98,8 @@ export function translate(src, arg) {
                 "competitions_management": "Управление соревнованиями",
                 "discipline_results": "Результаты дисциплины",
                 "disciplines_management": "Управление дисциплинами",
+                "disciplines_shown": "Информация только по следующим дисциплинам:",
+                "disciplines_summary": "Сводка по дисциплинам",
                 "export_competition": "Экспорт данных турнира и результатов",
                 "import_competition": "Импорт данных турнира",
                 "import_export": "Импорт / экспорт",
@@ -114,10 +117,12 @@ export function translate(src, arg) {
             "labels": {
                 "competition_name": "Наименование соревнования",
                 "competition_date": "Дата проведения",
+                "group_by_clubs": "Группировать по клубам",
                 "include_acrobatics": "Включить акробатику",
                 "include_formation_sportsmen": "Включить состав формейшнов",
                 "no_files_selected": "Выберите файл...",
                 "paste_acro": "Вставьте данные из калькулятора акробатики",
+                "show_summary": "Показывать только количество",
                 "sub": "зап",  // substitute
             },
             "messages": {
@@ -136,7 +141,9 @@ export function translate(src, arg) {
                 "start_list": "Стартовый лист",
             },
             "phrases": {
-                "total_n_participants": (n) => "Итого " + n + " участник" + chooseEnding(n, "", "а", "ов"),
+                "n_participants": n => n.toString() + " участник" + chooseEnding(n, "", "а", "ов"),
+                "n_sportsmen": n => n.toString() + " спортсмен" + chooseEnding(n, "", "а", "ов"),
+                "total_n_participants": n => "Итого " + n + " участник" + chooseEnding(n, "", "а", "ов"),
             },
             "judging-tabs": {
                 "tour-admin": "Управление",
@@ -319,6 +326,7 @@ export function translate(src, arg) {
                 "club_name": "Клуб",
                 "club_city": "Город",
                 "coaches": "Тренеры",
+                "discipline_name": "Дисциплина",
                 "first_name": "Имя",
                 "gender": "Пол",
                 "gender_f": "Ж",

@@ -5,7 +5,8 @@ import { message_dispatcher } from "server/message_dispatcher";
 import { Loader } from "ui/components";
 import { Printable } from "ui/printable";
 import { Docx } from "common/docx";
-import { CmpChain } from "common/tools";
+import { clone, CmpChain } from "common/tools";
+
 
 class ParticipantNumbersNumber extends React.Component {
     render() {
@@ -90,9 +91,14 @@ export class StartList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: null,
-            include_formation_sportsmen: false,
-            include_acrobatics: false,
+            competition: null,
+            config: {
+                include_formation_sportsmen: false,
+                include_acrobatics: false,
+                group_by_clubs: false,
+                show_summary: false,
+                disciplines: {},
+            }
         }
         message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
         message_dispatcher.addListener("reload_data", this.loadData.bind(this));
@@ -117,10 +123,21 @@ export class StartList extends React.Component {
                 },
             },
         };
-        this.setState(
-            this.storage.get("Competition")
-                .by_id(this.props.competition_id)
-                .serialize(SCHEMA));
+        let competition = this.storage.get("Competition")
+            .by_id(this.props.competition_id)
+            .serialize(SCHEMA);
+        let config = clone(this.state.config);
+        let new_disciplines = {};
+        competition.disciplines.forEach(discipline => {
+            new_disciplines[discipline.id] = (discipline.id in config.disciplines)
+                ? config.disciplines[discipline.id]
+                : true;
+        })
+        config.disciplines = new_disciplines;
+        this.setState({
+            config: config,
+            competition: competition,
+        });
     }
     loadData() {
         Api("competition.get", {
@@ -138,84 +155,47 @@ export class StartList extends React.Component {
         .onSuccess(this.reloadFromStorage.bind(this))
         .send();
     }
-    onCbChange() {
+    onConfigChange = new_config => {
         this.setState({
-            include_acrobatics: this.refs.cb_acro.checked,
-            include_formation_sportsmen: this.refs.cb_forms.checked,
+            config: new_config,
         });
     }
-    onDisciplineCbChange(discipline_id, event) {
-        let upd = {}
-        upd["hide_" + discipline_id] = !event.target.checked;
-        this.setState(upd);
-    }
-    setAllDisciplines(selected, event) {
-        event.preventDefault();
-        let upd = {}
-        this.state.disciplines.forEach((d) => upd["hide_" + d.id] = selected);
-        this.setState(upd);
-    }
-    renderDiscipline(ic) {
-        if (this.state["hide_" + ic.id]) {
-            return null;
+    renderBody() {
+        let props = {
+            competition: this.state.competition,
+            config: this.state.config,
         }
-        return <div key={ ic.id }>
-            <h5><p>{ ic.name }</p></h5>
-            <div className="discipline">
-                <table className="bordered-table"><thead>
-                    <tr>
-                        <th className="w-8 number"><p>{ _("models.participant.number") }</p></th>
-                        <th className="w-27 name"><p>{ _("models.participant.sportsmen") }</p></th>
-                        <th className="w-9 year-of-birth"><p>{ _("models.participant.sportsmen_year_of_birth") }</p></th>
-                        <th className="w-28 club"><p>{ _("models.participant.club_name") }</p></th>
-                        <th className="w-28 coaches"><p>{ _("models.participant.coaches") }</p></th>
-                    </tr>
-                </thead><tbody>
-                    { ic.participants.map((p) => [
-                        <tr key={ p.id } className={ !this.state.include_acrobatics || p.programs.length === 0 ? "" : "has-acro" }>
-                            <td className="w-8 number"><p className="text-center">{ p.number }</p></td>
-                            <td className="w-36 name" colSpan="2">
-                                <table className="inner"><tbody>
-                                    { p.formation_name ? <tr><th colSpan="2"><p className="text-left">{ p.formation_name }</p></th></tr> : null }
-                                    { this.state.include_formation_sportsmen || !p.formation_name ? p.sportsmen.map((s, idx) => <tr key={ idx }>
-                                        <td className="w-75"><p>
-                                            { s.last_name + " " + s.first_name }
-                                            { s.substitute ? <i> ({ _("admin.labels.sub") }.)</i> : null }
-                                        </p></td>
-                                        <td className="w-25"><p className="text-center">{ s.year_of_birth }</p></td>
-                                    </tr> ) : null }
-                                </tbody></table>
-                            </td>
-                            <td className="w-28 club"><p>{ p.club.name }</p></td>
-                            <td className="w-28 coaches"><p>{ p.coaches.split(",").map((c) => [c.trim(), <br key="X" />]) }</p></td>
-                        </tr>,
-                        !this.state.include_acrobatics || p.programs.length === 0 ? null :
-                            <tr key={ "Acro" + p.id } ><td className="acro" colSpan="5">
-                                <table className="inner"><tbody>
-                                    { p.programs.map((pr, pr_idx) =>
-                                        [<tr key={ "H" + pr_idx }>
-                                            <th colSpan="2"><p className="text-left">{ pr.name }</p></th>
-                                        </tr>].concat(
-                                            pr.acrobatics.map((a, a_idx) =>
-                                                <tr key={ `A_${pr_idx}_${a_idx}` }>
-                                                    <td className="w-93"><p className="text-left">{ a.description }</p></td>
-                                                    <td className="w-7"><p className="text-right">{ a.score.toFixed(1) }</p></td>
-                                                </tr>
-                                            )
-                                        )
-                                    ) }
-                                </tbody></table>
-                            </td></tr>
-                    ] ) }
-                </tbody></table>
-                <p className="text-right">
-                    <strong>{ _("admin.phrases.total_n_participants", ic.participants.length) }</strong>
-                </p>
-            </div>
-        </div>;
+        if (this.state.config.show_summary) {
+            if (this.state.config.group_by_clubs) {
+                return <ClubsSummaryTable { ...props } />
+            }
+            return <DisciplinesSummaryTable { ...props } />
+        }
+        if (this.state.config.group_by_clubs) {
+            return <Clubs { ...props } />
+        }
+        return <Disciplines { ...props } />
+    }
+    renderParticipantNumbers() {
+        let disciplines = this.state.competition.disciplines.filter(dis => this.state.config.disciplines[dis.id])
+        return (
+            <ParticipantNumbers
+                competition_name={ this.state.competition.name }
+                disciplines={ disciplines }
+                ref="numbers" />
+        )
+    }
+    getTitle() {
+        if (this.state.config.show_summary) {
+            if (this.state.config.group_by_clubs) {
+                return _("admin.headers.clubs_summary");
+            }
+            return _("admin.headers.disciplines_summary");
+        }
+        return _("admin.headers.start_list");
     }
     render() {  // eslint-disable-line react/sort-comp
-        if (this.state.name === null) {
+        if (this.state.competition === null) {
             return <Loader />
         }
         return <div className="app-content">
@@ -227,57 +207,24 @@ export class StartList extends React.Component {
                 <h1>{ _("admin.headers.start_list") }</h1>
             </header>
             <div className="app-body start-list">
-                <div className="controls">
-                    <div className="row">
-                        <div className="col-md-6">
-                            { this.state.disciplines.map((d) =>
-                                <div className="switch" key={ d.id }>
-                                    <label>
-                                        <input
-                                            type="checkbox"
-                                            checked={ !this.state["hide_" + d.id] }
-                                            onChange={ this.onDisciplineCbChange.bind(this, d.id) } />
-                                        { d.name }
-                                    </label>
-                                </div>
-                            ) }
-                            <a href="#" onClick={ this.setAllDisciplines.bind(this, false) }>{ _("global.buttons.select_all") }</a>
-                            &nbsp;&nbsp;&nbsp;&nbsp;
-                            <a href="#" onClick={ this.setAllDisciplines.bind(this, true) }>{ _("global.buttons.deselect_all") }</a>
-                        </div>
-                        <div className="col-md-6">
-                            <div className="switch">
-                                <label>
-                                    <input type="checkbox" ref="cb_acro" onChange={ this.onCbChange.bind(this) } />
-                                    { _("admin.labels.include_acrobatics") }
-                                </label>
-                            </div>
-                            <div className="switch">
-                                <label>
-                                    <input type="checkbox" ref="cb_forms" onChange={ this.onCbChange.bind(this) } />
-                                    { _("admin.labels.include_formation_sportsmen") }
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <Controls
+                    config={ this.state.config }
+                    disciplines={ this.state.competition.disciplines }
+                    onChange={ this.onConfigChange } />
                 <Printable
                     ref="printable"
-                    header={ this.state.name + ", " + this.state.date }
-                    title1={ _("admin.headers.start_list") }
-                    body={ this.state.disciplines.map((dis) => this.renderDiscipline(dis)) } />
+                    header={ this.state.competition.name + ", " + this.state.competition.date }
+                    title1={ this.getTitle() }
+                    body={ this.renderBody() } />
+                { this.renderParticipantNumbers() }
             </div>
-            <ParticipantNumbers
-                competition_name={ this.state.name }
-                disciplines={ this.state.disciplines.filter((dis) => !this.state["hide_" + dis.id]) }
-                ref="numbers" />
         </div>;
     }
     createDocx(filename="start-list.docx") {
         Docx(filename)
             .setMargins([10, 15, 10, 25])
-            .setHeader(this.state.name + ", " + this.state.date)
-            .setTitle1(_("admin.headers.start_list"))
+            .setHeader(this.state.competition.name + ", " + this.state.competition.date)
+            .setTitle1(this.getTitle())
             .setBody(this.refs.printable.fetchPrintableData())
             .addStyle(".bordered-table .inner td, .bordered-table .inner th", "border", "none")
             .addStyle(".bordered-table .inner td, .bordered-table .inner th", "padding", "0")
@@ -286,5 +233,452 @@ export class StartList extends React.Component {
             .addStyle(".has-acro td", "border-bottom", "1px solid #555 !important")
             .addStyle(".has-acro td td", "border-bottom", "none !important")
             .save();
+    }
+}
+
+class Controls extends React.Component {
+    setAllDisciplines(value) {
+        let config = clone(this.props.config);
+        Object.keys(config.disciplines).forEach(key => {
+            config.disciplines[key] = value;
+        });
+        this.props.onChange(config);
+    }
+    onDisciplineCbChange = (discipline_id, value) => {
+        let config = clone(this.props.config);
+        config.disciplines[discipline_id] = value;
+        this.props.onChange(config);
+    }
+    onPropertyCbChange = (property_name, value) => {
+        let config = clone(this.props.config);
+        config[property_name] = value;
+        this.props.onChange(config);
+    }
+    onSelectAllDisciplines = e => {
+        e.preventDefault();
+        this.setAllDisciplines(true);
+    }
+    onDeselectAllDisciplines = e => {
+        e.preventDefault();
+        this.setAllDisciplines(false);
+    }
+    render() {
+        return (
+            <div className="controls">
+                <div className="row">
+                    <div className="col-md-6">
+                        { this.props.disciplines.map(d =>
+                            <ControlsCheckbox
+                                key={ d.id }
+                                mkey={ d.id }
+                                label={ d.name }
+                                value={ this.props.config.disciplines[d.id] }
+                                onChange={ this.onDisciplineCbChange } />
+                        ) }
+                        <a href="#" onClick={ this.onSelectAllDisciplines }>{ _("global.buttons.select_all") }</a>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="#" onClick={ this.onDeselectAllDisciplines }>{ _("global.buttons.deselect_all") }</a>
+                    </div>
+                    <div className="col-md-6">
+                        <ControlsCheckbox
+                            key="include_acrobatics"
+                            mkey="include_acrobatics"
+                            label={ _("admin.labels.include_acrobatics") }
+                            value={ this.props.config.include_acrobatics }
+                            onChange={ this.onPropertyCbChange } />
+                        <ControlsCheckbox
+                            key="include_formation_sportsmen"
+                            mkey="include_formation_sportsmen"
+                            label={ _("admin.labels.include_formation_sportsmen") }
+                            value={ this.props.config.include_formation_sportsmen }
+                            onChange={ this.onPropertyCbChange } />
+                        <ControlsCheckbox
+                            key="group_by_clubs"
+                            mkey="group_by_clubs"
+                            label={ _("admin.labels.group_by_clubs") }
+                            value={ this.props.config.group_by_clubs }
+                            onChange={ this.onPropertyCbChange } />
+                        <ControlsCheckbox
+                            key="show_summary"
+                            mkey="show_summary"
+                            label={ _("admin.labels.show_summary") }
+                            value={ this.props.config.show_summary }
+                            onChange={ this.onPropertyCbChange } />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+}
+
+class ControlsCheckbox extends React.Component {
+    onChange = e => {
+        this.props.onChange(this.props.mkey, e.target.checked);
+    }
+    render() {
+        return (
+            <div className="switch">
+                <label>
+                    <input
+                        type="checkbox"
+                        checked={ this.props.value }
+                        onChange={ this.onChange } />
+                    { this.props.label }
+                </label>
+            </div>
+        );
+    }
+}
+
+class DisciplinesSummaryTable extends React.Component {
+    render() {
+        let all_participants = [].concat.apply([], this.props.competition.disciplines.map(d => d.participants));
+        return (
+            <div className="summary">
+                <table className="bordered-table"><tbody>
+                    { this.props.competition.disciplines.map(discipline =>
+                        <ParticipantsStats
+                            table_row
+                            key={ discipline.id }
+                            label={ discipline.name }
+                            participants={ discipline.participants } />
+                    ) }
+                </tbody></table>
+                <p>&nbsp;</p>
+                <ParticipantsStats
+                    participants={ all_participants } />
+            </div>
+        );
+    }
+}
+
+class ClubsSummaryTable extends React.Component {
+    render() {
+        let all_participants = [].concat.apply([], this.props.competition.disciplines.map(d => d.participants));
+        let clubs = Clubs.getParticipantsByClubs(this.props.competition, this.props.config);
+        return (
+            <div className="summary">
+                <DisciplinesShown { ...this.props } />
+                <table className="bordered-table"><tbody>
+                    { clubs.map(club =>
+                        <ParticipantsStats
+                            table_row
+                            key={ club.id }
+                            label={ `${club.name}, ${club.city}` }
+                            participants={ club.participants } />
+                    ) }
+                </tbody></table>
+                <p>&nbsp;</p>
+                <ParticipantsStats
+                    participants={ all_participants } />
+            </div>
+        );
+    }
+}
+
+class DisciplinesShown extends React.Component {
+    hasDisabledDisciplines() {
+        return this.props.competition.disciplines.filter(d => !this.props.config.disciplines[d.id]).length > 0;
+    }
+    getEnabledDisciplines() {
+        return this.props.competition.disciplines.filter(d => this.props.config.disciplines[d.id]);
+    }
+    render() {
+        if (!this.hasDisabledDisciplines()) {
+            return null;
+        }
+        let disciplines = this.getEnabledDisciplines();
+        if (disciplines.length === 0) {
+            return null;
+        }
+        return (
+            <div className="disciplines-shown">
+                <p><strong>{ _("admin.headers.disciplines_shown") }</strong></p>
+                <ul>
+                    { disciplines.map(d =>
+                        <li key={ d.id }>{ d.name }</li>
+                    ) }
+                </ul>
+            </div>
+        )
+    }
+}
+
+class Disciplines extends React.Component {
+    render() {
+        return <div>
+            { this.props.competition.disciplines.map(discipline =>
+                <DisciplineSection
+                    key={ discipline.id }
+                    discipline={ discipline }
+                    { ...this.props } />
+            ) }
+        </div>
+    }
+}
+
+class DisciplineSection extends React.Component {
+    renderRows() {
+        let result = [];
+        this.props.discipline.participants.forEach(p => {
+            let include_acrobatics = this.props.config.include_acrobatics && p.programs.length !== 0;
+            result.push(
+                <DisciplineSectionRow
+                    key={ `P${p.id}` }
+                    config={ this.props.config }
+                    acro_included={ include_acrobatics }
+                    participant={ p } />
+            );
+            if (include_acrobatics) {
+                result.push(
+                    <Acrobatics
+                        key={ `A${p.id}` }
+                        config={ this.props.config }
+                        participant={ p } />
+                )
+            }
+        });
+        return result;
+    }
+    render() {
+        if (!this.props.config.disciplines[this.props.discipline.id]) {
+            return null;
+        }
+        return <div>
+            <h5><p>{ this.props.discipline.name }</p></h5>
+            <div className="discipline">
+                <table className="bordered-table"><thead>
+                    <tr>
+                        <th className="w-8 number"><p>{ _("models.participant.number") }</p></th>
+                        <th className="w-27 name"><p>{ _("models.participant.sportsmen") }</p></th>
+                        <th className="w-9 year-of-birth"><p>{ _("models.participant.sportsmen_year_of_birth") }</p></th>
+                        <th className="w-28 club"><p>{ _("models.participant.club_name") }</p></th>
+                        <th className="w-28 coaches"><p>{ _("models.participant.coaches") }</p></th>
+                    </tr>
+                </thead><tbody>
+                    { this.renderRows() }
+                </tbody></table>
+                <ParticipantsStats
+                    participants={ this.props.discipline.participants } />
+            </div>
+        </div>;
+    }
+}
+
+class DisciplineSectionRow extends React.Component {
+    render() {
+        let class_name = this.props.acro_included ? "has-acro" : "";
+        let p = this.props.participant;
+        return (
+            <tr className={ class_name }>
+                <td className="w-8 number"><p className="text-center">{ p.number }</p></td>
+                <td className="w-36 name" colSpan="2">
+                    <SportsmenTable
+                        config={ this.props.config }
+                        participant={ p } />
+                </td>
+                <td className="w-28 club"><p>{ p.club.name }</p></td>
+                <td className="w-28 coaches"><p>{ p.coaches.split(",").map((c) => [c.trim(), <br key="X" />]) }</p></td>
+            </tr>
+        );
+    }
+}
+
+class Clubs extends React.Component {
+    static getParticipantsByClubs(competition, config) {
+        let disciplines = clone(competition.disciplines);
+        let grouped = {};
+        let clubs = {};
+        disciplines.forEach(discipline => {
+            if (!config.disciplines[discipline.id]) {
+                return;
+            }
+            discipline.participants.forEach(participant => {
+                let club_id = participant.club.id;
+                if (!(club_id in grouped)) {
+                    grouped[club_id] = [];
+                }
+                participant.discipline = discipline;
+                grouped[club_id].push(participant);
+                clubs[club_id] = participant.club;
+            });
+        });
+        let clubs_list = Object.keys(clubs).map(key => clubs[key]);
+        clubs_list.sort((a, b) => a.name.localeCompare(b.name));
+        return clubs_list.map(club => {
+            club.participants = grouped[club.id];
+            return club;
+        });
+    }
+    render() {
+        let clubs = Clubs.getParticipantsByClubs(this.props.competition, this.props.config);
+        return <div>
+            <DisciplinesShown { ...this.props } />
+            { clubs.map(club =>
+                <ClubSection
+                    key={ club.id }
+                    club={ club }
+                    { ...this.props } />
+            ) }
+        </div>
+    }
+}
+
+class ClubSection extends React.Component {
+    renderRows() {
+        let result = [];
+        this.props.club.participants.forEach(p => {
+            let include_acrobatics = this.props.config.include_acrobatics && p.programs.length !== 0;
+            result.push(
+                <ClubSectionRow
+                    key={ `P${p.id}` }
+                    config={ this.props.config }
+                    acro_included={ include_acrobatics }
+                    participant={ p } />
+            );
+            if (include_acrobatics) {
+                result.push(
+                    <Acrobatics
+                        key={ `A${p.id}` }
+                        config={ this.props.config }
+                        participant={ p } />
+                )
+            }
+        });
+        return result;
+    }
+    render() {
+        return <div>
+            <h5><p>{ this.props.club.name }, { this.props.club.city }</p></h5>
+            <div className="club">
+                <table className="bordered-table"><thead>
+                    <tr>
+                        <th className="w-8 number"><p>{ _("models.participant.number") }</p></th>
+                        <th className="w-27 name"><p>{ _("models.participant.sportsmen") }</p></th>
+                        <th className="w-9 year-of-birth"><p>{ _("models.participant.sportsmen_year_of_birth") }</p></th>
+                        <th className="w-28 discipline"><p>{ _("models.participant.discipline_name") }</p></th>
+                        <th className="w-28 coaches"><p>{ _("models.participant.coaches") }</p></th>
+                    </tr>
+                </thead><tbody>
+                    { this.renderRows() }
+                </tbody></table>
+                <ParticipantsStats
+                    participants={ this.props.club.participants } />
+            </div>
+        </div>;
+    }
+}
+
+class ClubSectionRow extends React.Component {
+    render() {
+        let class_name = this.props.acro_included ? "has-acro" : "";
+        let p = this.props.participant;
+        return (
+            <tr className={ class_name }>
+                <td className="w-8 number"><p className="text-center">{ p.number }</p></td>
+                <td className="w-36 name" colSpan="2">
+                    <SportsmenTable
+                        config={ this.props.config }
+                        participant={ p } />
+                </td>
+                <td className="w-28 discipline"><p>{ p.discipline.name }</p></td>
+                <td className="w-28 coaches"><p>{ p.coaches.split(",").map((c) => [c.trim(), <br key="X" />]) }</p></td>
+            </tr>
+        );
+    }
+}
+
+class SportsmenTable extends React.Component {
+    renderFormationName() {
+        let formation_name = this.props.participant.formation_name;
+        if (formation_name !== "") {
+            return (
+                <tr key="FN">
+                    <th colSpan="2"><p className="text-left">{ formation_name }</p></th>
+                </tr>
+            );
+        }
+        return null;
+    }
+    renderSportsmen() {
+        if (this.props.config.include_formation_sportsmen || this.props.participant.formation_name === "") {
+            return this.props.participant.sportsmen.map((s, idx) =>
+                <tr key={ idx }>
+                    <td className="w-75"><p>
+                        { s.last_name + " " + s.first_name }
+                        { s.substitute ? <i> ({ _("admin.labels.sub") }.)</i> : null }
+                    </p></td>
+                    <td className="w-25"><p className="text-center">{ s.year_of_birth }</p></td>
+                </tr>
+            )
+        }
+    }
+    render() {
+        let p = this.props.participant;
+        return (
+            <table className="inner"><tbody>
+                { this.renderFormationName() }
+                { this.renderSportsmen() }
+            </tbody></table>
+        );
+    }
+}
+
+class ParticipantsStats extends React.Component {
+    hashSportsman(s) {
+        return `${s.last_name}\n${s.first_name}\n${s.year_of_birth}\n${s.gender}`;
+    }
+    countSportsmen(participants) {
+        let found = {};
+        participants.forEach(p => {
+            p.sportsmen.forEach(s => {
+                let hash = this.hashSportsman(s);
+                found[hash] = true;
+            })
+        });
+        return Object.keys(found).length;
+    }
+    render() {
+        if (this.props.table_row) {
+            return (
+                <tr>
+                    <th className="w-66"><p className="text-left">{ this.props.label }</p></th>
+                    <td className="w-17"><p className="text-left">{ _("admin.phrases.n_participants", this.props.participants.length) }</p></td>
+                    <td className="w-17"><p className="text-left">{ _("admin.phrases.n_sportsmen", this.countSportsmen(this.props.participants)) }</p></td>
+                </tr>
+            )
+        }
+        return (
+            <p className="text-right">
+                <strong>
+                    { _("admin.phrases.total_n_participants", this.props.participants.length) }{", "}
+                    { _("admin.phrases.n_sportsmen", this.countSportsmen(this.props.participants)) }
+                </strong>
+            </p>
+        );
+    }
+}
+
+class Acrobatics extends React.Component {
+    render() {
+        let p = this.props.participant;
+        return (
+            <tr><td className="acro" colSpan="5">
+                <table className="inner"><tbody>
+                    { p.programs.map((pr, pr_idx) =>
+                        [<tr key={ "H" + pr_idx }>
+                            <th colSpan="2"><p className="text-left">{ pr.name }</p></th>
+                        </tr>].concat(
+                            pr.acrobatics.map((a, a_idx) =>
+                                <tr key={ `A_${pr_idx}_${a_idx}` }>
+                                    <td className="w-93"><p className="text-left">{ a.description }</p></td>
+                                    <td className="w-7"><p className="text-right">{ a.score.toFixed(1) }</p></td>
+                                </tr>
+                            )
+                        )
+                    ) }
+                </tbody></table>
+            </td></tr>
+        );
     }
 }

@@ -22,7 +22,10 @@ function buildJsx(entry_point, out_dir, out_file) {
         paths: ['./src/jsx/'],
         debug: gutil.env.type !== 'production',
     })
-    .transform(babelify, {presets: ['es2015-loose', 'react']})
+    .transform(babelify, {
+        presets: ['es2015-loose', 'react'],
+        plugins: ['transform-class-properties'],
+    })
     .bundle()
     .pipe(source(out_file))
     .pipe(buffer())

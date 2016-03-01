@@ -68,6 +68,7 @@ class DocxImpl {
                 "margin": 0,
                 "padding": 0,
             },
+            "li": { "margin-top": 0, "padding-top": 0 },
             ".spacer": {
                 "font-size": "14pt",
             },
