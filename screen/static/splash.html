@@ -8,13 +8,71 @@
             padding: 0;
             overflow: hidden;
             background-color: black;
-            background-image: url("images/splash.png");
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
+            color: #fff;
+            font-family: Tahoma;
+            line-height: 1.3;
+            height: 100%;
+        }
+        .outer {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+        #competition_name {
+            text-align: center;
+            font-size: 3vw;
         }
     </style>
+    <script>
+        window.addEventListener("load", function() {
+            console.log("Starting inner frame script...");
+            function ge(id) {
+                return document.getElementById(id)
+            }
+            var competition_id = parseInt(window.location.hash.substr(1));
+            var state = {
+                current_tour_id: null,
+            };
+            var tour_storage = null;
+
+            function updateData() {
+                console.log("Updating data...")
+                var competition = rockjudge.storage.get("Competition").by_id(competition_id);
+                if (!competition) {
+                    console.log("No competition");
+                    return;
+                }
+                competition = competition.serialize({});
+                $("#competition_name").text(competition.name);
+                console.log("Done.");
+            }
+
+            function init() {
+                rockjudge.api("competition.get", { competition_id: competition_id, children: {} })
+                    .addToDB("Competition", competition_id)
+                    .onSuccess(updateData)
+                    .onError(console.error.bind(console))
+                    .send();
+            }
+
+            rockjudge.message_dispatcher.addListener("db_update", updateData);
+            rockjudge.message_dispatcher.addListener("reload_data", init);
+
+            init();
+        });
+    </script>
 </head>
 <body>
+    <div class="outer">
+        <div id="competition_name">
+        </div>
+    </div>
+    <script src="/static/thirdparty/jquery/jquery.js"></script>
+    <script src="/static/thirdparty/sockjs/sockjs.js"></script>
+    <script src="/static/js/lib.js"></script>
 </body>
 </html>

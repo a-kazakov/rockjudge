@@ -610,11 +610,14 @@ class FormationRunScore:
             score_wrapper = ScoreWrapper(score, scoring_system, discipline_judge=discipline_judge)
             self.head_judge_total_score = score_wrapper.total_score
             self.has_next_tour = score_wrapper.data["nexttour"]
-        self.dance_judges_total_scores = [
-            ScoreWrapper(l_score, scoring_system, discipline_judge=l_discipline_judge).total_score + self.penalties
-            for l_discipline_judge, l_score
-            in self.dance_judge_scores
-        ]
+        if run.performed:
+            self.dance_judges_total_scores = [
+                ScoreWrapper(l_score, scoring_system, discipline_judge=l_discipline_judge).total_score + self.penalties
+                for l_discipline_judge, l_score
+                in self.dance_judge_scores
+            ]
+        else:
+            self.dance_judges_total_scores = [-10**10 for _ in self.dance_judge_scores]
 
     @property
     def head_judge_score(self):
@@ -723,4 +726,4 @@ class FormationTourScores:
             "additional_data": {
                 "places": run_score.get_places(),
             }
-        } for run_score, place in zip(self.run_scores, self.places)]
+        } for place, run_score in sorted(zip(self.places, self.run_scores), key=lambda x: x[0])]

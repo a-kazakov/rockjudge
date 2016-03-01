@@ -2,6 +2,10 @@
 <html>
 <head>
     <title>Screen</title>
+    <script>
+        var SHOW_RESULTS = true;
+        var SCREEN_ID = "heats_one_participant";
+    </script>
     <style>
         html, body {
             margin: 0;
@@ -9,209 +13,109 @@
             height: 100%;
             overflow: hidden;
             background-color: black;
-            background-image: url("images/bg.png");
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            color: #0006c3;
+            color: #fff;
             font-family: Tahoma;
-            text-shadow: 1px 1px 0px rgba(250, 250, 250, 1), 2px 2px 0px rgba(100, 100, 100, 0.7);
             line-height: 1.3;
+            height: 100%;
         }
-        .outer {
-            position: absolute;
-            left: calc(50% - 560px);
-            top: calc(50% - 392px);
-            width: 1120px;
-            height: 784px;
-        }
-        td {
-            vertical-align: top;
-        }
-        #data {
+        #content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
             text-align: center;
-            margin: 0;
-            padding: 0;
         }
         .tour-heat {
-            text-align: center;
-            font-size: 35px;
+            font-size: 3vw;
         }
         .discipline {
-            text-align: center;
-            font-size: 35px;
+            font-size: 3vw;
             font-weight: bold;
-            margin: 300px 0 0 0;
-        }
-        .discipline.no-info {
-            margin: 400px 0 0 0;
         }
         .participant {
-            margin: 50px 0 0 0;
-            font-size: 35px;
+            margin: 5vw 0 0 0;
+            font-size: 3vw;
         }
         .participant .number {
             font-weight: bold;
         }
         .participant .score {
-            margin: 50px 0 0 0;
+            margin: 5vw 0 0 0;
             font-weight: bold;
         }
     </style>
     <script>
         window.addEventListener("load", function() {
-            console.log("Starting inner frame script...");
-            function ge(id) {
-                return document.getElementById(id)
-            }
-            var competition_id = parseInt(window.location.hash.substr(1));
-            var state = {
-                current_tour_id: null,
-            };
-            var tour_storage = null;
-
-            function updateData() {
-                console.log("Updating data...")
-                var competition = rockjudge.storage.get("Competition").by_id(competition_id);
-                if (!competition) {
-                    console.log("No competition");
+            var inited = false;
+            watcher = new ActiveTourWatcher(rockjudge, parseInt(window.location.hash.substr(1)), SCREEN_ID);
+            watcher.onReady(function() {
+                inited = true;
+            });
+            watcher.onUpdate(function(tour, heat) {
+                if (!inited) {
+                    return false;
+                }
+                if (tour === null) {
                     return;
                 }
-                competition = competition.serialize({});
-                var screen_data = competition.screen_data;
-                var screen_id = screen_data.screen_id;
-                if (screen_id != "heats_one_participant") {
-                    console.log("Wrong screen ID");
+                $("#content").show();
+                $("#discipline").text(tour.discipline.name);
+                $("#tour").text(tour.name);
+                var run = tour.runs.filter(function(r) { return r.heat === heat; })[0];
+                if (!run) {
+                    $(".participant").hide();
+                    $(".heat").hide();
                     return;
                 }
-                var tour_id = screen_data.controls_state.tour_id;
-                if (tour_id !== state.current_tour_id || tour_id === null) {
-                    if (tour_id !== null) {
-                        rockjudge.api("tour.get", { tour_id: tour_id, children: {
-                            discipline: {
-                                discipline_judges: {},
-                            },
-                            runs: {
-                                participant: {
-                                    club: {},
-                                },
-                                scores: {},
-                            },
-                        } })
-                            .addToDB("Tour", tour_id, rockjudge.storage.getDomain(tour_id))
-                            .onSuccess(function() {
-                                if (state.current_tour_id !== tour_id) {
-                                    rockjudge.storage.delDomain(state.current_tour_id)
-                                    state.current_tour_id = tour_id;
-                                    tour_storage = rockjudge.storage.getDomain(tour_id);
-                                }
-                                updateData();
-                            })
-                            .onError(console.error.bind(console))
-                            .send();
-                            console.log("Incorrect tour id");
-                    } else {
-                        console.log("Null tour ID");
-                        state.current_tour_id = null;
-                    }
+                $(".participant").show();
+                $(".heat").show();
+                $("#heat").text(run.heat);
+                $("#n_heats").text(tour.runs[tour.runs.length - 1].heat);
+                $("#number").text(run.participant.number);
+                $("#name").text(run.participant.name);
+                $("#club").text(run.participant.club.name + ", " + run.participant.club.city);
+                if (!SHOW_RESULTS) {
+                    $(".score").hide();
                     return;
                 }
-                if (!tour_storage) {
-                    console.log("No tour rockjudge.storage");
-                    return;
-                }
-                var tour = tour_storage.get("Tour").by_id(tour_id);
-                if (!tour) {
-                    console.log("No tour");
-                    return;
-                }
-                console.log(tour_storage);
-                tour = tour.serialize({ discipline: { discipline_judges: {}}, runs: { scores: {}, participant: { club: {}}}});
-                var heat = screen_data.controls_state.heat;
-                var heat_runs = tour.runs.filter((run) => run.heat == heat);
-                var output = $("<div>");
                 var judges = {};
                 tour.discipline.discipline_judges.forEach(function(dj) {
                     judges[dj.id] = dj;
                 });
-                heat_runs.forEach(function(run) {
-                    var participant = run.participant;
-                    var item = $("#templates .participant").clone();
-                    var score = run.verbose_total_score.primary_score;
-                    item.find(".number").text("№" + participant.number);
-                    item.find(".name").text(participant.name);
-                    item.find(".club").text(participant.club.name + ", " + participant.club.city);
-                    item.find(".score .value").text(score.toFixed(2));
-                    var show_score = true;
-                    run.scores.forEach(function(score) {
-                        if (!score.confirmed &&
-                                (judges[score.discipline_judge_id].role == "dance_judge" ||
-                                    judges[score.discipline_judge_id].role == "acro_judge")) {
-                            show_score = false;
-                        }
-                    });
-                    if (show_score) {
-                        item.find(".score").show();
-                    } else {
-                        item.find(".score").hide();
-                    }
-                    output.append(item);
+                var unconfirmed_scores = run.scores.filter(function(score) {
+                    var role = judges[score.discipline_judge_id].role;
+                    return !score.confirmed && (role == "dance_judge" || role == "acro_judge");
                 });
-                $("#data").html(output.html());
-                $("#discipline").html(tour.discipline.name);
-                if (heat) {
-                    $("#tour").html(tour.name);
-                    $("#heat_value").text(heat);
-                    $("#total_heats").text(tour.runs[tour.runs.length - 1].heat);
+                if (!run.performed || unconfirmed_scores.length > 0) {
+                    $(".score").css("visibility", "hidden");
+                    return;
                 }
-                if (!heat) {
-                    $("#heat").hide();
-                    $(".discipline").addClass("no-info");
-                } else {
-                    $("#heat").show();
-                    $(".discipline").removeClass("no-info");
-                }
-                $("#content").show();
-                console.log("Done.");
-            }
-
-            function init() {
-                rockjudge.api("competition.get", { competition_id: competition_id, children: {} })
-                    .addToDB("Competition", competition_id)
-                    .onSuccess(updateData)
-                    .onError(console.error.bind(console))
-                    .send();
-            }
-
-            rockjudge.message_dispatcher.addListener("db_update", updateData);
-            rockjudge.message_dispatcher.addListener("reload_data", init);
-
-            init();
+                var score_text = run.verbose_total_score.primary_score.toFixed(2);
+                $("#score").text(score_text);
+                $(".score").css("visibility", "visible");
+            });
+            watcher.init();
         });
     </script>
 </head>
 <body>
-    <table class="outer" id="content" style="display:none">
-        <tr><td>
-            <div class="discipline">
-                <span id="discipline"></span>
-            </div>
-            <div class="tour-heat">
-                <span id="tour"></span><span id="heat">. Заход <span id="heat_value"></span>/<span id="total_heats"></span></span>
-            </div>
-            <div id="data"></div>
-        </td>
-    </tr>
-    <div id="templates" style="display:none;">
-        <div class="participant">
-            <div class="number"></div>
-            <div class="name"></div>
-            <div class="club"></div>
-            <div class="score">Результат: <span class="value"></span></div>
+    <div id="content" style="display: none;">
+        <div class="discipline">
+            <span id="discipline"></span>
         </div>
-    </div>
+        <div class="tour-heat">
+            <span id="tour"></span><span class="heat">. Заход <span id="heat"></span>/<span id="n_heats"></span></span>
+        </div>
+        <div class="participant">
+            <div class="number">№<span id="number"></span></div>
+            <div class="name" id="name"></div>
+            <div class="club" id="club"></div>
+            <div class="score">Результат: <span id="score"></span></div>
+        </div>
+    <div>
     <script src="/static/thirdparty/jquery/jquery.js"></script>
     <script src="/static/thirdparty/sockjs/sockjs.js"></script>
     <script src="/static/js/lib.js"></script>
+    <script src="tour_watcher.js"></script>
 </body>
 </html>

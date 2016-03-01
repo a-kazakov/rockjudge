@@ -107,6 +107,7 @@
 .tour-admin .bordered-table .form-acro-input {
   width: 630px;
   color: #efefef;
+  left: 50%;
 }
 .tour-admin .bordered-table .form-acro-input .no-program {
   margin: 10px 0 20px;
@@ -140,11 +141,13 @@
   width: 300px;
   height: 29px;
 }
+.tour-admin .bordered-table .form-score-input {
+  right: 50%;
+}
 .tour-admin .bordered-table .form-score-input,
 .tour-admin .bordered-table .form-acro-input {
   position: absolute;
   top: 50%;
-  left: 50%;
   background-color: #3f5765;
   z-index: 10;
   padding: 10px;
