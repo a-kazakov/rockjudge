@@ -53,11 +53,15 @@ class MyServer(BaseHTTPRequestHandler):
     def do_print(self, filename, copies):
         global config
         path = os.path.join(config["downloads"], filename)
-        for idx in range(copies):
-            local_path = "{}_{}.docx".format(path, idx)
-            print(path, local_path)
-            sp.call(["copy", path, local_path], shell=True)
-            sp.Popen([config["word"], "/q", "/n", "/mFilePrintDefault", "/mFileCloseOrExit", local_path])
+        for _ in range(50):
+            if not os.path.exists(path):
+                time.sleep(0.2)
+                continue
+            for idx in range(copies):
+                local_path = "{}_{}.docx".format(path, idx)
+                sp.call(["copy", path, local_path], shell=True)
+                sp.Popen([config["word"], "/q", "/n", "/mFilePrintDefault", "/mFileCloseOrExit", local_path])
+            break
 
     def do_GET(self):
         o = urllib.parse.urlparse(self.path)
