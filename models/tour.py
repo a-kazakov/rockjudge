@@ -164,7 +164,6 @@ class Tour(BaseModel):
         if self.participants_per_heat >= 3 and len(self.runs) % self.participants_per_heat == 1:
             heats[len(self.runs) // self.participants_per_heat] = \
                 [None] * (self.participants_per_heat - (self.participants_per_heat + 1) // 2)
-        print(heats)
         # Filling with existing heats (only if preserving evisting)
         if preserve_existing:
             for run in self.runs:
