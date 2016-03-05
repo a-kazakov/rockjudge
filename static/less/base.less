@@ -145,6 +145,20 @@ header {
   }
 }
 
+.connection-status {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  transition: opacity 1s ease;
+  padding: 2px 10px;
+  &.ok {
+    display: none;
+  }
+  &.tick {
+    background-color: @brand-danger;
+  }
+}
+
 .loop-width(@counter) when (@counter >= 1) {
   .loop-width((@counter - 1));
   .w-@{counter} {

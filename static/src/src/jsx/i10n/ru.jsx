@@ -227,6 +227,8 @@ export function translate(src, arg) {
             },
             "labels": {
                 "browse": "Обзор...",
+                "connecting": "Подключение к сети",
+                "connection_problem": "Проблемы с сетью",
                 "yes": "Да",
                 "no": "Нет",
             },

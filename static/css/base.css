@@ -7018,6 +7018,20 @@ header .controls button {
 .printable .va-top {
   vertical-align: top;
 }
+.connection-status {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  -webkit-transition: opacity 1s ease;
+          transition: opacity 1s ease;
+  padding: 2px 10px;
+}
+.connection-status.ok {
+  display: none;
+}
+.connection-status.tick {
+  background-color: #d9534f;
+}
 .w-1 {
   width: 1%;
 }

@@ -1,4 +1,5 @@
 import { storage } from "server/storage";
+import { connection_status } from "ui/components";
 
 
 class MessageDispatcher {
@@ -12,6 +13,7 @@ class MessageDispatcher {
         console.log("Connecting to websocket...");
         this.ws = new SockJS("http://" + window.location.host + "/ws");
         this.ws.onopen = function() {
+            connection_status.setOk();
             console.log("Connected.");
             if (this.closed) {
                 this.onMessage({
@@ -23,6 +25,7 @@ class MessageDispatcher {
             }
         }.bind(this);
         this.ws.onclose = function() {
+            connection_status.setFail();
             console.log("Connection closed.");
             this.closed = true;
             setTimeout(this.connect.bind(this), 500);
