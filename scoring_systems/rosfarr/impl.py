@@ -238,6 +238,7 @@ class AcroScore:
                 base_score = override.score if override is not None else acro["score"]
                 result += apply_reduction(m100(base_score), reduction)
         result -= 30 * m100(self.data["mistakes"])
+        result = min(6500, result)
         return result
 
     def update(self, new_data):
