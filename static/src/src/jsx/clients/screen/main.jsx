@@ -52,7 +52,7 @@ export class Screen extends React.Component {
     }
     reloadFromStorage() {
         let new_data = storage.get("Competition").by_id(this.props.competition_id).serialize({}).screen_data;
-        if (new_data.screen_id !== this.state.current_screen.id) {
+        if (new_data.screen_id !== this.state.current_screen.id && new_data.screen_id) {
             this.changeScreen(new_data.screen_id);
         }
     }

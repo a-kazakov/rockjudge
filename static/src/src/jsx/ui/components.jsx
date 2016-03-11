@@ -11,7 +11,21 @@ export class Loader extends React.Component {
     }
 }
 
+class ConnectionStatusMock {
+    setOk() {}
+    setFail() {}
+}
+
 class ConnectionStatus extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            "connected": null,
+        };
+    }
+    componentWillUnmount() {
+        this.stopInterval();
+    }
     static init() {
         let element = window.document.getElementById("connection_status");
         if (element) {
@@ -20,12 +34,7 @@ class ConnectionStatus extends React.Component {
                 element
             );
         }
-    }
-    constructor(props) {
-        super(props);
-        this.state = {
-            "connected": null,
-        };
+        return new ConnectionStatusMock();
     }
     startInterval() {
         if (this.interval) {
@@ -43,9 +52,6 @@ class ConnectionStatus extends React.Component {
         }
         clearInterval(this.interval);
         this.interval = null;
-    }
-    componentWillUnmount() {
-        this.stopInterval();
     }
     setOk() {
         this.stopInterval();

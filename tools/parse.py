@@ -85,6 +85,14 @@ class Discipline:
             if p.discipline == self.name
         ]) > 0
 
+    @property
+    def has_tours(self):
+        return len([
+            None
+            for p in Tour.storage
+            if p.discipline == self.name
+        ]) > 0
+
     def serialize(self, add_tours=True):
         result = {k: getattr(self, k) for k in ["name", "external_id", "sp"]}
         result["participants"] = [
@@ -378,7 +386,7 @@ if __name__ == "__main__":
                 "disciplines": [
                     x.serialize(add_tours=args.add_tours)
                     for x in Discipline.storage.values()
-                    if x.has_participants or x.has_judges
+                    if x.has_participants or x.has_judges or x.has_tours
                 ],
                 "plan": [x.serialize() for x in CompetitionPlanItem.storage] if args.add_plan else []
             }, sort_keys=True, indent=4, ensure_ascii=False))
