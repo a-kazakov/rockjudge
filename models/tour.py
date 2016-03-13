@@ -147,7 +147,7 @@ class Tour(BaseModel):
             run.inherited_data = inherited_data[run.participant_id] if run.participant_id in inherited_data else {}
             run.save()
         prev_tour = self.get_prev_tour(throw=False)
-        if prev_tour is None or prev_tour.finalized:
+        if prev_tour is None or prev_tour.finalized or prev_tour.hope_tour:
             self.shuffle_heats(ws_message=None, broadcast=False, preserve_existing=True)
         else:
             self.clone_heats(prev_tour, ws_message=None, broadcast=False)
