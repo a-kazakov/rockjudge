@@ -58,11 +58,15 @@ class DisciplineJudge(BaseModel):
         )
 
     def delete_model(self, ws_message):
-        from models import Tour
+        from models import (
+            Run,
+            Tour,
+        )
         num_finalized_tours = self.discipline.raw_tours.where(Tour.finalized == True).count()  # NOQA
         if num_finalized_tours > 0:
             raise ApiError("errors.discipline_judge.delete_with_finalized")
-        if self.get_attr_count("score_set") > 0:
+        tours_ids = [tour.id for tour in self.discipline.tours]
+        if self.score_set.join(Run).where(Run.tour << tours_ids).count() > 0:
             raise ApiError("errors.discipline_judge.delete_with_scores")
         self.discipline = None
         self.judge = None
