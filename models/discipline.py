@@ -180,13 +180,12 @@ class Discipline(BaseModel):
         )
 
     def delete_model(self, ws_message):
-        if self.participants.count() > 0:
+        if self.get_attr_count("participants") > 0:
             raise ApiError("errors.discipline.delete_with_participants")
         if self.first_tour is not None:
             raise ApiError("errors.discipline.delete_with_tours")
         competition_id = self.competition_id
-        self.competition = None
-        self.save()
+        self.delete_instance(recursive=True)
         ws_message.add_model_update(
             model_type=competition_proxy,
             model_id=competition_id,

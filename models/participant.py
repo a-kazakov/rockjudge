@@ -3,6 +3,7 @@ import peewee
 
 from playhouse import postgres_ext
 
+from exceptions import ApiError
 from models.base_model import BaseModel
 from models.club import Club
 from models.proxies import discipline_proxy
@@ -144,14 +145,19 @@ class Participant(BaseModel):
         )
 
     def delete_model(self, ws_message):
+        from models import Tour
         discipline_id = self.discipline_id
-        self.discipline = None
-        self.save()
+        if self.run_set.join(Tour).where(Tour.finalized == True).count() > 0:  # NOQA
+            raise ApiError("errors.participant.delete_with_finalized_tours")
+        self.delete_instance(recursive=True)
         ws_message.add_model_update(
             model_type=discipline_proxy,
             model_id=discipline_id,
             schema={
-                "participants": {}
+                "participants": {},
+                "tours": {
+                    "runs": {},
+                },
             }
         )
 

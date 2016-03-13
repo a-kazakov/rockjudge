@@ -65,12 +65,9 @@ class DisciplineJudge(BaseModel):
         num_finalized_tours = self.discipline.raw_tours.where(Tour.finalized == True).count()  # NOQA
         if num_finalized_tours > 0:
             raise ApiError("errors.discipline_judge.delete_with_finalized")
-        tours_ids = [tour.id for tour in self.discipline.tours]
-        if self.score_set.join(Run).where(Run.tour << tours_ids).count() > 0:
+        if self.get_attr_count("score_set") > 0:
             raise ApiError("errors.discipline_judge.delete_with_scores")
-        self.discipline = None
-        self.judge = None
-        self.save()
+        self.delete_instance()
         ws_message.add_message("reload_data")
 
     def get_sorting_key(self):

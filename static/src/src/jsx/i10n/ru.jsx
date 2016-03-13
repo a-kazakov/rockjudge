@@ -190,6 +190,9 @@ export function translate(src, arg) {
             "judge": {
                 "delete_with_disciplines": "Невозможно удалить судью, входящего в судейскую бригаду хотя бы одной дисциплины",
             },
+            "participant": {
+                "delete_with_finalized_tours": "Невозможно удалить участника, принявшего участие хотя бы в одном финализированном туре"
+            },
             "run": {
                 "set_performed_flag_on_finalized": "Невозможно изменить статус захода финализинованного тура",
             },

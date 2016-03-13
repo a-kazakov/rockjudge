@@ -50,12 +50,10 @@ class Club(BaseModel):
         )
 
     def delete_model(self, ws_message):
-        from models import Participant
-        if self.participants.where(~(Participant.discipline >> None)).count() > 0:
+        if self.participants.count() > 0:
             raise ApiError("errors.club.delete_with_participants")
         competition_id = self.competition_id
-        self.competition = None
-        self.save()
+        self.delete_instance()
         ws_message.add_model_update(
             model_type=competition_proxy,
             model_id=competition_id,

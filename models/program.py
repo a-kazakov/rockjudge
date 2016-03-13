@@ -85,8 +85,7 @@ class Program(BaseModel):
     def delete_model(self, ws_message):
         from models import Participant
         participant_id = self.participant_id
-        self.participant = None
-        self.save()
+        self.delete_instance()
         ws_message.add_model_update(
             model_type=Participant,
             model_id=participant_id,

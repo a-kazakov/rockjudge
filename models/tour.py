@@ -396,7 +396,6 @@ class Tour(BaseModel):
             raise ApiError("errors.tour.delete_finalized")
         if self.get_attr_count("competition_plan_entries") > 0:
             raise ApiError("errors.tour.delete_in_competition_plan")
-        # We don't actually delete the tour. Just removing it from linked list.
         discipline = self.discipline
         prev_tour = self.get_prev_tour()
         if prev_tour is None:  # This is the first_tour
@@ -405,8 +404,7 @@ class Tour(BaseModel):
         else:
             prev_tour.next_tour = self.next_tour
             prev_tour.save()
-        self.next_tour = None
-        self.save()
+        self.delete_instance(recursive=True)
         ws_message.add_model_update(
             model_type=Discipline,
             model_id=discipline.id,

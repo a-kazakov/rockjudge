@@ -48,8 +48,7 @@ class Judge(BaseModel):
         ).count()
         if discipline_judges_count > 0:
             raise ApiError("errors.judge.delete_with_disciplines")
-        self.competition = None
-        self.save()
+        self.delete_instance()
         ws_message.add_message("reload_data")
 
     def get_sorting_key(self):  # TODO: move this logic to scoring system
