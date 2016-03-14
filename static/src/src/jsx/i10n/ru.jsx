@@ -424,6 +424,9 @@ export function translate(src, arg) {
             },
         },
         "tablet": {
+            "alerts": {
+                "has_unconfirmed_scores": "Имеются незафиксированные оценки судей в последнем заходе.",
+            },
             "buttons": {
                 "finalize_tour": "Финализировать тур",
                 "finalize_tour_and_start_next": "Финализировать тур и перейти к следующему",

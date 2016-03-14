@@ -210,6 +210,31 @@ export class Judge extends React.Component {
         }
         return this.getHeatsCount(runs);
     }
+    hasUnconfirmedScores() {
+        let runs = this.state.tour.runs;
+        let confirmed_scores = {};
+        for (let i = runs.length - 1; i >= 0; --i) {
+            for (let j = 0; j < runs[i].scores.length; ++j) {
+                let score = runs[i].scores[j];
+                if (score.confirmed) {
+                    confirmed_scores[score.discipline_judge_id] = true;
+                }
+            }
+            if (Object.keys(confirmed_scores).length > 0) {
+                if (i === 0) {
+                    return false;
+                }
+                for (let j = 0; j < runs[i].scores.length; ++j) {
+                    let score = runs[i - 1].scores[j];
+                    if (score.confirmed && !confirmed_scores[score.discipline_judge_id]) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+        return false;
+    }
 
     // Rendering
 
@@ -218,33 +243,48 @@ export class Judge extends React.Component {
             <TourResultsBody tour_id={ this.state.tour.id } verbosity="2" tableOnly />
         </div>
     }
+    renderHasUnconfirmedScoresWarning() {
+        if (!this.hasUnconfirmedScores()) {
+            return null;
+        }
+        return (
+            <div className="warning">
+                <div className="content">
+                    { _("tablet.alerts.has_unconfirmed_scores") }
+                </div>
+            </div>
+        );
+    }
     renderActions() {
-        return <div className="body actions">
-            <div className="item">
-                <button className="tbtn btn-primary" type="button"
-                        {...onTouchOrClick(this.stopTour.bind(this))}>
-                    { _("tablet.buttons.stop_tour") }
-                </button>
+        return (
+            <div className="body actions">
+                { this.renderHasUnconfirmedScoresWarning() }
+                <div className="item">
+                    <button className="tbtn btn-primary" type="button"
+                            {...onTouchOrClick(this.stopTour.bind(this))}>
+                        { _("tablet.buttons.stop_tour") }
+                    </button>
+                </div>
+                <div className="item">
+                    <button className="tbtn btn-primary" type="button"
+                            {...onTouchOrClick(this.finalizeTour.bind(this))}>
+                        { _("tablet.buttons.finalize_tour") }
+                    </button>
+                </div>
+                <div className="item">
+                    <button className="tbtn btn-primary" type="button"
+                            {...onTouchOrClick(this.stopTourAndStartNext.bind(this))}>
+                        { _("tablet.buttons.stop_tour_and_start_next") }
+                    </button>
+                </div>
+                <div className="item">
+                    <button className="tbtn btn-primary" type="button"
+                             {...onTouchOrClick(this.finalizeTourAndStartNext.bind(this))}>
+                        { _("tablet.buttons.finalize_tour_and_start_next") }
+                    </button>
+                </div>
             </div>
-            <div className="item">
-                <button className="tbtn btn-primary" type="button"
-                        {...onTouchOrClick(this.finalizeTour.bind(this))}>
-                    { _("tablet.buttons.finalize_tour") }
-                </button>
-            </div>
-            <div className="item">
-                <button className="tbtn btn-primary" type="button"
-                        {...onTouchOrClick(this.stopTourAndStartNext.bind(this))}>
-                    { _("tablet.buttons.stop_tour_and_start_next") }
-                </button>
-            </div>
-            <div className="item">
-                <button className="tbtn btn-primary" type="button"
-                         {...onTouchOrClick(this.finalizeTourAndStartNext.bind(this))}>
-                    { _("tablet.buttons.finalize_tour_and_start_next") }
-                </button>
-            </div>
-        </div>
+        );
     }
     renderHeader() {
         let btn_prev = null;

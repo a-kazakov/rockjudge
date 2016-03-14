@@ -270,6 +270,25 @@ html, body, #content {
                     max-width: 500px;
                 }
             }
+            .warning {
+                width: 80%;
+                max-width: 500px;
+                margin: 0 auto;
+                display: inline-block;
+                height: 0;
+                position: relative;
+                .content {
+                    position: absolute;
+                    text-align: center;
+                    left: 0;
+                    right: 0;
+                    bottom: 10px;
+                    padding: 10px;
+                    border: 1px solid @alert-danger-border;
+                    color: @alert-danger-text;
+                    background-color: @alert-danger-bg;
+                }
+            }
         }
     }
     .footer {
