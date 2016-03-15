@@ -7014,6 +7014,7 @@ header .controls button {
 .printable .p-content .bordered-table > tbody > tr > th,
 .printable .p-content .bordered-table > thead > tr > th {
   border: 1pt solid black;
+  padding: 1pt 3pt;
 }
 .printable .va-top {
   vertical-align: top;

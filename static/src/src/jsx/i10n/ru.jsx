@@ -109,6 +109,7 @@ export function translate(src, arg) {
                 "load_acrobatics": "Загрузка акробатики",
                 "participants_management": "Управление участниками",
                 "service_menu": "Сервисное меню",
+                "sportsmen_list": "Список спортсменов",
                 "start_list": "Стартовый лист",
                 "tour_heats": "Заходы участников",
                 "tour_results": "Результаты тура",
@@ -128,6 +129,7 @@ export function translate(src, arg) {
                 "include_judges": "Включить данные о судьях",
                 "no_files_selected": "Выберите файл...",
                 "paste_acro": "Вставьте данные из калькулятора акробатики",
+                "show_sportsmen_only": "Показывать только спортсменов",
                 "show_summary": "Показывать только количество",
                 "sub": "зап",  // substitute
             },
@@ -148,7 +150,8 @@ export function translate(src, arg) {
             },
             "phrases": {
                 "n_participants": n => n.toString() + " участник" + chooseEnding(n, "", "а", "ов"),
-                "n_sportsmen": n => n.toString() + " спортсмен" + chooseEnding(n, "", "а", "ов"),
+                "n_sportsmen": (n, s) => n.toString() + " спортсмен" + chooseEnding(n, "", "а", "ов") + (s > 0 ? ` (+${s} запасн${ chooseEnding(s, "ой", "ых", "ых") })` : ""),
+                "n_sportsmen_short": (n, s) => n.toString() + " спортсмен" + chooseEnding(n, "", "а", "ов") + (s > 0 ? ` (+${s} зап.)` : ""),
                 "total_n_participants": n => "Итого " + n + " участник" + chooseEnding(n, "", "а", "ов"),
             },
             "judging-tabs": {
@@ -364,6 +367,7 @@ export function translate(src, arg) {
                 "name": "Участник",
                 "number": "Номер",
                 "programs": "Программы",
+                "sportsman": "Спортсмен",
                 "sportsmen": "Спортсмены",
                 "sportsmen_year_of_birth": "Г.р.",
                 "substitute_n": "Осн.",

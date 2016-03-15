@@ -98,6 +98,7 @@ export class StartList extends React.Component {
                 include_formation_sportsmen: false,
                 include_acrobatics: false,
                 group_by_clubs: false,
+                show_sportsmen_only: false,
                 show_summary: false,
                 disciplines: {},
             }
@@ -194,6 +195,9 @@ export class StartList extends React.Component {
             }
             return _("admin.headers.disciplines_summary");
         }
+        if (this.state.config.show_sportsmen_only) {
+            return _("admin.headers.sportsmen_list")
+        }
         return _("admin.headers.start_list");
     }
     render() {  // eslint-disable-line react/sort-comp
@@ -214,6 +218,7 @@ export class StartList extends React.Component {
                         {key: "include_acrobatics",            label: _("admin.labels.include_acrobatics")},
                         {key: "include_formation_sportsmen",   label: _("admin.labels.include_formation_sportsmen")},
                         {key: "group_by_clubs",                label: _("admin.labels.group_by_clubs")},
+                        {key: "show_sportsmen_only",           label: _("admin.labels.show_sportsmen_only")},
                         {key: "show_summary",                  label: _("admin.labels.show_summary")}
                     ]}
                     config={ this.state.config }
@@ -356,6 +361,28 @@ class DisciplineSection extends React.Component {
         });
         return result;
     }
+    renderBody() {
+        if (this.props.config.show_sportsmen_only) {
+            return (
+                <SportsmenList
+                    config={ this.props.config }
+                    participants={ this.props.discipline.participants } />
+            );
+        }
+        return (
+            <table className="bordered-table"><thead>
+                <tr>
+                    <th className="w-8 number"><p>{ _("models.participant.number") }</p></th>
+                    <th className="w-27 name"><p>{ _("models.participant.sportsmen") }</p></th>
+                    <th className="w-9 year-of-birth"><p>{ _("models.participant.sportsmen_year_of_birth") }</p></th>
+                    <th className="w-28 club"><p>{ _("models.participant.club_name") }</p></th>
+                    <th className="w-28 coaches"><p>{ _("models.participant.coaches") }</p></th>
+                </tr>
+            </thead><tbody>
+                { this.renderRows() }
+            </tbody></table>
+        );
+    }
     render() {
         if (!this.props.config.disciplines[this.props.discipline.id]) {
             return null;
@@ -363,17 +390,7 @@ class DisciplineSection extends React.Component {
         return <div>
             <h5><p>{ this.props.discipline.name }</p></h5>
             <div className="discipline">
-                <table className="bordered-table"><thead>
-                    <tr>
-                        <th className="w-8 number"><p>{ _("models.participant.number") }</p></th>
-                        <th className="w-27 name"><p>{ _("models.participant.sportsmen") }</p></th>
-                        <th className="w-9 year-of-birth"><p>{ _("models.participant.sportsmen_year_of_birth") }</p></th>
-                        <th className="w-28 club"><p>{ _("models.participant.club_name") }</p></th>
-                        <th className="w-28 coaches"><p>{ _("models.participant.coaches") }</p></th>
-                    </tr>
-                </thead><tbody>
-                    { this.renderRows() }
-                </tbody></table>
+                { this.renderBody() }
                 <ParticipantsStats
                     participants={ this.props.discipline.participants } />
             </div>
@@ -463,21 +480,33 @@ class ClubSection extends React.Component {
         });
         return result;
     }
+    renderBody() {
+        if (this.props.config.show_sportsmen_only) {
+            return (
+                <SportsmenList
+                    config={ this.props.config }
+                    participants={ this.props.club.participants } />
+            );
+        }
+        return (
+            <table className="bordered-table"><thead>
+                <tr>
+                    <th className="w-8 number"><p>{ _("models.participant.number") }</p></th>
+                    <th className="w-27 name"><p>{ _("models.participant.sportsmen") }</p></th>
+                    <th className="w-9 year-of-birth"><p>{ _("models.participant.sportsmen_year_of_birth") }</p></th>
+                    <th className="w-28 discipline"><p>{ _("models.participant.discipline_name") }</p></th>
+                    <th className="w-28 coaches"><p>{ _("models.participant.coaches") }</p></th>
+                </tr>
+            </thead><tbody>
+                { this.renderRows() }
+            </tbody></table>
+        )
+    }
     render() {
         return <div>
             <h5><p>{ this.props.club.name }, { this.props.club.city }</p></h5>
             <div className="club">
-                <table className="bordered-table"><thead>
-                    <tr>
-                        <th className="w-8 number"><p>{ _("models.participant.number") }</p></th>
-                        <th className="w-27 name"><p>{ _("models.participant.sportsmen") }</p></th>
-                        <th className="w-9 year-of-birth"><p>{ _("models.participant.sportsmen_year_of_birth") }</p></th>
-                        <th className="w-28 discipline"><p>{ _("models.participant.discipline_name") }</p></th>
-                        <th className="w-28 coaches"><p>{ _("models.participant.coaches") }</p></th>
-                    </tr>
-                </thead><tbody>
-                    { this.renderRows() }
-                </tbody></table>
+                { this.renderBody() }
                 <ParticipantsStats
                     participants={ this.props.club.participants } />
             </div>
@@ -540,27 +569,83 @@ class SportsmenTable extends React.Component {
     }
 }
 
+class SportsmenList extends React.Component {
+    render() {
+        let sportsmen = ParticipantsStats.getUniqueSportsmen(this.props.participants);
+        sportsmen.sort((a, b) => CmpChain()
+            .cmp(a.last_name, b.last_name)
+            .cmp(a.first_name, b.first_name)
+            .cmp(a.gender, b.gender)
+            .cmp(a.year_of_birth, b.year_of_birth)
+            .end()
+        )
+        return (
+            <table className="bordered-table"><tbody>
+                <tr>
+                    <th className="w-5"><p>&nbsp;</p></th>
+                    <th className="w-35"><p className="text-left">{ _("models.participant.sportsman") }</p></th>
+                    <th className="w-15"><p className="text-center">{ _("models.participant.yob") }</p></th>
+                    <th className="w-15"><p className="text-center">{ _("models.participant.gender") }</p></th>
+                    <th className="w-15"><p className="text-center">{ _("models.participant.substitute_n") }</p></th>
+                    <th className="w-15"><p className="text-center">{ _("models.participant.substitute_y") }</p></th>
+                </tr>
+                { sportsmen.map((s, idx) =>
+                    <tr key={ idx }>
+                        <td className="w-5"><p className="text-right">{ idx + 1 }</p></td>
+                        <td className="w-35"><p className="text-left">{ `${s.last_name} ${s.first_name}` }</p></td>
+                        <td className="w-15"><p className="text-center">{ s.year_of_birth }</p></td>
+                        <td className="w-15"><p className="text-center">
+                            { s.gender === "F" ? _("models.participant.gender_f") : _("models.participant.gender_m") }
+                        </p></td>
+                        <td className="w-15"><p className="text-center">{ s.p_count }</p></td>
+                        <td className="w-15"><p className="text-center">{ s.s_count }</p></td>
+                    </tr>
+                ) }
+            </tbody></table>
+        );
+    }
+}
+
 class ParticipantsStats extends React.Component {
-    hashSportsman(s) {
+    static hashSportsman(s) {
         return `${s.last_name}\n${s.first_name}\n${s.year_of_birth}\n${s.gender}`;
     }
-    countSportsmen(participants) {
+    static getUniqueSportsmen(participants) {
         let found = {};
         participants.forEach(p => {
             p.sportsmen.forEach(s => {
-                let hash = this.hashSportsman(s);
-                found[hash] = true;
+                let hash = ParticipantsStats.hashSportsman(s);
+                if (!found[hash]) {
+                    found[hash] = clone(s);
+                    found[hash].s_count = 0;
+                    found[hash].p_count = 0;
+                }
+                if (s.substitute) {
+                    ++found[hash].s_count;
+                } else {
+                    ++found[hash].p_count;
+                }
             })
         });
-        return Object.keys(found).length;
+        return Object.keys(found).map(key => found[key]);
+    }
+    static countSportsmen(participants) {
+        let sportsmen = ParticipantsStats.getUniqueSportsmen(participants);
+        return {
+            total: sportsmen.length,
+            substitute_only: sportsmen.filter(s => s.p_count === 0).length,
+        }
     }
     render() {
+        let sp_count = ParticipantsStats.countSportsmen(this.props.participants);
+        let p_count = sp_count.total - sp_count.substitute_only;
+        let s_count = sp_count.substitute_only;
         if (this.props.table_row) {
             return (
                 <tr>
-                    <th className="w-66"><p className="text-left">{ this.props.label }</p></th>
-                    <td className="w-17"><p className="text-left">{ _("admin.phrases.n_participants", this.props.participants.length) }</p></td>
-                    <td className="w-17"><p className="text-left">{ _("admin.phrases.n_sportsmen", this.countSportsmen(this.props.participants)) }</p></td>
+                    <th className="w-60"><p className="text-left">{ this.props.label }</p></th>
+                    <td className="w-16"><p className="text-left">{ _("admin.phrases.n_participants", this.props.participants.length) }</p></td>
+                    <td className="w-24"><p className="text-left">{ _("admin.phrases.n_sportsmen_short", p_count, s_count) }</p></td>
                 </tr>
             )
         }
@@ -568,7 +653,7 @@ class ParticipantsStats extends React.Component {
             <p className="text-right">
                 <strong>
                     { _("admin.phrases.total_n_participants", this.props.participants.length) }{", "}
-                    { _("admin.phrases.n_sportsmen", this.countSportsmen(this.props.participants)) }
+                    { _("admin.phrases.n_sportsmen", p_count, s_count) }
                 </strong>
             </p>
         );
