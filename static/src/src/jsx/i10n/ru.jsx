@@ -96,6 +96,7 @@ export function translate(src, arg) {
                 "competition_report": "Протокол соревнований",
                 "competition_results": "Результаты соревнований",
                 "competitions_management": "Управление соревнованиями",
+                "discipline_judges": "Распределение судей по дисциплинам",
                 "discipline_results": "Результаты дисциплины",
                 "disciplines_management": "Управление дисциплинами",
                 "disciplines_shown": "Информация только по следующим дисциплинам:",
@@ -117,9 +118,11 @@ export function translate(src, arg) {
             "labels": {
                 "competition_date": "Дата проведения",
                 "competition_name": "Наименование соревнования",
+                "discipline": "Дисциплина",
                 "group_by_clubs": "Группировать по клубам",
                 "include_acrobatics": "Включить акробатику",
                 "include_clubs": "Включить данные о клубах",
+                "include_discipline_judges": "Включить распределение судей по дисциплинам",
                 "include_extended_info": "Включить расширенную информацию",
                 "include_formation_sportsmen": "Включить состав формейшнов",
                 "include_judges": "Включить данные о судьях",
@@ -316,6 +319,22 @@ export function translate(src, arg) {
                 "external_id": "Внешний ID",
                 "name": "Название дисциплины",
                 "sp": "Приоритет",
+            },
+            "discipline_judge": {
+                "roles": {
+                    "acro_judge": "А",
+                    "dance_judge": "T",
+                    "head_judge": "Гл",
+                    "tech_judge": "Тех",
+                },
+                "roles_legend": (
+                    <table className="w-100"><tbody><tr>
+                        <td className="w-25">Гл — главный судья</td>
+                        <td className="w-25">Т — судья танца</td>
+                        <td className="w-25">А — судья акробатики</td>
+                        <td className="w-25">Тex — технический судья</td>
+                    </tr></tbody></table>
+                ),
             },
             "judge": {
                 "category": "Категория",

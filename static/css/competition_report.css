@@ -36,6 +36,13 @@
 .competition-report .clubs th {
   padding: 0px 20px 0px 0px;
 }
+.competition-report .discipline-judges table {
+  width: 100%;
+}
+.competition-report .discipline-judges table th,
+.competition-report .discipline-judges table td {
+  padding: 1px 3px;
+}
 table.sportsmen {
   width: 100%;
 }

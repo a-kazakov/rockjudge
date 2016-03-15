@@ -19,6 +19,7 @@ export class CompetitionReport extends React.Component {
                 include_extended_info: true,
                 include_clubs: true,
                 include_judges: true,
+                include_discipline_judges: false,
                 disciplines: {},
             }
         };
@@ -38,7 +39,11 @@ export class CompetitionReport extends React.Component {
     }
     reloadFromStorage() {
         const SCHEMA = {
-            disciplines: {},
+            disciplines: {
+                discipline_judges: {
+                    judge: {},
+                },
+            },
             judges: {},
             clubs: {
                 participants: {},
@@ -64,11 +69,15 @@ export class CompetitionReport extends React.Component {
         Api("competition.get", {
             competition_id: this.props.competition_id,
             children: {
+                disciplines: {
+                    discipline_judges: {
+                        judge: {},
+                    },
+                },
+                judges: {},
                 clubs: {
                     participants: {},
                 },
-                disciplines: {},
-                judges: {},
             }
         })
         .addToDB("Competition", this.props.competition_id, this.storage)
@@ -88,6 +97,7 @@ export class CompetitionReport extends React.Component {
             <Info { ...this.state } />
             <Clubs { ...this.state } />
             <Judges { ...this.state } />
+            <DisciplineJudges { ...this.state } />
             <Results { ...this.state } />
         </div>;
         return <div className="app-content">
@@ -100,9 +110,10 @@ export class CompetitionReport extends React.Component {
             <div className="app-body competition-report">
                 <DisciplinesControls
                     custom_controls={[
-                        {key: "include_extended_info",  label: _("admin.labels.include_extended_info")},
-                        {key: "include_clubs",          label: _("admin.labels.include_clubs")},
-                        {key: "include_judges",         label: _("admin.labels.include_judges")}
+                        {key: "include_extended_info",      label: _("admin.labels.include_extended_info")},
+                        {key: "include_clubs",              label: _("admin.labels.include_clubs")},
+                        {key: "include_judges",             label: _("admin.labels.include_judges")},
+                        {key: "include_discipline_judges",  label: _("admin.labels.include_discipline_judges")},
                     ]}
                     config={ this.state.config }
                     disciplines={ this.state.competition.disciplines }
@@ -187,6 +198,14 @@ class Clubs extends React.Component {
 }
 
 class Judges extends React.Component {
+    renderIdx(idx) {
+        if (!this.props.config.include_discipline_judges) {
+            return null;
+        }
+        return (
+            <td className="w-5"><p className="text-right">{ idx + 1 }</p></td>
+        );
+    }
     render() {
         if (!this.props.config.include_judges) {
             return null;
@@ -195,13 +214,74 @@ class Judges extends React.Component {
             <div>
                 <h4><p>{ _("admin.headers.judges") }</p></h4>
                 <table className="judges"><tbody>
-                    { this.props.competition.judges.map((judge) =>
+                    { this.props.competition.judges.map((judge, idx) =>
                         <tr key={ judge.id }>
-                            <th className="w-40"><p className="text-left">{ judge.role_description || _("global.phrases.judge_n", judge.number) }</p></th>
+                            { this.renderIdx(idx) }
+                            <th className="w-35"><p className="text-left">{ judge.role_description || _("global.phrases.judge_n", judge.number) }</p></th>
                             <td className="w-60"><p>{ judge.name }, { judge.category }</p></td>
                         </tr>
                     ) }
                 </tbody></table>
+            </div>
+        );
+    }
+}
+
+class DisciplineJudges extends React.Component {
+    getJudgesDisciplines() {
+        let judges_used = {};
+        let roles = {};
+        this.props.competition.disciplines.forEach(discipline => {
+            discipline.discipline_judges.forEach(discipline_judge => {
+                roles[`${discipline.id}_${discipline_judge.judge.id}`] = discipline_judge.role;
+                judges_used[discipline_judge.judge.id] = true;
+            });
+        });
+        let judges = [];
+        this.props.competition.judges.forEach((j, idx) => {
+            if (judges_used[j.id]) {
+                judges.push(idx);
+            }
+        });
+        let table = this.props.competition.disciplines.map(discipline =>
+            judges.map(judge_idx =>
+                roles[`${discipline.id}_${this.props.competition.judges[judge_idx].id}`] || null
+            )
+        );
+        return { judges, table }
+    }
+    render() {
+        if (!this.props.config.include_discipline_judges) {
+            return null;
+        }
+        let data = this.getJudgesDisciplines();
+        let style = { width: `${ (60 / data.judges.length).toFixed(3) }%` };
+        console.log(data);
+        return (
+            <div div className="discipline-judges">
+                <h4><p>{ _("admin.headers.discipline_judges") }</p></h4>
+                <table className="bordered-table"><tbody>
+                    <tr>
+                        <th className="w-40"><p className="text-left">{ _("admin.labels.discipline") }</p></th>
+                        { data.judges.map(judge_idx =>
+                            <th style={ style } key={ judge_idx }><p className="text-center">{ judge_idx + 1 }</p></th>
+                        ) }
+                    </tr>
+                    { data.table.map((row, idx) => {
+                        let discipline = this.props.competition.disciplines[idx];
+                        return (
+                            <tr key={ discipline.id }>
+                                <th className="w-40"><p className="text-left">{ discipline.name }</p></th>
+                                { row.map(cell =>
+                                    <td style={ style }><p className="text-center">
+                                        { cell ? _(`models.discipline_judge.roles.${cell}`) : "—" }
+                                    </p></td>
+                                ) }
+                            </tr>
+                        )
+                    } ) }
+                </tbody></table>
+                { _("models.discipline_judge.roles_legend") }
             </div>
         );
     }
