@@ -457,7 +457,7 @@ export function translate(src, arg) {
                 "start_stopwatch": "Старт",
                 "stop_stopwatch": "Стоп",
                 "stop_tour": "Завершить тур",
-                "stop_tour_and_start_next": "Перейти к следующему туру",
+                "stop_tour_and_start_next": "Завершить тур и перейти к следующему туру",
                 "to_start_page": "На главную",
             },
             "confirms": {

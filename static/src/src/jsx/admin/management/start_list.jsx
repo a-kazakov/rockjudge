@@ -84,6 +84,7 @@ class ParticipantNumbers extends React.Component {
             .addStyle(".name", "font-weight", "bold")
             .addStyle(".club", "font-size", "12pt")
             .addStyle(".discipline", "font-size", "12pt")
+
             .save();
     }
 }
@@ -239,6 +240,7 @@ export class StartList extends React.Component {
             .addStyle(".acro", "border-top", "none !important")
             .addStyle(".has-acro td", "border-bottom", "1px solid #555 !important")
             .addStyle(".has-acro td td", "border-bottom", "none !important")
+            .addStyle("tr.tr-acro", "page-break-inside", "auto")
             .save();
     }
 }
@@ -577,15 +579,16 @@ class Acrobatics extends React.Component {
     render() {
         let p = this.props.participant;
         return (
-            <tr><td className="acro" colSpan="5">
+            <tr className="tr-acro"><td className="acro" colSpan="5">
                 <table className="inner"><tbody>
                     { p.programs.map((pr, pr_idx) =>
                         [<tr key={ "H" + pr_idx }>
-                            <th colSpan="2"><p className="text-left">{ pr.name }</p></th>
+                            <th colSpan="3"><p className="text-left">{ pr.name }</p></th>
                         </tr>].concat(
                             pr.acrobatics.map((a, a_idx) =>
                                 <tr key={ `A_${pr_idx}_${a_idx}` }>
-                                    <td className="w-93"><p className="text-left">{ a.description }</p></td>
+                                    <td className="w-3"><p className="text-left">{ a_idx + 1 }</p></td>
+                                    <td className="w-90"><p className="text-left">{ a.description }</p></td>
                                     <td className="w-7"><p className="text-right">{ a.score.toFixed(1) }</p></td>
                                 </tr>
                             )
