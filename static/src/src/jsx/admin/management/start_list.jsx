@@ -252,8 +252,8 @@ export class StartList extends React.Component {
 
 class DisciplinesSummaryTable extends React.Component {
     render() {
-        let all_participants = [].concat.apply([], this.props.competition.disciplines.map(d => d.participants));
         let disciplines = this.props.competition.disciplines.filter(d => this.props.config.disciplines[d.id]);
+        let all_participants = [].concat.apply([], disciplines.map(d => d.participants));
         return (
             <div className="summary">
                 <table className="bordered-table"><tbody>
@@ -275,8 +275,8 @@ class DisciplinesSummaryTable extends React.Component {
 
 class ClubsSummaryTable extends React.Component {
     render() {
-        let all_participants = [].concat.apply([], this.props.competition.disciplines.map(d => d.participants));
         let clubs = Clubs.getParticipantsByClubs(this.props.competition, this.props.config);
+        let all_participants = [].concat.apply([], clubs.map(c => c.participants));
         return (
             <div className="summary">
                 <DisciplinesShown { ...this.props } />
