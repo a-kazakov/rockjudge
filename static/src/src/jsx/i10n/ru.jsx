@@ -91,6 +91,7 @@ export function translate(src, arg) {
                 "clubs": "Клубы-участники",
                 "clubs_management": "Управление клубами",
                 "clubs_summary": "Сводка по клубам",
+                "competition_info": "Информация о турнире",
                 "competition_plan": "Программа соревнований",
                 "competition_plan_management": "Программа соревнований",
                 "competition_report": "Протокол соревнований",

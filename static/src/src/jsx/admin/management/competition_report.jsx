@@ -93,6 +93,11 @@ export class CompetitionReport extends React.Component {
         if (this.state.competition === null) {
             return <Loader />
         }
+        let n_disciplines = Object.keys(this.state.config.disciplines)
+                                  .filter(key => this.state.config.disciplines[key]).length;
+        let title = n_disciplines > 0
+            ? _("admin.headers.competition_report")
+            : _("admin.headers.competition_info");
         let body = <div>
             <Info { ...this.state } />
             <Clubs { ...this.state } />
@@ -105,7 +110,7 @@ export class CompetitionReport extends React.Component {
                 <div className="controls">
                     <button className="btn btn-primary" onClick={ this.createDocx }>DOCX</button>
                 </div>
-                <h1>{ _("admin.headers.competition_report") }</h1>
+                <h1>{ title }</h1>
             </header>
             <div className="app-body competition-report">
                 <DisciplinesControls
@@ -120,7 +125,7 @@ export class CompetitionReport extends React.Component {
                     onChange={ this.onConfigChange } />
                 <Printable
                     ref="printable"
-                    title1={ _("admin.headers.competition_report") }
+                    title1={ title }
                     body={ body } />
             </div>
         </div>
@@ -256,7 +261,6 @@ class DisciplineJudges extends React.Component {
         }
         let data = this.getJudgesDisciplines();
         let style = { width: `${ (60 / data.judges.length).toFixed(3) }%` };
-        console.log(data);
         return (
             <div div className="discipline-judges">
                 <h4><p>{ _("admin.headers.discipline_judges") }</p></h4>

@@ -62,7 +62,6 @@ export class StartPage extends React.Component {
         });
     }
     renderCompetitionSelector() {
-        console.log(this.state.competitions);
         let comps = this.state.competitions.map(function(comp, idx) {
             return (
                 <div

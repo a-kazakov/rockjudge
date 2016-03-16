@@ -51,6 +51,8 @@ class CompetitionPlanItem(BaseModel):
                     failed_discipline = discipline
                     break
             raise ApiError("errors.competition_plan.too_many_tours", failed_discipline.name)
+        except KeyError:
+            raise ApiError("errors.competition_plan.invalid_discipline_found")
 
     @classmethod
     def create_model(cls, competition, data, ws_message):
