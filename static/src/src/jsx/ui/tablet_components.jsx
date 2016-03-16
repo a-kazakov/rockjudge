@@ -103,7 +103,7 @@ export class Slider extends React.Component {
         let pos = this.getTouch(event) - this.pin;
         return Math.min(Math.max(pos, 0), 200);
     }
-    onClick(event) {
+    onClick = (event) => {
         if (this.state.finished || this.props.done) {
             return;
         }
@@ -114,7 +114,7 @@ export class Slider extends React.Component {
         });
         this.props.onActivate();
     }
-    onTouchStart(event) {
+    onTouchStart = (event) => {
         event.preventDefault();
         if (this.state.finished || this.props.done) {
             return;
@@ -125,7 +125,7 @@ export class Slider extends React.Component {
             touch: true,
         });
     }
-    onTouchMove(event) {
+    onTouchMove = (event) => {
         event.preventDefault();
         if (this.state.finished || this.props.done) {
             return;
@@ -134,7 +134,7 @@ export class Slider extends React.Component {
             position: this.getSliderPos(event),
         });
     }
-    onTouchEnd(event) {
+    onTouchEnd = (event) => {
         event.preventDefault();
         if (this.state.finished || this.props.done) {
             return;
@@ -157,10 +157,10 @@ export class Slider extends React.Component {
         return <div className="slider noselect">
             <div className={"inner" + (this.isFree() ? " free" : "")}
                 style={{ left: (this.props.done || this.state.finished) ? "200px" : this.state.position + "px" }}
-                onTouchStart={ this.onTouchStart.bind(this) }
-                onTouchMove={ this.onTouchMove.bind(this) }
-                onTouchEnd={ this.onTouchEnd.bind(this) }
-                onClick={ this.onClick.bind(this) }
+                onTouchStart={ this.onTouchStart }
+                onTouchMove={ this.onTouchMove }
+                onTouchEnd={ this.onTouchEnd }
+                onClick={ this.onClick }
             >
                 →
             </div>
