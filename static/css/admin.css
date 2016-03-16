@@ -311,7 +311,7 @@ body,
 div.import-export {
   padding: 10px;
 }
-div.import-export label {
+div.import-export label.browse {
   cursor: pointer;
   width: 500px;
   margin-right: 5px;
@@ -322,7 +322,7 @@ div.import-export label {
   white-space: pre;
   overflow: hidden;
 }
-div.import-export label div {
+div.import-export label.browse div {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -348,15 +348,24 @@ div.import-export label div {
   background-color: #2b3a42;
   color: #efefef;
 }
-div.import-export label div span {
+div.import-export label.browse div span {
   display: block;
 }
-div.import-export label input {
+div.import-export label.browse input {
   margin-bottom: 10px;
   position: absolute;
   width: 0.1px;
   height: 0.1px;
   left: -10000px;
+}
+div.import-export .import-items-selector {
+  background-color: #bdd4de;
+  width: 500px;
+  margin-top: 10px;
+  padding: 10px;
+}
+div.import-export .import-items-selector label input {
+  margin-right: 5px;
 }
 .ic-management-ui {
   padding: 10px;

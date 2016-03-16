@@ -121,18 +121,18 @@ class Discipline(BaseModel):
             rev_discipline_judges[judge_id].delete_model(WsMessage())
 
     @classmethod
-    def load_models(cls, competition, objects):
+    def load_models(cls, competition, objects, items):
         from models import (
             DisciplineJudge,
             Participant,
             Tour,
         )
         for model, created, raw_data in cls.load_models_base(objects, competition=competition):
-            if "participants" in raw_data:
+            if "participants" in raw_data and items["participants"]:
                 Participant.load_models(model, raw_data["participants"])
-            if "discipline_judges" in raw_data:
+            if "discipline_judges" in raw_data and items["discipline_judges"]:
                 DisciplineJudge.load_models(model, raw_data["discipline_judges"])
-            if "tours" in raw_data:
+            if "tours" in raw_data and items["tours"]:
                 Tour.load_models(model, raw_data["tours"])
 
     @classmethod

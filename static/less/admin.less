@@ -187,7 +187,7 @@ html, body, #content {
 
 div.import-export {
     padding: 10px;
-    label {
+    label.browse {
         cursor: pointer;
         width: 500px;
         margin-right: 5px;
@@ -217,6 +217,17 @@ div.import-export {
             width: 0.1px;
             height: 0.1px;
             left: -10000px;
+        }
+    }
+    .import-items-selector {
+        background-color: @ui-light;
+        width: 500px;
+        margin-top: 10px;
+        padding: 10px;
+        label {
+            input {
+                margin-right: 5px;
+            }
         }
     }
 }

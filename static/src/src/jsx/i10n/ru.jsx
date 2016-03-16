@@ -117,9 +117,12 @@ export function translate(src, arg) {
                 "unpicked_tours": "Не включены в программу",
             },
             "labels": {
+                "clubs": "Клубы",
                 "competition_date": "Дата проведения",
                 "competition_name": "Наименование соревнования",
                 "discipline": "Дисциплина",
+                "discipline_judges": "Распределение судей по дисциплинам",
+                "disciplines": "Дисциплины",
                 "group_by_clubs": "Группировать по клубам",
                 "include_acrobatics": "Включить акробатику",
                 "include_clubs": "Включить данные о клубах",
@@ -127,11 +130,15 @@ export function translate(src, arg) {
                 "include_extended_info": "Включить расширенную информацию",
                 "include_formation_sportsmen": "Включить состав формейшнов",
                 "include_judges": "Включить данные о судьях",
+                "judges": "Судьи",
                 "no_files_selected": "Выберите файл...",
+                "participants": "Участники",
                 "paste_acro": "Вставьте данные из калькулятора акробатики",
+                "plan": "Программа турнира",
                 "show_sportsmen_only": "Показывать только спортсменов",
                 "show_summary": "Показывать только количество",
                 "sub": "зап",  // substitute
+                "tours": "Туры",
             },
             "messages": {
                 "invalid_passcode": "Введён неверный код потверждения",
@@ -178,7 +185,8 @@ export function translate(src, arg) {
                 "delete_non_empty": "Невозможно удалить соревнование, содержащее дисциплины, клубы или судей",
             },
             "competition_plan": {
-                "too_many_tours": (d) => ["Ошибка в программе соревнований", `В дисциплине ${d} содержится больше туров, чем создано в системе`]
+                "too_many_tours": (d) => ["Ошибка в программе соревнований", `В дисциплине ${d} содержится больше туров, чем создано в системе`],
+                "invalid_discipline_found": "Программа соревнований содержит туры, отсутствующие в системе",
             },
             "discipline": {
                 "change_judges_with_finalized_tour": "Невозможно изменить состав судей для дисциплины, содержащей финализированные туры",

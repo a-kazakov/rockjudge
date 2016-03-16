@@ -438,7 +438,7 @@ class Api:
     @classmethod
     def competition_load(cls, request, ws_message):
         competition = cls.get_model(Competition, "competition_id", request)
-        competition.load(request["data"], ws_message=ws_message)
+        competition.load(request["data"], request["items"], ws_message=ws_message)
         return {}
 
     @classmethod

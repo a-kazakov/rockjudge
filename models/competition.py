@@ -45,7 +45,7 @@ class Competition(BaseModel):
             "judges": {},
         })
 
-    def load(self, encoded_data, ws_message):
+    def load(self, encoded_data, items, ws_message):
         from models import (
             Club,
             CompetitionPlanItem,
@@ -55,13 +55,13 @@ class Competition(BaseModel):
         data = import_file_protector.decode(encoded_data)
         if data is None:
             raise ApiError("errors.admin.load_syntax_error")
-        if "clubs" in data:
+        if "clubs" in data and items["clubs"]:
             Club.load_models(self, data["clubs"])
-        if "judges" in data:
+        if "judges" in data and items["judges"]:
             Judge.load_models(self, data["judges"])
-        if "disciplines" in data:
-            Discipline.load_models(self, data["disciplines"])
-        if "plan" in data:
+        if "disciplines" in data and items["disciplines"]:
+            Discipline.load_models(self, data["disciplines"], items)
+        if "plan" in data and items["plan"]:
             CompetitionPlanItem.load_models(self, data["plan"])
         ws_message.add_message("reload_data")
 
