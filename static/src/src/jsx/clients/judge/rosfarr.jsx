@@ -5,8 +5,8 @@ import {
     TabletIntegerInput,
     TabletIntegerSelectInput,
     TabletSelectorInput,
-    TabletPoint5Input,
     TabletPoint5SelectInput,
+    TabletAcroOverrideInput,
     StopWatch,
     Slider,
 } from "ui/tablet_components";
@@ -296,13 +296,14 @@ class TechJudgeAcrobaticOverride extends React.Component {
         return <div className="tech-judge-acro">
             <div className="controls pull-right">
                 <div className="setter">
-                    <TabletPoint5Input
+                    <TabletAcroOverrideInput
+                        original_value={ this.props.acro.original_score }
                         value={ this.props.acro.score }
                         onValueUpdate={ this.props.onAcroOverride } />
                 </div>
             </div>
             <h3>
-                { this.props.acro.description } (={ this.props.acro.original_score })
+                { this.props.acro.description }
             </h3>
             <div className="clearfix"></div>
         </div>

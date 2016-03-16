@@ -277,6 +277,21 @@ div.judge-tablet .body .main-table .mistakes {
   vertical-align: top;
   margin-bottom: 0;
 }
+.judge-tablet .body .main-table .tablet-acro-override-input {
+  width: 100%;
+}
+.judge-tablet .body .main-table .tablet-acro-override-input .buttons button {
+  width: 23%;
+  margin: 1%;
+  padding: 5px;
+}
+.judge-tablet .body .main-table .tablet-acro-override-input .buttons button:disabled {
+  background-color: #92a0a7;
+}
+.judge-tablet .body .main-table .tablet-acro-override-input .value {
+  text-align: center;
+  font-weight: bold;
+}
 .judge-tablet .body .tour-results {
   width: auto !important;
   margin: 10px !important;

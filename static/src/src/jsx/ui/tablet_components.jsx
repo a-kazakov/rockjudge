@@ -187,7 +187,7 @@ export class TabletSelectorInput extends React.Component {
     static get propTypes() {
         return {
             style: React.PropTypes.string,
-            choices: React.PropTypes.string.isRequired,
+            choices: React.PropTypes.array.isRequired,
             row_size: React.PropTypes.number,
             active: React.PropTypes.number,
             onValueUpdate: React.PropTypes.func.isRequired,
@@ -324,51 +324,79 @@ export class TabletIntegerInput extends React.Component {
     }
 }
 
-export class TabletPoint5Input extends React.Component {
+export class TabletAcroOverrideInput extends React.Component {
     static get propTypes() {
         return {
             value: React.PropTypes.number.isRequired,
+            original_value: React.PropTypes.number.isRequired,
+            send_deltas: React.PropTypes.bool,
             onValueUpdate: React.PropTypes.func.isRequired,
-            sendDeltas: React.PropTypes.bool,
         };
     }
     static get defaultProps() {
         return {
-            sendDeltas: false,
+            send_deltas: false,
         }
     }
-    onMinus() {
-        if (this.props.sendDeltas) {
+    onMinus = () => {
+        if (this.props.send_deltas) {
             this.props.onValueUpdate({"delta": -0.5});
         } else {
-            this.props.onValueUpdate(this.props.value - 0.5);
+            this.props.onValueUpdate(Math.max(this.props.value - 0.5, 0));
         }
     }
-    onPlus() {
-        if (this.props.sendDeltas) {
+    onPlus = () => {
+        if (this.props.send_deltas) {
             this.props.onValueUpdate({"delta": 0.5});
         } else {
-            this.props.onValueUpdate(this.props.value + 0.5);
+            this.props.onValueUpdate(Math.min(this.props.value + 0.5, this.props.original_value));
         }
     }
+    onZero = () => {
+        this.props.onValueUpdate(0);
+    }
+    onRestore = () => {
+        this.props.onValueUpdate(this.props.original_value);
+    }
     render() {
+        let value_changed = Math.abs(this.props.value - this.props.original_value);
         return (
-            <div className="tablet-integer-input">
-                <button
-                    className="tbtn btn-minus"
-                    {...onTouchOrClick(this.onMinus.bind(this))}
-                >
-                    &minus;
-                </button>
-                <div className="value">
-                    { this.props.value }
+            <div className="tablet-acro-override-input">
+                <div className="buttons">
+                    <button
+                        className="tbtn btn-zero"
+                        disabled={ this.props.value < 0.05 }
+                        {...onTouchOrClick(this.onZero)}
+                    >
+                        ↓0
+                    </button>
+                    <button
+                        className="tbtn btn-restore"
+                        disabled={ value_changed < 0.05 }
+                        {...onTouchOrClick(this.onRestore)}
+                    >
+                        ↑
+                    </button>
+                    <button
+                        className="tbtn btn-minus"
+                        disabled={ this.props.value < 0.05 }
+                        {...onTouchOrClick(this.onMinus)}
+                    >
+                        &minus;
+                    </button>
+                    <button
+                        className="tbtn btn-plus"
+                        disabled={ this.props.original_value < this.props.value + 0.05 }
+                        {...onTouchOrClick(this.onPlus)}
+                    >
+                        +
+                    </button>
                 </div>
-                <button
-                    className="tbtn btn-plus"
-                    {...onTouchOrClick(this.onPlus.bind(this))}
-                >
-                    +
-                </button>
+                <div className="value">
+                    { value_changed
+                        ? `${this.props.original_value.toFixed(1)} → ${this.props.value.toFixed(1)}`
+                        : this.props.value.toFixed(1) }
+                </div>
             </div>
         )
     }
@@ -380,8 +408,6 @@ export class StopWatch extends React.Component {
     static get propTypes() {
         return {
             score_id: React.PropTypes.number,
-            onValueUpdate: React.PropTypes.func.isRequired,
-            sendDeltas: React.PropTypes.bool,
         };
     }
     constructor(props) {
