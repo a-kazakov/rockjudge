@@ -27,10 +27,9 @@ class CompetitionPlanItem(BaseModel):
 
     @classmethod
     def load_models(cls, competition, objects):
-        existing_items = {
-            item.sp: item
-            for item in competition.plan
-        }
+        if len(objects) == 0:
+            return
+        CompetitionPlanItem.delete().where(CompetitionPlanItem.competition == competition).execute()
         tours_iterators = {
             discipline.external_id: iter(discipline.tours)
             for discipline in competition.disciplines
@@ -44,10 +43,7 @@ class CompetitionPlanItem(BaseModel):
                     obj["tour_id"] = tour_id
                 else:
                     obj["tour_id"] = None
-                if obj["sp"] in existing_items:
-                    existing_items[obj["sp"]].update_model(obj, WsMessage())
-                else:
-                    cls.create_model(competition, obj, WsMessage())
+                cls.create_model(competition, obj, WsMessage())
         except StopIteration:
             failed_discipline = None
             for discipline in competition.disciplines:
