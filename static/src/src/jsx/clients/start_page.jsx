@@ -2,6 +2,7 @@ import { _ } from "i10n/loader";
 import { Api } from "server/api";
 import { storage } from "server/storage";
 import { Loader } from "ui/components";
+import { message_dispatcher } from "server/message_dispatcher";
 
 
 export class StartPage extends React.Component {
@@ -17,6 +18,8 @@ export class StartPage extends React.Component {
             all_loaded: false,
             selected_competition: null,
         }
+        message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
+        message_dispatcher.addListener("reload_data", this.loadData.bind(this));
     }
     loadCompetitionData(competition_id) {
         Api("competition.get", {
