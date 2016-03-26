@@ -152,9 +152,50 @@ class Tour(BaseModel):
         else:
             self.clone_heats(prev_tour, ws_message=None, broadcast=False)
 
+    @staticmethod
+    def weighted_shuffle(runs, participants_per_heat):
+        # Prepare result
+        result = [None for _ in runs]
+        free_slots = set(x for x in range(len(result)))
+        # Make clubs list
+        club_pools = defaultdict(list)
+        weights = {}
+        for run in runs:
+            club_pools[run.participant.club_id].append(run)
+        clubs_lists = sorted(club_pools.items(), key=lambda x: -len(x[1]))
+        for club_id, club_runs in clubs_lists:
+            heats_used = defaultdict(lambda: 0)
+            for run in club_runs:
+                slots_weights = {
+                    idx: 1 / (100 ** heats_used[idx // participants_per_heat])
+                    for idx in free_slots
+                }
+                total_weight = sum(slots_weights.values())
+                weights_rsq = list((key, value / total_weight) for key, value in slots_weights.items())
+                s = 0
+                for idx, item in enumerate(weights_rsq):
+                    weights_rsq[idx] = (item[0], s,)
+                    s += item[1]
+                rnd = random.random()
+                l, r = 0, len(weights_rsq)
+                while l < r - 1:
+                    m = (l + r) // 2
+                    if weights_rsq[m][1] < rnd:
+                        l = m
+                    else:
+                        r = m
+                slot = weights_rsq[l][0]
+                heat = slot // participants_per_heat
+                heats_used[heat] += 1
+                result[slot] = run
+                free_slots.remove(slot)
+        return result
+
     def shuffle_heats(self, ws_message, preserve_existing=False, broadcast=True):
         self.smart_prefetch({
-            "runs": {},
+            "runs": {
+                "participant": {}
+            },
         })
         heats = defaultdict(list)
         # Assertions
@@ -171,7 +212,7 @@ class Tour(BaseModel):
                     heats[run.heat].append(run.id)
         # Adding new runs to heats
         new_runs = [run for run in self.runs if run.heat <= 0 or not preserve_existing]
-        random.shuffle(new_runs)
+        new_runs = self.weighted_shuffle(new_runs, self.participants_per_heat)
         current_filling_heat = 1
         for run in new_runs:
             while len(heats[current_filling_heat]) >= self.participants_per_heat:
