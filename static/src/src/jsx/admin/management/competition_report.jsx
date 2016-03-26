@@ -84,6 +84,14 @@ export class CompetitionReport extends React.Component {
         .onSuccess(this.reloadFromStorage.bind(this))
         .send();
     }
+    getTitle() {
+        const n_disciplines = Object.keys(this.state.config.disciplines)
+                                  .filter(key => this.state.config.disciplines[key]).length;
+        const title = n_disciplines > 0
+            ? _("admin.headers.competition_report")
+            : _("admin.headers.competition_info");
+        return title;
+    }
     onConfigChange = (new_config) => {
         this.setState({
             config: new_config,
@@ -93,47 +101,47 @@ export class CompetitionReport extends React.Component {
         if (this.state.competition === null) {
             return <Loader />
         }
-        let n_disciplines = Object.keys(this.state.config.disciplines)
-                                  .filter(key => this.state.config.disciplines[key]).length;
-        let title = n_disciplines > 0
-            ? _("admin.headers.competition_report")
-            : _("admin.headers.competition_info");
-        let body = <div>
-            <Info { ...this.state } />
-            <Clubs { ...this.state } />
-            <Judges { ...this.state } />
-            <DisciplineJudges { ...this.state } />
-            <Results { ...this.state } />
-        </div>;
-        return <div className="app-content">
-            <header className="app-header">
-                <div className="controls">
-                    <button className="btn btn-primary" onClick={ this.createDocx }>DOCX</button>
-                </div>
-                <h1>{ title }</h1>
-            </header>
-            <div className="app-body competition-report">
-                <DisciplinesControls
-                    custom_controls={[
-                        {key: "include_extended_info",      label: _("admin.labels.include_extended_info")},
-                        {key: "include_clubs",              label: _("admin.labels.include_clubs")},
-                        {key: "include_judges",             label: _("admin.labels.include_judges")},
-                        {key: "include_discipline_judges",  label: _("admin.labels.include_discipline_judges")},
-                    ]}
-                    config={ this.state.config }
-                    disciplines={ this.state.competition.disciplines }
-                    onChange={ this.onConfigChange } />
-                <Printable
-                    ref="printable"
-                    title1={ title }
-                    body={ body } />
+        const title = this.getTitle();
+        let body = (
+            <div>
+                <Info { ...this.state } />
+                <Clubs { ...this.state } />
+                <Judges { ...this.state } />
+                <DisciplineJudges { ...this.state } />
+                <Results { ...this.state } />
             </div>
-        </div>
+        );
+        return (
+            <div className="app-content">
+                <header className="app-header">
+                    <div className="controls">
+                        <button className="btn btn-primary" onClick={ this.createDocx }>DOCX</button>
+                    </div>
+                    <h1>{ title }</h1>
+                </header>
+                <div className="app-body competition-report">
+                    <DisciplinesControls
+                        custom_controls={[
+                            {key: "include_extended_info",      label: _("admin.labels.include_extended_info")},
+                            {key: "include_clubs",              label: _("admin.labels.include_clubs")},
+                            {key: "include_judges",             label: _("admin.labels.include_judges")},
+                            {key: "include_discipline_judges",  label: _("admin.labels.include_discipline_judges")},
+                        ]}
+                        config={ this.state.config }
+                        disciplines={ this.state.competition.disciplines }
+                        onChange={ this.onConfigChange } />
+                    <Printable
+                        ref="printable"
+                        title1={ title }
+                        body={ body } />
+                </div>
+            </div>
+        );
     }
     createDocx = (filename="report.docx") => {
         Docx(filename)
             .setMargins([10, 15, 10, 25])
-            .setTitle1(_("admin.headers.competition_report"))
+            .setTitle1(this.getTitle())
             .setBody(this.refs.printable.fetchPrintableData())
             .addStyle(".spacer td", "height", "5pt")
             .addStyle(".tour-name", "background", "#ddd")
