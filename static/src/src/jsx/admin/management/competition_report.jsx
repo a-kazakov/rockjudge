@@ -211,27 +211,43 @@ class Clubs extends React.Component {
 }
 
 class Judges extends React.Component {
-    renderIdx(idx) {
+    static genJudgesNumbers(competition) {
+        let result = [];
+        let numbers_used = {};
+        competition.judges.forEach((j, idx) => {
+            const number = j.number;
+            let appendix = "";
+            let cnt = 0;
+            while (numbers_used[number + appendix]) {
+                appendix = number === "" ? cnt.toString() : `-${++cnt}`;
+            }
+            numbers_used[number + appendix] = true;
+            result.push(number + appendix);
+        });
+        return result;
+    }
+    renderIdx(idx, numbers) {
         if (!this.props.config.include_discipline_judges) {
             return null;
         }
         return (
-            <td className="w-5"><p className="text-right">{ idx + 1 }</p></td>
+            <td className="w-10"><p className="text-right">{ numbers[idx] }</p></td>
         );
     }
     render() {
         if (!this.props.config.include_judges) {
             return null;
         }
+        const numbers = Judges.genJudgesNumbers(this.props.competition);
         return (
             <div>
                 <h4><p>{ _("admin.headers.judges") }</p></h4>
                 <table className="judges"><tbody>
                     { this.props.competition.judges.map((judge, idx) =>
                         <tr key={ judge.id }>
-                            { this.renderIdx(idx) }
+                            { this.renderIdx(idx, numbers) }
                             <th className="w-35"><p className="text-left">{ judge.role_description || _("global.phrases.judge_n", judge.number) }</p></th>
-                            <td className="w-60"><p>{ judge.name }, { judge.category }</p></td>
+                            <td className="w-55"><p>{ judge.name }, { judge.category }</p></td>
                         </tr>
                     ) }
                 </tbody></table>
@@ -251,14 +267,18 @@ class DisciplineJudges extends React.Component {
             });
         });
         let judges = [];
+        const judges_numbers = Judges.genJudgesNumbers(this.props.competition);
         this.props.competition.judges.forEach((j, idx) => {
             if (judges_used[j.id]) {
-                judges.push(idx);
+                judges.push({
+                    number: judges_numbers[idx],
+                    idx: idx,
+                });
             }
         });
         let table = this.props.competition.disciplines.map(discipline =>
-            judges.map(judge_idx =>
-                roles[`${discipline.id}_${this.props.competition.judges[judge_idx].id}`] || null
+            judges.map(judge =>
+                roles[`${discipline.id}_${this.props.competition.judges[judge.idx].id}`] || null
             )
         );
         return { judges, table }
@@ -275,8 +295,8 @@ class DisciplineJudges extends React.Component {
                 <table className="bordered-table"><tbody>
                     <tr>
                         <th className="w-40"><p className="text-left">{ _("admin.labels.discipline") }</p></th>
-                        { data.judges.map(judge_idx =>
-                            <th style={ style } key={ judge_idx }><p className="text-center">{ judge_idx + 1 }</p></th>
+                        { data.judges.map(judge =>
+                            <th style={ style } key={ judge.idx }><p className="text-center">{ judge.number }</p></th>
                         ) }
                     </tr>
                     { data.table.map((row, idx) => {
@@ -284,8 +304,8 @@ class DisciplineJudges extends React.Component {
                         return (
                             <tr key={ discipline.id }>
                                 <th className="w-40"><p className="text-left">{ discipline.name }</p></th>
-                                { row.map(cell =>
-                                    <td style={ style }><p className="text-center">
+                                { row.map((cell, idx) =>
+                                    <td style={ style } key={ idx }><p className="text-center">
                                         { cell ? _(`models.discipline_judge.roles.${cell}`) : "—" }
                                     </p></td>
                                 ) }
