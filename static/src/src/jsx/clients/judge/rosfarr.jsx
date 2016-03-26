@@ -90,6 +90,9 @@ class HeadJudgeTechJudgeScore extends React.Component {
         };
     }
     getTimingData() {
+        if (!this.props.score) {
+            return ["-", ""];
+        }
         let tv_raw_value = this.props.score.data.raw_data.timing_violation;
         if (tv_raw_value === null) {
             return ["-", ""];
@@ -101,27 +104,33 @@ class HeadJudgeTechJudgeScore extends React.Component {
     }
     render() {
         let timing_data = this.getTimingData();
-        return <div>
-            <h3 className={ this.props.score.confirmed ? "confirmed" : "" }>{ this.props.discipline_judge.judge.name }</h3>
-            <table className="tech-judge-info"><tbody><tr>
-                <td className="title">
-                    { __("tablet.tech_judge.jump_steps") }
-                </td>
-                <td className="value">
-                    <div className="inner">
-                        { this.props.score.data.raw_data.jump_steps }
-                    </div>
-                </td>
-                <td className="title">
-                    { __("tablet.tech_judge.timing") }
-                </td>
-                <td className="value">
-                    <div className={ "inner" + timing_data[1] }>
-                        { timing_data[0] }
-                    </div>
-                </td>
-            </tr></tbody></table>
-        </div>
+        let jump_steps = this.props.score
+            ? this.props.score.data.raw_data.jump_steps
+            : 0;
+        let confirmed = this.props.score && this.props.score.confirmed;
+        return (
+            <div>
+                <h3 className={ confirmed ? "confirmed" : "" }>{ this.props.discipline_judge.judge.name }</h3>
+                <table className="tech-judge-info"><tbody><tr>
+                    <td className="title">
+                        { __("tablet.tech_judge.jump_steps") }
+                    </td>
+                    <td className="value">
+                        <div className="inner">
+                            { jump_steps }
+                        </div>
+                    </td>
+                    <td className="title">
+                        { __("tablet.tech_judge.timing") }
+                    </td>
+                    <td className="value">
+                        <div className={ "inner" + timing_data[1] }>
+                            { timing_data[0] }
+                        </div>
+                    </td>
+                </tr></tbody></table>
+            </div>
+        );
     }
 }
 
@@ -158,9 +167,14 @@ class HeadJudgeDanceJudgeScore extends React.Component {
         };
     }
     render() {
-        return <td className={ this.props.score.confirmed ? "confirmed" : "" }>
-            { this.props.score.data.total_score.toFixed(2) }
-        </td>
+        let confirmed = this.props.score && this.props.score.confirmed;
+        return (
+            <td className={ confirmed ? "confirmed" : "" }>
+                { this.props.score
+                    ? this.props.score.data.total_score.toFixed(2)
+                    : "—" }
+            </td>
+        );
     }
 }
 
@@ -266,26 +280,28 @@ class HeadJudgeScoreInput extends React.Component {
                 performed={ this.props.run.performed } />
 
         }
-        return <div>
-            <h3>{ __("tablet.head_judge.penalty_type") }</h3>
-            <TabletSelectorInput
-                choices={ this.getPenaltyCoices() }
-                active={ this.props.score.data.raw_data.penalty }
-                onValueUpdate={ this.genOnPenaltyUpdate() } />
-            <HeadJudgeTechJudgesScores
-                all_discipline_judges={ this.props.all_discipline_judges }
-                all_scores={ this.props.all_scores } />
-            <HeadJudgeDanceJudgesScores
-                all_discipline_judges={ this.props.all_discipline_judges }
-                all_scores={ this.props.all_scores } />
-            <HeadJudgeActobaticOverrides
-                acrobatics={ this.props.run.acrobatics } />
-            <HeadJudgePreviousPenalties
-                penalties={ this.props.run.inherited_data.penalties } />
-            <HeadJudgeNotPerformedSwitch
-                run_id={ this.props.run.id }
-                performed={ this.props.run.performed } />
-        </div>
+        return (
+            <div>
+                <h3>{ __("tablet.head_judge.penalty_type") }</h3>
+                <TabletSelectorInput
+                    choices={ this.getPenaltyCoices() }
+                    active={ this.props.score.data.raw_data.penalty }
+                    onValueUpdate={ this.genOnPenaltyUpdate() } />
+                <HeadJudgeTechJudgesScores
+                    all_discipline_judges={ this.props.all_discipline_judges }
+                    all_scores={ this.props.all_scores } />
+                <HeadJudgeDanceJudgesScores
+                    all_discipline_judges={ this.props.all_discipline_judges }
+                    all_scores={ this.props.all_scores } />
+                <HeadJudgeActobaticOverrides
+                    acrobatics={ this.props.run.acrobatics } />
+                <HeadJudgePreviousPenalties
+                    penalties={ this.props.run.inherited_data.penalties } />
+                <HeadJudgeNotPerformedSwitch
+                    run_id={ this.props.run.id }
+                    performed={ this.props.run.performed } />
+            </div>
+        );
     }
 }
 

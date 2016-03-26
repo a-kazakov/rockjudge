@@ -67,6 +67,6 @@ createJsxTask('presenter');
 createJsxTask('screen');
 createJsxTask('screen_operator');
 
-gulp.task('all', gulp.parallel(...all_jsx_tasks));
+gulp.task('all', gulp.parallel.apply(gulp.parallel, all_jsx_tasks));
 
 gulp.task('default', gulp.series('all'));
