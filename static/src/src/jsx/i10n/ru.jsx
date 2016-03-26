@@ -90,6 +90,7 @@ export function translate(src, arg) {
                 "clients_management": "Управление подключенными устройствами",
                 "clubs": "Клубы-участники",
                 "clubs_management": "Управление клубами",
+                "clubs_shown": "Информация только по следующим клубам:",
                 "clubs_summary": "Сводка по клубам",
                 "competition_info": "Информация о турнире",
                 "competition_plan": "Программа соревнований",

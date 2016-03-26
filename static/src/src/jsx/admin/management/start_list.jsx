@@ -101,6 +101,7 @@ export class StartList extends React.Component {
                 show_sportsmen_only: false,
                 show_summary: false,
                 disciplines: {},
+                clubs: {},
             }
         }
         message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
@@ -125,18 +126,26 @@ export class StartList extends React.Component {
                     programs: {},
                 },
             },
+            clubs: {},
         };
-        let competition = this.storage.get("Competition")
+        const competition = this.storage.get("Competition")
             .by_id(this.props.competition_id)
             .serialize(SCHEMA);
         let config = clone(this.state.config);
         let new_disciplines = {};
+        let new_clubs = {};
         competition.disciplines.forEach(discipline => {
             new_disciplines[discipline.id] = (discipline.id in config.disciplines)
                 ? config.disciplines[discipline.id]
                 : true;
         })
+        competition.clubs.forEach(club => {
+            new_clubs[club.id] = (club.id in config.clubs)
+                ? config.clubs[club.id]
+                : true;
+        });
         config.disciplines = new_disciplines;
+        config.clubs = new_clubs;
         this.setState({
             config: config,
             competition: competition,
@@ -152,6 +161,7 @@ export class StartList extends React.Component {
                         programs: {},
                     },
                 },
+                clubs: {},
             }
         })
         .addToDB("Competition", this.props.competition_id, this.storage)
@@ -164,7 +174,7 @@ export class StartList extends React.Component {
         });
     }
     renderBody() {
-        let props = {
+        const props = {
             competition: this.state.competition,
             config: this.state.config,
         }
@@ -223,6 +233,7 @@ export class StartList extends React.Component {
                     ]}
                     config={ this.state.config }
                     disciplines={ this.state.competition.disciplines }
+                    clubs={ this.state.competition.clubs }
                     onChange={ this.onConfigChange } />
                 <Printable
                     ref="printable"
@@ -250,12 +261,48 @@ export class StartList extends React.Component {
     }
 }
 
+function groupParticipants(competition, config) {
+    if (config.group_by_clubs) {
+        let clubs = clone(competition.clubs);
+        let disciplines = clone(competition.disciplines);
+        let grouped = {}
+        disciplines.forEach(discipline => {
+            if (!config.disciplines[discipline.id]) {
+                return;
+            }
+            discipline.participants.forEach(participant => {
+                if (!config.clubs[participant.club.id]) {
+                    return;
+                }
+                let club_id = participant.club.id;
+                if (!(club_id in grouped)) {
+                    grouped[club_id] = [];
+                }
+                participant.discipline = discipline;
+                grouped[club_id].push(participant);
+            });
+        });
+        clubs.forEach(club => {
+            club.participants = grouped[club.id]
+        });
+        return clubs.filter(club => club.participants);
+    } else {
+        let disciplines = clone(competition.disciplines);
+        disciplines = disciplines.filter(discipline => config.disciplines[discipline.id]);
+        disciplines.forEach(discipline => {
+            discipline.participants = discipline.participants.filter(participant => config.clubs[participant.club.id]);
+        });
+        return disciplines.filter(discipline => discipline.participants.length > 0);
+    }
+}
+
 class DisciplinesSummaryTable extends React.Component {
     render() {
-        let disciplines = this.props.competition.disciplines.filter(d => this.props.config.disciplines[d.id]);
-        let all_participants = [].concat.apply([], disciplines.map(d => d.participants));
+        const disciplines = groupParticipants(this.props.competition, this.props.config);
+        const all_participants = [].concat.apply([], disciplines.map(d => d.participants));
         return (
             <div className="summary">
+                <ClubsShown { ...this.props } />
                 <table className="bordered-table"><tbody>
                     { disciplines.map(discipline =>
                         <ParticipantsStats
@@ -275,8 +322,8 @@ class DisciplinesSummaryTable extends React.Component {
 
 class ClubsSummaryTable extends React.Component {
     render() {
-        let clubs = Clubs.getParticipantsByClubs(this.props.competition, this.props.config);
-        let all_participants = [].concat.apply([], clubs.map(c => c.participants));
+        const clubs = groupParticipants(this.props.competition, this.props.config);
+        const all_participants = [].concat.apply([], clubs.map(c => c.participants));
         return (
             <div className="summary">
                 <DisciplinesShown { ...this.props } />
@@ -308,7 +355,7 @@ class DisciplinesShown extends React.Component {
         if (!this.hasDisabledDisciplines()) {
             return null;
         }
-        let disciplines = this.getEnabledDisciplines();
+        const disciplines = this.getEnabledDisciplines();
         if (disciplines.length === 0) {
             return null;
         }
@@ -325,16 +372,48 @@ class DisciplinesShown extends React.Component {
     }
 }
 
+class ClubsShown extends React.Component {
+    hasDisabledClubs() {
+        return this.props.competition.clubs.filter(d => !this.props.config.clubs[d.id]).length > 0;
+    }
+    getEnabledClubs() {
+        return this.props.competition.clubs.filter(d => this.props.config.clubs[d.id]);
+    }
+    render() {
+        if (!this.hasDisabledClubs()) {
+            return null;
+        }
+        const clubs = this.getEnabledClubs();
+        if (clubs.length === 0) {
+            return null;
+        }
+        return (
+            <div className="clubs-shown">
+                <p><strong>{ _("admin.headers.clubs_shown") }</strong></p>
+                <ul>
+                    { clubs.map(d =>
+                        <li key={ d.id }>{ d.name }</li>
+                    ) }
+                </ul>
+            </div>
+        )
+    }
+}
+
 class Disciplines extends React.Component {
     render() {
-        return <div>
-            { this.props.competition.disciplines.map(discipline =>
-                <DisciplineSection
-                    key={ discipline.id }
-                    discipline={ discipline }
-                    { ...this.props } />
-            ) }
-        </div>
+        const disciplines = groupParticipants(this.props.competition, this.props.config);
+        return (
+            <div>
+                <ClubsShown { ...this.props } />
+                { disciplines.map(discipline =>
+                    <DisciplineSection
+                        key={ discipline.id }
+                        discipline={ discipline }
+                        { ...this.props } />
+                ) }
+            </div>
+        );
     }
 }
 
@@ -418,42 +497,19 @@ class DisciplineSectionRow extends React.Component {
 }
 
 class Clubs extends React.Component {
-    static getParticipantsByClubs(competition, config) {
-        let disciplines = clone(competition.disciplines);
-        let grouped = {};
-        let clubs = {};
-        disciplines.forEach(discipline => {
-            if (!config.disciplines[discipline.id]) {
-                return;
-            }
-            discipline.participants.forEach(participant => {
-                let club_id = participant.club.id;
-                if (!(club_id in grouped)) {
-                    grouped[club_id] = [];
-                }
-                participant.discipline = discipline;
-                grouped[club_id].push(participant);
-                clubs[club_id] = participant.club;
-            });
-        });
-        let clubs_list = Object.keys(clubs).map(key => clubs[key]);
-        clubs_list.sort((a, b) => a.name.localeCompare(b.name));
-        return clubs_list.map(club => {
-            club.participants = grouped[club.id];
-            return club;
-        });
-    }
     render() {
-        let clubs = Clubs.getParticipantsByClubs(this.props.competition, this.props.config);
-        return <div>
-            <DisciplinesShown { ...this.props } />
-            { clubs.map(club =>
-                <ClubSection
-                    key={ club.id }
-                    club={ club }
-                    { ...this.props } />
-            ) }
-        </div>
+        const clubs = groupParticipants(this.props.competition, this.props.config);
+        return (
+            <div>
+                <DisciplinesShown { ...this.props } />
+                { clubs.map(club =>
+                    <ClubSection
+                        key={ club.id }
+                        club={ club }
+                        { ...this.props } />
+                ) }
+            </div>
+        );
     }
 }
 

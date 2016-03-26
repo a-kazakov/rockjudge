@@ -16,6 +16,9 @@
   color: #efefef;
   text-decoration: underline;
 }
+.start-list .controls .spacer {
+  height: 25px;
+}
 .start-list .discipline > table,
 .start-list .club > table {
   width: 100%;
@@ -56,7 +59,8 @@
   padding: 2px 5px;
   text-align: left;
 }
-.start-list .disciplines-shown ul {
+.start-list .disciplines-shown ul,
+.start-list .clubs-shown ul {
   margin-bottom: 15pt;
 }
 .start-list td.acro {
