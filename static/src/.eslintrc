@@ -16,6 +16,7 @@
     "SockJS": true,
     "saveAs": true,
     "htmlDocx": true,
+    "Map": true,
   },
   "env": {
     "browser": true,

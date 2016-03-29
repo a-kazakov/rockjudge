@@ -1,3 +1,5 @@
+import "babel-polyfill";
+
 import { _ } from "i10n/loader";
 import { Api } from "server/api";
 import { storage } from "server/storage";
@@ -65,11 +67,11 @@ export class Judge extends React.Component {
                     state_upd["tour"] = tour;
                     // Find discipline judge
                     state_upd["discipline_judge"] = null;
-                    tour.discipline.discipline_judges.forEach(function(dj) {
+                    tour.discipline.discipline_judges.forEach(dj => {
                         if (dj.judge.id === this.props.judge_id) {
                             state_upd["discipline_judge"] = dj;
                         }
-                    }.bind(this));
+                    });
                     if (reset_heat) {
                         let discipline_judge = state_upd["discipline_judge"];
                         if (!discipline_judge || discipline_judge.role === "head_judge") {
@@ -211,26 +213,37 @@ export class Judge extends React.Component {
         return this.getHeatsCount(runs);
     }
     hasUnconfirmedScores() {
-        let runs = this.state.tour.runs;
-        let confirmed_scores = {};
-        for (let i = runs.length - 1; i >= 0; --i) {
-            for (let j = 0; j < runs[i].scores.length; ++j) {
-                let score = runs[i].scores[j];
+        const runs = this.state.tour.runs;
+        const latest_heat = runs[runs.length - 1].heat;
+        if (latest_heat === runs[0].heat) {
+            return false
+        }
+        const latest_runs = runs.filter(r => r.heat === latest_heat);
+        const prev_runs = runs.filter(r => r.heat === latest_heat - 1);
+        let scores = new Map();
+        const process_run = (run, type) => {
+            for (const score of run.scores) {
+                const dj_id = score.discipline_judge_id;
+                if (!scores.has(dj_id)) {
+                    scores.set(dj_id, {
+                        latest: 0,
+                        prev: 0,
+                    });
+                }
                 if (score.confirmed) {
-                    confirmed_scores[score.discipline_judge_id] = true;
+                    ++scores.get(dj_id)[type];
                 }
             }
-            if (Object.keys(confirmed_scores).length > 0) {
-                if (i === 0) {
-                    return false;
-                }
-                for (let j = 0; j < runs[i].scores.length; ++j) {
-                    let score = runs[i - 1].scores[j];
-                    if (score.confirmed && !confirmed_scores[score.discipline_judge_id]) {
-                        return true;
-                    }
-                }
-                return false;
+        };
+        for (const run of latest_runs) {
+            process_run(run, "latest");
+        }
+        for (const run of prev_runs) {
+            process_run(run, "prev");
+        }
+        for (const stats of scores.values()) {
+            if (stats.prev > 0 && stats.latest < latest_runs.length) {
+                return true;
             }
         }
         return false;
