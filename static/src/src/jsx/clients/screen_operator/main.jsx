@@ -13,34 +13,77 @@ class ScreenOperatorTourSelector extends React.Component {
     static get propTypes() {
         return {
             competition: React.PropTypes.object.isRequired,
-            value: React.PropTypes.string,
+            value: React.PropTypes.oneOfType([
+                React.PropTypes.oneOf([null]),
+                React.PropTypes.number
+            ]),
             onChange: React.PropTypes.func.isRequired,
         };
     }
-    expandSelect(original_event) {
-        original_event.preventDefault();
-        original_event.stopPropagation();
-        var e = document.createEvent("MouseEvents");
-        e.initMouseEvent("mousedown", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-        this._select.dispatchEvent(e);
+    onSelectTour = (tour_id) => {
+        this.props.onChange(tour_id);
+    }
+    renderDiscipline(discipline) {
+        return (
+            <div className="discipline" key={ discipline.id }>
+                <div className="name">
+                    { discipline.name }
+                </div>
+                <div className="tours">
+                    <div className="inner">
+                        { discipline.tours.map(tour =>
+                            <ScreenOperatorTourSelectorTour
+                                key={ tour.id }
+                                tour={ tour }
+                                selected_tour={ this.props.value }
+                                onSelect={ this.onSelectTour } />
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
     }
     render() {
-        let options = [];
-        this.props.competition.disciplines.forEach((discipline) =>
-            discipline.tours.forEach((tour) =>
-                options.push(<option value={ tour.id } key={ tour.id }>
-                    { discipline.name } &mdash; { tour.name + (tour.finalized ? " [over]" : "") }
-                </option>)
-            )
+        return (
+            <div className="tour-selector">
+                { this.props.competition.disciplines.map(discipline =>
+                    this.renderDiscipline(discipline)
+                )}
+            </div>
         );
-        return <select value={ this.props.value }
-                       className="form-control"
-                       ref={ c => this._select = c }
-                       onChange={ (e) => this.props.onChange(e.target.value || null ) }
-                       onTouchStart={ this.expandSelect.bind(this) }>
-            <option value="">----------</option>
-            { options }
-        </select>
+    }
+}
+
+class ScreenOperatorTourSelectorTour extends React.Component {
+    static get propTypes() {
+        return {
+            tour: React.PropTypes.object.isRequired,
+            selected_tour: React.PropTypes.oneOfType([
+                React.PropTypes.oneOf([null]),
+                React.PropTypes.number
+            ]),
+            onSelect: React.PropTypes.func.isRequired,
+        }
+    }
+    onSelect = () => {
+        this.props.onSelect(this.props.tour.id);
+    }
+    render() {
+        let class_name = "tour";
+        if (this.props.tour.id === this.props.selected_tour) {
+            class_name += " selected";
+        }
+        if (this.props.tour.active) {
+            class_name += " active";
+        }
+        if (this.props.tour.finalized) {
+            class_name += " finalized";
+        }
+        return (
+            <div className={ class_name } {...onTouchEndOrClick(this.onSelect)}>
+                { this.props.tour.name }
+            </div>
+        );
     }
 }
 

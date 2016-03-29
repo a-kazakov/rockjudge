@@ -66,6 +66,62 @@
       -ms-flex-positive: 1;
           flex-grow: 1;
 }
+.screen-operator .body .controls .tour-selector {
+  width: 90%;
+  margin: 5px auto;
+  font-size: 11px;
+}
+.screen-operator .body .controls .tour-selector .discipline .name {
+  display: inline-block;
+  vertical-align: top;
+  line-height: 27px;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 40%;
+}
+.screen-operator .body .controls .tour-selector .discipline .tours {
+  display: inline-block;
+  width: 60%;
+}
+.screen-operator .body .controls .tour-selector .discipline .tours .inner {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+}
+.screen-operator .body .controls .tour-selector .discipline .tours .inner .tour {
+  line-height: 19px;
+  border: 2px solid black;
+  margin: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: center;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  cursor: pointer;
+}
+.screen-operator .body .controls .tour-selector .discipline .tours .inner .tour.active {
+  background-color: #bdd4de;
+  color: #1c1d21;
+}
+.screen-operator .body .controls .tour-selector .discipline .tours .inner .tour.finalized {
+  background-color: #ccc;
+}
+.screen-operator .body .controls .tour-selector .discipline .tours .inner .tour.selected {
+  background-color: #ff530d;
+  color: #1c1d21;
+}
 .screen-operator .body .controls .heat-selector .heat {
   margin: 5px auto;
   cursor: pointer;
