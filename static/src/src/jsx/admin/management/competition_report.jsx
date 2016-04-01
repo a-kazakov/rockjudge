@@ -138,8 +138,8 @@ export class CompetitionReport extends React.Component {
             </div>
         );
     }
-    createDocx = (filename="report.docx") => {
-        Docx(filename)
+    createDocx = () => {
+        Docx("report.docx")
             .setMargins([10, 15, 10, 25])
             .setTitle1(this.getTitle())
             .setBody(this.refs.printable.fetchPrintableData())
