@@ -93,7 +93,7 @@ export class Service extends React.Component {
                     <h3>{ _("admin.headers.auto_printer") }</h3>
                     <AutoPrinterStatus competition_id={ this.props.competition_id } />
                     <h3>{ _("admin.headers.about") }</h3>
-                    { _("admin.alerts.about", "v1.0.3", "16 марта 2016г.") }
+                    { _("admin.alerts.about", "v1.0.4", "1 апреля 2016г.") }
                 </div>
             </div>
         </div>
