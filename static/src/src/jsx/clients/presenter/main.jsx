@@ -250,23 +250,35 @@ class PresenterTabletHeats extends React.Component {
         super(props);
         this.state = {
             tour: null,
-            current_heat: 1,
-            active_tour_id: null,
         };
-        message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
-        message_dispatcher.addListener("reload_data", this.loadData.bind(this));
-        message_dispatcher.addListener("active_tour_update", this.dispatchActiveTourUpdate.bind(this));
+        this.listeners = [];
+    }
+    componentDidMount() {
+        this.storage = storage.getDomain("heats");
+        this.addListener("db_update", this.reloadFromStorage.bind(this));
+        this.addListener("reload_data", this.loadData.bind(this));
+        this.addListener("active_tour_update", this.dispatchActiveTourUpdate.bind(this));
         this.loadData();
     }
+    componentWillUnmount() {
+        for (let listener_id of this.listeners) {
+            message_dispatcher.removeListener(listener_id);
+        }
+        storage.delDomain("heats");
+    }
+    addListener(event, dispatcher) {
+        const listener_id = message_dispatcher.addListener(event, dispatcher);
+        this.listeners.push(listener_id);
+    }
     reloadFromStorage() {
-        let active_tour_id = this.state.active_tour_id;
+        const active_tour_id = this.props.active_tour_id;
         if (active_tour_id === null) {
             this.setState({
                 tour: null,
             });
             return;
         }
-        let active_tour_model = storage.get("Tour").by_id(active_tour_id);
+        const active_tour_model = this.storage.get("Tour").by_id(active_tour_id);
         if (!active_tour_model) {
             this.setState({
                 tour: null,
@@ -286,31 +298,24 @@ class PresenterTabletHeats extends React.Component {
         })
     }
     loadData() {
-        Api("tour.find_active", {}).onSuccess(function(response) {
+        Api("tour.find_active", {}).onSuccess(response => {
             this.dispatchActiveTourUpdate(response);
-        }.bind(this)).send();
+        }).send();
     }
 
     // Dispatchers
 
     dispatchActiveTourUpdate(response) {
-        var tour_id = response.tour_id;
+        const tour_id = response.tour_id;
         if ((this.state.tour === null && tour_id === null) || (this.state.tour !== null && this.state.tour.id === tour_id)) {
             return;
         }
-        this.setState({
-            "active_tour_id": tour_id,
-        });
+        this.props.updateActiveTour(tour_id);
         if (tour_id === null) {
-            storage.del("Tour");
-            storage.del("Run");
-            storage.del("Participant");
-            storage.del("Sportsman");
-            storage.del("Club");
-            storage.del("Discipline");
+            storage.delDomain("heats");
+            this.storage = storage.getDomain("heats");
             this.setState({
                 tour: null,
-                current_heat: 1,
             });
             return;
         }
@@ -322,27 +327,20 @@ class PresenterTabletHeats extends React.Component {
             },
             discipline: {},
         }})
-            .addToDB("Tour", tour_id)
-            .onSuccess(function() {
+            .addToDB("Tour", tour_id, this.storage)
+            .onSuccess(() => {
                 this.reloadFromStorage(tour_id);
-                this.setState({
-                    current_heat: 1,
-                });
-            }.bind(this))
+            })
             .send();
     }
 
     // Actions
 
     toPrevHeat() {
-        this.setState({
-            current_heat: this.state.current_heat - 1,
-        });
+        this.props.updateCurrentHeat(this.props.current_heat - 1);
     }
     toNextHeat() {
-        this.setState({
-            current_heat: this.state.current_heat + 1,
-        });
+        this.props.updateCurrentHeat(this.props.current_heat + 1);
     }
 
     // Helpers
@@ -357,12 +355,12 @@ class PresenterTabletHeats extends React.Component {
         var btn_prev = null;
         var btn_next = null;
         if (this.state.tour !== null) {
-            if (this.state.current_heat > 1) {
+            if (this.props.current_heat > 1) {
                 btn_prev = <button className="btn btn-primary pull-left" {...onTouchOrClick(this.toPrevHeat.bind(this))}>
                     { _("tablet.buttons.prev_heat") }
                 </button>;
             }
-            if (this.state.current_heat < this.getHeatsCount()) {
+            if (this.props.current_heat < this.getHeatsCount()) {
                 btn_next = <button className="btn btn-primary pull-right" {...onTouchOrClick(this.toNextHeat.bind(this))}>
                     { _("tablet.buttons.next_heat") }
                 </button>;
@@ -386,9 +384,9 @@ class PresenterTabletHeats extends React.Component {
         </div>;
     }
     renderHeat() {
-        let runs = this.state.tour.runs.filter((run) => run.heat === this.state.current_heat);
+        let runs = this.state.tour.runs.filter((run) => run.heat === this.props.current_heat);
         return <div className="heat">
-            <h3>{ _("tablet.headers.heat") }: { this.state.current_heat } / { this.getHeatsCount() }</h3>
+            <h3>{ _("tablet.headers.heat") }: { this.props.current_heat } / { this.getHeatsCount() }</h3>
             { runs.map((run) =>
                 <table key={ run.id }><tbody>
                     <tr>
@@ -475,10 +473,12 @@ export class Presenter extends React.Component {
         this.state = {
             page: "info",
             competition: null,
+            current_heat: 1,
+            active_tour_id: null,
         };
         message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
         message_dispatcher.addListener("reload_data", this.loadData.bind(this));
-       this.loadData();
+        this.loadData();
     }
     reloadFromStorage() {
         this.setState({
@@ -507,6 +507,19 @@ export class Presenter extends React.Component {
             .onSuccess(this.reloadFromStorage.bind(this))
             .send();
     }
+    updateActiveTour = (new_tour_id) => {
+        if (this.state.active_tour_id !== new_tour_id) {
+            this.setState({
+                active_tour_id: new_tour_id,
+                current_heat: 1,
+            });
+        }
+    }
+    updateCurrentHeat = (new_heat) => {
+        this.setState({
+            current_heat: new_heat,
+        });
+    }
     switchPage(new_page) {
         this.setState({
             page: new_page,
@@ -520,7 +533,13 @@ export class Presenter extends React.Component {
         case "info":
             return <PresenterTabletInfo competition={ this.state.competition } />
         case "heats":
-            return <PresenterTabletHeats />
+            return (
+                <PresenterTabletHeats
+                    current_heat={ this.state.current_heat }
+                    active_tour_id={ this.state.active_tour_id }
+                    updateCurrentHeat={ this.updateCurrentHeat }
+                    updateActiveTour={ this.updateActiveTour } />
+            );
         case "plan":
             return <PresenterTabletPlan competition={ this.state.competition } />
         case "results":
