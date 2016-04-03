@@ -27,23 +27,19 @@ class ParticipantNumbersNumber extends React.Component {
 class ParticipantNumbers extends React.Component {
     makeParticipantsList() {
         let res = [];
-        this.props.disciplines.forEach((discipline, idx) =>
-            res = res.concat(discipline.participants.map((participant) => ({
+        this.props.participants.forEach(group => {
+            res = res.concat(group.participants.map(participant => ({
                 id: participant.id,
                 number: participant.number,
                 name: participant.name,
-                club: participant.club,
-                discipline_idx: idx,
-                discipline_name: discipline.name,
+                club: participant.club
+                    ? participant.club
+                    : group.club,
+                discipline_name: participant.discipline
+                    ? participant.discipline.name
+                    : group.name,
             })))
-        );
-        res.sort((a, b) => CmpChain()
-            .cmp(a.club.city, b.club.city)
-            .cmp(a.club.name, b.club.name)
-            .cmp(a.discipline_idx, b.discipline_idx)
-            .cmp(a.number, b.number)
-            .end()
-        )
+        });
         return res;
     }
     render() {  // eslint-disable-line react/sort-comp
@@ -190,11 +186,11 @@ export class StartList extends React.Component {
         return <Disciplines { ...props } />
     }
     renderParticipantNumbers() {
-        let disciplines = this.state.competition.disciplines.filter(dis => this.state.config.disciplines[dis.id])
+        const participants = groupParticipants(this.state.competition, this.state.config);
         return (
             <ParticipantNumbers
                 competition_name={ this.state.competition.name }
-                disciplines={ disciplines }
+                participants={ participants }
                 ref="numbers" />
         )
     }
