@@ -91,7 +91,7 @@ export class CompetitionPlan extends React.Component {
         </div>
     }
     render() {  // eslint-disable-line react/sort-comp
-        let tours = this.genTours();
+        const tours = this.genTours();
         return <div className="app-content">
             <header className="app-header">
                 <div className="controls">

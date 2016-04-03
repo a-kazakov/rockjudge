@@ -1,3 +1,5 @@
+import "babel-polyfill";
+
 import { _ } from "i10n/loader";
 import { Api } from "server/api";
 import { storage } from "server/storage";
@@ -10,7 +12,7 @@ import { DisciplineResults } from "admin/judging/discipline_results";
 class PresenterTabletLeftBar extends React.Component {
     static get propTypes() {
         return {
-            active: React.PropTypes.oneOf(["info", "heats", "results"]).isRequired,
+            active: React.PropTypes.oneOf(["info", "plan", "heats", "results"]).isRequired,
             onPageSwitch: React.PropTypes.func.isRequired,
         };
     }
@@ -19,6 +21,10 @@ class PresenterTabletLeftBar extends React.Component {
             <div className={ "item" + (this.props.active === "info" ? " active" : "") }
                  { ...onTouchOrClick(() => this.props.onPageSwitch("info")) }>
                 <span>{ _("presenter.headers.info") }</span>
+            </div>
+            <div className={ "item" + (this.props.active === "plan" ? " active" : "") }
+                 { ...onTouchOrClick(() => this.props.onPageSwitch("plan")) }>
+                <span>{ _("presenter.headers.plan") }</span>
             </div>
             <div className={ "item" + (this.props.active === "heats" ? " active" : "") }
                  { ...onTouchOrClick(() => this.props.onPageSwitch("heats")) }>
@@ -109,14 +115,130 @@ class PresenterTabletInfo extends React.Component {
         };
     }
     render() {
-        return <div className="info">
-            <h2>{ this.props.competition.name }</h2>
-            <PresenterTabletInfoCompetitionInfo competition={ this.props.competition } />
-            <h3>{ _("presenter.headers.judges") }</h3>
-            <PresenterTabletInfoJudges judges={ this.props.competition.judges } />
-            <h3>{ _("presenter.headers.clubs") }</h3>
-            <PresenterTabletInfoClubs clubs={ this.props.competition.clubs } />
-        </div>
+        return (
+            <div className="info">
+                <h2>{ this.props.competition.name }</h2>
+                <PresenterTabletInfoCompetitionInfo competition={ this.props.competition } />
+                <h3>{ _("presenter.headers.judges") }</h3>
+                <PresenterTabletInfoJudges judges={ this.props.competition.judges } />
+                <h3>{ _("presenter.headers.clubs") }</h3>
+                <PresenterTabletInfoClubs clubs={ this.props.competition.clubs } />
+            </div>
+        );
+    }
+}
+
+class PresenterTabletPlanItem extends React.Component {
+    makeRef = (ref) => {
+        if (this._scrolled || !ref) {
+            return;
+        }
+        this._scrolled = true;
+        const tour = this.props.tours.get(this.props.item.tour_id);
+        if (tour.tour.active) {
+            ref.scrollIntoView();
+        }
+    }
+    renderVerbose() {
+        return (
+            <tr>
+                <td className="estimated-beginning">
+                    { this.props.item.estimated_beginning }
+                </td>
+                <td className="verbose-name" colSpan="2">
+                    { this.props.item.verbose_name }
+                </td>
+                <td className="estimated-duration">
+                    { this.props.item.estimated_duration }
+                </td>
+            </tr>
+        );
+    }
+    renderNormal() {
+        if (this.props.item.tour_id === null) {
+            return this.renderVerbose();
+        }
+        const tour = this.props.tours.get(this.props.item.tour_id);
+        const class_name =
+            tour.tour.finalized ? "finalized" :
+            tour.tour.active ? "active" : "";
+        return (
+            <tr className={ class_name } ref={ this.makeRef }>
+                <td className="estimated-beginning">
+                    { this.props.item.estimated_beginning }
+                </td>
+                <td className="discipline">
+                    { tour.discipline.name }
+                </td>
+                <td className="tour">
+                    { tour.tour.name }
+                </td>
+                <td className="estimated-duration">
+                    { this.props.item.estimated_duration }
+                </td>
+            </tr>
+        );
+    }
+    render() {
+        return this.props.item.verbose_name !== ""
+            ? this.renderVerbose()
+            : this.renderNormal();
+    }
+}
+
+class PresenterTabletPlan extends React.Component {
+    static get propTypes() {
+        return {
+            competition: React.PropTypes.object.isRequired,
+        };
+    }
+    componentWillReceiveProps(next_props) {
+        this._tours = null;
+    }
+    get tours() {
+        if (!this._tours) {
+            this._tours = new Map();
+            for (let discipline of this.props.competition.disciplines) {
+                for (let tour of discipline.tours) {
+                    this._tours.set(tour.id, {
+                        discipline: discipline,
+                        tour: tour,
+                    });
+                }
+            }
+        }
+        return this._tours;
+    }
+    renderItems() {
+        return this.props.competition.plan.map(item =>
+            <PresenterTabletPlanItem
+                key={ item.id }
+                item={ item }
+                tours={ this.tours } />
+        )
+    }
+    render() {
+        return (
+            <div className="plan">
+                <table><tbody>
+                    <tr>
+                        <th className="estimated-beginning">
+                            { _("presenter.labels.estimated_beginning") }
+                        </th>
+                        <th className="discipline">
+                            { _("presenter.labels.discipline") }
+                        </th>
+                        <th className="tour">
+                            { _("presenter.labels.tour") }
+                        </th>
+                        <th className="estimated-duration">
+                            { _("presenter.labels.estimated_duration") }
+                        </th>
+                    </tr>
+                    { this.renderItems() }
+                </tbody></table>
+            </div>
+        );
     }
 }
 
@@ -364,16 +486,22 @@ export class Presenter extends React.Component {
                 .by_id(this.props.competition_id)
                 .serialize({
                     clubs: {},
-                    disciplines: {},
+                    disciplines: {
+                        tours: {},
+                    },
                     judges: {},
+                    plan: {},
                 }),
         });
     }
     loadData() {
         Api("competition.get", { competition_id: this.props.competition_id, children: {
             clubs: {},
-            disciplines: {},
+            disciplines: {
+                tours: {},
+            },
             judges: {},
+            plan: {},
         } })
             .addToDB("Competition", this.props.competition_id)
             .onSuccess(this.reloadFromStorage.bind(this))
@@ -393,18 +521,22 @@ export class Presenter extends React.Component {
             return <PresenterTabletInfo competition={ this.state.competition } />
         case "heats":
             return <PresenterTabletHeats />
+        case "plan":
+            return <PresenterTabletPlan competition={ this.state.competition } />
         case "results":
             return <PresenterTabletResults competition={ this.state.competition } />
         }
     }
     render() {
-        return <div className="presenter-tablet">
-            <PresenterTabletLeftBar
-                active={ this.state.page }
-                onPageSwitch={ this.switchPage.bind(this) } />
-            <div className="content">
-                { this.renderBody() }
+        return (
+            <div className="presenter-tablet">
+                <PresenterTabletLeftBar
+                    active={ this.state.page }
+                    onPageSwitch={ this.switchPage.bind(this) } />
+                <div className="content">
+                    { this.renderBody() }
+                </div>
             </div>
-        </div>
+        );
     }
 }

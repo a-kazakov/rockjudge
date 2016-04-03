@@ -129,6 +129,49 @@ body {
 .presenter-tablet .content .info .judges td {
   padding: 2px 5px;
 }
+.presenter-tablet .content .plan {
+  padding: 20px;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+}
+.presenter-tablet .content .plan table {
+  width: 100%;
+}
+.presenter-tablet .content .plan table tr:nth-child(2n+1) {
+  background-color: #fff;
+}
+.presenter-tablet .content .plan table tr:nth-child(2n) {
+  background-color: #ddd;
+}
+.presenter-tablet .content .plan table tr.finalized {
+  color: #666;
+  font-style: italic;
+}
+.presenter-tablet .content .plan table tr.active {
+  background-color: #559955;
+  color: #fff;
+  font-weight: bold;
+}
+.presenter-tablet .content .plan table .estimated-beginning {
+  width: 100px;
+  text-align: center;
+}
+.presenter-tablet .content .plan table .estimated-duration {
+  width: 125px;
+  text-align: center;
+}
+.presenter-tablet .content .plan table td.verbose-name {
+  font-weight: bold;
+  font-style: italic;
+}
+.presenter-tablet .content .plan table th,
+.presenter-tablet .content .plan table td {
+  padding: 2px 5px;
+}
 .presenter-tablet .content .heats {
   display: -webkit-box;
   display: -webkit-flex;

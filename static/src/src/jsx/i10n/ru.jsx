@@ -420,11 +420,16 @@ export function translate(src, arg) {
                 "heats": "Заходы",
                 "info": "Информация",
                 "judges": "Судьи",
+                "plan": "Программа",
                 "results": "Результаты",
             },
             "labels": {
+                "discipline": "Дисциплина",
+                "estimated_beginning": "Начало",
+                "estimated_duration": "Длит.",
                 "no_active_tour": "Нет активного тура",
                 "place": "место",
+                "tour": "Тур",
             },
         },
         "results": {

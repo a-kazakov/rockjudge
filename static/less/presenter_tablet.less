@@ -73,6 +73,45 @@ html, body {
                 }
             }
         }
+        .plan {
+            padding: 20px;
+            overflow: scroll;
+            -webkit-overflow-scrolling: touch;
+            flex-grow: 1;
+            table {
+                width: 100%;
+                tr:nth-child(2n+1) {
+                    background-color: #fff;
+                }
+                tr:nth-child(2n) {
+                    background-color: #ddd;
+                }
+                tr.finalized {
+                    color: #666;
+                    font-style: italic;
+                }
+                tr.active {
+                    background-color: @ui-green;
+                    color: #fff;
+                    font-weight: bold;
+                }
+                .estimated-beginning {
+                    width: 100px;
+                    text-align: center;
+                }
+                .estimated-duration {
+                    width: 125px;
+                    text-align: center;
+                }
+                td.verbose-name {
+                    font-weight: bold;
+                    font-style: italic;
+                }
+                th, td {
+                    padding: 2px 5px;
+                }
+            }
+        }
         .heats {
             display: flex;
             flex-grow: 1;
