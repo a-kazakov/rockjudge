@@ -1,6 +1,7 @@
 import getScoringType from "common/getScoringType";
 
-import AcroJudgeTabletBody from "./AcroJudgeTabletBody";
+import AcrobaticsLayout from "./AcrobaticsLayout";
+import DanceLayout from "./DanceLayout";
 
 import { Api } from "server/api";
 
@@ -17,19 +18,25 @@ export default class JudgeTablet extends React.Component {
     }
     render() {
         const scoring_type = getScoringType(this.props.disciplineJudge, this.props.tour.scoring_system_name);
+        let LayoutClass;
         switch (scoring_type) {
         case "acro":
-            return (
-                <AcroJudgeTabletBody
-                    disciplineJudge={ this.props.disciplineJudge }
-                    tour={ this.props.tour }
-                    onScoreUpdate={ this.onScoreUpdate }
-                    onScoreConfirm={ this.onScoreConfirm } />
-            );
+            LayoutClass = AcrobaticsLayout;
+            break;
+        case "dance":
+            LayoutClass = DanceLayout;
+            break;
         default:
             return (
                 <div>Not implemented!</div>
             );
         }
+        return (
+            <LayoutClass
+                disciplineJudge={ this.props.disciplineJudge }
+                tour={ this.props.tour }
+                onScoreUpdate={ this.onScoreUpdate }
+                onScoreConfirm={ this.onScoreConfirm } />
+        );
     }
 }

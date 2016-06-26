@@ -35,7 +35,7 @@ function createJsxTask(task) {
             })
             .transform(babelify, {
                 presets: ['es2015', 'react'],
-                plugins: ['transform-class-properties'],
+                plugins: ['transform-class-properties', 'transform-object-rest-spread'],
             })
             .bundle()
             .pipe(source(out_file))
@@ -78,7 +78,7 @@ function createRuleSetJsxTask(task) {
             })
             .transform(babelify, {
                 presets: ['es2015', 'react'],
-                plugins: ['transform-class-properties'],
+                plugins: ['transform-class-properties', 'transform-object-rest-spread'],
             })
             .bundle()
             .pipe(source(out_file))

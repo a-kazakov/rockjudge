@@ -1,8 +1,6 @@
 import _ from "l10n";
 
 import ConfirmationButton from "JudgeTablet/ConfirmationButton";
-import Elements from "./Elements";
-import Mistakes from "./Mistakes";
 
 export default class Participant extends React.Component {
     constructor(props) {
@@ -23,7 +21,20 @@ export default class Participant extends React.Component {
         });
     }
     canConfirm() {
-        return this.score.data.raw_data.reductions.filter(a => a === null).length === 0;
+        const score_data = this.score.data.raw_data;
+        for (const key of Object.keys(score_data)) {
+            const value = score_data[key];
+            if (Array.isArray(value)) {
+                if (value.filter(a => a === null).length !== 0) {
+                    return false;
+                }
+            } else {
+                if (value === null) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     onConfirm = () => {
         this.props.onScoreConfirm(this.score.id);
@@ -35,6 +46,9 @@ export default class Participant extends React.Component {
         return this._cache[key];
     }
     onScoreUpdate = (key, value) => {
+        if (this.score.confirmed) {
+            return;
+        }
         let score_data = {};
         score_data[key] = value;
         this.props.onScoreUpdate(this.score.id, score_data);
@@ -50,13 +64,11 @@ export default class Participant extends React.Component {
     renderScoringLayout() {
         const score_data = this.score.data.raw_data;
         const class_name = this.score.confirmed ? "read-only" : "";
+        const ScoringComponent = this.props.layoutClass;
         return (
             <div className={ class_name }>
-                <Elements
-                    reductions={ score_data.reductions }
-                    onAcroReductionUpdate={ this.onAcroReductionUpdate } />
-                <Mistakes
-                    mistakes={ score_data.mistakes }
+                <ScoringComponent
+                    scoreData={ score_data }
                     onScoreUpdate={ this.onScoreUpdate } />
                 <ConfirmationButton
                     confirmed={ this.score.confirmed }

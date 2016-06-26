@@ -2,7 +2,7 @@ import Header from "JudgeTablet/Header";
 import Grid from "JudgeTablet/Grid";
 import Participant from "./Participant";
 
-export default class AcroJudgeTabletBody extends React.Component {
+export default class GeneralLayout extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -57,6 +57,7 @@ export default class AcroJudgeTabletBody extends React.Component {
                             <Participant
                                 key={ run.id }
                                 run={ run }
+                                layoutClass={ this.props.layoutClass }
                                 disciplineJudge={ this.props.disciplineJudge }
                                 onScoreUpdate={ this.props.onScoreUpdate }
                                 onScoreConfirm={ this.props.onScoreConfirm } />
