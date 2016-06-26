@@ -1,4 +1,4 @@
-import { _ } from "i10n/loader";
+import { _ } from "l10n/loader";
 import { HeatsBody, HeatsButtons } from "./heats";
 import { TourAdminBody, TourAdminButtons } from "./tour_admin";
 import { TourResultsBody, TourResultsButtons } from "./tour_results";

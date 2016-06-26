@@ -17,7 +17,7 @@ export function translate(src, arg) {
         "admin": {
             "alerts": {
                 "about": (version, date) => <div className="about">
-                    <p><b>RockJudge {version}</b> (от {date}) &mdash; система для подсчета результатов соревнований по акробатическому рок-н-роллу.</p>
+                    <p><b>RockJudge {version}</b> (закрытая версия для ограниченного использования) &mdash; система для подсчета результатов соревнований по акробатическому рок-н-роллу.</p>
                     <p>Авторские права на систему RockJudge полностью принадлежат разработчику Артему Казакову. Соавтор системы Антон Амелин.</p>
                     <p>Система распространяется по лицензии Linum d.o.o (info@linum.hr). Для использования системы судейства RockJudge необходимо и достаточно иметь право использования системы Linum LPS.</p>
                     <p>Официальный сайт: <a href="https://rockjudge.com/" target="_blank">https://rockjudge.com/</a></p>

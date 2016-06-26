@@ -34,7 +34,7 @@ function createJsxTask(task) {
                 debug: env_type !== 'production',
             })
             .transform(babelify, {
-                presets: ['es2015-loose', 'react'],
+                presets: ['es2015', 'react'],
                 plugins: ['transform-class-properties'],
             })
             .bundle()
@@ -56,6 +56,49 @@ function createJsxTask(task) {
     gulp.task(task, makeItFaster(str_func));
 }
 
+function createRuleSetJsxTask(task) {
+    all_jsx_tasks.push("rs_" + task);
+    function doTheJob() {
+        var gulp = require('gulp');
+        var browserify = require('browserify');
+        var babelify = require('babelify');
+        var uglify = require('gulp-uglify');
+        var source = require('vinyl-source-stream');
+        var buffer = require('vinyl-buffer');
+        var gutil = require('gulp-util');
+
+        var task = "__task__";
+        var env_type = "__env_type__";
+        function buildJsx(entry_point, out_dir, out_file) {
+            var bundler = browserify({
+                entries: entry_point,
+                extensions: ['.jsx'],
+                paths: ['./src/jsx/', './src/jsx/rules_sets/' + task + '/'],
+                debug: env_type !== 'production',
+            })
+            .transform(babelify, {
+                presets: ['es2015', 'react'],
+                plugins: ['transform-class-properties'],
+            })
+            .bundle()
+            .pipe(source(out_file))
+            .pipe(buffer())
+            .pipe(env_type === 'production' ? uglify() : gutil.noop())
+            .pipe(gulp.dest(out_dir));
+            return bundler;
+        }
+        return buildJsx(
+            'src/jsx/rules_sets/' + task + '/root.jsx',
+            '../js/rules_sets',
+            task + '.js'
+        );
+    }
+    var str_func = doTheJob.toString()
+        .replace("__task__", task)
+        .replace("__env_type__", gutil.env.type);
+    gulp.task("rs_" + task, makeItFaster(str_func));
+}
+
 createJsxTask('start_page');
 createJsxTask('admin');
 createJsxTask('auto_printer');
@@ -66,6 +109,8 @@ createJsxTask('lib');
 createJsxTask('presenter');
 createJsxTask('screen');
 createJsxTask('screen_operator');
+
+createRuleSetJsxTask('rosfarr');
 
 gulp.task('all', gulp.parallel.apply(gulp.parallel, all_jsx_tasks));
 

@@ -1,4 +1,4 @@
-import { _ } from "i10n/loader";
+import { _ } from "l10n/loader";
 import { Api } from "server/api";
 import { storage } from "server/storage";
 import { message_dispatcher } from "server/message_dispatcher";

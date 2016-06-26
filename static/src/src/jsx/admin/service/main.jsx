@@ -1,4 +1,4 @@
-import { _ } from "i10n/loader";
+import { _ } from "l10n/loader";
 import { Api } from "server/api";
 import { showConfirm } from "ui/dialogs";
 import { AutoPrinterStatus } from "./auto_printer_status";
@@ -93,7 +93,7 @@ export class Service extends React.Component {
                     <h3>{ _("admin.headers.auto_printer") }</h3>
                     <AutoPrinterStatus competition_id={ this.props.competition_id } />
                     <h3>{ _("admin.headers.about") }</h3>
-                    { _("admin.alerts.about", "v1.0.5", "7 апреля 2016г.") }
+                    { _("admin.alerts.about", "v1.1 prerelease", "") }
                 </div>
             </div>
         </div>

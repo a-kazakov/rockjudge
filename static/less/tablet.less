@@ -12,6 +12,29 @@ html, body, #content {
     header {
         flex-shrink: 0;
     }
+    .grid {
+        margin: 0 auto;
+        width: 100%;
+        .row {
+            &.align-left {
+                margin-right: auto;
+            }
+            &.align-right {
+                margin-left: auto;
+            }
+            &.align-center {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .item {
+                vertical-align: top;
+                border-left: 2px solid black;
+                &:first-child {
+                    border-left: none;
+                }
+            }
+        }
+    }
     .splash-screen {
         flex-grow: 1;
         display: flex;
@@ -53,20 +76,11 @@ html, body, #content {
         flex-grow: 1;
         overflow-y: scroll;
         -webkit-overflow-scrolling: touch;
-        .main-table {
-            width: 100%;
-            margin: 0 auto 20px;
-            table-layout: fixed;
-            &.single-run {
-                width: 650px;
-            }
-            > tbody > tr > td {
-                vertical-align: top;
-                padding: 15px;
-                border-left: 2px solid @ui-medium;
-                &:first-child {
-                    border-left: none;
-                }
+        .participant {
+            padding: 15px;
+            border-left: 2px solid @ui-medium;
+            &:first-child {
+                border-left: none;
             }
             h2 {
                 text-align: center;
@@ -420,7 +434,7 @@ button.score-btn {
     .loop-width((@counter - 1));
     &.n-@{counter} {
         button {
-            width: ((99%) / @counter) - 1%;
+            width: ((99.99%) / @counter) - 1%;
         }
     }
 }
@@ -429,7 +443,7 @@ button.score-btn {
     .loop-width-2rows((@counter - 1));
     &.n-@{counter} {
         button {
-            @btn-width: 2 * (99%) / (@counter + 1) - 1%;
+            @btn-width: 2 * (99.99%) / (@counter + 1) - 1%;
                 width: @btn-width;
                 &:nth-child(2n) {
                      margin: 45px (@btn-width / -2) 0 (@btn-width / -2) !important;

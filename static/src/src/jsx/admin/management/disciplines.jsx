@@ -1,4 +1,4 @@
-import { _ } from "i10n/loader";
+import { _ } from "l10n/loader";
 import { Api } from "server/api";
 import { showError, showConfirm } from "ui/dialogs";
 import { GL } from "common/definitions";

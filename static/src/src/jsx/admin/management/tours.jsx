@@ -1,4 +1,4 @@
-import { _, tour_names } from "i10n/loader";
+import { _, tour_names } from "l10n/loader";
 import { Api } from "server/api";
 import { GL } from "common/definitions";
 import { showConfirm } from "ui/dialogs";

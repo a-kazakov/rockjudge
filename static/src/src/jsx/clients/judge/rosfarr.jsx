@@ -1,4 +1,4 @@
-import { _ } from "i10n/loader";
+import { _ } from "l10n/loader";
 import { Api } from "server/api";
 import {
     onTouchOrClick,
@@ -645,19 +645,6 @@ class DanceJudgeScoreInput extends React.Component {
 }
 
 // Acro judge
-
-class AcroJudgeAcrobaticInput extends React.Component {
-    render() {
-        return <div>
-            <h3>{ _("tablet.headers.acro_n", this.props.acro_idx) }</h3>
-            <ScorePartScale
-                scale="reduction"
-                active={ this.props.reduction }
-                onValueUpdate={ this.props.onAcroReductionUpdate } />
-        </div>
-    }
-}
-
 class AcroJudgeScoreMistakes extends React.Component {
     render() {
         return <div className="mistakes">

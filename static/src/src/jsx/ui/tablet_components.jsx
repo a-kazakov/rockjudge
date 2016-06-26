@@ -1,4 +1,4 @@
-import { _ } from "i10n/loader";
+import { _ } from "l10n/loader";
 
 
 export function onTouchOrClick(handler) {
@@ -207,7 +207,7 @@ export class TabletSelectorInput extends React.Component {
         this.props.choices.forEach((el, idx) => {
             let key = el[0];
             let text = el[1];
-            let active_class_name = (this.props.active === key) ? " active" : "";
+            let active_class_name = (this.props.value === key) ? " active" : "";
             result.push(
                 <button
                     key={ key }
@@ -221,7 +221,7 @@ export class TabletSelectorInput extends React.Component {
             }
         });
         let layout_class = (this.props.style !== "two-lines") ? "selector-layout" : "selector-layout-2rows";
-        let selected_class = this.props.active === null ? "" : " selected"
+        let selected_class = this.props.value === null ? "" : " selected"
         return <div className={"scoring-layout " + layout_class + selected_class + " n-" + this.getButtonsCount().toString() }>{ result }</div>
     }
 }

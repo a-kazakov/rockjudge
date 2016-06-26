@@ -1,4 +1,4 @@
-import { _ } from "i10n/loader";
+import { _ } from "l10n/loader";
 import { Clubs } from "./clubs";
 import { CompetitionPlan } from "./competition_plan";
 import { CompetitionReport } from "./competition_report";

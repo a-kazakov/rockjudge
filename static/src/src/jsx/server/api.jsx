@@ -1,4 +1,4 @@
-import { _ } from "i10n/loader";
+import { _ } from "l10n/loader";
 import { storage } from "server/storage";
 import { showError } from "ui/dialogs";
 

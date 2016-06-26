@@ -1,16 +1,14 @@
 import "babel-polyfill";
 
-import { _ } from "i10n/loader";
+import { _ } from "l10n/loader";
 import { Api } from "server/api";
 import { storage } from "server/storage";
 import { message_dispatcher } from "server/message_dispatcher";
 import { Loader } from "ui/components";
 import { showConfirm } from "ui/dialogs";
 import { onTouchOrClick } from "ui/tablet_components";
-import { TourResultsBody } from "admin/judging/tour_results";
 
-import { TabletScoreInput } from "./rosfarr";
-
+import rule_set from "rules_sets/loader";
 
 export class Judge extends React.Component {
     static get propTypes() {
@@ -49,7 +47,7 @@ export class Judge extends React.Component {
 
     // Loaders
 
-    reloadFromStorage(reset_heat) {
+    reloadFromStorage() {
         let st_judge = storage.get("Judge").by_id(this.props.judge_id)
         if (!st_judge) {
             return;
@@ -72,16 +70,6 @@ export class Judge extends React.Component {
                             state_upd["discipline_judge"] = dj;
                         }
                     });
-                    if (reset_heat) {
-                        let discipline_judge = state_upd["discipline_judge"];
-                        if (!discipline_judge || discipline_judge.role === "head_judge") {
-                            state_upd["current_heat"] = 1;
-                        } else {
-                            let discipline_judge_id = discipline_judge && discipline_judge.id;
-                            state_upd["current_heat"] = this.getFirstNonConfirmedHeat(tour.runs, discipline_judge_id) || 1;
-                        }
-                        state_upd["page"] = "default";
-                    }
                 }
             }
         }
@@ -142,7 +130,7 @@ export class Judge extends React.Component {
     }
 
     // Actions
-
+/*
     toPrevHeat() {
         this.setState({
             current_heat: this.state.current_heat - 1,
@@ -192,9 +180,9 @@ export class Judge extends React.Component {
             }
         });
     }
-
+*/
     // Helpers
-
+/*
     getHeatsCount(runs) {
         runs = runs || this.state.tour.runs;
         return Math.max(...runs.map((run) => run.heat));
@@ -336,7 +324,7 @@ export class Judge extends React.Component {
             { btn_next }
             { current_tour }
         </header>
-    }
+    }*/
     renderSplashScreen() {
         let judge = this.state.judge;
         let judge_number = judge.role_description || _("global.phrases.judge_n", judge.number);
@@ -434,7 +422,7 @@ export class Judge extends React.Component {
                 { cells }
             </tr></tbody></table>;
         </div>
-    }
+    }/*
     renderFooter() {
         if (this.state.discipline_judge === null) {
             return null;
@@ -470,7 +458,7 @@ export class Judge extends React.Component {
                 {...onTouchOrClick(this.switchPage.bind(this, "acro"))}>{ _("tablet.pages.acrobatics") }
             </button>
         </div>;
-    }
+    }*/
     render() {
         if (this.state.judge === null) {
             return <Loader />;
@@ -481,10 +469,17 @@ export class Judge extends React.Component {
         if (this.state.discipline_judge === null) {
             return this.renderSplashScreen();
         }
+        const JudgeTabletComponent = rule_set.judge_tablet;
+        return (
+            <JudgeTabletComponent
+                tour={ this.state.tour }
+                disciplineJudge={ this.state.discipline_judge } />
+        );
+        /*
         return <div className="judge-tablet">
             { this.renderHeader() }
             { this.renderScoringLayout() }
             { this.renderFooter() }
-        </div>
+        </div>*/
     }
 }

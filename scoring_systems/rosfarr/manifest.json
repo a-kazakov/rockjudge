@@ -1,0 +1,21 @@
+{
+    "name": "РосФАРР",
+    "scoring_systems": [
+        "am_final_acro",
+        "am_final_fw",
+        "formation",
+        "formation_acro",
+        "acro",
+        "no_acro",
+        "simplified"
+    ],
+    "supported_languages": [
+        "ru"
+    ],
+    "judges_roles": [
+        "head_judge",
+        "dance_judge",
+        "acro_judge",
+        "tech_judge"
+    ]
+}

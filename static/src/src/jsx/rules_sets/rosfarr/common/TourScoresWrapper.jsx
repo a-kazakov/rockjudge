@@ -1,19 +1,7 @@
-export class RunScoresWrapper {
-    constructor(run, discipline_judges) {
-        this.run = run;
-        this.discipline_judges = discipline_judges;
-        this.scores_by_discipline_judge_id = {}
-        run.scores.forEach(function(score) {
-            let dj_id = score.discipline_judge_id;
-            this.scores_by_discipline_judge_id[dj_id] = score;
-        }.bind(this));
-    }
-    getScoresByJudgeIds(discipline_judge_ids) {
-        return discipline_judge_ids.map(((dj_id) => this.scores_by_discipline_judge_id[dj_id]).bind(this));
-    }
-}
+import RunScoresWrapper from "./RunScoresWrapper";
 
-export class TourScoresWrapper {
+
+export default class TourScoresWrapper {
     constructor(tour, results) {
         this.run_wrappers = tour.runs.map((run) => new RunScoresWrapper(run, tour.discipline_judges));
         this.discipline_judges = tour.discipline.discipline_judges;
@@ -57,39 +45,5 @@ export class TourScoresWrapper {
     }
     getRuns() {
         return this.run_wrappers.map((w) => w.run);
-    }
-}
-
-export function getParticipantDisplay(participant) {
-    if (participant.formation_name !== "") {
-        return <p>{ participant.formation_name }</p>;
-    }
-    return participant.sportsmen.map((s, idx) => <p key={ idx }>{ s.last_name + " " + s.first_name }</p>);
-}
-
-export function getScoringType(discipline_judge, scoring_system_name) {
-    switch (discipline_judge.role) {
-    case "dance_judge":
-        switch (scoring_system_name) {
-        case "rosfarr.formation":
-            return "formation";
-        case "rosfarr.formation_acro":
-            return "formation_acro";
-        case "rosfarr.simplified":
-            return "simplified";
-        default:
-            return "dance";
-        }
-    case "acro_judge":
-        switch (scoring_system_name) {
-        case "rosfarr.am_final_fw":
-            return "dance";
-        default:
-            return "acro";
-        }
-    case "tech_judge":
-        return "tech";
-    case "head_judge":
-        return "head";
     }
 }
