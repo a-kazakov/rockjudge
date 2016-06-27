@@ -62,6 +62,7 @@ class TourResultsVerboseTableRow extends React.Component {
     renderScore(judge, score, additiolal_data) {
         switch (getScoringType(judge, this.props.tour.scoring_system_name)) {
         case "dance":
+        case "dance_halved":
             return this.renderDanceScore(score, additiolal_data);
         case "acro":
             return this.renderAcroScore(score, additiolal_data);

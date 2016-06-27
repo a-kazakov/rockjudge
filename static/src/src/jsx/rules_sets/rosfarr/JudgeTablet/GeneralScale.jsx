@@ -10,6 +10,11 @@ import {
 } from "ui/tablet_components";
 
 export default class GeneralScale extends React.Component {
+    static get defaultProps() {
+        return {
+            header: null,
+        };
+    }
     get possiblie_reductions() {
         return [
             [100, "X"],
@@ -20,6 +25,17 @@ export default class GeneralScale extends React.Component {
             [5,   "-5%"],
             [0,   "OK"],
         ]
+    }
+    renderHeader() {
+        if (this.props.header === null) {
+            return null;
+        }
+        return (
+            <h3>
+                { this.props.header }
+            </h3>
+        );
+
     }
     renderBody() {
         switch (this.props.scale) {
@@ -56,7 +72,7 @@ export default class GeneralScale extends React.Component {
     render() {
         return (
             <div>
-                <h3>{ this.props.header }</h3>
+                { this.renderHeader() }
                 { this.renderBody() }
             </div>
         );

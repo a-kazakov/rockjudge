@@ -188,14 +188,14 @@ export class TabletSelectorInput extends React.Component {
         return {
             style: React.PropTypes.string,
             choices: React.PropTypes.array.isRequired,
-            row_size: React.PropTypes.number,
+            rowSize: React.PropTypes.number,
             active: React.PropTypes.number,
             onValueUpdate: React.PropTypes.func.isRequired,
         };
     }
     getButtonsCount() {
         if (this.props.style === "grid") {
-            return this.props.row_size;
+            return this.props.rowSize;
         }
         return this.props.choices.length;
     }
@@ -216,7 +216,7 @@ export class TabletSelectorInput extends React.Component {
                 >
                     {text}
                 </button>);
-            if (this.props.style === "grid" && (idx + 1) % this.props.row_size === 0) {
+            if (this.props.style === "grid" && (idx + 1) % this.props.rowSize === 0) {
                 result.push(<br key={ "br" + idx } />)
             }
         });
