@@ -4,7 +4,6 @@ import ResultsTable3 from "ResultsTable3";
 import JudgeTablet from "JudgeTablet";
 import AdminScoreInput from "AdminScoreInput";
 
-
 window.registerRulesSet("RosFARR", {
     tour_results_table_1: ResultsTable1,
     tour_results_table_2: ResultsTable2,

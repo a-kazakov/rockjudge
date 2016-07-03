@@ -102,72 +102,72 @@ body,
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
 }
-.judge-tablet .body .participant {
+.judge-tablet .body .layout-participant {
   padding: 15px;
   border-left: 2px solid #3f5765;
 }
-.judge-tablet .body .participant:first-child {
+.judge-tablet .body .layout-participant:first-child {
   border-left: none;
 }
-.judge-tablet .body .participant h2 {
+.judge-tablet .body .layout-participant h2 {
   text-align: center;
   font-size: 20px;
   font-weight: 500;
   margin: 5px 0 15px 0;
 }
-.judge-tablet .body .participant .total-score {
+.judge-tablet .body .layout-participant .total-score {
   font-weight: bold;
   font-size: 14px;
   text-align: right;
 }
-.judge-tablet .body .participant .not-performing {
+.judge-tablet .body .layout-participant .not-performing {
   font-weight: bold;
   font-size: 20px;
   text-align: center;
 }
-.judge-tablet .body .participant .not-performed-control {
+.judge-tablet .body .layout-participant .not-performed-control {
   text-align: center;
   padding-top: 20px;
 }
-.judge-tablet .body .participant .dance-judge-scores {
+.judge-tablet .body .layout-participant .dance-judge-scores {
   width: 100%;
   margin: 5px auto;
   table-layout: fixed;
   border-collapse: separate;
   border-spacing: 5px;
 }
-.judge-tablet .body .participant .dance-judge-scores .numbers {
+.judge-tablet .body .layout-participant .dance-judge-scores .numbers {
   padding: 0;
   text-align: center;
   font-weight: bold;
   font-size: 14px;
 }
-.judge-tablet .body .participant .dance-judge-scores .scores td {
+.judge-tablet .body .layout-participant .dance-judge-scores .scores td {
   background-color: #a7bbc5;
   padding: 5px;
   text-align: center;
   font-weight: bold;
   font-size: 14px;
 }
-.judge-tablet .body .participant .dance-judge-scores .scores td.confirmed {
+.judge-tablet .body .layout-participant .dance-judge-scores .scores td.confirmed {
   color: #efefef;
   background-color: #090;
 }
-.judge-tablet .body .participant .mistakes .tbtn {
+.judge-tablet .body .layout-participant .mistakes .tbtn {
   background-color: #900;
 }
-.judge-tablet .body .participant .mistakes .value {
+.judge-tablet .body .layout-participant .mistakes .value {
   background-color: #fcc;
 }
-div.judge-tablet .body .participant .mistakes {
+div.judge-tablet .body .layout-participant .mistakes {
   width: 50%;
   margin: 0 auto;
 }
-.judge-tablet .body .participant .mistakes td {
+.judge-tablet .body .layout-participant .mistakes td {
   width: 50%;
   padding: 0 10px;
 }
-.judge-tablet .body .participant .tech-judge-info {
+.judge-tablet .body .layout-participant .tech-judge-info {
   font-weight: bold;
   font-size: 13px;
   width: 100%;
@@ -178,7 +178,7 @@ div.judge-tablet .body .participant .mistakes {
   margin-bottom: 10px;
   height: 29px;
 }
-.judge-tablet .body .participant .tech-judge-info .title {
+.judge-tablet .body .layout-participant .tech-judge-info .title {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   vertical-align: middle;
@@ -186,34 +186,34 @@ div.judge-tablet .body .participant .mistakes {
   padding-right: 5px;
   text-align: right;
 }
-.judge-tablet .body .participant .tech-judge-info .value {
+.judge-tablet .body .layout-participant .tech-judge-info .value {
   vertical-align: top;
   width: 17.5%;
   text-align: center;
   padding: 2px;
 }
-.judge-tablet .body .participant .tech-judge-info .value .inner {
+.judge-tablet .body .layout-participant .tech-judge-info .value .inner {
   background-color: #a7bbc5;
   line-height: 29px;
   height: 29px;
 }
-.judge-tablet .body .participant .tech-judge-info .value .inner.ok {
+.judge-tablet .body .layout-participant .tech-judge-info .value .inner.ok {
   background-color: #090;
   color: #efefef;
 }
-.judge-tablet .body .participant .tech-judge-info .value .inner.fail {
+.judge-tablet .body .layout-participant .tech-judge-info .value .inner.fail {
   background-color: #900;
   color: #efefef;
 }
-.judge-tablet .body .participant .confirm {
+.judge-tablet .body .layout-participant .confirm {
   text-align: center;
   padding-top: 10px;
   height: 35px;
 }
-.judge-tablet .body .participant .confirm button {
+.judge-tablet .body .layout-participant .confirm button {
   width: 200px;
 }
-.judge-tablet .body .participant .slider {
+.judge-tablet .body .layout-participant .slider {
   position: relative;
   width: 250px;
   height: 37px;
@@ -222,7 +222,7 @@ div.judge-tablet .body .participant .mistakes {
   text-align: center;
   margin: 0 auto;
 }
-.judge-tablet .body .participant .slider .inner {
+.judge-tablet .body .layout-participant .slider .inner {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -234,21 +234,21 @@ div.judge-tablet .body .participant .mistakes {
   color: #fff;
   cursor: pointer;
 }
-.judge-tablet .body .participant .slider .free {
+.judge-tablet .body .layout-participant .slider .free {
   -webkit-transition: all 1s ease;
           transition: all 1s ease;
 }
-.judge-tablet .body .participant .slider .slide-text {
+.judge-tablet .body .layout-participant .slider .slide-text {
   margin-left: 35px;
 }
-.judge-tablet .body .participant .slider .done-text {
+.judge-tablet .body .layout-participant .slider .done-text {
   margin-right: 35px;
 }
-.judge-tablet .body .participant .stopwatch {
+.judge-tablet .body .layout-participant .stopwatch {
   width: 100%;
   padding-bottom: 15px;
 }
-.judge-tablet .body .participant .stopwatch .time {
+.judge-tablet .body .layout-participant .stopwatch .time {
   line-height: 31px;
   vertical-align: middle;
   text-align: center;
@@ -258,52 +258,52 @@ div.judge-tablet .body .participant .mistakes {
   margin-right: 0.5%;
   display: inline-block;
 }
-.judge-tablet .body .participant .stopwatch .btn-toggle,
-.judge-tablet .body .participant .stopwatch .btn-reset {
+.judge-tablet .body .layout-participant .stopwatch .btn-toggle,
+.judge-tablet .body .layout-participant .stopwatch .btn-reset {
   margin-left: 0.5%;
   margin-right: 0.5%;
   vertical-align: middle;
   width: 32.3333%;
   display: inline-block;
 }
-.judge-tablet .body .participant .stopwatch .tbtn.btn-toggle {
+.judge-tablet .body .layout-participant .stopwatch .tbtn.btn-toggle {
   background-color: #5cb85c;
   color: #ffffff;
 }
-.judge-tablet .body .participant .stopwatch .tbtn.btn-toggle.active {
+.judge-tablet .body .layout-participant .stopwatch .tbtn.btn-toggle.active {
   background-color: #d9534f;
 }
-.judge-tablet .body .participant .tech-judge-acro {
+.judge-tablet .body .layout-participant .tech-judge-acro {
   padding: 5px 0;
   border-top: 2px solid #2b3a42;
 }
-.judge-tablet .body .participant .tech-judge-acro .controls {
+.judge-tablet .body .layout-participant .tech-judge-acro .controls {
   margin-bottom: -7px;
   float: right;
 }
-.judge-tablet .body .participant .tech-judge-acro .controls .btn-reset {
+.judge-tablet .body .layout-participant .tech-judge-acro .controls .btn-reset {
   width: 110px;
   display: inline-block;
   vertical-align: top;
 }
-.judge-tablet .body .participant .tech-judge-acro .controls .setter {
+.judge-tablet .body .layout-participant .tech-judge-acro .controls .setter {
   width: 150px;
   display: inline-block;
   vertical-align: top;
   margin-bottom: 0;
 }
-.judge-tablet .body .participant .tablet-acro-override-input {
+.judge-tablet .body .layout-participant .tablet-acro-override-input {
   width: 100%;
 }
-.judge-tablet .body .participant .tablet-acro-override-input .buttons button {
+.judge-tablet .body .layout-participant .tablet-acro-override-input .buttons button {
   width: 23%;
   margin: 1%;
   padding: 5px;
 }
-.judge-tablet .body .participant .tablet-acro-override-input .buttons button:disabled {
+.judge-tablet .body .layout-participant .tablet-acro-override-input .buttons button:disabled {
   background-color: #92a0a7;
 }
-.judge-tablet .body .participant .tablet-acro-override-input .value {
+.judge-tablet .body .layout-participant .tablet-acro-override-input .value {
   text-align: center;
   font-weight: bold;
 }

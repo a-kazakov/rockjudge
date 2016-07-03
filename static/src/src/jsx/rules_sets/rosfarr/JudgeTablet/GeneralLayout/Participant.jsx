@@ -1,15 +1,10 @@
 import _ from "l10n";
 
+import CacheMixin from "common/CacheMixin";
+
 import ConfirmationButton from "JudgeTablet/ConfirmationButton";
 
-export default class Participant extends React.Component {
-    constructor(props) {
-        super(props);
-        this._cache = {};
-    }
-    componentWillReceiveProps(next_props) {
-        this._cache = {};
-    }
+export default class Participant extends CacheMixin(React.Component) {
     get score() {
         return this.fetchFromCache("score", () => {
             for (const score of this.props.run.scores) {
@@ -38,12 +33,6 @@ export default class Participant extends React.Component {
     }
     onConfirm = () => {
         this.props.onScoreConfirm(this.score.id);
-    }
-    fetchFromCache(key, getter) {
-        if (!(key in this._cache)) {
-            this._cache[key] = getter();
-        }
-        return this._cache[key];
     }
     onScoreUpdate = (key, value) => {
         if (this.score.confirmed) {
@@ -90,7 +79,7 @@ export default class Participant extends React.Component {
             this.props.run.participant.name,
             this.props.run.participant.sportsmen.length);
         return (
-            <div className="participant">
+            <div className="layout-participant">
                 <h2>
                     { header }
                 </h2>

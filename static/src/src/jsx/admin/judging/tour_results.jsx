@@ -6,7 +6,7 @@ import { Loader } from "ui/components";
 import { Printable } from "ui/printable";
 import { Docx } from "common/docx";
 
-import { TourResultsTable, TourResultsSemiVerboseTable, TourResultsVerboseTable } from "./rosfarr/tour_results";
+import rule_set from "rules_sets/loader";
 
 
 export class TourResultsButtons extends React.Component {
@@ -123,13 +123,16 @@ export class TourResultsBody extends React.Component {
         if (this.state.tour === null || this.state.results === null) {
             return <Loader />
         }
-        var table = null;
+        let table = null;
         if (this.props.verbosity === "3") {
-            table = <TourResultsVerboseTable {...this.state} />
+            const ResultsComponent = rule_set.tour_results_table_3
+            table = <ResultsComponent {...this.state} />
         } else if (this.props.verbosity === "2") {
-            table = <TourResultsSemiVerboseTable {...this.state} />
+            const ResultsComponent = rule_set.tour_results_table_2
+            table = <ResultsComponent {...this.state} />
         } else {
-            table = <TourResultsTable {...this.state} />
+            const ResultsComponent = rule_set.tour_results_table_1
+            table = <ResultsComponent {...this.state} />
         }
         this.rendered = true;
         if (this.props.tableOnly) {

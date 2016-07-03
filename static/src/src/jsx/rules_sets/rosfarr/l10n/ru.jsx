@@ -19,9 +19,28 @@ export default function translate(src, arg) {
                 "fall_down": "Падения (-30)",
                 "acro_n": (n) => `Акробатика ${n + 1}`,
             },
+            "alerts": {
+                "has_unconfirmed_scores": "Имеются незафиксированные оценки судей в последнем заходе.",
+            },
             "buttons": {
+                "finalize_tour": "Финализировать тур",
+                "finalize_tour_and_start_next": "Финализировать тур и перейти к следующему",
                 "next_heat": "След. заход",
+                "not_performed": "Невыход на площадку",
+                "performed": "Отмена невыхода на площадку",
                 "prev_heat": "Пред. заход",
+                "reset_stopwatch": "Сброс",
+                "start_stopwatch": "Старт",
+                "stop_stopwatch": "Стоп",
+                "stop_tour": "Завершить тур",
+                "stop_tour_and_start_next": "Завершить тур и перейти к следующему туру",
+                "to_start_page": "На главную",
+            },
+            "confirms": {
+                "finalize_tour": "Вы действительно хотите финализировать этот тур?",
+                "finalize_tour_and_start_next": "Вы действительно хотите финализировать этот тур и перейти к следующему туру?",
+                "stop_tour": "Вы действительно хотите остановить этот тур?",
+                "stop_tour_and_start_next": "Вы действительно хотите перейти к следующему туру?",
             },
             "dance_judge": {
                 "acrobatics": "Акробатика",
@@ -46,6 +65,8 @@ export default function translate(src, arg) {
                 "heat_number": (n, t) => `Заход ${n} из ${t}`,
                 "confirm_score": "Зафиксировать",
                 "confirmed": "Зафиксировано",
+                "mark_not_performed": "Невыход на площадку",
+                "discard_not_performed": "Отмена невыхода на площадку",
             },
             "head_judge": {
                 "acrobatic_overrides": "Корректировки акробатики",
@@ -63,6 +84,11 @@ export default function translate(src, arg) {
                 "jump_steps": "Основные ходы",
                 "reset_to_n": (n) => "Сброс на " + n.toString(),
                 "timing": "Длительность",
+            },
+            "pages": {
+                "heats": "Заходы",
+                "results": "Результаты",
+                "actions": "Действия",
             },
         },
         "results": {

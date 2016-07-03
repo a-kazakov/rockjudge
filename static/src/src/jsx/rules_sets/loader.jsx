@@ -4,7 +4,6 @@ class RulesSetLoader {
     }
 
     load(module_name, data) {
-        console.log(`Adding scoring system: ${module_name}`);
         const KEYS = ["tour_results_table_1", "tour_results_table_2", "tour_results_table_2",
                       "judge_tablet", "admin_score_input"];
         for (const key of KEYS) {
@@ -14,6 +13,7 @@ class RulesSetLoader {
             this[`_${key}`] = data[key];
         }
         this._loaded = true;
+        console.log(`Added scoring system: ${module_name}`);
     }
 
     _checkIfLoaded() {

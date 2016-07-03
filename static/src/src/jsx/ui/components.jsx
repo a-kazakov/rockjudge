@@ -28,7 +28,7 @@ class ConnectionStatus extends React.Component {
     }
     static init() {
         let element = window.document.getElementById("connection_status");
-        if (element) {
+        if (element && !element.hasChildNodes()) {
             return ReactDOM.render(
                 <ConnectionStatus />,
                 element

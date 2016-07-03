@@ -22,6 +22,7 @@ export default class Header extends React.Component {
         );
     }
     render() {
+        const judge_number = this.props.judge.role_description || _("global.phrases.judge_n", this.props.judge.number);
         return (
             <header>
                 { this.renderPrevHeatButton() }
@@ -29,7 +30,7 @@ export default class Header extends React.Component {
                 <div className="header">
                     <table className="full-width"><tbody><tr>
                         <td>
-                            <h1>{ _("tablet.global.judge_number", this.props.judge.number) }</h1>
+                            <h1>{ judge_number }</h1>
                             <h2>{ this.props.judge.name }</h2>
                         </td>
                         <td>
