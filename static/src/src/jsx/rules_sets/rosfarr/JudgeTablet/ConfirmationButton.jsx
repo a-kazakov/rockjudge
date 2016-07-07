@@ -3,6 +3,11 @@ import _ from "l10n";
 import { Slider } from "ui/tablet_components";
 
 export default class ConfirmationButton extends React.Component {
+    static get defaultProps() {
+        return {
+            canConfirm: true,
+        }
+    }
     render() {
         if (!this.props.canConfirm) {
             return <div className="confirm"></div>;

@@ -7,6 +7,7 @@ import FormationLayout from "./FormationLayout";
 import FormationAcroLayout from "./FormationAcroLayout";
 import SimplifiedLayout from "./SimplifiedLayout";
 import HeadJudgeLayout from "./HeadJudgeLayout";
+import TechJudgeLayout from "./TechJudgeLayout";
 
 import { Api } from "server/api";
 
@@ -19,6 +20,7 @@ export default class JudgeTablet extends React.Component {
         "formation_acro": FormationAcroLayout,
         "simplified": SimplifiedLayout,
         "head": HeadJudgeLayout,
+        "tech": TechJudgeLayout,
     };
     onScoreUpdate = (score_id, new_score) => {
         let request = {

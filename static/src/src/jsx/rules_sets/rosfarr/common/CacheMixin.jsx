@@ -2,7 +2,7 @@ var CacheMixin = Base => class extends Base {
     resetCache() {
         this._cache = {};
     }
-    componentWillReceiveProps() {
+    componentWillUpdate() {
         this.resetCache();
     }
     fetchFromCache(key, generator) {

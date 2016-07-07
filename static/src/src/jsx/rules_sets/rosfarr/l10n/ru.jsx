@@ -89,6 +89,8 @@ export default function translate(src, arg) {
                 "heats": "Заходы",
                 "results": "Результаты",
                 "actions": "Действия",
+                "dancing": "Танец",
+                "acro": "Акробатика",
             },
         },
         "results": {
