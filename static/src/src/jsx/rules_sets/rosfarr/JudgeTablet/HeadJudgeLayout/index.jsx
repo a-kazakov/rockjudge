@@ -20,6 +20,7 @@ export default class HeadJudgeLayout extends React.Component {
         if (next_props.tour.id !== this.props.tour.id) {
             this.setState({
                 heat: 1,
+                page: "heats",
             });
         }
     }
@@ -46,19 +47,22 @@ export default class HeadJudgeLayout extends React.Component {
                 disciplineJudge={ this.props.disciplineJudge }
                 heat={ this.state.heat }
                 tour={ this.props.tour }
-                onScoreUpdate={ this.props.onScoreUpdate } />
+                onScoreUpdate={ this.props.onScoreUpdate }
+            />
         );
     }
     renderResults() {
         return (
             <ResultsPage
-                tour={ this.props.tour } />
+                tour={ this.props.tour }
+            />
         );
     }
     renderActions() {
         return (
             <ActionsPage
-                tour={ this.props.tour } />
+                tour={ this.props.tour }
+            />
         );
     }
     renderHeader() {
@@ -71,7 +75,8 @@ export default class HeadJudgeLayout extends React.Component {
                 heatsCount={ heats_count }
                 maxHeat={ heats_count }
                 onPrevHeatClick={ this.onPrevHeatClick }
-                onNextHeatClick={ this.onNextHeatClick } />
+                onNextHeatClick={ this.onNextHeatClick }
+            />
         );
     }
     renderBody() {
@@ -89,13 +94,16 @@ export default class HeadJudgeLayout extends React.Component {
             <Footer value={ this.state.page } onChange={ this.onPageChange }>
                 <FooterItem
                     label={ _("tablet.pages.heats") }
-                    mkey="heats" />
+                    mkey="heats"
+                />
                 <FooterItem
                     label={ _("tablet.pages.results") }
-                    mkey="results" />
+                    mkey="results"
+                />
                 <FooterItem
                     label={ _("tablet.pages.actions") }
-                    mkey="actions" />
+                    mkey="actions"
+                />
             </Footer>
         );
     }

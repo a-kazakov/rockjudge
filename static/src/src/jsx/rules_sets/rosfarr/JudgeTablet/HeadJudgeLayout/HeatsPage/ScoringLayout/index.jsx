@@ -49,19 +49,25 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
                 <PenaltyInput
                     score={ this.score }
                     onScoreUpdate={ this.onScoreUpdate }
-                    scoringSystemName={ this.props.tour.scoring_system_name } />
+                    scoringSystemName={ this.props.tour.scoring_system_name }
+                />
                 <TechJudgesScores
                     run={ this.props.run }
-                    disciplineJudges={ this.props.tour.discipline.discipline_judges } />
+                    disciplineJudges={ this.props.tour.discipline.discipline_judges }
+                />
                 <LineJudgesScores
                     run={ this.props.run }
-                    disciplineJudges={ this.props.tour.discipline.discipline_judges } />
+                    disciplineJudges={ this.props.tour.discipline.discipline_judges }
+                />
                 <AcrobaticOverrides
-                    run={ this.props.run } />
+                    run={ this.props.run }
+                />
                 <PreviousPenalties
-                    run={ this.props.run } />
+                    run={ this.props.run }
+                />
                 <NotPerformedSwitch
-                    run={ this.props.run } />
+                    run={ this.props.run }
+                />
             </div>
         );
     }

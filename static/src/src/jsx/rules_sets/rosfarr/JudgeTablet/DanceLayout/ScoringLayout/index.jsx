@@ -24,7 +24,8 @@ export default class ScoringLayout extends React.Component {
                 { this.renderPart("composition", "integer", { min: 0, max: 20 }) }
                 <Mistakes
                     scoreData={ this.props.scoreData }
-                    onScoreUpdate={ this.props.onScoreUpdate } />
+                    onScoreUpdate={ this.props.onScoreUpdate }
+                />
             </div>
         );
     }

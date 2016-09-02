@@ -45,7 +45,9 @@ class ApiImpl {
                 return;
             }
             let response = JSON.parse(xhr.responseText);
-            if (response.success) {
+            if (response === null) {
+                this.cb_fail();
+            } else if (response.success) {
                 this.update_db(response.response);
                 this.cb_success(response.response);
             } else {
@@ -65,3 +67,4 @@ class ApiImpl {
 }
 
 export var Api = (...args) => new ApiImpl(...args);
+export default Api;

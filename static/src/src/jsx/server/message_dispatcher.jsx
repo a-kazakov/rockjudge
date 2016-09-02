@@ -80,4 +80,8 @@ class MessageDispatcher {
     }
 }
 
-export var message_dispatcher = new MessageDispatcher();
+
+if (!window.message_dispatcher) {
+    window.message_dispatcher = new MessageDispatcher();
+}
+export var message_dispatcher = window.message_dispatcher;

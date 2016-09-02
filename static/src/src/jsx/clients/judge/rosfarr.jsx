@@ -339,9 +339,11 @@ class TechJudgeAcroScoreInput extends React.Component {
         );
     }
     render() {
-        return <div>
-            { this.renderContent() }
-        </div>
+        return (
+            <div>
+                { this.renderContent() }
+            </div>
+        );
     }
 }
 
@@ -351,33 +353,41 @@ class TechJudgeDanceScoreInput extends React.Component {
     }
     render() {
         let score = this.props.score.data;
-        return <div>
-            <h3>{ __("tablet.tech_judge.jump_steps") }</h3>
-            <TabletIntegerInput
-                value={ score.raw_data.jump_steps }
-                sendDeltas
-                onValueUpdate={ this.genOnScoreUpdate("jump_steps") } />
-            <div className="spacer"></div>
-            <h3>{ __("tablet.tech_judge.timing") }</h3>
-            <StopWatch score_id={ this.props.score.id } />
-            <TabletSelectorInput
-                choices={ [[true, "X"], [null, "-"], [false, "OK"]] }
-                active={ score.raw_data.timing_violation }
-                onValueUpdate={ this.genOnScoreUpdate("timing_violation") } />
-        </div>
+        return (
+            <div>
+                <h3>{ __("tablet.tech_judge.jump_steps") }</h3>
+                <TabletIntegerInput
+                    value={ score.raw_data.jump_steps }
+                    sendDeltas
+                    onValueUpdate={ this.genOnScoreUpdate("jump_steps") } />
+                <div className="spacer"></div>
+                <h3>{ __("tablet.tech_judge.timing") }</h3>
+                <StopWatch score_id={ this.props.score.id } />
+                <TabletSelectorInput
+                    choices={ [[true, "X"], [null, "-"], [false, "OK"]] }
+                    active={ score.raw_data.timing_violation }
+                    onValueUpdate={ this.genOnScoreUpdate("timing_violation") } />
+            </div>
+        );
     }
 }
 
 class TechJudgeScoreInput extends React.Component {
     render() {
         if (this.props.page === "acro") {
-            return <TechJudgeAcroScoreInput
-                acrobatics={ this.props.run.acrobatics }
-                onAcroOverride={ this.props.onAcroOverride } />
+            return (
+                <TechJudgeAcroScoreInput
+                    acrobatics={ this.props.run.acrobatics }
+                    onAcroOverride={ this.props.onAcroOverride }
+                />
+            );
         } else {
-            return <TechJudgeDanceScoreInput
-                score={ this.props.score }
-                onScoreUpdate={ this.props.onScoreUpdate } />
+            return (
+                <TechJudgeDanceScoreInput
+                    score={ this.props.score }
+                    onScoreUpdate={ this.props.onScoreUpdate }
+                />
+            );
         }
     }
 }
