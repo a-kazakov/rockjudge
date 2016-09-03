@@ -11,7 +11,8 @@ export default class AcroPage extends React.Component {
                 tour={ this.props.tour }
                 disciplineJudge={ this.props.disciplineJudge }
                 onAcroOverride={ this.props.onAcroOverride }
-                onScoreConfirm={ this.props.onScoreConfirm } />
+                onScoreConfirm={ this.props.onScoreConfirm }
+            />
         );
     }
     render() {

@@ -1,4 +1,6 @@
-import { Api } from "server/api";
+import Api from "server/api";
+
+import { Loader } from "ui/components";
 import { storage } from "server/storage";
 import { message_dispatcher } from "server/message_dispatcher";
 
@@ -73,12 +75,18 @@ export default class ResultsPage extends React.Component {
     }
     render() {
         if (this.state.tour === null || this.state.results === null) {
-            return <div />
+            return (
+                <div className="body results">
+                    <Loader />
+                </div>
+            );
         }
         return (
             <div className="body results">
                 <div className="tour-results">
-                    <ResultsTable2 {...this.state} />
+                    <ResultsTable2
+                        {...this.state}
+                    />
                 </div>
             </div>
         )

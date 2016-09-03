@@ -40,7 +40,8 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
             <Element
                 key={ idx }
                 acro={ acro }
-                onAcroOverride={ this.genOnAcroOverride(idx) } />
+                onAcroOverride={ this.genOnAcroOverride(idx) }
+            />
         );
     }
     render() {
@@ -54,7 +55,8 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
                 { this.renderContent() }
                 <ConfirmationButton
                     confirmed={ this.score.confirmed }
-                    onConfirm={ this.onConfirm } />
+                    onConfirm={ this.onConfirm }
+                />
             </div>
         );
     }

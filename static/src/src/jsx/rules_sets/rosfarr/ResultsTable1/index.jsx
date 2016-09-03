@@ -58,7 +58,8 @@ export default class ResultsTable1 extends React.Component {
                     results_info={ results_info[idx] }
                     run={ runs[idx] }
                     has_next_tour={ has_next_tour }
-                    has_total_score={ has_total_score } />
+                    has_total_score={ has_total_score }
+                />
             );
         };
         return <div className="brief-table">

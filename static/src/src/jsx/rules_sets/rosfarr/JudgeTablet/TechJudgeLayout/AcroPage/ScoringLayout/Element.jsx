@@ -9,7 +9,8 @@ export default class Element extends React.Component {
                         <TabletAcroOverrideInput
                             original_value={ this.props.acro.original_score }
                             value={ this.props.acro.score }
-                            onValueUpdate={ this.props.onAcroOverride } />
+                            onValueUpdate={ this.props.onAcroOverride }
+                        />
                     </div>
                 </div>
                 <h3>

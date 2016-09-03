@@ -9,7 +9,8 @@ export default class Elements extends React.Component {
                         key={ acro_idx }
                         reduction={ reduction }
                         acroIdx={ acro_idx }
-                        onAcroReductionUpdate={ this.props.onAcroReductionUpdate } />
+                        onAcroReductionUpdate={ this.props.onAcroReductionUpdate }
+                    />
                 ) }
             </div>
         );

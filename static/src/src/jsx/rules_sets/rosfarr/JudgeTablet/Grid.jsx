@@ -35,9 +35,7 @@ export default class Grid extends CacheMixin(React.Component) {
     }
     get asym_layout() {
         return this.fetchFromCache("asym_layout", () =>
-            this.two_rows
-                ? this.children % 2 === 0
-                : false
+            this.two_rows && this.children.length % 2 === 0
         );
     }
     renderRow(elements, is_second_row) {
@@ -45,7 +43,7 @@ export default class Grid extends CacheMixin(React.Component) {
             return null;
         }
         const row_width = `${(elements.length * this.width_value).toFixed(5)}%`;
-        let class_name = "row";
+        let class_name = "grid-row";
         if (!this.asym_layout) {
             class_name += " align-center";
         } else if (is_second_row) {

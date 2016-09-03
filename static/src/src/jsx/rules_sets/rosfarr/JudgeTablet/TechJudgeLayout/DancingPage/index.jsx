@@ -11,7 +11,8 @@ export default class DancingPage extends React.Component {
                 tour={ this.props.tour }
                 disciplineJudge={ this.props.disciplineJudge }
                 onScoreUpdate={ this.props.onScoreUpdate }
-                onScoreConfirm={ this.props.onScoreConfirm } />
+                onScoreConfirm={ this.props.onScoreConfirm }
+            />
         );
     }
     render() {

@@ -27,7 +27,8 @@ export default class TechJudgesScores extends CacheMixin(React.Component) {
                     <Item
                         key={ score.id }
                         score={ score }
-                        judge={ this.tech_judges_index.get(score.discipline_judge_id).judge } />
+                        judge={ this.tech_judges_index.get(score.discipline_judge_id).judge }
+                    />
                 )}
             </div>
         );

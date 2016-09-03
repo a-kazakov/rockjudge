@@ -32,24 +32,34 @@ export default class ResultsTable2 extends React.Component {
         if (result === null) {
             return null;
         }
-        return <tr key={ "NT" + idx }><th className="advances-header" colSpan={ n_cols }>
-            { result }
-        </th></tr>
+        return (
+            <tr key={ "NT" + idx }>
+                <th className="advances-header" colSpan={ n_cols }>
+                    { result }
+                </th>
+            </tr>
+        );
     }
     render() {
-        let tour_wrapper = new TourScoresWrapper(this.props.tour, this.props.results);
-        let discipline_judges = tour_wrapper.getDisciplineJudgesByRoles("acro_judge", "dance_judge");
-        let scores_table = tour_wrapper.getScoresTableByRoles("acro_judge", "dance_judge");
-        let head_judge_scores = tour_wrapper.getScoresTableByRoles("head_judge").map((row) => row[0]);
-        let results_info = tour_wrapper.getResultsInfo();
-        let runs = tour_wrapper.getRuns();
-        let has_next_tour = this.props.tour.next_tour_id !== null;
-        let has_total_score = this.props.tour.scoring_system_name !== "rosfarr.formation" && this.props.tour.scoring_system_name !== "rosfarr.formation_acro";
-        let widths = new ColumnsWidths(discipline_judges.length + 1);
-        let judges_header = discipline_judges.map(function(dj) {
-            let suffix = getScoringType(dj, this.props.tour.scoring_system_name) === "acro" ? " (A)" : "";
-            return <th key={ dj.id } style={ widths.genJudgeStyle() }><p>{ dj.judge.number + suffix }</p></th>
-        }.bind(this));
+        const tour_wrapper = new TourScoresWrapper(this.props.tour, this.props.results);
+        const discipline_judges = tour_wrapper.getDisciplineJudgesByRoles("acro_judge", "dance_judge");
+        const scores_table = tour_wrapper.getScoresTableByRoles("acro_judge", "dance_judge");
+        const head_judge_scores = tour_wrapper.getScoresTableByRoles("head_judge").map((row) => row[0]);
+        const results_info = tour_wrapper.getResultsInfo();
+        const runs = tour_wrapper.getRuns();
+        const has_next_tour = this.props.tour.next_tour_id !== null;
+        const has_total_score = this.props.tour.scoring_system_name !== "rosfarr.formation" && this.props.tour.scoring_system_name !== "rosfarr.formation_acro";
+        const widths = new ColumnsWidths(discipline_judges.length + 1);
+        const judges_header = discipline_judges.map((dj) => {
+            const suffix = getScoringType(dj, this.props.tour.scoring_system_name) === "acro" ? " (A)" : "";
+            return (
+                <th key={ dj.id } style={ widths.genJudgeStyle() }>
+                    <p>
+                        { dj.judge.number + suffix }
+                    </p>
+                </th>
+            );
+        });
         let rows = [];
         for (let idx = 0; idx < runs.length; ++idx) {
             rows.push(this.renderAdvancesHeader(
@@ -71,7 +81,8 @@ export default class ResultsTable2 extends React.Component {
                     scores={ scores_table[idx] }
                     discipline_judges={ discipline_judges }
                     has_next_tour={ has_next_tour }
-                    has_total_score={ has_total_score } />
+                    has_total_score={ has_total_score }
+                />
             );
         };
         return <table className="bordered-table">

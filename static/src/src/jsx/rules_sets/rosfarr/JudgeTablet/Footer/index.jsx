@@ -8,7 +8,8 @@ export default function Footer(props) {
                     key={ btn.props.mkey }
                     onClick={ props.onChange }
                     active={ props.value === btn.props.mkey }
-                    { ...btn.props } />
+                    { ...btn.props }
+                />
             )}
         </div>
     )

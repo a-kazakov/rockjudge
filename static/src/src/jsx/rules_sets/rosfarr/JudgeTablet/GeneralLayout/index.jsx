@@ -63,7 +63,8 @@ export default class GeneralLayout extends CacheMixin(React.Component) {
                     heatsCount={ this.heats_count }
                     maxHeat={ this.first_non_confirmed_heat }
                     onPrevHeatClick={ this.onPrevHeatClick }
-                    onNextHeatClick={ this.onNextHeatClick } />
+                    onNextHeatClick={ this.onNextHeatClick }
+                />
                 <div className="body">
                     <Grid>
                         { this.props.tour.runs.filter(run => run.heat === this.state.heat).map(run =>

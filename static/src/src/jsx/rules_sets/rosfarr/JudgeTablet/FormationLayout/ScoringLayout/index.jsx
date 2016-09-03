@@ -2,6 +2,7 @@ import _ from "l10n";
 
 import ScorePart from "./ScorePart";
 import Mistakes from "./Mistakes";
+import TotalScore from "JudgeTablet/TotalScore";
 
 export default class ScoringLayout extends React.Component {
     renderPart(code, scale, additional_props={}) {
@@ -12,7 +13,8 @@ export default class ScoringLayout extends React.Component {
                 value={ this.props.scoreData[code] }
                 scale={ scale }
                 onScoreUpdate={ this.props.onScoreUpdate }
-                {...additional_props} />
+                {...additional_props}
+            />
         );
     }
     render() {
@@ -23,7 +25,11 @@ export default class ScoringLayout extends React.Component {
                 { this.renderPart("impression", "point5", { min: 0, max: 10 }) }
                 <Mistakes
                     scoreData={ this.props.scoreData }
-                    onScoreUpdate={ this.props.onScoreUpdate } />
+                    onScoreUpdate={ this.props.onScoreUpdate }
+                />
+                <TotalScore
+                    score={ this.props.score }
+                />
             </div>
         );
     }

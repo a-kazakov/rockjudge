@@ -13,7 +13,8 @@ export default class Mistakes extends React.Component {
                     <h3>{ _("tablet.dance_judge.form_mistakes") }</h3>
                     <TabletIntegerInput
                         value={ this.props.scoreData.mistakes }
-                        onValueUpdate={ this.onMistakesUpdate } />
+                        onValueUpdate={ this.onMistakesUpdate }
+                    />
                 </td>
             </tr></tbody></table>
         );

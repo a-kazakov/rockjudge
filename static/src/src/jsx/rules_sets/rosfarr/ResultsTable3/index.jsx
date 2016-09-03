@@ -27,7 +27,8 @@ export default class TourResultsVerboseTable extends React.Component {
                     head_judge_score={ head_judge_scores[idx] }
                     results_info={ results_info[idx] }
                     discipline_judges={ discipline_judges }
-                    has_next_tour={ has_next_tour } />
+                    has_next_tour={ has_next_tour }
+                />
             );
         };
         let judges_header = discipline_judges.map(function(dj) {

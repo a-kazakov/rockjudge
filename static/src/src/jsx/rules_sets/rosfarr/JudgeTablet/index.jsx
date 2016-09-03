@@ -45,7 +45,8 @@ export default class JudgeTablet extends React.Component {
                 disciplineJudge={ this.props.disciplineJudge }
                 tour={ this.props.tour }
                 onScoreUpdate={ this.onScoreUpdate }
-                onScoreConfirm={ this.onScoreConfirm } />
+                onScoreConfirm={ this.onScoreConfirm }
+            />
         );
     }
 }

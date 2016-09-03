@@ -12,7 +12,8 @@ export default class Mistakes extends React.Component {
                 <h3>{ _("tablet.acro_judge.fall_down") }</h3>
                 <TabletIntegerInput
                     value={ this.props.mistakes }
-                    onValueUpdate={ this.onUpdate } />
+                    onValueUpdate={ this.onUpdate }
+                />
             </div>
         );
     }

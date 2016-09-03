@@ -12,7 +12,8 @@ export default class Element extends React.Component {
                 header={ _("tablet.acro_judge.acro_n", this.props.acroIdx) }
                 scale="reduction"
                 value={ this.props.reduction }
-                onValueUpdate={ this.onUpdate } />
+                onValueUpdate={ this.onUpdate }
+            />
         );
     }
 }

@@ -14,7 +14,8 @@ export default class ScoringLayout extends React.Component {
                 onValueUpdate={ this.onValueUpdate }
                 min={ 1 }
                 max={ 40 }
-                rowSize={ 10 } />
+                rowSize={ 10 }
+            />
         );
     }
 }

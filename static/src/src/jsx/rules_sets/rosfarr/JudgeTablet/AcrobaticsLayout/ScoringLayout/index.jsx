@@ -2,6 +2,7 @@ import _ from "l10n";
 
 import Elements from "./Elements";
 import Mistakes from "./Mistakes";
+import TotalScore from "JudgeTablet/TotalScore";
 
 export default class ScoringLayout extends React.Component {
     onAcroReductionUpdate = (acro_idx, value) => {
@@ -14,10 +15,15 @@ export default class ScoringLayout extends React.Component {
             <div>
                 <Elements
                     reductions={ this.props.scoreData.reductions }
-                    onAcroReductionUpdate={ this.onAcroReductionUpdate } />
+                    onAcroReductionUpdate={ this.onAcroReductionUpdate }
+                />
                 <Mistakes
                     mistakes={ this.props.scoreData.mistakes }
-                    onScoreUpdate={ this.props.onScoreUpdate } />
+                    onScoreUpdate={ this.props.onScoreUpdate }
+                />
+                <TotalScore
+                    score={ this.props.score }
+                />
             </div>
         );
     }

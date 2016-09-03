@@ -11,11 +11,39 @@ html, body, #content {
     align-items: stretch;
     header {
         flex-shrink: 0;
+        &.flex {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            .btn-container {
+                flex-shrink: 0;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                width: 150px;
+                &.left {
+                    justify-content: flex-start;
+                }
+                &.right {
+                    justify-content: flex-end;
+                }
+            }
+            .flex-container {
+                flex-grow: 1;
+                text-align: center;
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                h1 {
+                    font-size: 16px;
+                }
+            }
+        }
     }
     .grid {
         margin: 0 auto;
         width: 100%;
-        .row {
+        .grid-row {
             table-layout: fixed;
             &.align-left {
                 margin-right: auto;

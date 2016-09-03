@@ -51,17 +51,21 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
                 <TabletIntegerInput
                     sendDeltas
                     value={ score.raw_data.jump_steps }
-                    onValueUpdate={ this.genOnScoreUpdate("jump_steps") } />
+                    onValueUpdate={ this.genOnScoreUpdate("jump_steps") }
+                />
                 <div className="spacer"></div>
                 <h3>{ _("tablet.tech_judge.timing") }</h3>
-                <StopWatch score_id={ this.score.id } />
+                <StopWatch score_id={ this.score.id }
+            />
                 <TabletSelectorInput
                     choices={ [[true, "X"], [null, "-"], [false, "OK"]] }
                     value={ score.raw_data.timing_violation }
-                    onValueUpdate={ this.genOnScoreUpdate("timing_violation") } />
+                    onValueUpdate={ this.genOnScoreUpdate("timing_violation") }
+                />
                 <ConfirmationButton
                     confirmed={ this.score.confirmed }
-                    onConfirm={ this.onConfirm } />
+                    onConfirm={ this.onConfirm }
+                />
             </div>
         );
     }

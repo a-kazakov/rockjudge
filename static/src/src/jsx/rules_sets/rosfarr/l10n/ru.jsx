@@ -146,7 +146,7 @@ export default function translate(src, arg) {
                             : "Участник №"
                         ) + n.toString()
                     ),
-                "judge_n": (n) => "Судья №" + n.toString(),
+                "judge_n": (n) => "Линейный судья №" + n.toString(),
             },
         },
     };

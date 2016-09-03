@@ -6,7 +6,8 @@ export default class DancingLayout extends React.Component {
         return (
             <GeneralLayout
                 layoutClass={ ScoringLayout }
-                {...this.props} />
+                {...this.props}
+            />
         );
     }
 }

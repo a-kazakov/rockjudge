@@ -34,7 +34,8 @@ export default class PenaltyInput extends React.Component {
                 <TabletSelectorInput
                     choices={ penalties }
                     value={ this.props.score.data.raw_data.penalty }
-                    onValueUpdate={ this.onUpdate } />
+                    onValueUpdate={ this.onUpdate }
+                />
             </div>
         );
     }

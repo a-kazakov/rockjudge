@@ -43,26 +43,30 @@ export default class GeneralScale extends React.Component {
             return (
                 <TabletPoint5SelectInput
                     style="two-lines"
-                    {...this.props} />
+                    {...this.props}
+                />
             );
         case "integer":
             return (
                 <TabletIntegerSelectInput
                     style="two-lines"
-                    {...this.props} />
+                    {...this.props}
+                />
             );
         case "grid":
             return (
                 <TabletIntegerSelectInput
                     style="grid"
-                    {...this.props} />
+                    {...this.props}
+                />
             );
         case "reduction":
             return (
                 <TabletSelectorInput
                     style="one-line"
                     choices={ this.possiblie_reductions }
-                    {...this.props} />
+                    {...this.props}
+                />
             );
         default:
             console.error(`Unknowd scale type: ${this.props.scale}`);

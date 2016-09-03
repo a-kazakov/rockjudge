@@ -3,7 +3,6 @@ import _ from "l10n";
 import CacheMixin from "common/CacheMixin";
 
 import ConfirmationButton from "JudgeTablet/ConfirmationButton";
-import TotalScore from "JudgeTablet/TotalScore";
 
 export default class Participant extends CacheMixin(React.Component) {
     get score() {
@@ -58,11 +57,9 @@ export default class Participant extends CacheMixin(React.Component) {
         return (
             <div className={ class_name }>
                 <ScoringComponent
+                    score={ this.score }
                     scoreData={ score_data }
                     onScoreUpdate={ this.onScoreUpdate }
-                />
-                <TotalScore
-                    score={ this.score }
                 />
                 <ConfirmationButton
                     confirmed={ this.score.confirmed }

@@ -17,7 +17,8 @@ export default class ConfirmationButton extends React.Component {
                 onActivate={ this.props.onConfirm }
                 done={ this.props.confirmed }
                 slideText={ _("tablet.global.confirm_score") }
-                doneText={ _("tablet.global.confirmed") } />
+                doneText={ _("tablet.global.confirmed") }
+            />
         </div>;
     }
 }

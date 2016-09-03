@@ -37,7 +37,8 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
                         { header }
                     </h2>
                     <NotPerformedSwitch
-                        run={ this.props.run } />
+                        run={ this.props.run }
+                    />
                 </div>
             )
         }

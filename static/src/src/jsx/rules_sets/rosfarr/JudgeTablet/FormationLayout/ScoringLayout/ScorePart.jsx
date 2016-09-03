@@ -12,7 +12,8 @@ export default class ScorePart extends React.Component {
                 value={ value }
                 scale={ scale }
                 onValueUpdate={ this.onValueUpdate }
-                {...other_props} />
+                {...other_props}
+            />
         );
     }
 }

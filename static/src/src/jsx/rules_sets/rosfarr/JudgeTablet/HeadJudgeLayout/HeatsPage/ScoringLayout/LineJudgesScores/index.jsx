@@ -39,7 +39,8 @@ export default class LineJudgeScore extends CacheMixin(React.Component) {
                 <Item
                     key={ dj.id }
                     judge={ dj.judge }
-                    score={ score } />
+                    score={ score }
+                />
             );
         });
     }
