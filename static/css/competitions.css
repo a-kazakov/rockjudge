@@ -29,15 +29,19 @@ body {
 .manage-competitions table tr.editor.create {
   background-color: #f0ad4e;
 }
-.manage-competitions table tr.editor input {
+.manage-competitions table tr.editor input,
+.manage-competitions table tr.editor select {
   height: 25px;
   border: 1px solid #ccc;
 }
 .manage-competitions table tr.editor input,
-.manage-competitions table tr.editor input button {
+.manage-competitions table tr.editor select,
+.manage-competitions table tr.editor input button,
+.manage-competitions table tr.editor select button {
   vertical-align: middle;
 }
-.manage-competitions table tr.editor input {
+.manage-competitions table tr.editor input,
+.manage-competitions table tr.editor select {
   padding-left: 5px;
   padding-right: 5px;
 }
@@ -62,6 +66,7 @@ body {
 .manage-competitions table tr.editor .buttons input {
   margin-bottom: 10px;
 }
-input {
+input,
+select {
   font-weight: normal;
 }

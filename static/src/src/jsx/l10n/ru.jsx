@@ -222,6 +222,7 @@ export function translate(src, arg) {
                 "delete_in_competition_plan": "Невозможно удалить тур, присутствующий в программе соревнований",
                 "init_finailzed": "Невозможно пересоздать финализированный тур",
                 "invalid_add_after_id": "Попытка добаить тур в несуществующее место",
+                "invalid_scoring_system": "Выбрана недопустимая система судейства",
                 "load_to_non_empty": (d) => ["Невозможно загрузить туры для дисциплины", `Дисциплина ${d} уже содержит туры`],
                 "next_is_finailzed": "Следующий тур не должен быть финализирован",
                 "no_next_tour": "Данный тур последний в программе соревнований",
@@ -317,6 +318,7 @@ export function translate(src, arg) {
                 "info_item_title": "Заголовок",
                 "info_item_value": "Значение",
                 "name": "Название",
+                "rules_set": "Система судейства",
             },
             "competition_plan_item": {
                 "discipline": "Дисциплина",
@@ -597,6 +599,7 @@ export function translate(src, arg) {
 
         "scoring_systems_names": {
             "rosfarr": {
+                "base_name": "РосФАРР",
                 "acro": "РосФАРР, акробатические программы",
                 "am_final_acro": "РосФАРР, A и M классы, финал, акробатика",
                 "am_final_fw": "РосФАРР, A и M классы, финал, техника ног",

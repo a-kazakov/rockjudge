@@ -25,7 +25,9 @@ export class Tours extends React.Component {
             return <TourCreatingUI
                 discipline_id={ this.props.discipline.id }
                 add_after={ after_id }
-                stopEditing={ this.addTourAfter.bind(this, -1) } />
+                stopEditing={ this.addTourAfter.bind(this, -1) }
+                rules_set={ this.props.rules_set }
+            />
         } else {
             return <button className="btn btn-default full-width" onClick={ this.addTourAfter.bind(this, after_id) }>
                 { _("admin.buttons.add_tour") }
@@ -35,7 +37,7 @@ export class Tours extends React.Component {
     renderTours() {
         return this.props.discipline.tours.map(function(tour, idx, arr) {
             return [
-                <TourEditingUI tour={ tour } key={ tour.id } />,
+                <TourEditingUI tour={ tour } rules_set={ this.props.rules_set } key={ tour.id } />,
                 this.renderTourCreation(tour.id, arr[idx + 1])
             ];
         }.bind(this));
@@ -131,8 +133,8 @@ class TourInputForm extends React.Component {
                             className="form-control"
                             ref="scoring_system_name"
                             disabled={ tour.finalized }
-                            defaultValue={ tour.scoring_system_name || GL.scoring_systems[0] } >
-                            { GL.scoring_systems.map((sn) => <option key={ sn } value={ sn }>{ _("scoring_systems_names." + sn) }</option>) }
+                            defaultValue={ tour.scoring_system_name || GL.scoring_systems[this.props.rules_set][0] } >
+                            { GL.scoring_systems[this.props.rules_set].map((sn) => <option key={ sn } value={ sn }>{ _("scoring_systems_names." + sn) }</option>) }
                         </select>
                     </div>
                     <div className="form-group form-group-sm row">
@@ -179,6 +181,7 @@ class TourEditingUI extends React.Component {
     renderEditor() {
         return <TourInputForm
             tour={ this.props.tour }
+            rules_set={ this.props.rules_set }
             submitTour={ this.submitTour.bind(this) }
             stopEditing={ this.stopEditing.bind(this) } />
     }
@@ -234,7 +237,9 @@ class TourCreatingUI extends React.Component {
         return <TourInputForm
             classes={ ["tour-create"] }
             submitTour={ this.submitTour.bind(this) }
-            stopEditing={ this.props.stopEditing } />
+            stopEditing={ this.props.stopEditing }
+            rules_set={ this.props.rules_set }
+        />
 
     }
 }

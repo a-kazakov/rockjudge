@@ -91,7 +91,8 @@ export class Admin extends React.Component {
                 competition_plan={ this.state.plan }
                 competition_name={ this.state.name }
                 competition_date={ this.state.date }
-                competition_id={ this.props.competition_id } />;
+                competition_id={ this.props.competition_id }
+                rules_set={ this.state.rules_set } />;
         case "service":
             return <Service
                 competition_id={ this.props.competition_id }

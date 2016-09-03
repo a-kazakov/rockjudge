@@ -1,5 +1,6 @@
 import { _ } from "l10n/loader";
 import { Api } from "server/api";
+import { GL } from "common/definitions";
 import { storage } from "server/storage";
 import { message_dispatcher } from "server/message_dispatcher";
 import { Loader } from "ui/components";
@@ -61,6 +62,7 @@ class CompetitionEditorRow extends React.Component {
             date: this.state.date,
             active: this.state.active,
             info: this.state.info,
+            rules_set: this.state.rules_set,
         }
     }
     onSubmit(event) {
@@ -116,6 +118,8 @@ class CompetitionEditorRow extends React.Component {
                     onClick={ this.removeInfoItem.bind(this, idx) }>X</button>
             </div>;
         }.bind(this));
+        let scoring_systems = Object.keys(GL.scoring_systems);
+        scoring_systems.sort()
         return <tr className={ "editor" + (this.props.newCompetition ? " create" : "" ) }>
             <td colSpan="4">
                 <form onSubmit={ this.onSubmit.bind(this) }>
@@ -143,6 +147,23 @@ class CompetitionEditorRow extends React.Component {
                                     value={ this.state.date }
                                     onChange={ this.onChange.bind(this, "", null, "date", "any") } />
                             </label>
+                            { this.props.newCompetition ?
+                                <label className="full-width">
+                                    { _("models.competition.rules_set") }
+                                    <select
+                                        value={ this.state.rules_set }
+                                        className="full-width"
+                                        onChange={ this.onChange.bind(this, "", null, "rules_set", "any") }
+                                    >
+                                        { scoring_systems.map(ss =>
+                                            <option value={ ss } key={ ss }>
+                                                { _(`scoring_systems_names.${ss}.base_name`) }
+                                            </option>
+                                        )}
+                                    </select>
+                                </label>
+                                : null
+                            }
                             <label className="full-width">
                                 { _("models.competition.active") }<br />
                                 <input
@@ -251,11 +272,14 @@ class CompetitionCreationRow extends React.Component {
         });
     }
     renderEditor() {
+        let scoring_systems = Object.keys(GL.scoring_systems);
+        scoring_systems.sort()
         let empty_data = {
             "name": "",
             "date": "",
             "active": true,
             "info": [],
+            "rules_set": scoring_systems[0],
         }
         return <CompetitionEditorRow
             newCompetition

@@ -159,7 +159,6 @@ class Tour(BaseModel):
         free_slots = set(x for x in range(len(result)))
         # Make clubs list
         club_pools = defaultdict(list)
-        weights = {}
         for run in runs:
             club_pools[run.participant.club_id].append(run)
         clubs_lists = sorted(club_pools.items(), key=lambda x: -len(x[1]))
@@ -391,6 +390,8 @@ class Tour(BaseModel):
 
     @classmethod
     def create_model(cls, discipline, add_after, data, ws_message):
+        if "scoring_system_name" in data:
+            cls.validate_scoring_system_name(discipline, data["scoring_system_name"])
         create_kwargs = cls.gen_model_kwargs(data, discipline=discipline)
         tour = Tour.create(**create_kwargs)
         if add_after is None:
@@ -421,11 +422,19 @@ class Tour(BaseModel):
         )
         return tour
 
+    @staticmethod
+    def validate_scoring_system_name(discipline, scoring_system_name):
+        parts = scoring_system_name.split(".")
+        if len(parts) != 2 or parts[0] != discipline.competition.rules_set:
+            raise ApiError("errors.tour.invalid_scoring_system")
+
     def update_model(self, new_data, ws_message):
         if self.finalized:
             for key in ["num_advances", "hope_tour", "scoring_system_name"]:
                 if key in new_data:
                     raise ApiError("errors.tour.update_finalized")
+        if "scoring_system_name" in new_data:
+            self.validate_scoring_system_name(self.discipline, new_data["scoring_system_name"])
         self.update_model_base(new_data)
         ws_message.add_model_update(
             model_type=self.__class__,

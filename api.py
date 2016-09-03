@@ -79,7 +79,7 @@ class Api:
 
     @classmethod
     def competition_get_all(cls, request, ws_message):
-        competitions = Competition.select()
+        competitions = Competition.select().where(Competition.deleted == False)  # NOQA
         return [{
             "id": c.id,
             "data": c.serialize(children=request["children"])
@@ -188,7 +188,8 @@ class Api:
             discipline=discipline,
             add_after=request["add_after"],
             data=request["data"],
-            ws_message=ws_message)
+            ws_message=ws_message,
+        )
         return {}
 
     @classmethod
@@ -197,7 +198,8 @@ class Api:
         Program.create_model(
             participant=participant,
             data=request["data"],
-            ws_message=ws_message)
+            ws_message=ws_message,
+        )
         return {}
 
     @classmethod
@@ -206,7 +208,8 @@ class Api:
         Club.create_model(
             competition=competition,
             data=request["data"],
-            ws_message=ws_message)
+            ws_message=ws_message,
+        )
         return {}
 
     @classmethod
@@ -215,7 +218,8 @@ class Api:
         Judge.create_model(
             competition=competition,
             data=request["data"],
-            ws_message=ws_message)
+            ws_message=ws_message,
+        )
         return {}
 
     def discipline_judge_create(cls, request, ws_message):
@@ -225,7 +229,8 @@ class Api:
             discipline=discipline,
             judge=judge,
             data=request["data"],
-            ws_message=ws_message)
+            ws_message=ws_message,
+        )
         return {}
 
     @classmethod
@@ -234,7 +239,8 @@ class Api:
         CompetitionPlanItem.create_model(
             competition=competition,
             data=request["data"],
-            ws_message=ws_message)
+            ws_message=ws_message,
+        )
         return {}
 
     @classmethod
@@ -243,7 +249,8 @@ class Api:
         Participant.create_model(
             discipline=discipline,
             data=request["data"],
-            ws_message=ws_message)
+            ws_message=ws_message,
+        )
         return {}
 
     # Deleters

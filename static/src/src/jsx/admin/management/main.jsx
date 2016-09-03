@@ -82,6 +82,7 @@ export class Management extends React.Component {
             }.bind(this));
             return <Tours
                 key={ this.state.page_props.discipline_id }
+                rules_set={ this.props.rules_set }
                 discipline={ ic } />
         case "manage_participants":
             return <Participants

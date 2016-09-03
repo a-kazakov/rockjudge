@@ -27,8 +27,11 @@ class Competition(BaseModel):
     info = postgres_ext.BinaryJSONField(default=[], dumps=serialize_competition_info)
     active = peewee.BooleanField(default=True)
     screen_data = postgres_ext.BinaryJSONField(default={})
+    rules_set = peewee.CharField()
+    deleted = peewee.BooleanField(default=False)
 
-    RW_PROPS = ["name", "date", "active", "info", "screen_data"]
+    RW_PROPS = ["name", "date", "active", "info", "screen_data", "deleted"]
+    RO_PROPS = ["rules_set"]
 
     PF_CHILDREN = {
         "disciplines": None,
@@ -67,7 +70,7 @@ class Competition(BaseModel):
 
     @classmethod
     def create_model(cls, data, ws_message):
-        create_kwargs = cls.gen_model_kwargs(data)
+        create_kwargs = cls.gen_model_kwargs(data, rules_set=data["rules_set"])
         cls.create(**create_kwargs)
         ws_message.add_message("competition_list_update")
 
@@ -81,13 +84,8 @@ class Competition(BaseModel):
         ws_message.add_message("competition_list_update")
 
     def delete_model(self, ws_message):
-        if self.disciplines.count() > 0:
-            raise ApiError("errors.competition.delete_non_empty")
-        if self.clubs.count() > 0:
-            raise ApiError("errors.competition.delete_non_empty")
-        if self.judges.count() > 0:
-            raise ApiError("errors.competition.delete_non_empty")
-        self.delete_instance()
+        self.deleted = True
+        self.save()
         ws_message.add_message("competition_list_update")
 
     def serialize(self, children={}):
