@@ -8,7 +8,7 @@ import { Loader } from "ui/components";
 import { showConfirm } from "ui/dialogs";
 import { onTouchOrClick } from "ui/tablet_components";
 
-import rule_set from "rules_sets/loader";
+import rules_set from "rules_sets/loader";
 
 export class Judge extends React.Component {
     static get propTypes() {
@@ -469,7 +469,7 @@ export class Judge extends React.Component {
         if (this.state.discipline_judge === null) {
             return this.renderSplashScreen();
         }
-        const JudgeTabletComponent = rule_set.judge_tablet;
+        const JudgeTabletComponent = rules_set.judge_tablet;
         return (
             <JudgeTabletComponent
                 tour={ this.state.tour }

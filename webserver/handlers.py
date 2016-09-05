@@ -20,9 +20,11 @@ class StaticFileHandlerNoCache(tornado.web.StaticFileHandler):
 
 class AdminHandler(tornado.web.RequestHandler):
     def get(self, competition_id):
+        competition = Competition.get(Competition.id == competition_id)
         self.render(
             "admin.html",
             competition_id=competition_id,
+            rules_set=competition.rules_set,
             debug=settings.DEBUG)
 
 

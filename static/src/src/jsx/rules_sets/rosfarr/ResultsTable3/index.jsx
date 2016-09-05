@@ -5,7 +5,7 @@ import Row from "./Row";
 import ColumnsWidths from "./ColumnsWidths";
 
 
-export default class TourResultsVerboseTable extends React.Component {
+export default class ResultsTable3 extends React.Component {
     render() {
         let tour_wrapper = new TourScoresWrapper(this.props.tour, this.props.results);
         let discipline_judges = tour_wrapper.getDisciplineJudgesByRoles("acro_judge", "dance_judge");

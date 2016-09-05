@@ -1,3 +1,5 @@
+import React from "react";
+
 import { _ } from "l10n/loader";
 import { Api } from "server/api";
 import { storage } from "server/storage";
@@ -22,7 +24,7 @@ class ParticipantNumbersNumber extends React.Component {
             <p className="spacer-bottom">&nbsp;</p>
         </div>
     }
-}
+} // DONE
 
 class ParticipantNumbers extends React.Component {
     makeParticipantsList() {
@@ -83,7 +85,7 @@ class ParticipantNumbers extends React.Component {
 
             .save();
     }
-}
+} // DONE
 
 export class StartList extends React.Component {
     constructor(props) {
@@ -255,7 +257,7 @@ export class StartList extends React.Component {
             .addStyle("tr.tr-acro", "page-break-inside", "auto")
             .save();
     }
-}
+} // DONE
 
 function groupParticipants(competition, config) {
     if (config.group_by_clubs) {
@@ -290,7 +292,7 @@ function groupParticipants(competition, config) {
         });
         return disciplines.filter(discipline => discipline.participants.length > 0);
     }
-}
+} // DONE
 
 class DisciplinesSummaryTable extends React.Component {
     render() {
@@ -314,7 +316,7 @@ class DisciplinesSummaryTable extends React.Component {
             </div>
         );
     }
-}
+} // DONE
 
 class ClubsSummaryTable extends React.Component {
     render() {
@@ -338,7 +340,7 @@ class ClubsSummaryTable extends React.Component {
             </div>
         );
     }
-}
+} // DONE
 
 class DisciplinesShown extends React.Component {
     hasDisabledDisciplines() {
@@ -366,7 +368,7 @@ class DisciplinesShown extends React.Component {
             </div>
         )
     }
-}
+} // DONE
 
 class ClubsShown extends React.Component {
     hasDisabledClubs() {
@@ -394,7 +396,7 @@ class ClubsShown extends React.Component {
             </div>
         )
     }
-}
+} // DONE
 
 class Disciplines extends React.Component {
     render() {
@@ -411,7 +413,7 @@ class Disciplines extends React.Component {
             </div>
         );
     }
-}
+} // DONE
 
 class DisciplineSection extends React.Component {
     renderRows() {
@@ -471,7 +473,7 @@ class DisciplineSection extends React.Component {
             </div>
         </div>;
     }
-}
+} // DONE
 
 class DisciplineSectionRow extends React.Component {
     render() {
@@ -490,7 +492,7 @@ class DisciplineSectionRow extends React.Component {
             </tr>
         );
     }
-}
+} // DONE
 
 class Clubs extends React.Component {
     render() {
@@ -507,7 +509,7 @@ class Clubs extends React.Component {
             </div>
         );
     }
-}
+} // DONE
 
 class ClubSection extends React.Component {
     renderRows() {
@@ -564,7 +566,7 @@ class ClubSection extends React.Component {
             </div>
         </div>;
     }
-}
+} // DONE
 
 class ClubSectionRow extends React.Component {
     render() {
@@ -583,7 +585,7 @@ class ClubSectionRow extends React.Component {
             </tr>
         );
     }
-}
+} // DONE
 
 class SportsmenTable extends React.Component {
     renderFormationName() {
@@ -619,7 +621,7 @@ class SportsmenTable extends React.Component {
             </tbody></table>
         );
     }
-}
+} // DONE
 
 class SportsmenList extends React.Component {
     render() {
@@ -656,7 +658,7 @@ class SportsmenList extends React.Component {
             </tbody></table>
         );
     }
-}
+} // DONE
 
 class ParticipantsStats extends React.Component {
     static hashSportsman(s) {
@@ -710,7 +712,7 @@ class ParticipantsStats extends React.Component {
             </p>
         );
     }
-}
+} // DONE
 
 class Acrobatics extends React.Component {
     render() {
@@ -735,4 +737,4 @@ class Acrobatics extends React.Component {
             </td></tr>
         );
     }
-}
+} // DONE

@@ -153,7 +153,7 @@ export function translate(src, arg) {
                 "manage_competition_plan": "Программа соревнований",
                 "manage_disciplines": "Управление дисциплинами",
                 "manage_judges": "Управление судьями",
-                "manage_sportsmen": "Управление спортсменами",
+                "manage_participants": "Управление спортсменами",
                 "manage_tours": "Управление турами",
                 "start_list": "Стартовый лист",
             },

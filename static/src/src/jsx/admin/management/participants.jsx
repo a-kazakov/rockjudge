@@ -99,7 +99,7 @@ export class Participants extends React.Component {
             </div>
         </div>
     }
-}
+} // DONE
 
 class ClubsSelector extends React.Component {
     renderList() {
@@ -115,7 +115,7 @@ class ClubsSelector extends React.Component {
             { this.renderList() }
         </select>
     }
-}
+} // DONE
 
 class ParticipantEditorRowGeneralInfo extends React.Component {
     genOnChange(field) {
@@ -147,7 +147,7 @@ class ParticipantEditorRowGeneralInfo extends React.Component {
                 onChange={ this.genOnChange("formation_name") } />
         </div>
     }
-}
+} // DONE
 
 class ParticipantEditorRowSportsman extends React.Component {
     genOnChange(field) {
@@ -196,7 +196,7 @@ class ParticipantEditorRowSportsman extends React.Component {
                 onClick={ this.props.onSportsmanRemove }>X</button>
         </div>
     }
-}
+} // DONE
 
 class ParticipantEditorRowSportsmenList extends React.Component {
     genOnChange(idx) {
@@ -238,7 +238,7 @@ class ParticipantEditorRowSportsmenList extends React.Component {
                 onClick={ this.addSportsman.bind(this) }>{ _("global.buttons.add") }</button>
         </div>
     }
-}
+} // DONE
 
 class ParticipantEditorRowProgramEditorElement extends React.Component {
     genOnChange(field) {
@@ -264,7 +264,7 @@ class ParticipantEditorRowProgramEditorElement extends React.Component {
                 onClick={ this.props.onElementRemove }>X</button>
         </div>
     }
-}
+} // DONE
 
 class ParticipantEditorRowProgramEditorElements extends React.Component {
     constructor(props) {
@@ -327,7 +327,7 @@ class ParticipantEditorRowProgramEditorElements extends React.Component {
             </button>
         </div>
     }
-}
+} // DONE
 
 class ParticipantEditorRowProgramEditor extends React.Component {
     loadAcrobatics() {
@@ -388,7 +388,7 @@ class ParticipantEditorRowProgramEditor extends React.Component {
             </button>
         </form>
     }
-}
+} // DONE
 
 class ParticipantEditorRowProgramCreator extends React.Component {
     constructor(props) {
@@ -429,7 +429,7 @@ class ParticipantEditorRowProgramCreator extends React.Component {
             { this.renderBody() }
         </div>
     }
-}
+} // DONE
 
 class ParticipantEditorRowProgram extends React.Component {
     constructor(props) {
@@ -483,7 +483,7 @@ class ParticipantEditorRowProgram extends React.Component {
             </tbody></table>
         </div>
     }
-}
+} // DONE
 
 class ParticipantEditorRowPrograms extends React.Component {
     render() {
@@ -501,7 +501,7 @@ class ParticipantEditorRowPrograms extends React.Component {
             }
         </div>
     }
-}
+} // DONE
 
 class ParticipantEditorRow extends React.Component {
     constructor(props) {
@@ -580,7 +580,7 @@ class ParticipantEditorRow extends React.Component {
             </td>
         </tr>
     }
-}
+} // DONE
 
 class ParticipantRow extends React.Component {
     constructor(props) {
@@ -632,7 +632,7 @@ class ParticipantRow extends React.Component {
             return this.renderViewer();
         }
     }
-}
+} // DONE
 
 class ParticipantCreationRow extends React.Component {
     constructor(props) {
@@ -678,4 +678,4 @@ class ParticipantCreationRow extends React.Component {
     render() {
         return this.state.editing ? this.renderEditor() : this.renderButton();
     }
-}
+} // DONE

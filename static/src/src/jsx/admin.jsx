@@ -1,7 +1,6 @@
-import { Admin } from "admin/main";
-
+import AdminPanel from "AdminPanel";
 
 ReactDOM.render(
-    <Admin { ...window.page_props } />,
+    <AdminPanel { ...window.page_props } />,
     document.getElementById("content")
 );

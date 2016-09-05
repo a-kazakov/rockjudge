@@ -21,10 +21,11 @@
   <script src="/static/thirdparty/html-docx-js/html-docx.js"></script>
   <script>
     window.page_props = {
-      competition_id: {{ competition_id }}
+      competitionId: {{ competition_id }}
     };
   </script>
   <script src="/static/js/admin.js"></script>
+  <script src="/static/js/rules_sets/{{ rules_set }}.js"></script>
 {% end %}
 
 {% block body %}

@@ -1,36 +1,38 @@
-var gulp = require('gulp');
-var less = require('gulp-less');
-var concat = require('gulp-concat');
-var gutil = require('gulp-util');
-var makeItFaster = require('spawn-task-experiment').spawn;
+"use strict"
+
+let gulp = require('gulp');
+let less = require('gulp-less');
+let concat = require('gulp-concat');
+let gutil = require('gulp-util');
+let makeItFaster = require('spawn-task-experiment').spawn;
 
 
-var LessPluginCleanCSS = require('less-plugin-clean-css'),
+let LessPluginCleanCSS = require('less-plugin-clean-css'),
     LessPluginAutoPrefix = require('less-plugin-autoprefix'),
     cleancss = new LessPluginCleanCSS({ advanced: true }),
     autoprefix = new LessPluginAutoPrefix({ browsers: ["last 5 versions"] });
 
 
-var all_jsx_tasks = [];
+let all_jsx_tasks = [];
 
 function createJsxTask(task) {
     all_jsx_tasks.push(task);
     function doTheJob() {
-        var gulp = require('gulp');
-        var browserify = require('browserify');
-        var babelify = require('babelify');
-        var uglify = require('gulp-uglify');
-        var source = require('vinyl-source-stream');
-        var buffer = require('vinyl-buffer');
-        var gutil = require('gulp-util');
+        let gulp = require('gulp');
+        let browserify = require('browserify');
+        let babelify = require('babelify');
+        let uglify = require('gulp-uglify');
+        let source = require('vinyl-source-stream');
+        let buffer = require('vinyl-buffer');
+        let gutil = require('gulp-util');
 
-        var task = "__task__";
-        var env_type = "__env_type__";
+        let task = "__task__";
+        let env_type = "__env_type__";
         function buildJsx(entry_point, out_dir, out_file) {
-            var bundler = browserify({
+            let bundler = browserify({
                 entries: entry_point,
                 extensions: ['.jsx'],
-                paths: ['./src/jsx/'],
+                paths: ['./src/jsx/', './src/jsx_new/'],
                 debug: env_type !== 'production',
             })
             .transform(babelify, {
@@ -50,7 +52,7 @@ function createJsxTask(task) {
             task + '.js'
         );
     }
-    var str_func = doTheJob.toString()
+    let str_func = doTheJob.toString()
         .replace("__task__", task)
         .replace("__env_type__", gutil.env.type);
     gulp.task(task, makeItFaster(str_func));
@@ -59,18 +61,18 @@ function createJsxTask(task) {
 function createRuleSetJsxTask(task) {
     all_jsx_tasks.push("rs_" + task);
     function doTheJob() {
-        var gulp = require('gulp');
-        var browserify = require('browserify');
-        var babelify = require('babelify');
-        var uglify = require('gulp-uglify');
-        var source = require('vinyl-source-stream');
-        var buffer = require('vinyl-buffer');
-        var gutil = require('gulp-util');
+        let gulp = require('gulp');
+        let browserify = require('browserify');
+        let babelify = require('babelify');
+        let uglify = require('gulp-uglify');
+        let source = require('vinyl-source-stream');
+        let buffer = require('vinyl-buffer');
+        let gutil = require('gulp-util');
 
-        var task = "__task__";
-        var env_type = "__env_type__";
+        let task = "__task__";
+        let env_type = "__env_type__";
         function buildJsx(entry_point, out_dir, out_file) {
-            var bundler = browserify({
+            let bundler = browserify({
                 entries: entry_point,
                 extensions: ['.jsx'],
                 paths: ['./src/jsx/', './src/jsx/rules_sets/' + task + '/'],
@@ -93,7 +95,7 @@ function createRuleSetJsxTask(task) {
             task + '.js'
         );
     }
-    var str_func = doTheJob.toString()
+    let str_func = doTheJob.toString()
         .replace("__task__", task)
         .replace("__env_type__", gutil.env.type);
     gulp.task("rs_" + task, makeItFaster(str_func));
