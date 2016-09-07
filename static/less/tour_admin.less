@@ -102,6 +102,27 @@
         }
         .controls {
           text-align: right;
+          .edit-btn {
+            padding: 0;
+            width: 85px;
+            height: 18px;
+            line-height: 18px;
+            box-sizing: border-box;
+          }
+          .reset-btn {
+            padding: 0;
+            height: 18px;
+            line-height: 18px;
+            width: 50px;
+            box-sizing: border-box;
+          }
+          input {
+            height: 18px;
+            border: none;
+            text-align: center;
+            width: 85px;
+            color: black;
+          }
         }
         .old-score, .new-score {
           text-align: center;
@@ -119,6 +140,48 @@
     }
     .form-score-input {
       right: 50%;
+      width: 250px;
+      .score-editor {
+        margin-bottom: 5px;
+        .fields {
+          margin-bottom: 5px;
+          text-align: left;
+          .item {
+            display: inline-block;
+            width: 49.99%;
+            vertical-align: top;
+            .score-label {
+              padding: 5px;
+              width: 37.9%;
+              display: inline-block;
+              color: white;
+              font-weight: bold;
+              text-align: right;
+            }
+            .score-value {
+              text-align: center;
+              padding: 5px;
+              display: inline-block;
+              width: 62%;
+              font-weight: normal;
+              select {
+                width: 100%;
+                border: none;
+                color: black;
+                padding-left: 3px;
+              }
+              .read-only {
+                width: 100%;
+                border: none;
+                background-color: white;
+                color: black;
+                height: 16px;
+                line-height: 16px;
+              }
+            }
+          }
+        }
+      }
     }
     .form-score-input, .form-acro-input {
       position: absolute;

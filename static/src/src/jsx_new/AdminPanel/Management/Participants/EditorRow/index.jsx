@@ -54,6 +54,7 @@ export default class EditorRow extends React.Component {
             participantData: participant_data,
         };
     }
+
     handleChange = (field, value) => {
         let participant = Object.assign({}, this.state.participantData); // clone
         participant[field] = value;

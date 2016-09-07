@@ -148,9 +148,9 @@ export default class DisciplineResults extends React.Component {
 
     // Listeners
 
-    signal(message) {
+    handleSignal = (message) => {
         if (this._renderer) {
-            this._renderer.signal(message);
+            this._renderer.handleSignal(message);
         }
     }
 

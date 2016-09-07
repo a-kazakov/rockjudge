@@ -1,27 +1,103 @@
 import getParticipantDisplay from "common/getParticipantDisplay";
 
-export default class TourResultsTableRow extends React.Component {
-    render() {
-        let card = this.props.run.performed
-            ? this.props.head_judge_score
-                ? this.props.head_judge_score.data.total_score
-                : "0"
-            : <span>&mdash;</span>;
-        let total_score = this.props.has_total_score ?
-            this.props.run.performed
-                ? <p className="text-center">
-                    <strong>{ this.props.run.verbose_total_score.primary_score.toFixed(2) }</strong>
-                    &nbsp;/{" "}{ this.props.run.verbose_total_score.secondary_score.toFixed(2) }
+export default class Row extends React.Component {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            disciplineJudgesMap: PT.instanceOf(Map).isRequired,
+            row: PT.shape({
+                place: PT.number,
+                run: PT.shape({
+                    performed: PT.bool.isRequired,
+                    participant: PT.shape({
+                        number: PT.number.isRequired,
+                        club: PT.shape({
+                            name: PT.string.isRequired,
+                        }).isRequired,
+                    }).isRequired,
+                    scores: PT.arrayOf(
+                        PT.shape({
+                            discipline_judge_id: PT.number.isRequired,
+                        }).isRequired
+                    ).isRequired,
+                    verbose_total_score: PT.shape({
+                        primary_score: PT.number,
+                        secondary_score: PT.number,
+                        previous_tour: PT.shape({
+                            primary_score: PT.number,
+                            secondary_score: PT.number,
+                        }),
+                    }),
+                }).isRequired,
+            }).isRequired,
+            showTotalScore: PT.bool.isRequired,
+        };
+    }
+    getCard() {
+        if (!this.props.row.run.performed) {
+            return "—";
+        }
+        const head_judge_score = this.props.row.run.scores.find(
+            score => this.props.disciplineJudgesMap.get(score.discipline_judge_id).role === "head_judge");
+        if (!head_judge_score) {
+            return "0";
+        }
+        return head_judge_score.data.total_score.toFixed();
+    }
+    renderTotalScoreCell() {
+        if (!this.props.showTotalScore) {
+            return null;
+        }
+        let content = "—";
+        if (this.props.row.run.performed) {
+            content = (
+                <span>
+                    <strong>
+                        { this.props.row.run.verbose_total_score.primary_score.toFixed(2) }
+                    </strong>
+                    &nbsp;{ "/ " }
+                    { this.props.row.run.verbose_total_score.secondary_score.toFixed(2) }
+                </span>
+            );
+        }
+        return (
+            <td className="w-18 score">
+                <p className="text-center">
+                    { content }
                 </p>
-                : <p className="text-center">&mdash;</p>
-            : null;
-        return <tr>
-            <td className="w-7 place"><p className="text-center">{ this.props.results_info.place }</p></td>
-            <td className="w-6 number"><p className="text-center">{ this.props.run.participant.number }</p></td>
-            <td className="w-30 participant">{ getParticipantDisplay(this.props.run.participant) }</td>
-            <td className="club"><p>{ this.props.run.participant.club.name }</p></td>
-            { this.props.has_total_score ? <td className="w-18 score">{ total_score }</td> : null }
-            <td className="w-8 card"><p className="text-center">{ card }</p></td>
-        </tr>
+            </td>
+        );
+    }
+    render() {
+        return (
+            <tr>
+                <td className="w-7 place">
+                    <p className="text-center">
+                        { this.props.row.place }
+                    </p>
+                </td>
+                <td className="w-6 number">
+                    <p className="text-center">
+                        { this.props.row.run.participant.number }
+                    </p>
+                </td>
+                <td className="w-30 participant">
+                    { getParticipantDisplay(this.props.row.run.participant)
+                 }</td>
+                <td className="club">
+                    <p>
+                        { this.props.row.run.participant.club.name }
+                    </p>
+                </td>
+                { this.renderTotalScoreCell() }
+                <td className="w-8 card">
+                    <p className="text-center">
+                        { this.getCard() }
+                    </p>
+                </td>
+            </tr>
+        );
     }
 }
+
+Row.displayName = "rules_sets_rosfarr_ResultsTable1_Row";

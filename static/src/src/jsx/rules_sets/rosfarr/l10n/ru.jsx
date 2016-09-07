@@ -14,6 +14,32 @@ export default function translate(src, arg) {
     }
 
     let PHRASES = {
+        "admin": {
+            "buttons": {
+                "add_club": "Добавить клуб",
+                "add_competition": "Создать соревнование",
+                "add_competition_plan_item": "Добавить элемент",
+                "add_discipline": "Добавить дисциплину",
+                "add_judge": "Добавить судью",
+                "add_participant": "Добавить участника",
+                "add_tour": "Добавить тур",
+                "confirm_score": "Зафиксировать",
+                "docx_heats": "Заходы в DOCX",
+                "docx_numbers": "Номера в DOCX",
+                "docx_results": "Результаты в DOCX",
+                "export": "Экспортировать",
+                "import": "Импортировать",
+                "launch_auto_printer": "Запуск автоматической печати",
+                "load_acro": "Загрузить акробатику",
+                "refresh_clients": "Перезагрузить все устройства",
+                "reload_clients": "Обновить данные на всех устройствах",
+                "switch_to_plan": "Сортировка по программе",
+                "switch_to_disciplines": "Сортировка по дисциплинам",
+                "to_start_page": "На главную",
+                "unconfirm_score": "Отмена фиксации",
+                "unfinalize": "Отменить финализацию",
+            },
+        },
         "tablet": {
             "acro_judge": {
                 "fall_down": "Падения (-30)",
@@ -138,6 +164,15 @@ export default function translate(src, arg) {
             },
         },
         "global": {
+            "buttons": {
+                "submit": "Сохранить",
+                "discard": "Отменить",
+                "close": "Закрыть",
+            },
+            "labels": {
+                "yes": "Да",
+                "no": "Нет",
+            },
             "phrases": {
                 "participant_n": (n, name, n_sp) =>
                     (n_sp > 2

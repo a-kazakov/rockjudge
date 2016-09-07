@@ -35,4 +35,4 @@ export default class NavigationButton extends React.Component {
     }
 }
 
-NavigationButton.displayName = "AdminPanelNavigationButton";
+NavigationButton.displayName = "AdminPanel_NavigationButton";

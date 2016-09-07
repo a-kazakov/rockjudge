@@ -15,12 +15,14 @@ export default class Participants extends React.Component {
             disciplineId: PT.number.isRequired,
         };
     }
+
     constructor(props) {
         super(props);
         this.state = {
             discipline: null,
         };
     }
+
     componentWillMount() {
         this.setupStorage();
         this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData);

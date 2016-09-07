@@ -1,52 +1,80 @@
 import _ from "l10n";
 
-import TourScoresWrapper from "common/TourScoresWrapper";
 import Row from "./Row";
 import ColumnsWidths from "./ColumnsWidths";
 
+import getJudgeTableMark from "getJudgeTableMark";
 
 export default class ResultsTable3 extends React.Component {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+           table: PT.arrayOf(
+                PT.shape({
+                    advances: PT.bool.isRequired,
+                    run: PT.shape({
+                        id: PT.number.isRequired,
+                        performed: PT.bool.isRequired,
+                    }).isRequired,
+                }).isRequired
+            ).isRequired,
+            tour: PT.shape({
+                scoring_system_name: PT.string.isRequired,
+                next_tour_id: PT.number,
+                discipline: PT.shape({
+                    discipline_judges: PT.arrayOf(
+                        PT.shape({
+                            role: PT.string.isRequired,
+                        }).isRequired
+                    ).isRequired,
+                }).isRequired,
+            }).isRequired,
+         };
+    }
+
     render() {
-        let tour_wrapper = new TourScoresWrapper(this.props.tour, this.props.results);
-        let discipline_judges = tour_wrapper.getDisciplineJudgesByRoles("acro_judge", "dance_judge");
-        let scores_table = tour_wrapper.getScoresTableByRoles("acro_judge", "dance_judge");
-        let head_judge_scores = tour_wrapper.getScoresTableByRoles("head_judge").map((row) => row[0]);
-        let results_info = tour_wrapper.getResultsInfo();
-        let runs = tour_wrapper.getRuns();
-        let has_next_tour = this.props.tour.next_tour_id !== null;
-        let rows = [];
-        let widths = new ColumnsWidths(discipline_judges.length);
-        for (let idx = 0; idx < runs.length; ++idx) {
-            rows.push(
-                <Row
-                    key={ runs[idx].id }
-                    tour={ this.props.tour }
-                    run={ runs[idx] }
-                    scores={ scores_table[idx] }
-                    widths={ widths }
-                    head_judge_score={ head_judge_scores[idx] }
-                    results_info={ results_info[idx] }
-                    discipline_judges={ discipline_judges }
-                    has_next_tour={ has_next_tour }
-                />
-            );
-        };
-        let judges_header = discipline_judges.map(function(dj) {
-            return <th key={ dj.id } width={ widths.genJudgeStyle() }><p>{ dj.judge.number }</p></th>
-        });
-        return <table className="bordered-table" style={{ width: "100%" }}>
-            <thead>
-                <tr>
-                    <th className="place" width={ widths.genPlaceStyle() }><p>{ _("results.labels.place") }</p></th>
-                    <th className="participant" width={ widths.genInfoStyle() }><p>
-                        { _("results.labels.info") }
-                    </p></th>
-                    { judges_header }
-                </tr>
-            </thead>
-            <tbody>
-                { rows }
-            </tbody>
-        </table>
+        const line_judges = this.props.tour.discipline.discipline_judges.filter(
+            dj => ["acro_judge", "dance_judge"].indexOf(dj.role) >= 0);
+        const widths = new ColumnsWidths(line_judges.length);
+        const djs_map = new Map(this.props.tour.discipline.discipline_judges.map(dj => [dj.id, dj]));
+
+        return (
+            <table className="bordered-table">
+                <thead>
+                    <tr>
+                        <th className="place" style={ widths.genPlaceStyle() }>
+                            <p>
+                                { _("results.labels.place") }
+                            </p>
+                        </th>
+                        <th className="participant" style={ widths.genInfoStyle() }>
+                            <p>
+                                { _("results.labels.info") }
+                            </p>
+                        </th>
+                        { line_judges.map(dj =>
+                            <th key={ dj.id } style={ widths.genJudgeStyle() }>
+                                <p>
+                                    { getJudgeTableMark(dj) }
+                                </p>
+                            </th>
+                        ) }
+                    </tr>
+                </thead>
+                <tbody>
+                    { this.props.table.map(row =>
+                        <Row
+                            disciplineJudgesMap={ djs_map }
+                            key={ row.run.id }
+                            lineDisciplineJudges={ line_judges }
+                            row={ row }
+                            tour={ this.props.tour }
+                        />
+                    ) }
+                </tbody>
+            </table>
+        );
     }
 }
+
+ResultsTable3.displayName = "rules_sets_rosfarr_ResultsTable3";

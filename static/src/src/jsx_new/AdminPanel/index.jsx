@@ -2,12 +2,12 @@ import { _ } from "l10n/loader";
 import { Api } from "server/api";
 import { storage } from "server/storage";
 import { message_dispatcher } from "server/message_dispatcher";
-import { Judging } from "admin/judging/main";
 import { Service } from "admin/service/main";
 import { Loader } from "ui/components";
 
 import NavigationButton from "./NavigationButton";
 import Management from "./Management";
+import Judging from "./judging";
 
 export default class AdminPanel extends React.Component {
     static get propTypes() {
@@ -22,7 +22,7 @@ export default class AdminPanel extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            active_app: this.getActiveAppFromHash(),
+            activeApp: this.getActiveAppFromHash(),
             competition: null,
         };
         message_dispatcher.addListener("db_update", this.reloadFromStorage);
@@ -76,7 +76,7 @@ export default class AdminPanel extends React.Component {
 
     handleAppChange = (app) => {
         this.setState({
-            active_app: app,
+            activeApp: app,
         });
         window.location.hash = "#" + app;
     }
@@ -84,17 +84,14 @@ export default class AdminPanel extends React.Component {
     // Rendering
 
     renderActiveApp() {
-        switch (this.state.active_app) {
+        switch (this.state.activeApp) {
         case "management":
             return (
                 <Management competition={ this.state.competition } />
             );
         case "judging":
             return (
-                <Judging
-                    competition_plan={ this.state.competition.plan }
-                    disciplines={ this.state.competition.disciplines }
-                />
+                <Judging competition={ this.state.competition } />
             );
         case "service":
             return (
@@ -108,7 +105,7 @@ export default class AdminPanel extends React.Component {
     renderButton(mkey, title) {
         return (
             <NavigationButton
-                active={ this.state.active_app === mkey }
+                active={ this.state.activeApp === mkey }
                 mkey={ mkey }
                 title={ title }
                 onClick={ this.handleAppChange }

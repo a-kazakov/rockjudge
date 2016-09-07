@@ -4,6 +4,7 @@ import ResultsTable3 from "ResultsTable3";
 import DisciplineResultsTable from "DisciplineResultsTable";
 import JudgeTablet from "JudgeTablet";
 import AdminScoreInput from "AdminScoreInput";
+import getJudgeTableMark from "getJudgeTableMark";
 
 window.registerRulesSet("RosFARR", {
     tour_results_table_1: ResultsTable1,
@@ -12,4 +13,5 @@ window.registerRulesSet("RosFARR", {
     discipline_results_table: DisciplineResultsTable,
     judge_tablet: JudgeTablet,
     admin_score_input: AdminScoreInput,
+    get_judge_table_mark: getJudgeTableMark,
 });

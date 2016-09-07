@@ -134,6 +134,7 @@ export function translate(src, arg) {
                 "include_judges": "Включить данные о судьях",
                 "judges": "Судьи",
                 "no_files_selected": "Выберите файл...",
+                "no_program_loaded": "Акробатика не загружена",
                 "participants": "Участники",
                 "paste_acro": "Вставьте данные из калькулятора акробатики",
                 "plan": "Программа турнира",
@@ -273,6 +274,7 @@ export function translate(src, arg) {
         "judging": {
             "buttons": {
                 "confirm_score": "Зафиксировать",
+                "edit_acrobatic_override": "Изменить",
                 "init_tour": "Пересоздать тур",
                 "finalize_tour": "Финализировать",
                 "reset_acrobatic_override": "Сброс",

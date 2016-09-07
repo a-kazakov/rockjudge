@@ -5,7 +5,8 @@ class RulesSetLoader {
 
     load(module_name, data) {
         const KEYS = ["tour_results_table_1", "tour_results_table_2", "tour_results_table_3",
-                      "discipline_results_table", "judge_tablet", "admin_score_input"];
+                      "discipline_results_table", "judge_tablet", "admin_score_input",
+                      "get_judge_table_mark"];
         for (const key of KEYS) {
             if (!(key in data)) {
                 throw new Error(`Module ${module_name} doesn't export ${key} class.`);
@@ -55,6 +56,11 @@ class RulesSetLoader {
     get admin_score_input() {
         this._checkIfLoaded();
         return this._admin_score_input;
+    }
+
+    get get_judge_table_mark() {
+        this._checkIfLoaded();
+        return this._get_judge_table_mark;
     }
 }
 
