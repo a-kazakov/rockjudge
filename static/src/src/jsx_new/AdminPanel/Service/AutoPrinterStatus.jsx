@@ -1,0 +1,74 @@
+import { _ } from "l10n/loader";
+import { Loader } from "ui/components";
+
+let auto_printer = null;
+
+export default class AutoPrinterStatus extends React.Component {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            competition: PT.shape({
+                id: PT.number.isRequired,
+            }).isRequired,
+        };
+    }
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            available: null,
+        };
+    }
+
+    componentDidMount() {
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://127.0.0.1:5949", true);
+        xhr.onload = () => this.setState({ available: true });  //eslint-disable-line react/no-did-mount-set-state
+        xhr.onerror = () => this.setState({ available: false });  //eslint-disable-line react/no-did-mount-set-state
+        xhr.send();
+    }
+
+    handleClick = () => {
+        if (!auto_printer || auto_printer.closed) {
+            auto_printer = window.open(
+                `/printer/${ this.props.competition.id }`,
+                "printer",
+                "resizable=yes,location=no"
+            );
+        } else {
+            auto_printer.focus();
+        }
+    }
+
+    render() {
+        if (this.state.available === null) {
+            return <Loader />
+        }
+        if (!this.state.available) {
+            return (
+                <div className="alert alert-danger">
+                    <p>
+                        { _("admin.alerts.auto_printer_not_available") }
+                    </p>
+                </div>
+            );
+        }
+        return (
+            <div className="alert alert-success">
+                <p>
+                    { _("admin.alerts.auto_printer_available") }
+                </p>
+                <br />
+                <button
+                    className="btn btn-default"
+                    type="button"
+                    onClick={ this.handleClick }
+                >
+                    { _("admin.buttons.launch_auto_printer") }
+                </button>
+            </div>
+        )
+    }
+}
+
+AutoPrinterStatus.displayName = "AdminPanel_Service_AutoPrinterStatus";

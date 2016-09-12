@@ -35,7 +35,7 @@ export default class Clubs extends React.Component {
                             <th className="external-id">
                                 { _("models.club.external_id") }
                             </th>
-                            <th className="delete"></th>
+                            <th className="delete" />
                         </tr>
                         { rows }
                         <CreationRow

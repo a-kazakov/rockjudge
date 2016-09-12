@@ -2,12 +2,12 @@ import { _ } from "l10n/loader";
 import { Api } from "server/api";
 import { storage } from "server/storage";
 import { message_dispatcher } from "server/message_dispatcher";
-import { Service } from "admin/service/main";
 import { Loader } from "ui/components";
 
 import NavigationButton from "./NavigationButton";
 import Management from "./Management";
-import Judging from "./judging";
+import Judging from "./Judging";
+import Service from "./Service";
 
 export default class AdminPanel extends React.Component {
     static get propTypes() {
@@ -95,10 +95,7 @@ export default class AdminPanel extends React.Component {
             );
         case "service":
             return (
-                <Service
-                    competition_id={ this.state.competition.id }
-                    disciplines={ this.state.competition.disciplines }
-                />
+                <Service competition={ this.state.competition } />
             );
         }
     }
@@ -130,7 +127,7 @@ export default class AdminPanel extends React.Component {
                         { this.renderButton("management", "Management") }
                         { this.renderButton("judging", "Judging") }
                         { this.renderButton("service", "Service") }
-                        <div className="spacer"></div>
+                        <div className="spacer" />
                         <div className="bottom-cell">
                             <a className="btn-back" href="/">
                                 { _("admin.buttons.to_start_page") }

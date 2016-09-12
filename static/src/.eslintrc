@@ -42,7 +42,7 @@
     "react/jsx-no-literals": 0,
     "react/jsx-no-undef": 1,
     "react/jsx-pascal-case": 1,
-    "react/jsx-sort-prop-types": [1, {
+    "react/sort-prop-types": [1, {
       "callbacksLast": true,
       "ignoreCase": false,
       "requiredFirst": false

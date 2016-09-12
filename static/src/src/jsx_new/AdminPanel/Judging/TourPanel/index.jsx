@@ -84,21 +84,21 @@ export default class TourPanel extends React.Component {
         switch (this.state.page) {
         case "tour-admin":
             return (
-                <ScoresTabButtons {...props} />
+                <ScoresTabButtons { ...props } />
             );
         case "heats":
             return (
-                <HeatsTabButtons {...props} />
+                <HeatsTabButtons { ...props } />
             )
         case "results-1":
         case "results-2":
         case "results-3":
             return (
-                <TourResultsTabButtons {...props} />
+                <TourResultsTabButtons { ...props } />
             );
         case "discipline-results":
             return (
-                <DisciplineResultsTabButtons {...props} />
+                <DisciplineResultsTabButtons { ...props } />
             );
         default:
             console.error("Unknown page:", this.state.page);
@@ -116,7 +116,7 @@ export default class TourPanel extends React.Component {
                 <h2>
                     { this.props.tour.name }
                 </h2>
-                <div className="clearfix"></div>
+                <div className="clearfix" />
                 <ul className="pull-right nav nav-tabs">
                     { this.renderNavButton("tour-admin") }
                     { this.renderNavButton("heats") }
@@ -137,9 +137,9 @@ export default class TourPanel extends React.Component {
         };
         switch (this.state.page) {
         case "tour-admin":
-            return <ScoresTab {...props} />
+            return <ScoresTab { ...props } />
         case "heats":
-            return <HeatsTab {...props} />
+            return <HeatsTab { ...props } />
         case "results-1":
             return <TourResultsTab verbosity={ 1 } { ...props } />
         case "results-2":

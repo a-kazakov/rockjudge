@@ -37,7 +37,7 @@ export default class Editor extends React.Component {
                         </th>
                         { this.props.readOnly
                             ? null
-                            : <th className="controls"></th> }
+                            : <th className="controls" /> }
                     </tr>
                     { this.props.run.acrobatics.map((element, idx) =>
                         <Row
