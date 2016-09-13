@@ -1,3 +1,5 @@
+import "babel-polyfill";
+
 import AdminPanel from "AdminPanel";
 
 ReactDOM.render(

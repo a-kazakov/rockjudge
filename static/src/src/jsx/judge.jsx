@@ -1,7 +1,9 @@
-import { Judge } from "clients/judge/main";
+import "babel-polyfill";
+
+import JudgeTablet from "JudgeTablet";
 
 
 ReactDOM.render(
-    <Judge { ...window.page_props } />,
+    <JudgeTablet { ...window.page_props } />,
     window.document.getElementById("content")
 );

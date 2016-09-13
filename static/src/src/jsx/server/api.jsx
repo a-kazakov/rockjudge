@@ -59,7 +59,9 @@ class ApiImpl {
             this.cb_fail();
         };
         let data = new FormData();
-        data.append("client_id", window.client_id);
+        if (window.client_id) {
+            data.append("client_id", window.client_id);
+        }
         data.append("data", JSON.stringify(this.data));
         data.append("method", this.method);
         xhr.send(data);
