@@ -36,7 +36,7 @@ export function translate(src, arg) {
             "auto_printer": {
                 "discipline": "Дисциплина",
                 "discipline_results": "Результаты дисциплины",
-                "heats": "Заходы сл. тура",
+                "heats": "Заходы",
                 "print_test_page": "Напечатать тестовую страницу",
                 "queue": "Очередь печати",
                 "queue_empty": "Очередь пуста",

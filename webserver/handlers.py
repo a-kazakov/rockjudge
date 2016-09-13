@@ -30,9 +30,11 @@ class AdminHandler(tornado.web.RequestHandler):
 
 class AutoPrinterHandler(tornado.web.RequestHandler):
     def get(self, competition_id):
+        competition = Competition.get(Competition.id == competition_id)
         return self.render(
             "auto_printer.html",
             competition_id=competition_id,
+            rules_set=competition.rules_set,
             debug=settings.DEBUG)
 
 

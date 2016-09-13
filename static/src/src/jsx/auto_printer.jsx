@@ -1,4 +1,4 @@
-import { AutoPrinter } from "admin/auto_printer/main";
+import AutoPrinter from "AdminPanel/Service/AutoPrinter";
 
 
 ReactDOM.render(

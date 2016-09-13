@@ -13,6 +13,10 @@ export default class HeatsTab extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
+            autoDocx: PT.shape({
+                filename: PT.string.isRequired,
+                onDone: PT.func.isRequired,
+            }),
             tour: PT.shape({
                 id: PT.number.isRequired,
             }).isRequired,
@@ -44,6 +48,11 @@ export default class HeatsTab extends React.Component {
     componentDidUpdate(prev_props, ps) {
         if (prev_props.tour.id !== this.props.tour.id) {
             this.loadData();
+        }
+        if (this.props.autoDocx && !this._docx_done && this.state.tour !== null) {
+            this._docx_done = true;
+            this.createDocx(this.props.autoDocx.filename);
+            this.props.autoDocx.onDone(this.props.autoDocx.filename);
         }
     }
     componentWillUnmount() {

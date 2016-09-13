@@ -97,7 +97,7 @@ export default class TourResults extends React.Component {
         if (!tour_storage) {
             return;
         }
-        if (tour_storage.tour.id === this.props.tourId) {
+        if (tour_storage.id === this.props.tourId) {
             this.loadResults();
         }
     }

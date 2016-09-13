@@ -14,6 +14,7 @@ export default class TourResultsTab extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
+            autoDocx: PT.object,
             tour: PT.shape({
                 id: PT.number.isRequired,
             }).isRequired,
@@ -32,6 +33,7 @@ export default class TourResultsTab extends React.Component {
     render() {
         return (
             <TourResults
+                autoDocx={ this.props.autoDocx }
                 ref={ this.makeResultsRef }
                 renderer={ Wrapper }
                 tourId={ this.props.tour.id }

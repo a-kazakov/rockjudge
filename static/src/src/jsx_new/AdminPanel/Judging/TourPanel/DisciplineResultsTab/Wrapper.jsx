@@ -9,13 +9,18 @@ export default class Wrapper extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
+            autoDocx: PT.shape({
+                filename: PT.string.isRequired,
+                onDone: PT.func.isRequired,
+            }),
             table: PT.arrayOf(PT.object.isRequired).isRequired,
             discipline: PT.object.isRequired,
         };
     }
 
-    constructor(props) {
-        super(props);
+    componentDidMount() {
+        this.createDocx(this.props.autoDocx.filename);
+        this.props.autoDocx.onDone(this.props.autoDocx.filename);
     }
 
     makePrintableRef = (ref) => this._printable = ref;
