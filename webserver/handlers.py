@@ -1,3 +1,4 @@
+import hashlib
 import json
 
 import tornado.gen
@@ -7,6 +8,7 @@ import settings
 from api import Api
 from db import Database
 from models import (
+    Client,
     Competition,
     Judge,
 )
@@ -25,7 +27,8 @@ class AdminHandler(tornado.web.RequestHandler):
             "admin.html",
             competition_id=competition_id,
             rules_set=competition.rules_set,
-            debug=settings.DEBUG)
+            settings=settings,
+        )
 
 
 class AutoPrinterHandler(tornado.web.RequestHandler):
@@ -35,21 +38,24 @@ class AutoPrinterHandler(tornado.web.RequestHandler):
             "auto_printer.html",
             competition_id=competition_id,
             rules_set=competition.rules_set,
-            debug=settings.DEBUG)
+            settings=settings,
+        )
 
 
 class CompetitionsHandler(tornado.web.RequestHandler):
     def get(self):
         self.render(
             "competitions.html",
-            debug=settings.DEBUG)
+            settings=settings,
+        )
 
 
 class ConnectionTesterHandler(tornado.web.RequestHandler):
     def get(self):
         self.render(
             "connection_tester.html",
-            debug=settings.DEBUG)
+            settings=settings,
+        )
 
 
 class JudgeHandler(tornado.web.RequestHandler):
@@ -59,7 +65,8 @@ class JudgeHandler(tornado.web.RequestHandler):
             "judge.html",
             judge_id=judge_id,
             rules_set=judge.competition.rules_set,
-            debug=settings.DEBUG)
+            settings=settings,
+        )
 
 
 class PresenterHandler(tornado.web.RequestHandler):
@@ -67,7 +74,8 @@ class PresenterHandler(tornado.web.RequestHandler):
         return self.render(
             "presenter.html",
             competition_id=competition_id,
-            debug=settings.DEBUG)
+            settings=settings,
+        )
 
 
 class ScreenHandler(tornado.web.RequestHandler):
@@ -76,7 +84,8 @@ class ScreenHandler(tornado.web.RequestHandler):
             "screen.html",
             competition_id=competition_id,
             manifest=json.load(open("screen/manifest.json", "rt", encoding="utf-8")),
-            debug=settings.DEBUG)
+            settings=settings,
+        )
 
 
 class ScreenOperatorHandler(tornado.web.RequestHandler):
@@ -85,16 +94,21 @@ class ScreenOperatorHandler(tornado.web.RequestHandler):
             "screen_operator.html",
             competition_id=competition_id,
             manifest=json.load(open("screen/manifest.json", "rt", encoding="utf-8")),
-            debug=settings.DEBUG)
+            settings=settings,
+        )
 
 
 class StartPageHandler(tornado.web.RequestHandler):
     def get(self):
-        competition_ids = [c.id for c in Competition.select().where(Competition.active == True)]  # NOQA
         self.render(
             "start_page.html",
-            competition_ids=competition_ids,
-            debug=settings.DEBUG)
+            settings=settings,
+        )
+
+
+class ApiRequest:
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
 
 
 class ApiHandler(tornado.web.RequestHandler):
@@ -102,12 +116,38 @@ class ApiHandler(tornado.web.RequestHandler):
         data = json.loads(self.get_argument("data"))
         method = self.get_argument("method")
         try:
-            client_id = self.get_argument("client_id")
+            ws_client_id = self.get_argument("ws_client_id")
         except:
             # TODO: add logging here
-            client_id = None
-        ws_message = WsMessage(client_id)
-        result = Api.call(method, data, ws_message=ws_message)
+            ws_client_id = None
+        ws_message = WsMessage(ws_client_id)
+        client = None
+        if method not in ["auth.register", "auth.exchange_keys"]:  # Check signature
+            try:
+                client = Client.get(id=self.get_argument("client_id"))
+                correct_sig_src = "{client_id}|{method}|{data}|{random}|{secret}".format(
+                    client_id=self.get_argument("client_id"),
+                    method=method,
+                    data=self.get_argument("data"),
+                    random=self.get_argument("random"),
+                    secret=client.secret,
+                )
+                correct_sig = hashlib.md5(correct_sig_src.encode()).hexdigest()
+                if correct_sig != self.get_argument("signature"):
+                    raise ValueError
+            except:
+                self.write(json.dumps({
+                    "success": False,
+                    "code": "errors.auth.invalid_signature",
+                }, ensure_ascii=False))
+        request = ApiRequest(
+            body=data,
+            client=client,
+            method=method,
+            remote_ip=self.request.remote_ip,
+            ws_message=ws_message,
+        )
+        result = Api.call(request)
         response = json.dumps(result, ensure_ascii=False)
         if not ws_message.empty():
             with Database.instance().db.transaction():

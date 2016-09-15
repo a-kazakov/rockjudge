@@ -1,5 +1,10 @@
+html,
+body,
+#content,
 .start-screen {
-  padding: 20px;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
 }
 .start-screen .btn-default:hover {
   background-color: #ffffff;
@@ -8,7 +13,7 @@
 .start-screen h3 {
   text-align: center;
 }
-.start-screen .role-selector h3 {
+.start-screen .universal-selector h3 {
   padding-bottom: 20px;
 }
 .start-screen .competition-selector {
@@ -32,6 +37,10 @@
   margin: 200px auto;
   text-align: center;
 }
+.start-screen .access-request button,
+.start-screen .single-judge button {
+  margin: 20px;
+}
 .start-screen .mbtn,
 .start-screen .mbtn:hover {
   background-color: #2b3a42;
@@ -42,6 +51,7 @@
   padding: 10px 5px;
   margin: 5px;
   text-align: center;
+  cursor: pointer;
 }
 .start-screen .mbtn .title,
 .start-screen .mbtn:hover .title {
@@ -53,6 +63,74 @@
 .start-screen .mbtn:hover.no-title {
   padding: 20px 5px;
   font-weight: bold;
+}
+.start-screen .presenter-selector,
+.start-screen .single-judge,
+.start-screen .no-access,
+.start-screen .access-request,
+.start-screen .universal-selector {
+  height: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+.start-screen .presenter-selector .content,
+.start-screen .single-judge .content,
+.start-screen .no-access .content,
+.start-screen .access-request .content,
+.start-screen .universal-selector .content {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+.start-screen .presenter-selector .client-id,
+.start-screen .single-judge .client-id,
+.start-screen .no-access .client-id,
+.start-screen .access-request .client-id,
+.start-screen .universal-selector .client-id {
+  -webkit-flex-shrink: 0;
+      -ms-flex-negative: 0;
+          flex-shrink: 0;
+  background-color: #2b3a42;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  color: white;
+  padding: 3px;
+}
+.start-screen .presenter-selector .content .mbtn {
+  width: 50%;
+}
+.start-screen .universal-selector .row {
+  width: 100%;
 }
 .start-screen .group {
   margin-top: 20px;

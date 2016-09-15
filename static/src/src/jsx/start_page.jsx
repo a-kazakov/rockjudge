@@ -1,4 +1,4 @@
-import { StartPage } from "clients/start_page";
+import StartPage from "StartPage";
 
 
 ReactDOM.render(

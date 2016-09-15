@@ -22,10 +22,10 @@ class WebSocketClients(SockJSConnection):
         pass
 
     def on_open(self, request):
-        client_id = str(int(10**6 * time.time()))
-        self.clients[client_id] = self
+        ws_client_id = str(int(10**6 * time.time()))
+        self.clients[ws_client_id] = self
         self.send(json.dumps({
-            "client_id": client_id
+            "ws_client_id": ws_client_id
         }))
 
     def on_close(self):
@@ -34,10 +34,10 @@ class WebSocketClients(SockJSConnection):
                 del self.clients[key]
 
     @classmethod
-    def broadcast(cls, counter_val, msg, client_id=None):
+    def broadcast(cls, counter_val, msg, ws_client_id=None):
         if len(cls.clients) == 0:
             return
-        cls.pending_messages[counter_val] = (msg, client_id)
+        cls.pending_messages[counter_val] = (msg, ws_client_id)
         while cls.next_to_send in cls.pending_messages:
             message, cl_id = cls.pending_messages[cls.next_to_send]
             if message is not None:
@@ -53,8 +53,8 @@ class WebSocketClients(SockJSConnection):
 
 
 class WsMessage:
-    def __init__(self, client_id=None):
-        self.client_id = client_id
+    def __init__(self, ws_client_id=None):
+        self.ws_client_id = ws_client_id
         self.model_updates = []
         self.messages = []
 
@@ -98,7 +98,7 @@ class WsMessage:
     def send(self):
         counter_val = WebSocketClients.get_counter_val()
         try:
-            WebSocketClients.broadcast(counter_val, self.serialize(), self.client_id)
+            WebSocketClients.broadcast(counter_val, self.serialize(), self.ws_client_id)
         except Exception as ex:
             WebSocketClients.broadcast(counter_val, None)
             raise ex

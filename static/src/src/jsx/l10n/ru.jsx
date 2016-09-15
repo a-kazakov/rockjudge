@@ -73,6 +73,7 @@ export function translate(src, arg) {
                 "unfinalize": "Отменить финализацию",
             },
             "confirms": {
+                "delete_client": "Вы действительно хотите отозвать авторизацию для этого клиента?",
                 "delete_club": "Вы действительно хотите удалить этот клуб?",
                 "delete_competition": "Вы действительно хотите удалить это соревнование?",
                 "delete_discipline": "Вы действительно хотите удалить эту дисциплину?",
@@ -87,7 +88,7 @@ export function translate(src, arg) {
             "headers": {
                 "about": "О программе",
                 "auto_printer": "Автоматическая печать",
-                "clients_management": "Управление подключенными устройствами",
+                "clients_management": "Управление авторизованными устройствами",
                 "clubs": "Клубы-участники",
                 "clubs_management": "Управление клубами",
                 "clubs_shown": "Информация только по следующим клубам:",
@@ -181,6 +182,12 @@ export function translate(src, arg) {
                 "duplicated_external_id": "В данных имеются записи с повторяющимимся external_id",
                 "unable_to_get": (wanted) => "Невозможно получить " + wanted + " из запроса",
             },
+            "auth": {
+                "already_authenticated": ["Не удалось авторизовать устройство", "Попробуйте обновить страницу"],
+                "invalid_signature": ["Запрос имеет неверную подпись", "Попробуйте обновить страницу"],
+                "localhost_only": ["Действие недоступно", "Данное действие можно осуществить только на компьютере, на котором запущена система"],
+                "not_authenticated": ["Действие недоступно", "Данное устройство не авторизовано для выполнения запрошенного действия"],
+            },
             "club": {
                 "delete_with_participants": "Невозможно удалить клуб, к которому привязаны участники",
             },
@@ -234,9 +241,16 @@ export function translate(src, arg) {
             },
         },
         "global": {
+            "access_levels": {
+                "admin": "Администратор (полный доступ)",
+                "any_judge": "Любой судья (запасной планшет)",
+                "none": "Нет доступа",
+                "presenter": "Ведущий / оператор экрана",
+            },
             "buttons": {
                 "add": "Добавить",
                 "close": "Закрыть",
+                "continue": "Продолжить",
                 "deselect_all": "Снять все",
                 "edit": "Редактировать",
                 "delete": "Удалить",
@@ -451,12 +465,19 @@ export function translate(src, arg) {
                 "select_competition": "Выберите соревнование для продолжения",
                 "select_role": "Выберите свою роль",
             },
+            "buttons": {
+                "request_access": "Запросить доступ",
+            },
             "messages": {
-                "no_competitions": "Нет активных соревнований",
+                "access_request": "Данное устройство не авторизовано для работы с этим соревнованием",
+                "client_id": id => `ID устройства: ${id}`,
                 "competitions_management_link": (link) => <span>
                     Управление соревнованиями находится по адресу&nbsp;
                     <a href={ link }>{ link }</a>
                 </span>,
+                "pending_access_request": "Ожидается авторизация устройства ...",
+                "single_judge_access": "Данный планшет авторизован для работы от имени следующего судьи",
+                "no_competitions": "Нет активных соревнований",
             },
             "roles": {
                 "administrator": "Администратор",
@@ -619,13 +640,16 @@ export function translate(src, arg) {
             "tech_judge": "Технический судья",
         },
     };
-    let path = src.split(".");
+
+    const path = src.split(".");
     let phrase_ptr = PHRASES;
-    path.forEach((chunk) => phrase_ptr = phrase_ptr[chunk]);
-    if (typeof phrase_ptr === "undefined") {
-        console.error("Unable to find translation for " + src);
-        return;
-    }
+    for (const chunk of path) {
+        phrase_ptr = phrase_ptr[chunk];
+        if (typeof phrase_ptr === "undefined") {
+            console.error("Unable to find translation for " + src);
+            return "";
+        }
+    };
     if (typeof phrase_ptr === "function") {
         let args = [];
         for (let idx = 1; idx < arguments.length; ++idx) {

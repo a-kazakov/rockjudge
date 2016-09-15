@@ -1,8 +1,9 @@
 import _ from "l10n";
 
-import { Api } from "server/api";
 import { showConfirm } from "ui/dialogs";
 import { onTouchOrClick } from "ui/tablet_components";
+
+import { Api } from "HostModules";
 
 export default class ActionsPage extends React.Component {
     stopTour = () => {

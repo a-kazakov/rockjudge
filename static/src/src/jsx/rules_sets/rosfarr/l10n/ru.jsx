@@ -187,7 +187,7 @@ export default function translate(src, arg) {
         },
     };
 
-    let path = src.split(".");
+    const path = src.split(".");
     let phrase_ptr = PHRASES;
     for (const chunk of path) {
         phrase_ptr = phrase_ptr[chunk];

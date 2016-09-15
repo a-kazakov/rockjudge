@@ -24,11 +24,15 @@ DB_CONFIG = {{
     'user': '{username}',
     'password': '{db_passwd}',
     'host': '127.0.0.1',
-}}""".format(
+}}
+
+SERVER_ID = {server_id}
+""".format(
         cookie_secret=random_string(),
         db_name=db_name,
         username=db_name,
         db_passwd=passwd,
+        server_id=random_string(),
     )
 
     with open("settings_prod.py", "wt") as f:

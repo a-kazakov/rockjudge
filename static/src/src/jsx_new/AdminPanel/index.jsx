@@ -32,6 +32,7 @@ export default class AdminPanel extends React.Component {
 
     get SCHEMA() {
         return {
+            clients: {},
             clubs: {},
             judges: {},
             plan: {},

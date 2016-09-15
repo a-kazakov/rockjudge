@@ -1,3 +1,10 @@
+import { Api } from "server/api";
+import { storage } from "server/storage";
+import { message_dispatcher } from "server/message_dispatcher";
+
+import TourResults from "common/TourResults";
+import DisciplineResults from "common/DisciplineResults";
+
 class RulesSetLoader {
     constructor() {
         this._loaded = false;
@@ -68,6 +75,7 @@ const loader = new RulesSetLoader();
 
 window.registerRulesSet = function() {
     loader.load(...arguments);
+    return { Api, storage, message_dispatcher, TourResults, DisciplineResults };
 }
 
 export default loader;

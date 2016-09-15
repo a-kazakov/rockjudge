@@ -9,7 +9,7 @@ import SimplifiedLayout from "./SimplifiedLayout";
 import HeadJudgeLayout from "./HeadJudgeLayout";
 import TechJudgeLayout from "./TechJudgeLayout";
 
-import { Api } from "server/api";
+import { Api } from "HostModules";
 
 export default class JudgeTablet extends React.Component {
     static LAYOUTS = {

@@ -85,6 +85,7 @@ class Competition(BaseModel):
 
     def delete_model(self, ws_message):
         self.deleted = True
+        self.active = False
         self.save()
         ws_message.add_message("competition_list_update")
 
@@ -94,6 +95,7 @@ class Competition(BaseModel):
         result = self.serialize_lower_child(result, "judges", children)
         result = self.serialize_lower_child(result, "clubs", children)
         result = self.serialize_lower_child(result, "plan", children)
+        result = self.serialize_lower_child(result, "clients", children)
         return result
 
     def export(self):

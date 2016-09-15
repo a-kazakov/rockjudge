@@ -1,6 +1,6 @@
 import _ from "l10n";
 
-import Api from "server/api";
+import { Api } from "HostModules";
 
 import CacheMixin from "common/CacheMixin";
 

@@ -3,6 +3,7 @@ import { Api } from "server/api";
 import { showConfirm } from "ui/dialogs";
 
 import AutoPrinterStatus from "./AutoPrinterStatus";
+import ClientsAuth from "./ClientsAuth";
 import Unfinalize from "./Unfinalize";
 
 export default class Service extends React.Component {
@@ -59,6 +60,12 @@ export default class Service extends React.Component {
                             { _("admin.headers.auto_printer") }
                         </h3>
                         <AutoPrinterStatus
+                            competition={ this.props.competition }
+                        />
+                        <h3>
+                            { _("admin.headers.clients_management") }
+                        </h3>
+                        <ClientsAuth
                             competition={ this.props.competition }
                         />
                         <h3>

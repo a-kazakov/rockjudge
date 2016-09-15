@@ -1,7 +1,12 @@
 @import "variables.less";
 
+html, body, #content, .start-screen {
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+}
+
 .start-screen {
-  padding: 20px;
   .btn-default:hover {
     background-color: @btn-default-bg;
     border-color: @btn-default-border;
@@ -9,7 +14,7 @@
   h3 {
     text-align: center;
   }
-  .role-selector {
+  .universal-selector {
     h3 {
       padding-bottom: 20px;
     }
@@ -35,6 +40,11 @@
     margin: 200px auto;
     text-align: center;
   }
+  .access-request, .single-judge {
+    button {
+      margin: 20px;
+    }
+  }
   .mbtn, .mbtn:hover {
     background-color: @ui-dark;
     color: @ui-white;
@@ -44,6 +54,7 @@
     padding: 10px 5px;
     margin: 5px;
     text-align: center;
+    cursor: pointer;
     .title {
       font-size: 14px;
       font-weight: bold;
@@ -52,6 +63,41 @@
     &.no-title {
       padding: 20px 5px;
       font-weight: bold;
+    }
+  }
+
+  .presenter-selector, .single-judge, .no-access, .access-request, .universal-selector {
+    height: 100%;
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    .content {
+      display: flex;
+      flex-grow: 1;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .client-id {
+      flex-shrink: 0;
+      background-color: @ui-dark;
+      text-align: center;
+      font-weight: bold;
+      font-size: 14px;
+      color: white;
+      padding: 3px;
+    }
+  }
+  .presenter-selector {
+    .content {
+      .mbtn {
+        width: 50%;
+      }
+    }
+  }
+  .universal-selector {
+    .row {
+      width: 100%;
     }
   }
 

@@ -1,8 +1,8 @@
 import _ from "l10n";
 
-import { Api } from "server/api";
-
 import { onTouchEndOrClick } from "ui/tablet_components";
+
+import { Api } from "HostModules";
 
 export default class NotPerformedSwitch extends React.Component {
     markNotPerformed() {

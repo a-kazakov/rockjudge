@@ -11,7 +11,9 @@ DB_CONFIG = {
     "host": "127.0.0.1",
 }
 
-VERSION = "v1_0"
+VERSION = "v1_1"
+
+SERVER_ID = "1234567890"
 
 try:
     from settings_prod import *  # NOQA

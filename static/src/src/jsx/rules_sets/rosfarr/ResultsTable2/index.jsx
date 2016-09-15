@@ -4,7 +4,6 @@ import Row from "./Row";
 import ColumnsWidths from "./ColumnsWidths";
 
 import getJudgeTableMark from "getJudgeTableMark";
-import TourScoresWrapper from "common/TourScoresWrapper";
 import getScoringType from "common/getScoringType";
 
 export default class ResultsTable2 extends React.Component {

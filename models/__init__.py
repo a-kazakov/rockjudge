@@ -1,5 +1,7 @@
 from models.acrobatic_override import AcrobaticOverride  # NOQA
 from models.api_log_item import ApiLogItem  # NOQA
+from models.client import Client  # NOQA
+from models.client_auth import ClientAuth  # NOQA
 from models.club import Club  # NOQA
 from models.competition import Competition  # NOQA
 from models.discipline import Discipline  # NOQA
