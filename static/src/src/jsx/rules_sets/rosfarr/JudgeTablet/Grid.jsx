@@ -47,15 +47,19 @@ export default class Grid extends CacheMixin(React.Component) {
         if (!this.asym_layout) {
             class_name += " align-center";
         } else if (is_second_row) {
-            class_name += " align-left";
-        } else {
             class_name += " align-right";
+        } else {
+            class_name += " align-left";
         }
         return (
-            <table className={ class_name } style={{ width: row_width }}><tbody>
+            <table className={ class_name } style={ { width: row_width } }><tbody>
                 <tr>
                     { elements.map((e, idx) =>
-                        <td className="item" key={ idx } style={{ width: this.width }}>
+                        <td
+                            className="item"
+                            key={ idx }
+                            style={ { width: this.width } }
+                        >
                             { e }
                         </td>
                     ) }
@@ -66,13 +70,13 @@ export default class Grid extends CacheMixin(React.Component) {
     render() {
         const class_name = this.two_rows ? "grid two-rows" : "grid";
         const first_row = this.two_rows
-            ? this.children.filter((x, idx) => idx % 2 === 1)
+            ? this.children.filter((x, idx) => idx % 2 === 0)
             : this.children;
         const second_row = this.two_rows
-            ? this.children.filter((x, idx) => idx % 2 === 0)
+            ? this.children.filter((x, idx) => idx % 2 === 1)
             : null;
         return (
-            <div className={ class_name } style={{ maxWidth: this.max_width }}>
+            <div className={ class_name } style={ { maxWidth: this.max_width } }>
                 { this.renderRow(first_row, false) }
                 { this.renderRow(second_row, true) }
             </div>
