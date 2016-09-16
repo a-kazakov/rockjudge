@@ -45,9 +45,11 @@ export default class RoleSelector extends React.Component {
     }
     componentDidUpdate(prev_props, ps) {
         if (
-            prev_props.competitionId !== this.props.competitionId ||
-            !prev_props.accessLevel ||
-            prev_props.accessLevel === "none"
+            prev_props.competitionId !== this.props.competitionId &&
+            (
+                window.location.hostname === "127.0.0.1" ||
+                (prev_props.accessLevel && prev_props.accessLevel !== "none")
+            )
         ) {
             this.loadData();
         }
@@ -97,7 +99,7 @@ export default class RoleSelector extends React.Component {
             competition: serialized,
         });
     }
-    loadData() {
+    loadData = () => {
         if (!this.has_access) {
             return
         }
@@ -106,7 +108,7 @@ export default class RoleSelector extends React.Component {
             children: this.SCHEMA,
         })
             .addToDB("Competition", this.props.competitionId, this.storage)
-            .onSuccess(this.reloadFromStorage.bind(this))
+            .onSuccess(this.reloadFromStorage)
             .send();
     }
 

@@ -95,13 +95,13 @@ export default class HeatsTab extends React.Component {
             tour: serialized,
         });
     }
-    loadData() {
+    loadData = () => {
         Api("tour.get", {
             tour_id: this.props.tour.id,
             children: this.SCHEMA,
         })
             .addToDB("Tour", this.props.tour.id, this.storage)
-            .onSuccess(this.reloadFromStorage.bind(this))
+            .onSuccess(this.reloadFromStorage)
             .send();
     }
 

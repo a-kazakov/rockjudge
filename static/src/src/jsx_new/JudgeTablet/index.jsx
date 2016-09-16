@@ -29,13 +29,14 @@ export default class JudgeTablet extends React.Component {
     componentWillMount() {
         this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData);
         this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage);
-        message_dispatcher.addListener("active_tour_update", this.handleActiveTourUpdate);
+        this.active_tour_update_listener = message_dispatcher.addListener("active_tour_update", this.handleActiveTourUpdate);
         this.loadData();
     }
 
     componentWillUnmount() {
         message_dispatcher.removeListener(this.reload_listener);
         message_dispatcher.removeListener(this.db_update_listener);
+        message_dispatcher.removeListener(this.active_tour_update_listener);
         this.freeStorage();
     }
 

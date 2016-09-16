@@ -108,7 +108,7 @@ export default class CompetitionReport extends React.Component {
             competition: competition,
         });
     }
-    loadData() {
+    loadData = () => {
         Api("competition.get", {
             competition_id: this.props.competition.id,
             children: this.SCHEMA,

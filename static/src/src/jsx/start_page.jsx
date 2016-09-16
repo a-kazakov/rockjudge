@@ -1,5 +1,6 @@
-import StartPage from "StartPage";
+import "babel-polyfill";
 
+import StartPage from "StartPage";
 
 ReactDOM.render(
     <StartPage { ...window.page_props } />,

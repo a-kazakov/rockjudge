@@ -51,7 +51,7 @@ export default class AutoPrinter extends React.Component {
             children: this.SCHEMA,
         })
             .addToDB("Competition", this.props.competitionId)
-            .onSuccess(this.reloadFromStorage.bind(this))
+            .onSuccess(this.reloadFromStorage)
             .send();
     }
     reloadFromStorage = () => {

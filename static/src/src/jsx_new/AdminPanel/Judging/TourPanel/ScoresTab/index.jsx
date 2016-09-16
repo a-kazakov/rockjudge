@@ -101,7 +101,7 @@ export default class ScoresTab extends React.Component {
             children: this.SCHEMA,
         })
             .addToDB("Tour", this.props.tour.id, this.storage)
-            .onSuccess(this.reloadFromStorage.bind(this))
+            .onSuccess(this.reloadFromStorage)
             .send();
     }
 

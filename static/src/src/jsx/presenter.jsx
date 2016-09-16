@@ -1,7 +1,8 @@
-import { Presenter } from "clients/presenter/main";
+import "babel-polyfill";
 
+import PresenterTablet from "PresenterTablet";
 
 ReactDOM.render(
-    <Presenter { ...window.page_props } />,
+    <PresenterTablet { ...window.page_props } />,
     window.document.getElementById("content")
 );

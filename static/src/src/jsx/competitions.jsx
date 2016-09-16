@@ -1,5 +1,6 @@
-import { Competitions } from "admin/competitions/main";
+import "babel-polyfill";
 
+import { Competitions } from "admin/competitions/main";
 
 ReactDOM.render(
     <Competitions { ...window.page_props } />,

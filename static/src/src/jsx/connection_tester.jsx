@@ -1,5 +1,6 @@
-import { ConnectionTester } from "clients/connection_tester/main";
+import "babel-polyfill";
 
+import { ConnectionTester } from "clients/connection_tester/main";
 
 ReactDOM.render(
     <ConnectionTester { ...window.page_props } />,

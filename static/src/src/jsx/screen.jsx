@@ -1,5 +1,6 @@
-import { Screen } from "clients/screen/main";
+import "babel-polyfill";
 
+import { Screen } from "clients/screen/main";
 
 ReactDOM.render(
     <Screen { ...window.page_props } />,
