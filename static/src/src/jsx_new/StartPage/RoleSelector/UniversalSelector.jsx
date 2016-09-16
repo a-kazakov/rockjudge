@@ -36,7 +36,7 @@ export default class UniversalSelector extends React.Component {
         return `/screen/${this.props.competition.id}`;
     }
     get admin_href() {
-        return `/screen/${this.props.competition.id}`;
+        return `/admin/${this.props.competition.id}`;
     }
     getJudgeRef(judge) {
         return `/judge/${judge.id}`;

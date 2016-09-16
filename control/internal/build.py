@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import glob
 import os
 import shutil
@@ -64,7 +66,7 @@ def copy_python_module(module):
 def build_module(name):
     with pushd(jp("src", name)):
         with task("Building {} module".format(name)):
-            run("py", "_compile.py", "build_ext", "--inplace")
+            run("py", "-3", "_compile.py", "build_ext", "--inplace")
 
 
 shutil.rmtree("dist", ignore_errors=True)
@@ -92,8 +94,8 @@ try:
             build_module("webserver")
 
             with task("Bundling everything together"):
-                run("py", jp(home, "control", "internal", "make_exe_spec.py"))
-                run("py", jp(home, "external-tools", "pyinstaller", "pyinstaller.py"), "exe.spec")
+                run("py", "-3", jp(home, "control", "internal", "make_exe_spec.py"))
+                run("py", "-3", jp(home, "external-tools", "pyinstaller", "pyinstaller.py"), "exe.spec")
 
             with task("Bulding JS"):
                 with pushd(jp(home, "static")):
@@ -129,7 +131,7 @@ try:
             with pushd("print_server", True):
                 shutil.copy(jp(home, "tools", "print.py"), ".")
                 shutil.copy(jp(home, "tools", "print-config-sample.txt"), jp(".", "print-config.txt"))
-                run("py", jp(home, "external-tools", "pyinstaller", "pyinstaller.py"), "-F", "print.py")
+                run("py", "-3", jp(home, "external-tools", "pyinstaller", "pyinstaller.py"), "-F", "print.py")
                 shutil.rmtree("build")
                 os.unlink("print.py")
                 os.unlink("print.spec")
