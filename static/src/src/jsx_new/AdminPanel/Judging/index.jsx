@@ -29,7 +29,7 @@ export default class Judging extends React.Component {
     getTourIdFromHash() {
         let chunks = window.location.hash.substr(1).split("/");
         if (chunks[1] && /^\d+$/.test(chunks[1])) {
-            return parseInt(chunks[1]);
+            return Number(chunks[1]);
         }
         return null;
     }
@@ -69,7 +69,6 @@ export default class Judging extends React.Component {
         );
     }
     render() {
-        const { tour, discipline } = this.getActiveTourAndDiscipline();
         return (
             <div className="app">
                 <SideMenu

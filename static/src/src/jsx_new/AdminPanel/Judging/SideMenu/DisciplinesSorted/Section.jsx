@@ -19,11 +19,11 @@ export default class Section extends React.Component {
     }
 
     handleOpenClose = (event) => {
-        sessionStorage.setItem("D_J_" + this.props.discipline.id, event.target.parentNode.open ? 0 : 1);
+        sessionStorage.setItem(`D_J_${this.props.discipline.id}`, event.target.parentNode.open ? 0 : 1);
     }
 
     isOpen() {
-        return !!parseInt(sessionStorage.getItem("D_J_" + this.props.discipline.id));
+        return !!Number(sessionStorage.getItem(`D_J_${this.props.discipline.id}`));
     }
     render() {
         return (

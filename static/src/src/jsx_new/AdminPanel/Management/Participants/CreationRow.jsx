@@ -46,7 +46,7 @@ export default class CreationRow extends React.Component {
             "club": {
                 "id": this.props.competition.clubs[0]
                     ? this.props.competition.clubs[0].id
-                    : null
+                    : null,
             },
             "sportsmen": [],
             "programs": [],

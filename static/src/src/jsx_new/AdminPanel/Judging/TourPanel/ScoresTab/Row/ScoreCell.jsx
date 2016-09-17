@@ -37,7 +37,7 @@ export default class ScoreCell extends React.Component {
         }
         Api("score.set", {
             score_id: this.props.score.id,
-            data: request
+            data: request,
         })
             .onSuccess(this.props.onStopEditing)
             .send();

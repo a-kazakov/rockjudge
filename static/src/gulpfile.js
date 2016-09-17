@@ -1,16 +1,16 @@
 "use strict"
 
-let gulp = require('gulp');
-let less = require('gulp-less');
-let concat = require('gulp-concat');
-let gutil = require('gulp-util');
-let makeItFaster = require('spawn-task-experiment').spawn;
+const gulp = require('gulp');
+const less = require('gulp-less');
+const concat = require('gulp-concat');
+const gutil = require('gulp-util');
+const makeItFaster = require('spawn-task-experiment').spawn;
 
 
-let LessPluginCleanCSS = require('less-plugin-clean-css'),
-    LessPluginAutoPrefix = require('less-plugin-autoprefix'),
-    cleancss = new LessPluginCleanCSS({ advanced: true }),
-    autoprefix = new LessPluginAutoPrefix({ browsers: ["last 5 versions"] });
+const LessPluginCleanCSS = require('less-plugin-clean-css'),
+      LessPluginAutoPrefix = require('less-plugin-autoprefix'),
+      cleancss = new LessPluginCleanCSS({ advanced: true }),
+      autoprefix = new LessPluginAutoPrefix({ browsers: ["last 5 versions"] });
 
 
 let all_jsx_tasks = [];
@@ -18,15 +18,15 @@ let all_jsx_tasks = [];
 function createJsxTask(task) {
     all_jsx_tasks.push(task);
     function doTheJob() {
-        let gulp = require('gulp');
-        let browserify = require('browserify');
-        let babelify = require('babelify');
-        let uglify = require('gulp-uglify');
-        let source = require('vinyl-source-stream');
-        let buffer = require('vinyl-buffer');
-        let gutil = require('gulp-util');
+        const gulp = require('gulp');
+        const browserify = require('browserify');
+        const babelify = require('babelify');
+        const uglify = require('gulp-uglify');
+        const source = require('vinyl-source-stream');
+        const buffer = require('vinyl-buffer');
+        const gutil = require('gulp-util');
 
-        let task = "__task__";
+        const task = "__task__";
         let env_type = "__env_type__";
         function buildJsx(entry_point, out_dir, out_file) {
             let bundler = browserify({
@@ -37,7 +37,11 @@ function createJsxTask(task) {
             })
             .transform(babelify, {
                 presets: ['es2015', 'react'],
-                plugins: ['transform-class-properties', 'transform-object-rest-spread'],
+                plugins: [
+                    'transform-class-properties',
+                    'transform-object-rest-spread',
+                    'syntax-trailing-function-commas',
+                ],
             })
             .bundle()
             .pipe(source(out_file))
@@ -80,7 +84,11 @@ function createRuleSetJsxTask(task) {
             })
             .transform(babelify, {
                 presets: ['es2015', 'react'],
-                plugins: ['transform-class-properties', 'transform-object-rest-spread'],
+                plugins: [
+                    'transform-class-properties',
+                    'transform-object-rest-spread',
+                    'syntax-trailing-function-commas',
+                ],
             })
             .bundle()
             .pipe(source(out_file))

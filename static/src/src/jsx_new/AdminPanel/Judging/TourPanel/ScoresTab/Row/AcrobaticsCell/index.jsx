@@ -64,7 +64,7 @@ export default class AcrobaticsCell extends React.Component {
                 onClick={ this.handleStartEditing }
             >
                { has_overrides
-                    ? original_score.toFixed(1) + " → " + score.toFixed(1)
+                    ? `${original_score.toFixed(1)} → ${score.toFixed(1)}`
                     : score.toFixed(1) }
             </td>
         );

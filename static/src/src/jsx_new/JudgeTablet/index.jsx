@@ -1,4 +1,3 @@
-import { _ } from "l10n/loader";
 import { Api } from "server/api";
 import { storage } from "server/storage";
 import { message_dispatcher } from "server/message_dispatcher";
@@ -92,7 +91,7 @@ export default class JudgeTablet extends React.Component {
         }
         Api("tour.get", {
             tour_id: this._current_active_tour_id,
-            children: this.TOUR_SCHEMA
+            children: this.TOUR_SCHEMA,
         })
             .addToDB("Tour", this._current_active_tour_id, this.tour_storage)
             .onSuccess(this.reloadFromStorage)
@@ -137,7 +136,7 @@ export default class JudgeTablet extends React.Component {
     loadData = () => {
         Api("judge.get", {
             judge_id: this.props.judgeId,
-            children: this.JUDGE_SCHEMA
+            children: this.JUDGE_SCHEMA,
         })
             .addToDB("Judge", this.props.judgeId)
             .onSuccess(this.reloadFromStorage)

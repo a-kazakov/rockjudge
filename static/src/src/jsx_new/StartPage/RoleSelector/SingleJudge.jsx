@@ -25,8 +25,8 @@ export default class SingleJudge extends React.Component {
     }
 
     render() {
-        const judge_id = parseInt(this.props.accessLevel.split("_")[1]);
-        const judge = this.props.competition.judges.find(judge => judge.id === judge_id);
+        const judge_id = Number(this.props.accessLevel.split("_")[1]);
+        const judge = this.props.competition.judges.find(j => j.id === judge_id);
         const judge_role = judge.role_description || _("global.phrases.judge_n", judge.number);
         if (!judge) {
             return null;

@@ -44,7 +44,7 @@ export default class Wrapper extends React.Component {
     render() { // eslint-disable-line react/sort-comp
         return (
             <Paper
-                header={ this.props.discipline.competition.name + ", " + this.props.discipline.competition.date }
+                header={ `${this.props.discipline.competition.name}, ${this.props.discipline.competition.date}` }
                 ref={ this.makePrintableRef }
                 title1={ _("admin.headers.discipline_results") }
                 title3={ this.props.discipline.name }
@@ -56,7 +56,7 @@ export default class Wrapper extends React.Component {
 
     createDocx(filename="discipline-results.docx") {
         Docx(filename)
-            .setHeader(this.props.discipline.competition.name + ", " + this.props.discipline.competition.date)
+            .setHeader(`${this.props.discipline.competition.name}, ${this.props.discipline.competition.date}`)
             .setTitle1(_("admin.headers.discipline_results"))
             .setTitle3(this.props.discipline.name)
             .setBody(this._printable.getPrintableHTML())

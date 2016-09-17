@@ -23,7 +23,10 @@ export default class TourResults extends React.Component {
 
     componentWillMount() {
         this.setupStorage();
-        this.reload_listener = message_dispatcher.addListener("reload_data", () => { this.loadData; this.loadResults(); });
+        this.reload_listener = message_dispatcher.addListener("reload_data", () => {
+            this.loadData();
+            this.loadResults();
+        });
         this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage);
         this.results_change_listener = message_dispatcher.addListener(
             "tour_results_changed reload_data",
@@ -171,7 +174,7 @@ export default class TourResults extends React.Component {
         );
     }
     renderBody(table) {
-        const { tourId, renderer, ...other_props} = this.props;
+        const { tourId, renderer, ...other_props} = this.props; // eslint-disable-line no-unused-vars
         const RenderingComponent = renderer;
         return (
             <RenderingComponent

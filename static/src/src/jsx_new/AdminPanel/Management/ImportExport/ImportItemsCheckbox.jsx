@@ -9,12 +9,11 @@ export default class ImportItemsCheckbox extends React.Component {
             onChange: PT.func.isRequired,
         };
     }
-    constructor(props) {
-        super(props);
-    }
+
     handleChange = (e) => {
         this.props.onChange(this.props.type, e.target.checked);
     }
+
     render() {
         return (
             <div className="switch">

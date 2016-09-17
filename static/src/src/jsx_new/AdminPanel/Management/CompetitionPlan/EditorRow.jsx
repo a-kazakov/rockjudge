@@ -44,8 +44,8 @@ export default class EditorRow extends React.Component {
 
     serialize() {
         return {
-            sp: parseInt(this._sp.value) || 0,
-            tour_id: this._tour_id.value === "" ? null : parseInt(this._tour_id.value),
+            sp: parseInt(this._sp.value, 10) || 0,
+            tour_id: this._tour_id.value === "" ? null : Number(this._tour_id.value),
             verbose_name: this._verbose_name.value,
             estimated_beginning: this._estimated_beginning.value,
             estimated_duration: this._estimated_duration.value,

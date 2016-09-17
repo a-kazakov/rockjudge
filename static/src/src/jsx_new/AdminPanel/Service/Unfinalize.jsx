@@ -39,9 +39,9 @@ export default class Unfinalize extends React.Component {
                 return false;
             }
             Api("tour.unfinalize", {
-                tour_id: parseInt(this._select.value),
+                tour_id: Number(this._select.value),
             })
-                .onSuccess(event => {
+                .onSuccess(() => {
                     swal({
                         title: _("global.messages.success"),
                         animation: false,

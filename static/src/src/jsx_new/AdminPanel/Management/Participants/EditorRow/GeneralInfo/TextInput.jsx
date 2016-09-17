@@ -10,7 +10,7 @@ export default class TextInput extends React.Component {
         this.props.onChange(this.props.mkey, e.target.value);
     }
     render() {
-        const { mkey, onChange, ...props } = this.props;
+        const { mkey, onChange, ...props } = this.props; // eslint-disable-line no-unused-vars
         return (
             <input
                 className="full-width"

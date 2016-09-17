@@ -52,7 +52,7 @@ export default class Row extends React.Component {
         let scores_map = new Map();
         for (const score of this.props.run.scores) {
             scores_map.set(score.discipline_judge_id, score)
-        };
+        }
         const scores = this.props.tour.discipline.discipline_judges.map((discipline_judge, idx) => {
             const score = scores_map.get(discipline_judge.id);
             return (
@@ -61,7 +61,7 @@ export default class Row extends React.Component {
                     disciplineJudge={ discipline_judge }
                     editing={ this.props.nowEditing.type === "score" &&
                               this.props.nowEditing.score_id === (score && score.id) }
-                    key={ (score && score.id) ||  ("I" + idx) }
+                    key={ (score && score.id) ||  `I${idx}` }
                     readOnly={ this.props.readOnly }
                     score={ score }
                     tour={ this.props.tour }

@@ -41,11 +41,11 @@ export default class Editor extends React.Component {
             animation: false,
         }, value => {
             try {
-                let data = JSON.parse(value);
+                const data = JSON.parse(value);
                 this._elements.load(data);
                 swal.close();
             }
-            catch (SyntaxError) {
+            catch (ex) {
                 showError(_("errors.admin.load_syntax_error"));
             }
         });

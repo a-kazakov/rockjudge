@@ -45,7 +45,7 @@ export default class HeatsTab extends React.Component {
             this.setupStorage(next_props.tour.id);
         }
     }
-    componentDidUpdate(prev_props, ps) {
+    componentDidUpdate(prev_props) {
         if (prev_props.tour.id !== this.props.tour.id) {
             this.loadData();
         }
@@ -69,7 +69,7 @@ export default class HeatsTab extends React.Component {
             runs: {
                 participant: {
                     club: {},
-                }
+                },
             },
         };
     }
@@ -123,7 +123,7 @@ export default class HeatsTab extends React.Component {
             return null;
         }
         return (
-            <tr key={ "H" + next_row.heat }>
+            <tr key={ `H${next_row.heat}` }>
                 <th className="heat-number" colSpan="3">
                     <p>
                         { _("global.phrases.heat_n", next_row.heat) }
@@ -157,7 +157,7 @@ export default class HeatsTab extends React.Component {
         }
         return (
             <Paper
-                header={ this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date }
+                header={ `${this.state.tour.discipline.competition.name}, ${this.state.tour.discipline.competition.date}` }
                 ref={ this.makePrintableRef }
                 title1={ _("admin.headers.tour_heats") }
                 title2={ this.state.tour.discipline.name }
@@ -195,7 +195,7 @@ export default class HeatsTab extends React.Component {
 
     createDocx(filename="tour-heats.docx") {
         Docx(filename)
-            .setHeader(this.state.tour.discipline.competition.name + ", " + this.state.tour.discipline.competition.date)
+            .setHeader(`${this.state.tour.discipline.competition.name}, ${this.state.tour.discipline.competition.date}`)
             .setTitle1(_("admin.headers.tour_heats"))
             .setTitle2(this.state.tour.discipline.name)
             .setTitle3(this.state.tour.name)

@@ -1,6 +1,6 @@
 import { GL } from "common/definitions";
 
-import { _, tour_names } from "l10n/loader";
+import { tour_names } from "l10n/loader";
 
 import AddButton from "./AddButton";
 import Creator from "./Creator";
@@ -48,7 +48,7 @@ export default class Tours extends React.Component {
 
     // Renderers
 
-    renderTourCreation(after_id, next_tour) {
+    renderTourCreation(after_id) {
         if (after_id === this.state.newTourAfterId) {
             return (
                 <Creator
@@ -69,21 +69,19 @@ export default class Tours extends React.Component {
         }
     }
     renderTours(discipline) {
-        return discipline.tours.map((tour, idx, arr) => {
+        return discipline.tours.map(tour => {
             return [
                 <Row
                     competition={ this.props.competition }
                     key={ tour.id }
                     tour={ tour }
                 />,
-                this.renderTourCreation(tour.id, arr[idx + 1])
+                this.renderTourCreation(tour.id),
             ];
         });
     }
     render() {
-        const discipline = this.props.competition.disciplines.find(
-            discipline => discipline.id === this.props.disciplineId
-        );
+        const discipline = this.props.competition.disciplines.find(d => d.id === this.props.disciplineId);
         return (
             <div className="app-content">
                 <header className="app-header">

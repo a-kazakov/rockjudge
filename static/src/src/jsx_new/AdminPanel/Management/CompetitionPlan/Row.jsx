@@ -65,7 +65,7 @@ export default class Row extends React.Component {
                 </td>
             );
         }
-        const tour = this.props.tours.find(tour => tour.id === this.props.item.tour_id);
+        const tour = this.props.tours.find(t => t.id === this.props.item.tour_id);
         if (!tour) {
             return (
                 <td colSpan="2" />
@@ -77,7 +77,7 @@ export default class Row extends React.Component {
             </td>,
             <td key="T">
                 { tour.tour_name }
-            </td>
+            </td>,
         ];
     }
     renderEditor() {

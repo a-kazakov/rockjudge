@@ -25,7 +25,7 @@ export default class Judges extends React.Component {
     static genJudgesNumbers(competition) {
         let result = [];
         let numbers_used = {};
-        competition.judges.forEach((j, idx) => {
+        competition.judges.forEach(j => {
             const number = j.number;
             let appendix = "";
             let cnt = 0;

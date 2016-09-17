@@ -1,5 +1,3 @@
-import { _ } from "l10n/loader";
-
 import Clubs from "./clubs";
 import CompetitionPlan from "./CompetitionPlan";
 import CompetitionReport from "./CompetitionReport";
@@ -39,7 +37,8 @@ export default class Management extends React.Component {
         Object.getOwnPropertyNames(props).forEach((key) => {
             props_pairs.push([key, props[key]]);
         });
-        window.location.hash = "#management/" + page + "/" + props_pairs.map((p) => p.join("=")).join("$");
+        const props_pairs_str = props_pairs.map((p) => p.join("=")).join("$");
+        window.location.hash = `#management/${page}/${props_pairs_str}`;
     }
     getPageFromHash() {
         let chunks = window.location.hash.substr(1).split("/");

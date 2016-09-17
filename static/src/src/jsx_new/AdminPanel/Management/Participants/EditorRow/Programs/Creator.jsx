@@ -25,7 +25,7 @@ export default class Creator extends React.Component {
     handleSubmission = (data) => {
         Api("program.create", {
             participant_id: this.props.participant.id,
-            data: data
+            data: data,
         })
             .onSuccess(this.handleStopEditing)
             .send();

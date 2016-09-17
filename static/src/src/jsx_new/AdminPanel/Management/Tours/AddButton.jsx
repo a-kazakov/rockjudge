@@ -8,12 +8,11 @@ export default class AddButton extends React.Component {
             onClick: PT.func.isRequired,
         };
     }
-    constructor(props) {
-        super(props);
-    }
+
     handleClick = () => {
         this.props.onClick(this.props.afterId);
     }
+
     render() {
         return (
             <button

@@ -13,7 +13,7 @@ export default class Acrobatics extends React.Component {
                             }).isRequired
                         ),
                     }).isRequired
-                )
+                ),
             }).isRequired,
         };
     }
@@ -24,13 +24,13 @@ export default class Acrobatics extends React.Component {
                     <table className="inner"><tbody>
                         { this.props.participant.programs.map((pr, pr_idx) =>
                             [
-                                <tr key={ "H" + pr_idx }>
+                                <tr key={ `H${pr_idx}` }>
                                     <th colSpan="3">
                                         <p className="text-left">
                                             { pr.name }
                                         </p>
                                     </th>
-                                </tr>
+                                </tr>,
                             ].concat(
                                 pr.acrobatics.map((a, a_idx) =>
                                     <tr key={ `A_${pr_idx}_${a_idx}` }>

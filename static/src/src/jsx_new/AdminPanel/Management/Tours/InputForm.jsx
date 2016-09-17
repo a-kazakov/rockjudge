@@ -1,5 +1,4 @@
 import { _ } from "l10n/loader";
-import { tour_names } from "l10n/loader";
 import { GL } from "common/definitions";
 
 export default class InputForm extends React.Component {
@@ -44,12 +43,12 @@ export default class InputForm extends React.Component {
     serialize() {
         let result = {
             name:                  this._name.value,
-            participants_per_heat: parseInt(this._participants_per_heat.value) || 1,
+            participants_per_heat: parseInt(this._participants_per_heat.value, 10) || 1,
             default_program:       this._default_program.value,
         };
         if (!this.props.tour || !this.props.tour.finalized) {
             Object.assign(result, {
-                num_advances:        parseInt(this._num_advances.value) || 0,
+                num_advances:        parseInt(this._num_advances.value, 10) || 0,
                 scoring_system_name: this._scoring_system_name.value,
                 hope_tour :          this._hope_tour.checked,
             });
@@ -142,7 +141,7 @@ export default class InputForm extends React.Component {
                             >
                                 { GL.scoring_systems[this.props.competition.rules_set].map((sn) =>
                                     <option key={ sn } value={ sn }>
-                                        { _("scoring_systems_names." + sn) }
+                                        { _(`scoring_systems_names.${sn}`) }
                                     </option>
                                 ) }
                             </select>

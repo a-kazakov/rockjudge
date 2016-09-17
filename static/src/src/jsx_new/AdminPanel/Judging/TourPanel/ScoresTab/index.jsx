@@ -45,7 +45,7 @@ export default class ScoresTab extends React.Component {
             this.setupStorage(next_props.tour.id);
         }
     }
-    componentDidUpdate(prev_props, ps) {
+    componentDidUpdate(prev_props) {
         if (prev_props.tour.id !== this.props.tour.id) {
             this.loadData();
         }
@@ -62,7 +62,7 @@ export default class ScoresTab extends React.Component {
                 competition: {},
                 discipline_judges: {
                     judge: {},
-                }
+                },
             },
             runs: {
                 acrobatics: {},
@@ -139,7 +139,7 @@ export default class ScoresTab extends React.Component {
             _("judging.confirms.shuffle_heats"),
             () => {
                 Api("tour.shuffle_heats", {
-                    tour_id: this.props.tour.id
+                    tour_id: this.props.tour.id,
                 })
                     .onSuccess(() => swal.close())
                     .send();

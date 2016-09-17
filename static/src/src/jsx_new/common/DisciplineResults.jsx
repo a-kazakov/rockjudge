@@ -1,4 +1,3 @@
-import { _ } from "l10n/loader";
 import { message_dispatcher } from "server/message_dispatcher";
 import { storage } from "server/storage";
 import { Api } from "server/api";
@@ -23,7 +22,10 @@ export default class DisciplineResults extends React.Component {
 
     componentWillMount() {
         this.setupStorage();
-        this.reload_listener = message_dispatcher.addListener("reload_data", () => { this.loadData; this.loadResults(); });
+        this.reload_listener = message_dispatcher.addListener("reload_data", () => {
+            this.loadData();
+            this.loadResults();
+        });
         this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage);
         this.results_change_listener = message_dispatcher.addListener(
             "tour_results_changed reload_data",
@@ -63,8 +65,8 @@ export default class DisciplineResults extends React.Component {
                     participant: {
                         club: {},
                     },
-                }
-            }
+                },
+            },
         };
     }
 
@@ -157,7 +159,7 @@ export default class DisciplineResults extends React.Component {
     // Rendering
 
     renderBody(table) {
-        const { disciplineId, renderer, ...other_props} = this.props;
+        const { disciplineId, renderer, ...other_props} = this.props; // eslint-disable-line no-unused-vars
         const RenderingComponent = renderer;
         return (
             <RenderingComponent

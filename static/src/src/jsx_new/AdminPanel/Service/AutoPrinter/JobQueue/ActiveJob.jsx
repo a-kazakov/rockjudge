@@ -16,7 +16,7 @@ export default class ActiveJob extends React.Component {
     }
 
     createFilename() {
-        return "autoprinter_" + Math.random().toString().replace(/[^0-9]/, "").slice(1) + ".tmp";
+        return `autoprinter_${Math.random().toString().replace(/[^0-9]/, "").slice(1)}.tmp`;
     }
 
     render() {

@@ -1,10 +1,7 @@
-import { _ } from "l10n/loader";
 import { Api } from "server/api";
 import { Loader } from "ui/components";
 import { storage } from "server/storage";
 import { message_dispatcher } from "server/message_dispatcher";
-
-import keys_storage from "common/keys_storage";
 
 import AccessRequest from "./AccessRequest";
 import NoAccess from "./NoAccess";
@@ -43,7 +40,7 @@ export default class RoleSelector extends React.Component {
             this.setupStorage(next_props.competitionId);
         }
     }
-    componentDidUpdate(prev_props, ps) {
+    componentDidUpdate(prev_props) {
         if (
             prev_props.competitionId !== this.props.competitionId &&
             (

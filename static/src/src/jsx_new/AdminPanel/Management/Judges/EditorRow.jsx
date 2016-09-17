@@ -47,7 +47,7 @@ export default class EditorRow extends React.Component {
             number: this._number.value,
             category: this._category.value,
             role_description: this._role_description.value,
-            sp: parseInt(this._sp.value),
+            sp: parseInt(this._sp.value, 10),
             external_id: this._external_id.value !== ""
                 ? this._external_id.value
                 : null,

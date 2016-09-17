@@ -13,7 +13,7 @@ export default class ClubSelector extends React.Component {
         };
     }
     handleChange = (e) => {
-        this.props.onChange("club_id", parseInt(e.target.value));
+        this.props.onChange("club_id", Number(e.target.value));
     }
     renderList() {
         return this.props.clubs.map((club) =>

@@ -33,7 +33,7 @@ export default class ImportExport extends React.Component {
                 swal({
                     title: _("global.messages.success"),
                     type: "success",
-                    animation: false
+                    animation: false,
                 });
             }).onDone(() => {
                 this.setState({

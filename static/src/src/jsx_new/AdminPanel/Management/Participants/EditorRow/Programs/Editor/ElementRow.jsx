@@ -18,7 +18,7 @@ export default class ElementRow extends React.Component {
         let new_element = Object.assign({}, this.props.element); // clone
         new_element[field] = value;
         this.props.onChange(this.props.idx, new_element);
-    };
+    }
     handleDescriptionChange = (event) => this.handleChange("description", event.target.value);
     handleScoreChange       = (event) => this.handleChange("score",       event.target.value);
     handleDeletion = () => {

@@ -26,7 +26,7 @@ export default class DisciplineJudgeRow extends React.Component {
         this.props.onChange(this.props.idx, new_value);
     }
     handleJudgeIdChange = (event) => {
-        this.handleChange("judge_id", parseInt(event.target.value));
+        this.handleChange("judge_id", Number(event.target.value));
     }
     handleRoleChange = (event) => {
         this.handleChange("role", event.target.value);

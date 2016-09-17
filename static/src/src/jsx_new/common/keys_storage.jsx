@@ -65,11 +65,11 @@ class KeysStorage {
                     client_id: client_id,
                     data: {
                         dh_gb: dh_gb_red.fromRed().toString(10),
-                    }
+                    },
                 })
                     .disableSignature()
-                    .onSuccess(response => {
-                        if (md5(`RockJudge|${secret}`) !== response.verification_string) {
+                    .onSuccess(ex_response => {
+                        if (md5(`RockJudge|${secret}`) !== ex_response.verification_string) {
                             console.error("Key exchange failed");
                             return;
                         }

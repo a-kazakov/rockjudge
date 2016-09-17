@@ -1,6 +1,5 @@
 import { _ } from "l10n/loader";
 import { Api } from "server/api";
-import { GL } from "common/definitions";
 import { showConfirm } from "ui/dialogs";
 
 import InputForm from "./InputForm";

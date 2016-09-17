@@ -135,8 +135,8 @@
                     return;
                 }
                 $("#discipline-name").text(discipline.name);
-                var place = screen_data.controls_state.place;
-                if (!place) {
+                var place = screen_data.controls_state.position;
+                if (place === null) {
                     $(".place, .name, .club").hide();
                     $("#discipline-name").addClass("no-info");
                     $("#content").show();
@@ -145,7 +145,7 @@
                     $("#discipline-name").removeClass("no-info");
                     $(".place, .name, .club").show();
                 }
-                var result = state.results[place - 1];
+                var result = state.results[place];
                 var runs_by_id = {};
                 discipline.tours.forEach(function(tour) {
                     tour.runs.forEach(function(run) {

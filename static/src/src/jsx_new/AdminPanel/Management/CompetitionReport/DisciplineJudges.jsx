@@ -96,8 +96,8 @@ export default class DisciplineJudges extends React.Component {
                                         { discipline.name }
                                     </p>
                                 </th>
-                                { row.map((cell, idx) =>
-                                    <td key={ idx } style={ style }>
+                                { row.map((cell, row_idx) =>
+                                    <td key={ row_idx } style={ style }>
                                         <p className="text-center">
                                             { cell ? _(`models.discipline_judge.roles.${cell}`) : "—" }
                                         </p>

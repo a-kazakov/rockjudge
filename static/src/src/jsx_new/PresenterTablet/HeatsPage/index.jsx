@@ -40,7 +40,7 @@ export default class HeatsPage extends React.Component {
             this.loadData();
         }
     }
-    componentDidUpdate(prev_props, ps) {
+    componentDidUpdate(prev_props) {
         if (prev_props.activeTourId !== this.props.activeTourId) {
             this.loadData();
         }

@@ -35,7 +35,7 @@ export default class Cell extends React.Component {
     makeInputRef = (ref) => this._input = ref;
 
     handleChange = (event) => {
-        const value = parseInt(event.target.value) || 0;
+        const value = parseInt(event.target.value, 10) || 0;
         this.props.onChange(this.props.action, value)
     }
     handleKeyDown = (event) => {

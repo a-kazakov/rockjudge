@@ -65,7 +65,7 @@ export default class AdminPanel extends React.Component {
 
     // Navigation
 
-    getActiveAppFromHash(app) {
+    getActiveAppFromHash() {
         let chunks = window.location.hash.substr(1).split("/");
         if (chunks[0] && ["judging", "management", "service"].indexOf(chunks[0]) >= 0) {
             return chunks[0];
@@ -79,7 +79,7 @@ export default class AdminPanel extends React.Component {
         this.setState({
             activeApp: app,
         });
-        window.location.hash = "#" + app;
+        window.location.hash = `#${app}`;
     }
 
     // Rendering

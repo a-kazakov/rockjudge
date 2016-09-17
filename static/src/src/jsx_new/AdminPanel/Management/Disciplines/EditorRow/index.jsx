@@ -39,7 +39,7 @@ export default class EditorRow extends React.Component {
         let used_judges = new Set();
         for (const dj of this._discipline_judges.value) {
             if (used_judges.has(dj.judge_id)) {
-                const judge = this.props.judges.find(judge => judge.id === dj.judge_id);
+                const judge = this.props.judges.find(j => j.id === dj.judge_id);
                 throw _("errors.discipline_judge.repeating_judge", judge.name);
             }
             used_judges.add(dj.judge_id);
@@ -48,11 +48,12 @@ export default class EditorRow extends React.Component {
     serialize() {
         return {
             name: this._name.value,
-            sp: parseInt(this._sp.value),
+            sp: parseInt(this._sp.value, 10),
             discipline_judges: this._discipline_judges.value,
             external_id: this._external_id.value !== ""
                 ? this._external_id.value
-                : null,        }
+                : null,
+            }
     }
 
     handleSubmission = (event) => {

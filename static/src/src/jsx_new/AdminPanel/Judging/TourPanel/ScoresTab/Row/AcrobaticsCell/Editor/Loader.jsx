@@ -27,7 +27,7 @@ export default class Loader extends React.Component {
         const program_id_str = this._selector.value;
         const program_id = program_id_str === ""
             ? null
-            : parseInt(program_id_str);
+            : Number(program_id_str);
         showConfirm(
             _("judging.confirms.load_program"),
             () => {

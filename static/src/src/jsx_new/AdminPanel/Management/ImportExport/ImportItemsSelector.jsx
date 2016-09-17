@@ -17,7 +17,7 @@ export default class ImportItemsSelector extends React.Component {
                 plan: true,
                 judges: true,
                 clubs: true,
-            }
+            },
         };
     }
     handleChange = (type, value) => {

@@ -40,7 +40,7 @@ export default class HeatCell extends React.Component {
     }
 
     submit() {
-        let value = parseInt(this._input.value.replace(/\D/g,''));
+        let value = parseInt(this._input.value, 10);
         if (isNaN(value)) {
             value = 0;
         }
@@ -48,7 +48,7 @@ export default class HeatCell extends React.Component {
             run_id: this.props.run.id,
             data: {
                 heat: value,
-            }
+            },
         })
             .onSuccess(this.props.onStopEditing)
             .send();

@@ -8,7 +8,7 @@ export default class SubMenu extends React.Component {
         };
     }
     isOpen() {
-        return !!parseInt(sessionStorage.getItem(this.props.id));
+        return !!Number(sessionStorage.getItem(this.props.id));
     }
     setOpenState(open) {
         sessionStorage.setItem(this.props.id, open ? 1 : 0);

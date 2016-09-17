@@ -1,5 +1,3 @@
-import { _ } from "l10n/loader";
-
 export default class Item extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;

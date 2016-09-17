@@ -19,10 +19,6 @@ export default class SideMenu extends React.Component {
         }
     }
 
-    constructor(props) {
-        super(props);
-    }
-
     handleItemClick = (mkey) => {
         this.props.onNavigate(mkey.page, mkey.page_props);
     }

@@ -34,7 +34,7 @@ export default class CompetitionReport extends React.Component {
                 include_judges: true,
                 include_discipline_judges: false,
                 disciplines: {},
-            }
+            },
         };
     }
 

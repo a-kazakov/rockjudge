@@ -1,5 +1,4 @@
 import { _ } from "l10n/loader";
-import { Api } from "server/api";
 
 import Loader from "./Loader";
 import Row from "./Row";

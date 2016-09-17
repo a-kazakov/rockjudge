@@ -14,7 +14,7 @@ export default class Numbers extends React.Component {
                             PT.shape({
                                 id: PT.number.isRequired,
                                 name: PT.string.isRequired,
-                                club: PT.object.isRequired
+                                club: PT.object.isRequired,
                             }).isRequired
                         ).isRequired,
                         name: PT.string.isRequired,
@@ -26,7 +26,7 @@ export default class Numbers extends React.Component {
                                 name: PT.string.isRequired,
                                 discipline: PT.shape({
                                     name: PT.string.isRequired,
-                                }).isRequired
+                                }).isRequired,
                             }).isRequired
                         ).isRequired,
                         club: PT.object.isRequired,

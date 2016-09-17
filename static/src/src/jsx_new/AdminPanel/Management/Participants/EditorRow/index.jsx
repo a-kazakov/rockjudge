@@ -70,14 +70,14 @@ export default class EditorRow extends React.Component {
     serialize() {
         let { number, sportsmen, ...result } = this.state.participantData;
         Object.assign(result, {
-            number: parseInt(number) || 0,
-            sportsmen: this.state.participantData.sportsmen.map(sp => {
-                let { year_of_birth, ...result } = sp;
-                Object.assign(result, {
-                    year_of_birth: parseInt(year_of_birth) || 0,
+            number: parseInt(number, 10) || 0,
+            sportsmen: sportsmen.map(sp => {
+                let { year_of_birth, ...inner_result } = sp;
+                Object.assign(inner_result, {
+                    year_of_birth: parseInt(year_of_birth, 10) || 0,
                 });
-                return result;
-            })
+                return inner_result;
+            }),
         });
         return result;
     }

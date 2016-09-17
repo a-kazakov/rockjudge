@@ -1,4 +1,3 @@
-import { _ } from "l10n/loader";
 import { Api } from "server/api";
 
 export default class PerformedCell extends React.Component {

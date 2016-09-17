@@ -37,7 +37,7 @@ export default class StartList extends React.Component {
                 show_summary: false,
                 disciplines: {},
                 clubs: {},
-            }
+            },
         }
     }
     componentWillMount() {
@@ -214,7 +214,7 @@ export default class StartList extends React.Component {
                             {key: "include_formation_sportsmen",   label: _("admin.labels.include_formation_sportsmen")},
                             {key: "group_by_clubs",                label: _("admin.labels.group_by_clubs")},
                             {key: "show_sportsmen_only",           label: _("admin.labels.show_sportsmen_only")},
-                            {key: "show_summary",                  label: _("admin.labels.show_summary")}
+                            {key: "show_summary",                  label: _("admin.labels.show_summary")},
                         ] }
                         disciplines={ this.state.competition.disciplines }
                         onChange={ this.handleConfigChange }
@@ -235,7 +235,7 @@ export default class StartList extends React.Component {
     createDocx(filename="start-list.docx") {
         Docx(filename)
             .setMargins([10, 15, 10, 25])
-            .setHeader(this.state.competition.name + ", " + this.state.competition.date)
+            .setHeader(`${this.state.competition.name}, ${this.state.competition.date}`)
             .setTitle1(this.getTitle())
             .setBody(this._printable.getPrintableHTML())
             .addStyle(".bordered-table .inner td, .bordered-table .inner th", "border", "none")

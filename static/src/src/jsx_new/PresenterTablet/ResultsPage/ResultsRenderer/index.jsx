@@ -22,11 +22,11 @@ export default class ResultsRenderer extends React.Component {
             prev_row.tour.id === next_row.tour.id
         ) {
             return null;
-        };
+        }
         return (
             <div
                 className="tour-name"
-                key={ "H" + next_row.run.id }
+                key={ `H${next_row.run.id}` }
             >
                 { next_row.tour.name }
             </div>
@@ -35,7 +35,7 @@ export default class ResultsRenderer extends React.Component {
     renderRow(row) {
         return (
             <Row
-                key={ "R" + row.run.id }
+                key={ `R${row.run.id}` }
                 participant={ row.run.participant }
                 place={ row.place }
             />

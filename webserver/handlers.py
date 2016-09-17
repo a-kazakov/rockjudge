@@ -83,7 +83,7 @@ class ScreenHandler(tornado.web.RequestHandler):
         return self.render(
             "screen.html",
             competition_id=competition_id,
-            manifest=json.load(open("screen/manifest.json", "rt", encoding="utf-8")),
+            manifest=json.load(open("screen/manifest.json", "rt", encoding="utf-8-sig")),
             settings=settings,
         )
 
@@ -93,7 +93,7 @@ class ScreenOperatorHandler(tornado.web.RequestHandler):
         return self.render(
             "screen_operator.html",
             competition_id=competition_id,
-            manifest=json.load(open("screen/manifest.json", "rt", encoding="utf-8")),
+            manifest=json.load(open("screen/manifest.json", "rt", encoding="utf-8-sig")),
             settings=settings,
         )
 

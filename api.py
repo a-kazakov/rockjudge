@@ -250,7 +250,7 @@ class Api:
         check_auth(
             competition_id=competition.id,
             request=request,
-            allowed_access_levels=("admin", "presenter", ),
+            allowed_access_levels=("admin", "presenter", "any_judge", ),
         )
         competition.update_model(request.body["data"], ws_message=request.ws_message)
         return {}

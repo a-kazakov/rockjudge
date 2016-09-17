@@ -16,7 +16,7 @@ export default class SideMenu extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            sortByPlan: !!parseInt(sessionStorage.getItem("sortByPlan")),
+            sortByPlan: !!Number(sessionStorage.getItem("sortByPlan")),
         };
     }
 
@@ -53,7 +53,7 @@ export default class SideMenu extends React.Component {
         }
     }
     renderButton() {
-        if (this.state.sortByPlan)
+        if (this.state.sortByPlan) {
             return (
                 <button
                     className="btn btn-default btn-sm full-width"
@@ -62,7 +62,7 @@ export default class SideMenu extends React.Component {
                     { _("admin.buttons.switch_to_disciplines") }
                 </button>
             );
-        else {
+        } else {
             return (
                 <button
                     className="btn btn-default btn-sm full-width"

@@ -81,11 +81,12 @@ export default class StatInfo extends React.Component {
                 </tr>
             );
         }
+        const n_participants_str = _("admin.phrases.total_n_participants", this.props.participants.length);
+        const n_sportsmen_str = _("admin.phrases.n_sportsmen", p_count, s_count);
         return (
             <p className="text-right">
                 <strong>
-                    { _("admin.phrases.total_n_participants", this.props.participants.length) + ", " +
-                      _("admin.phrases.n_sportsmen", p_count, s_count) }
+                    { `${n_participants_str}, ${n_sportsmen_str}` }
                 </strong>
             </p>
         );
