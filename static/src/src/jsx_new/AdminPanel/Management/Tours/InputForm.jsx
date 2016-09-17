@@ -1,4 +1,4 @@
-import { _ } from "l10n/loader";
+import _ from "l10n";
 import { GL } from "common/definitions";
 
 export default class InputForm extends React.Component {

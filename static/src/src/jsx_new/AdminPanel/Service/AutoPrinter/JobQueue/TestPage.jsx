@@ -1,4 +1,4 @@
-import { _ } from "l10n/loader";
+import _ from "l10n";
 import { Docx } from "common/docx";
 
 export default class TestPage extends React.Component {

@@ -50,12 +50,12 @@ class CompetitionsHandler(tornado.web.RequestHandler):
         )
 
 
-class ConnectionTesterHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.render(
-            "connection_tester.html",
-            settings=settings,
-        )
+# class ConnectionTesterHandler(tornado.web.RequestHandler):
+#     def get(self):
+#         self.render(
+#             "connection_tester.html",
+#             settings=settings,
+#         )
 
 
 class JudgeHandler(tornado.web.RequestHandler):

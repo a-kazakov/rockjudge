@@ -1,4 +1,4 @@
-import { _ } from "l10n/loader";
+import _ from "l10n";
 
 import rules_set from "rules_sets/loader";
 

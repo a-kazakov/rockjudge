@@ -1,4 +1,4 @@
-import { _ } from "l10n/loader";
+import _ from "l10n";
 
 import Loader from "./Loader";
 import Row from "./Row";

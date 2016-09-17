@@ -73,8 +73,8 @@ class RulesSetLoader {
 
 const loader = new RulesSetLoader();
 
-window.registerRulesSet = function() {
-    loader.load(...arguments);
+window.registerRulesSet = function(...args) {
+    loader.load(...args);
     return { Api, storage, message_dispatcher, TourResults, DisciplineResults };
 }
 

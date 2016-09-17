@@ -1,4 +1,4 @@
-import { _ } from "l10n/loader";
+import _ from "l10n";
 
 export default class Info extends React.Component {
     static get propTypes() {

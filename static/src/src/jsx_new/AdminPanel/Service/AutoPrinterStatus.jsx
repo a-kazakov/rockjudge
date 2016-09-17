@@ -1,4 +1,4 @@
-import { _ } from "l10n/loader";
+import _ from "l10n";
 import { Loader } from "ui/components";
 
 let auto_printer = null;

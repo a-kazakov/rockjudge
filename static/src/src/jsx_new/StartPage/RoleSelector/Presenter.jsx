@@ -1,4 +1,4 @@
-import { _ } from "l10n/loader";
+import _ from "l10n";
 
 import keys_storage from "common/keys_storage";
 

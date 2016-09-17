@@ -1,4 +1,4 @@
-import { _ } from "l10n/loader";
+import _ from "l10n";
 import { Api } from "server/api";
 import { Loader } from "ui/components";
 import { storage } from "server/storage";

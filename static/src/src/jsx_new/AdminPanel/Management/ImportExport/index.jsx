@@ -1,4 +1,4 @@
-import { _ } from "l10n/loader";
+import _ from "l10n";
 import { Api } from "server/api";
 
 import ImportItemsSelector from "./ImportItemsSelector";
