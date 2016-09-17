@@ -3,7 +3,7 @@ import { Api } from "server/api";
 import { storage } from "server/storage";
 import { message_dispatcher } from "server/message_dispatcher";
 import { Loader } from "ui/components";
-import { showConfirm } from "ui/dialogs";
+import showConfirm from "common/dialogs/showConfirm";
 
 import JobQueue from "./JobQueue";
 import Table from "./Table";

@@ -1,7 +1,8 @@
 import _ from "l10n";
 import { Api } from "server/api";
 import { Loader } from "ui/components";
-import { showConfirm } from "ui/dialogs";
+import showConfirm from "common/dialogs/showConfirm";
+import closeDialog from "common/dialogs/closeDialog";
 import { storage } from "server/storage";
 import { message_dispatcher } from "server/message_dispatcher";
 
@@ -114,7 +115,7 @@ export default class ScoresTab extends React.Component {
                 Api("tour.init", {
                     tour_id: this.props.tour.id,
                 })
-                    .onSuccess(() => swal.close())
+                    .onSuccess(closeDialog)
                     .send();
             }
         );
@@ -127,7 +128,7 @@ export default class ScoresTab extends React.Component {
                     tour_id: this.props.tour.id,
                 })
                     .onSuccess(() => {
-                        swal.close();
+                        closeDialog();
                         this.props.onPageSwitch("results-1");
                     })
                     .send();
@@ -141,7 +142,7 @@ export default class ScoresTab extends React.Component {
                 Api("tour.shuffle_heats", {
                     tour_id: this.props.tour.id,
                 })
-                    .onSuccess(() => swal.close())
+                    .onSuccess(closeDialog)
                     .send();
             }
         );

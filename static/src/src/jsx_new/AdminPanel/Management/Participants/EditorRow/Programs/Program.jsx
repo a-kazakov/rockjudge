@@ -1,6 +1,7 @@
 import _ from "l10n";
 import { Api } from "server/api";
-import { showConfirm } from "ui/dialogs";
+import showConfirm from "common/dialogs/showConfirm";
+import closeDialog from "common/dialogs/closeDialog";
 
 import Editor from "./Editor";
 
@@ -36,7 +37,7 @@ export default class Program extends React.Component {
             _("admin.confirms.delete_program"),
             () => {
                 Api("program.delete", { program_id: this.props.program.id })
-                    .onSuccess(() => swal.close())
+                    .onSuccess(closeDialog)
                     .send();
             }
         );

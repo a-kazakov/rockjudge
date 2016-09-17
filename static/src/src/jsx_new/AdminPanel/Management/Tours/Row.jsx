@@ -1,6 +1,7 @@
 import _ from "l10n";
 import { Api } from "server/api";
-import { showConfirm } from "ui/dialogs";
+import showConfirm from "common/dialogs/showConfirm";
+import closeDialog from "common/dialogs/closeDialog";
 
 import InputForm from "./InputForm";
 
@@ -44,7 +45,7 @@ export default class Row extends React.Component {
             _("admin.confirms.delete_tour"),
             () => {
                 Api("tour.delete", { tour_id: this.props.tour.id })
-                    .onSuccess(() => swal.close())
+                    .onSuccess(closeDialog)
                     .send();
             }
         );

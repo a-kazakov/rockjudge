@@ -1,5 +1,6 @@
 import _ from "l10n";
-import { showError } from "ui/dialogs";
+import showError from "common/dialogs/showError";
+import closeDialog from "common/dialogs/closeDialog";
 
 import Elements from "./Elements";
 
@@ -43,7 +44,7 @@ export default class Editor extends React.Component {
             try {
                 const data = JSON.parse(value);
                 this._elements.load(data);
-                swal.close();
+                closeDialog();
             }
             catch (ex) {
                 showError(_("errors.admin.load_syntax_error"));

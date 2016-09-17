@@ -1,6 +1,7 @@
 import _ from "l10n";
 import { Api } from "server/api";
-import { showConfirm } from "ui/dialogs";
+import showConfirm from "common/dialogs/showConfirm";
+import closeDialog from "common/dialogs/closeDialog";
 
 export default class Row extends React.Component {
     static get propTypes() {
@@ -64,7 +65,7 @@ export default class Row extends React.Component {
                 Api("client_auth.delete", {
                     client_auth_id: this.props.client.id,
                 })
-                    .onSuccess(() => swal.close())
+                    .onSuccess(closeDialog)
                     .send();
         });
     }

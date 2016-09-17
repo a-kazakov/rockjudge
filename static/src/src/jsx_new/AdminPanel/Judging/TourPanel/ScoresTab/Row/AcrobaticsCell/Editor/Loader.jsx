@@ -1,6 +1,7 @@
 import _ from "l10n";
 import { Api } from "server/api";
-import { showConfirm } from "ui/dialogs";
+import showConfirm from "common/dialogs/showConfirm";
+import closeDialog from "common/dialogs/closeDialog";
 
 export default class Loader extends React.Component {
     static get propTypes() {
@@ -35,7 +36,7 @@ export default class Loader extends React.Component {
                     program_id: program_id,
                     run_id: this.props.run.id,
                 })
-                    .onSuccess(() => swal.close())
+                    .onSuccess(closeDialog)
                     .send();
             }
         );

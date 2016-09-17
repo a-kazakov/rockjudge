@@ -1,6 +1,7 @@
 import _ from "l10n";
 import { Api } from "server/api";
-import { showConfirm } from "ui/dialogs";
+import showConfirm from "common/dialogs/showConfirm";
+import closeDialog from "common/dialogs/closeDialog";
 
 import AutoPrinterStatus from "./AutoPrinterStatus";
 import ClientsAuth from "./ClientsAuth";
@@ -16,12 +17,12 @@ export default class Service extends React.Component {
 
     handleClientsReload = () => {
         showConfirm(_("admin.confirms.reload_clients"), () => {
-            Api("service.reload_clients", {}).onSuccess(() => swal.close()).send();
+            Api("service.reload_clients", {}).onSuccess(closeDialog).send();
         });
     }
     handleClientsRefresh() {
         showConfirm(_("admin.confirms.refresh_clients"), () => {
-            Api("service.refresh_clients", {}).onSuccess(() => swal.close()).send();
+            Api("service.refresh_clients", {}).onSuccess(closeDialog).send();
         });
     }
 

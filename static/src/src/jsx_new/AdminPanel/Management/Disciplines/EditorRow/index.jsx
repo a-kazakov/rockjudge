@@ -1,5 +1,5 @@
 import _ from "l10n";
-import { showError } from "ui/dialogs";
+import showError from "common/dialogs/showError";
 
 import DisciplineJudges from "./DisciplineJudges";
 

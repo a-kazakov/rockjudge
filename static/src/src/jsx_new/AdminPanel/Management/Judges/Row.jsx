@@ -1,6 +1,7 @@
 import _ from "l10n";
 import { Api } from "server/api";
-import { showConfirm } from "ui/dialogs";
+import showConfirm from "common/dialogs/showConfirm";
+import closeDialog from "common/dialogs/closeDialog";
 
 import EditorRow from "./EditorRow";
 
@@ -44,7 +45,7 @@ export default class Row extends React.Component {
                 Api("judge.delete", {
                     judge_id: this.props.judge.id,
                 })
-                    .onSuccess(() => swal.close())
+                    .onSuccess(closeDialog)
                     .send();
         });
     }
