@@ -19,8 +19,10 @@ export default class Wrapper extends React.Component {
     }
 
     componentDidMount() {
-        this.createDocx(this.props.autoDocx.filename);
-        this.props.autoDocx.onDone(this.props.autoDocx.filename);
+        if (this.props.autoDocx) {
+            this.createDocx(this.props.autoDocx.filename);
+            this.props.autoDocx.onDone(this.props.autoDocx.filename);
+        }
     }
 
     makePrintableRef = (ref) => this._printable = ref;

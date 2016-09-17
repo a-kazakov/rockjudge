@@ -51,9 +51,9 @@ function createJsxTask(task) {
             return bundler;
         }
         return buildJsx(
-            'src/jsx/' + task + '.jsx',
-            '../js',
-            task + '.js'
+            `src/jsx_new/entry_points/${task}.jsx`,
+            "../js",
+            `${task}.js`
         );
     }
     let str_func = doTheJob.toString()
