@@ -1,5 +1,5 @@
 import _ from "l10n";
-import { Api } from "server/api";
+import Api from "common/server/Api";
 
 export default class Unfinalize extends React.Component {
     static get propTypes() {

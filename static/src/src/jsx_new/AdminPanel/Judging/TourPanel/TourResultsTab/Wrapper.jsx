@@ -34,7 +34,7 @@ export default class Wrapper extends React.Component {
             this.createDocx();
             break;
         default:
-            console.log("Unknown message:", message)
+            console.error("Unknown message:", message)
         }
     }
 

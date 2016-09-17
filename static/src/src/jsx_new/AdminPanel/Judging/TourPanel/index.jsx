@@ -154,7 +154,7 @@ export default class TourPanel extends React.Component {
                 />
             );
         default:
-            console.log("Unknown page:", this.state.page);
+            console.error("Unknown page:", this.state.page);
         }
     }
     render() {

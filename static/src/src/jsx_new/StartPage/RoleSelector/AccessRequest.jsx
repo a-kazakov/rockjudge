@@ -1,5 +1,5 @@
 import _ from "l10n";
-import { Api } from "server/api";
+import Api from "common/server/Api";
 
 import keys_storage from "common/keys_storage";
 

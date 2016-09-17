@@ -1,5 +1,5 @@
 import _ from "l10n";
-import { Api } from "server/api";
+import Api from "common/server/Api";
 
 import EditorRow from "./EditorRow";
 
@@ -56,6 +56,7 @@ export default class CreationRow extends React.Component {
                 newParticipant
                 participant={ empty_data }
                 onStopEditing={ this.handleStopEditing }
+                onSubmit={ this.handleSubmission }
                 { ...this.props }
             />
         );

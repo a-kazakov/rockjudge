@@ -1,4 +1,4 @@
-import { Api } from "server/api";
+import Api from "common/server/Api";
 
 import EditorRow from "./EditorRow";
 

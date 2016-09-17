@@ -1,9 +1,9 @@
 import _ from "l10n";
-import { Api } from "server/api";
+import Api from "common/server/Api";
 import { Docx } from "common/docx";
 import { Loader } from "ui/components";
-import { storage } from "server/storage";
-import { message_dispatcher } from "server/message_dispatcher";
+import storage from "common/server/storage";
+import message_dispatcher from "common/server/message_dispatcher";
 
 import Paper from "AdminPanel/common/Paper";
 
@@ -113,7 +113,7 @@ export default class HeatsTab extends React.Component {
             this.createDocx();
             break;
         default:
-            console.log("Unknown message:", message)
+            console.error("Unknown message:", message)
         }
     }
 

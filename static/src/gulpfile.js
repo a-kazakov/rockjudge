@@ -113,7 +113,6 @@ createJsxTask('start_page');
 createJsxTask('admin');
 createJsxTask('auto_printer');
 createJsxTask('competitions');
-createJsxTask('connection_tester');
 createJsxTask('judge');
 createJsxTask('lib');
 createJsxTask('presenter');

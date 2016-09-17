@@ -1,11 +1,12 @@
 import { _ } from "l10n/loader";
-import { Api } from "server/api";
 import { GL } from "common/definitions";
-import { storage } from "server/storage";
-import { message_dispatcher } from "server/message_dispatcher";
 import { Loader } from "ui/components";
 import { showConfirm } from "ui/dialogs";
 import { clone } from "common/tools";
+
+import Api from "common/server/Api";
+import storage from "common/server/storage";
+import message_dispatcher from "common/server/message_dispatcher";
 
 
 class CompetitionEditorRow extends React.Component {

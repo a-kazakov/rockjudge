@@ -1,6 +1,6 @@
-import { Api } from "server/api";
+import Api from "common/server/Api";
 import { Loader } from "ui/components";
-import { message_dispatcher } from "server/message_dispatcher";
+import message_dispatcher from "common/server/message_dispatcher";
 
 import keys_storage from "common/keys_storage";
 

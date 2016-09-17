@@ -13,7 +13,6 @@ export default class EditorRow extends React.Component {
             }).isRequired,
             newParticipant: PT.bool,
             participant: PT.shape({
-                id: PT.number.isRequired,
                 number: PT.oneOfType([
                     PT.number.isRequired,
                     PT.string.isRequired,

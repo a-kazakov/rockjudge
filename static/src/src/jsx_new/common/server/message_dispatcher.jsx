@@ -1,6 +1,6 @@
-import { storage } from "server/storage";
 import { connection_status } from "ui/components";
 
+import storage from "common/server/storage";
 
 class MessageDispatcher {
     constructor() {
@@ -9,55 +9,56 @@ class MessageDispatcher {
         this.listeners_cnt = 0;
         this.connect();
     }
-    connect() {
+    connect = () => {
         console.log("Connecting to websocket...");
-        this.ws = new SockJS("http://" + window.location.host + "/ws");
-        this.ws.onopen = function() {
+        this.ws = new SockJS(`http://${window.location.host}/ws`);
+        this.ws.onopen = () => {
             connection_status.setOk();
-            console.log("Connected.");
+            console.log("Connected to websocket.");
             if (this.closed) {
-                this.onMessage({
+                this.handleMessage({
                     data: JSON.stringify({
                         messages: [["reload_data", null]],
                         model_updates: [],
-                    })
+                    }),
                 })
             }
-        }.bind(this);
-        this.ws.onclose = function() {
+        };
+        this.ws.onclose = () => {
             connection_status.setFail();
-            console.log("Connection closed.");
+            console.log("Connection to websocket closed.");
             this.closed = true;
-            setTimeout(this.connect.bind(this), 500);
-        }.bind(this);
-        this.ws.onmessage = this.onMessage.bind(this);
+            setTimeout(this.connect, 500);
+        };
+        this.ws.onmessage = this.handleMessage;
     }
-    onMessage(message) {
+    handleMessage = (message) => {
         let data = JSON.parse(message.data);
         if (data["ws_client_id"]) {
             window.ws_client_id = data["ws_client_id"];
             return;
         }
-        data.messages.forEach(function(data) {
-            let msg_type = data[0];
-            let msg_data = data[1];
-            let listeners = this.listeners[msg_type] || {};
+        for (const data_message of data.messages) {
+            const [msg_type, msg_data] = data_message;
+            const listeners = this.listeners[msg_type] || {};
             if (msg_type === "force_refresh") {
                 window.location.reload(true);
             }
-            Object.keys(this.listeners[msg_type] || {}).forEach((key) => listeners[key](msg_data));
-        }.bind(this));
+            for (const key of Object.keys(this.listeners[msg_type] || {})) {
+                listeners[key](msg_data);
+            }
+        }
         let data_changed = false;
-        data.model_updates.forEach((model_info) => {
+        for (const model_info of data.model_updates) {
             data_changed = storage.updateModel(model_info.model, model_info.id, model_info.data) || data_changed;
-        });
+        }
         if (data_changed) {
-            let listeners = this.listeners["db_update"] || {};
-            Object.keys(listeners).forEach((key) => {
+            const listeners = this.listeners["db_update"] || {};
+            for (const key of Object.keys(listeners)) {
                 if (listeners[key]) {
                     listeners[key]();
                 }
-            });
+            }
         }
     }
     getListenerId() {
@@ -65,23 +66,21 @@ class MessageDispatcher {
     }
     addListener(msg_types, callback) {
         let id = this.getListenerId();
-        msg_types.split(" ").forEach(function(msg_type) {
+        for (const msg_type of msg_types.split(" ")) {
             if (!this.listeners[msg_type]) {
                 this.listeners[msg_type] = {};
             }
             this.listeners[msg_type][id] = callback;
-        }.bind(this));
+        }
         return id;
     }
     removeListener(listener_id) {
-        Object.keys(this.listeners).forEach(function(key) {
+        for (const key of Object.keys(this.listeners)) {
             delete this.listeners[key][listener_id];
-        }.bind(this));
+        }
     }
 }
 
 
-if (!window.message_dispatcher) {
-    window.message_dispatcher = new MessageDispatcher();
-}
-export var message_dispatcher = window.message_dispatcher;
+const message_dispatcher = new MessageDispatcher();
+export default message_dispatcher;

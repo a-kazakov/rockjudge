@@ -1,8 +1,8 @@
 import _ from "l10n";
-import { Api } from "server/api";
+import Api from "common/server/Api";
 import { clone } from "common/tools";
-import { storage } from "server/storage";
-import { message_dispatcher } from "server/message_dispatcher";
+import storage from "common/server/storage";
+import message_dispatcher from "common/server/message_dispatcher";
 import { Loader } from "ui/components";
 
 import { onTouchEndOrClick } from "ui/tablet_components";

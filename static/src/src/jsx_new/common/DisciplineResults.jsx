@@ -1,6 +1,6 @@
-import { message_dispatcher } from "server/message_dispatcher";
-import { storage } from "server/storage";
-import { Api } from "server/api";
+import message_dispatcher from "common/server/message_dispatcher";
+import storage from "common/server/storage";
+import Api from "common/server/Api";
 import { Loader } from "ui/components";
 
 export default class DisciplineResults extends React.Component {

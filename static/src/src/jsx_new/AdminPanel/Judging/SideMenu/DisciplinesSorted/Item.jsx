@@ -1,3 +1,5 @@
+import makeClassName from "common/makeClassName";
+
 export default class Item extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
@@ -17,14 +19,11 @@ export default class Item extends React.Component {
     }
 
     getClassName() {
-        let result = "level-2";
-        if (this.props.tour.finalized) {
-            result += " grey";
-        }
-        if (this.props.active) {
-            result += " active";
-        }
-        return result;
+        return makeClassName({
+            "level-2": true,
+            "grey": this.props.tour.finalized,
+            "active": this.props.active,
+        });
     }
     render() {
         return (

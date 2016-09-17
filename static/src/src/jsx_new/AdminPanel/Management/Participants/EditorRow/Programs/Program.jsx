@@ -1,5 +1,5 @@
 import _ from "l10n";
-import { Api } from "server/api";
+import Api from "common/server/Api";
 import showConfirm from "common/dialogs/showConfirm";
 import closeDialog from "common/dialogs/closeDialog";
 
@@ -12,7 +12,7 @@ export default class Program extends React.Component {
             program: PT.shape({
                 id: PT.number.isRequired,
                 name: PT.string.isRequired,
-                default_for: PT.string.isRequired,
+                default_for: PT.string,
                 acrobatics: PT.arrayOf(PT.object.isRequired).isRequired,
             }).isRequired,
         };

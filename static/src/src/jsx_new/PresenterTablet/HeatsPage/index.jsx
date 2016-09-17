@@ -1,6 +1,6 @@
-import { Api } from "server/api";
-import { storage } from "server/storage";
-import { message_dispatcher } from "server/message_dispatcher";
+import Api from "common/server/Api";
+import storage from "common/server/storage";
+import message_dispatcher from "common/server/message_dispatcher";
 import { Loader } from "ui/components";
 
 import CurrentHeat from "./CurrentHeat";

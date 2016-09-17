@@ -1,10 +1,10 @@
 import md5 from "js-md5";
 
-import { _ } from "l10n/loader";
-import { storage } from "server/storage";
-import { showError } from "ui/dialogs";
-
+import _ from "l10n";
 import keys_storage from "common/keys_storage";
+import makeRandomString from "common/tools/makeRandomString";
+import showError from "common/dialogs/showError";
+import storage from "common/server/storage";
 
 let queue = [];
 let obtaining_keys = false;
@@ -15,7 +15,7 @@ class ApiImpl {
         this.data = data;
         this.cb_success = () => {};
         this.cb_error = (msg, code, args) => showError(code ? _(code, ...args) : msg);
-        this.cb_fail = (...data) => console.error("API fail", ...data);
+        this.cb_fail = (...fail_info) => console.error("API fail", ...fail_info);
         this.cb_done = () => {};
         this.update_db = () => {};
         this.sign = true;
@@ -41,16 +41,10 @@ class ApiImpl {
         return this;
     }
     addToDB(model_type, model_id, st=storage) {
-        this.update_db = function(response) {
-            st.get(model_type).add(model_id, response);
+        this.update_db = response => {
+            st.addModel(model_type, model_id, response, this.data.children || {});
         }
         return this;
-    }
-    makeRandomStr() {
-        const date = new Date();
-        const time = date.getTime() * 1000 + date.getUTCMilliseconds();
-        const random = Math.floor(Math.random() * 10000000000000000);
-        return `${time.toString(36)}_${random.toString(36)}`;
     }
     obtainKeys() {
         if (obtaining_keys) {
@@ -106,7 +100,7 @@ class ApiImpl {
             data.append("ws_client_id", window.ws_client_id);
         }
         if (this.sign) {
-            const rand_str = this.makeRandomStr();
+            const rand_str = makeRandomString();
             data.append("client_id", keys_storage.client_id)
             data.append("random", rand_str)
             data.append("signature", md5(`${keys_storage.client_id}|${this.method}|${str_data}|${rand_str}|${keys_storage.secret}`));
@@ -115,5 +109,5 @@ class ApiImpl {
     }
 }
 
-export const Api = (...args) => new ApiImpl(...args);
+const Api = (...args) => new ApiImpl(...args);
 export default Api;

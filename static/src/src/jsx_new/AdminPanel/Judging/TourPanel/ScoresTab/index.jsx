@@ -1,10 +1,10 @@
 import _ from "l10n";
-import { Api } from "server/api";
+import Api from "common/server/Api";
 import { Loader } from "ui/components";
 import showConfirm from "common/dialogs/showConfirm";
 import closeDialog from "common/dialogs/closeDialog";
-import { storage } from "server/storage";
-import { message_dispatcher } from "server/message_dispatcher";
+import storage from "common/server/storage";
+import message_dispatcher from "common/server/message_dispatcher";
 
 import rules_set from "rules_sets/loader";
 

@@ -1,4 +1,4 @@
-import { Api } from "server/api";
+import Api from "common/server/Api";
 
 export default class PerformedCell extends React.Component {
     static get propTypes() {

@@ -1,7 +1,7 @@
 import md5 from "js-md5";
 import BN from "bn.js";
 
-import { Api } from "server/api";
+import Api from "common/server/Api";
 
 class KeysStorage {
     constructor() {

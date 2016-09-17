@@ -1,3 +1,5 @@
+import makeClassName from "common/makeClassName";
+
 export default class Item extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
@@ -20,23 +22,31 @@ export default class Item extends React.Component {
     }
 
     getClassName() {
-        let result = `level-${this.props.level}`;
-        if (this.props.active) {
-            result += " active";
-        }
-        return result;
+        return makeClassName({
+            [`level-${this.props.level}`]: true,
+            "active": this.props.active,
+        });
     }
-    render() {
+    renderMainPart() {
         return (
-            <div className="block">
-                <div
-                    className={ this.getClassName() }
-                    onClick={ this.handleClick }
-                >
-                    { this.props.title }
-                </div>
+            <div
+                className={ this.getClassName() }
+                onClick={ this.handleClick }
+            >
+                { this.props.title }
             </div>
         );
+    }
+    render() {
+        if (this.props.level === 1) {
+            return (
+                <div className="block">
+                    { this.renderMainPart() }
+                </div>
+            );
+        }
+        return this.renderMainPart();
+
     }
 }
 
