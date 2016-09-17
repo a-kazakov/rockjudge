@@ -20,7 +20,7 @@ def serialize_competition_info(raw_data):
 
 class Competition(BaseModel):
     class Meta:
-        order_by = ["-active", "date"]
+        order_by = ["-active", "name"]
 
     name = peewee.CharField()
     date = peewee.CharField()
