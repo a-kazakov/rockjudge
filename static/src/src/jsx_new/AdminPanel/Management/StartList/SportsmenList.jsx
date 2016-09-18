@@ -1,5 +1,5 @@
 import _ from "l10n";
-import { CmpChain } from "common/tools";
+import CmpChain from "common/tools/CmpChain";
 
 import StatInfo from "./StatInfo";
 

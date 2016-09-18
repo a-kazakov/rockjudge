@@ -1,4 +1,4 @@
-import DisciplineResults from "common/DisciplineResults";
+import DisciplineResults from "common/components/DisciplineResults";
 
 import DisciplineSelector from "./DisciplineSelector";
 import ResultsRenderer from "./ResultsRenderer";

@@ -1,4 +1,4 @@
-import { onTouchOrClick } from "ui/tablet_components";
+import onTouchOrClick from "tablet_ui/onTouchOrClick";
 
 export default class Button extends React.Component {
     onClick = () => {

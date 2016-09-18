@@ -1,31 +1,33 @@
-import {
-    onTouchOrClick,
-    TabletIntegerInput,
-    TabletIntegerSelectInput,
-    TabletSelectorInput,
-    TabletPoint5SelectInput,
-    TabletAcroOverrideInput,
-    StopWatch,
-    Slider,
-} from "ui/tablet_components";
+import NumberSelectorInput from "tablet_ui/NumberSelectorInput";
+import SelectorInput from "tablet_ui/SelectorInput";
 
 export default class GeneralScale extends React.Component {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            header: PT.string,
+            scale: PT.oneOf(["point5", "integer", "grid", "reduction"]).isRequired,
+        };
+    }
+
     static get defaultProps() {
         return {
             header: null,
         };
     }
-    get possiblie_reductions() {
+
+    get POSSIBLIE_REDUCTIONS() {
         return [
-            [100, "X"],
+            [100, "-100%"],
             [75,  "-75%"],
             [50,  "-50%"],
             [25,  "-25%"],
             [10,  "-10%"],
             [5,   "-5%"],
-            [0,   "OK"],
+            [0,   "-0%"],
         ]
     }
+
     renderHeader() {
         if (this.props.header === null) {
             return null;
@@ -38,38 +40,41 @@ export default class GeneralScale extends React.Component {
 
     }
     renderBody() {
-        switch (this.props.scale) {
+        const { scale, ...other_props } = this.props;
+        switch (scale) {
         case "point5":
             return (
-                <TabletPoint5SelectInput
+                <NumberSelectorInput
+                    decimalSize={ 1 }
+                    step={ 0.5 }
                     style="two-lines"
-                    {...this.props}
+                    { ...other_props }
                 />
             );
         case "integer":
             return (
-                <TabletIntegerSelectInput
+                <NumberSelectorInput
                     style="two-lines"
-                    {...this.props}
+                    { ...other_props }
                 />
             );
         case "grid":
             return (
-                <TabletIntegerSelectInput
+                <NumberSelectorInput
                     style="grid"
-                    {...this.props}
+                    { ...other_props }
                 />
             );
         case "reduction":
             return (
-                <TabletSelectorInput
+                <SelectorInput
+                    choices={ this.POSSIBLIE_REDUCTIONS }
                     style="one-line"
-                    choices={ this.possiblie_reductions }
-                    {...this.props}
+                    { ...this.props }
                 />
             );
         default:
-            console.error(`Unknowd scale type: ${this.props.scale}`);
+            console.error(`Unknowd scale type: ${scale}`);
             return null;
         }
     }

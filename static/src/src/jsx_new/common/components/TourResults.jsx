@@ -1,13 +1,14 @@
+import _ from "l10n";
 import message_dispatcher from "common/server/message_dispatcher";
 import storage from "common/server/storage";
 import Api from "common/server/Api";
-import { Loader } from "ui/components";
+import Loader from "common/components/Loader";
 
-export default class DisciplineResults extends React.Component {
+export default class TourResults extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
-            disciplineId: PT.number.isRequired,
+            tourId: PT.number.isRequired,
             renderer: PT.func.isRequired,
         };
     }
@@ -15,7 +16,7 @@ export default class DisciplineResults extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            discipline: null,
+            tour: null,
             results: null,
         };
     }
@@ -35,17 +36,17 @@ export default class DisciplineResults extends React.Component {
         this.loadResults();
     }
     componentWillReceiveProps(next_props) {
-        if (this.props.disciplineId !== next_props.disciplineId) {
+        if (this.props.tourId !== next_props.tourId) {
             this.setState({
-                discipline: null,
+                tour: null,
                 results: null,
             });
-            this.freeStorage(this.props.disciplineId);
-            this.setupStorage(next_props.disciplineId);
+            this.freeStorage(this.props.tourId);
+            this.setupStorage(next_props.tourId);
         }
     }
     componentDidUpdate(prev_props) {
-        if (prev_props.disciplineId !== this.props.disciplineId) {
+        if (prev_props.tourId !== this.props.tourId) {
             this.loadData();
             this.loadResults();
         }
@@ -59,28 +60,33 @@ export default class DisciplineResults extends React.Component {
 
     get SCHEMA() {
         return {
-            competition: {},
-            tours: {
-                runs: {
-                    participant: {
-                        club: {},
-                    },
+            discipline: {
+                competition: {},
+                discipline_judges: {
+                    judge: {},
+                },
+            },
+            runs: {
+                acrobatics: {},
+                scores: {},
+                participant: {
+                    club: {},
                 },
             },
         };
     }
 
-    setupStorage(discipline_id=null) {
-        if (discipline_id === null) {
-            discipline_id = this.props.disciplineId;
+    setupStorage(tour_id=null) {
+        if (tour_id === null) {
+            tour_id = this.props.tourId;
         }
-        this.storage = storage.getDomain(`discipline_results_${discipline_id}`);
+        this.storage = storage.getDomain(`tour_results_${tour_id}`);
     }
-    freeStorage(discipline_id=null) {
-        if (discipline_id === null) {
-            discipline_id = this.props.disciplineId;
+    freeStorage(tour_id=null) {
+        if (tour_id === null) {
+            tour_id = this.props.tourId;
         }
-        storage.delDomain(`discipline_results_${discipline_id}`);
+        storage.delDomain(`tour_results_${tour_id}`);
     }
 
     makeRendererRef = (ref) => this._renderer = ref;
@@ -94,34 +100,33 @@ export default class DisciplineResults extends React.Component {
         if (!tour_storage) {
             return;
         }
-        if (tour_storage.discipline.id === this.props.disciplineId) {
+        if (tour_storage.id === this.props.tourId) {
             this.loadResults();
         }
     }
 
     getMergedResults() {
-        if (this.state.results === null || this.state.discipline === null) {
+        if (this.state.results === null || this.state.tour === null) {
             return null;
         }
         // Build runs index
         let runs_index = new Map();
-        for (const tour of this.state.discipline.tours) {
-            for (const run of tour.runs) {
-                runs_index.set(run.id, { tour, run });
-            }
+        for (const run of this.state.tour.runs) {
+            runs_index.set(run.id, run);
         }
         // Merge results
         const result = this.state.results.map(row => ({
             place: row.place,
-            tour: runs_index.get(row.run_id).tour,
-            run: runs_index.get(row.run_id).run,
+            advances: row.advances,
+            additional_data: row.additional_data,
+            run: runs_index.get(row.run_id),
         }));
         return result;
     }
 
     loadResults = () => {
-        Api("discipline.get_results", {
-            discipline_id: this.props.disciplineId,
+        Api("tour.get_results", {
+            tour_id: this.props.tourId,
         })
         .onSuccess(response => {
             this.setState({
@@ -131,20 +136,20 @@ export default class DisciplineResults extends React.Component {
         .send();
     }
     loadData = () => {
-        Api("discipline.get", {
-            discipline_id: this.props.disciplineId,
+        Api("tour.get", {
+            tour_id: this.props.tourId,
             children: this.SCHEMA,
         })
-            .addToDB("Discipline", this.props.disciplineId, this.storage)
+            .addToDB("Tour", this.props.tourId, this.storage)
             .onSuccess(this.reloadFromStorage)
             .send();
     }
     reloadFromStorage = () => {
-        const serialized = this.storage.get("Discipline")
-            .by_id(this.props.disciplineId)
+        const serialized = this.storage.get("Tour")
+            .by_id(this.props.tourId)
             .serialize(this.SCHEMA);
         this.setState({
-            discipline: serialized,
+            tour: serialized,
         });
     }
 
@@ -158,14 +163,24 @@ export default class DisciplineResults extends React.Component {
 
     // Rendering
 
+    renderNonFinalizedWarning() {
+        if (!this.state.tour.finalized) {
+            return null;
+        }
+        return (
+            <div className="alert alert-danger">
+                { _("results.alerts.not_finalized") }
+            </div>
+        );
+    }
     renderBody(table) {
-        const { disciplineId, renderer, ...other_props} = this.props; // eslint-disable-line no-unused-vars
+        const { tourId, renderer, ...other_props} = this.props; // eslint-disable-line no-unused-vars
         const RenderingComponent = renderer;
         return (
             <RenderingComponent
-                discipline={ this.state.discipline }
                 ref={ this.makeRendererRef }
                 table={ table }
+                tour={ this.state.tour }
                 { ...other_props }
             />
         )
@@ -174,17 +189,18 @@ export default class DisciplineResults extends React.Component {
         const table = this.getMergedResults();
         if (table === null) {
             return (
-                <div className="discipline-results">
+                <div className="tour-results">
                     <Loader />
                 </div>
             );
         }
         return (
-            <div className="discipline-results">
+            <div className="tour-results">
+                { this.renderNonFinalizedWarning }
                 { this.renderBody(table) }
             </div>
         );
     }
 }
 
-DisciplineResults.displayName = "AdminPanel_common_DisciplineResults";
+TourResults.displayName = "common_TourResults";

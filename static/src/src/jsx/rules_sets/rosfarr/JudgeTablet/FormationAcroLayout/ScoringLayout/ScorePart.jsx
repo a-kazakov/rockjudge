@@ -1,7 +1,7 @@
 import GeneralScale from "JudgeTablet/GeneralScale";
 
 export default class ScorePart extends React.Component {
-    onValueUpdate = (value) => {
+    onChange = (value) => {
         this.props.onScoreUpdate(this.props.code, value);
     }
     render() {
@@ -11,7 +11,7 @@ export default class ScorePart extends React.Component {
                 header={ header }
                 value={ value }
                 scale={ scale }
-                onValueUpdate={ this.onValueUpdate }
+                onChange={ this.onChange }
                 {...other_props}
             />
         );

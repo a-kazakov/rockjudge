@@ -1,7 +1,7 @@
 import _ from "l10n";
 
-import { showConfirm } from "ui/dialogs";
-import { onTouchOrClick } from "ui/tablet_components";
+import onTouchOrClick from "tablet_ui/onTouchOrClick";
+import showConfirm from "common/dialogs/showConfirm"; // FIXME
 
 import { Api } from "HostModules";
 

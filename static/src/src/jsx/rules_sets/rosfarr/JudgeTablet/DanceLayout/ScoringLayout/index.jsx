@@ -10,10 +10,10 @@ export default class ScoringLayout extends React.Component {
             <ScorePart
                 code={ code }
                 header={ _(`tablet.dance_judge.${code}`) }
-                value={ this.props.scoreData[code] }
                 scale={ scale }
+                value={ this.props.scoreData[code] }
                 onScoreUpdate={ this.props.onScoreUpdate }
-                {...additional_props}
+                { ...additional_props }
             />
         );
     }

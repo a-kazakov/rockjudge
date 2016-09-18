@@ -1,7 +1,7 @@
 import _ from "l10n";
 import Api from "common/server/Api";
 import Docx from "common/Docx";
-import { Loader } from "ui/components";
+import Loader from "common/components/Loader";
 import storage from "common/server/storage";
 import message_dispatcher from "common/server/message_dispatcher";
 

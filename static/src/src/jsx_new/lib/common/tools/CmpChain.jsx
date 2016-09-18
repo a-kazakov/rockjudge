@@ -1,10 +1,3 @@
-export function clone(obj) {
-    if (typeof obj !== "object") {
-        return obj;
-    }
-    return JSON.parse(JSON.stringify(obj));
-}
-
 class CmpChainImpl {
     constructor() {
         this.result = 0;
@@ -24,4 +17,5 @@ class CmpChainImpl {
     }
 }
 
-export var CmpChain = () => new CmpChainImpl();
+const CmpChain = () => new CmpChainImpl();
+export default CmpChain;

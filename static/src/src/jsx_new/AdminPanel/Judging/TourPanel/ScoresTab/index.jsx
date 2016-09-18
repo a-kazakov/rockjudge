@@ -1,6 +1,6 @@
 import _ from "l10n";
 import Api from "common/server/Api";
-import { Loader } from "ui/components";
+import Loader from "common/components/Loader";
 import showConfirm from "common/dialogs/showConfirm";
 import closeDialog from "common/dialogs/closeDialog";
 import storage from "common/server/storage";

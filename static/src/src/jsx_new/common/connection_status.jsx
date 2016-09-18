@@ -1,15 +1,6 @@
 import _ from "l10n";
 
-
-export class Loader extends React.Component {
-    render() {
-        return <table style={{ "height": "100%", "width": "100%" }}><tbody><tr>
-            <td style={{ "textAlign": "center" }}>
-                <img src="/static/img/ajax-loader.gif" />
-            </td>
-        </tr></tbody></table>
-    }
-}
+import makeClassName from "common/makeClassName";
 
 class ConnectionStatusMock {
     setOk() {}
@@ -17,15 +8,6 @@ class ConnectionStatusMock {
 }
 
 class ConnectionStatus extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            "connected": null,
-        };
-    }
-    componentWillUnmount() {
-        this.stopInterval();
-    }
     static init() {
         let element = window.document.getElementById("connection_status");
         if (element && !element.hasChildNodes()) {
@@ -36,9 +18,21 @@ class ConnectionStatus extends React.Component {
         }
         return new ConnectionStatusMock();
     }
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            "connected": null,
+        };
+    }
+
+    componentWillUnmount() {
+        this.stopInterval();
+    }
+
     startInterval() {
         if (this.interval) {
-            return
+            return;
         }
         this.interval = setInterval(() => {
             this.setState({
@@ -48,11 +42,12 @@ class ConnectionStatus extends React.Component {
     }
     stopInterval() {
         if (!this.interval) {
-            return
+            return;
         }
         clearInterval(this.interval);
         this.interval = null;
     }
+
     setOk() {
         this.stopInterval();
         this.setState({ connected: true, tick: false });
@@ -61,9 +56,19 @@ class ConnectionStatus extends React.Component {
         this.startInterval();
         this.setState({ connected: false });
     }
+
+    getClassName() {
+        return makeClassName({
+            "connection-status": true,
+            "alert-danger": true,
+            "tick": this.state.tick,
+        });
+    }
     render() {
         if (this.state.connected) {
-            return <div className="connection-status ok"></div>
+            return (
+                <div className="connection-status ok" />
+            );
         }
         if (this.state.connected === null) {
             return (
@@ -73,11 +78,12 @@ class ConnectionStatus extends React.Component {
             )
         }
         return (
-            <div className={ "connection-status alert-danger" + (this.state.tick ? " tick" : "") }>
-                    { _("global.labels.connection_problem") }
+            <div className={ this.getClassName() }>
+                { _("global.labels.connection_problem") }
             </div>
         )
     }
 }
 
-export var connection_status = ConnectionStatus.init();
+const connection_status = ConnectionStatus.init();
+export default connection_status;

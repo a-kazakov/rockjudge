@@ -3,7 +3,7 @@ import Api from "common/server/Api";
 import message_dispatcher from "common/server/message_dispatcher";
 import storage from "common/server/storage";
 
-import { Loader } from "ui/components";
+import Loader from "common/components/Loader";
 
 import Row from "./Row";
 import CreationRow from "./CreationRow";

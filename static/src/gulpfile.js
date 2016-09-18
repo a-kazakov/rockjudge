@@ -32,7 +32,7 @@ function createJsxTask(task) {
             let bundler = browserify({
                 entries: entry_point,
                 extensions: ['.jsx'],
-                paths: ['./src/jsx/', './src/jsx_new/'],
+                paths: ['./src/jsx/', './src/jsx_new/', './src/jsx_new/lib'],
                 debug: env_type !== 'production',
             })
             .transform(babelify, {
@@ -79,7 +79,7 @@ function createRuleSetJsxTask(task) {
             let bundler = browserify({
                 entries: entry_point,
                 extensions: ['.jsx'],
-                paths: ['./src/jsx/', './src/jsx/rules_sets/' + task + '/'],
+                paths: [`./src/jsx/rules_sets/${task}/`, './src/jsx_new/lib'],
                 debug: env_type !== 'production',
             })
             .transform(babelify, {

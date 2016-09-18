@@ -1,4 +1,4 @@
-import { onTouchOrClick } from "ui/tablet_components";
+import onTouchOrClick from "tablet_ui/onTouchOrClick";
 
 export default class Item extends React.Component {
     static get propTypes() {

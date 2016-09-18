@@ -1,4 +1,4 @@
-import { onTouchEndOrClick } from "ui/tablet_components";
+import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
 import makeClassName from "common/makeClassName";
 

@@ -1,4 +1,4 @@
-import { connection_status } from "ui/components";
+import connection_status from "common/connection_status";
 
 import storage from "common/server/storage";
 

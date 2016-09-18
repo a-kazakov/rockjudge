@@ -3,7 +3,7 @@ import _ from "l10n";
 import GeneralScale from "JudgeTablet/GeneralScale";
 
 export default class ScoringLayout extends React.Component {
-    onValueUpdate = (value) => {
+    onChange = (value) => {
         this.props.onScoreUpdate("points", value);
     }
     render() {
@@ -11,7 +11,7 @@ export default class ScoringLayout extends React.Component {
             <GeneralScale
                 value={ this.props.scoreData.points }
                 scale="grid"
-                onValueUpdate={ this.onValueUpdate }
+                onChange={ this.onChange }
                 min={ 1 }
                 max={ 40 }
                 rowSize={ 10 }

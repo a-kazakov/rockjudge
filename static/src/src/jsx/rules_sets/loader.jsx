@@ -2,8 +2,8 @@ import Api from "common/server/Api";
 import storage from "common/server/storage";
 import message_dispatcher from "common/server/message_dispatcher";
 
-import TourResults from "common/TourResults";
-import DisciplineResults from "common/DisciplineResults";
+import TourResults from "common/components/TourResults";
+import DisciplineResults from "common/components/DisciplineResults";
 
 class RulesSetLoader {
     constructor() {

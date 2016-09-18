@@ -1,5 +1,5 @@
 import _ from "l10n";
-import { Loader } from "ui/components";
+import Loader from "common/components/Loader";
 
 let auto_printer = null;
 

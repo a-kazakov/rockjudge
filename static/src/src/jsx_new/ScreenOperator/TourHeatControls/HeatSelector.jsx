@@ -1,10 +1,10 @@
 import _ from "l10n";
 import Api from "common/server/Api";
-import { Loader } from "ui/components";
+import Loader from "common/components/Loader";
 import storage from "common/server/storage";
 import message_dispatcher from "common/server/message_dispatcher";
 
-import { onTouchEndOrClick } from "ui/tablet_components";
+import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
 import HeatSelectorRow from "./HeatSelectorRow";
 

@@ -1,4 +1,4 @@
-import TourResults from "common/TourResults";
+import TourResults from "common/components/TourResults";
 
 import Wrapper from "./Wrapper";
 

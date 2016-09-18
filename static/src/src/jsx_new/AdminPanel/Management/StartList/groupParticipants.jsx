@@ -1,4 +1,4 @@
-import { clone } from "common/tools";
+import clone from "common/tools/clone";
 
 function groupParticipants(competition, config) {
     if (config.group_by_clubs) {

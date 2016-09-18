@@ -1,6 +1,6 @@
 import makeClassName from "common/makeClassName";
 
-import { onTouchEndOrClick } from "ui/tablet_components";
+import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
 export default class Item extends React.Component {
     static get propTypes() {

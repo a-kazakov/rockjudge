@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import rules_set from "rules_sets/loader";
 
-import DisciplineResults from "common/DisciplineResults";
+import DisciplineResults from "common/components/DisciplineResults";
 
 export default class Results extends React.Component {
     static get propTypes() {
