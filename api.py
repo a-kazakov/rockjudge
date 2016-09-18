@@ -103,7 +103,10 @@ class Api:
 
     @classmethod
     def competition_get_active_names(cls, request):
-        competitions = Competition.select().where(Competition.active == True)  # NOQA
+        competitions = Competition.select().where(
+            (Competition.active == True) &  # NOQA
+            (Competition.deleted == False)  # NOQA
+        )
         # No auth check
         return [{
             "id": c.id,

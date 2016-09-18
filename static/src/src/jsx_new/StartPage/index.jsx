@@ -51,12 +51,14 @@ export default class StartPage extends React.Component {
                 <Loader />
             );
         }
-        const active_comeptition_id = this.state.activeCompetitionId || (
-            this.state.competitionsNames.length === 1
-                ? this.state.competitionsNames[0]
-                : null
-        )
-        if (active_comeptition_id === null) {
+        const active_comeptition = (
+            this.state.activeCompetitionId
+                ? this.state.competitionsNames.find(c => c.id === this.state.activeCompetitionId)
+                : this.state.competitionsNames.length === 1
+                    ? this.state.competitionsNames[0]
+                    : null
+        );
+        if (active_comeptition === null) {
             return (
                 <CompetitionSelector
                     competitionsNames={ this.state.competitionsNames }
@@ -66,8 +68,8 @@ export default class StartPage extends React.Component {
         }
         return (
             <RoleSelector
-                accessLevel={ this.state.competitionAccesses[active_comeptition_id] }
-                competitionId={ active_comeptition_id }
+                accessLevel={ this.state.competitionAccesses[active_comeptition.id] }
+                competition={ active_comeptition }
             />
         );
     }

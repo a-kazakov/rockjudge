@@ -6,6 +6,30 @@ html, body, #content, .start-screen {
 }
 
 .start-screen {
+  .role-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: 100%;
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      flex-shrink: 0;
+      h1 {
+        font-size: 16px;
+      }
+    }
+    .role-selector-content {
+      flex-grow: 1;
+      display: flex;
+      align-items: stretch;
+      > * {
+        flex-grow: 1;
+      }
+    }
+  }
   .btn-default:hover {
     background-color: @btn-default-bg;
     border-color: @btn-default-border;
@@ -21,7 +45,12 @@ html, body, #content, .start-screen {
   .competition-selector {
     width: 100%;
     max-width: 500px;
-    margin: 100px auto;
+    min-height: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
     .list {
       width: 100%;
       .button {
@@ -36,8 +65,14 @@ html, body, #content, .start-screen {
     }
   }
   .no-competitions {
-    margin: 200px auto;
-    text-align: center;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    h3 {
+      text-align: center;
+    }
   }
   .access-request, .single-judge {
     button {
@@ -66,7 +101,6 @@ html, body, #content, .start-screen {
   }
 
   .presenter-selector, .single-judge, .no-access, .access-request, .universal-selector {
-    height: 100%;
     display: flex;
     align-items: stretch;
     flex-direction: column;

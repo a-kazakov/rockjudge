@@ -14,7 +14,10 @@ export default class RoleSelector extends React.Component {
         const PT = React.PropTypes;
         return {
             accessLevel: PT.string,
-            competitionId: PT.number.isRequired,
+            competition: PT.shape({
+                id: PT.number.isRequired,
+                name: PT.string.isRequired,
+            }).isRequired,
         };
     }
 
@@ -32,20 +35,20 @@ export default class RoleSelector extends React.Component {
         this.loadData();
     }
     componentWillReceiveProps(next_props) {
-        if (this.props.competitionId !== next_props.competitionId) {
+        if (this.props.competition.id !== next_props.competition.id) {
             this.setState({
                 competition: null,
             });
-            this.freeStorage(this.props.competitionId);
-            this.setupStorage(next_props.competitionId);
+            this.freeStorage(this.props.competition.id);
+            this.setupStorage(next_props.competition.id);
         }
     }
     componentDidUpdate(prev_props) {
         if (
-            prev_props.competitionId !== this.props.competitionId &&
+            prev_props.competition.id !== this.props.competition.id ||
             (
-                window.location.hostname === "127.0.0.1" ||
-                (prev_props.accessLevel && prev_props.accessLevel !== "none")
+                window.location.hostname !== "127.0.0.1" &&
+                (!prev_props.accessLevel || prev_props.accessLevel === "none")
             )
         ) {
             this.loadData();
@@ -67,13 +70,13 @@ export default class RoleSelector extends React.Component {
 
     setupStorage(competition_id=null) {
         if (competition_id === null) {
-            competition_id = this.props.competitionId;
+            competition_id = this.props.competition.id;
         }
         this.storage = storage.getDomain(`heats_${competition_id}`);
     }
     freeStorage(competition_id=null) {
         if (competition_id === null) {
-            competition_id = this.props.competitionId;
+            competition_id = this.props.competition.id;
         }
         storage.delDomain(`heats_${competition_id}`);
     }
@@ -90,7 +93,7 @@ export default class RoleSelector extends React.Component {
             return
         }
         const serialized = this.storage.get("Competition")
-            .by_id(this.props.competitionId)
+            .by_id(this.props.competition.id)
             .serialize(this.SCHEMA);
         this.setState({
             competition: serialized,
@@ -101,20 +104,20 @@ export default class RoleSelector extends React.Component {
             return
         }
         Api("competition.get", {
-            competition_id: this.props.competitionId,
+            competition_id: this.props.competition.id,
             children: this.SCHEMA,
         })
-            .addToDB("Competition", this.props.competitionId, this.storage)
+            .addToDB("Competition", this.props.competition.id, this.storage)
             .onSuccess(this.reloadFromStorage)
             .send();
     }
 
-    render() {
+    renderBody() {
         if (window.location.hostname !== "127.0.0.1") {
             if (!this.props.accessLevel) {
                 return (
                     <AccessRequest
-                        competitionId={ this.props.competitionId }
+                        competitionId={ this.props.competition.id }
                     />
                 );
             }
@@ -159,9 +162,22 @@ export default class RoleSelector extends React.Component {
                 />
             );
         }
-
         return (
             <h3>Not implemented</h3>
+        );
+    }
+    render() {
+        return (
+            <div className="role-selector">
+                <header>
+                    <h1>
+                        { this.props.competition.name }
+                    </h1>
+                </header>
+                <div className="role-selector-content">
+                    { this.renderBody() }
+                </div>
+            </div>
         );
     }
 }

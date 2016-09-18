@@ -20,7 +20,7 @@ export default class CompetitionSelector extends React.Component {
         if (window.location.hostname === "127.0.0.1") {
             link = (
                 <h4>
-                    { _("start_page.messages.competitions_management_link", link) }
+                    { _("start_page.messages.competitions_management_link", `${window.location.origin}/c`) }
                 </h4>
             );
         }
