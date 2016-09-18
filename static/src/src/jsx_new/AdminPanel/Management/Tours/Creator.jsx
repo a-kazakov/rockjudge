@@ -7,7 +7,6 @@ export default class Creator extends React.Component {
         const PT = React.PropTypes;
         return {
             afterId: PT.number,
-            competition: PT.object.isRequired,
             disciplineId: PT.number.isRequired,
             onStopEditing: PT.func.isRequired,
         };
@@ -30,7 +29,6 @@ export default class Creator extends React.Component {
         return (
             <InputForm
                 classes={ ["tour-create"] }
-                competition={ this.props.competition }
                 onStopEditing={ this.props.onStopEditing }
                 onSubmit={ this.handleSubmission }
             />

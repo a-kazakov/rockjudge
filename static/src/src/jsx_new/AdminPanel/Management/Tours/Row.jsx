@@ -1,5 +1,6 @@
 import _ from "l10n";
 import Api from "common/server/Api";
+import rules_set from "rules_sets/loader";
 import showConfirm from "common/dialogs/showConfirm";
 import closeDialog from "common/dialogs/closeDialog";
 
@@ -9,7 +10,6 @@ export default class Row extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
-            competition: PT.object.isRequired,
             tour: PT.object.isRequired,
         };
     }
@@ -55,7 +55,6 @@ export default class Row extends React.Component {
     renderEditor() {
         return (
             <InputForm
-                competition={ this.props.competition }
                 tour={ this.props.tour }
                 onStopEditing={ this.handleStopEditing }
                 onSubmit={ this.handleSubmission }
@@ -95,7 +94,7 @@ export default class Row extends React.Component {
                             <strong>
                                 { `${_("models.tour.scoring_system_name")}: ` }
                             </strong>
-                            { _(`scoring_systems_names.${this.props.tour.scoring_system_name}`) }
+                            { rules_set.translate(`scoring_systems_names.${this.props.tour.scoring_system_name}`) }
                         </p>
                         <p>
                             <strong>

@@ -1,5 +1,5 @@
 import _ from "l10n";
-import { GL } from "common/definitions";
+import rules_set from "rules_sets/loader";
 
 import DisciplineJudgeRow from "./DisciplineJudgeRow";
 
@@ -42,7 +42,7 @@ export default class DisciplineJudges extends React.Component {
         this.modifyValue(discipline_judges => {
             discipline_judges.push({
                 judge_id: this.props.judges[0] && this.props.judges[0].id,
-                role: GL.judge_roles[0],
+                role: rules_set.meta.judge_roles[0],
             });
         });
     }

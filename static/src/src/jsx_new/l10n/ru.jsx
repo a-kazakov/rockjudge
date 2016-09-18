@@ -640,26 +640,6 @@ export default function translate(src, ...args) {
                 },
             },
         },
-
-        "scoring_systems_names": {
-            "rosfarr": {
-                "base_name": "РосФАРР",
-                "acro": "РосФАРР, акробатические программы",
-                "am_final_acro": "РосФАРР, A и M классы, финал, акробатика",
-                "am_final_fw": "РосФАРР, A и M классы, финал, техника ног",
-                "formation": "РосФАРР, формейшн без акробатики",
-                "formation_acro": "РосФАРР, формейшн с акробатикой",
-                "no_acro": "РосФАРР, танцевальные программы",
-                "simplified": "РосФАРР, упрощенная система (1–40)",
-            },
-        },
-        "judge_roles": {
-            "": "-",
-            "acro_judge": "Судья акробатики",
-            "dance_judge": "Судья танца",
-            "head_judge": "Главный судья",
-            "tech_judge": "Технический судья",
-        },
     };
 
     const path = src.split(".");
@@ -676,15 +656,3 @@ export default function translate(src, ...args) {
     }
     return phrase_ptr;
 }
-
-export const getPossibleTourNames = () => [
-    "Финал",
-    "Тур «Надежды»",
-    "Отборочный тур",
-    "1/2 финала",
-    "1/4 финала",
-    "1/8 финала",
-    "1/16 финала",
-    "Финал, техника ног",
-    "Финал, акробатика",
-];

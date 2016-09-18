@@ -1,6 +1,4 @@
-import { GL } from "common/definitions";
-
-import { tour_names } from "l10n/loader";
+import rules_set from "rules_sets/loader";
 
 import AddButton from "./AddButton";
 import Creator from "./Creator";
@@ -53,7 +51,6 @@ export default class Tours extends React.Component {
             return (
                 <Creator
                     afterId={ after_id }
-                    competition={ this.props.competition }
                     disciplineId={ this.props.disciplineId }
                     key="tour-creating"
                     onStopEditing={ this.handleStopTourCreating }
@@ -72,7 +69,6 @@ export default class Tours extends React.Component {
         return discipline.tours.map(tour => {
             return [
                 <Row
-                    competition={ this.props.competition }
                     key={ tour.id }
                     tour={ tour }
                 />,
@@ -94,10 +90,14 @@ export default class Tours extends React.Component {
                     { this.renderTours(discipline) }
                 </div>
                 <datalist id="dl_tours">
-                    { tour_names.map((n, idx) => <option key={ idx } value={ n } />) }
+                    { rules_set.translate.tour_name_suggestions.map((n, idx) =>
+                        <option key={ idx } value={ n } />
+                    ) }
                 </datalist>
                 <datalist id="dl_programs">
-                    { GL.suggested_programs.map((n, idx) => <option key={ idx } value={ n } />) }
+                    { rules_set.meta.suggested_programs.map((n, idx) =>
+                        <option key={ idx } value={ n } />
+                    ) }
                 </datalist>
             </div>
         );

@@ -12,7 +12,9 @@
 
 {% block scripts %}
   <script>
-    window.page_props = {};
+    window.page_props = {
+        rulesSets: {{ rules_sets }}
+    };
   </script>
   <script src="/static/js/competitions.js"></script>
 {% end %}

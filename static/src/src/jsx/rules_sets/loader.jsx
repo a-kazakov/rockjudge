@@ -11,9 +11,17 @@ class RulesSetLoader {
     }
 
     load(module_name, data) {
-        const KEYS = ["tour_results_table_1", "tour_results_table_2", "tour_results_table_3",
-                      "discipline_results_table", "judge_tablet", "admin_score_input",
-                      "get_judge_table_mark"];
+        const KEYS = [
+            "meta",
+            "translate",
+            "tour_results_table_1",
+            "tour_results_table_2",
+            "tour_results_table_3",
+            "discipline_results_table",
+            "judge_tablet",
+            "admin_score_input",
+            "get_judge_table_mark",
+        ];
         for (const key of KEYS) {
             if (!(key in data)) {
                 throw new Error(`Module ${module_name} doesn't export ${key} class.`);
@@ -33,6 +41,16 @@ class RulesSetLoader {
         if (!this._loaded) {
             throw new Error("No scoring system was loaded");
         }
+    }
+
+    get meta() {
+        this._checkIfLoaded();
+        return this._meta;
+    }
+
+    get translate() {
+        this._checkIfLoaded();
+        return this._translate;
     }
 
     get tour_results_table_1() {

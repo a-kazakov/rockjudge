@@ -1,5 +1,4 @@
-import _ from "l10n";
-import { GL } from "common/definitions";
+import rules_set from "rules_sets/loader";
 
 export default class DisciplineJudgeRow extends React.Component {
     static get propTypes() {
@@ -7,7 +6,7 @@ export default class DisciplineJudgeRow extends React.Component {
         return {
             disciplineJudge: PT.shape({
                 judge_id: PT.number.isRequired,
-                role: PT.oneOf(GL.judge_roles),
+                role: PT.oneOf(rules_set.meta.judge_roles),
             }).isRequired,
             idx: PT.number.isRequired,
             judges: PT.arrayOf(
@@ -54,9 +53,9 @@ export default class DisciplineJudgeRow extends React.Component {
                     value={ this.props.disciplineJudge.role }
                     onChange={ this.handleRoleChange }
                 >
-                    { GL.judge_roles.map(jr =>
+                    { rules_set.meta.judge_roles.map(jr =>
                         <option key={ jr } value={ jr }>
-                            { _(`judge_roles.${jr}`) }
+                            { rules_set.translate(`judge_roles.${jr}`) }
                         </option>
                     ) }
                 </select>

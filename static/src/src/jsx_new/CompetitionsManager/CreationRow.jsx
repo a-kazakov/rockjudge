@@ -1,11 +1,16 @@
 import _ from "l10n";
 import Api from "common/server/Api";
 
-import { GL } from "common/definitions";
-
 import EditorRow from "./EditorRow";
 
 export default class CreationRow extends React.Component {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            rulesSets: PT.object.isRequired,
+        };
+    }
+
     constructor(props) {
         super(props);
         this.state = {
@@ -25,14 +30,12 @@ export default class CreationRow extends React.Component {
     }
 
     renderEditor() {
-        const scoring_systems = Object.keys(GL.scoring_systems);
-        scoring_systems.sort()
         const empty_data = {
             "name": "",
             "date": "",
             "active": true,
             "info": [],
-            "rules_set": scoring_systems[0],
+            "rules_set": Object.keys(this.props.rulesSets).sort()[0],
         }
         return (
             <EditorRow

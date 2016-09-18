@@ -1,18 +1,4 @@
-export default function translate(src, arg) {
-    function chooseEnding(n, e1, e2, e5) {
-        let x = n % 100;
-        if (Math.floor(x / 10) === 1) {
-            return e5;
-        }
-        if (x % 10 === 1) {
-            return e1;
-        }
-        if (x % 10 >= 5 || x % 10 === 0) {
-            return e5;
-        }
-        return e2;
-    }
-
+export default function translate(src, ...args) {
     let PHRASES = {
         "admin": {
             "buttons": {
@@ -108,7 +94,7 @@ export default function translate(src, arg) {
             },
             "tech_judge": {
                 "jump_steps": "Основные ходы",
-                "reset_to_n": (n) => "Сброс на " + n.toString(),
+                "reset_to_n": (n) => `Сброс на ${n}`,
                 "timing": "Длительность",
             },
             "pages": {
@@ -122,7 +108,7 @@ export default function translate(src, arg) {
         "results": {
             "breakdown": {
                 "a": "A",
-                "acro_n": (n) => "A" + n.toString(),
+                "acro_n": (n) => `A${n}`,
                 "bm": "БО",
                 "c": "К",
                 "df": "ТФ",
@@ -174,16 +160,39 @@ export default function translate(src, arg) {
                 "no": "Нет",
             },
             "phrases": {
-                "participant_n": (n, name, n_sp) =>
-                    (n_sp > 2
-                        ? "Формейшн №" + n.toString() + (name ? ": " + name : "")
-                        : (n_sp === 2
-                            ? "Пара №"
-                            : "Участник №"
-                        ) + n.toString()
-                    ),
-                "judge_n": (n) => "Линейный судья №" + n.toString(),
+                "participant_n": (n, name, n_sp) => {
+                    if (n_sp > 2) {
+                        let result = `Формейшн №${n}`;
+                        if (name) {
+                            result += `: ${name}`;
+                        }
+                        return result;
+                    }
+                    return (n_sp === 2)
+                        ? `Пара №${n}`
+                        : `Участник №${n}`
+                },
+                "judge_n": (n) => `Линейный судья №${n}`,
             },
+        },
+        "scoring_systems_names": {
+            "rosfarr": {
+                "base_name": "РосФАРР",
+                "acro": "РосФАРР, акробатические программы",
+                "am_final_acro": "РосФАРР, A и M классы, финал, акробатика",
+                "am_final_fw": "РосФАРР, A и M классы, финал, техника ног",
+                "formation": "РосФАРР, формейшн без акробатики",
+                "formation_acro": "РосФАРР, формейшн с акробатикой",
+                "no_acro": "РосФАРР, танцевальные программы",
+                "simplified": "РосФАРР, упрощенная система (1–40)",
+            },
+        },
+        "judge_roles": {
+            "": "-",
+            "acro_judge": "Судья акробатики",
+            "dance_judge": "Судья танца",
+            "head_judge": "Главный судья",
+            "tech_judge": "Технический судья",
         },
     };
 
@@ -192,16 +201,24 @@ export default function translate(src, arg) {
     for (const chunk of path) {
         phrase_ptr = phrase_ptr[chunk];
         if (typeof phrase_ptr === "undefined") {
-            console.error("Unable to find translation for " + src);
+            console.error(`Unable to find translation for ${src}`);
             return "";
         }
-    };
+    }
     if (typeof phrase_ptr === "function") {
-        let args = [];
-        for (let idx = 1; idx < arguments.length; ++idx) {
-            args.push(arguments[idx]);
-        }
         return phrase_ptr(...args);
     }
     return phrase_ptr;
 }
+
+translate.tour_name_suggestions = [
+    "Финал",
+    "Тур «Надежды»",
+    "Отборочный тур",
+    "1/2 финала",
+    "1/4 финала",
+    "1/8 финала",
+    "1/16 финала",
+    "Финал, техника ног",
+    "Финал, акробатика",
+];

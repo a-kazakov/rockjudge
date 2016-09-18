@@ -4,6 +4,7 @@ import json
 import tornado.gen
 import tornado.web
 
+import scoring_systems
 import settings
 from api import Api
 from db import Database
@@ -46,6 +47,7 @@ class CompetitionsHandler(tornado.web.RequestHandler):
     def get(self):
         self.render(
             "competitions.html",
+            rules_sets=json.dumps(scoring_systems.get_rules_sets_names()),
             settings=settings,
         )
 

@@ -1,8 +1,6 @@
 import _ from "l10n";
 import makeClassName from "common/makeClassName";
 
-import { GL } from "common/definitions";
-
 import Info from "./Info";
 
 export default class EditorRow extends React.Component {
@@ -18,6 +16,7 @@ export default class EditorRow extends React.Component {
                 rules_set: PT.string.isRequired,
             }).isRequired,
             newCompetition: PT.bool,
+            rulesSets: PT.object,
             onStopEditing: PT.func.isRequired,
             onSubmit: PT.func.isRequired,
         };
@@ -71,7 +70,7 @@ export default class EditorRow extends React.Component {
         if (!this.props.newCompetition) {
             return null;
         }
-        const scoring_systems = Object.keys(GL.scoring_systems).sort();
+        const rules_sets = Object.keys(this.props.rulesSets).sort();
         return (
             <label className="full-width">
                 { _("models.competition.rules_set") }
@@ -80,9 +79,9 @@ export default class EditorRow extends React.Component {
                     defaultValue={ this.props.competition.rules_set }
                     ref={ this.makeRulesSetRef }
                 >
-                    { scoring_systems.map(ss =>
+                    { rules_sets.map(ss =>
                         <option key={ ss } value={ ss }>
-                            { _(`scoring_systems_names.${ss}.base_name`) }
+                            { rules_sets[ss] }
                         </option>
                     ) }
                 </select>

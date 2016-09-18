@@ -9,6 +9,13 @@ import Row from "./Row";
 import CreationRow from "./CreationRow";
 
 export default class CompetitionsManager extends React.Component {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            rulesSets: PT.object.isRequired,
+        };
+    }
+
     constructor(props) {
         super(props);
         this.state = {
@@ -63,7 +70,9 @@ export default class CompetitionsManager extends React.Component {
                                 key={ competition.id }
                             />
                         ) }
-                        <CreationRow />
+                        <CreationRow
+                            rulesSets={ this.props.rulesSets }
+                        />
                     </tbody>
                 </table>
             </div>

@@ -1,14 +1,11 @@
 import _ from "l10n";
-import { GL } from "common/definitions";
+import rules_set from "rules_sets/loader";
 
 export default class InputForm extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
             classes: PT.arrayOf(PT.string.isRequired),
-            competition: PT.shape({
-                rules_set: PT.string.isRequired,
-            }).isRequired,
             tour: PT.shape({
                 default_program: PT.string.isRequired,
                 finalized: PT.bool.isRequired,
@@ -65,7 +62,7 @@ export default class InputForm extends React.Component {
             num_advances: "",
             participants_per_heat: "1",
             default_program: "",
-            scoring_system_name: GL.scoring_systems[this.props.competition.rules_set][0],
+            scoring_system_name: rules_set.meta.scoring_systems[0],
         }
         return (
             <form
@@ -139,9 +136,9 @@ export default class InputForm extends React.Component {
                                 disabled={ tour.finalized }
                                 ref={ this.makeScoringSystemRef }
                             >
-                                { GL.scoring_systems[this.props.competition.rules_set].map((sn) =>
+                                { rules_set.meta.scoring_systems.map((sn) =>
                                     <option key={ sn } value={ sn }>
-                                        { _(`scoring_systems_names.${sn}`) }
+                                        { rules_set.translate(`scoring_systems_names.${sn}`) }
                                     </option>
                                 ) }
                             </select>
