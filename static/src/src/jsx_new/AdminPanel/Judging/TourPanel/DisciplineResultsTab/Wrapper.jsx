@@ -1,5 +1,5 @@
 import _ from "l10n";
-import { Docx } from "common/docx";
+import Docx from "common/Docx";
 
 import rules_set from "rules_sets/loader";
 

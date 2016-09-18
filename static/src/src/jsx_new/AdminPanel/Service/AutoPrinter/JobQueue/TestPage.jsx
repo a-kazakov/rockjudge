@@ -1,5 +1,5 @@
 import _ from "l10n";
-import { Docx } from "common/docx";
+import Docx from "common/Docx";
 
 export default class TestPage extends React.Component {
     static get propTypes() {

@@ -98,15 +98,15 @@ function createRuleSetJsxTask(task) {
             return bundler;
         }
         return buildJsx(
-            'src/jsx/rules_sets/' + task + '/root.jsx',
+            `src/jsx/rules_sets/${task}/root.jsx`,
             '../js/rules_sets',
-            task + '.js'
+            `${task}.js`
         );
     }
     let str_func = doTheJob.toString()
         .replace("__task__", task)
         .replace("__env_type__", gutil.env.type);
-    gulp.task("rs_" + task, makeItFaster(str_func));
+    gulp.task(`rs_${task}`, makeItFaster(str_func));
 }
 
 createJsxTask('start_page');

@@ -1,4 +1,4 @@
-import { Docx } from "common/docx";
+import Docx from "common/Docx";
 
 import OneNumber from "./OneNumber";
 

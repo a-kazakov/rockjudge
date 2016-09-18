@@ -1,3 +1,5 @@
+import { saveAs } from "file-saver";
+
 class DocxImpl {
     constructor(filename) {
         this.filename = filename;
@@ -86,7 +88,7 @@ class DocxImpl {
     }
     addWidthCss() {
         for (let i = 1; i <= 100; ++i) {
-            this.addStyle(".w-" + i, "width", i + "%");
+            this.addStyle(`.w-${i}`, "width", `${i}%`);
         }
     }
 
@@ -127,23 +129,27 @@ class DocxImpl {
     }
 
     renderStyleBlock(selector, data) {
-        let css_pairs = Object.getOwnPropertyNames(data).map((key) => key + ': ' + data[key] + '; ')
-        return selector + " { " + css_pairs.join(" ") + " }";
+        const css_pairs = Object.keys(data).map(
+            key => `${key}: ${data[key]};`
+        )
+        return `${selector} { ${css_pairs.join(" ")} }`;
     }
     renderStyles() {
-        let css_blocks = Object.getOwnPropertyNames(this.styles).map((
-            (selector) => this.renderStyleBlock(selector, this.styles[selector])
-        ).bind(this));
+        const css_blocks = Object.keys(this.styles).map(selector =>
+            this.renderStyleBlock(selector, this.styles[selector])
+        );
         return css_blocks.join("\n");
     }
     renderHTML() {
-        let css = this.renderStyles();
-        let header = this.header ? '<p class="header">' + this.header + '</p>' : "";
-        let title1 = this.title1 ? '<h1>' + this.title1 + '</h1>' : "";
-        let title2 = this.title2 ? '<h2>' + this.title2 + '</h2>' : "";
-        let title3 = this.title3 ? '<h3>' + this.title3 + '</h3>' : "";
-        let spacer = (header || title1 || title2 || title3) ? '<p class="spacer">&nbsp;</p>' : "";
-        return "<!DOCTYPE html>\n" +
+        const css = this.renderStyles();
+        const header = this.header ? `<p class="header">${this.header}</p>` : "";
+        const title1 = this.title1 ? `<h1>${this.title1}</h1>` : "";
+        const title2 = this.title2 ? `<h2>${this.title2}</h2>` : "";
+        const title3 = this.title3 ? `<h3>${this.title3}</h3>` : "";
+        const spacer = (header || title1 || title2 || title3) ? '<p class="spacer">&nbsp;</p>' : "";
+        /* eslint-disable prefer-template */
+        return (
+            "<!DOCTYPE html>\n" +
             "<html><head>" +
                 "<meta charset=\"utf-8\">" +
                 "<style>\n" + css + "\n</style>\n" +
@@ -154,7 +160,9 @@ class DocxImpl {
                 title3 +
                 spacer +
                 this.body +
-            "</body></html>";
+            "</body></html>"
+        );
+        /* eslint-enable prefer-template */
     }
 
     save() {
@@ -167,11 +175,12 @@ class DocxImpl {
                 right:  Math.floor(margins[1] * 56.659).toString(),
                 bottom: Math.floor(margins[2] * 56.659).toString(),
                 left:   Math.floor(margins[3] * 56.659).toString(),
-            }
+            },
         });
         saveAs(converted, this.filename);
     }
 }
 
 
-export var Docx = (fn) => new DocxImpl(fn);
+const Docx = (fn) => new DocxImpl(fn);
+export default Docx
