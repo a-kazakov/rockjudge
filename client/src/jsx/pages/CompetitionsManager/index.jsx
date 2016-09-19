@@ -48,8 +48,8 @@ export default class CompetitionsManager extends React.Component {
 
     renderTable() {
         return (
-            <div className="manage-competitions">
-                <table className="table table-striped">
+            <div className="CompetitionsManager">
+                <table>
                     <tbody>
                         <tr>
                             <th className="name">
@@ -68,6 +68,7 @@ export default class CompetitionsManager extends React.Component {
                                 competition={ competition }
                                 idx={ idx }
                                 key={ competition.id }
+                                rulesSets={ this.props.rulesSets }
                             />
                         ) }
                         <CreationRow

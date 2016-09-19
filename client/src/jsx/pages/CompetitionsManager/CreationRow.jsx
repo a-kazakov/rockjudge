@@ -42,6 +42,7 @@ export default class CreationRow extends React.Component {
                 newCompetition
                 baseTabIndex={ 1000 * 10000 }
                 competition={ empty_data }
+                rulesSets={ this.props.rulesSets }
                 onStopEditing={ this.handleStopEditing }
                 onSubmit={ this.handleSubmission }
             />

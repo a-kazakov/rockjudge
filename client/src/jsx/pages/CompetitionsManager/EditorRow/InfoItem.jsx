@@ -50,7 +50,7 @@ export default class InfoItem extends React.Component {
                     onChange={ this.handleValueChange }
                 />
                 <button
-                    className="down btn btn-primary"
+                    className="down"
                     disabled={ this.props.idx === this.props.itemsCount - 1 }
                     type="button"
                     onClick={ this.handleMoveDown }
@@ -58,7 +58,7 @@ export default class InfoItem extends React.Component {
                     ↓
                 </button>
                 <button
-                    className="up btn btn-primary"
+                    className="up"
                     disabled={ this.props.idx === 0 }
                     tabIndex={ -1 }
                     type="button"
@@ -67,7 +67,7 @@ export default class InfoItem extends React.Component {
                     ↑
                 </button>
                 <button
-                    className="del btn btn-danger"
+                    className="delete"
                     tabIndex={ -1 }
                     type="button"
                     onClick={ this.handleItemRemove }

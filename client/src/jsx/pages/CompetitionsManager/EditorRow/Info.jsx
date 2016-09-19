@@ -75,7 +75,7 @@ export default class Info extends React.Component {
                     />
                 ) }
                 <button
-                    className="full-width btn btn-sm btn-default"
+                    className="add-button"
                     tabIndex={ this.props.baseTabIndex + 949 }
                     type="button"
                     onClick={ this.handleAddition }

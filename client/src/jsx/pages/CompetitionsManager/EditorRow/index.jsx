@@ -81,7 +81,7 @@ export default class EditorRow extends React.Component {
                 >
                     { rules_sets.map(ss =>
                         <option key={ ss } value={ ss }>
-                            { rules_sets[ss] }
+                            { this.props.rulesSets[ss] }
                         </option>
                     ) }
                 </select>
@@ -93,67 +93,66 @@ export default class EditorRow extends React.Component {
             <tr className={ this.getClassName() }>
                 <td colSpan="4">
                     <form onSubmit={ this.handleSubmission }>
-                        <div className="row">
-                            <div className="col-md-3 general-info">
-                                <label className="full-width">
-                                    { _("models.competition.name") }
-                                    <input
-                                        className="full-width"
-                                        defaultValue={ this.props.competition.name }
-                                        ref={ this.makeNameRef }
-                                        tabIndex={ this.props.baseTabIndex + 1 }
-                                    />
-                                </label>
-                                <label className="full-width">
-                                    { _("models.competition.date") }
-                                    <input
-                                        className="full-width"
-                                        defaultValue={ this.props.competition.date }
-                                        ref={ this.makeDateRef }
-                                        tabIndex={ this.props.baseTabIndex + 2 }
-                                    />
-                                </label>
-                                { this.renderRulesSet() }
-                                <label className="full-width">
-                                    { _("models.competition.active") }
-                                    <br />
-                                    <input
-                                        defaultChecked={ this.props.competition.active }
-                                        ref={ this.makeActiveRef }
-                                        tabIndex={ this.props.baseTabIndex + 3 }
-                                        type="checkbox"
-                                    />
-                                </label>
-                            </div>
-                            <div className="col-md-7">
-                                <label>
-                                    { _("models.competition.info") }
-                                </label>
+                        <div className="col-6 general-info">
+                            <label className="full-width">
+                                { _("models.competition.name") }
+                                <input
+                                    required
+                                    className="full-width"
+                                    defaultValue={ this.props.competition.name }
+                                    ref={ this.makeNameRef }
+                                    tabIndex={ this.props.baseTabIndex + 1 }
+                                />
+                            </label>
+                            <label className="full-width">
+                                { _("models.competition.date") }
+                                <input
+                                    required
+                                    className="full-width"
+                                    defaultValue={ this.props.competition.date }
+                                    ref={ this.makeDateRef }
+                                    tabIndex={ this.props.baseTabIndex + 2 }
+                                />
+                            </label>
+                            { this.renderRulesSet() }
+                            <label className="full-width">
+                                { _("models.competition.active") }
+                                <br />
+                                <input
+                                    defaultChecked={ this.props.competition.active }
+                                    ref={ this.makeActiveRef }
+                                    tabIndex={ this.props.baseTabIndex + 3 }
+                                    type="checkbox"
+                                />
+                            </label>
+                        </div>
+                        <div className="col-14">
+                            <label>
+                                { _("models.competition.info") }
                                 <Info
                                     baseTabIndex={ this.props.baseTabIndex + 10 }
                                     defaultValue={ this.props.competition.info }
                                     ref={ this.makeInfoRef }
                                 />
-                            </div>
-                            <div className="col-md-2">
-                                <label>&nbsp;</label>
-                                <div className="buttons">
-                                    <button
-                                        className="btn btn-primary"
-                                        tabIndex={ this.props.baseTabIndex + 998 }
-                                        type="submit"
-                                    >
-                                        { _("global.buttons.submit") }
-                                    </button>
-                                    <button
-                                        className="btn btn-danger"
-                                        tabIndex={ this.props.baseTabIndex + 999 }
-                                        type="button"
-                                        onClick={ this.props.onStopEditing }
-                                    >
-                                        { _("global.buttons.discard") }
-                                    </button>
-                                </div>
+                            </label>
+                        </div>
+                        <div className="col-4">
+                            <div className="buttons horizontal">
+                                <button
+                                    className="btn btn-primary"
+                                    tabIndex={ this.props.baseTabIndex + 998 }
+                                    type="submit"
+                                >
+                                    { _("global.buttons.submit") }
+                                </button>
+                                <button
+                                    className="btn btn-danger"
+                                    tabIndex={ this.props.baseTabIndex + 999 }
+                                    type="button"
+                                    onClick={ this.props.onStopEditing }
+                                >
+                                    { _("global.buttons.discard") }
+                                </button>
                             </div>
                         </div>
                     </form>
