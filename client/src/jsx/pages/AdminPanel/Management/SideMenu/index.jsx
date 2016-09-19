@@ -56,7 +56,7 @@ export default class SideMenu extends React.Component {
     }
     render() {
         return (
-            <div className="side-menu">
+            <div className="SideMenu">
                 { this.renderOneLevelItem("import_export") }
                 { this.renderOneLevelItem("manage_judges") }
                 { this.renderOneLevelItem("manage_disciplines") }

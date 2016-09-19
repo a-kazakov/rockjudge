@@ -58,23 +58,24 @@ export default class Program extends React.Component {
             );
         }
         return (
-            <div>
+            <div className="program">
                 <h5>
                     { this.props.program.name }
                     { this.props.program.default_for
                         ? <em>&nbsp;({ this.props.program.default_for })</em>
                         : null
                     }
-                    { " / " }
-                    <a href="#" onClick={ this.handleStartEditing }>
-                        Редактировать
-                    </a>
-                    { " / " }
-                    <a href="#" onClick={ this.handleDeletion }>
-                        Удалить
-                    </a>
+                    <div className="actions">
+                        <a href="#" onClick={ this.handleStartEditing }>
+                            Редактировать
+                        </a>
+                        { " / " }
+                        <a href="#" onClick={ this.handleDeletion }>
+                            Удалить
+                        </a>
+                    </div>
                 </h5>
-                <table className="full-width program"><tbody>
+                <table className="program-table"><tbody>
                     { this.props.program.acrobatics.map((element, idx) =>
                         <tr key={ idx }>
                             <td>

@@ -27,7 +27,7 @@ class DocxImpl {
             },
             "h1, h2, h3, h4, h5, h6": {
                 "page-break-after": "avoid",
-                "margin-bottom": 0,
+                "margin": 0,
             },
             "h1": {
                 "font-size": "20pt",

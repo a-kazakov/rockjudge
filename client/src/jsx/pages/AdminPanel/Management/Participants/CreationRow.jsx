@@ -65,7 +65,7 @@ export default class CreationRow extends React.Component {
         return (
             <tr><td colSpan="6">
                 <button
-                    className="btn btn-default full-width"
+                    className="create-button"
                     type="button"
                     onClick={ this.handleStartEditing }
                 >

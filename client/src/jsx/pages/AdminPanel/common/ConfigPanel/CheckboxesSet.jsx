@@ -44,7 +44,7 @@ export default class CheckboxesSet extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="CheckboxesSet">
                 { this.props.items.map(item =>
                     <OneCheckbox
                         key={ item.id }
@@ -57,7 +57,6 @@ export default class CheckboxesSet extends React.Component {
                 <a href="#" onClick={ this.handleSelectAll }>
                     { _("global.buttons.select_all") }
                 </a>
-                &nbsp;&nbsp;&nbsp;&nbsp;
                 <a href="#" onClick={ this.handleDeselectAll }>
                     { _("global.buttons.deselect_all") }
                 </a>

@@ -14,7 +14,6 @@
     "$": true,
     "swal": true,
     "SockJS": true,
-    "saveAs": true,
     "htmlDocx": true,
   },
   "env": {

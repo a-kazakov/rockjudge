@@ -1,3 +1,5 @@
+import { saveAs } from "file-saver";
+
 import _ from "l10n";
 import Api from "common/server/Api";
 import storage from "common/server/storage";

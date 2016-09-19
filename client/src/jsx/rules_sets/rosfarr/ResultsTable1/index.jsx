@@ -1,6 +1,5 @@
 import _ from "l10n";
 
-import TourScoresWrapper from "common/TourScoresWrapper";
 import Row from "./Row"
 
 export default class ResultsTable1 extends React.Component {
@@ -30,6 +29,12 @@ export default class ResultsTable1 extends React.Component {
         };
     }
 
+    static transformDocx(docx) {
+        docx
+            .addStyle(".bordered-table", "font-size", "12pt")
+            .addStyle(".advances-header", "background-color", "#ddd");
+    }
+
     getRowStatus(row) {
         if (!row) {
             return "none";
@@ -52,7 +57,7 @@ export default class ResultsTable1 extends React.Component {
             return null;
         }
         return (
-            <tr key={ "AH" + next_row.run.id }>
+            <tr key={ `AH${next_row.run.id}` }>
                 <th className="advances-header" colSpan={ n_cols }>
                     <p className="text-left">
                         { this.getStatusHeader(next_status) }
@@ -83,9 +88,9 @@ export default class ResultsTable1 extends React.Component {
                     showTotalScore={ show_total_score }
                 />
             );
-        };
+        }
         return (
-            <div className="brief-table">
+            <div className="ResultsTable1">
                 <table className="bordered-table">
                     <thead>
                         <tr>

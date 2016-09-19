@@ -70,7 +70,7 @@ export default class Judging extends React.Component {
     }
     render() {
         return (
-            <div className="app">
+            <div className="Judging">
                 <SideMenu
                     activeTourId={ this.state.activeTourId }
                     competition={ this.props.competition }

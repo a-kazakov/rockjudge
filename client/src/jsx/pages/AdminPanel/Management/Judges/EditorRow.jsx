@@ -66,83 +66,72 @@ export default class EditorRow extends React.Component {
             <tr className={ this.getClassName() }>
                 <td colSpan="5">
                     <form onSubmit={ this.handleSubmission }>
-                        <div className="row">
-                            <div className="col-lg-1">
-                                <label className="full-width">
-                                    { _("models.judge.number") }
-                                    <input
-                                        className="full-width"
-                                        defaultValue={ this.props.judge.number }
-                                        ref={ this.makeNumberRef }
-                                    />
-                                </label>
-                            </div>
-                            <div className="col-lg-1">
-                                <label className="full-width">
-                                    { _("models.judge.category") }
-                                    <input
-                                        className="full-width"
-                                        defaultValue={ this.props.judge.category }
-                                        ref={ this.makeCategoryRef }
-                                    />
-                                </label>
-                            </div>
-                            <div className="col-lg-3">
-                                <label className="full-width">
-                                    { _("models.judge.name") }
-                                    <input
-                                        className="full-width"
-                                        defaultValue={ this.props.judge.name }
-                                        ref={ this.makeNameRef }
-                                    />
-                                </label>
-                            </div>
-                            <div className="col-lg-3">
-                                <label className="full-width">
-                                    { _("models.judge.role_description") }
-                                    <input
-                                        className="full-width"
-                                        defaultValue={ this.props.judge.role_description }
-                                        ref={ this.makeRoleDescriptionRef }
-                                    />
-                                </label>
-                            </div>
-                            <div className="col-lg-1">
-                                <label className="full-width">
-                                    { _("models.judge.external_id") }
-                                    <input
-                                        className="full-width"
-                                        defaultValue={ this.props.judge.external_id || "" }
-                                        ref={ this.makeExternalIdRef }
-                                    />
-                                </label>
-                            </div>
-                            <div className="col-lg-1">
-                                <label className="full-width">
-                                    { _("models.judge.sp") }
-                                    <input
-                                        className="full-width"
-                                        defaultValue={ this.props.judge.sp }
-                                        ref={ this.makeSpRef }
-                                    />
-                                </label>
-                            </div>
-                            <div className="col-lg-2">
-                                <div className="buttons">
-                                    <button
-                                        className="btn btn-sm btn-primary"
-                                        type="submit"
-                                    >
-                                        { _("global.buttons.submit") }
-                                    </button>
-                                    <button
-                                        className="btn btn-sm btn-danger"
-                                        type="button"
-                                        onClick={ this.props.onStopEditing }
-                                    >
-                                        { _("global.buttons.discard") }
-                                    </button>
-                                </div>
+                        <div className="col-2">
+                            <label className="full-width">
+                                { _("models.judge.number") }
+                                <input
+                                    defaultValue={ this.props.judge.number }
+                                    ref={ this.makeNumberRef }
+                                />
+                            </label>
+                        </div>
+                        <div className="col-2">
+                            <label className="full-width">
+                                { _("models.judge.category") }
+                                <input
+                                    defaultValue={ this.props.judge.category }
+                                    ref={ this.makeCategoryRef }
+                                />
+                            </label>
+                        </div>
+                        <div className="col-6">
+                            <label className="full-width">
+                                { _("models.judge.name") }
+                                <input
+                                    defaultValue={ this.props.judge.name }
+                                    ref={ this.makeNameRef }
+                                />
+                            </label>
+                        </div>
+                        <div className="col-6">
+                            <label className="full-width">
+                                { _("models.judge.role_description") }
+                                <input
+                                    defaultValue={ this.props.judge.role_description }
+                                    ref={ this.makeRoleDescriptionRef }
+                                />
+                            </label>
+                        </div>
+                        <div className="col-3">
+                            <label className="full-width">
+                                { _("models.judge.external_id") }
+                                <input
+                                    defaultValue={ this.props.judge.external_id || "" }
+                                    ref={ this.makeExternalIdRef }
+                                />
+                            </label>
+                        </div>
+                        <div className="col-2">
+                            <label className="full-width">
+                                { _("models.judge.sp") }
+                                <input
+                                    className="full-width"
+                                    defaultValue={ this.props.judge.sp }
+                                    ref={ this.makeSpRef }
+                                />
+                            </label>
+                        </div>
+                        <div className="col-3">
+                            <div className="buttons vertical">
+                                <button type="submit">
+                                    { _("global.buttons.submit") }
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={ this.props.onStopEditing }
+                                >
+                                    { _("global.buttons.discard") }
+                                </button>
                             </div>
                         </div>
                     </form>

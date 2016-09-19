@@ -99,14 +99,14 @@ export default class Row extends React.Component {
             return (
                 <div>
                     <button
-                        className="btn btn-sm btn-success"
+                        className="save-button"
                         type="button"
                         onClick={ this.handleSubmission }
                     >
                         { _("global.buttons.save") }
                     </button>
                     <button
-                        className="btn btn-sm btn-danger"
+                        className="discard-button"
                         type="button"
                         onClick={ this.handleStopEditing }
                     >
@@ -118,14 +118,14 @@ export default class Row extends React.Component {
         return (
             <div>
                 <button
-                    className="btn btn-sm btn-primary"
+                    className="edit-button"
                     type="button"
                     onClick={ this.handleStartEditing }
                 >
                     { _("global.buttons.edit") }
                 </button>
                 <button
-                    className="btn btn-sm btn-danger"
+                    className="delete-button"
                     type="button"
                     onClick={ this.handleDeletion }
                 >

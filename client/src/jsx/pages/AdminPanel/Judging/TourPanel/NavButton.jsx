@@ -21,14 +21,13 @@ export default class NavButton extends React.Component {
     }
     render() {
         return (
-            <li className={ this.getClassName() }>
-                <a
-                    href="#"
-                    onClick={ this.handleClick }
-                >
-                    { this.props.label }
-                </a>
-            </li>
+            <a
+                className={ this.getClassName() }
+                href="#"
+                onClick={ this.handleClick }
+            >
+                { this.props.label }
+            </a>
         );
     }
 }

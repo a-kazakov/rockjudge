@@ -1,0 +1,27 @@
+.CompetitionReport {
+    .flex-col();
+    > header {
+        .flex-item();
+        .admin-header();
+    }
+    > .body {
+        .flex-item-stretch();
+        .scrollable();
+        padding: 5px;
+        .Paper {
+            .bordered-table .sportsmen td, .bordered-table .sportsmen th {
+                border: none;
+                padding: 0;
+            }
+            .tour-name {
+                background: #ddd;
+            }
+            .spacer td {
+                height: 5pt;
+            }
+            .sportsmen {
+                width: 100%;
+            }
+        }
+    }
+}

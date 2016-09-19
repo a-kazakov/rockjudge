@@ -1,0 +1,127 @@
+.ScoresTab {
+    padding: 5px;
+    table.scores-table {
+        font-size: 12px;
+        width: auto;
+        max-width: 100%;
+        box-sizing: border-box;
+        > tbody > tr {
+            > td {
+                position: relative;
+                &:not(.name) {
+                    text-align: center;
+                }
+                &.heat, &.judge, &.acrobatics {
+                    cursor: pointer;
+                }
+                &.number     { width: 50px;  }
+                &.name       { width: 300px; }
+                &.acrobatics { width: 120px; }
+                &.heat       { width: 40px;  }
+                &.judge      { width: 50px;  }
+                &.total      { width: 120px; }
+                &.performed  { width: 20px;  }
+                &.confirmed-score {
+                    background-color: @color-green;
+                    font-weight: bold;
+                    color: #fff;
+                }
+                &.acrobatics.editing {
+                    background-color: @color-contrast;
+                }
+                .acrobatics-editor {
+                    width: 630px;
+                    color: @color-white;
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    background-color: @color-medium;
+                    z-index: 10;
+                    padding: 10px;
+                    cursor: default;
+                   .no-program {
+                        margin: 10px 0 20px;
+                        font-style: italic;
+                    }
+                    table {
+                        margin-bottom: 10px;
+                        width: 100%;
+                    }
+                    th {
+                        color: @color-white;
+                    }
+                    td, th {
+                        border: 0;
+                        padding-left: 10px;
+                        padding-right: 10px;
+                        text-align: left;
+                        vertical-align: middle;
+                        input {
+                            width: 50px;
+                        }
+                    }
+                    tr:nth-child(even) {
+                      background-color: lighten(@color-medium, 5%);
+                    }
+                    .description {
+                        width: 350px;
+                    }
+                    .controls {
+                        text-align: right;
+                        .edit-button {
+                            .button-white();
+                            .button-small();
+                            width: 85px;
+                        }
+                        .reset-button {
+                            .button-white();
+                            .button-small();
+                            width: 50px;
+                        }
+                        input {
+                            height: 18px;
+                            border: none;
+                            text-align: center;
+                            width: 85px;
+                            color: black;
+                        }
+                    }
+                    .old-score, .new-score {
+                        text-align: center;
+                        width: 50px;
+                    }
+                    .acro-loader {
+                        color: #000;
+                        float: left;
+                        > select {
+                            width: 300px;
+                            height: 30px;
+                            vertical-align: top;
+                        }
+                        > button {
+                            .button-white();
+                            vertical-align: top;
+                        }
+                    }
+                    .close-button {
+                        .button-white();
+                        float: right;
+                    }
+                }
+            }
+            > th {
+                text-align: center;
+                font-weight: bold;
+            }
+            > td, th {
+                border: 1px solid black;
+            }
+            &.odd-heat {
+                background-color: lighten(@color-light, 10%);
+                > td.confirmed-score {
+                    background-color: darken(@color-green, 10%);
+                }
+            }
+        }
+    }
+}

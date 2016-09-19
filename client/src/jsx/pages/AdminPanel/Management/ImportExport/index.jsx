@@ -1,3 +1,5 @@
+import { saveAs } from "file-saver";
+
 import _ from "l10n";
 import Api from "common/server/Api";
 
@@ -68,12 +70,16 @@ export default class ImportExport extends React.Component {
     }
     render() {
         return (
-            <div className="app-content load-competition-page">
-                <header className="app-head">
-                    <h1>{ _("admin.headers.import_export") }</h1>
+            <div className="ImportExport">
+                <header>
+                    <h1>
+                        { _("admin.headers.import_export") }
+                    </h1>
                 </header>
-                <div className="import-export">
-                    <h3>{ _("admin.headers.import_competition") }</h3>
+                <div className="body">
+                    <h3>
+                        { _("admin.headers.import_competition") }
+                    </h3>
                     <form
                         className="import-form"
                         onSubmit={ this.handleFormSubmission }
@@ -96,7 +102,6 @@ export default class ImportExport extends React.Component {
                         />
                         <br />
                         <button
-                            className="btn btn-primary"
                             disabled={ !this.canImport() }
                             type="submit"
                         >
@@ -105,7 +110,6 @@ export default class ImportExport extends React.Component {
                     </form>
                     <h3>{ _("admin.headers.export_competition") }</h3>
                     <button
-                        className="btn btn-primary"
                         type="button"
                         onClick={ this.handleExportClick }
                     >

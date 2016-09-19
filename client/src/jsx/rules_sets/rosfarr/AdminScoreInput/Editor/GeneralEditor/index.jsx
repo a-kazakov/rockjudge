@@ -64,14 +64,14 @@ export default class GeneralEditor extends React.Component {
         return (
             <div className="buttons">
                 <button
-                    className="btn btn-primary"
+                    className="submit-button"
                     type="submit"
                 >
                     { _("global.buttons.submit") }
                 </button>
                 &nbsp;
                 <button
-                    className="btn btn-primary"
+                    className="discard-button"
                     type="button"
                     onClick={ this.handleDiscardClick }
                 >

@@ -4,6 +4,7 @@ export default class Paper extends React.Component {
         return {
             children: PT.node.isRequired,
             header: PT.string,
+            margins: PT.arrayOf(PT.number.isRequired),
             title1: PT.string,
             title2: PT.string,
             title3: PT.string,
@@ -53,9 +54,20 @@ export default class Paper extends React.Component {
             </div>
         )
     }
+    getStyle() {
+        if (!this.props.margins) {
+            return {};
+        }
+        return {
+            padding: this.props.margins
+                .map(v => 2.834645669291 * v)
+                .map(v => `${v.toFixed(3)}pt`)
+                .join(" "),
+        }
+    }
     render() {
         return (
-            <div className="printable">
+            <div className="Paper" style={ this.getStyle() }>
                 { this.renderHeader() }
                 { this.renderTitle1() }
                 { this.renderTitle2() }

@@ -21,7 +21,7 @@ export default class Buttons extends React.Component {
             return (
                 <div>
                     <Button
-                        className="btn btn-danger"
+                        className="stop-tour-button"
                         label={ _("judging.buttons.stop_tour") }
                         signalMessage="stop_tour"
                         onSignal={ this.props.onSignal }
@@ -32,25 +32,22 @@ export default class Buttons extends React.Component {
         return (
             <div>
                 <Button
-                    className="btn btn-primary"
                     label={ _("judging.buttons.init_tour") }
                     signalMessage="init_tour"
                     onSignal={ this.props.onSignal }
                 />
                 <Button
-                    className="btn btn-primary"
                     label={ _("judging.buttons.finalize_tour") }
                     signalMessage="finalize_tour"
                     onSignal={ this.props.onSignal }
                 />
                 <Button
-                    className="btn btn-primary"
                     label={ _("judging.buttons.shuffle_heats") }
                     signalMessage="shuffle_heats"
                     onSignal={ this.props.onSignal }
                 />
                 <Button
-                    className="btn btn-success"
+                    className="start-tour-button"
                     label={ _("judging.buttons.start_tour") }
                     signalMessage="start_tour"
                     onSignal={ this.props.onSignal }

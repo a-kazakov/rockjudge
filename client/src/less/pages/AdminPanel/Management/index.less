@@ -1,0 +1,21 @@
+.Management {
+    .flex-row();
+    .SideMenu {
+        .flex-item();
+        .scrollable();
+    }
+    > :not(.SideMenu) {
+        .flex-item-stretch();
+        .scrollable();
+    }
+    @import (multiple) "../SideMenu";
+    @import "./ImportExport";
+    @import "./Judges";
+    @import "./Disciplines";
+    @import "./Clubs";
+    @import "./Participants";
+    @import "./Tours";
+    @import "./CompetitionPlan";
+    @import "./StartList";
+    @import "./CompetitionReport";
+}

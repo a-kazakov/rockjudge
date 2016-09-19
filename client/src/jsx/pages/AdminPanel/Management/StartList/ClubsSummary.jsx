@@ -1,4 +1,4 @@
-import DisciplinesShown from "./ClubsShown";
+import DisciplinesShown from "./DisciplinesShown";
 import StatInfo from "./StatInfo";
 import groupParticipants from "./groupParticipants";
 

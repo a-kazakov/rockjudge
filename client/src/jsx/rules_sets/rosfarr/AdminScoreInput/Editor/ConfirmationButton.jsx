@@ -9,8 +9,8 @@ export default class ConfirmationButton extends React.Component {
         };
     }
     getClassName() {
-        let result = "btn btn-sm btn-confirmation";
-        result += this.props.confirmed ? " btn-danger" : " btn-success";
+        let result = "confirmation-button";
+        result += this.props.confirmed ? " confirmed" : " not-confirmed";
         return result;
     }
     render() {

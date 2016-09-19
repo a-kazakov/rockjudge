@@ -106,10 +106,7 @@ export default class Row extends React.Component {
                     { this.props.item.estimated_duration }
                 </td>
                 <td className="delete">
-                    <button
-                        className="btn btn-danger"
-                        onClick={ this.handleDeletion }
-                    >
+                    <button onClick={ this.handleDeletion }>
                         X
                     </button>
                 </td>

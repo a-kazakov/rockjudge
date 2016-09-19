@@ -23,12 +23,14 @@ export default class DisciplineResultsTab extends React.Component {
 
     render() {
         return (
-            <DisciplineResults
-                autoDocx={ this.props.autoDocx }
-                disciplineId={ this.props.discipline.id }
-                ref={ this.makeResultsRef }
-                renderer={ Wrapper }
-            />
+            <div className="DisciplineResultsTab rules-set">
+                <DisciplineResults
+                    autoDocx={ this.props.autoDocx }
+                    disciplineId={ this.props.discipline.id }
+                    ref={ this.makeResultsRef }
+                    renderer={ Wrapper }
+                />
+            </div>
         );
     }
 }

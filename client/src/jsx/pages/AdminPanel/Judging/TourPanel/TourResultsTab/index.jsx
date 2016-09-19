@@ -22,15 +22,20 @@ export default class TourResultsTab extends React.Component {
 
     // Rendering
 
+    getClassName() {
+        return `TourResultsTab rules-set`;
+    }
     render() {
         return (
-            <TourResults
-                autoDocx={ this.props.autoDocx }
-                ref={ this.makeResultsRef }
-                renderer={ Wrapper }
-                tourId={ this.props.tour.id }
-                verbosity={ this.props.verbosity }
-            />
+            <div className={ this.getClassName() }>
+                <TourResults
+                    autoDocx={ this.props.autoDocx }
+                    ref={ this.makeResultsRef }
+                    renderer={ Wrapper }
+                    tourId={ this.props.tour.id }
+                    verbosity={ this.props.verbosity }
+                />
+            </div>
         );
     }
 }

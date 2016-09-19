@@ -32,38 +32,38 @@ export default class Disciplines extends React.Component {
             />
         );
         return (
-            <div className="manage-disciplines">
-                <table className="table table-striped">
-                    <tbody>
-                        <tr>
-                            <th className="name">
-                                { _("models.discipline.name") }
-                            </th>
-                            <th className="sp">
-                                { _("models.discipline.sp") }
-                            </th>
-                            <th className="external-id">
-                                { _("models.discipline.external_id") }
-                            </th>
-                            <th className="delete" />
-                        </tr>
-                        { rows }
-                        <CreationRow
-                            competition={ this.props.competition }
-                            judges={ this.props.competition.judges }
-                        />
-                    </tbody>
-                </table>
-            </div>
+            <table>
+                <tbody>
+                    <tr>
+                        <th className="name">
+                            { _("models.discipline.name") }
+                        </th>
+                        <th className="sp">
+                            { _("models.discipline.sp") }
+                        </th>
+                        <th className="external-id">
+                            { _("models.discipline.external_id") }
+                        </th>
+                        <th className="delete" />
+                    </tr>
+                    { rows }
+                    <CreationRow
+                        competition={ this.props.competition }
+                        judges={ this.props.competition.judges }
+                    />
+                </tbody>
+            </table>
         );
     }
     render() {
         return (
-            <div className="app-content">
-                <header className="app-header">
-                    <h1>{ _("admin.headers.disciplines_management") }</h1>
+            <div className="Disciplines">
+                <header>
+                    <h1>
+                        { _("admin.headers.disciplines_management") }
+                    </h1>
                 </header>
-                <div className="app-body">
+                <div className="body">
                     { this.renderTable() }
                 </div>
             </div>

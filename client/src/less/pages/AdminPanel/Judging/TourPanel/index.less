@@ -1,0 +1,37 @@
+.TourPanel {
+    .flex-col();
+    > header {
+        .flex-item();
+        .admin-header();
+        padding-bottom: 0;
+        nav {
+            .flex-row();
+            justify-content: flex-end;
+            > a {
+                vertical-align: bottom;
+                padding: 10px 10px 9px;
+                margin: 5px 5px 0;
+                color: @color-white;
+                text-decoration: none;
+                &:hover, &.active {
+                    background-color: @color-white;
+                    color: @color-black;
+                }
+            }
+        }
+        .controls {
+            .start-tour-button {
+                .button-green();
+            }
+            .stop-tour-button {
+                .button-red();
+            }
+        }
+    }
+    > .body {
+        .flex-item-stretch();
+        .scrollable();
+        @import "./ScoresTab";
+        @import "./HeatsTab";
+    }
+}

@@ -57,7 +57,7 @@ export default class ScoreCell extends React.Component {
     }
 
     getClasssName() {
-        let result = "judge";
+        let result = "judge rules-set";
         if (this.props.editing) {
             result += " editing";
         }

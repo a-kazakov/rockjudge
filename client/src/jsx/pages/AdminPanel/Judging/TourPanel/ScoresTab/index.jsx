@@ -199,8 +199,8 @@ export default class ScoresTab extends React.Component {
         }
         const discipline_judges = this.state.tour.discipline.discipline_judges;
         return (
-            <div className="tour-admin">
-                <table className="bordered-table">
+            <div className="ScoresTab">
+                <table className="scores-table">
                     <tbody>
                         <tr>
                             { this.renderTableHeaderCell("heat") }

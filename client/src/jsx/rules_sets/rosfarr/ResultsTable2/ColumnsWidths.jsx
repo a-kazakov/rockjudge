@@ -1,6 +1,6 @@
 export default class ColumnsWidths {
     constructor(n_judges, has_total_score) {
-        this.judge_width = Math.round(60 / (n_judges + 1));
+        this.judge_width = Math.round(55 / (n_judges + 1));
         this.total_score_width = has_total_score ? 14 : 0;
         this.place_width = 6;
         this.number_width = 3;

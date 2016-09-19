@@ -1,0 +1,144 @@
+.Participants {
+    .flex-col();
+    > header {
+        .flex-item();
+        .admin-header();
+    }
+    > .body {
+        .flex-item-stretch();
+        .scrollable();
+        padding: 5px;
+        > table {
+            .admin-management-table();
+            .editor {
+                .sportsmen {
+                    input, select {
+                        display: inline;
+                        height: 20px;
+                        margin: 0;
+                        vertical-align: top;
+                    }
+                    .first-name, .last-name {
+                      width: 25%;
+                    }
+                    .yob, .gender, .substitute {
+                      width: 15%;
+                    }
+                    button.delete {
+                        .button-red();
+                        .button-small();
+                        width: 5%;
+                        padding: 0;
+                    }
+                    button.add {
+                        .button-white();
+                        .button-small();
+                        width: 100%;
+                    }
+                }
+                .programs {
+                    .program:not(:nth-child(2)) {
+                        margin-top: 10px;
+                    }
+                    h5 {
+                        margin: 0 0 5px;
+                        padding: 5px;
+                        // background-color: @color-white;
+                        background-color: lighten(@color-medium, 30%);
+                        // color: white;
+                        .actions {
+                            text-align: right;
+                            a, a:visited {
+                                color: inherit;
+                            }
+                        }
+                    }
+                    .add-programs-after-creation-alert {
+                        .alert-primary();
+                    }
+                    .program-table {
+                        tr:nth-child(odd) {
+                            background-color: lighten(@color-light, 10%);
+                        }
+                        td {
+                            padding: 5px;
+                            font-size: 12px;
+                        }
+                    }
+                    .program-creator {
+                        margin-top: 10px;
+                        > .create-button {
+                            .button-white();
+                            width: 100%;
+                        }
+                    }
+                    .program-editor {
+                        padding: 10px;
+                        background-color: lighten(@color-light, 10%);
+                        margin-bottom: 10px;
+                        input, select {
+                            display: inline;
+                            height: 20px;
+                            margin: 0;
+                            vertical-align: top;
+                        }
+                        &.create {
+                            background-color: @color-yellow;
+                        }
+                        .name {
+                            font-weight: bold;
+                            margin-bottom: 10px;
+                            width: 80%;
+                        }
+                        .default-for {
+                            width: 20%;
+                            margin-bottom: 10px;
+                            font-style: italic;
+                        }
+                        .elements {
+                            margin-bottom: 10px;
+                        }
+                        .acrobatic {
+                            .description {
+                                width: 85%;
+                            }
+                            .score {
+                                text-align: right;
+                                width: 10%;
+                            }
+                            .delete {
+                                .button-red();
+                                .button-small();
+                                padding: 0;
+                                width: 5%;
+                            }
+                        }
+                        .add-element-button {
+                            .button-white();
+                            .button-small();
+                            width: 100%;
+                        }
+                        .load-button {
+                            .button-white();
+                            .button-small();
+                            float: right;
+                        }
+                        .submit-button {
+                            .button-primary();
+                            .button-small();
+                        }
+                        .discard-button {
+                            .button-red();
+                            .button-small();
+                        }
+                    }
+                }
+            }
+        }
+        .total-participants {
+            font-weight: bold;
+            margin: 5px;
+            text-align: right;
+        }
+    }
+}

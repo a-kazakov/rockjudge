@@ -57,53 +57,46 @@ export default class EditorRow extends React.Component {
             <tr className={ this.getClassName() }>
                 <td colSpan="4">
                     <form onSubmit={ this.handleSubmission }>
-                        <div className="rows">
-                            <div className="col-md-5">
-                                <label className="full-width">
-                                    { _("models.club.name") }
-                                    <input
-                                        className="full-width"
-                                        defaultValue={ this.props.club.name }
-                                        ref={ this.makeNameRef }
-                                    />
-                                </label>
-                            </div>
-                            <div className="col-md-2">
-                                <label className="full-width">
-                                    { _("models.club.city") }
-                                    <input
-                                        className="full-width"
-                                        defaultValue={ this.props.club.city }
-                                        ref={ this.makeCityRef }
-                                    />
-                                </label>
-                            </div>
-                            <div className="col-md-2">
-                                <label className="full-width">
-                                    { _("models.club.external_id") }<br />
-                                    <input
-                                        defaultValue={ this.props.club.external_id || "" }
-                                        ref={ this.makeExternalIdRef }
-                                    />
-                                </label>
-                            </div>
-                            <div className="col-md-3">
-                                <div className="buttons">
-                                    <div className="buttons">
-                                        <button
-                                            className="btn btn-sm btn-primary"
-                                            type="submit"
-                                        >
-                                            { _("global.buttons.submit") }
-                                        </button>
-                                        <button
-                                            className="btn btn-sm btn-danger"
-                                            type="button"
-                                            onClick={ this.props.onStopEditing }
-                                        >
-                                            { _("global.buttons.discard") }
-                                        </button>
-                                    </div>
+                        <div className="col-10">
+                            <label>
+                                { _("models.club.name") }
+                                <input
+                                    defaultValue={ this.props.club.name }
+                                    ref={ this.makeNameRef }
+                                />
+                            </label>
+                        </div>
+                        <div className="col-4">
+                            <label>
+                                { _("models.club.city") }
+                                <input
+
+                                    defaultValue={ this.props.club.city }
+                                    ref={ this.makeCityRef }
+                                />
+                            </label>
+                        </div>
+                        <div className="col-4">
+                            <label>
+                                { _("models.club.external_id") }<br />
+                                <input
+                                    defaultValue={ this.props.club.external_id || "" }
+                                    ref={ this.makeExternalIdRef }
+                                />
+                            </label>
+                        </div>
+                        <div className="col-6">
+                            <div className="buttons">
+                                <div className="buttons horizontal">
+                                    <button type="submit">
+                                        { _("global.buttons.submit") }
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={ this.props.onStopEditing }
+                                    >
+                                        { _("global.buttons.discard") }
+                                    </button>
                                 </div>
                             </div>
                         </div>

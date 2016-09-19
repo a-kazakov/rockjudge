@@ -22,39 +22,37 @@ export default class Clubs extends React.Component {
             );
         });
         return (
-            <div className="manage-clubs">
-                <table className="table table-striped">
-                    <tbody>
-                        <tr>
-                            <th className="name">
-                                { _("models.club.name") }
-                            </th>
-                            <th className="city">
-                                { _("models.club.city") }
-                            </th>
-                            <th className="external-id">
-                                { _("models.club.external_id") }
-                            </th>
-                            <th className="delete" />
-                        </tr>
-                        { rows }
-                        <CreationRow
-                            competition={ this.props.competition }
-                        />
-                    </tbody>
-                </table>
-            </div>
+            <table>
+                <tbody>
+                    <tr>
+                        <th className="name">
+                            { _("models.club.name") }
+                        </th>
+                        <th className="city">
+                            { _("models.club.city") }
+                        </th>
+                        <th className="external-id">
+                            { _("models.club.external_id") }
+                        </th>
+                        <th className="delete" />
+                    </tr>
+                    { rows }
+                    <CreationRow
+                        competition={ this.props.competition }
+                    />
+                </tbody>
+            </table>
         );
     }
     render() {
         return (
-            <div className="app-content">
-                <header className="app-header">
+            <div className="Clubs">
+                <header>
                     <h1>
                         { _("admin.headers.clubs_management") }
                     </h1>
                 </header>
-                <div className="app-body">
+                <div className="body">
                     { this.renderTable() }
                 </div>
             </div>

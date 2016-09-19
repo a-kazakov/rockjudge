@@ -46,7 +46,7 @@ export default class AutoPrinterStatus extends React.Component {
         }
         if (!this.state.available) {
             return (
-                <div className="alert alert-danger">
+                <div className="auto-printer-status fail">
                     <p>
                         { _("admin.alerts.auto_printer_not_available") }
                     </p>
@@ -54,13 +54,11 @@ export default class AutoPrinterStatus extends React.Component {
             );
         }
         return (
-            <div className="alert alert-success">
+            <div className="auto-printer-status ok">
                 <p>
                     { _("admin.alerts.auto_printer_available") }
                 </p>
-                <br />
                 <button
-                    className="btn btn-default"
                     type="button"
                     onClick={ this.handleClick }
                 >

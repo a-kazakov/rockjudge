@@ -14,6 +14,64 @@ const LessPluginCleanCSS = require('less-plugin-clean-css'),
 
 
 let all_jsx_tasks = [];
+let all_less_tasks = []
+
+function createLessTask(task) {
+
+    function buildLess() {
+        // modules
+        var LessPluginCleanCSS = require('less-plugin-clean-css'),
+            LessPluginAutoPrefix = require('less-plugin-autoprefix'),
+            cleancss = new LessPluginCleanCSS({ advanced: true }),
+            autoprefix = new LessPluginAutoPrefix({ browsers: ["last 5 versions"] });
+        var gulp = require('gulp');
+        var less = require('gulp-less');
+        var concat = require('gulp-concat');
+        // arguments
+        var task = "__task__";
+        // building
+        return gulp.src(`src/less/entry_points/${task}.less`)
+            .pipe(less({
+                plugins: [autoprefix, cleancss],
+                paths: ["src/less/"],
+            }))
+            .pipe(concat(`${task}.css`))
+            .pipe(gulp.dest("../static/css"));
+    }
+
+    all_less_tasks.push("css_" + task);
+    var str_func = buildLess.toString()
+        .replace("__task__", task);
+    gulp.task("css_" + task, makeItFaster(str_func));
+}
+
+function createRuleSetLessTask(task) {
+
+    function buildLess() {
+        // modules
+        const LessPluginCleanCSS = require('less-plugin-clean-css'),
+              LessPluginAutoPrefix = require('less-plugin-autoprefix'),
+              cleancss = new LessPluginCleanCSS({ advanced: true }),
+              autoprefix = new LessPluginAutoPrefix({ browsers: ["last 5 versions"] });
+        const gulp = require('gulp');
+        const less = require('gulp-less');
+        const concat = require('gulp-concat');
+        // arguments
+        const task = "__task__";
+        // building
+        return gulp.src(`src/less/rules_sets/${task}/index.less`)
+            .pipe(less({
+                plugins: [autoprefix, cleancss],
+                paths: [`src/less/rules_sets/${task}`, "src/less/include"],
+            }))
+            .pipe(concat(`${task}.css`))
+            .pipe(gulp.dest("../static/css/rules_sets"));
+    }
+
+    all_less_tasks.push(`rs_css_${task}`);
+    const str_func = buildLess.toString().replace("__task__", task);
+    gulp.task(`rs_css_${task}`, makeItFaster(str_func));
+}
 
 function createJsxTask(task) {
     all_jsx_tasks.push(task);
@@ -109,6 +167,8 @@ function createRuleSetJsxTask(task) {
     gulp.task(`rs_${task}`, makeItFaster(str_func));
 }
 
+createLessTask('admin');
+
 createJsxTask('start_page');
 createJsxTask('admin');
 createJsxTask('auto_printer');
@@ -119,6 +179,7 @@ createJsxTask('presenter');
 createJsxTask('screen');
 createJsxTask('screen_operator');
 
+createRuleSetLessTask('rosfarr');
 createRuleSetJsxTask('rosfarr');
 
 gulp.task('all', gulp.parallel.apply(gulp.parallel, all_jsx_tasks));

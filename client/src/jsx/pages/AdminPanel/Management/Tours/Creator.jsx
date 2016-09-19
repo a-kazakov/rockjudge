@@ -28,7 +28,7 @@ export default class Creator extends React.Component {
     render() {
         return (
             <InputForm
-                classes={ ["tour-create"] }
+                classes={ ["create"] }
                 onStopEditing={ this.props.onStopEditing }
                 onSubmit={ this.handleSubmission }
             />

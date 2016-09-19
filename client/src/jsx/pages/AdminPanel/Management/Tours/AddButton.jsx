@@ -16,7 +16,7 @@ export default class AddButton extends React.Component {
     render() {
         return (
             <button
-                className="btn btn-default full-width"
+                className="add-tour-button"
                 type="button"
                 onClick={ this.handleClick }
             >

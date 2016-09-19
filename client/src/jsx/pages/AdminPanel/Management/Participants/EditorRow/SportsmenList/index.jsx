@@ -33,10 +33,10 @@ export default class SportsmenList extends React.Component {
     }
     render() {
         return (
-            <div>
-                <h4>
+            <div className="sportsmen">
+                <label>
                     { _("models.participant.sportsmen") }
-                </h4>
+                </label>
                 { this.props.sportsmen.map((sp, idx) =>
                     <Row
                         idx={ idx }
@@ -47,7 +47,7 @@ export default class SportsmenList extends React.Component {
                     />
                 ) }
                 <button
-                    className="full-width btn btn-sm btn-default"
+                    className="add"
                     type="button"
                     onClick={ this.handleSportsmanAddition }
                 >

@@ -58,6 +58,7 @@ export default function translate(src, ...args) {
                 "add_competition": "Создать соревнование",
                 "add_competition_plan_item": "Добавить элемент",
                 "add_discipline": "Добавить дисциплину",
+                "add_element": "Добавить элемент",
                 "add_judge": "Добавить судью",
                 "add_participant": "Добавить участника",
                 "add_tour": "Добавить тур",

@@ -79,13 +79,13 @@ export default class Tours extends React.Component {
     render() {
         const discipline = this.props.competition.disciplines.find(d => d.id === this.props.disciplineId);
         return (
-            <div className="app-content">
-                <header className="app-header">
+            <div className="Tours">
+                <header>
                     <h1>
                         { discipline.name }
                     </h1>
                 </header>
-                <div className="app-body ic-management-ui">
+                <div className="body">
                     { this.renderTourCreation(null, discipline.tours[0]) }
                     { this.renderTours(discipline) }
                 </div>

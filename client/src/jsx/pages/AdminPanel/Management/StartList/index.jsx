@@ -187,25 +187,21 @@ export default class StartList extends React.Component {
             );
         }
         return (
-            <div className="app-content">
-                <header className="app-header">
+            <div className="StartList">
+                <header>
                     <div className="controls">
-                        <button
-                            className="btn btn-primary"
-                            onClick={ this.handleDocxCreation }
-                        >
+                        <button onClick={ this.handleDocxCreation }>
                             DOCX
                         </button>
-                        <button
-                            className="btn btn-primary"
-                            onClick={ this.handleNumbersDocxCreation }
-                        >
+                        <button onClick={ this.handleNumbersDocxCreation }>
                             { _("admin.buttons.docx_numbers") }
                         </button>
                     </div>
-                    <h1>{ _("admin.headers.start_list") }</h1>
+                    <h1>
+                        { _("admin.headers.start_list") }
+                    </h1>
                 </header>
-                <div className="app-body start-list">
+                <div className="body">
                     <ConfigPanel
                         clubs={ this.state.competition.clubs }
                         config={ this.state.config }
@@ -221,6 +217,7 @@ export default class StartList extends React.Component {
                     />
                     <Paper
                         header={ `${this.state.competition.name}, ${this.state.competition.date}` }
+                        margins={ [10, 15, 10, 25] }
                         ref={ this.makePrintableRef }
                         title1={ this.getTitle() }
                     >

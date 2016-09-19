@@ -1,0 +1,24 @@
+@import (reference) "include/colors";
+
+.alert(@bg-color, @text-color, @border-color) {
+    padding: 10px;
+    background-color: @bg-color;
+    color: @text-color;
+    border: 1px solid @border-color;
+}
+
+.alert-red() {
+    .alert(@color-light-red, @color-dark-red, @color-red);
+}
+
+.alert-yellow() {
+    .alert(@color-light-yellow, @color-dark-yellow, @color-yellow);
+}
+
+.alert-green() {
+    .alert(@color-light-green, @color-dark-green, @color-green);
+}
+
+.alert-primary() {
+    .alert(darken(@color-light, 10%), @color-dark, @color-medium);
+}

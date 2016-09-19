@@ -117,7 +117,7 @@ export default class AdminPanel extends React.Component {
             );
         }
         return (
-            <div className="wrapper">
+            <div className="AdminPanel">
                 <div className="header">
                     <div className="caption">
                         { `${this.state.competition.name} (${this.state.competition.date})` }
@@ -130,7 +130,7 @@ export default class AdminPanel extends React.Component {
                         { this.renderButton("service", "Service") }
                         <div className="spacer" />
                         <div className="bottom-cell">
-                            <a className="btn-back" href="/">
+                            <a className="back-button" href="/">
                                 { _("admin.buttons.to_start_page") }
                             </a>
                         </div>

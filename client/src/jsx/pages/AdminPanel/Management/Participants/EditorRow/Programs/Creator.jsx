@@ -49,7 +49,7 @@ export default class Creator extends React.Component {
         }
         return (
             <button
-                className="btn btn-sm btn-default full-width"
+                className="create-button"
                 type="button"
                 onClick={ this.handleStartEditing }
             >

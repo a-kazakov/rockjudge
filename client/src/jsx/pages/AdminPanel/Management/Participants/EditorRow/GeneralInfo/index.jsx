@@ -18,35 +18,43 @@ export default class GeneralInfo extends React.Component {
             onChange: PT.func.isRequired,
         };
     }
+
     render() {
         return (
             <div>
-                <h4>
-                    { _("models.participant.general_info") }
-                </h4>
-                <TextInput
-                    mkey="number"
-                    placeholder={ _("models.participant.number") }
-                    value={ this.props.participantData.number }
-                    onChange={ this.props.onChange }
-                />
-                <ClubSelector
-                    clubs={ this.props.competition.clubs }
-                    participantData={ this.props.participantData }
-                    onChange={ this.props.onChange }
-                />
-                <TextInput
-                    mkey="coaches"
-                    placeholder={ _("models.participant.coaches") }
-                    value={ this.props.participantData.coaches }
-                    onChange={ this.props.onChange }
-                />
-                <TextInput
-                    mkey="formation_name"
-                    placeholder={ _("models.participant.formation_name") }
-                    value={ this.props.participantData.formation_name }
-                    onChange={ this.props.onChange }
-                />
+                <label>
+                    { _("models.participant.number") }
+                    <TextInput
+                        mkey="number"
+                        type="number"
+                        value={ this.props.participantData.number }
+                        onChange={ this.props.onChange }
+                    />
+                </label>
+                <label>
+                    { _("models.participant.club_name") }
+                    <ClubSelector
+                        clubs={ this.props.competition.clubs }
+                        participantData={ this.props.participantData }
+                        onChange={ this.props.onChange }
+                    />
+                </label>
+                <label>
+                    { _("models.participant.coaches") }
+                    <TextInput
+                        mkey="coaches"
+                        value={ this.props.participantData.coaches }
+                        onChange={ this.props.onChange }
+                    />
+                </label>
+                <label>
+                    { _("models.participant.formation_name") }
+                    <TextInput
+                        mkey="formation_name"
+                        value={ this.props.participantData.formation_name }
+                        onChange={ this.props.onChange }
+                    />
+                </label>
             </div>
         );
     }

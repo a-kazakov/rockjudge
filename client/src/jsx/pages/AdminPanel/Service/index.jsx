@@ -28,52 +28,41 @@ export default class Service extends React.Component {
 
     render() {
         return (
-            <div className="app">
-                <div className="app-content">
-                    <header className="app-header">
-                        <h1>
-                            { _("admin.headers.service_menu") }
-                        </h1>
-                    </header>
-                    <div className="service-menu app-body">
-                        <h3>
-                            { _("admin.headers.clients_management") }
-                        </h3>
-                        <button
-                            className="btn btn-primary control-btn"
-                            onClick={ this.handleClientsReload }
-                        >
-                            { _("admin.buttons.reload_clients") }
-                        </button>
-                        <button
-                            className="btn btn-primary control-btn"
-                            onClick={ this.handleClientsRefresh }
-                        >
-                            { _("admin.buttons.refresh_clients") }
-                        </button>
-                        <h3>
-                            { _("admin.headers.unfinalize_tour") }
-                        </h3>
-                        <Unfinalize
-                            competition={ this.props.competition }
-                        />
-                        <h3>
-                            { _("admin.headers.auto_printer") }
-                        </h3>
-                        <AutoPrinterStatus
-                            competition={ this.props.competition }
-                        />
-                        <h3>
-                            { _("admin.headers.clients_management") }
-                        </h3>
-                        <ClientsAuth
-                            competition={ this.props.competition }
-                        />
-                        <h3>
-                            { _("admin.headers.about") }
-                        </h3>
-                        { _("admin.alerts.about", "v1.1 prerelease", "") }
-                    </div>
+            <div className="Service">
+                <header>
+                    <h1>
+                        { _("admin.headers.service_menu") }
+                    </h1>
+                </header>
+                <div className="body">
+                    <h3>
+                        { _("admin.headers.clients_management") }
+                    </h3>
+                    <ClientsAuth
+                        competition={ this.props.competition }
+                    />
+                    <button className="action-button" onClick={ this.handleClientsReload }>
+                        { _("admin.buttons.reload_clients") }
+                    </button>
+                    <button className="action-button" onClick={ this.handleClientsRefresh }>
+                        { _("admin.buttons.refresh_clients") }
+                    </button>
+                    <h3>
+                        { _("admin.headers.unfinalize_tour") }
+                    </h3>
+                    <Unfinalize
+                        competition={ this.props.competition }
+                    />
+                    <h3>
+                        { _("admin.headers.auto_printer") }
+                    </h3>
+                    <AutoPrinterStatus
+                        competition={ this.props.competition }
+                    />
+                    <h3>
+                        { _("admin.headers.about") }
+                    </h3>
+                    { _("admin.alerts.about", "v1.1 prerelease", "") }
                 </div>
             </div>
         );

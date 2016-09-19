@@ -58,23 +58,21 @@ export default class ConfigPanel extends React.Component {
     }
     render() {
         return (
-            <div className="controls">
-                <div className="row">
-                    <div className="col-md-6">
-                        { this.renderDisciplines() }
-                    </div>
-                    <div className="col-md-6">
-                        { this.renderClubs() }
-                        { this.props.customControls.map(info =>
-                            <OneCheckbox
-                                key={ info.key }
-                                label={ info.label }
-                                mkey={ info.key }
-                                value={ this.props.config[info.key] }
-                                onChange={ this.handleChange }
-                            />
-                        ) }
-                    </div>
+            <div className="ConfigPanel">
+                <div className="part">
+                    { this.renderDisciplines() }
+                </div>
+                <div className="part">
+                    { this.renderClubs() }
+                    { this.props.customControls.map(info =>
+                        <OneCheckbox
+                            key={ info.key }
+                            label={ info.label }
+                            mkey={ info.key }
+                            value={ this.props.config[info.key] }
+                            onChange={ this.handleChange }
+                        />
+                    ) }
                 </div>
             </div>
         );

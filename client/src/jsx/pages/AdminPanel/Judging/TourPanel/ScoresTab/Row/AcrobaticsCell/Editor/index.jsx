@@ -68,13 +68,13 @@ export default class Editor extends React.Component {
     }
     render() {
         return (
-            <div className="form-acro-input">
+            <div className="acrobatics-editor">
                 { this.props.run.program_name === null
                     ? this.renderMock()
                     : this.renderBody() }
                 { this.renderLoader() }
                 <button
-                    className="btn btn-primary btn-sm pull-right"
+                    className="close-button"
                     type="button"
                     onClick={ this.props.onStopEditing }
                 >

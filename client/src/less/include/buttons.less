@@ -1,0 +1,58 @@
+.button(@bg-color, @text-color) { // 30px height
+    background-color: @bg-color;
+    border: none;
+    color: @text-color;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 19px;
+    padding: 0 10px 1px;
+    height: 30px;
+    text-decoration: none;
+    border: 1px solid @bg-color;
+    &:disabled {
+        color: #aaa;
+        background-color: #777;
+        border-color: #777;
+    }
+}
+
+.button-small() { // 20px height
+    height: 20px;
+    line-height: 18px;
+    font-size: 12px;
+    padding: 0px 5px;
+}
+
+.button-large() { // 50px height
+    height: 50px;
+    font-size: 25px;
+    line-height: 28px;
+    padding: 10px 20px;
+}
+
+.button-red() {
+    .button(@color-red, white);
+}
+
+.button-yellow() {
+    .button(@color-yellow, black);
+}
+
+.button-green() {
+    .button(@color-green, white);
+}
+
+.button-primary() {
+    .button(@color-dark, white);
+}
+
+.button-white() {
+    .button(white, @color-dark);
+    border-color: #aaa;
+    &:disabled {
+        color: #777;
+        background-color: #aaa;
+        border-color: #777;
+    }
+}

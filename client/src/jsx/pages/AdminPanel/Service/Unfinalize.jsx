@@ -69,27 +69,24 @@ export default class Unfinalize extends React.Component {
         }
         if (eligible_tours.length === 0) {
             return (
-                <div className="alert alert-danger">
+                <div className="unfinalize-warning">
                     { _("admin.alerts.no_finalized") }
                 </div>
             );
         }
         return (
             <div>
-                <div className="alert alert-danger">
+                <div className="unfinalize-warning">
                     { _("admin.alerts.unfinalize_warning") }
                 </div>
                 <form
                     className="unfinalization"
                     onSubmit={ this.handleFormSubmit }
                 >
-                    <select
-                        className="form-control"
-                        ref={ this.makeSelectRef }
-                    >
+                    <select ref={ this.makeSelectRef }>
                         { eligible_tours }
                     </select>
-                    <button className="btn btn-primary" type="submit">
+                    <button type="submit">
                         { _("admin.buttons.unfinalize") }
                     </button>
                 </form>

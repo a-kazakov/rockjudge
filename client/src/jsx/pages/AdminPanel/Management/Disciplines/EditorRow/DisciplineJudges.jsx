@@ -59,7 +59,7 @@ export default class DisciplineJudges extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="discipline-judges">
                 { this.state.disciplineJudges.map((dj, idx) =>
                     <DisciplineJudgeRow
                         disciplineJudge={ dj }
@@ -71,7 +71,7 @@ export default class DisciplineJudges extends React.Component {
                     />
                 ) }
                 <button
-                    className="full-width btn btn-sm btn-default"
+                    className="add"
                     type="button"
                     onClick={ this.handleAddition }
                 >

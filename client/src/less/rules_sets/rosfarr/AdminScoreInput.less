@@ -1,0 +1,82 @@
+.AdminScoreInput {
+    right: 50%;
+    width: 250px;
+    position: absolute;
+    top: 50%;
+    background-color: @color-medium;
+    z-index: 10;
+    padding: 10px;
+    cursor: default;
+    table {
+        margin-bottom: 10px;
+    }
+    th {
+        color: @color-white;
+    }
+    td, th {
+        border: 0;
+        padding-left: 10px;
+        padding-right: 10px;
+        text-align: left;
+        input {
+            width: 50px;
+        }
+    }
+    .score-editor {
+        margin-bottom: 5px;
+        .fields {
+            margin-bottom: 5px;
+            text-align: left;
+            .item {
+                display: inline-block;
+                width: 49.99%;
+                vertical-align: top;
+                .score-label {
+                    padding: 5px;
+                    width: 37.9%;
+                    display: inline-block;
+                    color: white;
+                    font-weight: bold;
+                    text-align: right;
+                }
+                .score-value {
+                    text-align: center;
+                    padding: 5px;
+                    display: inline-block;
+                    width: 62%;
+                    font-weight: normal;
+                    select {
+                        width: 100%;
+                        border: none;
+                        color: black;
+                        padding-left: 3px;
+                    }
+                    .read-only {
+                        width: 100%;
+                        border: none;
+                        background-color: white;
+                        color: black;
+                        height: 16px;
+                        line-height: 16px;
+                    }
+                }
+            }
+        }
+    }
+    .buttons {
+        text-align: center;
+        button {
+            .button-primary();
+        }
+    }
+    .confirmation-button {
+        &.confirmed {
+            .button-red();
+            .button-small();
+        }
+        &.not-confirmed {
+            .button-green();
+            .button-small();
+        }
+    }
+}

@@ -1,0 +1,22 @@
+.Judging {
+    .flex-row();
+    .SideMenu {
+        .flex-item();
+        .flex-col();
+        > .tours {
+            .flex-item-stretch();
+            .scrollable();
+        }
+        > button {
+            .flex-item();
+            .button-white();
+            .button-small();
+        }
+    }
+    > :not(.SideMenu) {
+        .flex-item-stretch();
+        .scrollable();
+    }
+    @import (multiple) "../SideMenu";
+    @import "./TourPanel/index";
+}

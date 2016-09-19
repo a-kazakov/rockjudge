@@ -4,7 +4,6 @@ import Row from "./Row";
 import ColumnsWidths from "./ColumnsWidths";
 
 import getJudgeTableMark from "getJudgeTableMark";
-import getScoringType from "common/getScoringType";
 
 export default class ResultsTable2 extends React.Component {
     static get propTypes() {
@@ -33,6 +32,13 @@ export default class ResultsTable2 extends React.Component {
         };
     }
 
+    static transformDocx(docx) {
+        docx
+            .addStyle(".bordered-table", "font-size", "9pt")
+            .addStyle(".advances-header", "background-color", "#ddd")
+            .addStyle(".total-score", "font-weight", "bold");
+    }
+
     getRowStatus(row) {
         if (!row) {
             return "none";
@@ -55,7 +61,7 @@ export default class ResultsTable2 extends React.Component {
             return null;
         }
         return (
-            <tr key={ "AH" + next_row.run.id }>
+            <tr key={ `AH${next_row.run.id}` }>
                 <th className="advances-header" colSpan={ n_cols }>
                     <p className="text-left">
                         { this.getStatusHeader(next_status) }
@@ -91,51 +97,53 @@ export default class ResultsTable2 extends React.Component {
                     tour={ this.props.tour }
                 />
             );
-        };
+        }
         return (
-            <table className="bordered-table">
-                <thead>
-                    <tr>
-                        <th className="place" style={ widths.genPlaceStyle() }>
-                            <p>
-                                { _("results.labels.place") }
-                            </p>
-                        </th>
-                        <th className="number" style={ widths.genNumberStyle() }>
-                            <p>
-                                { _("results.labels.number") }
-                            </p>
-                        </th>
-                        <th className="participant" style={ widths.genNameStyle() }>
-                            <p>
-                                { _("results.labels.participant_name") }
-                            </p>
-                        </th>
-                        { show_total_score ? (
-                            <th className="total-score" style={ widths.genTotalScoreStyle() }>
+            <div className="ResultsTable2">
+                <table className="bordered-table">
+                    <thead>
+                        <tr>
+                            <th className="place" style={ widths.genPlaceStyle() }>
                                 <p>
-                                    { _("results.labels.total_score") }
+                                    { _("results.labels.place") }
                                 </p>
                             </th>
-                        ) : null }
-                        { line_judges.map(dj =>
-                            <th key={ dj.id } style={ widths.genJudgeStyle() }>
+                            <th className="number" style={ widths.genNumberStyle() }>
                                 <p>
-                                    { getJudgeTableMark(dj) }
+                                    { _("results.labels.number") }
                                 </p>
                             </th>
-                        ) }
-                        <th className="card" style={ widths.genJudgeStyle() }>
-                            <p className="text-center">
-                                { _("results.labels.card") }
-                            </p>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    { rows }
-                </tbody>
-            </table>
+                            <th className="participant" style={ widths.genNameStyle() }>
+                                <p>
+                                    { _("results.labels.participant_name") }
+                                </p>
+                            </th>
+                            { show_total_score ? (
+                                <th className="total-score" style={ widths.genTotalScoreStyle() }>
+                                    <p>
+                                        { _("results.labels.total_score") }
+                                    </p>
+                                </th>
+                            ) : null }
+                            { line_judges.map(dj =>
+                                <th key={ dj.id } style={ widths.genJudgeStyle() }>
+                                    <p>
+                                        { getJudgeTableMark(dj) }
+                                    </p>
+                                </th>
+                            ) }
+                            <th className="card" style={ widths.genJudgeStyle() }>
+                                <p className="text-center">
+                                    { _("results.labels.card") }
+                                </p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        { rows }
+                    </tbody>
+                </table>
+            </div>
         );
     }
 }

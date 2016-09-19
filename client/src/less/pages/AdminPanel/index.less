@@ -1,0 +1,95 @@
+@left-col-size: 100px;
+
+.AdminPanel {
+    .fill-space();
+    .flex-col();
+    > .header {
+        .flex-item();
+        .flex-row();
+        height: 30px;
+        background-color: @color-dark;
+        .caption {
+            .flex-item-stretch();
+            color: @color-white;
+            line-height: 30px;
+            font-weight: bold;
+            text-align: center;
+        }
+    }
+    > .body {
+        .flex-item-stretch();
+        .flex-row();
+        min-height: 0px; // hack
+        .left-col {
+            .flex-item();
+            .flex-col();
+            width: @left-col-size;
+            background-color: @color-dark;
+            .button {
+                .flex-item();
+                color: @color-light;
+                cursor: pointer;
+                width: @left-col-size;
+                height: @left-col-size;
+                position: relative;
+                margin-bottom: @left-col-size / 3;
+                .icon {
+                    height: @left-col-size;
+                    line-height: @left-col-size * 0.9;
+                    text-align: center;
+                    font-size: 90px;
+                    font-weight: 900;
+                }
+                .label {
+                    position: absolute;
+                    bottom: 2px;
+                    left: 0;
+                    right: 0;
+                    height: 12px;
+                    line-height: 1;
+                    text-align: center;
+                    font-size: 12px;
+                    font-weight: bold;
+                }
+                &:hover {
+                    background-color: lighten(@color-dark, 10%);
+                }
+                &.active, &.active:hover {
+                    background-color: darken(@color-dark, 10%);
+                }
+            }
+            .spacer {
+                .flex-item-stretch();
+            }
+            .bottom-cell {
+                .flex-item();
+                .back-button {
+                    font-size: 12px;
+                    font-weight: bold;
+                    color: @color-white;
+                    text-align: center;
+                    text-decoration: none;
+                    display: block;
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+        .Management, .Judging, .Service {
+            .flex-item-stretch();
+        }
+        @import "./common/index";
+        @import "./Management/index";
+        @import "./Judging/index";
+        @import "./Service";
+    }
+    h3 {
+        font-size: 20px;
+        font-weight: normal;
+        margin: 20px 0 10px;
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+}

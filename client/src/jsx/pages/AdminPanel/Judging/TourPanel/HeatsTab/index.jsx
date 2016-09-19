@@ -156,14 +156,14 @@ export default class HeatsTab extends React.Component {
             );
         }
         return (
-            <Paper
-                header={ `${this.state.tour.discipline.competition.name}, ${this.state.tour.discipline.competition.date}` }
-                ref={ this.makePrintableRef }
-                title1={ _("admin.headers.tour_heats") }
-                title2={ this.state.tour.discipline.name }
-                title3={ this.state.tour.name }
-            >
-                <div className="tour-heats">
+            <div className="HeatsTab">
+                <Paper
+                    header={ `${this.state.tour.discipline.competition.name}, ${this.state.tour.discipline.competition.date}` }
+                    ref={ this.makePrintableRef }
+                    title1={ _("admin.headers.tour_heats") }
+                    title2={ this.state.tour.discipline.name }
+                    title3={ this.state.tour.name }
+                >
                     <table className="bordered-table">
                         <thead>
                             <tr>
@@ -188,8 +188,8 @@ export default class HeatsTab extends React.Component {
                             { this.renderRows() }
                         </tbody>
                     </table>
-                </div>
-            </Paper>
+                </Paper>
+            </div>
         );
     }
 

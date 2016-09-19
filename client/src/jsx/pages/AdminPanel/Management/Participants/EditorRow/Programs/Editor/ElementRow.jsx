@@ -43,7 +43,7 @@ export default class ElementRow extends React.Component {
                     onChange={ this.handleScoreChange }
                 />
                 <button
-                    className="del btn btn-danger"
+                    className="delete"
                     type="button"
                     onClick={ this.handleDeletion }
                 >

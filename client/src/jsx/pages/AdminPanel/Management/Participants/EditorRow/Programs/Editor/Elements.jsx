@@ -74,11 +74,11 @@ export default class Elements extends React.Component {
                     />
                 ) }
                 <button
-                    className="btn btn-sm btn-default full-width"
+                    className="add-element-button"
                     type="button"
                     onClick={ this.handleElementAddition }
                 >
-                    { _("global.buttons.add") }
+                    { _("admin.buttons.add_element") }
                 </button>
             </div>
         );

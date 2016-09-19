@@ -1,0 +1,42 @@
+.Disciplines {
+    .flex-col();
+    > header {
+        .flex-item();
+        .admin-header();
+    }
+    > .body {
+        .flex-item-stretch();
+        .scrollable();
+        padding: 5px;
+        > table {
+            .admin-management-table();
+            .editor {
+                .discipline-judges {
+                    select {
+                        display: inline;
+                    }
+                    select.judge {
+                        height: 20px;
+                        margin: 0;
+                        width: 60%;
+                    }
+                    select.judge-role {
+                        height: 20px;
+                        margin: 0;
+                        width: 35%;
+                    }
+                    button.delete {
+                        .button-red();
+                        .button-small();
+                        width: 5%;
+                    }
+                    button.add {
+                        .button-white();
+                        .button-small();
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
+}

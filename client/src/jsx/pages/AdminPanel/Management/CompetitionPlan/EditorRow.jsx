@@ -68,78 +68,71 @@ export default class EditorRow extends React.Component {
             <tr className={ this.getClassName() }>
                 <td colSpan="6">
                     <form onSubmit={ this.handleSubmission }>
-                        <div className="rows">
-                            <div className="col-md-2">
-                                <label className="full-width">
-                                    { _("models.competition_plan_item.sp") }
-                                    <input
-                                        className="full-width"
-                                        defaultValue={ this.props.item.sp }
-                                        ref={ this.makeSpRef }
-                                    />
-                                </label>
-                            </div>
-                            <div className="col-md-5">
-                                <label className="full-width">
-                                    { _("models.competition_plan_item.verbose_name") }
-                                    <input
-                                        className="full-width"
-                                        defaultValue={ this.props.item.verbose_name }
-                                        ref={ this.makeVerboseNameRef }
-                                    />
-                                </label>
-                                <label className="full-width">
-                                    { _("models.competition_plan_item.tour") }
-                                    <select
-                                        className="full-width"
-                                        defaultValue={ this.props.item.tour_id || "" }
-                                        ref={ this.makeTourIdRef }
-                                    >
-                                        <option value="">
-                                            ----------
+                        <div className="col-5">
+                            <label>
+                                { _("models.competition_plan_item.sp") }
+                                <input
+                                    defaultValue={ this.props.item.sp }
+                                    ref={ this.makeSpRef }
+                                />
+                            </label>
+                        </div>
+                        <div className="col-10">
+                            <label>
+                                { _("models.competition_plan_item.verbose_name") }
+                                <input
+                                    defaultValue={ this.props.item.verbose_name }
+                                    ref={ this.makeVerboseNameRef }
+                                />
+                            </label>
+                            <label>
+                                { _("models.competition_plan_item.tour") }
+                                <select
+                                    defaultValue={ this.props.item.tour_id || "" }
+                                    ref={ this.makeTourIdRef }
+                                >
+                                    <option value="">
+                                        ----------
+                                    </option>
+                                    { this.props.tours.map(tour =>
+                                        <option key={ tour.id } value={ tour.id }>
+                                            { tour.name }
                                         </option>
-                                        { this.props.tours.map(tour =>
-                                            <option key={ tour.id } value={ tour.id }>
-                                                { tour.name }
-                                            </option>
-                                        ) }
-                                    </select>
-                                </label>
-                            </div>
-                            <div className="col-md-2">
-                                <label className="full-width">
-                                    { _("models.competition_plan_item.estimated_beginning") }
-                                    <input
-                                        className="full-width"
-                                        defaultValue={ this.props.item.estimated_beginning }
-                                        ref={ this.makeEstimatedBeginningRef }
-                                    />
-                                </label>
-                                <label className="full-width">
-                                    { _("models.competition_plan_item.estimated_duration") }
-                                    <input
-                                        className="full-width"
-                                        defaultValue={ this.props.item.estimated_duration }
-                                        ref={ this.makeEstimatedDurationRef }
-                                    />
-                                </label>
-                            </div>
-                            <div className="col-md-3">
-                                <div className="buttons">
-                                    <button
-                                        className="btn btn-primary"
-                                        type="submit"
-                                    >
-                                        { _("global.buttons.submit") }
-                                    </button>
-                                    <button
-                                        className="btn btn-danger"
-                                        type="button"
-                                        onClick={ this.props.onStopEditing }
-                                    >
-                                        { _("global.buttons.discard") }
-                                    </button>
-                                </div>
+                                    ) }
+                                </select>
+                            </label>
+                        </div>
+                        <div className="col-5">
+                            <label>
+                                { _("models.competition_plan_item.estimated_beginning") }
+                                <input
+                                    defaultValue={ this.props.item.estimated_beginning }
+                                    ref={ this.makeEstimatedBeginningRef }
+                                />
+                            </label>
+                            <label>
+                                { _("models.competition_plan_item.estimated_duration") }
+                                <input
+                                    defaultValue={ this.props.item.estimated_duration }
+                                    ref={ this.makeEstimatedDurationRef }
+                                />
+                            </label>
+                        </div>
+                        <div className="col-4">
+                            <div className="buttons vertical">
+                                <button
+                                    className="btn btn-primary"
+                                    type="submit"
+                                >
+                                    { _("global.buttons.submit") }
+                                </button>
+                                <button
+                                    className="btn btn-danger"
+                                    type="button"
+                                    onClick={ this.props.onStopEditing }
+                                >
+                                    { _("global.buttons.discard") }
+                                </button>
                             </div>
                         </div>
                     </form>

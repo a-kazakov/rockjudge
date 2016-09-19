@@ -1,0 +1,63 @@
+.ImportExport {
+    .flex-col();
+    > header {
+        .flex-item();
+        .admin-header();
+    }
+    > .body {
+        .flex-item-stretch();
+        .scrollable();
+        padding: 5px;
+        label.browse {
+            cursor: pointer;
+            display: block;
+            font-weight: bold;
+            width: 500px;
+            margin-right: 5px;
+            background-color: @color-light;
+            padding: 6px 12px;
+            line-height: 22px;
+            position: relative;
+            white-space: pre;
+            overflow: hidden;
+            div {
+                .flex-col;
+                justify-content: center;
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                right: 0;
+                padding: 0 20px;
+                background-color: @color-dark;
+                color: @color-white;
+                span {
+                    display: block;
+                }
+            }
+            input {
+                margin-bottom: 10px;
+                position: absolute;
+                width: 0.1px;
+                height: 0.1px;
+                left: -10000px;
+            }
+        }
+        .import-items-selector {
+            background-color: @color-light;
+            width: 500px;
+            margin-top: 10px;
+            padding: 10px;
+            label {
+                display: block;
+                font-weight: bold;
+                padding: 5px 0;
+                input {
+                    margin-right: 5px;
+                }
+            }
+        }
+        button {
+            .button-primary();
+        }
+    }
+}

@@ -106,7 +106,7 @@ export default class TourPanel extends React.Component {
     }
     renderHeader() {
         return (
-            <header className="app-header with-tabs">
+            <header>
                 <div className="controls">
                     { this.renderButtons(this.props.tour) }
                 </div>
@@ -117,14 +117,14 @@ export default class TourPanel extends React.Component {
                     { this.props.tour.name }
                 </h2>
                 <div className="clearfix" />
-                <ul className="pull-right nav nav-tabs">
+                <nav>
                     { this.renderNavButton("tour-admin") }
                     { this.renderNavButton("heats") }
                     { this.renderNavButton("results-1") }
                     { this.renderNavButton("results-2") }
                     { this.renderNavButton("results-3") }
                     { this.renderNavButton("discipline-results") }
-                </ul>
+                </nav>
                 <div className="clearfix" />
             </header>
         );
@@ -159,9 +159,9 @@ export default class TourPanel extends React.Component {
     }
     render() {
         return (
-            <div className="app-content">
+            <div className="TourPanel">
                 { this.renderHeader() }
-                <div className="app-body">
+                <div className="body">
                     { this.renderBody() }
                 </div>
             </div>

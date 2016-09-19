@@ -18,7 +18,7 @@ export default class OneCheckbox extends React.Component {
 
     render() {
         return (
-            <div className="switch">
+            <div className="OneCheckbox">
                 <label>
                     <input
                         checked={ this.props.value }

@@ -102,7 +102,7 @@ export default class Management extends React.Component {
     }
     render() {
         return (
-            <div className="app">
+            <div className="Management">
                 <SideMenu
                     activePage={ this.state.page }
                     activePageProps={ this.state.pageProps }

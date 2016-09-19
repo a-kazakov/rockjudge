@@ -1,0 +1,30 @@
+.CompetitionPlan {
+    .flex-col();
+    > header {
+        .flex-item();
+        .admin-header();
+    }
+    > .body {
+        .flex-item-stretch();
+        .scrollable();
+        padding: 5px;
+        > div.wrapper {
+            > table {
+                .admin-management-table();
+            }
+            > .unpicked-tours {
+                .alert-red();
+                margin-bottom: 5px;
+                h4 {
+                    margin: 0 0 5px;
+                }
+                ul {
+                    margin: 0;
+                }
+            }
+        }
+        .print-only {
+            display: none;
+        }
+    }
+}

@@ -63,56 +63,60 @@ export default class Row extends React.Component {
     }
     renderViewer() {
         return (
-            <div className="tour" key={ this.props.tour.id }>
-                <h3>{ this.props.tour.name }</h3>
-                <div className="row">
-                    <div className="col-md-5">
-                        <p>
-                            <strong>
-                                { `${_("models.tour.num_advances")}: ` }
-                            </strong>
-                            { this.props.tour.num_advances }
-                        </p>
-                        <p>
-                            <strong>
-                                { `${_("models.tour.participants_per_heat")}: ` }
-                            </strong>
-                            { this.props.tour.participants_per_heat }
-                        </p>
-                        <p>
-                            <strong>
-                                { `${_("models.tour.is_hope_tour")}: ` }
-                            </strong>
-                            { this.props.tour.hope_tour
-                                ? _("global.labels.yes")
-                                : _("global.labels.no")
-                            }
-                        </p>
+            <div className="tour viewer">
+                <h3>
+                    { this.props.tour.name }
+                </h3>
+                <div className="tour-content">
+                    <div className="info">
+                        <div className="first-col">
+                            <p>
+                                <strong>
+                                    { `${_("models.tour.num_advances")}: ` }
+                                </strong>
+                                { this.props.tour.num_advances }
+                            </p>
+                            <p>
+                                <strong>
+                                    { `${_("models.tour.participants_per_heat")}: ` }
+                                </strong>
+                                { this.props.tour.participants_per_heat }
+                            </p>
+                            <p>
+                                <strong>
+                                    { `${_("models.tour.is_hope_tour")}: ` }
+                                </strong>
+                                { this.props.tour.hope_tour
+                                    ? _("global.labels.yes")
+                                    : _("global.labels.no")
+                                }
+                            </p>
+                        </div>
+                        <div className="second-col">
+                            <p>
+                                <strong>
+                                    { `${_("models.tour.scoring_system_name")}: ` }
+                                </strong>
+                                { rules_set.translate(`scoring_systems_names.${this.props.tour.scoring_system_name}`) }
+                            </p>
+                            <p>
+                                <strong>
+                                    { `${_("models.tour.default_program")}: ` }
+                                </strong>
+                                { this.props.tour.default_program }
+                            </p>
+                        </div>
                     </div>
-                    <div className="col-md-5">
-                        <p>
-                            <strong>
-                                { `${_("models.tour.scoring_system_name")}: ` }
-                            </strong>
-                            { rules_set.translate(`scoring_systems_names.${this.props.tour.scoring_system_name}`) }
-                        </p>
-                        <p>
-                            <strong>
-                                { `${_("models.tour.default_program")}: ` }
-                            </strong>
-                            { this.props.tour.default_program }
-                        </p>
-                    </div>
-                    <div className="col-md-2">
+                    <div className="buttons">
                         <button
-                            className="full-width btn btn-primary btn-sm"
+                            className="edit-button"
                             onClick={ this.handleStartEditing }
                         >
                             { _("global.buttons.edit") }
                         </button>
                         <br />
                         <button
-                            className="full-width btn btn-danger btn-sm"
+                            className="delete-button"
                             onClick={ this.handleTourDeletion }
                         >
                             { _("global.buttons.delete") }

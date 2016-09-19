@@ -32,6 +32,15 @@ export default class DisciplineResultsTable extends React.Component {
             ).isRequired,
         };
     }
+
+    static transformDocx(docx) {
+        docx
+            .addStyle(".tour-name", "background", "#ddd")
+            .addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none")
+            .addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0")
+            .addStyle(".sportsmen", "width", "100%");
+    }
+
     renderRowHeader(prev_row, next_row) {
         const need_render =
             typeof prev_row === "undefined" ||
@@ -40,7 +49,7 @@ export default class DisciplineResultsTable extends React.Component {
             return null;
         }
         return (
-            <tr key={ "H" + next_row.run.id }>
+            <tr key={ `H${next_row.run.id}` }>
                 <th className="tour-name" colSpan="6">
                     <p className="text-center">
                         { next_row.tour.name }
@@ -52,7 +61,7 @@ export default class DisciplineResultsTable extends React.Component {
     renderRow(row) {
         let p = row.run.participant;
         return (
-            <tr key={ "R" + row.run.id }>
+            <tr key={ `R${row.run.id}` }>
                 <td className="w-8 place">
                     <p className="text-center">
                         { row.place === null ? "" : row.place }
@@ -78,7 +87,7 @@ export default class DisciplineResultsTable extends React.Component {
                             <tr key={ idx }>
                                 <td className="w-75">
                                     <p>
-                                        { s.last_name + " " + s.first_name }
+                                        { `${s.last_name} ${s.first_name}` }
                                         { s.substitute ? <i> ({ _("results.labels.sub") }.)</i> : null }
                                     </p>
                                 </td>
@@ -118,7 +127,7 @@ export default class DisciplineResultsTable extends React.Component {
     }
     render() {
         return (
-            <div className="discipline-results">
+            <div className="DisciplineResultsTable">
                 <table className="bordered-table">
                     <thead>
                         <tr>

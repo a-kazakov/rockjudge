@@ -61,19 +61,27 @@ export default class Row extends React.Component {
                     value={ this.props.sportsman.gender }
                     onChange={ this.handleGenderChange }
                 >
-                    <option value="F">{ _("models.participant.gender_f") }</option>
-                    <option value="M">{ _("models.participant.gender_m") }</option>
+                    <option value="F">
+                        { _("models.participant.gender_f") }
+                    </option>
+                    <option value="M">
+                        { _("models.participant.gender_m") }
+                    </option>
                 </select>
                 <select
                     className="substitute"
                     value={ this.props.sportsman.substitute ? "Y" : "N" }
                     onChange={ this.handleSubstitudeChange }
                 >
-                    <option value="N">{ _("models.participant.substitute_n") }</option>
-                    <option value="Y">{ _("models.participant.substitute_y") }</option>
+                    <option value="N">
+                        { _("models.participant.substitute_n") }
+                    </option>
+                    <option value="Y">
+                        { _("models.participant.substitute_y") }
+                    </option>
                 </select>
                 <button
-                    className="del btn btn-danger"
+                    className="delete"
                     type="button"
                     onClick={ this.handleDeletion }
                 >

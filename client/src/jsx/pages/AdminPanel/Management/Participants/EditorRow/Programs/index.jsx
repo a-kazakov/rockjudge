@@ -21,8 +21,10 @@ export default class Programs extends React.Component {
     }
     render() {
         return (
-            <div>
-                <h4>{ _("models.participant.programs") }</h4>
+            <div className="programs">
+                <label>
+                    { _("models.participant.programs") }
+                </label>
                 { this.props.programs.map(p =>
                     <Program
                         key={ p.id }
@@ -30,7 +32,7 @@ export default class Programs extends React.Component {
                     />
                 ) }
                 { this.props.newParticipant ? (
-                    <div className="alert alert-info">
+                    <div className="add-programs-after-creation-alert">
                         { _("admin.alerts.add_programs_after_creation") }
                     </div>
                 ) : (

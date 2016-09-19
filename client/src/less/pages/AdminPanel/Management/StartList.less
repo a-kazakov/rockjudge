@@ -1,0 +1,33 @@
+.StartList {
+    .flex-col();
+    > header {
+        .flex-item();
+        .admin-header();
+    }
+    > .body {
+        .flex-item-stretch();
+        .scrollable();
+        padding: 5px;
+        .Paper {
+            .bordered-table .inner td, .bordered-table .inner th {
+                border: none;
+                padding: 0;
+            }
+            .inner {
+                width: 100%;
+            }
+            .acro {
+                border-top: none !important;
+            }
+            .has-acro td {
+                border-bottom: 1px solid #555 !important;
+            }
+            .has-acro td td {
+                border-bottom: none !important;
+            }
+        }
+        .print-only {
+            display: none;
+        }
+    }
+}

@@ -78,67 +78,51 @@ export default class EditorRow extends React.Component {
             <tr className={ this.getClassName() }>
                 <td colSpan="5">
                     <form onSubmit={ this.handleSubmission }>
-                        <div className="row">
-                            <div className="col-lg-4">
-                                <label className="full-width">
-                                    { _("models.discipline.name") }
-                                    <input
-                                        className="full-width"
-                                        defaultValue={ this.props.discipline.name }
-                                        ref={ this.makeNameRef }
-                                    />
-                                </label>
-                                <div className="row">
-                                    <div className="col-lg-6">
-                                        <label className="full-width">
-                                            { _("models.discipline.sp") }
-                                            <input
-                                                className="full-width"
-                                                defaultValue={ this.props.discipline.sp }
-                                                ref={ this.makeSpRef }
-                                            />
-                                        </label>
-                                    </div>
-                                    <div className="col-lg-6">
-                                        <label className="full-width">
-                                            { _("models.discipline.external_id") }<br />
-                                            <input
-                                                className="full-width"
-                                                defaultValue={ this.props.discipline.external_id || "" }
-                                                ref={ this.makeExternalIdRef }
-                                            />
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-lg-6">
-                                <label className="full-width">
-                                    { _("models.discipline.discipline_judges") }
-                                </label>
-                                <DisciplineJudges
-                                    defaultValue={ this.props.discipline.discipline_judges }
-                                    judges={ this.props.judges }
-                                    ref={ this.makeDisciplineJudgesRef }
+                        <div className="col-8">
+                            <label className="full-width">
+                                { _("models.discipline.name") }
+                                <input
+                                    defaultValue={ this.props.discipline.name }
+                                    ref={ this.makeNameRef }
                                 />
-                            </div>
-                            <div className="col-lg-2">
-                                <label>&nbsp;</label>
-                                <div className="buttons">
-                                    <button
-                                        className="btn btn-primary"
-                                        type="submit"
-                                    >
-                                        { _("global.buttons.submit") }
-                                    </button>
-                                    <br />
-                                    <button
-                                        className="btn btn-danger"
-                                        type="button"
-                                        onClick={ this.props.onStopEditing }
-                                    >
-                                        { _("global.buttons.discard") }
-                                    </button>
-                                </div>
+                            </label>
+                            <label className="full-width">
+                                { _("models.discipline.sp") }
+                                <input
+                                    defaultValue={ this.props.discipline.sp }
+                                    ref={ this.makeSpRef }
+                                />
+                            </label>
+                            <label className="full-width">
+                                { _("models.discipline.external_id") }<br />
+                                <input
+                                    defaultValue={ this.props.discipline.external_id || "" }
+                                    ref={ this.makeExternalIdRef }
+                                />
+                            </label>
+                        </div>
+                        <div className="col-12">
+                            <label className="full-width">
+                                { _("models.discipline.discipline_judges") }
+                            </label>
+                            <DisciplineJudges
+                                defaultValue={ this.props.discipline.discipline_judges }
+                                judges={ this.props.judges }
+                                ref={ this.makeDisciplineJudgesRef }
+                            />
+                        </div>
+                        <div className="col-4">
+                            <label>&nbsp;</label>
+                            <div className="buttons vertical">
+                                <button type="submit">
+                                    { _("global.buttons.submit") }
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={ this.props.onStopEditing }
+                                >
+                                    { _("global.buttons.discard") }
+                                </button>
                             </div>
                         </div>
                     </form>

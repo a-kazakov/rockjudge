@@ -100,7 +100,7 @@ export default class CompetitionPlan extends React.Component {
         });
         const unpicked_tours = tours.filter((tour) => !picked_tours_ids.has(tour.id));
         const unpicked_tours_html = unpicked_tours.length === 0 ? null : (
-            <div>
+            <div className="unpicked-tours">
                 <h4>
                     { _("admin.headers.unpicked_tours") }
                 </h4>
@@ -114,8 +114,9 @@ export default class CompetitionPlan extends React.Component {
             </div>
         );
         return (
-            <div className="manage-competition-plan">
-                <table className="table table-striped">
+            <div className="wrapper">
+                { unpicked_tours_html }
+                <table>
                     <tbody>
                         <tr>
                             <th className="sp">
@@ -142,27 +143,24 @@ export default class CompetitionPlan extends React.Component {
                         />
                     </tbody>
                 </table>
-                { unpicked_tours_html }
             </div>
         );
     }
     render() {  // eslint-disable-line react/sort-comp
         const tours = this.genTours();
         return (
-            <div className="app-content">
-                <header className="app-header">
+            <div className="CompetitionPlan">
+                <header>
                     <div className="controls">
-                        <button
-                            className="btn btn-primary"
-                            key="btn-init-tour"
-                            onClick={ this.handleDocxCreation }
-                        >
+                        <button onClick={ this.handleDocxCreation }>
                             DOCX
                         </button>
                     </div>
-                    <h1>{ _("admin.headers.competition_plan_management") }</h1>
+                    <h1>
+                        { _("admin.headers.competition_plan_management") }
+                    </h1>
                 </header>
-                <div className="app-body">
+                <div className="body">
                     { this.renderTable(tours) }
                     <PrintablePlan
                         competition={ this.props.competition }

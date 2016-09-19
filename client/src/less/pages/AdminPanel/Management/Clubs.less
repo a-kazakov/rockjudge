@@ -1,0 +1,15 @@
+.Clubs {
+    .flex-col();
+    > header {
+        .flex-item();
+        .admin-header();
+    }
+    > .body {
+        .flex-item-stretch();
+        .scrollable();
+        padding: 5px;
+        > table {
+            .admin-management-table();
+        }
+    }
+}

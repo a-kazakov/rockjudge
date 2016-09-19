@@ -140,7 +140,7 @@ export default class CompetitionReport extends React.Component {
         }
         const title = this.getTitle();
         return (
-            <div className="app-content">
+            <div className="CompetitionReport">
                 <header className="app-header">
                     <div className="controls">
                         <button
@@ -152,7 +152,7 @@ export default class CompetitionReport extends React.Component {
                     </div>
                     <h1>{ title }</h1>
                 </header>
-                <div className="app-body competition-report">
+                <div className="body">
                     <ConfigPanel
                         config={ this.state.config }
                         customControls={ [
@@ -165,6 +165,7 @@ export default class CompetitionReport extends React.Component {
                         onChange={ this.handleConfigChange }
                     />
                     <Paper
+                        margins={ [10, 15, 10, 25] }
                         ref={ this.makePrintableRef }
                         title1={ title }
                     >

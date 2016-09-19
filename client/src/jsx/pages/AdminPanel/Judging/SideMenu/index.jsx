@@ -75,11 +75,11 @@ export default class SideMenu extends React.Component {
     }
     render() {
         return (
-            <div className="side-menu">
-                <div className="competition-schema">
+            <div className="SideMenu">
+                <div className="tours">
                     { this.renderList() }
-                    { this.renderButton() }
                 </div>
+                { this.renderButton() }
             </div>
         );
     }

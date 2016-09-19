@@ -57,16 +57,15 @@ export default class Wrapper extends React.Component {
     }
 
     createDocx(filename="discipline-results.docx") {
-        Docx(filename)
+        const docx = Docx(filename)
             .setHeader(`${this.props.discipline.competition.name}, ${this.props.discipline.competition.date}`)
             .setTitle1(_("admin.headers.discipline_results"))
             .setTitle3(this.props.discipline.name)
             .setBody(this._printable.getPrintableHTML())
-            .addStyle(".tour-name", "background", "#ddd")
-            .addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none")
-            .addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0")
-            .addStyle(".sportsmen", "width", "100%")
-            .save();
+        if (rules_set.discipline_results_table.transformDocx) {
+            rules_set.discipline_results_table.transformDocx(docx)
+        }
+        docx.save();
     }
 }
 

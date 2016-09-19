@@ -1,0 +1,82 @@
+.Service {
+    .flex-col();
+    > header {
+        .flex-item();
+        .admin-header();
+    }
+    > .body {
+        .flex-item-stretch();
+        .scrollable();
+        padding: 10px;
+        .unfinalize-warning {
+            .alert-red();
+            margin-bottom: 10px;
+        }
+        .unfinalization {
+            select {
+                vertical-align: top;
+                display: inline;
+                height: 30px;
+                max-width: 500px;
+                margin-right: 5px;
+            }
+            button {
+                .button-primary();
+            }
+        }
+        .action-button {
+            .button-primary();
+            margin-right: 10px;
+        }
+        .clients-auth {
+            width: auto;
+            margin-bottom: 20px;
+            td, th {
+                line-height: 20px;
+                padding: 2px 5px;
+                text-align: left;
+            }
+            .id {
+                width: 100px;
+            }
+            .access-level {
+                width: 500px;
+                select {
+                    height: 22px;
+                    width: 100%;
+                }
+            }
+            .buttons {
+                width: 230px;
+                button {
+                    width: 110px;
+                    &.edit-button, &.save-button {
+                        .button-primary();
+                        .button-small();
+                    }
+                    &.delete-button, &.discard-button {
+                        .button-red();
+                        .button-small();
+                    }
+                }
+            }
+        }
+        .auto-printer-status {
+            p {
+                margin: 0px 2px 5px;
+            }
+            button {
+                .button-white();
+            }
+            &.ok {
+                .alert-green();
+            }
+            &.fail {
+                .alert-red();
+            }
+        }
+        p {
+            margin-bottom: 10px;
+        }
+    }
+}

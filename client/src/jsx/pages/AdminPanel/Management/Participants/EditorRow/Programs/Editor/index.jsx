@@ -88,20 +88,18 @@ export default class Editor extends React.Component {
                     elements={ this.props.program.acrobatics }
                     ref={ this.makeElementsRef }
                 />
-                <div className="pull-right">
-                    <button
-                        className="btn btn-sm btn-default"
-                        type="button"
-                        onClick={ this.handleLoadAcrobatics }
-                    >
-                        { _("admin.buttons.load_acro") }
-                    </button>
-                </div>
-                <button className="btn btn-sm btn-primary">
+                <button
+                    className="load-button"
+                    type="button"
+                    onClick={ this.handleLoadAcrobatics }
+                >
+                    { _("admin.buttons.load_acro") }
+                </button>
+                <button className="submit-button">
                     { _("global.buttons.submit") }
                 </button>
                 <button
-                    className="btn btn-sm btn-danger"
+                    className="discard-button"
                     type="button"
                     onClick={ this.props.onStopEditing }
                 >

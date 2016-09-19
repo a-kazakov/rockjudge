@@ -1,0 +1,77 @@
+@import (reference) "include/buttons";
+@import (reference) "include/colors";
+@import (reference) "include/forms";
+@import (reference) "include/layout";
+
+.admin-header() {
+    background-color: @color-medium;
+    min-height: 50px;
+    padding: 5px 10px;
+    h1 {
+        color: @color-white;
+        font-size: 25px;
+        font-weight: 400;
+        margin: 3px 5px;
+    }
+    h2 {
+        color: @color-white;
+        font-size: 14px;
+        font-weight: 500;
+        margin: 3px 5px;
+    }
+    .controls {
+        float: right;
+        text-align: right;
+        margin: 5px;
+        button {
+            .button-primary();
+            margin-right: 0;
+            margin-left: 10px;
+        }
+    }
+}
+
+.admin-management-table() {
+    width: 100%;
+    box-sizing: border-box;
+    border-collapse: collapse;
+    > thead, > tbody {
+        > tr:nth-child(odd) {
+            background-color: white;
+        }
+        > tr:nth-child(even) {
+            background-color: @color-white;
+        }
+        > tr > td, > tr > th {
+            border-bottom: 1px solid #ccc;
+            text-align: left;
+            padding: 5px 10px;
+        }
+        > tr.viewer {
+            cursor: pointer;
+            .delete {
+                width: 50px;
+                text-align: right;
+                padding: 0 5px 0 0;
+                vertical-align: middle;
+                button {
+                    .button-red();
+                    .button-small();
+                }
+            }
+        }
+        > tr.editor {
+            &.create {
+                background-color: @color-yellow;
+            }
+            background-color: @color-light;
+            margin: 5px 0;
+            .admin-management-form();
+        }
+        > tr > td > .create-button {
+            .button-white();
+            width: 100%;
+            display: block;
+        }
+    }
+}

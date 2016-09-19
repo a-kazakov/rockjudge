@@ -94,7 +94,7 @@ export default class Editor extends React.Component {
     render() {
         const scoring_type = getScoringType(this.props.disciplineJudge, this.props.tour.scoring_system_name);
         return (
-            <div className="form-score-input">
+            <div className="AdminScoreInput">
                 { this.renderBody(scoring_type) }
                 { this.renderConfirmationButton(scoring_type) }
             </div>

@@ -1,0 +1,29 @@
+@side-menu-width: 350px;
+
+.SideMenu {
+    .no-select();
+    width: @side-menu-width;
+    background-color: @color-light;
+    .block {
+        margin-bottom: 10px;
+    }
+    .level-1 {
+        padding: 5px 10px;
+        font-weight: bold;
+    }
+    .level-2 {
+        padding: 2px 5px 3px 30px;
+    }
+    .level-1, .level-2 {
+        cursor: pointer;
+        &:hover {
+            background-color: lighten(@color-medium, 10%) !important;
+        }
+        &.grey {
+            color: #999;
+        }
+        &.active {
+            background-color: @color-contrast;
+        }
+    }
+}

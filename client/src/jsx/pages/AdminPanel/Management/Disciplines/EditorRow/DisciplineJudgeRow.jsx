@@ -60,7 +60,7 @@ export default class DisciplineJudgeRow extends React.Component {
                     ) }
                 </select>
                 <button
-                    className="del btn btn-danger"
+                    className="delete"
                     type="button"
                     onClick={ this.handleDeletion }
                 >

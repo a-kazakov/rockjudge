@@ -98,35 +98,30 @@ export default class Participants extends React.Component {
             />
         );
         return (
-            <div className="manage-participants">
-                <table className="table table-striped">
-                    <tbody>
-                        <tr>
-                            <th className="number">
-                                { _("models.participant.number") }
-                            </th>
-                            <th className="name">
-                                { _("models.participant.name") }
-                            </th>
-                            <th className="club-name">
-                                { _("models.participant.club_name") }
-                            </th>
-                            <th className="club-city">
-                                { _("models.participant.club_city") }
-                            </th>
-                            <th className="delete" />
-                        </tr>
-                        { rows }
-                        <CreationRow
-                            competition={ this.props.competition }
-                            discipline={ this.state.discipline }
-                        />
-                    </tbody>
-                </table>
-                <div className="total-participants">
-                    { _("admin.phrases.total_n_participants", this.state.discipline.participants.length) }
-                </div>
-            </div>
+            <table>
+                <tbody>
+                    <tr>
+                        <th className="number">
+                            { _("models.participant.number") }
+                        </th>
+                        <th className="name">
+                            { _("models.participant.name") }
+                        </th>
+                        <th className="club-name">
+                            { _("models.participant.club_name") }
+                        </th>
+                        <th className="club-city">
+                            { _("models.participant.club_city") }
+                        </th>
+                        <th className="delete" />
+                    </tr>
+                    { rows }
+                    <CreationRow
+                        competition={ this.props.competition }
+                        discipline={ this.state.discipline }
+                    />
+                </tbody>
+            </table>
         );
     }
     render() {
@@ -136,8 +131,8 @@ export default class Participants extends React.Component {
             );
         }
         return (
-            <div className="app-content">
-                <header className="app-header">
+            <div className="Participants">
+                <header>
                     <h1>
                         { this.state.discipline.name }
                     </h1>
@@ -145,8 +140,11 @@ export default class Participants extends React.Component {
                         { _("admin.headers.participants_management") }
                     </h2>
                 </header>
-                <div className="app-body">
+                <div className="body">
                     { this.renderTable() }
+                    <div className="total-participants">
+                        { _("admin.phrases.total_n_participants", this.state.discipline.participants.length) }
+                    </div>
                 </div>
             </div>
         );

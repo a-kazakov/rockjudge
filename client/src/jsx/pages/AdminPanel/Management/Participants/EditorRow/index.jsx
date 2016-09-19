@@ -92,49 +92,41 @@ export default class EditorRow extends React.Component {
         return (
             <tr className={ this.getClassName() }>
                 <td colSpan="6">
-                    <div className="row">
-                        <div className="col-md-7">
-                            <form
-                                className="row"
-                                onSubmit={ this.handleSubmission }
-                            >
-                                <div className="col-md-5 general-info">
-                                    <GeneralInfo
-                                        competition={ this.props.competition }
-                                        participantData={ this.state.participantData }
-                                        onChange={ this.handleChange }
-                                    />
-                                    <div className="buttons">
-                                        <button
-                                            className="btn btn-primary"
-                                            type="submit"
-                                        >
-                                            { _("global.buttons.submit") }</button>
-                                        <button
-                                            className="btn btn-danger"
-                                            type="button"
-                                            onClick={ this.props.onStopEditing }
-                                        >
-                                            { _("global.buttons.discard") }
-                                        </button>
-                                    </div>
+                    <div className="col-15 wrapper">
+                        <form onSubmit={ this.handleSubmission }>
+                            <div className="col-10">
+                                <GeneralInfo
+                                    competition={ this.props.competition }
+                                    participantData={ this.state.participantData }
+                                    onChange={ this.handleChange }
+                                />
+                                <div className="buttons horizontal">
+                                    <button type="submit">
+                                        { _("global.buttons.submit") }
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={ this.props.onStopEditing }
+                                    >
+                                        { _("global.buttons.discard") }
+                                    </button>
                                 </div>
-                                <div className="col-md-7">
-                                    <SportsmenList
-                                        sportsmen={ this.state.participantData.sportsmen }
-                                        onChange={ this.handleChange }
-                                    />
-                                </div>
-                            </form>
-                        </div>
-                        <div className="col-md-5">
-                            <Programs
-                                newParticipant={ this.props.newParticipant }
-                                participant={ this.props.participant }
-                                programs={ this.props.participant.programs }
-                                onChange={ this.handleChange }
-                            />
-                        </div>
+                            </div>
+                            <div className="col-14">
+                                <SportsmenList
+                                    sportsmen={ this.state.participantData.sportsmen }
+                                    onChange={ this.handleChange }
+                                />
+                            </div>
+                        </form>
+                    </div>
+                    <div className="col-9">
+                        <Programs
+                            newParticipant={ this.props.newParticipant }
+                            participant={ this.props.participant }
+                            programs={ this.props.participant.programs }
+                            onChange={ this.handleChange }
+                        />
                     </div>
                 </td>
             </tr>

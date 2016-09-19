@@ -21,39 +21,37 @@ export default class Judges extends React.Component {
             />
         );
         return (
-            <div className="manage-judges">
-                <table className="table table-striped">
-                    <tbody>
-                        <tr>
-                            <th className="role_description">
-                                { _("models.judge.role_description") }
-                            </th>
-                            <th className="name">
-                                { _("models.judge.name") }
-                            </th>
-                            <th className="category">
-                                { _("models.judge.category") }
-                            </th>
-                            <th className="delete" />
-                        </tr>
-                        { rows }
-                        <CreationRow
-                            competition={ this.props.competition }
-                        />
-                    </tbody>
-                </table>
-            </div>
+            <table>
+                <tbody>
+                    <tr>
+                        <th className="role_description">
+                            { _("models.judge.role_description") }
+                        </th>
+                        <th className="name">
+                            { _("models.judge.name") }
+                        </th>
+                        <th className="category">
+                            { _("models.judge.category") }
+                        </th>
+                        <th className="delete" />
+                    </tr>
+                    { rows }
+                    <CreationRow
+                        competition={ this.props.competition }
+                    />
+                </tbody>
+            </table>
         );
     }
     render() {
         return (
-            <div className="app-content">
-                <header className="app-header">
+            <div className="Judges">
+                <header>
                     <h1>
                         { _("admin.headers.judges_management") }
                     </h1>
                 </header>
-                <div className="app-body">
+                <div className="body">
                     { this.renderTable() }
                 </div>
             </div>

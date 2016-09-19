@@ -53,7 +53,7 @@ export default class InputForm extends React.Component {
         return result;
     }
     render() {
-        const classes = ["tour"].concat(this.props.classes).join(" ");
+        const classes = ["tour", "editor"].concat(this.props.classes).join(" ");
         const tour = this.props.tour || {
             id: "new",
             finalized: false,
@@ -71,111 +71,91 @@ export default class InputForm extends React.Component {
                 onSubmit={ this.handleSubmission }
             >
                 <div className="row">
-                    <div className="col-md-6">
-                        <div className="form-group form-group-sm">
-                            <label className="control-label">
+                    <div className="col-12 wrapper">
+                        <div className="col-24">
+                            <label>
                                 { _("models.tour.name") }
+                                <input
+                                    required
+                                    defaultValue={ tour.name }
+                                    list="dl_tours"
+                                    ref={ this.makeNameRef }
+                                    type="text"
+                                />
+                            </label>
+                        </div>
+                        <div className="col-8">
+                            <label>
+                                { _("models.tour.num_advances") }
                             </label>
                             <input
-                                className="form-control"
-                                defaultValue={ tour.name }
-                                list="dl_tours"
-                                ref={ this.makeNameRef }
+                                defaultValue={ tour.num_advances }
+                                disabled={ tour.finalized }
+                                ref={ this.makeNumAdvandesRef }
                                 type="text"
                             />
                         </div>
-                        <div className="form-group form-group-sm row">
-                            <div className="col-lg-4">
-                                <label className="control-label">
-                                    { _("models.tour.num_advances") }
-                                </label>
+                        <div className="col-8">
+                            <label>
+                                { _("models.tour.participants_per_heat") }
                                 <input
-                                    className="form-control"
-                                    defaultValue={ tour.num_advances }
-                                    disabled={ tour.finalized }
-                                    ref={ this.makeNumAdvandesRef }
-                                    type="text"
-                                />
-                            </div>
-                            <div className="col-lg-4">
-                                <label className="control-label">
-                                    { _("models.tour.participants_per_heat") }
-                                </label>
-                                <input
-                                    className="form-control"
                                     defaultValue={ tour.participants_per_heat }
                                     ref={ this.makeParticipantPerHeatRef }
                                     type="text"
                                 />
-                            </div>
-                            <div className="col-lg-4">
-                                <label className="control-label">
-                                    { _("models.tour.is_hope_tour") }
-                                </label>
-                                <div className="checkbox">
-                                    <label>
-                                        <input
-                                            defaultChecked={ tour.hope_tour }
-                                            disabled={ tour.finalized }
-                                            ref={ this.makeHopeTourRef }
-                                            type="checkbox"
-                                        />
-                                    </label>
-                                </div>
-                            </div>
+                            </label>
+                        </div>
+                        <div className="col-8">
+                            <label>
+                                { _("models.tour.is_hope_tour") }
+                                <input
+                                    defaultChecked={ tour.hope_tour }
+                                    disabled={ tour.finalized }
+                                    ref={ this.makeHopeTourRef }
+                                    type="checkbox"
+                                />
+                            </label>
                         </div>
                     </div>
-                    <div className="col-md-6">
-                        <div className="form-group form-group-sm">
-                            <label className="control-label">
+                    <div className="col-12 wrapper">
+                        <div className="col-24">
+                            <label>
                                 { _("models.tour.scoring_system_name") }
+                                <select
+                                    defaultValue={ tour.scoring_system_name }
+                                    disabled={ tour.finalized }
+                                    ref={ this.makeScoringSystemRef }
+                                >
+                                    { rules_set.meta.scoring_systems.map((sn) =>
+                                        <option key={ sn } value={ sn }>
+                                            { rules_set.translate(`scoring_systems_names.${sn}`) }
+                                        </option>
+                                    ) }
+                                </select>
                             </label>
-                            <select
-                                className="form-control"
-                                defaultValue={ tour.scoring_system_name }
-                                disabled={ tour.finalized }
-                                ref={ this.makeScoringSystemRef }
-                            >
-                                { rules_set.meta.scoring_systems.map((sn) =>
-                                    <option key={ sn } value={ sn }>
-                                        { rules_set.translate(`scoring_systems_names.${sn}`) }
-                                    </option>
-                                ) }
-                            </select>
                         </div>
-                        <div className="form-group form-group-sm row">
-                            <div className="col-lg-6">
-                                <label className="control-label">
-                                    { _("models.tour.default_program") }
-                                </label>
-                                <input
-                                    className="form-control"
-                                    defaultValue={ tour.default_program || "" }
-                                    list="dl_programs"
-                                    ref={ this.makeDefaultProgramRef }
-                                    type="text"
-                                />
-                            </div>
-                            <div className="col-lg-6">
-                                <label className="control-label">
-                                    &nbsp;
-                                </label>
-                                <div className="text-right">
-                                    <button
-                                        className="btn btn-primary btn-sm"
-                                        type="submit"
-                                    >
-                                        { _("global.buttons.submit") }
-                                    </button>
-                                    &nbsp;
-                                    <button
-                                        className="btn btn-primary btn-sm"
-                                        type="button"
-                                        onClick={ this.props.onStopEditing }
-                                    >
-                                        { _("global.buttons.discard") }
-                                    </button>
-                                </div>
+                        <div className="col-12">
+                            <label>
+                                { _("models.tour.default_program") }
+                            </label>
+                            <input
+                                defaultValue={ tour.default_program || "" }
+                                list="dl_programs"
+                                ref={ this.makeDefaultProgramRef }
+                                type="text"
+                            />
+                        </div>
+                        <div className="col-12">
+                            <div className="buttons horizontal">
+                                <button type="submit">
+                                    { _("global.buttons.submit") }
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={ this.props.onStopEditing }
+                                >
+                                    { _("global.buttons.discard") }
+                                </button>
                             </div>
                         </div>
                     </div>

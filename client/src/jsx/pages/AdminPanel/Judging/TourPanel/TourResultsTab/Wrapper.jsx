@@ -55,6 +55,7 @@ export default class Wrapper extends React.Component {
         return (
             <Paper
                 header={ `${this.props.tour.discipline.competition.name}, ${this.props.tour.discipline.competition.date}` }
+                margins={ [10, 10, 15, 10] }
                 ref={ this.makePrintableRef }
                 title1={ _("admin.headers.tour_results") }
                 title2={ this.props.tour.discipline.name }
@@ -66,31 +67,17 @@ export default class Wrapper extends React.Component {
     }
 
     createDocx(filename="tour-results.docx") {
-        Docx(filename)
+        const docx = Docx(filename)
             .setMargins([10, 10, 15, 10])
             .setHeader(`${this.props.tour.discipline.competition.name}, ${this.props.tour.discipline.competition.date}`)
             .setTitle1(_("admin.headers.tour_results"))
             .setTitle2(this.props.tour.discipline.name)
             .setTitle3(this.props.tour.name)
-            .setBody(this._printable.getPrintableHTML())
-            .addStyle(".bordered-table", "font-size", this.props.verbosity === 1 ? "12pt" : "9pt")
-            .addStyle(".bordered-table .acro-table td", "font-size", "9pt")
-            .addStyle(".bordered-table .acro-table td", "padding", "0 3pt")
-            .addStyle(".bordered-table .acro-table td", "border", "0.5pt solid black")
-            .addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "font-size", "9pt")
-            .addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none")
-            .addStyle(".bordered-table .score-breakdown th", "padding", "0 1pt 0 0")
-            .addStyle(".bordered-table .score-breakdown td", "padding", "0 0 0 1pt")
-            .addStyle(".score-breakdown th", "text-align", "right")
-            .addStyle(".score-breakdown td", "text-align", "left")
-            .addStyle(".score-breakdown td", "text-align", "left")
-            .addStyle(".score-breakdown", "width", "50pt")
-            .addStyle(".advances-header", "background-color", "#ddd")
-            .addStyle(".total-score", "font-weight", "bold")
-            .addStyle(".head_judge", "width", "5%")
-            .addStyle(".dance_judge", "width", "8%")
-            .addStyle(".acro_judge", "width", "8%")
-            .save();
+            .setBody(this._printable.getPrintableHTML());
+        if (this.getRenderingComponent().transformDocx) {
+            this.getRenderingComponent().transformDocx(docx);
+        }
+        docx.save();
     }
 }
 

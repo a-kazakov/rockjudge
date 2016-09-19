@@ -95,14 +95,14 @@ export default class Row extends React.Component {
             <td className="controls">
                 { this.props.element.has_override ? (
                     <button
-                        className="btn btn-default btn-sm reset-btn"
+                        className="reset-button"
                         onClick={ this.handleReset }
                     >
                         { _("judging.buttons.reset_acrobatic_override") }
                     </button>
                 ) : null }
                 <button
-                    className="btn btn-default btn-sm  edit-btn"
+                    className="edit-button"
                     onClick={ this.handleStartEditing }
                 >
                     { _("judging.buttons.edit_acrobatic_override") }

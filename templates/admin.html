@@ -6,14 +6,11 @@
   RockJudge
 {% end %}
 
+{% block defaultstyles %}{% end %}
+
 {% block styles %}
   <link rel="stylesheet" href="/static/css/admin.css">
-  <link rel="stylesheet" href="/static/css/tour_admin.css">
-  <link rel="stylesheet" href="/static/css/tour_results.css">
-  <link rel="stylesheet" href="/static/css/discipline_results.css">
-  <link rel="stylesheet" href="/static/css/manage_participants.css">
-  <link rel="stylesheet" href="/static/css/start_list.css">
-  <link rel="stylesheet" href="/static/css/competition_report.css">
+  <link rel="stylesheet" href="/static/css/rules_sets/{{ rules_set }}.css">
 {% end %}
 
 {% block scripts %}
