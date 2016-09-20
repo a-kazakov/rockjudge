@@ -23,10 +23,7 @@ export default class Header extends React.Component {
             return null;
         }
         return (
-            <button
-                className="btn btn-primary pull-left"
-                { ...onTouchOrClick(this.props.onPrevHeatClick) }
-            >
+            <button { ...onTouchOrClick(this.props.onPrevHeatClick) }>
                 { _("tablet.buttons.prev_heat") }
             </button>
         );
@@ -36,10 +33,7 @@ export default class Header extends React.Component {
             return null;
         }
         return (
-            <button
-                className="btn btn-primary pull-right"
-                { ...onTouchOrClick(this.props.onNextHeatClick) }
-            >
+            <button { ...onTouchOrClick(this.props.onNextHeatClick) }>
                 { _("tablet.buttons.next_heat") }
             </button>
         );
@@ -47,15 +41,19 @@ export default class Header extends React.Component {
     render() {
         return (
             <header className="flex">
-                { this.renderPrevHeatButton() }
-                { this.renderNextHeatButton() }
-                <div className="header">
+                <div className="button-container">
+                    { this.renderPrevHeatButton() }
+                </div>
+                <div className="data">
                     <h1>
                         { this.props.tour.discipline.name }
                     </h1>
                     <h2>
                         { this.props.tour.name }
                     </h2>
+                </div>
+                <div className="button-container">
+                    { this.renderNextHeatButton() }
                 </div>
             </header>
         );

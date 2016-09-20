@@ -114,7 +114,7 @@ export default class PresenterTablet extends React.Component {
 
     render() {
         return (
-            <div className="presenter-tablet">
+            <div className="PresenterTablet">
                 <LeftBar
                     page={ this.state.page }
                     onPageChange={ this.handlePageChange }

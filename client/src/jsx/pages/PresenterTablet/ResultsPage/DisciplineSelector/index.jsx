@@ -9,7 +9,7 @@ export default class DisciplineSelector extends React.Component {
                     id: PT.number.isRequired,
                 }).isRequired
             ).isRequired,
-            value: PT.string,
+            value: PT.number,
             onDisciplineChange: PT.func.isRequired,
         };
     }

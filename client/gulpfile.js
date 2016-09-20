@@ -170,6 +170,7 @@ function createRuleSetJsxTask(task) {
 createLessTask('admin');
 createLessTask('competitions');
 createLessTask('judge');
+createLessTask('presenter');
 
 createJsxTask('start_page');
 createJsxTask('admin');

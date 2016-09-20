@@ -1,0 +1,231 @@
+.PresenterTablet {
+    .fill-space();
+    .flex-row();
+    .left-bar {
+        .flex-item();
+        .flex-col();
+        width: 40px;
+        background-color: @color-dark;
+        .item {
+            .flex-item-stretch();
+            .flex-centered();
+            font-weight: bold;
+            color: @color-white;
+            cursor: pointer;
+            overflow: visible;
+            position: relative;
+            &.active {
+                background-color: @color-medium;
+            }
+            span {
+                transform-origin: 50% 50%;
+                transform: rotate(-90deg);
+            }
+        }
+    }
+    .content {
+        .flex-item-stretch();
+        .flex-col();
+        font-size: 18px;
+        .info {
+            .flex-item-stretch();
+            .tablet-scrollable();
+            padding: 20px;
+            h2 {
+                text-align: center;
+            }
+            .competition-info, .judges {
+                width: 100%;
+                tr:nth-child(2n+1) {
+                    background-color: #fff;
+                }
+                tr:nth-child(2n) {
+                    background-color: #ddd;
+                }
+                th {
+                    text-align: left;
+                    width: 350px;
+                }
+                th, td {
+                    padding: 2px 5px;
+                }
+            }
+        }
+        .plan {
+            .flex-item-stretch();
+            .tablet-scrollable();
+            padding: 20px;
+            table {
+                width: 100%;
+                tr:nth-child(2n+1) {
+                    background-color: #fff;
+                }
+                tr:nth-child(2n) {
+                    background-color: #ddd;
+                }
+                tr.finalized {
+                    color: #666;
+                    font-style: italic;
+                }
+                tr.active {
+                    background-color: @color-green;
+                    color: #fff;
+                    font-weight: bold;
+                }
+                .estimated-beginning {
+                    width: 100px;
+                    text-align: center;
+                }
+                .estimated-duration {
+                    width: 125px;
+                    text-align: center;
+                }
+                td.verbose-name {
+                    font-weight: bold;
+                    font-style: italic;
+                }
+                th, td {
+                    padding: 2px 5px;
+                }
+            }
+        }
+        .heats {
+            .flex-item-stretch();
+            .flex-col();
+            .splash-screen {
+                .flex-item-stretch();
+                .flex-centered();
+                font-size: 24px;
+                .spacer {
+                    height: 50px;
+                }
+            }
+            header {
+                .flex-row();
+                background-color: @color-medium;
+                color: white;
+                padding: 10px;
+                .button-container {
+                    .flex-item();
+                    .flex-centered();
+                    width: 120px;
+                    &.left {
+                        text-align: left;
+                    }
+                    &.right {
+                        text-align: right;
+                    }
+                    button {
+                        .button-primary();
+                    }
+                }
+                .data {
+                    .flex-item-stretch();
+                    .flex-centered();
+                    text-align: center;
+                    h1 {
+                        font-size: 15px;
+                    }
+                    h2 {
+                        font-size: 14px;
+                    }
+                    h1, h2 {
+                        margin: 0;
+                        font-weight: normal;
+                    }
+                }
+            }
+            .heat {
+                .flex-item-stretch();
+                .tablet-scrollable();
+                .flex-centered();
+                table {
+                    width: 80%;
+                    margin: 10px auto;
+                    td {
+                        border: 2px solid black;
+                        padding: 5px;
+                        &.number {
+                            width: 70px;
+                            text-align: center;
+                            font-weight: bold;
+                            font-size: 20px;
+                        }
+                        &.name {
+                            font-weight: bold;
+                        }
+                    }
+                }
+                .spacer {
+                    height: 100px;
+                }
+            }
+        }
+        .results {
+            .flex-item-stretch();
+            .flex-row();
+            .disciplines {
+                .flex-item();
+                .tablet-scrollable();
+                width: 350px;
+                background-color: @color-light;
+                .item {
+                    cursor: pointer;
+                    padding: 7px;
+                    font-size: 15px;
+                    font-weight: bold;
+                    &.active {
+                        background-color: @color-contrast;
+                    }
+                }
+            }
+            .discipline-results {
+                .flex-item-stretch();
+                .tablet-scrollable();
+                .tour-name, .row {
+                    width: 90%;
+                    margin: 5px auto;
+                }
+                .tour-name {
+                    background-color: @color-dark;
+                    color: @color-white;
+                    font-weight: bold;
+                    text-align: center;
+                    padding: 5px;
+                }
+                .row {
+                    cursor: pointer;
+                    &.active {
+                        background-color: lighten(@color-contrast, 40%);
+                    }
+                    td {
+                        font-size: 15px;
+                        border: 2px solid black;
+                        padding: 1px 5px;
+                        &.place {
+                            width: 70px;
+                            text-align: center;
+                            font-weight: bold;
+                            font-size: 20px;
+                            line-height: 20px;
+                            .place-label {
+                                font-size: 12px;
+                                line-height: 12px;
+                                color: black;
+                                padding: 0;
+                            }
+                        }
+                        &.number {
+                            width: 70px;
+                            text-align: center;
+                            font-weight: bold;
+                        }
+                        &.name {
+                            font-weight: bold;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
