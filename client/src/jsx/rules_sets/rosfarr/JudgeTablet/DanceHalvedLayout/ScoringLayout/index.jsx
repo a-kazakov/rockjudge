@@ -10,8 +10,9 @@ export default class ScoringLayout extends React.Component {
             <ScorePart
                 code={ code }
                 header={ _(`tablet.dance_judge.${code}`) }
-                value={ this.props.scoreData[code] }
+                readOnly={ this.props.readOnly }
                 scale={ scale }
+                value={ this.props.scoreData[code] }
                 onScoreUpdate={ this.props.onScoreUpdate }
                 {...additional_props}
             />
@@ -25,6 +26,7 @@ export default class ScoringLayout extends React.Component {
                 { this.renderPart("dance_figs", "point5", { min: 0, max: 12.5 }) }
                 { this.renderPart("composition", "point5", { min: 0, max: 10 }) }
                 <Mistakes
+                    readOnly={ this.props.readOnly }
                     scoreData={ this.props.scoreData }
                     onScoreUpdate={ this.props.onScoreUpdate }
                 />

@@ -7,6 +7,7 @@ export default class Element extends React.Component {
                 <div className="controls pull-right">
                     <div className="setter">
                         <OverrideInput
+                            readOnly={ this.props.readOnly }
                             onChange={ this.props.onAcroOverride }
                             originalValue={ this.props.acro.original_score }
                             value={ this.props.acro.score }

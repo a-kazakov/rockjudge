@@ -36,20 +36,20 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
         return (new_value) => this.onScoreUpdate(score_part, new_value);
     }
     render() {
-        let score = this.score.data;
-        const class_name = this.score.confirmed ? "layout-participant read-only" : "layout-participant";
+        const score = this.score.data;
         const header = _("global.phrases.participant_n",
             this.props.run.participant.number,
             this.props.run.participant.name,
             this.props.run.participant.sportsmen.length);
         return (
-            <div className={ class_name }>
+            <div className="layout-participant">
                 <h2>
                     { header }
                 </h2>
                 <h3>{ _("tablet.tech_judge.jump_steps") }</h3>
                 <IntegerInput
                     sendDeltas
+                    readOnly={ this.score.confirmed }
                     value={ score.raw_data.jump_steps }
                     onChange={ this.handleJumpStepsChange }
                 />
@@ -62,6 +62,7 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
                 />
                 <SelectorInput
                     choices={ [[true, "X"], [null, "-"], [false, "OK"]] }
+                    readOnly={ this.score.confirmed }
                     value={ score.raw_data.timing_violation }
                     onChange={ this.handleTimingViolationChange }
                 />

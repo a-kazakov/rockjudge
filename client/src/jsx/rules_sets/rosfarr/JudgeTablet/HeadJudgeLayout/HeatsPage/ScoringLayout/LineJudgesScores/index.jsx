@@ -37,8 +37,8 @@ export default class LineJudgeScore extends CacheMixin(React.Component) {
             const dj = this.line_judges_index.get(score.discipline_judge_id);
             return (
                 <Item
-                    key={ dj.id }
                     judge={ dj.judge }
+                    key={ dj.id }
                     score={ score }
                 />
             );
@@ -48,7 +48,7 @@ export default class LineJudgeScore extends CacheMixin(React.Component) {
         return (
             <div>
                 <h3>{ _("tablet.head_judge.dance_judge_scores") }</h3>
-                <table className="dance-judge-scores"><tbody>
+                <table className="line-judge-scores"><tbody>
                     <tr className="numbers">
                         { this.renderNumbers() }
                     </tr>

@@ -109,7 +109,7 @@ export default class HeadJudgeLayout extends React.Component {
     }
     render() {
         return (
-            <div className="judge-tablet">
+            <div className="rosfarr-JudgeTablet HeadJudgeLayout">
                 { this.renderHeader() }
                 { this.renderBody() }
                 { this.renderFooter() }

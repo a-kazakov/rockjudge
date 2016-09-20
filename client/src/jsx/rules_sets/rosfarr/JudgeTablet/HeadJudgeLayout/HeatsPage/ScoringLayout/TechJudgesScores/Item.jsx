@@ -13,7 +13,7 @@ export default class Item extends React.Component {
         }
         let tv_raw_value = this.props.score.data.raw_data.timing_violation;
         if (tv_raw_value === null) {
-            return ["-", ""];
+            return ["—", ""];
         } else if (tv_raw_value) {
             return ["X", " fail"];
         } else {

@@ -55,7 +55,7 @@ export default class GeneralLayout extends CacheMixin(React.Component) {
     }
     render() {
         return (
-            <div className="judge-tablet">
+            <div className="rosfarr-JudgeTablet GeneralLayout">
                 <Header
                     judge={ this.props.disciplineJudge.judge }
                     tour={ this.props.tour }

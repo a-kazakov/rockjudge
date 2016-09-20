@@ -90,15 +90,12 @@ export default class ActionsPage extends React.Component {
     }
     renderButton(code, callback) {
         return (
-            <div className="item">
-                <button
-                    className="tbtn btn-primary"
-                    type="button"
-                    {...onTouchOrClick(callback)}
-                >
-                    { _(`tablet.buttons.${code}`) }
-                </button>
-            </div>
+            <button
+                type="button"
+                { ...onTouchOrClick(callback) }
+            >
+                { _(`tablet.buttons.${code}`) }
+            </button>
         );
     }
     render() {

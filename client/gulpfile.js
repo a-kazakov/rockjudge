@@ -169,6 +169,7 @@ function createRuleSetJsxTask(task) {
 
 createLessTask('admin');
 createLessTask('competitions');
+createLessTask('judge');
 
 createJsxTask('start_page');
 createJsxTask('admin');
@@ -183,6 +184,6 @@ createJsxTask('screen_operator');
 createRuleSetLessTask('rosfarr');
 createRuleSetJsxTask('rosfarr');
 
-gulp.task('all', gulp.parallel.apply(gulp.parallel, all_jsx_tasks));
+gulp.task('all', gulp.parallel.apply(gulp.parallel, all_jsx_tasks.concat(all_less_tasks)));
 
 gulp.task('default', gulp.series('all'));

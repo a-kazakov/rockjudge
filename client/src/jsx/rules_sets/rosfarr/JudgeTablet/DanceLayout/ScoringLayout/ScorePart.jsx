@@ -9,6 +9,7 @@ export default class ScorePart extends React.Component {
         const { header, value, scale, onScoreUpdate, ...other_props } = this.props;
         return (
             <GeneralScale
+                readOnly={ this.props.readOnly }
                 header={ header }
                 scale={ scale }
                 value={ value }

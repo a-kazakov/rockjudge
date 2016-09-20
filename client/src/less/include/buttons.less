@@ -5,13 +5,17 @@
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
-    line-height: 19px;
-    padding: 0 10px 1px;
     height: 30px;
+    padding: 0 10px 1px;
     text-decoration: none;
     border: 1px solid @bg-color;
+    &:not(button) {
+        line-height: 27px;
+        display: inline-block;
+        vertical-align: top;
+    }
     &:disabled {
-        color: #aaa;
+        color: #fff;
         background-color: #777;
         border-color: #777;
     }
@@ -47,6 +51,10 @@
     .button(@color-dark, white);
 }
 
+.button-medium() {
+    .button(@color-medium, white);
+}
+
 .button-white() {
     .button(white, @color-dark);
     border-color: #aaa;
@@ -55,4 +63,32 @@
         background-color: #aaa;
         border-color: #777;
     }
+}
+
+.button-tablet() {
+    font-size: 12px;
+    font-weight: bold;
+    padding: 0;
+    height: 35px;
+    display: inline-block;
+}
+
+.button-tablet-primary {
+    .button-primary();
+    .button-tablet();
+}
+
+.button-tablet-medium {
+    .button-medium();
+    .button-tablet();
+}
+
+.button-tablet-red {
+    .button-red();
+    .button-tablet();
+}
+
+.button-tablet-green {
+    .button-green();
+    .button-tablet();
 }

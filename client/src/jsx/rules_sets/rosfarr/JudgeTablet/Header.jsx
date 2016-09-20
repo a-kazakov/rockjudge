@@ -6,15 +6,12 @@ export default class Header extends React.Component {
     renderPrevHeatButton() {
         if (this.props.heat <= 1) {
             return (
-                <div className="btn-container" />
+                <div className="button-container" />
             );
         }
         return (
-            <div className="btn-container left">
-                <button
-                    className="btn btn-primary"
-                    { ...onTouchEndOrClick(this.props.onPrevHeatClick) }
-                >
+            <div className="button-container left">
+                <button { ...onTouchEndOrClick(this.props.onPrevHeatClick) }>
                     { _("tablet.buttons.prev_heat") }
                 </button>
             </div>
@@ -23,15 +20,12 @@ export default class Header extends React.Component {
     renderNextHeatButton() {
         if (this.props.heat >= this.props.maxHeat) {
             return (
-                <div className="btn-container" />
+                <div className="button-container" />
             );
         }
         return (
-            <div className="btn-container right">
-                <button
-                    className="btn btn-primary"
-                    { ...onTouchEndOrClick(this.props.onNextHeatClick) }
-                >
+            <div className="button-container right">
+                <button { ...onTouchEndOrClick(this.props.onNextHeatClick) }>
                     { _("tablet.buttons.next_heat") }
                 </button>
             </div>
@@ -40,9 +34,9 @@ export default class Header extends React.Component {
     render() {
         const judge_number = this.props.judge.role_description || _("global.phrases.judge_n", this.props.judge.number);
         return (
-            <header className="flex">
+            <header>
                 { this.renderPrevHeatButton() }
-                <div className="flex-container">
+                <div className="data">
                     <div className="box">
                         <h1>{ judge_number }</h1>
                         <h2>{ this.props.judge.name }</h2>

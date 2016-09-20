@@ -26,6 +26,18 @@
                     font-weight: bold;
                     color: #fff;
                 }
+                &.judge.editing {
+                    background-color: @color-contrast;
+                }
+                &.heat input {
+                  width: 100%;
+                  box-sizing: border-box;
+                  height: 18px;
+                  margin: -2px;
+                  padding: 0;
+                  border: 0;
+                  text-align: center;
+                }
                 &.acrobatics.editing {
                     background-color: @color-contrast;
                 }
@@ -115,6 +127,7 @@
             }
             > td, th {
                 border: 1px solid black;
+                padding: 1px 3px;
             }
             &.odd-heat {
                 background-color: lighten(@color-light, 10%);

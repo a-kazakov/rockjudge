@@ -19,15 +19,14 @@ export default class Mistakes extends React.Component {
 
     render() {
         return (
-            <table className="mistakes"><tbody><tr>
-                <td>
-                    <h3>{ _("tablet.dance_judge.form_mistakes") }</h3>
-                    <IntegerInput
-                        value={ this.props.scoreData.mistakes }
-                        onChange={ this.handleChange }
-                    />
-                </td>
-            </tr></tbody></table>
+            <div className="mistakes">
+                <h3>{ _("tablet.dance_judge.form_mistakes") }</h3>
+                <IntegerInput
+                    readOnly={ this.props.readOnly }
+                    value={ this.props.scoreData.mistakes }
+                    onChange={ this.handleChange }
+                />
+            </div>
         );
     }
 }

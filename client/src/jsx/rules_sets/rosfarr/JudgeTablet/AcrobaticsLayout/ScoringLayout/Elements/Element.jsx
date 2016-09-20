@@ -7,7 +7,7 @@ export default class Element extends React.Component {
         const PT = React.PropTypes;
         return {
             acroIdx: PT.number.isRequired,
-            reduction: PT.number.isRequired,
+            reduction: PT.number,
             onAcroReductionUpdate: PT.func.isRequired,
         };
     }
@@ -20,6 +20,7 @@ export default class Element extends React.Component {
         return (
             <GeneralScale
                 header={ _("tablet.acro_judge.acro_n", this.props.acroIdx) }
+                readOnly={ this.props.readOnly }
                 scale="reduction"
                 value={ this.props.reduction }
                 onChange={ this.handleChange }

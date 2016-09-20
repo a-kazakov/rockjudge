@@ -10,6 +10,7 @@ export default class ScorePart extends React.Component {
         return (
             <GeneralScale
                 header={ header }
+                readOnly={ this.props.readOnly }
                 scale={ scale }
                 value={ value }
                 onChange={ this.handleChange }

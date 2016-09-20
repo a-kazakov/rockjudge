@@ -11,15 +11,27 @@ export default class OverrideInput extends React.Component {
     }
 
     handleMinus = () => {
+        if (this.props.readOnly) {
+            return;
+        }
         this.props.onChange(Math.max(this.props.value - 0.5, 0));
     }
     handlePlus = () => {
+        if (this.props.readOnly) {
+            return;
+        }
         this.props.onChange(Math.min(this.props.value + 0.5, this.props.originalValue));
     }
     handleZero = () => {
+        if (this.props.readOnly) {
+            return;
+        }
         this.props.onChange(0);
     }
     handleRestore = () => {
+        if (this.props.readOnly) {
+            return;
+        }
         this.props.onChange(this.props.originalValue);
     }
 
@@ -29,29 +41,29 @@ export default class OverrideInput extends React.Component {
             <div className="tablet-acro-override-input">
                 <div className="buttons">
                     <button
-                        className="tbtn btn-zero"
-                        disabled={ this.props.value < 0.05 }
+                        className="btn-zero"
+                        disabled={ this.props.value < 0.05 || this.props.readOnly }
                         { ...onTouchOrClick(this.handleZero) }
                     >
                         ↓0
                     </button>
                     <button
-                        className="tbtn btn-restore"
-                        disabled={ value_changed < 0.05 }
+                        className="btn-restore"
+                        disabled={ value_changed < 0.05 || this.props.readOnly }
                         { ...onTouchOrClick(this.handleRestore) }
                     >
                         ↑
                     </button>
                     <button
-                        className="tbtn btn-minus"
-                        disabled={ this.props.value < 0.05 }
+                        className="btn-minus"
+                        disabled={ this.props.value < 0.05 || this.props.readOnly }
                         { ...onTouchOrClick(this.handleMinus) }
                     >
                         &minus;
                     </button>
                     <button
-                        className="tbtn btn-plus"
-                        disabled={ this.props.originalValue < this.props.value + 0.05 }
+                        className="btn-plus"
+                        disabled={ this.props.originalValue < this.props.value + 0.05 || this.props.readOnly }
                         { ...onTouchOrClick(this.handlePlus) }
                     >
                         +

@@ -1,4 +1,5 @@
 import _ from "l10n";
+import makeClassName from "common/makeClassName";
 
 import Slider from "tablet_ui/Slider";
 
@@ -18,14 +19,15 @@ export default class ConfirmationButton extends React.Component {
         }
     }
 
+    getClassName() {
+        return makeClassName({
+            "confirm": true,
+            "hidden": !this.props.canConfirm,
+        });
+    }
     render() {
-        if (!this.props.canConfirm) {
-            return (
-                <div className="confirm" />
-            );
-        }
         return (
-            <div className="confirm">
+            <div className={ this.getClassName() }>
                 <Slider
                     done={ this.props.confirmed }
                     slideText={ _("tablet.global.confirm_score") }

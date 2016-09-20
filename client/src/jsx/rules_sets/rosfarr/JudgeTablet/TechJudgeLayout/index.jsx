@@ -9,7 +9,7 @@ import FooterItem from "JudgeTablet/Footer/FooterItem";
 import DancingPage from "./DancingPage";
 import AcroPage from "./AcroPage";
 
-export default class HeadJudgeLayout extends CacheMixin(React.Component) {
+export default class TechJudgeLayout extends CacheMixin(React.Component) {
     constructor(props) {
         super(props);
         this.state = {
@@ -122,7 +122,7 @@ export default class HeadJudgeLayout extends CacheMixin(React.Component) {
     }
     render() {
         return (
-            <div className="judge-tablet">
+            <div className="rosfarr-JudgeTablet TechJudgeLayout">
                 { this.renderHeader() }
                 { this.renderBody() }
                 { this.renderFooter() }

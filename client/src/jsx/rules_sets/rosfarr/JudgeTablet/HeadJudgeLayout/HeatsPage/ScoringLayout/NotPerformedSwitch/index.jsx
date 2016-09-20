@@ -16,7 +16,7 @@ export default class NotPerformedSwitch extends React.Component {
             return (
                 <button
                     type="button"
-                    className="btn btn-sm btn-danger"
+                    className="not-performed"
                     { ...onTouchEndOrClick(this.markNotPerformed.bind(this)) }
                 >
                     { _("tablet.global.mark_not_performed") }
@@ -26,7 +26,7 @@ export default class NotPerformedSwitch extends React.Component {
             return (
                 <button
                     type="button"
-                    className="btn btn-sm btn-success"
+                    className="performed"
                     { ...onTouchEndOrClick(this.markPerformed.bind(this)) }
                 >
                     { _("tablet.global.discard_not_performed") }
@@ -36,7 +36,7 @@ export default class NotPerformedSwitch extends React.Component {
     }
     render() {
         return (
-            <div className="not-performed-control">
+            <div className="not-performed-switch">
                 { this.renderButton() }
             </div>
         );

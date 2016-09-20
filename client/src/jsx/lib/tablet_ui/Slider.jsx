@@ -137,7 +137,7 @@ export default  class Slider extends React.Component {
     }
     render() {
         return (
-            <div className="slider noselect">
+            <div className="Slider">
                 <div className={ makeClassName({ "inner": true, "free": this.isFree() }) }
                     style={ { left: (this.props.done || this.state.finished) ? "200px" : `${this.state.position}px` } }
                     onClick={ this.handleClick }

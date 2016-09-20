@@ -17,12 +17,10 @@ export default class ResultsPage extends React.Component {
     render() {
         return (
             <div className="body results">
-                <div className="tour-results">
-                    <TourResults
-                        renderer={ ResultsTable2 }
-                        tourId={ this.props.tour.id }
-                    />
-                </div>
+                <TourResults
+                    renderer={ ResultsTable2 }
+                    tourId={ this.props.tour.id }
+                />
             </div>
         )
     }

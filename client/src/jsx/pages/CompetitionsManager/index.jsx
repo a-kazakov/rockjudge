@@ -48,35 +48,33 @@ export default class CompetitionsManager extends React.Component {
 
     renderTable() {
         return (
-            <div className="CompetitionsManager">
-                <table>
-                    <tbody>
-                        <tr>
-                            <th className="name">
-                                { _("models.competition.name") }
-                            </th>
-                            <th className="date">
-                                { _("models.competition.date") }
-                            </th>
-                            <th className="is-active">
-                                { _("models.competition.active") }
-                            </th>
-                            <th className="delete" />
-                        </tr>
-                        { this.state.competitions.map((competition, idx) =>
-                            <Row
-                                competition={ competition }
-                                idx={ idx }
-                                key={ competition.id }
-                                rulesSets={ this.props.rulesSets }
-                            />
-                        ) }
-                        <CreationRow
+            <table>
+                <tbody>
+                    <tr>
+                        <th className="name">
+                            { _("models.competition.name") }
+                        </th>
+                        <th className="date">
+                            { _("models.competition.date") }
+                        </th>
+                        <th className="is-active">
+                            { _("models.competition.active") }
+                        </th>
+                        <th className="delete" />
+                    </tr>
+                    { this.state.competitions.map((competition, idx) =>
+                        <Row
+                            competition={ competition }
+                            idx={ idx }
+                            key={ competition.id }
                             rulesSets={ this.props.rulesSets }
                         />
-                    </tbody>
-                </table>
-            </div>
+                    ) }
+                    <CreationRow
+                        rulesSets={ this.props.rulesSets }
+                    />
+                </tbody>
+            </table>
         );
     }
     render() {
@@ -86,13 +84,15 @@ export default class CompetitionsManager extends React.Component {
             );
         }
         return (
-            <div>
+            <div className="CompetitionsManager">
                 <header>
                     <h1>
                         { _("admin.headers.competitions_management") }
                     </h1>
                 </header>
-                { this.renderTable() }
+                <div className="body">
+                    { this.renderTable() }
+                </div>
             </div>
         );
     }

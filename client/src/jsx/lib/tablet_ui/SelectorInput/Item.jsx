@@ -7,6 +7,7 @@ export default class Item extends React.Component {
         const PT = React.PropTypes;
         return {
             active: PT.bool.isRequired,
+            readOnly: PT.bool.isRequired,
             text: PT.string.isRequired,
             value: PT.oneOfType([
                 PT.string.isRequired,
@@ -18,6 +19,9 @@ export default class Item extends React.Component {
     }
 
     handleClick = () => {
+        if (this.props.readOnly) {
+            return;
+        }
         this.props.onClick(this.props.value);
     }
 
@@ -26,6 +30,7 @@ export default class Item extends React.Component {
             "tbtn": true,
             "score-btn": true,
             "active": this.props.active,
+            "read-only": this.props.readOnly,
         });
     }
     render() {

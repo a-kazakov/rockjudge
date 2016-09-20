@@ -20,6 +20,7 @@ export default class Mistakes extends React.Component {
             <div className="mistakes">
                 <h3>{ _("tablet.acro_judge.fall_down") }</h3>
                 <IntegerInput
+                    readOnly={ this.props.readOnly }
                     value={ this.props.mistakes }
                     onChange={ this.handleChange }
                 />

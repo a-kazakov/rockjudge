@@ -15,6 +15,7 @@ export default class SelectorInput extends React.Component {
                     ]),
                 ),
             ).isRequired,
+            readOnly: PT.bool,
             rowSize: PT.number,
             style: PT.oneOf(["grid", "one-line", "two-lines"]),
             value: PT.oneOfType([
@@ -27,6 +28,7 @@ export default class SelectorInput extends React.Component {
     }
     static get defaultProps() {
         return {
+            readOnly: false,
             rowSize: 10,
             style: "one-line",
         };
@@ -41,9 +43,9 @@ export default class SelectorInput extends React.Component {
 
     getClassName() {
         return makeClassName({
-            "scoring-layout": true,
-            "selector-layout": this.props.style !== "two-lines",
-            "selector-layout-2rows": this.props.style === "two-lines",
+            "SelectorInput": true,
+            "one-row": this.props.style !== "two-lines",
+            "two-rows": this.props.style === "two-lines",
             "selected": this.props.value !== null,
             [`n-${this.getButtonsCount()}`]: true,
         });
@@ -65,6 +67,7 @@ export default class SelectorInput extends React.Component {
                 <Item
                     active={ value === this.props.value }
                     key={ idx }
+                    readOnly={ this.props.readOnly }
                     text={ text }
                     value={ value }
                     onClick={ this.props.onChange }

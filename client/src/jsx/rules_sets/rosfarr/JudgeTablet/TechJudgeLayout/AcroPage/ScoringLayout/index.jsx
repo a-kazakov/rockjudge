@@ -38,6 +38,7 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
     renderContent() {
         return this.props.run.acrobatics.map((acro, idx) =>
             <Element
+                readOnly={ this.score.confirmed }
                 key={ idx }
                 acro={ acro }
                 onAcroOverride={ this.genOnAcroOverride(idx) }

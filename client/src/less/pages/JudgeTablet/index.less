@@ -1,0 +1,61 @@
+.JudgeTablet {
+    .no-select();
+    .fill-space();
+    &.splash-screen {
+        .flex-col();
+        > header {
+            .flex-item();
+            .flex-row();
+            background-color: @color-medium;
+            color: white;
+            min-height: 40px;
+            padding: 10px;
+            h1 {
+                .flex-item-stretch();
+                .flex-centered();
+                font-weight: normal;
+                text-align: center;
+                font-size: 15px;
+                margin: 0 120px 0 0;
+                padding: 0;
+            }
+            .button {
+                .flex-item();
+                width: 120px;
+                text-align: left;
+                a {
+                    .button-primary();
+                }
+            }
+        }
+        > .body {
+            .flex-item-stretch();
+            .flex-centered();
+            .judge-number {
+                font-weight: 700;
+                font-size: 25px;
+            }
+            .judge-name {
+                font-weight: 400;
+                font-size: 40px;
+            }
+            .not-judging-discipline {
+                margin-top: 30px;
+                font-weight: bold;
+                font-size: 20px;
+                text-align: center;
+            }
+            .not-judging-message {
+                margin-top: 30px;
+                font-weight: 500;
+                font-size: 20px;
+                text-align: center;
+            }
+            .not-judging-tour {
+                font-weight: bold;
+                font-size: 20px;
+                text-align: center;
+            }
+        }
+    }
+}

@@ -1,0 +1,128 @@
+.HeadJudgeLayout {
+    .not-performed-switch {
+        margin-top: 20px;
+        text-align: center;
+        button.not-performed {
+            .button-red();
+        }
+        button.performed {
+            .button-green();
+        }
+    }
+    .line-judge-scores {
+        width: 100%;
+        margin: 5px auto;
+        table-layout: fixed;
+        border-collapse: separate;
+        border-spacing: 5px;
+        .numbers {
+            padding: 0;
+            text-align: center;
+            font-weight: normal;
+            font-size: 14px;
+            td {
+                vertical-align: bottom;
+                height: 20px;
+            }
+        }
+        .scores {
+            td {
+                background-color: lighten(@color-dark, 50%);
+                vertical-align: middle;
+                height: 30px;
+                text-align: center;
+                font-weight: bold;
+                font-size: 14px;
+                &.confirmed {
+                    color: @color-white;
+                    background-color: @color-green;
+                }
+            }
+        }
+    }
+    .tech-judge-info {
+        font-weight: normal;
+        font-size: 13px;
+        width: 100%;
+        box-sizing: border-box;
+        vertical-align: top;
+        margin-bottom: 15px;
+        height: 30px;
+        .title {
+            box-sizing: border-box;
+            vertical-align: middle;
+            width: 32.5%;
+            padding-right: 5px;
+            text-align: right;
+        }
+        .value {
+            vertical-align: middle;
+            width: 17.5%;
+            text-align: center;
+            font-weight: bold;
+            .inner {
+                .flex-centered();
+                background-color: lighten(@color-dark, 50%);
+                height: 30px;
+                &.ok {
+                    background-color: @color-green;
+                    color: @color-white;
+                }
+                &.fail {
+                    background-color: @color-red;
+                    color: @color-white;
+                }
+            }
+        }
+    }
+    .ResultsTable2 {
+        p {
+            margin: 0;
+            padding: 0;
+            font-size: 12px;
+        }
+        .text-left {
+            text-align: left;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .text-center {
+            text-align: center;
+        }
+        table {
+            > thead, > tbody {
+                > tr {
+                    > td, > th {
+                        border: 1px solid black;
+                    }
+                }
+            }
+        }
+        margin: 10px;
+    }
+    .actions {
+        .flex-centered();
+        .warning {
+            width: 500px;
+            display: inline-block;
+            height: 0;
+            position: relative;
+            .content {
+                .alert-red();
+                position: absolute;
+                text-align: center;
+                left: 0;
+                right: 0;
+                bottom: 10px;
+                padding: 10px;
+            }
+        }
+        button {
+            .button-primary();
+            width: 500px;
+            margin: 5px;
+            height: 40px;
+        }
+    }
+}

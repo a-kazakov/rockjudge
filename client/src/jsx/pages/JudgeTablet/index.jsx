@@ -165,10 +165,12 @@ export default class JudgeTablet extends React.Component {
         }
         const JudgeTabletComponent = rules_set.judge_tablet;
         return (
-            <JudgeTabletComponent
-                disciplineJudge={ this.state.disciplineJudge }
-                tour={ this.state.tour }
-            />
+            <div className="JudgeTablet rules-set">
+                <JudgeTabletComponent
+                    disciplineJudge={ this.state.disciplineJudge }
+                    tour={ this.state.tour }
+                />
+            </div>
         );
     }
 }

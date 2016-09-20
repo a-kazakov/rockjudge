@@ -1,0 +1,69 @@
+.TechJudgeLayout {
+    .stopwatch {
+        width: 100%;
+        padding-bottom: 15px;
+        .time {
+            line-height: 31px;
+            vertical-align: middle;
+            text-align: center;
+            font-weight: bold;
+            width: 32.3333%;
+            margin-left: 0.5%;
+            margin-right: 0.5%;
+            display: inline-block;
+        }
+        .btn-toggle, .btn-reset {
+            margin-left: 0.5%;
+            margin-right: 0.5%;
+            vertical-align: middle;
+            width: 32.3333%;
+            display: inline-block;
+        }
+        .tbtn {
+            .button-tablet-primary();
+        }
+        .tbtn.btn-toggle {
+            .button-tablet-green();
+            &.active {
+                .button-tablet-red();
+            }
+        }
+    }
+
+    .tech-judge-acro {
+        padding: 5px 0;
+        border-top: 2px solid @color-dark;
+        .controls {
+            margin-bottom: -7px;
+            float: right;
+            .btn-reset {
+                width: 110px;
+                display: inline-block;
+                vertical-align: top;
+            }
+            .setter {
+                width: 150px;
+                display: inline-block;
+                vertical-align: top;
+                margin-bottom: 0;
+            }
+        }
+    }
+    .tablet-acro-override-input {
+        width: 100%;
+        .buttons {
+            button {
+                .button-tablet-primary();
+                width: 23%;
+                margin: 1%;
+                // &:disabled {
+                //     background-color: desaturate(lighten(@color-dark, 40%), 10%);
+                // }
+            }
+        }
+        .value {
+            text-align: center;
+            font-weight: bold;
+        }
+    }
+}

@@ -1,0 +1,112 @@
+.rosfarr-JudgeTablet {
+    .fill-space();
+    .flex-col();
+    header {
+        .flex-item();
+        .flex-row();
+        background-color: @color-medium;
+        color: white;
+        min-height: 40px;
+        padding: 10px;
+        h1 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: normal;
+        }
+        h2 {
+            margin: 0;
+            font-size: 13px;
+            font-weight: normal;
+        }
+        .button-container {
+            .flex-item();
+            width: 120px;
+            &.left {
+                .flex-centered();
+                align-items: flex-start;
+            }
+            &.right {
+                .flex-centered();
+                align-items: flex-end;
+            }
+            button {
+                .button-primary();
+            }
+        }
+        .data {
+            .flex-item-stretch();
+            .flex-row();
+            .box {
+                .flex-item-stretch();
+                .flex-centered();
+            }
+        }
+    }
+    .body {
+        .flex-item-stretch();
+        .tablet-scrollable();
+        .total-score {
+            font-weight: bold;
+            text-align: right;
+        }
+        h2 {
+            text-align: center;
+            font-weight: bold;
+            margin: 5px 0;
+            font-size: 16px;
+        }
+        h3 {
+            font-weight: bold;
+            font-size: 12px;
+            margin: 5px 0;
+        }
+        .mistakes {
+            button {
+                background-color: @color-red !important;
+                border-color: @color-red !important;
+                margin: 0;
+            }
+            .value {
+                background-color: @color-light-red !important;
+            }
+        }
+        table.mistakes {
+            width: 100%;
+            table-layout: fixed;
+            td:not(:first-child) {
+                padding-left: 10px;
+            }
+            td:not(:last-child) {
+                padding-right: 10px;
+            }
+        }
+        div.mistakes {
+            margin: 0 auto;
+            width: 300px;
+        }
+        .confirm.hidden {
+            visibility: hidden;
+        }
+    }
+    footer {
+        .flex-item();
+        .flex-row();
+        justify-content: center;
+        height: 30px;
+        background-color: @color-medium;
+        button {
+            .flex-item();
+            width: 200px;
+            background-color: @color-medium;
+            color: white;
+            border: none;
+            font-weight: bold;
+            &.active {
+                background-color: @color-dark;
+            }
+        }
+    }
+    @import "./Grid";
+    @import "./HeadJudgeLayout";
+    @import "./TechJudgeLayout";
+}

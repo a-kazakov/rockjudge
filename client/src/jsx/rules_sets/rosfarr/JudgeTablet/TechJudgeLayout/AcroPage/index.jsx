@@ -17,7 +17,7 @@ export default class AcroPage extends React.Component {
     }
     render() {
         return (
-            <div className="body heats">
+            <div className="body">
                 <Grid>
                     { this.renderScores() }
                 </Grid>

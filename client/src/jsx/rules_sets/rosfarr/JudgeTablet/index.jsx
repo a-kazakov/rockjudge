@@ -41,12 +41,14 @@ export default class JudgeTablet extends React.Component {
             );
         }
         return (
-            <LayoutClass
-                disciplineJudge={ this.props.disciplineJudge }
-                tour={ this.props.tour }
-                onScoreUpdate={ this.onScoreUpdate }
-                onScoreConfirm={ this.onScoreConfirm }
-            />
+            <div className="rosfarr-JudgeTablet">
+                <LayoutClass
+                    disciplineJudge={ this.props.disciplineJudge }
+                    tour={ this.props.tour }
+                    onScoreConfirm={ this.onScoreConfirm }
+                    onScoreUpdate={ this.onScoreUpdate }
+                />
+            </div>
         );
     }
 }

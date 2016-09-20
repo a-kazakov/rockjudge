@@ -27,12 +27,14 @@ export default class Mistakes extends React.Component {
                 <td>
                     <h3>{ _("tablet.dance_judge.form_small_mistakes") }</h3>
                     <IntegerInput
+                        readOnly={ this.props.readOnly }
                         value={ this.props.scoreData.small_mistakes }
                         onChange={ this.handleSmallMistakesChange }
                     />
                 </td><td>
                     <h3>{ _("tablet.dance_judge.form_big_mistakes") }</h3>
                     <IntegerInput
+                        readOnly={ this.props.readOnly }
                         value={ this.props.scoreData.big_mistakes }
                         onChange={ this.handleBigMistakesChange }
                     />

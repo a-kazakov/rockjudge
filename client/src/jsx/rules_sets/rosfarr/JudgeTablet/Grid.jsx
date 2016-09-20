@@ -68,7 +68,7 @@ export default class Grid extends CacheMixin(React.Component) {
         )
     }
     render() {
-        const class_name = this.two_rows ? "grid two-rows" : "grid";
+        const class_name = this.two_rows ? "Grid two-rows" : "Grid";
         const first_row = this.two_rows
             ? this.children.filter((x, idx) => idx % 2 === 0)
             : this.children;

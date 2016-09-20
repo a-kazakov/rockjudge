@@ -52,11 +52,11 @@ export default class Participant extends CacheMixin(React.Component) {
     }
     renderScoringLayout() {
         const score_data = this.score.data.raw_data;
-        const class_name = this.score.confirmed ? "read-only" : "";
         const ScoringComponent = this.props.layoutClass;
         return (
-            <div className={ class_name }>
+            <div>
                 <ScoringComponent
+                    readOnly={ this.score.confirmed }
                     score={ this.score }
                     scoreData={ score_data }
                     onScoreUpdate={ this.onScoreUpdate }

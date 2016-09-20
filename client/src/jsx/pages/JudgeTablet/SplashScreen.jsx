@@ -45,19 +45,18 @@ export default class SplashScreen extends React.Component {
             _("global.phrases.judge_n", this.props.judge.number)
         );
         return (
-            <div className="judge-tablet">
+            <div className="JudgeTablet splash-screen">
                 <header>
-                    <a className="btn btn-primary pull-left" href="/">
-                        { _("tablet.buttons.to_start_page") }
-                    </a>
-                    <div className="header">
-                        <h1>
-                            { this.props.judge.competition.name }
-                        </h1>
+                    <div className="button">
+                        <a href="/">
+                            { _("tablet.buttons.to_start_page") }
+                        </a>
                     </div>
-                    <div className="clearfix" />
+                    <h1>
+                        { this.props.judge.competition.name }
+                    </h1>
                 </header>
-                <div className="splash-screen">
+                <div className="body">
                     <div className="judge-number">
                         { judge_number }
                     </div>

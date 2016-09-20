@@ -13,11 +13,13 @@ export default class ScoringLayout extends React.Component {
         return (
             <div>
                 <Elements
+                    readOnly={ this.props.readOnly }
                     reductions={ this.props.scoreData.reductions }
                     onAcroReductionUpdate={ this.handleAcroReductionUpdate }
                 />
                 <Mistakes
                     mistakes={ this.props.scoreData.mistakes }
+                    readOnly={ this.props.readOnly }
                     onScoreUpdate={ this.props.onScoreUpdate }
                 />
                 <TotalScore

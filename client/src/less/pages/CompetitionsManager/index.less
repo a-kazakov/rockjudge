@@ -1,35 +1,49 @@
 .CompetitionsManager {
-    padding: 10px;
-    > table {
-        .admin-management-table();
-        > tbody > tr.editor > td > form .info {
-            input {
-                display: inline;
-                height: 20px;
-                margin: 0;
+    .flex-col();
+    height: 100%;
+    > header {
+        .flex-item();
+        .admin-header();
+    }
+    > .body {
+        .flex-item-stretch();
+        .scrollable();
+        padding: 10px;
+        > table {
+            .admin-management-table();
+            > tbody > tr.editor > td > form .info {
+                input {
+                    display: inline;
+                    height: 20px;
+                    margin: 0;
+                }
+                input.title {
+                  width: 20%;
+                }
+                input.value {
+                  width: 65%;
+                }
+                button.delete {
+                    .button-red();
+                    .button-small();
+                    width: 5%;
+                }
+                button.up, button.down {
+                    .button-primary();
+                    .button-small();
+                    width: 5%;
+                }
+                .add-button {
+                    .button-white();
+                    .button-small();
+                    width: 100%;
+                    height: 25px;
+                }
             }
-            input.title {
-              width: 20%;
-            }
-            input.value {
-              width: 65%;
-            }
-            button.delete {
-                .button-red();
-                .button-small();
-                width: 5%;
-            }
-            button.up, button.down {
-                .button-primary();
-                .button-small();
-                width: 5%;
-            }
-            .add-button {
-                .button-white();
-                .button-small();
-                width: 100%;
-                height: 25px;
-            }
+        }
+        .create-button {
+            .button-white();
+            width: 100%;
         }
     }
 }
