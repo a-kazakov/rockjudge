@@ -7,6 +7,8 @@ const gulp = require("gulp");
 const gutil = require("gulp-util");
 const makeItFaster = require("spawn-task-experiment").spawn;
 
+const OUT_DIR = gutil.env.dest || "../static/";
+
 function makeTask(func, args) {
     const params = Array.from(args);
     const str_func = func.toString();
@@ -88,7 +90,7 @@ function addPrimaryLessTask(module_name) {
     const task_func = makeGeneralLessTask(
         task_name,
         `src/less/entry_points/${module_name}.less`,
-        "../static/css",
+        `${OUT_DIR}/css`,
         `${module_name}.css`,
         ["src/less/"]
     );
@@ -106,7 +108,7 @@ function addPrimaryJsxTask(module_name) {
     const task_func = makeGeneralJsxTask(
         task_name,
         `src/jsx/entry_points/${module_name}.jsx`,
-        "../static/js",
+        `${OUT_DIR}/js`,
         `${module_name}.js`,
         ["./src/jsx/", "./src/jsx/lib/"],
         debug
@@ -124,7 +126,7 @@ function addRulesSetLessTask(rules_set_name) {
     const task_func = makeGeneralLessTask(
         task_name,
         `src/less/rules_sets/${rules_set_name}/index.less`,
-        "../static/css/rules_sets",
+        `${OUT_DIR}/css/rules_sets`,
         `${rules_set_name}.css`,
         [`src/less/rules_sets/${rules_set_name}`, "src/less/include"]
     );
@@ -142,7 +144,7 @@ function addRulesSetJsxTask(rules_set_name) {
     const task_func = makeGeneralJsxTask(
         task_name,
         `src/jsx/rules_sets/${rules_set_name}/root.jsx`,
-        '../static/js/rules_sets',
+        `${OUT_DIR}/js/rules_sets`,
         `${rules_set_name}.js`,
         [`./src/jsx/rules_sets/${rules_set_name}/`, './src/jsx/lib'],
         debug

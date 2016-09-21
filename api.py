@@ -845,5 +845,5 @@ class Api:
                     exception=ex_str,
                     response=response)
             logger.removeHandler(hdlr)
-            print("Api call: {:<25s} {:4d}ms {:4d} queries".format(request.method, int(1000 * total_time), hdlr.cnt))
+            print("Api call: {:<35s} {:4d}ms {:4d} queries".format(request.method, int(1000 * total_time), hdlr.cnt))
             return response
