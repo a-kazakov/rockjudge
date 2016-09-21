@@ -117,7 +117,7 @@ export default class HeatSelector extends React.Component {
         return (
             <div className="heat-selector">
                 <button
-                    className="btn btn-sm btn-warning btn-reset-heat"
+                    className="reset-button"
                     type="button"
                     { ...onTouchEndOrClick(this.handleHeatReset) }
                 >

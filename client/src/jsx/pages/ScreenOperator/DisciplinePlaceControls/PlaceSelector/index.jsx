@@ -26,7 +26,7 @@ export default class PlaceSelector extends React.Component {
         return (
             <div>
                 <button
-                    className="btn btn-sm btn-warning btn-reset-place"
+                    className="reset-button"
                     type="button"
                     { ...onTouchEndOrClick(this.handlePlaceReset) }
                 >

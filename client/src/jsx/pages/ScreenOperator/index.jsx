@@ -192,14 +192,14 @@ export default class ScreenOperator extends React.Component {
         return (
             <div className="buttons">
                 <button
-                    className="btn btn-danger"
+                    className="discard-button"
                     type="button"
                     { ...onTouchEndOrClick(this.handleDataReset) }
                 >
                     { _("global.buttons.discard") }
                 </button>
                 <button
-                    className="btn btn-primary"
+                    className="submit-button"
                     disabled={ !this.validatePendingData() }
                     type="button"
                     { ...onTouchEndOrClick(this.handleDataSubmission) }
@@ -217,7 +217,7 @@ export default class ScreenOperator extends React.Component {
         }
         const data = this.data;
         return (
-            <div className="screen-operator">
+            <div className="ScreenOperator">
                 <LeftCol
                     activeScreenId={ data.screen_id }
                     manifest={ this.manifest }

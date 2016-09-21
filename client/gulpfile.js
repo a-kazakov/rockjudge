@@ -160,13 +160,14 @@ addPrimaryLessTask('admin');
 addPrimaryLessTask('competitions');
 addPrimaryLessTask('judge');
 addPrimaryLessTask('presenter');
+addPrimaryLessTask('screen');
+addPrimaryLessTask('screen_operator');
 
 addPrimaryJsxTask('start_page');
 addPrimaryJsxTask('admin');
 addPrimaryJsxTask('auto_printer');
 addPrimaryJsxTask('competitions');
 addPrimaryJsxTask('judge');
-addPrimaryJsxTask('lib');
 addPrimaryJsxTask('presenter');
 addPrimaryJsxTask('screen');
 addPrimaryJsxTask('screen_operator');
