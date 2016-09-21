@@ -1,7 +1,5 @@
 import _ from "l10n";
 
-import keys_storage from "common/keys_storage";
-
 export default class SingleJudge extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
@@ -33,24 +31,18 @@ export default class SingleJudge extends React.Component {
         }
         return (
             <div className="single-judge">
-                <div className="content">
-                    <h3>
-                        { _("start_page.messages.single_judge_access") }
-                    </h3>
-                    <h4>
-                        { `${judge_role}: ${judge.name}` }
-                    </h4>
-                    <button
-                        className="btn btn-lg btn-primary"
-                        type="button"
-                        onClick={ this.handleButtonClick }
-                    >
-                        { _("global.buttons.continue") }
-                    </button>
-                </div>
-                <div className="client-id">
-                    { _("start_page.messages.client_id", keys_storage.client_id) }
-                </div>
+                <h3>
+                    { _("start_page.messages.single_judge_access") }
+                </h3>
+                <h4>
+                    { `${judge_role}: ${judge.name}` }
+                </h4>
+                <button
+                    type="button"
+                    onClick={ this.handleButtonClick }
+                >
+                    { _("global.buttons.continue") }
+                </button>
             </div>
         );
     }

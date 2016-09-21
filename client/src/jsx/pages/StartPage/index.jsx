@@ -1,3 +1,5 @@
+import _ from "l10n";
+
 import Api from "common/server/Api";
 import Loader from "common/components/Loader";
 import message_dispatcher from "common/server/message_dispatcher";
@@ -75,8 +77,11 @@ export default class StartPage extends React.Component {
     }
     render() {
         return (
-            <div className="start-screen">
+            <div className="StartPage">
                 { this.renderBody() }
+                <div className="client-id">
+                    { _("start_page.messages.client_id", keys_storage.client_id) }
+                </div>
             </div>
         );
     }

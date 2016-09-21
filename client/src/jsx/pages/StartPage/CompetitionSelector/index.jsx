@@ -25,11 +25,11 @@ export default class CompetitionSelector extends React.Component {
             );
         }
         return (
-            <div className="start-screen">
-                <div className="no-competitions">
-                    <h3>{ _("start_page.messages.no_competitions") }</h3>
-                    { link }
-                </div>
+            <div className="CompetitionSelector no-competitions">
+                <h3>
+                    { _("start_page.messages.no_competitions") }
+                </h3>
+                { link }
             </div>
         );
     }
@@ -38,7 +38,7 @@ export default class CompetitionSelector extends React.Component {
             return this.renderNoCompetitions();
         }
         return (
-            <div className="competition-selector">
+            <div className="CompetitionSelector">
                 <h3>
                     { _("start_page.headers.select_competition") }
                 </h3>

@@ -168,13 +168,13 @@ export default class RoleSelector extends React.Component {
     }
     render() {
         return (
-            <div className="role-selector">
+            <div className="RoleSelector">
                 <header>
                     <h1>
                         { this.props.competition.name }
                     </h1>
                 </header>
-                <div className="role-selector-content">
+                <div className="body">
                     { this.renderBody() }
                 </div>
             </div>

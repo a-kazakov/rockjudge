@@ -156,6 +156,7 @@ function addRulesSetJsxTask(rules_set_name) {
 }
 
 
+addPrimaryLessTask('start_page');
 addPrimaryLessTask('admin');
 addPrimaryLessTask('competitions');
 addPrimaryLessTask('judge');
