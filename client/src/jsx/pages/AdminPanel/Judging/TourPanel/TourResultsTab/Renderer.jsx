@@ -5,7 +5,7 @@ import rules_set from "rules_sets/loader";
 
 import Paper from "pages/AdminPanel/common/Paper";
 
-export default class Wrapper extends React.Component {
+export default class Renderer extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -81,4 +81,4 @@ export default class Wrapper extends React.Component {
     }
 }
 
-Wrapper.displayName = "AdminPanel_Judging_TourPanel_TourResultsTab_Wrapper";
+Renderer.displayName = "AdminPanel_Judging_TourPanel_TourResultsTab_Renderer";

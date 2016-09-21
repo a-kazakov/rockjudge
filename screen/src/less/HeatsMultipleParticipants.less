@@ -1,0 +1,67 @@
+.HeatsMultipleParticipants {
+    @base: 1.25vh;
+    @run_base: 1vh;
+    @row_height: 27vh;
+    .outer();
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    .discipline-name {
+        font-size: 4 * @base;
+        font-weight: bold;
+    }
+    .tour-name {
+        font-size: 3 * @base;
+        font-weight: bold;
+        padding-bottom: 3 * @base;
+    }
+    .heat {
+        font-size: 4 * @base;
+        padding-bottom: 6 * @base;
+    }
+    .runs {
+        width: 100%;
+        box-sizing: border-box;
+        &:not(.two-rows) {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+        }
+        &.two-rows {
+            text-align: center;
+            .run:nth-child(even) {
+                margin: @row_height (-33.3% / 2) 0 (-33.3% / 2);
+            }
+        }
+        .run {
+            height: @row_height;
+            text-align: center;
+            box-sizing: border-box;
+            width: 33.3%;
+            display: inline-block;
+            vertical-align: top;
+            &.hidden {
+                visibility: hidden;
+            }
+            .participant-number {
+                font-size: 6 * @run_base;
+                color: @rosfarr-red;
+            }
+            .participant-name {
+                font-size: 4 * @run_base;
+                white-space: pre-wrap;
+            }
+        }
+        .score {
+            padding-top: 2 * @run_base;
+            font-size: 4 * @run_base;
+            font-weight: bold;
+            &.hidden {
+                visibility: hidden;
+            }
+        }
+    }
+}

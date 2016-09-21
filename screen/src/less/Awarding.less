@@ -1,0 +1,32 @@
+.discipline-results {
+    .outer();
+}
+
+.discipline-results .Awarding {
+    @base: 0.9vw;
+    .outer();
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    .discipline-name {
+        font-size: 4 * @base;
+        font-weight: bold;
+    }
+    .place {
+        padding-top: 4 * @base;
+        font-size: 6 * @base;
+        font-weight: bold;
+        color: @rosfarr-red;
+    }
+    .participant-name {
+        padding-top: 2 * @base;
+        padding-bottom: @base;
+        font-size: 4 * @base;
+    }
+    .participant-club {
+        font-size: 3 * @base;
+        font-weight: bold;
+    }
+}

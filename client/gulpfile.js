@@ -1,190 +1,179 @@
 "use strict"
 
-const gulp = require('gulp');
-const less = require('gulp-less');
-const concat = require('gulp-concat');
-const gutil = require('gulp-util');
-const makeItFaster = require('spawn-task-experiment').spawn;
+/* eslint-disable no-shadow */
+/* eslint-disable prefer-rest-params */
 
+const gulp = require("gulp");
+const gutil = require("gulp-util");
+const makeItFaster = require("spawn-task-experiment").spawn;
 
-const LessPluginCleanCSS = require('less-plugin-clean-css'),
-      LessPluginAutoPrefix = require('less-plugin-autoprefix'),
-      cleancss = new LessPluginCleanCSS({ advanced: true }),
-      autoprefix = new LessPluginAutoPrefix({ browsers: ["last 5 versions"] });
-
-
-let all_jsx_tasks = [];
-let all_less_tasks = []
-
-function createLessTask(task) {
-
-    function buildLess() {
-        // modules
-        var LessPluginCleanCSS = require('less-plugin-clean-css'),
-            LessPluginAutoPrefix = require('less-plugin-autoprefix'),
-            cleancss = new LessPluginCleanCSS({ advanced: true }),
-            autoprefix = new LessPluginAutoPrefix({ browsers: ["last 5 versions"] });
-        var gulp = require('gulp');
-        var less = require('gulp-less');
-        var concat = require('gulp-concat');
-        // arguments
-        var task = "__task__";
-        // building
-        return gulp.src(`src/less/entry_points/${task}.less`)
-            .pipe(less({
-                plugins: [autoprefix, cleancss],
-                paths: ["src/less/"],
-            }))
-            .pipe(concat(`${task}.css`))
-            .pipe(gulp.dest("../static/css"));
-    }
-
-    all_less_tasks.push("css_" + task);
-    var str_func = buildLess.toString()
-        .replace("__task__", task);
-    gulp.task("css_" + task, makeItFaster(str_func));
+function makeTask(func, args) {
+    const params = Array.from(args);
+    const str_func = func.toString();
+    const str_params = params.map(p => JSON.stringify(p)).join(",");
+    const str_wrapper = `function() { (${str_func})(${str_params}); }`;
+    return makeItFaster(str_wrapper);
 }
 
-function createRuleSetLessTask(task) {
+let task_groups = {}
 
-    function buildLess() {
-        // modules
-        const LessPluginCleanCSS = require('less-plugin-clean-css'),
-              LessPluginAutoPrefix = require('less-plugin-autoprefix'),
-              cleancss = new LessPluginCleanCSS({ advanced: true }),
-              autoprefix = new LessPluginAutoPrefix({ browsers: ["last 5 versions"] });
+function addTaskToGroup(task, group) {
+    if (!task_groups[group]) {
+        task_groups[group] = [];
+    }
+    task_groups[group].push(task);
+}
+
+function addGroupTasks() {
+    for (const group of Object.keys(task_groups)) {
+        gulp.task(group, gulp.parallel.apply(gulp.parallel, task_groups[group]));
+    }
+}
+
+function makeGeneralLessTask() {
+    return makeTask((task, entry_file, out_dir, out_file, path) => {
+        const LessPluginCleanCSS = require('less-plugin-clean-css');
+        const LessPluginAutoPrefix = require('less-plugin-autoprefix');
         const gulp = require('gulp');
         const less = require('gulp-less');
         const concat = require('gulp-concat');
-        // arguments
-        const task = "__task__";
-        // building
-        return gulp.src(`src/less/rules_sets/${task}/index.less`)
+
+        const cleancss = new LessPluginCleanCSS({ advanced: true });
+        const autoprefix = new LessPluginAutoPrefix({ browsers: ["last 5 versions"] });
+
+        return gulp.src(entry_file)
             .pipe(less({
                 plugins: [autoprefix, cleancss],
-                paths: [`src/less/rules_sets/${task}`, "src/less/include"],
+                paths: path,
             }))
-            .pipe(concat(`${task}.css`))
-            .pipe(gulp.dest("../static/css/rules_sets"));
-    }
-
-    all_less_tasks.push(`rs_css_${task}`);
-    const str_func = buildLess.toString().replace("__task__", task);
-    gulp.task(`rs_css_${task}`, makeItFaster(str_func));
+            .pipe(concat(out_file))
+            .pipe(gulp.dest(out_dir));
+    }, arguments);
 }
 
-function createJsxTask(task) {
-    all_jsx_tasks.push(task);
-    function doTheJob() {
-        const gulp = require('gulp');
-        const browserify = require('browserify');
-        const babelify = require('babelify');
-        const uglify = require('gulp-uglify');
-        const source = require('vinyl-source-stream');
-        const buffer = require('vinyl-buffer');
-        const gutil = require('gulp-util');
+function makeGeneralJsxTask() {
+    return makeTask((task, entry_file, out_dir, out_file, path, debug) => {
+        const gulp = require("gulp");
+        const browserify = require("browserify");
+        const babelify = require("babelify");
+        const uglify = require("gulp-uglify");
+        const source = require("vinyl-source-stream");
+        const buffer = require("vinyl-buffer");
+        const gutil = require("gulp-util");
 
-        const task = "__task__";
-        let env_type = "__env_type__";
-        function buildJsx(entry_point, out_dir, out_file) {
-            let bundler = browserify({
-                entries: entry_point,
-                extensions: ['.jsx'],
-                paths: ['./src/jsx/', './src/jsx/lib'],
-                debug: env_type !== 'production',
-            })
+        return browserify({
+            entries: entry_file,
+            extensions: [".jsx"],
+            paths: path,
+            debug: debug,
+        })
             .transform(babelify, {
-                presets: ['es2015', 'react'],
+                presets: ["es2015", "react"],
                 plugins: [
-                    'transform-class-properties',
-                    'transform-object-rest-spread',
-                    'syntax-trailing-function-commas',
+                    "transform-class-properties",
+                    "transform-object-rest-spread",
+                    "syntax-trailing-function-commas",
                 ],
             })
             .bundle()
             .pipe(source(out_file))
             .pipe(buffer())
-            .pipe(env_type === 'production' ? uglify() : gutil.noop())
+            .pipe(debug ? gutil.noop() : uglify())
             .pipe(gulp.dest(out_dir));
-            return bundler;
-        }
-        return buildJsx(
-            `src/jsx/entry_points/${task}.jsx`,
-            "../static/js",
-            `${task}.js`
-        );
-    }
-    let str_func = doTheJob.toString()
-        .replace("__task__", task)
-        .replace("__env_type__", gutil.env.type);
-    gulp.task(task, makeItFaster(str_func));
+    }, arguments);
 }
 
-function createRuleSetJsxTask(task) {
-    all_jsx_tasks.push("rs_" + task);
-    function doTheJob() {
-        let gulp = require('gulp');
-        let browserify = require('browserify');
-        let babelify = require('babelify');
-        let uglify = require('gulp-uglify');
-        let source = require('vinyl-source-stream');
-        let buffer = require('vinyl-buffer');
-        let gutil = require('gulp-util');
-
-        let task = "__task__";
-        let env_type = "__env_type__";
-        function buildJsx(entry_point, out_dir, out_file) {
-            let bundler = browserify({
-                entries: entry_point,
-                extensions: ['.jsx'],
-                paths: [`./src/jsx/rules_sets/${task}/`, './src/jsx/lib'],
-                debug: env_type !== 'production',
-            })
-            .transform(babelify, {
-                presets: ['es2015', 'react'],
-                plugins: [
-                    'transform-class-properties',
-                    'transform-object-rest-spread',
-                    'syntax-trailing-function-commas',
-                ],
-            })
-            .bundle()
-            .pipe(source(out_file))
-            .pipe(buffer())
-            .pipe(env_type === 'production' ? uglify() : gutil.noop())
-            .pipe(gulp.dest(out_dir));
-            return bundler;
-        }
-        return buildJsx(
-            `src/jsx/rules_sets/${task}/root.jsx`,
-            '../static/js/rules_sets',
-            `${task}.js`
-        );
-    }
-    let str_func = doTheJob.toString()
-        .replace("__task__", task)
-        .replace("__env_type__", gutil.env.type);
-    gulp.task(`rs_${task}`, makeItFaster(str_func));
+function addPrimaryLessTask(module_name) {
+    const task_name = `css_${module_name}`;
+    const task_func = makeGeneralLessTask(
+        task_name,
+        `src/less/entry_points/${module_name}.less`,
+        "../static/css",
+        `${module_name}.css`,
+        ["src/less/"]
+    );
+    addTaskToGroup(task_name, module_name);
+    addTaskToGroup(task_name, "css");
+    addTaskToGroup(task_name, "css_core");
+    addTaskToGroup(task_name, "core");
+    addTaskToGroup(task_name, "all");
+    gulp.task(task_name, task_func);
 }
 
-createLessTask('admin');
-createLessTask('competitions');
-createLessTask('judge');
-createLessTask('presenter');
+function addPrimaryJsxTask(module_name) {
+    const debug = gutil.env.type !== "production";
+    const task_name = `js_${module_name}`;
+    const task_func = makeGeneralJsxTask(
+        task_name,
+        `src/jsx/entry_points/${module_name}.jsx`,
+        "../static/js",
+        `${module_name}.js`,
+        ["./src/jsx/", "./src/jsx/lib/"],
+        debug
+    );
+    addTaskToGroup(task_name, module_name);
+    addTaskToGroup(task_name, "js");
+    addTaskToGroup(task_name, "js_core");
+    addTaskToGroup(task_name, "core");
+    addTaskToGroup(task_name, "all");
+    gulp.task(task_name, task_func);
+}
 
-createJsxTask('start_page');
-createJsxTask('admin');
-createJsxTask('auto_printer');
-createJsxTask('competitions');
-createJsxTask('judge');
-createJsxTask('lib');
-createJsxTask('presenter');
-createJsxTask('screen');
-createJsxTask('screen_operator');
+function addRulesSetLessTask(rules_set_name) {
+    const task_name = `css_rs_${rules_set_name}`;
+    const task_func = makeGeneralLessTask(
+        task_name,
+        `src/less/rules_sets/${rules_set_name}/index.less`,
+        "../static/css/rules_sets",
+        `${rules_set_name}.css`,
+        [`src/less/rules_sets/${rules_set_name}`, "src/less/include"]
+    );
+    addTaskToGroup(task_name, `rs_${rules_set_name}`);
+    addTaskToGroup(task_name, "css");
+    addTaskToGroup(task_name, `css_rules_sets`);
+    addTaskToGroup(task_name, `rules_sets`);
+    addTaskToGroup(task_name, "all");
+    gulp.task(task_name, task_func);
+}
 
-createRuleSetLessTask('rosfarr');
-createRuleSetJsxTask('rosfarr');
+function addRulesSetJsxTask(rules_set_name) {
+    const debug = gutil.env.type !== "production";
+    const task_name = `js_rs_${rules_set_name}`;
+    const task_func = makeGeneralJsxTask(
+        task_name,
+        `src/jsx/rules_sets/${rules_set_name}/root.jsx`,
+        '../static/js/rules_sets',
+        `${rules_set_name}.js`,
+        [`./src/jsx/rules_sets/${rules_set_name}/`, './src/jsx/lib'],
+        debug
+    );
+    addTaskToGroup(task_name, `rs_${rules_set_name}`);
+    addTaskToGroup(task_name, "js");
+    addTaskToGroup(task_name, `js_rules_sets`);
+    addTaskToGroup(task_name, `rules_sets`);
+    addTaskToGroup(task_name, "all");
+    gulp.task(task_name, task_func);
+}
 
-gulp.task('all', gulp.parallel.apply(gulp.parallel, all_jsx_tasks.concat(all_less_tasks)));
+
+addPrimaryLessTask('admin');
+addPrimaryLessTask('competitions');
+addPrimaryLessTask('judge');
+addPrimaryLessTask('presenter');
+
+addPrimaryJsxTask('start_page');
+addPrimaryJsxTask('admin');
+addPrimaryJsxTask('auto_printer');
+addPrimaryJsxTask('competitions');
+addPrimaryJsxTask('judge');
+addPrimaryJsxTask('lib');
+addPrimaryJsxTask('presenter');
+addPrimaryJsxTask('screen');
+addPrimaryJsxTask('screen_operator');
+
+addRulesSetLessTask('rosfarr');
+addRulesSetJsxTask('rosfarr');
+
+addGroupTasks();
 
 gulp.task('default', gulp.series('all'));

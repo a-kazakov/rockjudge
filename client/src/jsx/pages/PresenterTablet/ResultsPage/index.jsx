@@ -1,4 +1,4 @@
-import DisciplineResults from "common/components/DisciplineResults";
+import DisciplineResultsLoader from "common/components/DisciplineResultsLoader";
 
 import DisciplineSelector from "./DisciplineSelector";
 import ResultsRenderer from "./ResultsRenderer";
@@ -31,7 +31,7 @@ export default class ResultsPage extends React.Component {
             );
         }
         return (
-            <DisciplineResults
+            <DisciplineResultsLoader
                 disciplineId={ this.state.currentDisciplineId }
                 renderer={ ResultsRenderer }
             />

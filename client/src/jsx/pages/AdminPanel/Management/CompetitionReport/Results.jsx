@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import rules_set from "rules_sets/loader";
 
-import DisciplineResults from "common/components/DisciplineResults";
+import DisciplineResultsLoader from "common/components/DisciplineResultsLoader";
 
 export default class Results extends React.Component {
     static get propTypes() {
@@ -28,7 +28,7 @@ export default class Results extends React.Component {
         return (
             <div key={ discipline.id }>
                 <h5><p>{ discipline.name }</p></h5>
-                <DisciplineResults
+                <DisciplineResultsLoader
                     disciplineId={ discipline.id }
                     renderer={ rules_set.discipline_results_table }
                 />

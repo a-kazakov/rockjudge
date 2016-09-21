@@ -1,15 +1,12 @@
 from exceptions import ApiError
 
-from models import ClientAuth, Club
+from models import ClientAuth
 
 
 def check_auth(competition_id, request, allowed_access_levels):
     if request.remote_ip == "127.0.0.1":  # localhost always pass
         return
     try:
-        Club.select().where(
-            (Club.competition == 1)
-        ).get()
         auth = ClientAuth.select().where(
             (ClientAuth.client == request.client) &
             (ClientAuth.competition == competition_id)

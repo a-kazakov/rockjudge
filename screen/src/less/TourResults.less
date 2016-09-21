@@ -1,0 +1,60 @@
+.tour-results {
+    .outer();
+}
+
+.tour-results .TourResults {
+    @base: 0.9vh;
+    .outer();
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    .discipline-name {
+        font-size: 4 * @base;
+        font-weight: bold;
+    }
+    .tour-name {
+        font-size: 3 * @base;
+        font-weight: bold;
+        padding-bottom: 2 * @base;
+    }
+    .header {
+        font-size: 3 * @base;
+        color: @rosfarr-red;
+        padding-bottom: @base;
+        font-weight: bold;
+        padding-bottom: 3 * @base;
+    }
+    table {
+        margin: 0;
+        border-collapse: collapse;
+        width: 90%;
+        td {
+            border-top: (0.3 * @base) solid desaturate(lighten(@rosfarr-blue, 50%), 40%);
+        }
+        td, th {
+            font-size: 3 * @base;
+            padding: (0.5 * @base) 0;
+            text-align: center;
+        }
+        .participant {
+            text-align: left;
+        }
+        .place {
+            width: 7 * @base;
+        }
+        .number {
+            width: 13 * @base;
+        }
+        .score {
+            width: 30 * @base;
+        }
+        .next-tour {
+            width: 15 * @base;
+        }
+        tr.empty {
+            visibility: hidden;
+        }
+    }
+}

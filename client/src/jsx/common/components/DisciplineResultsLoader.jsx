@@ -3,13 +3,19 @@ import storage from "common/server/storage";
 import Api from "common/server/Api";
 import Loader from "common/components/Loader";
 
-export default class DisciplineResults extends React.Component {
+export default class DisciplineResultsLoader extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
             disciplineId: PT.number.isRequired,
             renderer: PT.func.isRequired,
+            showLoader: PT.bool.isRequired,
         };
+    }
+    static get defaultProps() {
+        return {
+            showLoader: true,
+        }
     }
 
     constructor(props) {
@@ -175,7 +181,7 @@ export default class DisciplineResults extends React.Component {
         if (table === null) {
             return (
                 <div className="discipline-results">
-                    <Loader />
+                    { this.props.showLoader ? <Loader /> : null }
                 </div>
             );
         }
@@ -187,4 +193,4 @@ export default class DisciplineResults extends React.Component {
     }
 }
 
-DisciplineResults.displayName = "AdminPanel_common_DisciplineResults";
+DisciplineResultsLoader.displayName = "common_DisciplineResultsLoader";

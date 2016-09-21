@@ -102,7 +102,7 @@ export default class Model {
         result.id = this.id
         for (const key of Object.keys(schema)) {
             if (!(key in result)) {
-                console.warn(schema, result);
+                console.warn("Failed to serialize result: Shema:", schema, "Fetched data:", result);
                 throw ReferenceError("Failed to serialize");
             }
         }

@@ -1,6 +1,6 @@
-import TourResults from "common/components/TourResults";
+import TourResultsLoader from "common/components/TourResultsLoader";
 
-import Wrapper from "./Wrapper";
+import Renderer from "./Renderer";
 
 export default class TourResultsTab extends React.Component {
     static get propTypes() {
@@ -28,10 +28,10 @@ export default class TourResultsTab extends React.Component {
     render() {
         return (
             <div className={ this.getClassName() }>
-                <TourResults
+                <TourResultsLoader
                     autoDocx={ this.props.autoDocx }
                     ref={ this.makeResultsRef }
-                    renderer={ Wrapper }
+                    renderer={ Renderer }
                     tourId={ this.props.tour.id }
                     verbosity={ this.props.verbosity }
                 />

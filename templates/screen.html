@@ -1,13 +1,18 @@
 {% extends "base.html" %}
-
+-
 {% autoescape None %}
 
 {% block title %}
   Screen
 {% end %}
 
+{% block defaultstyles %}{% end %}
+
 {% block styles %}
   <link rel="stylesheet" href="/static/css/screen.css">
+  {% if manifest["styles"] %}
+    <link rel="stylesheet" href="/media/screen/{{ manifest["styles"] }}">
+  {% end %}
 {% end %}
 
 {% block scripts %}
@@ -18,6 +23,7 @@
     };
   </script>
   <script src="/static/js/screen.js"></script>
+  <script src="/media/screen/{{ manifest["script"] }}"></script>
 {% end %}
 
 {% block body %}

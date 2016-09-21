@@ -1,7 +1,7 @@
 import _ from "l10n";
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
-import DisciplineResults from "common/components/DisciplineResults";
+import DisciplineResultsLoader from "common/components/DisciplineResultsLoader";
 
 import Renderer from "./Renderer";
 
@@ -32,7 +32,7 @@ export default class PlaceSelector extends React.Component {
                 >
                     { _("screen_operator.buttons.reset_place") }
                 </button>
-                <DisciplineResults
+                <DisciplineResultsLoader
                     disciplineId={ this.props.disciplineId }
                     key={ this.props.disciplineId }
                     renderer={ Renderer }

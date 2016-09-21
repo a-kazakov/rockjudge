@@ -4,13 +4,19 @@ import storage from "common/server/storage";
 import Api from "common/server/Api";
 import Loader from "common/components/Loader";
 
-export default class TourResults extends React.Component {
+export default class TourResultsLoader extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
             tourId: PT.number.isRequired,
             renderer: PT.func.isRequired,
+            showLoader: PT.bool.isRequired,
         };
+    }
+    static get defaultProps() {
+        return {
+            showLoader: true,
+        }
     }
 
     constructor(props) {
@@ -190,7 +196,7 @@ export default class TourResults extends React.Component {
         if (table === null) {
             return (
                 <div className="tour-results">
-                    <Loader />
+                    { this.props.showLoader ? <Loader /> : null }
                 </div>
             );
         }
@@ -203,4 +209,4 @@ export default class TourResults extends React.Component {
     }
 }
 
-TourResults.displayName = "common_TourResults";
+TourResultsLoader.displayName = "common_TourResultsLoader";

@@ -2,33 +2,29 @@
     "screens": [{
         "id": "splash",
         "name": "Заставка, название турнира",
-        "template": "splash.html",
         "controls": "none"
     }, {
         "id": "heats_one_participant",
         "name": "Заходы, одна пара на площадке",
-        "template": "heats-one-participant.html",
         "controls": "tour-heat"
     }, {
-        "id": "heats_two_participants",
+        "id": "heats_multiple_participants",
         "name": "Заходы, до пяти пар на площадке",
-        "template": "heats-two-participants.html",
         "controls": "tour-heat"
     }, {
         "id": "heats_formation",
         "name": "Заходы, формейшн (без результата)",
-        "template": "heats-formation.html",
         "controls": "tour-heat"
     }, {
         "id": "tour_results",
         "name": "Результаты тура",
-        "template": "tour-results.html",
         "controls": "tour"
     }, {
         "id": "awarding",
         "name": "Награждение",
-        "template": "awarding.html",
         "controls": "discipline-place"
     }],
+    "styles": "styles.css",
+    "script": "root.js",
     "default": "splash"
 }

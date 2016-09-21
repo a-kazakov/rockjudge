@@ -1,0 +1,44 @@
+.HeatsOneParticipant {
+    @base: 1.35vh;
+    .outer();
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    .discipline-name {
+        font-size: 3.5 * @base;
+        padding-bottom: 0.5 * @base;
+        font-weight: bold;
+    }
+    .tour-name {
+        font-size: 3 * @base;
+        font-weight: bold;
+    }
+    .run {
+        padding-top: 2 * @base;
+        .heat {
+            font-size: 4 * @base;
+            padding-bottom: 2 * @base;
+        }
+        .participant-number {
+            font-size: 7 * @base;
+            color: @rosfarr-red;
+        }
+        .participant-name {
+            font-size: 4 * @base;
+        }
+        .participant-club-name {
+            font-size: 2.25 * @base;
+            font-weight: bold;
+        }
+        .score {
+            padding-top: 4 * @base;
+            font-size: 4 * @base;
+            font-weight: bold;
+            &.hidden {
+                visibility: hidden;
+            }
+        }
+    }
+}

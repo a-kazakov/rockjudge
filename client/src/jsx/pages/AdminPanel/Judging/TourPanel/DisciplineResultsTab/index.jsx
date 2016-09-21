@@ -1,6 +1,6 @@
-import DisciplineResults from "common/components/DisciplineResults";
+import DisciplineResultsLoader from "common/components/DisciplineResultsLoader";
 
-import Wrapper from "./Wrapper";
+import Renderer from "./Renderer";
 
 export default class DisciplineResultsTab extends React.Component {
     static get propTypes() {
@@ -24,11 +24,11 @@ export default class DisciplineResultsTab extends React.Component {
     render() {
         return (
             <div className="DisciplineResultsTab rules-set">
-                <DisciplineResults
+                <DisciplineResultsLoader
                     autoDocx={ this.props.autoDocx }
                     disciplineId={ this.props.discipline.id }
                     ref={ this.makeResultsRef }
-                    renderer={ Wrapper }
+                    renderer={ Renderer }
                 />
             </div>
         );
