@@ -1,0 +1,93 @@
+.AutoPrinter {
+    .fill-space();
+    .flex-col();
+    > header {
+        .flex-item();
+        .admin-header();
+    }
+    > .body {
+        .flex-item-stretch();
+        .scrollable();
+    }
+    .section-table {
+        display: inline-block;
+        vertical-align: top;
+        width: 70%;
+        box-sizing: border-box;
+        padding: 10px;
+    }
+    .section-queue {
+        display: inline-block;
+        vertical-align: top;
+        width: 30%;
+        box-sizing: border-box;
+        padding: 10px;
+    }
+    .test-page-button {
+        margin: 40px;
+        text-align: center;
+        button {
+            .button-primary();
+        }
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        table-layout: fixed;
+        .discipline {
+            width: 450px;
+        }
+        tr:nth-child(2n) {
+            background-color: #fff;
+        }
+        td, th {
+            padding: 2px 5px;
+            border: 2px solid black;
+            font-size: 13px;
+            overflow: hidden;
+        }
+        td.input {
+            padding: 0;
+            input {
+                margin: 0;
+                width: 100%;
+                background-color: transparent;
+                border: none;
+                text-align: center;
+            }
+        }
+        th {
+            text-align: center;
+        }
+    }
+    .queue {
+        &.queue-empty {
+            text-align: center;
+            font-style: italic;
+        }
+        .row {
+            background-color: @color-light;
+            margin: 5px;
+            padding: 5px;
+            div {
+                display: inline-block;
+                box-sizing: border-box;
+                vertical-align: top;
+            }
+            .name {
+                width: 100%;
+                font-weight: bold;
+            }
+            .type {
+                width: 90%;
+            }
+            .copies {
+                width: 10%;
+                text-align: center;
+            }
+        }
+        .hidden-container {
+            display: none;
+        }
+    }
+}

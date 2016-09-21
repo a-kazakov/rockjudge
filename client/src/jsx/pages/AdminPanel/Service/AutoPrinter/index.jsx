@@ -20,7 +20,7 @@ export default class AutoPrinter extends React.Component {
 
     constructor(props) {
         super(props);
-        const old_actions_str = sessionStorage.getItem(`auto_printer_${this.props.competitionId}`);
+        const old_actions_str = localStorage.getItem(`auto_printer_${this.props.competitionId}`);
         const initial_actions = old_actions_str ? JSON.parse(old_actions_str) : {};
         this.state = {
             competition: null,
@@ -40,7 +40,7 @@ export default class AutoPrinter extends React.Component {
         this.reload_data_listener = message_dispatcher.addListener("reload_data", this.loadData);
     }
     componentDidUpdate() {
-        sessionStorage.setItem(`auto_printer_${this.props.competitionId}`, JSON.stringify(this.state.actions));
+        localStorage.setItem(`auto_printer_${this.props.competitionId}`, JSON.stringify(this.state.actions));
     }
     componentWillUnmount() {
         message_dispatcher.removeListener(this.db_update_listener);
@@ -149,13 +149,13 @@ export default class AutoPrinter extends React.Component {
             );
         }
         return (
-            <div className="auto-printer">
+            <div className="AutoPrinter">
                 <header>
                     <h1>
                         { _("admin.headers.auto_printer") }
                     </h1>
                 </header>
-                <div>
+                <div className="body">
                     <div className="section-table">
                         <h3>
                             { _("admin.auto_printer.rules") }
@@ -174,7 +174,6 @@ export default class AutoPrinter extends React.Component {
                         <JobQueue ref={ this.makeQueueRef } />
                         <div className="test-page-button">
                             <button
-                                className="btn btn-primary"
                                 type="button"
                                 onClick={ this.handlePrintTestPage }
                             >
