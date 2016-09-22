@@ -1,7 +1,6 @@
 import _ from "l10n";
 
 import getParticipantDisplay from "common/getParticipantDisplay";
-import getScoringType from "common/getScoringType";
 
 export default class InfoCell extends React.Component {
     static get propTypes() {

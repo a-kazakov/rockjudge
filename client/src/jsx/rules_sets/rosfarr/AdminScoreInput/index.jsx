@@ -23,23 +23,23 @@ export default class AdminScoreInput extends React.Component {
     }
     render() {
         if (!this.props.editing) {
-            if (
-                this.props.disciplineJudge.role === "head_judge" &&
-                this.props.score.data.raw_data.nexttour
-            ) {
+            if (this.props.disciplineJudge.role === "head_judge") {
+                let result = this.props.score.data.raw_data.penalty === null
+                    ? "—"
+                    : this.props.score.data.total_score.toFixed();
+                if (this.props.score.data.raw_data.nexttour) {
+                    result += "/NT";
+                }
                 return (
                     <span>
-                        { `[${this.props.score.data.total_score.toFixed(2)}]` }
+                        { result }
                     </span>
                 );
             }
             if (this.props.disciplineJudge.role === "tech_judge") {
-                const tv_str = this.props.score.data.raw_data.timing_violation === null
-                    ? "?" : this.props.score.data.raw_data.timing_violation
-                        ? "✗" : "✓";
                 return (
                     <span>
-                        { `${this.props.score.data.raw_data.jump_steps} ${tv_str}` }
+                        { this.props.score.data.total_score.toFixed() }
                     </span>
                 );
             }

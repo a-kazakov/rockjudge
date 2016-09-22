@@ -10,6 +10,7 @@ import SimplifiedScore from "./SimplifiedScore";
 import HeadJudgeScore from "./HeadJudgeScore";
 import HeadJudgeFormationScore from "./HeadJudgeFormationScore";
 import TechJudgeScore from "./TechJudgeScore";
+import TechJudgeFormationScore from "./TechJudgeFormationScore";
 
 export default class Editor extends React.Component {
     static get propTypes() {
@@ -32,6 +33,12 @@ export default class Editor extends React.Component {
             ["rosfarr.formation", "rosfarr.formation_acro"].indexOf(this.props.tour.scoring_system_name) >= 0
         ) {
             scoring_type = "head_formation";
+        }
+        if (
+            scoring_type === "tech" &&
+            ["rosfarr.formation", "rosfarr.formation_acro"].indexOf(this.props.tour.scoring_system_name) >= 0
+        ) {
+            scoring_type = "tech_formation";
         }
         const score_props = {
             score:     this.props.score,
@@ -75,6 +82,10 @@ export default class Editor extends React.Component {
         case "tech":
             return (
                 <TechJudgeScore { ...score_props } />
+            );
+        case "tech_formation":
+            return (
+                <TechJudgeFormationScore { ...score_props } />
             );
         default:
             console.error(`Unknown scoring type: ${scoring_type}`);

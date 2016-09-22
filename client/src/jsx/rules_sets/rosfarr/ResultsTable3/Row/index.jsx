@@ -1,5 +1,3 @@
-import _ from "l10n";
-
 import getScoringType from "common/getScoringType";
 
 import InfoCell from "./InfoCell";

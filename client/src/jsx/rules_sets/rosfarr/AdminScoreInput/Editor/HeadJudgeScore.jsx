@@ -40,6 +40,7 @@ export default class HeadJudgeScore extends React.Component {
             <GeneralEditor
                 fields={ [
                     this.makeField("penalty", "P", [
+                        ["", "—"],
                         ["0", "OK"],
                         ["-3", "-3"],
                         ["-30", "-30"],

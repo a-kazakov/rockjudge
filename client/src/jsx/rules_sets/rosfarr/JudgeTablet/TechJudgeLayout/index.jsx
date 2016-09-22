@@ -54,32 +54,33 @@ export default class TechJudgeLayout extends CacheMixin(React.Component) {
             heat: value,
         });
     }
-    onPrevHeatClick = () => {
+    handlePrevHeatClick = () => {
         this.updateHeat(this.state.heat - 1);
     }
-    onNextHeatClick = () => {
+    handleNextHeatClick = () => {
         this.updateHeat(this.state.heat + 1);
     }
-    onPageChange = (page) => {
+    handlePageChange = (page) => {
         this.setState({ page });
     }
     renderDancing() {
         return (
             <DancingPage
-                runs={ this.runs }
                 disciplineJudge={ this.props.disciplineJudge }
-                onScoreUpdate={ this.props.onScoreUpdate }
+                tour={ this.props.tour }
+                runs={ this.runs }
                 onScoreConfirm={ this.props.onScoreConfirm }
+                onScoreUpdate={ this.props.onScoreUpdate }
             />
         );
     }
     renderAcro() {
         return (
             <AcroPage
-                runs={ this.runs }
                 disciplineJudge={ this.props.disciplineJudge }
-                onScoreUpdate={ this.props.onScoreUpdate }
+                runs={ this.runs }
                 onScoreConfirm={ this.props.onScoreConfirm }
+                onScoreUpdate={ this.props.onScoreUpdate }
             />
         );
     }
@@ -87,13 +88,13 @@ export default class TechJudgeLayout extends CacheMixin(React.Component) {
         const heats_count = this.heats_count;
         return (
             <Header
-                judge={ this.props.disciplineJudge.judge }
-                tour={ this.props.tour }
                 heat={ this.state.heat }
                 heatsCount={ heats_count }
+                judge={ this.props.disciplineJudge.judge }
                 maxHeat={ this.first_non_confirmed_heat }
-                onPrevHeatClick={ this.onPrevHeatClick }
-                onNextHeatClick={ this.onNextHeatClick }
+                tour={ this.props.tour }
+                onNextHeatClick={ this.handleNextHeatClick }
+                onPrevHeatClick={ this.handlePrevHeatClick }
             />
         );
     }
@@ -110,13 +111,15 @@ export default class TechJudgeLayout extends CacheMixin(React.Component) {
             return null;
         }
         return (
-            <Footer value={ this.state.page } onChange={ this.onPageChange }>
+            <Footer value={ this.state.page } onChange={ this.handlePageChange }>
                 <FooterItem
                     label={ _("tablet.pages.dancing") }
-                    mkey="dancing" />
+                    mkey="dancing"
+                />
                 <FooterItem
                     label={ _("tablet.pages.acro") }
-                    mkey="acro" />
+                    mkey="acro"
+                />
             </Footer>
         );
     }

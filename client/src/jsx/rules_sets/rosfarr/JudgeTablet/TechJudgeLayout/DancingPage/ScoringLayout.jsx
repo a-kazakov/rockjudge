@@ -31,6 +31,7 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
 
     handleJumpStepsChange = (value) => this.handleScoreChange("jump_steps", value);
     handleTimingViolationChange = (value) => this.handleScoreChange("timing_violation", value);
+    handlePenaltyChange = (value) => this.handleScoreChange("penalty", value);
 
     genOnScoreUpdate(score_part) {
         return (new_value) => this.onScoreUpdate(score_part, new_value);
@@ -41,11 +42,32 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
             this.props.run.participant.number,
             this.props.run.participant.name,
             this.props.run.participant.sportsmen.length);
+        const penalties = ["rosfarr.formation", "rosfarr.formation_acro"].indexOf(this.props.tour.scoring_system_name) >= 0
+            ? [
+                [0,    _("tablet.tech_judge.ok")],
+                [-5,   _("tablet.tech_judge.form_yellow_card")],
+                [-15,  _("tablet.tech_judge.form_red_card")],
+            ]
+            : [
+                [0,    _("tablet.tech_judge.ok")],
+                [-3,   _("tablet.tech_judge.yellow_card")],
+                [-30,  _("tablet.tech_judge.red_card")],
+                [-100, _("tablet.tech_judge.black_card")],
+            ];
         return (
             <div className="layout-participant">
                 <h2>
                     { header }
                 </h2>
+                <h3>
+                    { _("tablet.head_judge.penalty_type") }
+                </h3>
+                <SelectorInput
+                    choices={ penalties }
+                    value={ score.raw_data.penalty }
+                    onChange={ this.handlePenaltyChange }
+                />
+                <div className="spacer" />
                 <h3>{ _("tablet.tech_judge.jump_steps") }</h3>
                 <IntegerInput
                     sendDeltas
@@ -66,6 +88,7 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
                     value={ score.raw_data.timing_violation }
                     onChange={ this.handleTimingViolationChange }
                 />
+                <div className="spacer" />
                 <ConfirmationButton
                     confirmed={ this.score.confirmed }
                     onConfirm={ this.handleConfirmation }

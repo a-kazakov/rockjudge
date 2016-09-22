@@ -9,7 +9,7 @@ export default class PenaltyInput extends React.Component {
             score: PT.shape({
                 data: PT.shape({
                     raw_data: PT.shape({
-                        penalty: PT.number.isRequired,
+                        penalty: PT.number,
                     }).isRequired,
                 }).isRequired,
             }).isRequired,
@@ -25,11 +25,13 @@ export default class PenaltyInput extends React.Component {
     render() {
         const penalties = ["rosfarr.formation", "rosfarr.formation_acro"].indexOf(this.props.scoringSystemName) >= 0
             ? [
+                [null, "—"],
                 [0,    _("tablet.head_judge.ok")],
                 [-5,   _("tablet.head_judge.form_yellow_card")],
                 [-15,  _("tablet.head_judge.form_red_card")],
             ]
             : [
+                [null, "—"],
                 [0,    _("tablet.head_judge.ok")],
                 [-3,   _("tablet.head_judge.yellow_card")],
                 [-30,  _("tablet.head_judge.red_card")],

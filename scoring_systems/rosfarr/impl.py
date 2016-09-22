@@ -266,17 +266,20 @@ class HeadScore:
         self.score = score
         raw_data = score.get_data()
         self.data = {
-            "penalty": raw_data.pop("penalty", 0),
+            "penalty": raw_data.pop("penalty", None),
             "nexttour": raw_data.pop("nexttour", False),
         }
 
     @property
     def total_score(self):
-        return m100(self.data["penalty"])
+        return (m100(self.data["penalty"])
+                if self.data["penalty"] is not None
+                else 0)
 
     def update(self, new_data):
+        penalty = new_data.pop("penalty", self.data["penalty"])
         self.data = {
-            "penalty": int(new_data.pop("penalty", self.data["penalty"])),
+            "penalty": int(penalty) if penalty is not None else None,
             "nexttour": bool(new_data.pop("nexttour", self.data["nexttour"])),
         }
         self.score.set_data(self.data)
@@ -292,19 +295,22 @@ class TechScore(BaseScore):
     DEFAULT_SCORES = {
         "jump_steps": 0,
         "timing_violation": None,
+        "penalty": 0,
     }
     INITIAL_SCORES = {
         "jump_steps": 0,
         "timing_violation": None,
+        "penalty": 0,
     }
     SCORES_VALIDATORS = {
         "jump_steps": lambda x: type(x) is int and 0 <= x <= 100,
         "timing_violation": lambda x: x in [None, True, False],
+        "penalty": lambda x: type(x) is int and -100 <= x <= 0,
     }
 
     @staticmethod
     def get_total_score(raw_scores):
-        return 0
+        return m100(raw_scores["penalty"])
 
 
 def ScoreWrapper(score, scoring_system, discipline_judge=None):
@@ -386,11 +392,12 @@ class RunScore:
             for discipline_judge, score
             in self.acro_judge_scores
         ]
-        if self.head_judge_score is not None:
-            discipline_judge, score = self.head_judge_score
-            score_wrapper = ScoreWrapper(score, scoring_system, discipline_judge=discipline_judge)
-            self.head_judge_total_score = score_wrapper.total_score
-            self.has_next_tour = score_wrapper.data["nexttour"]
+        head_judge_score = self.head_judge_score
+        if head_judge_score is not None:
+            discipline_judge, score = head_judge_score
+            self.head_judge_score_wrapper = ScoreWrapper(score, scoring_system, discipline_judge=discipline_judge)
+            self.head_judge_total_score = self.head_judge_score_wrapper.total_score
+            self.has_next_tour = self.head_judge_score_wrapper.data["nexttour"]
         if scoring_system in ["rosfarr.acro", "rosfarr.am_final_acro"]:
             self.acro_scores = SmallScoresSet(self.acro_judges_total_scores)
             self.dance_scores = SmallScoresSet(self.dance_judges_total_scores)
@@ -404,6 +411,13 @@ class RunScore:
         for discipline_judge, score in self.judge_scores:
             if discipline_judge.role == "head_judge":
                 return discipline_judge, score
+        return None
+
+    @property
+    def tech_judge_scores(self):
+        for discipline_judge, score in self.judge_scores:
+            if discipline_judge.role == "tech_judge":
+                yield discipline_judge, score
         return None
 
     @property
@@ -426,8 +440,9 @@ class RunScore:
     def penalties(self):
         if self.head_judge_score is None:
             return 0
-        penalty = self.head_judge_total_score
-        return frac(penalty)
+        if self.head_judge_score_wrapper.data["penalty"] is not None:
+            return self.head_judge_score_wrapper.total_score
+        return min(ScoreWrapper(score, self.scoring_system, dj).total_score for dj, score in self.tech_judge_scores)
 
     @property
     def nexttour_score(self):
@@ -497,11 +512,13 @@ class RunScore:
                 "primary_score": float(-sorting_score[0] / 100.0),
                 "secondary_score": float(-sorting_score[1] / 100.0),
                 "nexttour": bool(sorting_score[4] == -1),
+                "total_penalty": self.penalties / 100,
             }
         return {
             "primary_score": float(-sorting_score[0] / 100.0),
             "secondary_score": float(-sorting_score[1] / 100.0),
             "nexttour": bool(sorting_score[2] == -1),
+            "total_penalty": float(self.penalties / 100.0),
         }
 
     @property
@@ -592,6 +609,7 @@ class TourScores:
 class FormationRunScore:
     def __init__(self, run, scoring_system, discipline_judges=None):
         discipline_judges = run.tour.discipline_judges if discipline_judges is None else discipline_judges
+        self.scoring_system = scoring_system
         self.n_judges = len([None for j in discipline_judges if j.role == "dance_judge"])
         self.run = run
         self.scores = run.scores
@@ -608,9 +626,9 @@ class FormationRunScore:
         head_judge_score = self.head_judge_score
         if head_judge_score is not None:
             discipline_judge, score = head_judge_score
-            score_wrapper = ScoreWrapper(score, scoring_system, discipline_judge=discipline_judge)
-            self.head_judge_total_score = score_wrapper.total_score
-            self.has_next_tour = score_wrapper.data["nexttour"]
+            self.head_judge_score_wrapper = ScoreWrapper(score, scoring_system, discipline_judge=discipline_judge)
+            self.head_judge_total_score = self.head_judge_score_wrapper.total_score
+            self.has_next_tour = self.head_judge_score_wrapper.data["nexttour"]
         if run.performed:
             self.dance_judges_total_scores = [
                 ScoreWrapper(l_score, scoring_system, discipline_judge=l_discipline_judge).total_score + self.penalties
@@ -625,6 +643,13 @@ class FormationRunScore:
         for discipline_judge, score in self.judge_scores:
             if discipline_judge.role == "head_judge":
                 return discipline_judge, score
+        return None
+
+    @property
+    def tech_judge_scores(self):
+        for discipline_judge, score in self.judge_scores:
+            if discipline_judge.role == "tech_judge":
+                yield discipline_judge, score
         return None
 
     @property
@@ -673,8 +698,9 @@ class FormationRunScore:
     def penalties(self):
         if self.head_judge_score is None:
             return 0
-        penalty = self.head_judge_total_score
-        return penalty
+        if self.head_judge_score_wrapper.data["penalty"] is not None:
+            return self.head_judge_score_wrapper.total_score
+        return min(ScoreWrapper(score, self.scoring_system, dj).total_score for dj, score in self.tech_judge_scores)
 
     @property
     def nexttour_score(self):
@@ -684,7 +710,9 @@ class FormationRunScore:
 
     @property
     def verbose_display_score(self):
-        return {}
+        return {
+            "total_penalty": self.penalties / 100,
+        }
 
     @property
     def display_score(self):

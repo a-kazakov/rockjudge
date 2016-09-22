@@ -9,6 +9,7 @@ export default class TechJudgeScore extends React.Component {
                 data: PT.shape({
                     raw_data: PT.shape({
                         jump_steps:       PT.number,
+                        penalty:          PT.number,
                         timing_violation: PT.bool,
                     }).isRequired,
                 }).isRequired,
@@ -21,6 +22,7 @@ export default class TechJudgeScore extends React.Component {
 
     handleSubmission = (data) => {
         this.props.onSubmit({
+            penalty:          data.penalty === "" ? null : parseInt(data.penalty),
             jump_steps:       parseInt(data.jump_steps),
             timing_violation: data.timing_violation === "" ? null : data.timing_violation === "true",
         });
@@ -40,6 +42,12 @@ export default class TechJudgeScore extends React.Component {
         return (
             <GeneralEditor
                 fields={ [
+                    this.makeField("penalty", "P", [
+                        ["0", "OK"],
+                        ["-3", "-3"],
+                        ["-30", "-30"],
+                        ["-100", "-100"],
+                    ]),
                     this.makeField("jump_steps", "JS", genScale("numbers", { max: 100 })),
                     this.makeField("timing_violation", "T", [
                         ["",      "?"],
