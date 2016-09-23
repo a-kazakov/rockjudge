@@ -76,7 +76,7 @@ export default class AutoPrinter extends React.Component {
 
     handlePrintTestPage = () => {
         showConfirm(
-            _("admin.auto_printer.print_test_page"),
+            _("admin.auto_printer.confirm_print_test_page"),
             () => {
                 saveAs(new Blob(["dummy"], {type : 'text/plain'}), `autoprinter_dummy_${Math.random()}.tmp`);
                 saveAs(new Blob(["dummy"], {type : 'text/plain'}), `autoprinter_dummy_${Math.random()}.tmp`);
@@ -86,6 +86,12 @@ export default class AutoPrinter extends React.Component {
             true
         );
     }
+    handlePrintFirstToursHeats = () =>
+        showConfirm(
+            _("admin.auto_printer.confirm_print_first_tours_heats"),
+            this.printFirstToursHeats,
+            true
+        );
 
     getToursFromCompetition(competition) {
         let result = [];
@@ -142,6 +148,17 @@ export default class AutoPrinter extends React.Component {
         }
     }
 
+    printFirstToursHeats = () => {
+        for (const discipline of this.state.competition.disciplines) {
+            let tour = Object.assign({}, discipline.tours[0]);
+            tour.discipline = discipline;
+            if (!tour || !this.state.actions[tour.id] || !this.state.actions[tour.id]["heats"]) {
+                continue;
+            }
+            this.doTheJob(tour, "heats", this.state.actions[tour.id]["heats"]);
+        }
+    }
+
     render() {
         if (!this.state.competition) {
             return (
@@ -172,12 +189,18 @@ export default class AutoPrinter extends React.Component {
                             { _("admin.auto_printer.queue") }
                         </h3>
                         <JobQueue ref={ this.makeQueueRef } />
-                        <div className="test-page-button">
+                        <div className="actions">
                             <button
                                 type="button"
                                 onClick={ this.handlePrintTestPage }
                             >
-                                Печать тестовой страницы
+                                { _("admin.auto_printer.print_test_page") }
+                            </button>
+                            <button
+                                type="button"
+                                onClick={ this.handlePrintFirstToursHeats }
+                            >
+                                { _("admin.auto_printer.print_fitst_tours_heats") }
                             </button>
                         </div>
                     </div>

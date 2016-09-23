@@ -26,7 +26,7 @@ DB_CONFIG = {{
     'host': '127.0.0.1',
 }}
 
-SERVER_ID = {server_id}
+SERVER_ID = '{server_id}'
 """.format(
         cookie_secret=random_string(),
         db_name=db_name,
