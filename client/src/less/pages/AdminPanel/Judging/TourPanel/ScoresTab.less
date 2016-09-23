@@ -6,6 +6,17 @@
         max-width: 100%;
         box-sizing: border-box;
         > tbody > tr {
+            > td, th {
+                border: 1px solid black;
+                padding: 1px 3px;
+                &.number     { width: 50px;  }
+                &.name       { width: 300px; }
+                &.acrobatics { width: 120px; }
+                &.heat       { width: 40px;  }
+                &.judge      { width: 50px;  }
+                &.total      { width: 120px; }
+                &.performed  { width: 20px;  }
+            }
             > td {
                 position: relative;
                 &:not(.name) {
@@ -14,13 +25,6 @@
                 &.heat, &.judge, &.acrobatics {
                     cursor: pointer;
                 }
-                &.number     { width: 50px;  }
-                &.name       { width: 300px; }
-                &.acrobatics { width: 120px; }
-                &.heat       { width: 40px;  }
-                &.judge      { width: 50px;  }
-                &.total      { width: 120px; }
-                &.performed  { width: 20px;  }
                 &.confirmed-score {
                     background-color: @color-green;
                     font-weight: bold;
@@ -28,6 +32,9 @@
                 }
                 &.judge.editing {
                     background-color: @color-contrast !important;
+                }
+                &.judge.no-score {
+                    background-color: #999;
                 }
                 &.heat input {
                   width: 100%;
@@ -124,10 +131,6 @@
             > th {
                 text-align: center;
                 font-weight: bold;
-            }
-            > td, th {
-                border: 1px solid black;
-                padding: 1px 3px;
             }
             &.odd-heat {
                 background-color: lighten(@color-light, 10%);

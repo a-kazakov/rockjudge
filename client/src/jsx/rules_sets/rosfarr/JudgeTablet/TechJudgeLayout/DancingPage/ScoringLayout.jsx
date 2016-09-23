@@ -37,6 +37,11 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
         return (new_value) => this.onScoreUpdate(score_part, new_value);
     }
     render() {
+        if (this.score === null) {
+            return (
+                <div />
+            );
+        }
         const score = this.score.data;
         const header = _("global.phrases.participant_n",
             this.props.run.participant.number,
@@ -64,6 +69,7 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
                 </h3>
                 <SelectorInput
                     choices={ penalties }
+                    readOnly={ this.score.confirmed }
                     value={ score.raw_data.penalty }
                     onChange={ this.handlePenaltyChange }
                 />

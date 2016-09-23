@@ -33,9 +33,15 @@ export default class Renderer extends React.Component {
         this.state = {
             page: 0,
         };
-        setInterval(() => this.setState({
+    }
+
+    componentDidMount() {
+        this._interval = setInterval(() => this.setState({
             page: this.state.page + 1,
         }), REFRESH_INTERVAL);
+    }
+    componentWillUnmount() {
+        clearInterval(this._interval);
     }
 
     renderRow = (row) => {

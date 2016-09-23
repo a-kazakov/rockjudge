@@ -78,6 +78,7 @@ export default class EditorRow extends React.Component {
                     className="full-width"
                     defaultValue={ this.props.competition.rules_set }
                     ref={ this.makeRulesSetRef }
+                    tabIndex={ this.props.baseTabIndex + 5 }
                 >
                     { rules_sets.map(ss =>
                         <option key={ ss } value={ ss }>

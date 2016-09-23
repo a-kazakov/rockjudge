@@ -1,4 +1,4 @@
-import onTouchOrClick from "tablet_ui/onTouchOrClick";
+import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
 export default class Item extends React.Component {
     static get propTypes() {
@@ -28,7 +28,7 @@ export default class Item extends React.Component {
         return (
             <div
                 className={ this.getClassName() }
-                { ...onTouchOrClick(this.handleClick) }
+                { ...onTouchEndOrClick(this.handleClick) }
             >
                 { this.props.discipline.name }
             </div>

@@ -26,6 +26,11 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
         this.props.onScoreUpdate(this.score.id, score_data);
     }
     render() {
+        if (this.score === null) {
+            return (
+                <div />
+            );
+        }
         const header = _("global.phrases.participant_n",
             this.props.run.participant.number,
             this.props.run.participant.name,

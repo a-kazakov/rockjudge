@@ -53,6 +53,11 @@ export default class Participant extends CacheMixin(React.Component) {
     renderScoringLayout() {
         const score_data = this.score.data.raw_data;
         const ScoringComponent = this.props.layoutClass;
+        if (this.score === null) {
+            return (
+                <div />
+            );
+        }
         return (
             <div>
                 <ScoringComponent

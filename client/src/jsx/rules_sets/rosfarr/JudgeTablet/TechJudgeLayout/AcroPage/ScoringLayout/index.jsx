@@ -50,6 +50,11 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
             this.props.run.participant.number,
             this.props.run.participant.name,
             this.props.run.participant.sportsmen.length);
+        if (this.score === null) {
+            return (
+                <div />
+            );
+        }
         return (
             <div className="layout-participant">
                 <h2>{ header }</h2>

@@ -69,7 +69,7 @@ export default class ScoreCell extends React.Component {
     render() {
         if (this.props.score === null) {
             return (
-                <td className="no-score">
+                <td className="judge no-score">
                     &nbsp;
                 </td>
             );

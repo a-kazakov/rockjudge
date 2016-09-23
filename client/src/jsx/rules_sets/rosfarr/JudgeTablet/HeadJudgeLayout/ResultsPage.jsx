@@ -1,4 +1,4 @@
-import { TourResults } from "HostModules";
+import { TourResultsLoader } from "HostModules";
 
 import ResultsTable2 from "ResultsTable2";
 
@@ -17,7 +17,7 @@ export default class ResultsPage extends React.Component {
     render() {
         return (
             <div className="body results">
-                <TourResults
+                <TourResultsLoader
                     renderer={ ResultsTable2 }
                     tourId={ this.props.tour.id }
                 />
