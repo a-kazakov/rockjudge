@@ -2,6 +2,7 @@ import { saveAs } from "file-saver";
 
 import _ from "l10n";
 import Api from "common/server/Api";
+import showSuccess from "common/dialogs/showSuccess";
 
 import ImportItemsSelector from "./ImportItemsSelector";
 
@@ -32,11 +33,7 @@ export default class ImportExport extends React.Component {
                 data: f.target.result,
                 items: this._selector.getValue(),
             }).onSuccess(() => {
-                swal({
-                    title: _("global.messages.success"),
-                    type: "success",
-                    animation: false,
-                });
+                showSuccess(_("global.messages.success"));
             }).onDone(() => {
                 this.setState({
                     submitting: false,

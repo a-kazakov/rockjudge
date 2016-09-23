@@ -1,5 +1,6 @@
 import _ from "l10n";
 import showError from "common/dialogs/showError";
+import showInput from "common/dialogs/showInput";
 import closeDialog from "common/dialogs/closeDialog";
 
 import Elements from "./Elements";
@@ -33,23 +34,20 @@ export default class Editor extends React.Component {
         this.props.onSubmit(this.serialize());
     }
     handleLoadAcrobatics = () => {
-        swal({
-            title: _("admin.headers.load_acrobatics"),
-            text: _("admin.labels.paste_acro"),
-            showCancelButton: true,
-            closeOnConfirm: false,
-            type: "input",
-            animation: false,
-        }, value => {
-            try {
-                const data = JSON.parse(value);
-                this._elements.load(data);
-                closeDialog();
+        showInput(
+            _("admin.headers.load_acrobatics"),
+            _("admin.labels.paste_acro"),
+            value => {
+                try {
+                    const data = JSON.parse(value);
+                    this._elements.load(data);
+                    closeDialog();
+                }
+                catch (ex) {
+                    showError(_("errors.admin.load_syntax_error"));
+                }
             }
-            catch (ex) {
-                showError(_("errors.admin.load_syntax_error"));
-            }
-        });
+        );
     }
 
     serialize() {

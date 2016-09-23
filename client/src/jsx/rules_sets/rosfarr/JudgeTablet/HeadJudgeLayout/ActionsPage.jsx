@@ -1,22 +1,38 @@
 import _ from "l10n";
 
 import onTouchOrClick from "tablet_ui/onTouchOrClick";
-import showConfirm from "common/dialogs/showConfirm"; // FIXME
+import showConfirm from "common/dialogs/showConfirm";
+import closeDialog from "common/dialogs/closeDialog";
 
 import { Api } from "HostModules";
 
 export default class ActionsPage extends React.Component {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            tour: PT.shape.isRequired,
+        };
+    }
+
     stopTour = () => {
         showConfirm(_("tablet.confirms.stop_tour"), () => {
             if (this.props.tour) {
-                Api("tour.stop", { tour_id: this.props.tour.id }).onSuccess(() => swal.close()).send();
+                Api("tour.stop", {
+                    tour_id: this.props.tour.id,
+                })
+                    .onSuccess(closeDialog)
+                    .send();
             }
         });
     }
     finalizeTour = () => {
         showConfirm(_("tablet.confirms.finalize_tour"), () => {
             if (this.props.tour) {
-                Api("tour.finalize", { tour_id: this.props.tour.id }).onSuccess(() => swal.close()).send();
+                Api("tour.finalize", {
+                    tour_id: this.props.tour.id,
+                })
+                    .onSuccess(closeDialog)
+                    .send();
             }
         });
     }
@@ -25,7 +41,11 @@ export default class ActionsPage extends React.Component {
             if (this.props.tour) {
                 let tour_id = this.props.tour.id;
                 Api("tour.stop", { tour_id }).onSuccess(() => {
-                    Api("tour.start_next_after", { tour_id }).onSuccess(() => swal.close()).send();
+                    Api("tour.start_next_after", {
+                        tour_id: tour_id,
+                    })
+                        .onSuccess(closeDialog)
+                        .send();
                 }).send();
             }
         });
@@ -34,12 +54,20 @@ export default class ActionsPage extends React.Component {
         showConfirm(_("tablet.confirms.finalize_tour_and_start_next"), () => {
             if (this.props.tour) {
                 let tour_id = this.props.tour.id;
-                Api("tour.finalize", { tour_id }).onSuccess(() => {
-                    Api("tour.start_next_after", { tour_id }).onSuccess(() => swal.close()).send();
-                }).send();
+                Api("tour.finalize", {
+                    tour_id: tour_id,
+                })
+                    .onSuccess(() => {
+                        Api("tour.start_next_after", {
+                            tour_id: tour_id,
+                        })
+                            .onSuccess(closeDialog)
+                            .send();
+                    }).send();
             }
         });
     }
+
     hasUnconfirmedScores() {
         const runs = this.props.tour.runs;
         const latest_heat = runs[runs.length - 1].heat;
@@ -76,6 +104,7 @@ export default class ActionsPage extends React.Component {
         }
         return false;
     }
+
     renderWarning() {
         if (!this.hasUnconfirmedScores()) {
             return null;

@@ -1,6 +1,10 @@
 import _ from "l10n";
 import Api from "common/server/Api";
 
+import showInput from "common/dialogs/showInput";
+import showInputError from "common/dialogs/showInputError";
+import showSuccess from "common/dialogs/showSuccess";
+
 export default class Unfinalize extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
@@ -26,30 +30,23 @@ export default class Unfinalize extends React.Component {
 
     handleFormSubmit = (event) => {
         event.preventDefault();
-        swal({
-            title: _("admin.headers.unfinalize_tour"),
-            text: _("admin.confirms.unfinalize_tour"),
-            showCancelButton: true,
-            closeOnConfirm: false,
-            type: "input",
-            animation: false,
-        }, (value) => {
-            if (value !== "unfinalize") {
-                swal.showInputError(_("admin.messages.invalid_passcode"));
-                return false;
-            }
-            Api("tour.unfinalize", {
-                tour_id: Number(this._select.value),
-            })
-                .onSuccess(() => {
-                    swal({
-                        title: _("global.messages.success"),
-                        animation: false,
-                        type: "success",
-                    });
+        showInput(
+            _("admin.headers.unfinalize_tour"),
+            _("admin.confirms.unfinalize_tour"),
+            value => {
+                if (value !== "unfinalize") {
+                    showInputError(_("admin.messages.invalid_passcode"));
+                    return false;
+                }
+                Api("tour.unfinalize", {
+                    tour_id: Number(this._select.value),
                 })
-                .send();
-        });
+                    .onSuccess(() => {
+                        showSuccess(_("global.messages.success"));
+                    })
+                    .send();
+            }
+        );
     }
 
     render() {

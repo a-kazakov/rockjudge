@@ -62,6 +62,7 @@ export default function translate(src, ...args) {
                 "add_judge": "Добавить судью",
                 "add_participant": "Добавить участника",
                 "add_tour": "Добавить тур",
+                "bulk_tour_init": "Создать первые туры",
                 "confirm_score": "Зафиксировать",
                 "docx_heats": "Заходы в DOCX",
                 "docx_numbers": "Номера в DOCX",
@@ -79,6 +80,7 @@ export default function translate(src, ...args) {
                 "unfinalize": "Отменить финализацию",
             },
             "confirms": {
+                "bulk_tour_init": "Пересоздать первые туры всех дисциплин?",
                 "delete_client": "Вы действительно хотите отозвать авторизацию для этого клиента?",
                 "delete_club": "Вы действительно хотите удалить этот клуб?",
                 "delete_competition": "Вы действительно хотите удалить это соревнование?",
@@ -118,6 +120,7 @@ export default function translate(src, ...args) {
                 "load_acrobatics": "Загрузка акробатики",
                 "participants_management": "Управление участниками",
                 "service_menu": "Сервисное меню",
+                "shortcuts": "Быстрые действия",
                 "sportsmen_list": "Список спортсменов",
                 "start_list": "Стартовый лист",
                 "tour_heats": "Заходы участников",
@@ -151,6 +154,13 @@ export default function translate(src, ...args) {
                 "tours": "Туры",
             },
             "messages": {
+                "bulk_tour_init_status": (idx, n_tours, failures) => {
+                    if (failures > 0) {
+                        return `Инициализация первых туров: ${idx}/${n_tours} (${failures} ошиб${chooseEnding("ка", "ки", "ок")})`;
+                    } else {
+                        return `Инициализация первых туров: ${idx}/${n_tours}`;
+                    }
+                },
                 "invalid_passcode": "Введён неверный код потверждения",
             },
             "menu": {

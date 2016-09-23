@@ -1,1 +1,3 @@
-export default () => swal.close();
+export default function closeDialog() {
+    swal.close();
+}

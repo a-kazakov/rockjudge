@@ -1,6 +1,6 @@
 import _ from "l10n";
 
-export default (message, action, close_on_confirm=false) => {
+export default function showConfirm(message, action, close_on_confirm=false) {
     return swal({
         title: message,
         animation: false,

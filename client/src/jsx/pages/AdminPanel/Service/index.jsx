@@ -4,6 +4,7 @@ import showConfirm from "common/dialogs/showConfirm";
 import closeDialog from "common/dialogs/closeDialog";
 
 import AutoPrinterStatus from "./AutoPrinterStatus";
+import BulkTourInit from "./BulkTourInit";
 import ClientsAuth from "./ClientsAuth";
 import Unfinalize from "./Unfinalize";
 
@@ -57,6 +58,12 @@ export default class Service extends React.Component {
                         { _("admin.headers.auto_printer") }
                     </h3>
                     <AutoPrinterStatus
+                        competition={ this.props.competition }
+                    />
+                    <h3>
+                        { _("admin.headers.shortcuts") }
+                    </h3>
+                    <BulkTourInit
                         competition={ this.props.competition }
                     />
                     <h3>
