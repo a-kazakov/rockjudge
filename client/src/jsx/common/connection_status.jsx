@@ -60,7 +60,7 @@ class ConnectionStatus extends React.Component {
     getClassName() {
         return makeClassName({
             "connection-status": true,
-            "alert-danger": true,
+            "error": true,
             "tick": this.state.tick,
         });
     }
@@ -72,7 +72,7 @@ class ConnectionStatus extends React.Component {
         }
         if (this.state.connected === null) {
             return (
-                <div className="connection-status alert-warning">
+                <div className="connection-status waiting">
                     { _("global.labels.connecting") }
                 </div>
             )

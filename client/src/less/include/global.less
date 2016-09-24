@@ -23,6 +23,27 @@ table {
     clear: both;
 }
 
+.connection-status {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    padding: 2px 5px;
+    &.ok {
+        display: none;
+    }
+    &.waiting {
+        background-color: @color-light-yellow;
+        color: @color-dark-yellow;
+    }
+    &.error {
+        background-color: @color-light-red;
+        color: @color-dark-red;
+        &.tick {
+            background-color: @color-red;
+        }
+    }
+}
+
 .loop-width(@counter) when (@counter >= 1) {
     .loop-width((@counter - 1));
     .w-@{counter} {

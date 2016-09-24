@@ -7,6 +7,7 @@ from exceptions import ApiError
 from models.base_model import BaseModel
 from models.discipline import Discipline
 from models.proxies import tour_proxy
+from protection.features_restriction import check_permissions
 from scoring_systems import get_scoring_system
 
 from webserver.websocket import WsMessage
@@ -272,6 +273,7 @@ class Tour(BaseModel):
             return None
 
     def start(self, ws_message):
+        check_permissions("tour.start", {"tour": self})
         if self.finalized:
             raise ApiError("errors.tour.start_finalized")
         active_tours = list(self.select().where(Tour.active == True))  # NOQA
