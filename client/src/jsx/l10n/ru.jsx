@@ -183,6 +183,7 @@ export default function translate(src, ...args) {
             },
             "phrases": {
                 "n_participants": n => `${n} участник${chooseEnding(n, "", "а", "ов")}`,
+                "n_participations": n => `${n} участи${chooseEnding(n, "е", "я", "й")}`,
                 "n_sportsmen": (n, s) => {
                     let result = `${n} спортсмен${chooseEnding(n, "", "а", "ов")}`;
                     if (s > 0) {

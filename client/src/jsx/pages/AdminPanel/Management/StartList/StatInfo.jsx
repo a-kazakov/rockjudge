@@ -57,23 +57,29 @@ export default class StatInfo extends React.Component {
     }
 
     render() {
-        let sp_count = StatInfo.countSportsmen(this.props.participants);
-        let p_count = sp_count.total - sp_count.substitute_only;
-        let s_count = sp_count.substitute_only;
+        const sp_count = StatInfo.countSportsmen(this.props.participants);
+        const p_count = sp_count.total - sp_count.substitute_only;
+        const s_count = sp_count.substitute_only;
+        const pt_count = this.props.participants.reduce((acc, part) => acc + part.sportsmen.length, 0);
         if (this.props.tableRow) {
             return (
                 <tr>
-                    <th className="w-60">
+                    <th className="w-45">
                         <p className="text-left">
                             { this.props.label }
                         </p>
                     </th>
-                    <td className="w-16">
+                    <td className="w-15">
                         <p className="text-left">
                             { _("admin.phrases.n_participants", this.props.participants.length) }
                         </p>
                     </td>
-                    <td className="w-24">
+                    <td className="w-15">
+                        <p className="text-left">
+                            { _("admin.phrases.n_participations", pt_count) }
+                        </p>
+                    </td>
+                    <td className="w-25">
                         <p className="text-left">
                             { _("admin.phrases.n_sportsmen_short", p_count, s_count) }
                         </p>
@@ -83,10 +89,11 @@ export default class StatInfo extends React.Component {
         }
         const n_participants_str = _("admin.phrases.total_n_participants", this.props.participants.length);
         const n_sportsmen_str = _("admin.phrases.n_sportsmen", p_count, s_count);
+        const n_participations_str = _("admin.phrases.n_participations", pt_count);
         return (
             <p className="text-right">
                 <strong>
-                    { `${n_participants_str}, ${n_sportsmen_str}` }
+                    { `${n_participants_str}, ${n_participations_str}, ${n_sportsmen_str}` }
                 </strong>
             </p>
         );

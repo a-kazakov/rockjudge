@@ -44,7 +44,7 @@ export default class ParticipantCell extends React.Component {
                     <td className="w-75"><p>
                         { `${s.last_name} ${s.first_name}` }
                         { s.substitute
-                            ? <i>{ `(${_("admin.labels.sub")}.)` }</i>
+                            ? <i>{ ` (${_("admin.labels.sub")}.)` }</i>
                             : null
                         }
                     </p></td>
