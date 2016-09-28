@@ -69,13 +69,14 @@ export default class HeadJudgeLayout extends React.Component {
         const heats_count = this.heats_count;
         return (
             <Header
-                judge={ this.props.disciplineJudge.judge }
-                tour={ this.props.tour }
                 heat={ this.state.heat }
                 heatsCount={ heats_count }
+                hideHeatsButtons={ this.state.page !== "heats" }
+                judge={ this.props.disciplineJudge.judge }
                 maxHeat={ heats_count }
-                onPrevHeatClick={ this.onPrevHeatClick }
+                tour={ this.props.tour }
                 onNextHeatClick={ this.onNextHeatClick }
+                onPrevHeatClick={ this.onPrevHeatClick }
             />
         );
     }

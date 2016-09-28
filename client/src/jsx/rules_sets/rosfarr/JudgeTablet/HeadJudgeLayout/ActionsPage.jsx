@@ -10,7 +10,20 @@ export default class ActionsPage extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
-            tour: PT.shape.isRequired,
+            tour: PT.shape({
+                id: PT.number.isRequired,
+                runs: PT.arrayOf(
+                    PT.shape({
+                        heat: PT.number.isRequired,
+                        scores: PT.arrayOf(
+                            PT.shape({
+                                discipline_judge_id: PT.number.isRequired,
+                                confirmed: PT.bool.isRequired,
+                            }).isRequired,
+                        ).isRequired,
+                    }).isRequired,
+                ).isRequired,
+            }),
         };
     }
 

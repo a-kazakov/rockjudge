@@ -3,8 +3,37 @@ import _ from "l10n";
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
 export default class Header extends React.Component {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            heat: PT.number.isRequired,
+            heatsCount: PT.number.isRequired,
+            hideHeatsButtons: PT.bool,
+            judge: PT.shape({
+                name: PT.string.isRequired,
+                role_description: PT.string,
+                number: PT.string.isRequired,
+            }).isRequired,
+            maxHeat: PT.number.isRequired,
+            tour: PT.shape({
+                name: PT.string.isRequired,
+                discipline: PT.shape({
+                    name: PT.string.isRequired,
+                }).isRequired,
+            }).isRequired,
+            onNextHeatClick: PT.func.isRequired,
+            onPrevHeatClick: PT.func.isRequired,
+        };
+    }
+
+    static get defaultProps() {
+        return {
+            hideHeatsButtons: false,
+        };
+    }
+
     renderPrevHeatButton() {
-        if (this.props.heat <= 1) {
+        if (this.props.hideHeatsButtons || this.props.heat <= 1) {
             return (
                 <div className="button-container" />
             );
@@ -18,7 +47,7 @@ export default class Header extends React.Component {
         );
     }
     renderNextHeatButton() {
-        if (this.props.heat >= this.props.maxHeat) {
+        if (this.props.hideHeatsButtons || this.props.heat >= this.props.maxHeat) {
             return (
                 <div className="button-container" />
             );

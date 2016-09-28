@@ -169,16 +169,6 @@ export default class TourResultsLoader extends React.Component {
 
     // Rendering
 
-    renderNonFinalizedWarning() {
-        if (!this.state.tour.finalized) {
-            return null;
-        }
-        return (
-            <div className="alert alert-danger">
-                { _("results.alerts.not_finalized") }
-            </div>
-        );
-    }
     renderBody(table) {
         const { tourId, renderer, ...other_props} = this.props; // eslint-disable-line no-unused-vars
         const RenderingComponent = renderer;
@@ -202,7 +192,6 @@ export default class TourResultsLoader extends React.Component {
         }
         return (
             <div className="tour-results">
-                { this.renderNonFinalizedWarning }
                 { this.renderBody(table) }
             </div>
         );

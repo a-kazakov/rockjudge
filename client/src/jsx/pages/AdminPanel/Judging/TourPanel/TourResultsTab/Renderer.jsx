@@ -45,6 +45,16 @@ export default class Renderer extends React.Component {
             case 3: return rules_set.tour_results_table_3;
         }
     }
+    renderNonFinalizedWarning() {
+        if (this.props.tour.finalized) {
+            return null;
+        }
+        return (
+            <div className="non-finalized-warning">
+                { _("results.alerts.not_finalized") }
+            </div>
+        );
+    }
     renderBody() {
         const RenderingComponent = this.getRenderingComponent();
         return (
@@ -61,6 +71,7 @@ export default class Renderer extends React.Component {
                 title2={ this.props.tour.discipline.name }
                 title3={ this.props.tour.name }
             >
+                { this.renderNonFinalizedWarning() }
                 { this.renderBody() }
             </Paper>
         );

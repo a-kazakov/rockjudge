@@ -9,12 +9,13 @@ export default class ScoringLayout extends React.Component {
     render() {
         return (
             <GeneralScale
-                value={ this.props.scoreData.points }
-                scale="grid"
-                onChange={ this.onChange }
-                min={ 1 }
                 max={ 40 }
+                min={ 1 }
+                readOnly={ this.props.readOnly }
                 rowSize={ 10 }
+                scale="grid"
+                value={ this.props.scoreData.points }
+                onChange={ this.onChange }
             />
         );
     }

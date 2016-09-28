@@ -7,6 +7,7 @@ from exceptions import ApiError
 from models.base_model import BaseModel
 from models.discipline import Discipline
 from models.proxies import tour_proxy
+from models.proxies import competition_proxy
 from protection.features_restriction import check_permissions
 from scoring_systems import get_scoring_system
 
@@ -446,8 +447,6 @@ class Tour(BaseModel):
     def delete_model(self, ws_message):
         if self.finalized:
             raise ApiError("errors.tour.delete_finalized")
-        if self.get_attr_count("competition_plan_entries") > 0:
-            raise ApiError("errors.tour.delete_in_competition_plan")
         discipline = self.discipline
         prev_tour = self.get_prev_tour()
         if prev_tour is None:  # This is the first_tour
@@ -456,12 +455,19 @@ class Tour(BaseModel):
         else:
             prev_tour.next_tour = self.next_tour
             prev_tour.save()
-        self.delete_instance(recursive=True)
+        self.delete_instance(recursive=True, delete_nullable=True)
         ws_message.add_model_update(
             model_type=Discipline,
             model_id=discipline.id,
             schema={
                 "tours": {},
+            }
+        )
+        ws_message.add_model_update(
+            model_type=competition_proxy,
+            model_id=discipline.competition_id,
+            schema={
+                "plan": {},
             }
         )
         ws_message.add_message("active_tour_update")
