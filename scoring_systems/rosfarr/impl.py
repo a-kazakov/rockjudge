@@ -442,6 +442,9 @@ class RunScore:
             return 0
         if self.head_judge_score_wrapper.data["penalty"] is not None:
             return self.head_judge_score_wrapper.total_score
+        tj_scores = list(self.tech_judge_scores)
+        if len(tj_scores) == 0:
+            return 0
         return min(ScoreWrapper(score, self.scoring_system, dj).total_score for dj, score in self.tech_judge_scores)
 
     @property

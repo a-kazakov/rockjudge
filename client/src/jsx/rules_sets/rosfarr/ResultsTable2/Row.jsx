@@ -53,12 +53,7 @@ export default class Row extends React.Component {
         if (!this.props.row.run.performed) {
             return "—";
         }
-        const head_judge_score = this.props.row.run.scores.find(
-            score => this.props.disciplineJudgesMap.get(score.discipline_judge_id).role === "head_judge");
-        if (!head_judge_score) {
-            return "0";
-        }
-        return head_judge_score.data.total_score.toFixed();
+        return this.props.row.run.verbose_total_score.total_penalty.toFixed();
     }
     renderFormationScore(score) {
         return (

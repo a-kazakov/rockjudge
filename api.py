@@ -1,8 +1,11 @@
 import base64
+import json
 import logging
 import os
+import random
 import time
 import traceback
+from datetime import datetime
 
 from db import Database
 from exceptions import ApiError
@@ -506,7 +509,7 @@ class Api:
     def participant_delete(cls, request):
         participant = cls.get_model(Participant, "participant_id", request)
         check_auth(
-            competition_id=participant.competition_id,
+            competition_id=participant.discipline.competition_id,
             request=request,
             allowed_access_levels=("admin", ),
         )
@@ -775,6 +778,17 @@ class Api:
         # payload = base64.b64encode(os.urandom(request.body["payload_size"] * 10000000 // 13333333)).decode()
         # request.ws_message.add_message("ping_reply", {"ping_id": request.body["ping_id"], "payload": payload})
         # return {}
+
+    @classmethod
+    def service_report_js_error(cls, request):
+        filename = "error_js_{:%Y-%m-%d.%H-%M-%S.%f}_{:09d}.json".format(datetime.now(), random.randint(0, 10**9 - 1))
+        json.dump(
+            request.body,
+            open(filename, "wt", encoding="utf-8"),
+            ensure_ascii=False,
+            sort_keys=True,
+            indent=4,
+        )
 
     @classmethod
     def auth_register(cls, request):

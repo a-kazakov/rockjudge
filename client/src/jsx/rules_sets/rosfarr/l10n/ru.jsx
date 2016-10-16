@@ -149,7 +149,7 @@ export default function translate(src, ...args) {
                 "participant_club": "Клуб",
                 "participant_coaches": "Тренеры",
                 "participant_name": "Участник",
-                "penalty": "Штраф главного судьи",
+                "penalty": "Штраф",
                 "place": "Место",
                 "sportsmen": "Спортсмены",
                 "sportsmen_year_of_birth": "Г.р.",

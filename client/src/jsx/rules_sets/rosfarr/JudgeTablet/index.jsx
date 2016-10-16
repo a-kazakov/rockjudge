@@ -23,7 +23,7 @@ export default class JudgeTablet extends React.Component {
         "tech": TechJudgeLayout,
     };
     onScoreUpdate = (score_id, new_score) => {
-        let request = {
+        const request = {
             score_data: new_score,
             force: false,
         };

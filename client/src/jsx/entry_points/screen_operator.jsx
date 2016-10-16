@@ -1,4 +1,5 @@
 import "babel-polyfill";
+import "common/error_handler";
 
 import ScreenOperator from "pages/ScreenOperator";
 

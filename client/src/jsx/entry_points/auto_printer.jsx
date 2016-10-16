@@ -1,4 +1,5 @@
 import "babel-polyfill";
+import "common/error_handler";
 
 import AutoPrinter from "pages/AdminPanel/Service/AutoPrinter";
 

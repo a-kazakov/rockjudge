@@ -123,6 +123,9 @@ export default class AutoPrinter extends React.Component {
         const tours = this.getToursFromCompetition(this.state.competition);
         const current_idx = tours.findIndex(t => t.id === tour.id);
         const next_idx = current_idx + 1;
+        if (!tours[next_idx]) {
+            return null;
+        }
         if (tours[current_idx].discipline.id !== tours[next_idx].discipline.id) {
             return null;
         }
@@ -138,7 +141,7 @@ export default class AutoPrinter extends React.Component {
     doActionsForTour(tour) {
         const actions = this.state.actions[tour.id];
         const next_tour = this.getNextTour(tour);
-        const next_tour_actions = this.state.actions[next_tour.id];
+        const next_tour_actions = next_tour !== null ? this.state.actions[next_tour.id] : null;
         for (const action_type of this.POSSIBLE_ACTIONS) {
             const action_tour = action_type === "heats" ? next_tour : tour;
             const actions_row = action_type === "heats" ? next_tour_actions : actions;

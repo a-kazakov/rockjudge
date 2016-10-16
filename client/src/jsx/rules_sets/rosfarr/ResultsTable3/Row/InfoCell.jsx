@@ -60,6 +60,12 @@ export default class InfoCell extends React.Component {
         };
     }
 
+    getCard() {
+        if (!this.props.row.run.performed) {
+            return "—";
+        }
+        return this.props.row.run.verbose_total_score.total_penalty.toFixed();
+    }
     renderParticipantInfo() {
         return (
             <div>
@@ -87,10 +93,7 @@ export default class InfoCell extends React.Component {
                 <strong>
                     { `${_("results.labels.penalty")}: ` }
                 </strong>
-                { head_judge_score
-                    ?  head_judge_score.data.total_score.toFixed()
-                    : "—"
-                }
+                { this.getCard() }
             </p>
         );
     }

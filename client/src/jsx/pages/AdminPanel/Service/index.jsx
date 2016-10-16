@@ -69,7 +69,7 @@ export default class Service extends React.Component {
                     <h3>
                         { _("admin.headers.about") }
                     </h3>
-                    { _("admin.alerts.about", "v1.1 prerelease", "") }
+                    { _("admin.alerts.about", "v1.1", "14.10.2016") }
                 </div>
             </div>
         );

@@ -67,6 +67,7 @@ export default class DisciplineResultsLoader extends React.Component {
         return {
             competition: {},
             tours: {
+                discipline: {},
                 runs: {
                     participant: {
                         club: {},
