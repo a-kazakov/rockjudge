@@ -7,6 +7,7 @@ import time
 import traceback
 from datetime import datetime
 
+import settings
 from db import Database
 from exceptions import ApiError
 from log import log_api
@@ -782,6 +783,8 @@ class Api:
     @classmethod
     def service_report_js_error(cls, request):
         filename = "error_js_{:%Y-%m-%d.%H-%M-%S.%f}_{:09d}.json".format(datetime.now(), random.randint(0, 10**9 - 1))
+        if not settings.DEBUG:
+            filename = os.path.join("..", filename)
         json.dump(
             request.body,
             open(filename, "wt", encoding="utf-8"),
