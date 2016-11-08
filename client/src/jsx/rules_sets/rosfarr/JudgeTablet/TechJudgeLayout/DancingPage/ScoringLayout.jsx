@@ -6,6 +6,8 @@ import IntegerInput from "tablet_ui/IntegerInput";
 
 import ConfirmationButton from "JudgeTablet/ConfirmationButton";
 
+import PreviousPenalties from "JudgeTablet/HeadJudgeLayout/HeatsPage/ScoringLayout/PreviousPenalties";
+
 import StopWatch from "./StopWatch";
 
 export default class ScoringLayout extends CacheMixin(React.Component) {
@@ -72,6 +74,9 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
                     readOnly={ this.score.confirmed }
                     value={ score.raw_data.penalty }
                     onChange={ this.handlePenaltyChange }
+                />
+                <PreviousPenalties
+                    run={ this.props.run }
                 />
                 <div className="spacer" />
                 <h3>{ _("tablet.tech_judge.jump_steps") }</h3>

@@ -7,6 +7,8 @@ import SplashScreen from "./SplashScreen";
 
 import rules_set from "rules_sets/loader";
 
+import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
+
 export default class JudgeTablet extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
@@ -25,7 +27,7 @@ export default class JudgeTablet extends React.Component {
         this._current_active_tour_id = null;
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData);
         this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage);
         this.active_tour_update_listener = message_dispatcher.addListener("active_tour_update", this.handleActiveTourUpdate);
@@ -149,6 +151,36 @@ export default class JudgeTablet extends React.Component {
 
     // Rendering
 
+    handleToggleFullScreen = () => {
+        if (
+            !window.document.fullscreenElement &&
+            !window.document.mozFullScreenElement &&
+            !window.document.webkitFullscreenElement
+        ) {
+            if (ReactDOM.findDOMNode(this).requestFullscreen) {
+                ReactDOM.findDOMNode(this).requestFullscreen();
+            } else if (ReactDOM.findDOMNode(this).mozRequestFullScreen) {
+                ReactDOM.findDOMNode(this).mozRequestFullScreen();
+            } else if (ReactDOM.findDOMNode(this).msRequestFullscreen) {
+                ReactDOM.findDOMNode(this).msRequestFullscreen();
+            } else if (ReactDOM.findDOMNode(this).webkitRequestFullscreen) {
+                ReactDOM.findDOMNode(this).webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+            } else if (ReactDOM.findDOMNode(this).webkitEnterFullscreen) {
+                ReactDOM.findDOMNode(this).webkitEnterFullscreen();
+            }
+        } else {
+            if (window.document.cancelFullScreen) {
+                window.document.cancelFullScreen();
+            } else if (window.document.mozCancelFullScreen) {
+                window.document.mozCancelFullScreen();
+            } else if (window.document.msCancelFullScreen) {
+                window.document.msCancelFullScreen();
+            } else if (window.document.webkitCancelFullScreen) {
+                window.document.webkitCancelFullScreen();
+            }
+        }
+    }
+
     render() {
         if (this.state.judge === null) {
             return (
@@ -170,6 +202,12 @@ export default class JudgeTablet extends React.Component {
                     disciplineJudge={ this.state.disciplineJudge }
                     tour={ this.state.tour }
                 />
+                <div
+                    className="btn-fullscreen"
+                    { ...onTouchEndOrClick(this.handleToggleFullScreen) }
+                >
+                    <div />
+                </div>
             </div>
         );
     }

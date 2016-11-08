@@ -97,11 +97,14 @@ export default class DisciplineResultsLoader extends React.Component {
             this.loadResults();
             return;
         }
-        let tour_storage = this.storage.get("Tour").by_id(message["tour_id"]);
-        if (!tour_storage) {
+        const tour_storage = this.storage.get("Tour").by_id(message["tour_id"]);
+        const tour = tour_storage.serialize({
+            discipline: {},
+        });
+        if (tour === null) { // Fake model
             return;
         }
-        if (tour_storage.discipline.id === this.props.disciplineId) {
+        if (tour.discipline.id === this.props.disciplineId) {
             this.loadResults();
         }
     }
