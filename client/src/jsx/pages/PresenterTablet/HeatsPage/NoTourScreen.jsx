@@ -1,6 +1,6 @@
 import _ from "l10n";
 
-export default class NoTourScreen extends React.Component {
+export default class NoTourScreen extends React.PureComponent {
     render() {
         return (
             <div className="heats">

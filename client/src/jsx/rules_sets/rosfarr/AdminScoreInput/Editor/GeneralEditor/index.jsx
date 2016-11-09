@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import Item from "./Item";
 
-export default class GeneralEditor extends React.Component {
+export default class GeneralEditor extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -56,7 +56,7 @@ export default class GeneralEditor extends React.Component {
                         type="button"
                         onClick={ this.handleDiscardClick }
                     >
-                    { _("global.buttons.close") }
+                        { _("global.buttons.close") }
                     </button>
                 </div>
             );
@@ -87,7 +87,7 @@ export default class GeneralEditor extends React.Component {
                 onSubmit={ this.handleSubmission }
             >
                 <div className="fields">
-                    { this.props.fields.map((f, idx) =>
+                    { this.props.fields.map(f =>
                         <Item
                             field={ f }
                             key={ f.key }

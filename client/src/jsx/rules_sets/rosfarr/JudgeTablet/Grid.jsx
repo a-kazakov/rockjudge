@@ -1,43 +1,30 @@
-import CacheMixin from "common/CacheMixin";
+export default class Grid extends React.PureComponent {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            children: PT.node.isRequired,
+        };
+    }
 
-export default class Grid extends CacheMixin(React.Component) {
-    get children() {
-        return this.fetchFromCache("children", () =>
-            Array.isArray(this.props.children)
-                ? this.props.children
-                : [this.props.children]
-        );
+    getMaxWidth() {
+        const line_size = this.two_rows
+            ? Math.floor((this.children.length + 1) / 2 + 0.001)
+            : this.children.length;
+        return `${600 * line_size}px`;
     }
-    get two_rows() {
-        return this.fetchFromCache("two_rows", () =>
-            this.children.length >= 4
-        );
+    setupCache() {
+        this.children = Array.isArray(this.props.children)
+            ? this.props.children
+            : [this.props.children];
+        this.two_rows = this.children.length >= 4;
+        this.width_value = this.two_rows
+            ? 99.9 / (this.children.length + 1) * 2
+            : 99.9 / this.children.length;
+        this.width = `${ this.width_value.toFixed(5) }%`;
+        this.max_width = this.getMaxWidth();
+        this.asym_layout = this.two_rows && this.children.length % 2 === 0;
     }
-    get width_value() {
-        return this.fetchFromCache("width_value", () =>
-            this.two_rows
-                ? 99.9 / (this.children.length + 1) * 2
-                : 99.9 / this.children.length
-        );
-    }
-    get width() {
-        return this.fetchFromCache("width", () =>
-            `${ this.width_value.toFixed(5) }%`
-        )
-    }
-    get max_width() {
-        return this.fetchFromCache("max_width", () => {
-            const line_size = this.two_rows
-                ? Math.floor((this.children.length + 1) / 2 + 0.001)
-                : this.children.length;
-            return `${600 * line_size}px`;
-        });
-    }
-    get asym_layout() {
-        return this.fetchFromCache("asym_layout", () =>
-            this.two_rows && this.children.length % 2 === 0
-        );
-    }
+
     renderRow(elements, is_second_row) {
         if (elements === null) {
             return null;
@@ -68,6 +55,7 @@ export default class Grid extends CacheMixin(React.Component) {
         )
     }
     render() {
+        this.setupCache();
         const class_name = this.two_rows ? "Grid two-rows" : "Grid";
         const first_row = this.two_rows
             ? this.children.filter((x, idx) => idx % 2 === 0)

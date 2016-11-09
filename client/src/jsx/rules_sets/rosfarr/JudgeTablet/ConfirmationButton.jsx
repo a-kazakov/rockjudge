@@ -3,7 +3,7 @@ import makeClassName from "common/makeClassName";
 
 import Slider from "tablet_ui/Slider";
 
-export default class ConfirmationButton extends React.Component {
+export default class ConfirmationButton extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -30,8 +30,8 @@ export default class ConfirmationButton extends React.Component {
             <div className={ this.getClassName() }>
                 <Slider
                     done={ this.props.confirmed }
-                    slideText={ _("tablet.global.confirm_score") }
                     doneText={ _("tablet.global.confirmed") }
+                    slideText={ _("tablet.global.confirm_score") }
                     onActivate={ this.props.onConfirm }
                 />
             </div>

@@ -5,7 +5,7 @@ import onTouchOrClick from "tablet_ui/onTouchOrClick";
 
 let stopwatches = {};
 
-export default class StopWatch extends React.Component {
+export default class StopWatch extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

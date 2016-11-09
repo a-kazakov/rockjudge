@@ -1,6 +1,22 @@
 import _ from "l10n";
 
-export default class ActobaticOverrides extends React.Component {
+export default class ActobaticOverrides extends React.PureComponent {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            run: PT.shape({
+                acrobatics: PT.arrayOf(
+                    PT.shape({
+                        acrobatic: PT.shape({
+                            original_score: PT.number.isRequired,
+                            score: PT.number.isRequired,
+                        }).isRequired,
+                    }).isRequired,
+                ).isRequired,
+            }).isRequired,
+        };
+    }
+
     getAcrobaticOverrides() {
         return this.props.run.acrobatics
             .map((acro, idx) => ({ idx: idx + 1, acrobatic: acro }))

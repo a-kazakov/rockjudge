@@ -2,7 +2,7 @@ import Api from "common/server/Api";
 
 import InputForm from "./InputForm";
 
-export default class Creator extends React.Component {
+export default class Creator extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

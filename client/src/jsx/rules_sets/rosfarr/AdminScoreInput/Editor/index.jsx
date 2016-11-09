@@ -12,7 +12,7 @@ import HeadJudgeFormationScore from "./HeadJudgeFormationScore";
 import TechJudgeScore from "./TechJudgeScore";
 import TechJudgeFormationScore from "./TechJudgeFormationScore";
 
-export default class Editor extends React.Component {
+export default class Editor extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

@@ -1,4 +1,4 @@
-export default class Buttons extends React.Component {
+export default class Buttons extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

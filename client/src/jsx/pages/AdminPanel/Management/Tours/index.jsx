@@ -4,7 +4,7 @@ import AddButton from "./AddButton";
 import Creator from "./Creator";
 import Row from "./Row";
 
-export default class Tours extends React.Component {
+export default class Tours extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

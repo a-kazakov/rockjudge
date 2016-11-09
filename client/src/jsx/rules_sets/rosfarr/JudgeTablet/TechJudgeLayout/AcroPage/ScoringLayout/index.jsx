@@ -2,27 +2,53 @@ import _ from "l10n";
 
 import { Api } from "HostModules";
 
-import CacheMixin from "common/CacheMixin";
-
 import ConfirmationButton from "JudgeTablet/ConfirmationButton";
 
 import Element from "./Element";
 
-export default class ScoringLayout extends CacheMixin(React.Component) {
-    get score() {
-        return this.fetchFromCache("score", () => {
-            for (const score of this.props.run.scores) {
-                if (score.discipline_judge_id === this.props.disciplineJudge.id) {
-                    return score;
-                }
-            }
-            return null;
-        });
+export default class ScoringLayout extends React.PureComponent {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            disciplineJudge: PT.shape({
+                id: PT.number.isRequired,
+            }).isRequired,
+            run: PT.shape({
+                id: PT.number.isRequired,
+                acrobatics: PT.arrayOf(
+                    PT.object.isRequired,
+                ).isRequired,
+                participant: PT.shape({
+                    number: PT.number.isRequired,
+                    name: PT.string.isRequired,
+                    sportsmen: PT.array.isRequired,
+                }).isRequired,
+                scores: PT.arrayOf(
+                    PT.shape({
+                        discipline_judge_id: PT.number.isRequired,
+                    }).isRequired,
+                ).isRequired,
+            }).isRequired,
+            onScoreConfirm: PT.func.isRequired,
+        };
     }
-    onConfirm = () => {
+
+    getScore() {
+        for (const score of this.props.run.scores) {
+            if (score.discipline_judge_id === this.props.disciplineJudge.id) {
+                return score;
+            }
+        }
+        return null;
+    }
+    setupCache() {
+        this.score = this.getScore();
+    }
+
+    handleConfirm = () => {
         this.props.onScoreConfirm(this.score.id);
     }
-    onAcroOverride = (acro_idx, value) => {
+    handleAcroOverride = (acro_idx, value) => {
         if (this.score.confirmed) {
             return;
         }
@@ -32,20 +58,20 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
             score: value,
         }).send();
     }
-    genOnAcroOverride(acro_idx) {
-        return (new_value) => this.onAcroOverride(acro_idx, new_value);
-    }
+
     renderContent() {
         return this.props.run.acrobatics.map((acro, idx) =>
             <Element
-                readOnly={ this.score.confirmed }
-                key={ idx }
                 acro={ acro }
-                onAcroOverride={ this.genOnAcroOverride(idx) }
+                idx={ idx }
+                key={ idx }
+                readOnly={ this.score.confirmed }
+                onAcroOverride={ this.handleAcroOverride }
             />
         );
     }
     render() {
+        this.setupCache();
         const header = _("global.phrases.participant_n",
             this.props.run.participant.number,
             this.props.run.participant.name,
@@ -61,7 +87,7 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
                 { this.renderContent() }
                 <ConfirmationButton
                     confirmed={ this.score.confirmed }
-                    onConfirm={ this.onConfirm }
+                    onConfirm={ this.handleConfirm }
                 />
             </div>
         );

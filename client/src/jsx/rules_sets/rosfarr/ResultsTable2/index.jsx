@@ -5,7 +5,7 @@ import ColumnsWidths from "./ColumnsWidths";
 
 import getJudgeTableMark from "getJudgeTableMark";
 
-export default class ResultsTable2 extends React.Component {
+export default class ResultsTable2 extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

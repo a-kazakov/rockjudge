@@ -2,7 +2,7 @@ import makeClassName from "common/makeClassName";
 
 import Item from "./Item";
 
-export default class SelectorInput extends React.Component {
+export default class SelectorInput extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

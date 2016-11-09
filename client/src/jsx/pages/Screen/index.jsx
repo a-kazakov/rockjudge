@@ -6,7 +6,7 @@ import ScreenManifest from "common/ScreenManifest";
 
 import loader from "./loader";
 
-export default class Screen extends React.Component {
+export default class Screen extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

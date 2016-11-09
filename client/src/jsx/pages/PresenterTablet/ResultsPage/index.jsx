@@ -3,7 +3,7 @@ import DisciplineResultsLoader from "common/components/DisciplineResultsLoader";
 import DisciplineSelector from "./DisciplineSelector";
 import ResultsRenderer from "./ResultsRenderer";
 
-export default class ResultsPage extends React.Component {
+export default class ResultsPage extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

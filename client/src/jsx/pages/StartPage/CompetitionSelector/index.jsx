@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import Button from "./Button";
 
-export default class CompetitionSelector extends React.Component {
+export default class CompetitionSelector extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

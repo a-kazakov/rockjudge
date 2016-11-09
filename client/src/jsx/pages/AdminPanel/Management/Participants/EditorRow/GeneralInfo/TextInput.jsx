@@ -1,4 +1,4 @@
-export default class TextInput extends React.Component {
+export default class TextInput extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

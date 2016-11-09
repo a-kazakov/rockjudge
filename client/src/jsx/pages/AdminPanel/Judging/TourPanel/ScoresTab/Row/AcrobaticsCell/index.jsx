@@ -1,6 +1,6 @@
 import Editor from "./Editor";
 
-export default class AcrobaticsCell extends React.Component {
+export default class AcrobaticsCell extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -63,7 +63,7 @@ export default class AcrobaticsCell extends React.Component {
                 className="acrobatics"
                 onClick={ this.handleStartEditing }
             >
-               { has_overrides
+                { has_overrides
                     ? `${original_score.toFixed(1)} → ${score.toFixed(1)}`
                     : score.toFixed(1) }
             </td>

@@ -2,7 +2,7 @@ import Docx from "common/Docx";
 
 import OneNumber from "./OneNumber";
 
-export default class Numbers extends React.Component {
+export default class Numbers extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

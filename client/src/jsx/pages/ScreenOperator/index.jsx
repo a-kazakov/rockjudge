@@ -14,7 +14,7 @@ import TourHeatControls from "./TourHeatControls";
 import TourControls from "./TourControls";
 import DisciplinePlaceControls from "./DisciplinePlaceControls";
 
-export default class ScreenOperator extends React.Component {
+export default class ScreenOperator extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

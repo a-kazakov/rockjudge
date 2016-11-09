@@ -3,7 +3,7 @@ import _ from "l10n";
 import TourSelector from "../TourSelector";
 import HeatSelector from "./HeatSelector";
 
-export default class TourHeatControls extends React.Component {
+export default class TourHeatControls extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

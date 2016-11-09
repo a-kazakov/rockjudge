@@ -3,7 +3,7 @@ import _ from "l10n";
 import DisciplineSelector from "./DisciplineSelector";
 import PlaceSelector from "./PlaceSelector";
 
-export default class DisciplinePlaceControls extends React.Component {
+export default class DisciplinePlaceControls extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

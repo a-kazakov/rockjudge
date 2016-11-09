@@ -3,7 +3,7 @@ import makeClassName from "common/makeClassName";
 
 import Info from "./Info";
 
-export default class EditorRow extends React.Component {
+export default class EditorRow extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

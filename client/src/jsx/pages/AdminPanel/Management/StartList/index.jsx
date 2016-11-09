@@ -15,7 +15,7 @@ import DisciplinesSummary from "./DisciplinesSummary";
 import Numbers from "./Numbers";
 import groupParticipants from "./groupParticipants";
 
-export default class StartList extends React.Component {
+export default class StartList extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

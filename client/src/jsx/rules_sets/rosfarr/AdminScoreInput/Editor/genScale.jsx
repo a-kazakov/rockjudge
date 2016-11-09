@@ -10,7 +10,7 @@ function genScale(type, user_params) {
             s => [s.toString(), `-${s}%`]
         );
         break;
-    case "numbers":
+    case "numbers": {
         const params = Object.assign({
             min: 0,
             max: 10,
@@ -22,6 +22,7 @@ function genScale(type, user_params) {
             result.push([str, str]);
         }
         break;
+    }
     default:
         console.error(`Unknown scale type: ${type}`);
     }

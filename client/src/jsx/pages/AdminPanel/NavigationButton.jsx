@@ -1,4 +1,4 @@
-export default class NavigationButton extends React.Component {
+export default class NavigationButton extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

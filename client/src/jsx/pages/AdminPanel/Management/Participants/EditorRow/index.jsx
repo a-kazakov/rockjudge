@@ -4,7 +4,7 @@ import GeneralInfo from "./GeneralInfo";
 import SportsmenList from "./SportsmenList";
 import Programs from "./Programs";
 
-export default class EditorRow extends React.Component {
+export default class EditorRow extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

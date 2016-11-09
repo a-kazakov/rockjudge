@@ -1,6 +1,6 @@
 import Api from "common/server/Api";
 
-export default class HeatCell extends React.Component {
+export default class HeatCell extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

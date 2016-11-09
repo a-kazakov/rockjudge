@@ -4,7 +4,7 @@ import rules_set from "rules_sets/loader";
 
 import DisciplineResultsLoader from "common/components/DisciplineResultsLoader";
 
-export default class Results extends React.Component {
+export default class Results extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

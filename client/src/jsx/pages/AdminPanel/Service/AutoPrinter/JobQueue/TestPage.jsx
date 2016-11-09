@@ -1,7 +1,7 @@
 import _ from "l10n";
 import Docx from "common/Docx";
 
-export default class TestPage extends React.Component {
+export default class TestPage extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

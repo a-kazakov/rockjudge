@@ -1,6 +1,6 @@
 import Section from "./Section";
 
-export default class DisciplinesSorted extends React.Component {
+export default class DisciplinesSorted extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

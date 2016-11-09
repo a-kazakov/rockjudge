@@ -2,7 +2,7 @@ import TourResultsLoader from "common/components/TourResultsLoader";
 
 import Renderer from "./Renderer";
 
-export default class TourResultsTab extends React.Component {
+export default class TourResultsTab extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

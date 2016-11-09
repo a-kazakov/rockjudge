@@ -9,7 +9,7 @@ import Paper from "pages/AdminPanel/common/Paper";
 
 import Row from "./Row";
 
-export default class HeatsTab extends React.Component {
+export default class HeatsTab extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

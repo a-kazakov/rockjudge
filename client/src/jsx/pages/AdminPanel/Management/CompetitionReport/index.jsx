@@ -14,7 +14,7 @@ import Judges from "./Judges";
 import DisciplineJudges from "./DisciplineJudges";
 import Results from "./Results";
 
-export default class CompetitionReport extends React.Component {
+export default class CompetitionReport extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

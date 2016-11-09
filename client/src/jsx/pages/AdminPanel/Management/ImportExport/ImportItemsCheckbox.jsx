@@ -1,4 +1,4 @@
-export default class ImportItemsCheckbox extends React.Component {
+export default class ImportItemsCheckbox extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

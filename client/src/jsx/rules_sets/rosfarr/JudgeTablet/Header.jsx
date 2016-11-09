@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
-export default class Header extends React.Component {
+export default class Header extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -80,7 +80,7 @@ export default class Header extends React.Component {
                     </div>
                 </div>
                 { this.renderNextHeatButton() }
-         </header>
+            </header>
         );
     }
 }

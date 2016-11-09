@@ -3,7 +3,7 @@ import CmpChain from "common/tools/CmpChain";
 
 import StatInfo from "./StatInfo";
 
-export default class SportsmenList extends React.Component {
+export default class SportsmenList extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

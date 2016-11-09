@@ -2,7 +2,7 @@ import Api from "common/server/Api";
 
 import rules_set from "rules_sets/loader";
 
-export default class ScoreCell extends React.Component {
+export default class ScoreCell extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

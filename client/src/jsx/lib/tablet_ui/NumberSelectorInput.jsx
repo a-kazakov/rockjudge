@@ -1,6 +1,6 @@
 import SelectorInput from "./SelectorInput";
 
-export default class NumberSelectorInput extends React.Component {
+export default class NumberSelectorInput extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

@@ -3,7 +3,7 @@ import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
 import makeClassName from "common/makeClassName";
 
-export default class RendererRow extends React.Component {
+export default class RendererRow extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

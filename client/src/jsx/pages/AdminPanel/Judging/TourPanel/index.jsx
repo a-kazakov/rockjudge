@@ -12,7 +12,7 @@ import HeatsTabButtons from "./HeatsTab/Buttons";
 import TourResultsTabButtons from "./TourResultsTab/Buttons";
 import DisciplineResultsTabButtons from "./DisciplineResultsTab/Buttons";
 
-export default class TourPanel extends React.Component {
+export default class TourPanel extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

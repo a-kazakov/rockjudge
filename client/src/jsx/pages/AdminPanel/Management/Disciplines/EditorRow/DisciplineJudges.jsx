@@ -3,7 +3,7 @@ import rules_set from "rules_sets/loader";
 
 import DisciplineJudgeRow from "./DisciplineJudgeRow";
 
-export default class DisciplineJudges extends React.Component {
+export default class DisciplineJudges extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

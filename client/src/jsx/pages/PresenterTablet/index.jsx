@@ -9,7 +9,7 @@ import LeftBar from "./LeftBar";
 import PlanPage from "./PlanPage";
 import ResultsPage from "./ResultsPage";
 
-export default class PresenterTablet extends React.Component {
+export default class PresenterTablet extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

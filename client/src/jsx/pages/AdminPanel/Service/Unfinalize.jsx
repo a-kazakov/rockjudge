@@ -5,7 +5,7 @@ import showInput from "common/dialogs/showInput";
 import showInputError from "common/dialogs/showInputError";
 import showSuccess from "common/dialogs/showSuccess";
 
-export default class Unfinalize extends React.Component {
+export default class Unfinalize extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

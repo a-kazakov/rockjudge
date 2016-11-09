@@ -4,7 +4,7 @@ import CompetitionInfo from "./CompetitionInfo";
 import Judges from "./Judges";
 import Clubs from "./Clubs";
 
-export default class InfoPage extends React.Component {
+export default class InfoPage extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

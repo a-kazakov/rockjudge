@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import Judges from "./Judges";
 
-export default class DisciplineJudges extends React.Component {
+export default class DisciplineJudges extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

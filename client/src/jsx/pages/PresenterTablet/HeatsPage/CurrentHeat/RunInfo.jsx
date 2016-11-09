@@ -1,4 +1,4 @@
-export default class RunInfo extends React.Component {
+export default class RunInfo extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

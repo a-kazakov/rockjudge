@@ -1,38 +1,53 @@
-import CacheMixin from "common/CacheMixin";
-
 import Header from "JudgeTablet/Header";
 import Grid from "JudgeTablet/Grid";
 import Participant from "./Participant";
 
-export default class GeneralLayout extends CacheMixin(React.Component) {
+export default class GeneralLayout extends React.PureComponent {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            disciplineJudge: PT.shape({
+                id: PT.number.isRequired,
+                judge: PT.object.isRequired,
+            }).isRequired,
+            layoutClass: PT.func.isRequired,
+            tour: PT.shape({
+                id: PT.number.isRequired,
+                runs: PT.arrayOf(
+                    PT.shape({
+                        heat: PT.number.isRequired,
+                        scores: PT.arrayOf(
+                            PT.shape({
+                                discipline_judge_id: PT.number.isRequired,
+                            }).isRequired,
+                        ).isRequired,
+                    }).isRequired,
+                ).isRequired,
+            }).isRequired,
+            onScoreConfirm: PT.func.isRequired,
+            onScoreUpdate: PT.func.isRequired,
+        };
+    }
+
     constructor(props) {
         super(props);
         this.state = {
-            heat: this.first_non_confirmed_heat,
+            heat: this.getFirstNonConfirmedHeat(),
         };
     }
+
     componentWillReceiveProps(next_props) {
         if (next_props.tour.id !== this.props.tour.id) {
             const prev_props = this.props;
             this.props = next_props;
-            this.resetCache();
             this.setState({
-                heat: this.first_non_confirmed_heat,
+                heat: this.getFirstNonConfirmedHeat(),
             });
             this.props = prev_props;
         }
     }
-    get heats_count() {
-        return this.fetchFromCache("heats_count", () =>
-            Math.max(...this.props.tour.runs.map(run => run.heat))
-        );
-    }
-    get runs() {
-        return this.fetchFromCache("runs", () =>
-            this.props.tour.runs.filter(run => run.heat === this.state.heat)
-        );
-    }
-    get first_non_confirmed_heat() {
+
+    getFirstNonConfirmedHeat() {
         for (const run of this.props.tour.runs) {
             for (const score of run.scores) {
                 if (score.discipline_judge_id === this.props.disciplineJudge.id && !score.confirmed && run.performed) {
@@ -42,39 +57,42 @@ export default class GeneralLayout extends CacheMixin(React.Component) {
         }
         return this.heats_count;
     }
-    updateHeat(value) {
-        this.setState({
-            heat: value,
-        });
+    setupCache() {
+        this.heats_count = Math.max(1, ...this.props.tour.runs.map(run => run.heat));
+        this.runs = this.props.tour.runs.filter(run => run.heat === this.state.heat);
+        this.first_non_confirmed_heat = this.getFirstNonConfirmedHeat();
     }
-    onPrevHeatClick = () => {
-        this.updateHeat(this.state.heat - 1);
-    }
-    onNextHeatClick = () => {
-        this.updateHeat(this.state.heat + 1);
-    }
+
+
+    setHeat = (heat) => this.setState({ heat });
+    updateHeat = (delta) => this.setHeat(this.state.heat + delta);
+
+    handlePrevHeatClick = () => this.updateHeat(-1);
+    handleNextHeatClick = () => this.updateHeat(1);
+
     render() {
+        this.setupCache();
         return (
             <div className="rosfarr-JudgeTablet GeneralLayout">
                 <Header
-                    judge={ this.props.disciplineJudge.judge }
-                    tour={ this.props.tour }
                     heat={ this.state.heat }
                     heatsCount={ this.heats_count }
+                    judge={ this.props.disciplineJudge.judge }
                     maxHeat={ this.first_non_confirmed_heat }
-                    onPrevHeatClick={ this.onPrevHeatClick }
-                    onNextHeatClick={ this.onNextHeatClick }
+                    tour={ this.props.tour }
+                    onNextHeatClick={ this.handleNextHeatClick }
+                    onPrevHeatClick={ this.handlePrevHeatClick }
                 />
                 <div className="body">
                     <Grid>
                         { this.props.tour.runs.filter(run => run.heat === this.state.heat).map(run =>
                             <Participant
-                                key={ run.id }
-                                run={ run }
-                                layoutClass={ this.props.layoutClass }
                                 disciplineJudge={ this.props.disciplineJudge }
-                                onScoreUpdate={ this.props.onScoreUpdate }
+                                key={ run.id }
+                                layoutClass={ this.props.layoutClass }
+                                run={ run }
                                 onScoreConfirm={ this.props.onScoreConfirm }
+                                onScoreUpdate={ this.props.onScoreUpdate }
                             />
                         )}
                     </Grid>

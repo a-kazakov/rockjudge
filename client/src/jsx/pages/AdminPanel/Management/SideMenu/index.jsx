@@ -3,7 +3,7 @@ import _ from "l10n";
 import Item from "./Item";
 import SubMenu from "./SubMenu";
 
-export default class SideMenu extends React.Component {
+export default class SideMenu extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

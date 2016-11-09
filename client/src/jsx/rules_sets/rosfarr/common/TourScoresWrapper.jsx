@@ -1,6 +1,5 @@
 import RunScoresWrapper from "./RunScoresWrapper";
 
-
 export default class TourScoresWrapper {
     constructor(tour, results) {
         this.run_wrappers = tour.runs.map((run) => new RunScoresWrapper(run, tour.discipline_judges));
@@ -23,21 +22,21 @@ export default class TourScoresWrapper {
             this.run_wrappers.sort((a, b) => a.results_info.place - b.results_info.place);
         }
     }
-    getDisciplineJudgesByRoles() {
-        if (arguments.length === 1) {
-            return this.discipline_judges_by_roles[arguments[0]]
-                ? this.discipline_judges_by_roles[arguments[0]].map((b) => b.discipline_judge)
+    getDisciplineJudgesByRoles(...args) {
+        if (args.length === 1) {
+            return this.discipline_judges_by_roles[args[0]]
+                ? this.discipline_judges_by_roles[args[0]].map((b) => b.discipline_judge)
                 : [];
         }
         let res = [];
-        for (let i = 0; i < arguments.length; ++i) {
-            res = res.concat(this.discipline_judges_by_roles[arguments[i]] || []);
+        for (let i = 0; i < args.length; ++i) {
+            res = res.concat(this.discipline_judges_by_roles[args[i]] || []);
         }
         res.sort((a, b) => a.idx - b.idx);
         return res.map((b) => b.discipline_judge);
     }
-    getScoresTableByRoles() {
-        let discipline_judge_ids = this.getDisciplineJudgesByRoles(...arguments).map((dj) => dj.id);
+    getScoresTableByRoles(...args) {
+        const discipline_judge_ids = this.getDisciplineJudgesByRoles(...args).map((dj) => dj.id);
         return this.run_wrappers.map((w) => w.getScoresByJudgeIds(discipline_judge_ids));
     }
     getResultsInfo() {

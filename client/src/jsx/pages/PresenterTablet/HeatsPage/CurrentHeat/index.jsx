@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import RunInfo from "./RunInfo";
 
-export default class CurrentHeat extends React.Component {
+export default class CurrentHeat extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

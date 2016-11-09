@@ -1,7 +1,7 @@
 import _ from "l10n";
 import rules_set from "rules_sets/loader";
 
-export default class InputForm extends React.Component {
+export default class InputForm extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

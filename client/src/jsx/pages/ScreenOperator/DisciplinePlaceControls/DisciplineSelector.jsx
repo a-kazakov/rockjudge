@@ -1,4 +1,4 @@
-export default class DisciplineSelector extends React.Component {
+export default class DisciplineSelector extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

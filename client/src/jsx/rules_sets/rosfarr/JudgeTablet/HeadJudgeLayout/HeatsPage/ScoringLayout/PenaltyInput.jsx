@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import SelectorInput from "tablet_ui/SelectorInput";
 
-export default class PenaltyInput extends React.Component {
+export default class PenaltyInput extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

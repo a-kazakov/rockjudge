@@ -2,11 +2,12 @@ import _ from "l10n";
 
 import GeneralScale from "JudgeTablet/GeneralScale";
 
-export default class Element extends React.Component {
+export default class Element extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
             acroIdx: PT.number.isRequired,
+            readOnly: PT.bool.isRequired,
             reduction: PT.number,
             onAcroReductionUpdate: PT.func.isRequired,
         };

@@ -9,7 +9,7 @@ import Presenter from "./Presenter";
 import SingleJudge from "./SingleJudge";
 import UniversalSelector from "./UniversalSelector";
 
-export default class RoleSelector extends React.Component {
+export default class RoleSelector extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

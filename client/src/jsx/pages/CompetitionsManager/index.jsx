@@ -8,7 +8,7 @@ import Loader from "common/components/Loader";
 import Row from "./Row";
 import CreationRow from "./CreationRow";
 
-export default class CompetitionsManager extends React.Component {
+export default class CompetitionsManager extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

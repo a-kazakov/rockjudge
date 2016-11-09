@@ -10,7 +10,7 @@ import Tours from "./Tours";
 
 import SideMenu from "./SideMenu";
 
-export default class Management extends React.Component {
+export default class Management extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

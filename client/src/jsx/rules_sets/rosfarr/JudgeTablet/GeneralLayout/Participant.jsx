@@ -1,20 +1,45 @@
 import _ from "l10n";
 
-import CacheMixin from "common/CacheMixin";
-
 import ConfirmationButton from "JudgeTablet/ConfirmationButton";
 
-export default class Participant extends CacheMixin(React.Component) {
-    get score() {
-        return this.fetchFromCache("score", () => {
-            for (const score of this.props.run.scores) {
-                if (score.discipline_judge_id === this.props.disciplineJudge.id) {
-                    return score;
-                }
-            }
-            return null;
-        });
+export default class Participant extends React.PureComponent {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            disciplineJudge: PT.shape({
+                id: PT.number.isRequired,
+            }).isRequired,
+            layoutClass: PT.func.isRequired,
+            run: PT.shape({
+                performed: PT.bool.isRequired,
+                participant: PT.shape({
+                    number: PT.number.isRequired,
+                    name: PT.string.isRequired,
+                    sportsmen: PT.array.isRequired,
+                }).isRequired,
+                scores: PT.arrayOf(
+                    PT.shape({
+                        discipline_judge_id: PT.number.isRequired,
+                    }).isRequired,
+                ).isRequired,
+            }).isRequired,
+            onScoreConfirm: PT.func.isRequired,
+            onScoreUpdate: PT.func.isRequired,
+        };
     }
+
+    getScore() {
+        for (const score of this.props.run.scores) {
+            if (score.discipline_judge_id === this.props.disciplineJudge.id) {
+                return score;
+            }
+        }
+        return null;
+    }
+    setupCache() {
+        this.score = this.getScore();
+    }
+
     canConfirm() {
         const score_data = this.score.data.raw_data;
         for (const key of Object.keys(score_data)) {
@@ -31,10 +56,11 @@ export default class Participant extends CacheMixin(React.Component) {
         }
         return true;
     }
-    onConfirm = () => {
+
+    handleConfirm = () => {
         this.props.onScoreConfirm(this.score.id);
     }
-    onScoreUpdate = (key, value) => {
+    handleScoreUpdate = (key, value) => {
         if (this.score.confirmed) {
             return;
         }
@@ -42,7 +68,7 @@ export default class Participant extends CacheMixin(React.Component) {
         score_data[key] = value;
         this.props.onScoreUpdate(this.score.id, score_data);
     }
-    onAcroReductionUpdate = (acro_idx, value) => {
+    handleAcroReductionUpdate = (acro_idx, value) => {
         if (this.score.confirmed) {
             return;
         }
@@ -50,6 +76,7 @@ export default class Participant extends CacheMixin(React.Component) {
         reductions[acro_idx] = value;
         this.onScoreUpdate("reductions", reductions);
     }
+
     renderScoringLayout() {
         const score_data = this.score.data.raw_data;
         const ScoringComponent = this.props.layoutClass;
@@ -64,12 +91,12 @@ export default class Participant extends CacheMixin(React.Component) {
                     readOnly={ this.score.confirmed }
                     score={ this.score }
                     scoreData={ score_data }
-                    onScoreUpdate={ this.onScoreUpdate }
+                    onScoreUpdate={ this.handleScoreUpdate }
                 />
                 <ConfirmationButton
-                    confirmed={ this.score.confirmed }
                     canConfirm={ this.canConfirm() }
-                    onConfirm={ this.onConfirm }
+                    confirmed={ this.score.confirmed }
+                    onConfirm={ this.handleConfirm }
                 />
             </div>
         );
@@ -82,6 +109,7 @@ export default class Participant extends CacheMixin(React.Component) {
         );
     }
     render() {
+        this.setupCache();
         const header = _("global.phrases.participant_n",
             this.props.run.participant.number,
             this.props.run.participant.name,

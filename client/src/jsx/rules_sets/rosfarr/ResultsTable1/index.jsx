@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import Row from "./Row"
 
-export default class ResultsTable1 extends React.Component {
+export default class ResultsTable1 extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

@@ -7,7 +7,7 @@ import Loader from "common/components/Loader";
 import Row from "./Row";
 import CreationRow from "./CreationRow";
 
-export default class Participants extends React.Component {
+export default class Participants extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

@@ -1,4 +1,4 @@
-export default class Acrobatics extends React.Component {
+export default class Acrobatics extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

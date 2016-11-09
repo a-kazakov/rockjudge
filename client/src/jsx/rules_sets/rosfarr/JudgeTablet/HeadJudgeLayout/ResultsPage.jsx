@@ -2,7 +2,7 @@ import { TourResultsLoader } from "HostModules";
 
 import ResultsTable2 from "ResultsTable2";
 
-export default class ResultsPage extends React.Component {
+export default class ResultsPage extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

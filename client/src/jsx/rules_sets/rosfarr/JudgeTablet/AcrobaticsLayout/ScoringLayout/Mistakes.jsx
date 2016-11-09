@@ -2,11 +2,12 @@ import _ from "l10n";
 
 import IntegerInput from "tablet_ui/IntegerInput";
 
-export default class Mistakes extends React.Component {
+export default class Mistakes extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
             mistakes: PT.number.isRequired,
+            readOnly: PT.bool.isRequired,
             onScoreUpdate: PT.func.isRequired,
         };
     }

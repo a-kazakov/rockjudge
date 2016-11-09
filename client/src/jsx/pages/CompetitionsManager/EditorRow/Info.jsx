@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import InfoItem from "./InfoItem";
 
-export default class Info extends React.Component {
+export default class Info extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

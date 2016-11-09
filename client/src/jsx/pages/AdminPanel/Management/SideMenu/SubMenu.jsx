@@ -1,4 +1,4 @@
-export default class SubMenu extends React.Component {
+export default class SubMenu extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

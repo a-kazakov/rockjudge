@@ -9,7 +9,7 @@ import rules_set from "rules_sets/loader";
 
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
-export default class JudgeTablet extends React.Component {
+export default class JudgeTablet extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

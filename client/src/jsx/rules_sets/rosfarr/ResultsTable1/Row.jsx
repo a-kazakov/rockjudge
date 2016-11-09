@@ -1,6 +1,6 @@
 import getParticipantDisplay from "common/getParticipantDisplay";
 
-export default class Row extends React.Component {
+export default class Row extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

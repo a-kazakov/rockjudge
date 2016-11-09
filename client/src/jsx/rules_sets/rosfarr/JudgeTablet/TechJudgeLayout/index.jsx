@@ -1,7 +1,5 @@
 import _ from "l10n";
 
-import CacheMixin from "common/CacheMixin";
-
 import Header from "JudgeTablet/Header";
 import Footer from "JudgeTablet/Footer";
 import FooterItem from "JudgeTablet/Footer/FooterItem";
@@ -9,11 +7,37 @@ import FooterItem from "JudgeTablet/Footer/FooterItem";
 import DancingPage from "./DancingPage";
 import AcroPage from "./AcroPage";
 
-export default class TechJudgeLayout extends CacheMixin(React.Component) {
+export default class TechJudgeLayout extends React.PureComponent {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            disciplineJudge: PT.shape({
+                id: PT.number.isRequired,
+                judge: PT.object.isRequired,
+            }).isRequired,
+            tour: PT.shape({
+                id: PT.number.isRequired,
+                scoring_system_name: PT.string.isRequired,
+                runs: PT.arrayOf(
+                    PT.shape({
+                        heat: PT.number.isRequired,
+                        scores: PT.arrayOf(
+                            PT.shape({
+                                discipline_judge_id: PT.number.isRequired,
+                            }).isRequired,
+                        ).isRequired,
+                    }).isRequired,
+                ).isRequired,
+            }).isRequired,
+            onScoreConfirm: PT.func.isRequired,
+            onScoreUpdate: PT.func.isRequired,
+        };
+    }
+
     constructor(props) {
         super(props);
         this.state = {
-            heat: this.first_non_confirmed_heat,
+            heat: this.getFirstNonConfirmedHeat(),
             page: "dancing",
         };
     }
@@ -21,25 +45,15 @@ export default class TechJudgeLayout extends CacheMixin(React.Component) {
         if (next_props.tour.id !== this.props.tour.id) {
             const prev_props = this.props;
             this.props = next_props;
-            this.resetCache();
             this.setState({
-                heat: this.first_non_confirmed_heat,
+                heat: this.getFirstNonConfirmedHeat(),
                 page: "dancing",
             });
             this.props = prev_props;
         }
     }
-    get heats_count() {
-        return this.fetchFromCache("heats_count", () =>
-            Math.max(...this.props.tour.runs.map(run => run.heat))
-        );
-    }
-    get runs() {
-        return this.fetchFromCache("runs", () =>
-            this.props.tour.runs.filter(run => run.heat === this.state.heat)
-        );
-    }
-    get first_non_confirmed_heat() {
+
+    getFirstNonConfirmedHeat() {
         for (const run of this.props.tour.runs) {
             for (const score of run.scores) {
                 if (score.discipline_judge_id === this.props.disciplineJudge.id && !score.confirmed && run.performed) {
@@ -49,26 +63,26 @@ export default class TechJudgeLayout extends CacheMixin(React.Component) {
         }
         return this.heats_count;
     }
-    updateHeat(value) {
-        this.setState({
-            heat: value,
-        });
+    setupCache() {
+        this.heats_count = Math.max(1, ...this.props.tour.runs.map(run => run.heat));
+        this.runs = this.props.tour.runs.filter(run => run.heat === this.state.heat);
+        this.first_non_confirmed_heat = this.getFirstNonConfirmedHeat();
     }
-    handlePrevHeatClick = () => {
-        this.updateHeat(this.state.heat - 1);
-    }
-    handleNextHeatClick = () => {
-        this.updateHeat(this.state.heat + 1);
-    }
-    handlePageChange = (page) => {
-        this.setState({ page });
-    }
+
+
+    setHeat = (heat) => this.setState({ heat });
+    updateHeat = (delta) => this.setHeat(this.state.heat + delta);
+
+    handlePrevHeatClick = () => this.updateHeat(-1);
+    handleNextHeatClick = () => this.updateHeat(1);
+    handlePageChange = (page) => this.setState({ page });
+
     renderDancing() {
         return (
             <DancingPage
                 disciplineJudge={ this.props.disciplineJudge }
-                tour={ this.props.tour }
                 runs={ this.runs }
+                tour={ this.props.tour }
                 onScoreConfirm={ this.props.onScoreConfirm }
                 onScoreUpdate={ this.props.onScoreUpdate }
             />
@@ -124,6 +138,7 @@ export default class TechJudgeLayout extends CacheMixin(React.Component) {
         );
     }
     render() {
+        this.setupCache();
         return (
             <div className="rosfarr-JudgeTablet TechJudgeLayout">
                 { this.renderHeader() }

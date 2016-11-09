@@ -2,7 +2,22 @@ import Grid from "JudgeTablet/Grid";
 
 import ScoringLayout from "./ScoringLayout";
 
-export default class DancingPage extends React.Component {
+export default class DancingPage extends React.PureComponent {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            disciplineJudge: PT.object.isRequired,
+            runs: PT.arrayOf(
+                PT.shape({
+                    id: PT.number.isRequired,
+                }).isRequired,
+            ).isRequired,
+            tour: PT.object.isRequired,
+            onScoreUpdate: PT.func.isRequired,
+            onScoreConfirm: PT.func.isRequired,
+        };
+    }
+
     renderScores() {
         return this.props.runs.map(run =>
             <ScoringLayout

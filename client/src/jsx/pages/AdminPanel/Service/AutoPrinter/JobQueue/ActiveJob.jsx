@@ -3,7 +3,7 @@ import TourResultsTab from "pages/AdminPanel/Judging/TourPanel/TourResultsTab";
 import DisciplineResultsTab from "pages/AdminPanel/Judging/TourPanel/DisciplineResultsTab";
 import TestPage from "./TestPage";
 
-export default class ActiveJob extends React.Component {
+export default class ActiveJob extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

@@ -8,7 +8,7 @@ import BulkTourInit from "./BulkTourInit";
 import ClientsAuth from "./ClientsAuth";
 import Unfinalize from "./Unfinalize";
 
-export default class Service extends React.Component {
+export default class Service extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

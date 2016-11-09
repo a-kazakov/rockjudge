@@ -1,17 +1,20 @@
 import NumberSelectorInput from "tablet_ui/NumberSelectorInput";
 import SelectorInput from "tablet_ui/SelectorInput";
 
-export default class GeneralScale extends React.Component {
+export default class GeneralScale extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
+            code: PT.any,
             header: PT.string,
             scale: PT.oneOf(["point5", "integer", "grid", "reduction"]).isRequired,
+            onChange: PT.func.isRequired,
         };
     }
 
     static get defaultProps() {
         return {
+            code: null,
             header: null,
         };
     }
@@ -28,6 +31,14 @@ export default class GeneralScale extends React.Component {
         ]
     }
 
+    handleChange = (value) => {
+        if (this.props.code !== null) {
+            this.props.onChange(this.props.code, value);
+        } else {
+            this.props.onChange(value);
+        }
+    }
+
     renderHeader() {
         if (this.props.header === null) {
             return null;
@@ -40,7 +51,8 @@ export default class GeneralScale extends React.Component {
 
     }
     renderBody() {
-        const { scale, ...other_props } = this.props;
+        // eslint-disable-next-line no-unused-vars
+        const { scale, onChange, ...other_props } = this.props;
         switch (scale) {
         case "point5":
             return (
@@ -48,6 +60,7 @@ export default class GeneralScale extends React.Component {
                     decimalSize={ 1 }
                     step={ 0.5 }
                     style="two-lines"
+                    onChange={ this.handleChange }
                     { ...other_props }
                 />
             );
@@ -55,6 +68,7 @@ export default class GeneralScale extends React.Component {
             return (
                 <NumberSelectorInput
                     style="two-lines"
+                    onChange={ this.handleChange }
                     { ...other_props }
                 />
             );
@@ -62,6 +76,7 @@ export default class GeneralScale extends React.Component {
             return (
                 <NumberSelectorInput
                     style="grid"
+                    onChange={ this.handleChange }
                     { ...other_props }
                 />
             );
@@ -70,7 +85,8 @@ export default class GeneralScale extends React.Component {
                 <SelectorInput
                     choices={ this.POSSIBLIE_REDUCTIONS }
                     style="one-line"
-                    { ...this.props }
+                    onChange={ this.handleChange }
+                    { ...other_props }
                 />
             );
         default:

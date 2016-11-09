@@ -3,7 +3,7 @@ import HeatCell from "./HeatCell";
 import PerformedCell from "./PerformedCell";
 import ScoreCell from "./ScoreCell";
 
-export default class Row extends React.Component {
+export default class Row extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

@@ -6,7 +6,7 @@ import showSuccess from "common/dialogs/showSuccess";
 
 import ImportItemsSelector from "./ImportItemsSelector";
 
-export default class ImportExport extends React.Component {
+export default class ImportExport extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

@@ -3,7 +3,7 @@ import showError from "common/dialogs/showError";
 
 import DisciplineJudges from "./DisciplineJudges";
 
-export default class EditorRow extends React.Component {
+export default class EditorRow extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

@@ -8,7 +8,7 @@ export default function getParticipantDisplay(participant) { // eslint-disable-l
     }
     return participant.sportsmen.map((s, idx) =>
         <p key={ idx }>
-            { s.last_name + " " + s.first_name }
+            { `${s.last_name} ${s.first_name}` }
         </p>
     );
 }

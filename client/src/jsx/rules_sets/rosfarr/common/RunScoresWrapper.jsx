@@ -9,6 +9,6 @@ export default class RunScoresWrapper {
         }.bind(this));
     }
     getScoresByJudgeIds(discipline_judge_ids) {
-        return discipline_judge_ids.map(((dj_id) => this.scores_by_discipline_judge_id[dj_id]).bind(this));
+        return discipline_judge_ids.map(dj_id => this.scores_by_discipline_judge_id[dj_id]);
     }
 }

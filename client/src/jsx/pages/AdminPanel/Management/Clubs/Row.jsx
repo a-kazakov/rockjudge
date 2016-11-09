@@ -5,7 +5,7 @@ import closeDialog from "common/dialogs/closeDialog";
 
 import EditorRow from "./EditorRow";
 
-export default class Row extends React.Component {
+export default class Row extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

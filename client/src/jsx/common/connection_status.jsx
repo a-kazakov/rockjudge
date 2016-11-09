@@ -7,7 +7,7 @@ class ConnectionStatusMock {
     setFail() {}
 }
 
-class ConnectionStatus extends React.Component {
+class ConnectionStatus extends React.PureComponent {
     static init() {
         let element = window.document.getElementById("connection_status");
         if (element && !element.hasChildNodes()) {

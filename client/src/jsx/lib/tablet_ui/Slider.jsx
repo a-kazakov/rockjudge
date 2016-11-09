@@ -1,6 +1,6 @@
 import makeClassName from "common/makeClassName";
 
-export default  class Slider extends React.Component {
+export default  class Slider extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

@@ -1,6 +1,5 @@
 import _ from "l10n";
 
-import CacheMixin from "common/CacheMixin";
 import SelectorInput from "tablet_ui/SelectorInput";
 import IntegerInput from "tablet_ui/IntegerInput";
 
@@ -10,16 +9,44 @@ import PreviousPenalties from "JudgeTablet/HeadJudgeLayout/HeatsPage/ScoringLayo
 
 import StopWatch from "./StopWatch";
 
-export default class ScoringLayout extends CacheMixin(React.Component) {
-    get score() {
-        return this.fetchFromCache("score", () => {
-            for (const score of this.props.run.scores) {
-                if (score.discipline_judge_id === this.props.disciplineJudge.id) {
-                    return score;
-                }
+export default class ScoringLayout extends React.PureComponent {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            disciplineJudge: PT.shape({
+                id: PT.number.isRequired,
+            }).isRequired,
+            run: PT.shape({
+                participant: PT.shape({
+                    number: PT.number.isRequired,
+                    name: PT.string.isRequired,
+                    sportsmen: PT.array.isRequired,
+                }).isRequired,
+                scores: PT.arrayOf(
+                    PT.shape({
+                        discipline_judge_id: PT.number.isRequired,
+                    }).isRequired,
+                ).isRequired,
+            }).isRequired,
+            tour: PT.shape({
+                scoring_system_name: PT.string.isRequired,
+            }).isRequired,
+            onScoreConfirm: PT.func.isRequired,
+            onScoreUpdate: PT.func.isRequired,
+        };
+    }
+
+    getScore() {
+        for (const score of this.props.run.scores) {
+            if (score.discipline_judge_id === this.props.disciplineJudge.id) {
+                return score;
             }
-            return null;
-        });
+        }
+        return null;
+    }
+
+    setupCache() {
+        this.score = this.getScore();
     }
 
     handleConfirmation = () => {
@@ -39,6 +66,7 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
         return (new_value) => this.onScoreUpdate(score_part, new_value);
     }
     render() {
+        this.setupCache();
         if (this.score === null) {
             return (
                 <div />

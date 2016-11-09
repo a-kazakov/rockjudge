@@ -1,4 +1,4 @@
-export default class Item extends React.Component {
+export default class Item extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

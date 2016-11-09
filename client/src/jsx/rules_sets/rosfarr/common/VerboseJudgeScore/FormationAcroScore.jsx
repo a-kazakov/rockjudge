@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import formatScore from "./formatScore";
 
-export default class FormationAcroScore extends React.Component {
+export default class FormationAcroScore extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

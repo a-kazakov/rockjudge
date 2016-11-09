@@ -6,7 +6,7 @@ import closeDialog from "common/dialogs/closeDialog";
 
 import { Api } from "HostModules";
 
-export default class ActionsPage extends React.Component {
+export default class ActionsPage extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

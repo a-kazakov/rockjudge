@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import ImportItemsCheckbox from "./ImportItemsCheckbox";
 
-export default class ImportItemsSelector extends React.Component {
+export default class ImportItemsSelector extends React.PureComponent {
     static get propTypes() {
         return {};
     }

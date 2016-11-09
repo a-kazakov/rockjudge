@@ -2,7 +2,7 @@ import DisciplineResultsLoader from "common/components/DisciplineResultsLoader";
 
 import Renderer from "./Renderer";
 
-export default class DisciplineResultsTab extends React.Component {
+export default class DisciplineResultsTab extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

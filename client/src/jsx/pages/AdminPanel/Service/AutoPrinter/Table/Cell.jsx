@@ -1,4 +1,4 @@
-export default class Cell extends React.Component {
+export default class Cell extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

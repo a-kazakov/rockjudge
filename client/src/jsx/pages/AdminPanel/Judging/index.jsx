@@ -1,7 +1,7 @@
 import SideMenu from "./SideMenu";
 import TourPanel from "./TourPanel";
 
-export default class Judging extends React.Component {
+export default class Judging extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

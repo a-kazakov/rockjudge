@@ -1,16 +1,29 @@
 import Button from "./Button";
 
-export default function Footer(props) {
-    return (
-        <footer>
-            { React.Children.map(props.children, (btn) =>
-                <Button
-                    key={ btn.props.mkey }
-                    active={ props.value === btn.props.mkey }
-                    onClick={ props.onChange }
-                    { ...btn.props }
-                />
-            )}
-        </footer>
-    )
+export default class Footer extends React.PureComponent {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            children: PT.node.isRequired,
+            value: PT.any.isRequired,
+            onChange: PT.func.isRequired,
+        };
+    }
+
+    render() {
+        return (
+            <footer>
+                { React.Children.map(this.props.children, (btn) =>
+                    <Button
+                        active={ this.props.value === btn.props.mkey }
+                        key={ btn.props.mkey }
+                        onClick={ this.props.onChange }
+                        { ...btn.props }
+                    />
+                )}
+            </footer>
+        )
+    }
 }
+
+Footer.displayName = "rules_sets_rosfarr_JudgeTablet_Footer";

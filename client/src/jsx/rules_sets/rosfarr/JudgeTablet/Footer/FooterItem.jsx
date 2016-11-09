@@ -1,4 +1,4 @@
-export default class FooterItem extends React.Component {
+export default class FooterItem extends React.PureComponent {
     render() {
         return null;
     }

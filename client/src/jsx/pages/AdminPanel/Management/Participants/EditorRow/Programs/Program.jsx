@@ -5,7 +5,7 @@ import closeDialog from "common/dialogs/closeDialog";
 
 import Editor from "./Editor";
 
-export default class Program extends React.Component {
+export default class Program extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

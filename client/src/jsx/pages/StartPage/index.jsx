@@ -9,7 +9,7 @@ import keys_storage from "common/keys_storage";
 import CompetitionSelector from "./CompetitionSelector";
 import RoleSelector from "./RoleSelector";
 
-export default class StartPage extends React.Component {
+export default class StartPage extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {

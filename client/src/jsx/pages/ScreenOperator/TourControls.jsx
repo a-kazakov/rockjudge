@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import TourSelector from "./TourSelector";
 
-export default class TourControls extends React.Component {
+export default class TourControls extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

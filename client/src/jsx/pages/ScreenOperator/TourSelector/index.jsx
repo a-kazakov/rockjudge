@@ -1,6 +1,6 @@
 import Tour from "./Tour";
 
-export default class TourSelector extends React.Component {
+export default class TourSelector extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

@@ -1,10 +1,9 @@
-import _ from "l10n";
 import message_dispatcher from "common/server/message_dispatcher";
 import storage from "common/server/storage";
 import Api from "common/server/Api";
 import Loader from "common/components/Loader";
 
-export default class TourResultsLoader extends React.Component {
+export default class TourResultsLoader extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

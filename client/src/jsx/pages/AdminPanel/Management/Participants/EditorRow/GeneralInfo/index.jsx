@@ -3,7 +3,7 @@ import _ from "l10n";
 import ClubSelector from "./ClubSelector";
 import TextInput from "./TextInput";
 
-export default class GeneralInfo extends React.Component {
+export default class GeneralInfo extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

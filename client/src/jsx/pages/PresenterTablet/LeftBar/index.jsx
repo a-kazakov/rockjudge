@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import Item from "./Item";
 
-export default class LeftBar extends React.Component {
+export default class LeftBar extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

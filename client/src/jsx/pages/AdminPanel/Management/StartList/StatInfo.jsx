@@ -1,6 +1,6 @@
 import _ from "l10n";
 
-export default class StatInfo extends React.Component {
+export default class StatInfo extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

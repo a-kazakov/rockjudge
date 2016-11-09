@@ -2,7 +2,20 @@ import Elements from "./Elements";
 import Mistakes from "./Mistakes";
 import TotalScore from "JudgeTablet/TotalScore";
 
-export default class ScoringLayout extends React.Component {
+export default class ScoringLayout extends React.PureComponent {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            readOnly: PT.bool.isRequired,
+            score: PT.object.isRequired,
+            scoreData: PT.shape({
+                reductions: PT.any.isRequired,
+                mistakes: PT.any.isRequired,
+            }).isRequired,
+            onScoreUpdate: PT.func.isRequired,
+        };
+    }
+
     handleAcroReductionUpdate = (acro_idx, value) => {
         let reductions = this.props.scoreData.reductions.map(() => null);
         reductions[acro_idx] = value;

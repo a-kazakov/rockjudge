@@ -3,7 +3,7 @@ import _ from "l10n";
 import Loader from "./Loader";
 import Row from "./Row";
 
-export default class Editor extends React.Component {
+export default class Editor extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

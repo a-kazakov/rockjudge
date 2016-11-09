@@ -3,7 +3,7 @@ import Api from "common/server/Api";
 import showConfirm from "common/dialogs/showConfirm";
 import closeDialog from "common/dialogs/closeDialog";
 
-export default class Row extends React.Component {
+export default class Row extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

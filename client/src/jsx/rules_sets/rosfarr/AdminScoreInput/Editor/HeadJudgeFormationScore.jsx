@@ -1,6 +1,6 @@
 import GeneralEditor from "./GeneralEditor"
 
-export default class HeadJudgeFormationScore extends React.Component {
+export default class HeadJudgeFormationScore extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

@@ -1,10 +1,11 @@
 import onTouchOrClick from "tablet_ui/onTouchOrClick";
 
-export default class OverrideInput extends React.Component {
+export default class OverrideInput extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
             originalValue: PT.number.isRequired,
+            readOnly: PT.bool.isRequired,
             value: PT.number.isRequired,
             onChange: PT.func.isRequired,
         };

@@ -1,6 +1,6 @@
 import Editor from "./Editor";
 
-export default class AdminScoreInput extends React.Component {
+export default class AdminScoreInput extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

@@ -8,7 +8,7 @@ import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
 import HeatSelectorRow from "./HeatSelectorRow";
 
-export default class HeatSelector extends React.Component {
+export default class HeatSelector extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

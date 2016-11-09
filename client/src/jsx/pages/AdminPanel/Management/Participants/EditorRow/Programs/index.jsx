@@ -3,7 +3,7 @@ import _ from "l10n";
 import Program from "./Program";
 import Creator from "./Creator";
 
-export default class Programs extends React.Component {
+export default class Programs extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

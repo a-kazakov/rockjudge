@@ -1,4 +1,4 @@
-export default class CompetitionInfo extends React.Component {
+export default class CompetitionInfo extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

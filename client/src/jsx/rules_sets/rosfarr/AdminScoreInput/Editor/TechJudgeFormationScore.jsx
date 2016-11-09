@@ -1,7 +1,7 @@
 import GeneralEditor from "./GeneralEditor"
 import genScale from "./genScale";
 
-export default class TechFormationJudgeScore extends React.Component {
+export default class TechFormationJudgeScore extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

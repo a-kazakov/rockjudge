@@ -1,11 +1,21 @@
-import _ from "l10n";
-
 import GeneralScale from "JudgeTablet/GeneralScale";
 
-export default class ScoringLayout extends React.Component {
-    onChange = (value) => {
+export default class ScoringLayout extends React.PureComponent {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            readOnly: PT.bool.isRequired,
+            scoreData: PT.shape({
+                points: PT.number,
+            }).isRequired,
+            onScoreUpdate: PT.func.isRequired,
+        };
+    }
+
+    handleChange = (value) => {
         this.props.onScoreUpdate("points", value);
     }
+
     render() {
         return (
             <GeneralScale
@@ -15,7 +25,7 @@ export default class ScoringLayout extends React.Component {
                 rowSize={ 10 }
                 scale="grid"
                 value={ this.props.scoreData.points }
-                onChange={ this.onChange }
+                onChange={ this.handleChange }
             />
         );
     }

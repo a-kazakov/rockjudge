@@ -1,4 +1,4 @@
-export default class ClubSelector extends React.Component {
+export default class ClubSelector extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

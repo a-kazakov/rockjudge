@@ -1,4 +1,4 @@
-export default class OneNumber extends React.Component {
+export default class OneNumber extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

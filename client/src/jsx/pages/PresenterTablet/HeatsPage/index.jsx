@@ -7,7 +7,7 @@ import CurrentHeat from "./CurrentHeat";
 import Header from "./Header";
 import NoTourScreen from "./NoTourScreen";
 
-export default class HeatsPage extends React.Component {
+export default class HeatsPage extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

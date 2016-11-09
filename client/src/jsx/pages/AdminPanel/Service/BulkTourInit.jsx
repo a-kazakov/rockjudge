@@ -3,7 +3,7 @@ import Api from "common/server/Api";
 import showConfirm from "common/dialogs/showConfirm";
 import showSuccess from "common/dialogs/showSuccess";
 
-export default class BulkTourInit extends React.Component {
+export default class BulkTourInit extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

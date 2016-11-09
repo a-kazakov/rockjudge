@@ -3,7 +3,7 @@ import _ from "l10n";
 import Row from "./Row";
 import CreationRow from "./CreationRow";
 
-export default class Disciplines extends React.Component {
+export default class Disciplines extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

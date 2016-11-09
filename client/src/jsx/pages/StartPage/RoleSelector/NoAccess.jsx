@@ -1,6 +1,6 @@
 import _ from "l10n";
 
-export default class NoAccess extends React.Component {
+export default class NoAccess extends React.PureComponent {
     render() {
         return (
             <div className="no-access">

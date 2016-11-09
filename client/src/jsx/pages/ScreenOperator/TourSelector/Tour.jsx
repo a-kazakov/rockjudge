@@ -2,7 +2,7 @@ import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
 import makeClassName from "common/makeClassName";
 
-export default class Tour extends React.Component {
+export default class Tour extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

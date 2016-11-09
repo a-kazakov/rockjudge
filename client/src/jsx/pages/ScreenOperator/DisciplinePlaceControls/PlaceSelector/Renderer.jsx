@@ -1,6 +1,6 @@
 import RendererRow from "./RendererRow";
 
-export default class Renderer extends React.Component {
+export default class Renderer extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

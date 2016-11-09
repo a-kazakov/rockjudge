@@ -1,6 +1,6 @@
 import Row from "./Row";
 
-export default class ClientsAuth extends React.Component {
+export default class ClientsAuth extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

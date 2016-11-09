@@ -9,7 +9,7 @@ import Management from "./Management";
 import Judging from "./Judging";
 import Service from "./Service";
 
-export default class AdminPanel extends React.Component {
+export default class AdminPanel extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

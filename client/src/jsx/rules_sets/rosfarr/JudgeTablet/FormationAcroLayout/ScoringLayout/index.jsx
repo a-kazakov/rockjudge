@@ -1,20 +1,30 @@
 import _ from "l10n";
 
-import ScorePart from "./ScorePart";
 import Mistakes from "./Mistakes";
+import GeneralScale from "JudgeTablet/GeneralScale";
 import TotalScore from "JudgeTablet/TotalScore";
 
-export default class ScoringLayout extends React.Component {
+export default class ScoringLayout extends React.PureComponent {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            readOnly: PT.bool.isRequired,
+            score: PT.object.isRequired,
+            scoreData: PT.object.isRequired,
+            onScoreUpdate: PT.func.isRequired,
+        };
+    }
+
     renderPart(code, scale, additional_props={}) {
         return (
-            <ScorePart
-                readOnly={ this.props.readOnly }
+            <GeneralScale
                 code={ code }
                 header={ _(`tablet.dance_judge.${code}`) }
-                value={ this.props.scoreData[code] }
+                readOnly={ this.props.readOnly }
                 scale={ scale }
-                onScoreUpdate={ this.props.onScoreUpdate }
-                {...additional_props}
+                value={ this.props.scoreData[code] }
+                onChange={ this.props.onScoreUpdate }
+                { ...additional_props }
             />
         );
     }

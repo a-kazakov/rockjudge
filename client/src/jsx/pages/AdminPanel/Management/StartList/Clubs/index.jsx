@@ -2,7 +2,7 @@ import Section from "./Section";
 import DisciplinesShown from "../DisciplinesShown";
 import groupParticipants from "../groupParticipants";
 
-export default class Clubs extends React.Component {
+export default class Clubs extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

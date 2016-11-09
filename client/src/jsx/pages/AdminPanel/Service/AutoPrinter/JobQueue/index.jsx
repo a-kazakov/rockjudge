@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import ActiveJob from "./ActiveJob";
 
-export default class JobQueue extends React.Component {
+export default class JobQueue extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {

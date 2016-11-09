@@ -5,7 +5,7 @@ import Acrobatics from "../Acrobatics";
 import SportsmenList from "../SportsmenList";
 import StatInfo from "../StatInfo";
 
-export default class Section extends React.Component {
+export default class Section extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

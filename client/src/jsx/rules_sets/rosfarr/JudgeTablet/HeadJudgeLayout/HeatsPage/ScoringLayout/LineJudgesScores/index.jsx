@@ -1,10 +1,27 @@
 import _ from "l10n";
 
-import CacheMixin from "common/CacheMixin";
-
 import Item from "./Item";
 
-export default class LineJudgeScore extends CacheMixin(React.Component) {
+export default class LineJudgeScore extends React.PureComponent {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            disciplineJudges: PT.arrayOf(
+                PT.shape({
+                    role: PT.string.isRequired,
+                }).isRequired,
+            ).isRequired,
+            run: PT.shape({
+                scores: PT.arrayOf(
+                    PT.shape({
+                        discipline_judge_id: PT.number.isRequired,
+                    }).isRequired,
+                ).isRequired,
+            }).isRequired,
+            tour: PT.object.isRequired,
+        };
+    }
+
     constructor(props) {
         super(props);
         this.state = {
@@ -12,22 +29,10 @@ export default class LineJudgeScore extends CacheMixin(React.Component) {
         };
     }
 
-    get line_judges() {
-        return this.fetchFromCache("line_judges", () =>
-            this.props.disciplineJudges.filter(dj => dj.role === "dance_judge" || dj.role === "acro_judge"));
-    }
-    get line_judges_index() {
-        return this.fetchFromCache("line_judges_index", () => {
-            let result = new Map();
-            for (const dj of this.line_judges) {
-                result.set(dj.id, dj);
-            }
-            return result;
-        });
-    }
-    get scores() {
-        return this.fetchFromCache("scores", () =>
-            this.props.run.scores.filter(score => this.line_judges_index.has(score.discipline_judge_id)));
+    setupCache() {
+        this.line_judges = this.props.disciplineJudges.filter(dj => ["dance_judge", "acro_judge"].includes(dj.role));
+        this.line_judges_index = new Map(this.line_judges.map(dj => [dj.id, dj]));
+        this.scores = this.props.run.scores.filter(score => this.line_judges_index.has(score.discipline_judge_id));
     }
 
     makeScoresRowRef = (ref) => this._scores_row = ref;
@@ -71,6 +76,7 @@ export default class LineJudgeScore extends CacheMixin(React.Component) {
         });
     }
     render() {
+        this.setupCache();
         return (
             <div>
                 <h3>{ _("tablet.head_judge.dance_judge_scores") }</h3>

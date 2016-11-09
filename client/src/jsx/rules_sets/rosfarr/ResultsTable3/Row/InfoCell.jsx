@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import getParticipantDisplay from "common/getParticipantDisplay";
 
-export default class InfoCell extends React.Component {
+export default class InfoCell extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -50,6 +50,7 @@ export default class InfoCell extends React.Component {
                             primary_score: PT.number,
                             secondary_score: PT.number,
                         }),
+                        total_penalty: PT.number,
                     }),
                 }).isRequired,
             }).isRequired,
@@ -86,8 +87,6 @@ export default class InfoCell extends React.Component {
         if (!this.props.row.run.performed) {
             return null;
         }
-        const head_judge_score = this.props.row.run.scores.find(
-            score => this.props.disciplineJudgesMap.get(score.discipline_judge_id).role === "head_judge");
         return (
             <p>
                 <strong>

@@ -20,7 +20,6 @@ const meta = {
         "quarterfinal",
         "final",
     ],
-
 }
 
 export default meta;

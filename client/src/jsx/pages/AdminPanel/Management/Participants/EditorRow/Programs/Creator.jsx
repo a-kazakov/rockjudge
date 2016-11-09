@@ -3,7 +3,7 @@ import Api from "common/server/Api";
 
 import Editor from "./Editor";
 
-export default class Creator extends React.Component {
+export default class Creator extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

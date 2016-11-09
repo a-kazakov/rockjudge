@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import ElementRow from "./ElementRow";
 
-export default class Elements extends React.Component {
+export default class Elements extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

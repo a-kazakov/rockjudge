@@ -3,7 +3,7 @@ import Loader from "common/components/Loader";
 
 let auto_printer = null;
 
-export default class AutoPrinterStatus extends React.Component {
+export default class AutoPrinterStatus extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

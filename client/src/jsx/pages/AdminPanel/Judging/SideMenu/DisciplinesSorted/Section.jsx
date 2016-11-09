@@ -1,6 +1,6 @@
 import Item from "./Item";
 
-export default class Section extends React.Component {
+export default class Section extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

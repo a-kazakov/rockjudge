@@ -10,7 +10,7 @@ import rules_set from "rules_sets/loader";
 
 import Row from "./Row";
 
-export default class ScoresTab extends React.Component {
+export default class ScoresTab extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

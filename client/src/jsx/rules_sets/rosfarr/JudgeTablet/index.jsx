@@ -11,7 +11,17 @@ import TechJudgeLayout from "./TechJudgeLayout";
 
 import { Api } from "HostModules";
 
-export default class JudgeTablet extends React.Component {
+export default class JudgeTablet extends React.PureComponent {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            disciplineJudge: PT.object.isRequired,
+            tour: PT.shape({
+                scoring_system_name: PT.string.isRequired,
+            }).isRequired,
+        };
+    }
+
     static LAYOUTS = {
         "acro": AcrobaticsLayout,
         "dance": DanceLayout,
@@ -22,16 +32,18 @@ export default class JudgeTablet extends React.Component {
         "head": HeadJudgeLayout,
         "tech": TechJudgeLayout,
     };
-    onScoreUpdate = (score_id, new_score) => {
+
+    handleScoreUpdate = (score_id, new_score) => {
         const request = {
             score_data: new_score,
             force: false,
         };
         Api("score.set", { score_id: score_id, data: request }).send();
     }
-    onScoreConfirm = (score_id) => {
+    handleScoreConfirm = (score_id) => {
         Api("score.confirm", { score_id: score_id }).send();
     }
+
     render() {
         const scoring_type = getScoringType(this.props.disciplineJudge, this.props.tour.scoring_system_name);
         let LayoutClass = JudgeTablet.LAYOUTS[scoring_type];
@@ -45,8 +57,8 @@ export default class JudgeTablet extends React.Component {
                 <LayoutClass
                     disciplineJudge={ this.props.disciplineJudge }
                     tour={ this.props.tour }
-                    onScoreConfirm={ this.onScoreConfirm }
-                    onScoreUpdate={ this.onScoreUpdate }
+                    onScoreConfirm={ this.handleScoreConfirm }
+                    onScoreUpdate={ this.handleScoreUpdate }
                 />
             </div>
         );

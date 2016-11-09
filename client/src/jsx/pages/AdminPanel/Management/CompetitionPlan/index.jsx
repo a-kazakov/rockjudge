@@ -5,7 +5,7 @@ import CreationRow from "./CreationRow";
 import PrintablePlan from "./PrintablePlan";
 import Row from "./Row";
 
-export default class CompetitionPlan extends React.Component {
+export default class CompetitionPlan extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

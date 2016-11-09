@@ -10,7 +10,7 @@ import showConfirm from "common/dialogs/showConfirm";
 import JobQueue from "./JobQueue";
 import Table from "./Table";
 
-export default class AutoPrinter extends React.Component {
+export default class AutoPrinter extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

@@ -4,20 +4,31 @@ import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
 import { Api } from "HostModules";
 
-export default class NotPerformedSwitch extends React.Component {
-    markNotPerformed() {
+export default class NotPerformedSwitch extends React.PureComponent {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            run: PT.shape({
+                id: PT.number.isRequired,
+                performed: PT.bool.isRequired,
+            }).isRequired,
+        };
+    }
+
+    handleMarkNotPerformed = () => {
         Api("run.mark_not_performed", { run_id: this.props.run.id }).send();
     }
-    markPerformed() {
+    handleMarkPerformed = () => {
         Api("run.mark_performed", { run_id: this.props.run.id }).send();
     }
+
     renderButton() {
         if (this.props.run.performed) {
             return (
                 <button
-                    type="button"
                     className="not-performed"
-                    { ...onTouchEndOrClick(this.markNotPerformed.bind(this)) }
+                    type="button"
+                    { ...onTouchEndOrClick(this.handleMarkNotPerformed) }
                 >
                     { _("tablet.global.mark_not_performed") }
                 </button>
@@ -25,9 +36,9 @@ export default class NotPerformedSwitch extends React.Component {
         } else {
             return (
                 <button
-                    type="button"
                     className="performed"
-                    { ...onTouchEndOrClick(this.markPerformed.bind(this)) }
+                    type="button"
+                    { ...onTouchEndOrClick(this.handleMarkPerformed) }
                 >
                     { _("tablet.global.discard_not_performed") }
                 </button>

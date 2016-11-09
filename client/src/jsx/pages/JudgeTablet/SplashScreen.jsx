@@ -1,6 +1,6 @@
 import _ from "l10n";
 
-export default class SplashScreen extends React.Component {
+export default class SplashScreen extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

@@ -8,7 +8,25 @@ import HeatsPage from "./HeatsPage";
 import ResultsPage from "./ResultsPage";
 import ActionsPage from "./ActionsPage";
 
-export default class HeadJudgeLayout extends React.Component {
+export default class HeadJudgeLayout extends React.PureComponent {
+    static get propTypes() {
+        const PT = React.PropTypes;
+        return {
+            disciplineJudge: PT.shape({
+                judge: PT.object.isRequired,
+            }).isRequired,
+            tour: PT.shape({
+                id: PT.number.isRequired,
+                runs: PT.arrayOf(
+                    PT.shape({
+                        heat: PT.number.isRequired,
+                    }),
+                ).isRequired,
+            }).isRequired,
+            onScoreUpdate: PT.func.isRequired,
+        };
+    }
+
     constructor(props) {
         super(props);
         this.state = {
@@ -16,6 +34,7 @@ export default class HeadJudgeLayout extends React.Component {
             page: "heats",
         };
     }
+
     componentWillReceiveProps(next_props) {
         if (next_props.tour.id !== this.props.tour.id) {
             this.setState({
@@ -24,23 +43,18 @@ export default class HeadJudgeLayout extends React.Component {
             });
         }
     }
-    get heats_count() {
+
+    getHeatsCount() {
         return Math.max(...this.props.tour.runs.map(run => run.heat));
     }
-    updateHeat(value) {
-        this.setState({
-            heat: value,
-        });
-    }
-    onPrevHeatClick = () => {
-        this.updateHeat(this.state.heat - 1);
-    }
-    onNextHeatClick = () => {
-        this.updateHeat(this.state.heat + 1);
-    }
-    onPageChange = (page) => {
-        this.setState({ page });
-    }
+
+    setHeat = (heat) => this.setState({ heat });
+    updateHeat = (delta) => this.setHeat(this.state.heat + delta);
+
+    handlePrevHeatClick = () => this.updateHeat(-1);
+    handleNextHeatClick = () => this.updateHeat(1);
+    handlePageChange = (page) => this.setState({ page });
+
     renderHeats() {
         return (
             <HeatsPage
@@ -66,7 +80,7 @@ export default class HeadJudgeLayout extends React.Component {
         );
     }
     renderHeader() {
-        const heats_count = this.heats_count;
+        const heats_count = this.getHeatsCount();
         return (
             <Header
                 heat={ this.state.heat }
@@ -75,8 +89,8 @@ export default class HeadJudgeLayout extends React.Component {
                 judge={ this.props.disciplineJudge.judge }
                 maxHeat={ heats_count }
                 tour={ this.props.tour }
-                onNextHeatClick={ this.onNextHeatClick }
-                onPrevHeatClick={ this.onPrevHeatClick }
+                onNextHeatClick={ this.handleNextHeatClick }
+                onPrevHeatClick={ this.handlePrevHeatClick }
             />
         );
     }
@@ -92,7 +106,10 @@ export default class HeadJudgeLayout extends React.Component {
     }
     renderFooter() {
         return (
-            <Footer value={ this.state.page } onChange={ this.onPageChange }>
+            <Footer
+                value={ this.state.page }
+                onChange={ this.handlePageChange }
+            >
                 <FooterItem
                     label={ _("tablet.pages.heats") }
                     mkey="heats"

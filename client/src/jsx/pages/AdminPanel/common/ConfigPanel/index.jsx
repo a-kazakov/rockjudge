@@ -1,7 +1,7 @@
 import CheckboxesSet from "./CheckboxesSet";
 import OneCheckbox from "./OneCheckbox";
 
-export default class ConfigPanel extends React.Component {
+export default class ConfigPanel extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

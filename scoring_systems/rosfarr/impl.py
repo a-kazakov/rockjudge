@@ -499,7 +499,7 @@ class RunScore:
                     "previous_tour": {
                         "primary_score": float(prev_primary / 100.0),
                         "secondary_score": float(prev_secondary / 100.0),
-                    }
+                    },
                 }
             return {}
         if self.scoring_system == "rosfarr.am_final_acro":
