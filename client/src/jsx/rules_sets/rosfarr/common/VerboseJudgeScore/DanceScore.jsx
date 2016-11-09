@@ -64,7 +64,7 @@ export default class DanceScore extends React.Component {
                     <th>
                         <p>{ _("results.breakdown.sm") }:</p>
                     </th>
-                    <td>
+                    <td className="mistakes">
                         <p>{ formatScore(this.props.score.data.raw_data.small_mistakes) }</p>
                     </td>
                 </tr>
@@ -72,7 +72,7 @@ export default class DanceScore extends React.Component {
                     <th>
                         <p>{ _("results.breakdown.bm") }:</p>
                     </th>
-                    <td>
+                    <td className="mistakes">
                         <p>{ formatScore(this.props.score.data.raw_data.big_mistakes) }</p>
                     </td>
                 </tr>

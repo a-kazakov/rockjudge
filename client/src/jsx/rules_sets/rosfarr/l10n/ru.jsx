@@ -128,6 +128,9 @@ export default function translate(src, ...args) {
                 "m": "Ош",
                 "p": "М",
                 "sm": "МО",
+                "js": "ОХ",
+                "tv": "Время",
+                "penalty": "Штраф",
                 "t": "Σ",
             },
             "headers": {

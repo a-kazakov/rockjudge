@@ -1,18 +1,44 @@
 import makeClassName from "common/makeClassName";
+import VerboseJudgeScore from "common/VerboseJudgeScore";
 
 export default class Item extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
+            disciplineJudge: PT.object.isRequired,
+            judge: PT.shape({
+                name: PT.string.isRequired,
+            }).isRequired,
             score: PT.shape({
                 confirmed: PT.bool.isRequired,
                 data: PT.shape({
                     total_score: PT.number.isRequired,
                 }).isRequired,
-            }),
+            }).isRequired,
+            showVerbose: PT.bool.isRequired,
+            tour: PT.object.isRequired,
         };
     }
 
+    renderVerboseScore() {
+        if (!this.props.showVerbose) {
+            return null;
+        }
+        return (
+            <div className="verbose-score">
+                <div className="judge-name">
+                    { this.props.judge.name }
+                </div>
+                <VerboseJudgeScore
+                    performed
+                    disciplineJudge={ this.props.disciplineJudge }
+                    score={ this.props.score }
+                    tour={ this.props.tour }
+                />
+                <div className="triangle" />
+            </div>
+        );
+    }
     getClassName() {
         const total_score = this.props.score ? this.props.score.data.total_score : 0;
         return makeClassName({
@@ -29,6 +55,7 @@ export default class Item extends React.Component {
                 { this.props.score
                     ? this.props.score.data.total_score.toFixed()
                     : "—" }
+                { this.renderVerboseScore() }
             </td>
         );
     }

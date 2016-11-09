@@ -36,7 +36,7 @@ export default class AcroScore extends React.Component {
                     <th>
                         <p>{ _("results.breakdown.fd") }:</p>
                     </th>
-                    <td>
+                    <td className="mistakes">
                         <p>{ formatScore(this.props.score.data.raw_data.mistakes) }</p>
                     </td>
                 </tr>

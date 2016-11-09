@@ -6,11 +6,9 @@ export default class FormationAcroScore extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
-            row: PT.shape({
-                additional_data: PT.shape({
-                    places: PT.object.isRequired,
-                }).isRequired,
-            }).isRequired,
+            additionalData: PT.shape({
+                places: PT.object.isRequired,
+            }),
             score: PT.shape({
                 id: PT.number.isRequired,
                 data: PT.shape({
@@ -67,7 +65,7 @@ export default class FormationAcroScore extends React.Component {
                     <th>
                         <p>{ _("results.breakdown.sm") }:</p>
                     </th>
-                    <td>
+                    <td className="mistakes">
                         <p>{ formatScore(this.props.score.data.raw_data.small_mistakes) }</p>
                     </td>
                 </tr>
@@ -75,7 +73,7 @@ export default class FormationAcroScore extends React.Component {
                     <th>
                         <p>{ _("results.breakdown.bm") }:</p>
                     </th>
-                    <td>
+                    <td className="mistakes">
                         <p>{ formatScore(this.props.score.data.raw_data.big_mistakes) }</p>
                     </td>
                 </tr>
@@ -87,14 +85,19 @@ export default class FormationAcroScore extends React.Component {
                         <p>{ this.props.score.data.total_score }</p>
                     </td>
                 </tr>
-                <tr>
-                    <th>
-                        <p>{ _("results.breakdown.p")  }:</p>
-                    </th>
-                    <td className="total-score">
-                        <p>{ this.props.row.additional_data.places[this.props.score.id] }</p>
-                    </td>
-                </tr>
+                { this.props.additionalData
+                    ? (
+                        <tr>
+                            <th>
+                                <p>{ _("results.breakdown.p")  }:</p>
+                            </th>
+                            <td className="total-score">
+                                <p>{ this.props.additionalData.places[this.props.score.id] }</p>
+                            </td>
+                        </tr>
+                    ) : null
+                }
+
             </tbody></table>
         );
     }

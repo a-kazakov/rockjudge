@@ -4,5 +4,5 @@ export default function formatScore(score, template="$") {
     }
     return template
         .replace("$", score)
-        .replace("@", score.toFixed(1));
+        .replace("@", score.toFixed(1))
 }

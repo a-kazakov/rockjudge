@@ -20,7 +20,7 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
             return null;
         });
     }
-    onScoreUpdate = (key, value) => {
+    handleScoreUpdate = (key, value) => {
         let score_data = {};
         score_data[key] = value;
         this.props.onScoreUpdate(this.score.id, score_data);
@@ -54,21 +54,23 @@ export default class ScoringLayout extends CacheMixin(React.Component) {
                 </h2>
                 <PenaltyInput
                     score={ this.score }
-                    onScoreUpdate={ this.onScoreUpdate }
                     scoringSystemName={ this.props.tour.scoring_system_name }
-                />
-                <TechJudgesScores
-                    run={ this.props.run }
-                    disciplineJudges={ this.props.tour.discipline.discipline_judges }
-                />
-                <LineJudgesScores
-                    run={ this.props.run }
-                    disciplineJudges={ this.props.tour.discipline.discipline_judges }
-                />
-                <AcrobaticOverrides
-                    run={ this.props.run }
+                    onScoreUpdate={ this.handleScoreUpdate }
                 />
                 <PreviousPenalties
+                    run={ this.props.run }
+                />
+                <TechJudgesScores
+                    disciplineJudges={ this.props.tour.discipline.discipline_judges }
+                    run={ this.props.run }
+                    tour={ this.props.tour }
+                />
+                <LineJudgesScores
+                    disciplineJudges={ this.props.tour.discipline.discipline_judges }
+                    run={ this.props.run }
+                    tour={ this.props.tour }
+                />
+                <AcrobaticOverrides
                     run={ this.props.run }
                 />
                 <NotPerformedSwitch
