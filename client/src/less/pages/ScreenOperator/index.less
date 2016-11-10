@@ -1,6 +1,22 @@
 .ScreenOperator {
     .fill-space();
     .flex-row();
+    .btn-fullscreen {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 30px;
+        height: 30px;
+        background-color: @color-dark;
+        div {
+            position: absolute;
+            border: 2px solid @color-white;
+            left: 5px;
+            right: 5px;
+            top: 8px;
+            bottom: 8px;
+        }
+    }
     select {
         display: block;
         width: 90%;

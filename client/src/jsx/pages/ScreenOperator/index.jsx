@@ -134,6 +134,36 @@ export default class ScreenOperator extends React.PureComponent {
             return data;
         });
     }
+    handleToggleFullScreen = () => {
+        if (
+            !window.document.fullscreenElement &&
+            !window.document.mozFullScreenElement &&
+            !window.document.webkitFullscreenElement
+        ) {
+            const node = ReactDOM.findDOMNode(this);
+            if (node.requestFullscreen) {
+                node.requestFullscreen();
+            } else if (node.mozRequestFullScreen) {
+                node.mozRequestFullScreen();
+            } else if (node.msRequestFullscreen) {
+                node.msRequestFullscreen();
+            } else if (node.webkitRequestFullscreen) {
+                node.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+            } else if (node.webkitEnterFullscreen) {
+                node.webkitEnterFullscreen();
+            }
+        } else {
+            if (window.document.cancelFullScreen) {
+                window.document.cancelFullScreen();
+            } else if (window.document.mozCancelFullScreen) {
+                window.document.mozCancelFullScreen();
+            } else if (window.document.msCancelFullScreen) {
+                window.document.msCancelFullScreen();
+            } else if (window.document.webkitCancelFullScreen) {
+                window.document.webkitCancelFullScreen();
+            }
+        }
+    }
 
     validatePendingData() {
         if (!this.state.pendingData) {
@@ -228,6 +258,12 @@ export default class ScreenOperator extends React.PureComponent {
                         { this.renderContols(data) }
                     </div>
                     { this.renderButtons() }
+                </div>
+                <div
+                    className="btn-fullscreen"
+                    { ...onTouchEndOrClick(this.handleToggleFullScreen) }
+                >
+                    <div />
                 </div>
             </div>
         );

@@ -3,6 +3,8 @@ import Loader from "common/components/Loader";
 import storage from "common/server/storage";
 import message_dispatcher from "common/server/message_dispatcher";
 
+import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
+
 import HeatsPage from "./HeatsPage";
 import InfoPage from "./InfoPage";
 import LeftBar from "./LeftBar";
@@ -64,6 +66,36 @@ export default class PresenterTablet extends React.PureComponent {
             .send();
     }
 
+    handleToggleFullScreen = () => {
+        if (
+            !window.document.fullscreenElement &&
+            !window.document.mozFullScreenElement &&
+            !window.document.webkitFullscreenElement
+        ) {
+            const node = ReactDOM.findDOMNode(this);
+            if (node.requestFullscreen) {
+                node.requestFullscreen();
+            } else if (node.mozRequestFullScreen) {
+                node.mozRequestFullScreen();
+            } else if (node.msRequestFullscreen) {
+                node.msRequestFullscreen();
+            } else if (node.webkitRequestFullscreen) {
+                node.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+            } else if (node.webkitEnterFullscreen) {
+                node.webkitEnterFullscreen();
+            }
+        } else {
+            if (window.document.cancelFullScreen) {
+                window.document.cancelFullScreen();
+            } else if (window.document.mozCancelFullScreen) {
+                window.document.mozCancelFullScreen();
+            } else if (window.document.msCancelFullScreen) {
+                window.document.msCancelFullScreen();
+            } else if (window.document.webkitCancelFullScreen) {
+                window.document.webkitCancelFullScreen();
+            }
+        }
+    }
     handleActiveTourUpdate = (data) => {
         if (data.tour_id !== this.state.activeTourId) {
             this.setState({
@@ -121,6 +153,12 @@ export default class PresenterTablet extends React.PureComponent {
                 />
                 <div className="content">
                     { this.renderBody() }
+                </div>
+                <div
+                    className="btn-fullscreen"
+                    { ...onTouchEndOrClick(this.handleToggleFullScreen) }
+                >
+                    <div />
                 </div>
             </div>
         );

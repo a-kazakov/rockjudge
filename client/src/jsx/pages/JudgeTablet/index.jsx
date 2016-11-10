@@ -86,6 +86,36 @@ export default class JudgeTablet extends React.PureComponent {
             tour: null,
         });
     }
+    handleToggleFullScreen = () => {
+        if (
+            !window.document.fullscreenElement &&
+            !window.document.mozFullScreenElement &&
+            !window.document.webkitFullscreenElement
+        ) {
+            const node = ReactDOM.findDOMNode(this);
+            if (node.requestFullscreen) {
+                node.requestFullscreen();
+            } else if (node.mozRequestFullScreen) {
+                node.mozRequestFullScreen();
+            } else if (node.msRequestFullscreen) {
+                node.msRequestFullscreen();
+            } else if (node.webkitRequestFullscreen) {
+                node.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+            } else if (node.webkitEnterFullscreen) {
+                node.webkitEnterFullscreen();
+            }
+        } else {
+            if (window.document.cancelFullScreen) {
+                window.document.cancelFullScreen();
+            } else if (window.document.mozCancelFullScreen) {
+                window.document.mozCancelFullScreen();
+            } else if (window.document.msCancelFullScreen) {
+                window.document.msCancelFullScreen();
+            } else if (window.document.webkitCancelFullScreen) {
+                window.document.webkitCancelFullScreen();
+            }
+        }
+    }
 
     loadTourData() {
         if (this._current_active_tour_id === null) {
@@ -150,36 +180,6 @@ export default class JudgeTablet extends React.PureComponent {
     }
 
     // Rendering
-
-    handleToggleFullScreen = () => {
-        if (
-            !window.document.fullscreenElement &&
-            !window.document.mozFullScreenElement &&
-            !window.document.webkitFullscreenElement
-        ) {
-            if (ReactDOM.findDOMNode(this).requestFullscreen) {
-                ReactDOM.findDOMNode(this).requestFullscreen();
-            } else if (ReactDOM.findDOMNode(this).mozRequestFullScreen) {
-                ReactDOM.findDOMNode(this).mozRequestFullScreen();
-            } else if (ReactDOM.findDOMNode(this).msRequestFullscreen) {
-                ReactDOM.findDOMNode(this).msRequestFullscreen();
-            } else if (ReactDOM.findDOMNode(this).webkitRequestFullscreen) {
-                ReactDOM.findDOMNode(this).webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-            } else if (ReactDOM.findDOMNode(this).webkitEnterFullscreen) {
-                ReactDOM.findDOMNode(this).webkitEnterFullscreen();
-            }
-        } else {
-            if (window.document.cancelFullScreen) {
-                window.document.cancelFullScreen();
-            } else if (window.document.mozCancelFullScreen) {
-                window.document.mozCancelFullScreen();
-            } else if (window.document.msCancelFullScreen) {
-                window.document.msCancelFullScreen();
-            } else if (window.document.webkitCancelFullScreen) {
-                window.document.webkitCancelFullScreen();
-            }
-        }
-    }
 
     render() {
         if (this.state.judge === null) {
