@@ -181,7 +181,7 @@ export default class JudgeTablet extends React.PureComponent {
 
     // Rendering
 
-    render() {
+    renderBody() {
         if (this.state.judge === null) {
             return (
                 <Loader />
@@ -197,11 +197,17 @@ export default class JudgeTablet extends React.PureComponent {
         }
         const JudgeTabletComponent = rules_set.judge_tablet;
         return (
-            <div className="JudgeTablet rules-set">
-                <JudgeTabletComponent
-                    disciplineJudge={ this.state.disciplineJudge }
-                    tour={ this.state.tour }
-                />
+            <JudgeTabletComponent
+                disciplineJudge={ this.state.disciplineJudge }
+                tour={ this.state.tour }
+            />
+        );
+    }
+
+    render() {
+        return (
+            <div className="JudgeTablet rules-set" key="outer">
+                { this.renderBody() }
                 <div
                     className="btn-fullscreen"
                     { ...onTouchEndOrClick(this.handleToggleFullScreen) }
