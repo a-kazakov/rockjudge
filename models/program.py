@@ -24,7 +24,7 @@ class Program(BaseModel):
         )
 
     name = peewee.CharField()
-    participant = peewee.ForeignKeyField(Participant, related_name="programs", null=True)
+    participant = peewee.ForeignKeyField(Participant, related_name="programs", on_delete="RESTRICT")
     acrobatics = postgres_ext.BinaryJSONField(default=[], dumps=serialize_program_acrobatics)
     default_for = peewee.CharField(null=True)
     external_id = peewee.CharField(null=True)

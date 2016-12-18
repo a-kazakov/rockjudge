@@ -19,7 +19,7 @@ class Score(BaseModel):
         "run": None,
     }
 
-    run = peewee.ForeignKeyField(Run, related_name="scores")
+    run = peewee.ForeignKeyField(Run, related_name="scores", on_delete="CASCADE")
     discipline_judge = peewee.ForeignKeyField(DisciplineJudge)
     score_data = postgres_ext.BinaryJSONField(default={})
     confirmed = peewee.BooleanField(default=False)

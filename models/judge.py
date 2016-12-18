@@ -12,7 +12,7 @@ class Judge(BaseModel):
             (("competition", "external_id",), True),
         )
 
-    competition = peewee.ForeignKeyField(Competition, null=True, related_name="judges")
+    competition = peewee.ForeignKeyField(Competition, related_name="judges", on_delete="RESTRICT")
     number = peewee.CharField(default="")
     name = peewee.CharField()
     category = peewee.CharField()

@@ -23,8 +23,8 @@ class DisciplineJudge(BaseModel):
 
     RW_PROPS = ["role"]
 
-    discipline = peewee.ForeignKeyField(Discipline, related_name="discipline_judges", null=True)
-    judge = peewee.ForeignKeyField(Judge, related_name="discipline_judges", null=True)
+    discipline = peewee.ForeignKeyField(Discipline, related_name="discipline_judges", on_delete="CASCADE")
+    judge = peewee.ForeignKeyField(Judge, related_name="discipline_judges", on_delete="RESTRICT")
     role = peewee.CharField()
 
     @classmethod

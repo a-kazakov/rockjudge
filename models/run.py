@@ -18,8 +18,8 @@ class Run(BaseModel):
         )
         order_by = ["heat", "heat_secondary", "participant"]
 
-    participant = peewee.ForeignKeyField(Participant)
-    tour = peewee.ForeignKeyField(Tour, related_name="runs")
+    participant = peewee.ForeignKeyField(Participant, on_delete="RESTRICT")
+    tour = peewee.ForeignKeyField(Tour, related_name="runs", on_delete="CASCADE")
     heat = peewee.IntegerField()
     heat_secondary = peewee.IntegerField()
     status = peewee.CharField(max_length=2, default="OK")  # OK, NP, DQ

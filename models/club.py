@@ -12,7 +12,7 @@ class Club(BaseModel):
         )
         order_by = ["city", "name"]
 
-    competition = peewee.ForeignKeyField(competition_proxy, null=True, related_name="clubs")
+    competition = peewee.ForeignKeyField(competition_proxy, related_name="clubs", on_delete="RESTRICT")
     name = peewee.CharField()
     city = peewee.CharField()
     external_id = peewee.CharField(null=True, default=None)

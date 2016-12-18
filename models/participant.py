@@ -30,11 +30,11 @@ class Participant(BaseModel):
         )
         order_by = ["number", "formation_name", "external_id"]
 
-    discipline = peewee.ForeignKeyField(discipline_proxy, null=True, related_name="participants")
+    discipline = peewee.ForeignKeyField(discipline_proxy, related_name="participants", on_delete="RESTRICT")
     formation_name = peewee.CharField(default="")
     coaches = peewee.CharField()
     number = peewee.IntegerField(default=0)
-    club = peewee.ForeignKeyField(Club, related_name="participants")
+    club = peewee.ForeignKeyField(Club, related_name="participants", on_delete="RESTRICT")
     external_id = peewee.CharField(null=True, default=None)
     sportsmen = postgres_ext.BinaryJSONField(default=[], dumps=serialize_participant_sportsmen)
 

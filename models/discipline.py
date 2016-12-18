@@ -20,8 +20,8 @@ class Discipline(BaseModel):
 
     name = peewee.CharField()
     sp = peewee.IntegerField(default=0)
-    competition = peewee.ForeignKeyField(Competition, null=True, related_name="disciplines")
-    first_tour = peewee.ForeignKeyField(tour_proxy, null=True)
+    competition = peewee.ForeignKeyField(Competition, related_name="disciplines", on_delete="RESTRICT")
+    first_tour = peewee.ForeignKeyField(tour_proxy, null=True, on_delete="SET NULL")
     external_id = peewee.CharField(null=True, default=None)
 
     RW_PROPS = ["name", "sp", "external_id"]

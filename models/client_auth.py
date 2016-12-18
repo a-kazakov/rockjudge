@@ -12,8 +12,8 @@ class ClientAuth(BaseModel):
         )
         order_by = ["client"]
 
-    client = peewee.ForeignKeyField(Client, related_name="authentications")
-    competition = peewee.ForeignKeyField(Competition, related_name="clients")
+    client = peewee.ForeignKeyField(Client, related_name="authentications", on_delete="CASCADE")
+    competition = peewee.ForeignKeyField(Competition, related_name="clients", on_delete="RESTRICT")
     access_level = peewee.CharField(default="none")
     # Possible levels:
     # - none

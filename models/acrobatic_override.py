@@ -11,6 +11,6 @@ class AcrobaticOverride(BaseModel):
         )
         order_by = ["run", "acrobatic_idx"]
 
-    run = peewee.ForeignKeyField(Run, related_name="acrobatic_overrides")
+    run = peewee.ForeignKeyField(Run, related_name="acrobatic_overrides", on_delete="CASCADE")
     acrobatic_idx = peewee.IntegerField()
     score = peewee.DoubleField()

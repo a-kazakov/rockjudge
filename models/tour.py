@@ -26,7 +26,7 @@ class Tour(BaseModel):
     active = peewee.BooleanField(default=False)
     hope_tour = peewee.BooleanField(default=False)
     total_advanced = peewee.IntegerField(default=0)
-    discipline = peewee.ForeignKeyField(Discipline, related_name="raw_tours")
+    discipline = peewee.ForeignKeyField(Discipline, related_name="raw_tours", on_delete="RESTRICT")
     scoring_system_name = peewee.CharField()
     cached_results = postgres_ext.BinaryJSONField(null=True, default=None)
 
@@ -553,8 +553,7 @@ class Tour(BaseModel):
         else:
             prev_tour.next_tour = self.next_tour
             prev_tour.save()
-        self.next_tour = None
-        self.delete_instance(recursive=True)
+        self.delete_instance()
         ws_message.add_model_update(
             model_type=Discipline,
             model_id=discipline.id,
