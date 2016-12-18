@@ -58,6 +58,10 @@ class ApiImpl {
             queue = [];
         })
     }
+    resetKeys() {
+        keys_storage.resetKeys();
+        window.location.reload();
+    }
     checkKeys() {
         if (!keys_storage.has_keys) {
             queue.push(this);
@@ -85,6 +89,10 @@ class ApiImpl {
                 this.update_db(response.response);
                 this.cb_success(response.response);
             } else {
+                if (response.code === "errors.auth.invalid_signature") {
+                    this.resetKeys();
+                    return;
+                }
                 this.cb_error(response.message, response.code, response.args);
             }
         };

@@ -124,7 +124,7 @@ class ApiHandler(tornado.web.RequestHandler):
             ws_client_id = None
         ws_message = WsMessage(ws_client_id)
         client = None
-        if method not in ["auth.register", "auth.exchange_keys"]:  # Check signature
+        if method not in ("auth.register", "auth.exchange_keys", ):  # Check signature
             try:
                 client = Client.get(id=self.get_argument("client_id"))
                 correct_sig_src = "{client_id}|{method}|{data}|{random}|{secret}".format(
@@ -142,6 +142,7 @@ class ApiHandler(tornado.web.RequestHandler):
                     "success": False,
                     "code": "errors.auth.invalid_signature",
                 }, ensure_ascii=False))
+                return
         request = ApiRequest(
             body=data,
             client=client,

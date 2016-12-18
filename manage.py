@@ -38,7 +38,13 @@ class Commands:
     @staticmethod
     def reset():
         from app import ModelManager
-        ModelManager.instance().reset()
+        print("Are you sure want to reset everything? Type 'Yes, I'm sure!' to continue.")
+        if input() == "Yes, I'm sure!":
+            print("Resetting ...")
+            ModelManager.instance().reset()
+            print("Done")
+        else:
+            print("Wrong password")
 
     @staticmethod
     def test():

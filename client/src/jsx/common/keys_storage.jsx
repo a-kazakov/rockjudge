@@ -32,6 +32,10 @@ class KeysStorage {
         }));
     }
 
+    resetKeys() {
+        localStorage.removeItem(this.ls_key);
+    }
+
     obtainKeys(onDone) {
         function makeRandomBN() {
             let result = "";

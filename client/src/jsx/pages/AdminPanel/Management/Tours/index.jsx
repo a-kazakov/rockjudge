@@ -46,7 +46,10 @@ export default class Tours extends React.PureComponent {
 
     // Renderers
 
-    renderTourCreation(after_id) {
+    renderTourCreation(after_id, next_tour) {
+        if (next_tour && next_tour.finalized) {
+            return null;
+        }
         if (after_id === this.state.newTourAfterId) {
             return (
                 <Creator
@@ -66,13 +69,13 @@ export default class Tours extends React.PureComponent {
         }
     }
     renderTours(discipline) {
-        return discipline.tours.map(tour => {
+        return discipline.tours.map((tour, idx, tours) => {
             return [
                 <Row
                     key={ tour.id }
                     tour={ tour }
                 />,
-                this.renderTourCreation(tour.id),
+                this.renderTourCreation(tour.id, tours[idx + 1] || null),
             ];
         });
     }
