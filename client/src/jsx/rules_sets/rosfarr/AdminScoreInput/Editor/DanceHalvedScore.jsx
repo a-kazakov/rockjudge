@@ -33,13 +33,13 @@ export default class DanceHalvedScore extends React.PureComponent {
         });
     }
 
-    makeField(key, label, scale) {
+    makeField(key, label, scale, float=false) {
         const value = this.props.score.data.raw_data[key];
         return {
             key: key,
             label: `${label}:`,
             options: scale,
-            defaultValue: value === null ? "" : value.toString(),
+            defaultValue: value === null ? "" : float ? value.toFixed(1) : value.toString(),
         }
     }
 
@@ -49,8 +49,8 @@ export default class DanceHalvedScore extends React.PureComponent {
                 fields={ [
                     this.makeField("fw_woman",       "FW", genScale("?reduction")),
                     this.makeField("fw_man",         "FM", genScale("?reduction")),
-                    this.makeField("dance_figs",     "DF", genScale("?numbers", { max: 12.5, step: 0.5 })),
-                    this.makeField("composition",    "C",  genScale("?numbers", { max: 10,   step: 0.5 })),
+                    this.makeField("dance_figs",     "DF", genScale("?numbers", { max: 12.5, step: 0.5 }), true),
+                    this.makeField("composition",    "C",  genScale("?numbers", { max: 10,   step: 0.5 }), true),
                     this.makeField("small_mistakes", "SM", genScale("numbers",  { max: 100 })),
                     this.makeField("big_mistakes",   "BM", genScale("numbers",  { max: 100 })),
                 ] }

@@ -26,17 +26,17 @@ export default class FormationScore extends React.PureComponent {
             dance_tech: data["dance_tech"] === "" ? null : parseFloat(data.dance_tech),
             dance_figs: data["dance_figs"] === "" ? null : parseFloat(data.dance_figs),
             impression: data["impression"] === "" ? null : parseFloat(data.impression),
-            mistakes:   parseInt(data.small_mistakes),
+            mistakes:   parseInt(data.mistakes),
         });
     }
 
-    makeField(key, label, scale) {
+    makeField(key, label, scale, float=false) {
         const value = this.props.score.data.raw_data[key];
         return {
             key: key,
             label: `${label}:`,
             options: scale,
-            defaultValue: value === null ? "" : value.toString(),
+            defaultValue: value === null ? "" : float ? value.toFixed(1) : value.toString(),
         }
     }
 
@@ -44,9 +44,9 @@ export default class FormationScore extends React.PureComponent {
         return (
             <GeneralEditor
                 fields={ [
-                    this.makeField("dance_tech", "DT", genScale("?numbers", { max: 10, step: 0.5 })),
-                    this.makeField("dance_figs", "DF", genScale("?numbers", { max: 10, step: 0.5 })),
-                    this.makeField("impression", "I",  genScale("?numbers", { max: 10, step: 0.5 })),
+                    this.makeField("dance_tech", "DT", genScale("?numbers", { max: 10, step: 0.5 }), true),
+                    this.makeField("dance_figs", "DF", genScale("?numbers", { max: 10, step: 0.5 }), true),
+                    this.makeField("impression", "I",  genScale("?numbers", { max: 10, step: 0.5 }), true),
                     this.makeField("mistakes",   "M",  genScale("numbers",  { max: 100 })),
                 ] }
                 readOnly={ this.props.readOnly }
