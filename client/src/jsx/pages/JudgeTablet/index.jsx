@@ -1,13 +1,12 @@
 import Api from "common/server/Api";
 import storage from "common/server/storage";
 import message_dispatcher from "common/server/message_dispatcher";
+import FullscreenButton from "common/components/FullscreenButton"
 import Loader from "common/components/Loader";
 
 import SplashScreen from "./SplashScreen";
 
 import rules_set from "rules_sets/loader";
-
-import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
 export default class JudgeTablet extends React.PureComponent {
     static get propTypes() {
@@ -85,36 +84,6 @@ export default class JudgeTablet extends React.PureComponent {
             disciplineJudge: null,
             tour: null,
         });
-    }
-    handleToggleFullScreen = () => {
-        if (
-            !window.document.fullscreenElement &&
-            !window.document.mozFullScreenElement &&
-            !window.document.webkitFullscreenElement
-        ) {
-            const node = ReactDOM.findDOMNode(this);
-            if (node.requestFullscreen) {
-                node.requestFullscreen();
-            } else if (node.mozRequestFullScreen) {
-                node.mozRequestFullScreen();
-            } else if (node.msRequestFullscreen) {
-                node.msRequestFullscreen();
-            } else if (node.webkitRequestFullscreen) {
-                node.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-            } else if (node.webkitEnterFullscreen) {
-                node.webkitEnterFullscreen();
-            }
-        } else {
-            if (window.document.cancelFullScreen) {
-                window.document.cancelFullScreen();
-            } else if (window.document.mozCancelFullScreen) {
-                window.document.mozCancelFullScreen();
-            } else if (window.document.msCancelFullScreen) {
-                window.document.msCancelFullScreen();
-            } else if (window.document.webkitCancelFullScreen) {
-                window.document.webkitCancelFullScreen();
-            }
-        }
     }
 
     loadTourData() {
@@ -203,17 +172,11 @@ export default class JudgeTablet extends React.PureComponent {
             />
         );
     }
-
     render() {
         return (
             <div className="JudgeTablet rules-set" key="outer">
                 { this.renderBody() }
-                <div
-                    className="btn-fullscreen"
-                    { ...onTouchEndOrClick(this.handleToggleFullScreen) }
-                >
-                    <div />
-                </div>
+                <FullscreenButton />
             </div>
         );
     }
