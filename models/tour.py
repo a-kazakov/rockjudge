@@ -470,7 +470,8 @@ class Tour(BaseModel):
                 "plan": {},
             }
         )
-        ws_message.add_message("active_tour_update")
+        if self.active:
+            ws_message.add_message("active_tour_update", {"tour_id": None})
 
     def get_serialized_results(self):
         return [{
