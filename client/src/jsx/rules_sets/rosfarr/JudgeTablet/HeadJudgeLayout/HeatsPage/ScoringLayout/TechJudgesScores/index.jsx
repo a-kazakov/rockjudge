@@ -82,6 +82,11 @@ export default class TechJudgeScore extends React.PureComponent {
     }
     render() {
         this.setupCache();
+        if (this.tech_judges.length === 0) {
+            return (
+                <div />
+            );
+        }
         return (
             <div>
                 <h3>{ _("tablet.head_judge.tech_judge_scores") }</h3>
