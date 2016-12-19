@@ -455,7 +455,8 @@ class Tour(BaseModel):
         else:
             prev_tour.next_tour = self.next_tour
             prev_tour.save()
-        self.delete_instance(recursive=True, delete_nullable=True)
+        self.next_tour = None
+        self.delete_instance(recursive=True)
         ws_message.add_model_update(
             model_type=Discipline,
             model_id=discipline.id,
