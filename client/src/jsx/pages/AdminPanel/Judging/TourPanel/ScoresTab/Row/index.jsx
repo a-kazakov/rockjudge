@@ -1,7 +1,10 @@
+import makeClassName from "common/makeClassName";
+
 import AcrobaticsCell from "./AcrobaticsCell";
 import HeatCell from "./HeatCell";
-import PerformedCell from "./PerformedCell";
+import StatusCell from "./StatusCell";
 import ScoreCell from "./ScoreCell";
+
 
 export default class Row extends React.PureComponent {
     static get propTypes() {
@@ -16,6 +19,8 @@ export default class Row extends React.PureComponent {
             run: PT.shape({
                 id: PT.number.isRequired,
                 heat: PT.number.isRequired,
+                performed: PT.bool.isRequired,
+                disqualified: PT.bool.isRequired,
                 total_score: PT.string.isRequired,
                 participant: PT.shape({
                     number: PT.number.isRequired,
@@ -44,9 +49,12 @@ export default class Row extends React.PureComponent {
     }
 
     getClassName() {
-        return this.props.run.heat % 2 === 1
-            ? "odd-heat"
-            : "even-heat"
+        return makeClassName({
+            "odd-heat": this.props.run.heat % 2 === 1,
+            "even-heat": this.props.run.heat % 2 === 0,
+            "not-performed": !this.props.run.performed,
+            "disqualified": this.props.run.disqualified,
+        });
     }
     render() {
         let scores_map = new Map();
@@ -94,7 +102,7 @@ export default class Row extends React.PureComponent {
                     onEditRequest={ this.props.onEditRequest }
                     onStopEditing={ this.props.onStopEditing }
                 />
-                <PerformedCell
+                <StatusCell
                     readOnly={ this.props.readOnly }
                     run={ this.props.run }
                 />

@@ -207,7 +207,7 @@ export default class ScoresTab extends React.PureComponent {
                             { this.renderTableHeaderCell("number") }
                             { this.renderTableHeaderCell("participant_name") }
                             { this.renderTableHeaderCell("acrobatics") }
-                            { this.renderTableHeaderCell("performed") }
+                            { this.renderTableHeaderCell("status") }
                             { this.renderTableHeaderCell("total_score") }
                             { discipline_judges.map(discipline_judge =>
                                 <th

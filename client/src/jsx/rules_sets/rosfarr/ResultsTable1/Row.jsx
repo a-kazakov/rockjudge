@@ -1,3 +1,5 @@
+import _ from "l10n";
+
 import getParticipantDisplay from "common/getParticipantDisplay";
 
 export default class Row extends React.PureComponent {
@@ -5,10 +7,12 @@ export default class Row extends React.PureComponent {
         const PT = React.PropTypes;
         return {
             disciplineJudgesMap: PT.instanceOf(Map).isRequired,
+            isFormation: PT.bool.isRequired,
             row: PT.shape({
                 place: PT.number,
                 run: PT.shape({
-                    performed: PT.bool.isRequired,
+                    status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
+                    disqualified: PT.bool.isRequired,
                     participant: PT.shape({
                         number: PT.number.isRequired,
                         club: PT.shape({
@@ -21,6 +25,7 @@ export default class Row extends React.PureComponent {
                         }).isRequired
                     ).isRequired,
                     verbose_total_score: PT.shape({
+                        card: PT.oneOf(["OK", "YC", "RC"]),
                         total_penalty: PT.number,
                         primary_score: PT.number,
                         secondary_score: PT.number,
@@ -35,17 +40,23 @@ export default class Row extends React.PureComponent {
         };
     }
     getCard() {
-        if (!this.props.row.run.performed) {
+        if (this.props.row.run.status !== "OK") {
             return "—";
         }
-        return this.props.row.run.verbose_total_score.total_penalty.toFixed();
+        const card = this.props.row.run.verbose_total_score.card;
+        return _(`results.cards.${card}`, this.props.isFormation);
+    }
+    getPlace() {
+        return this.props.row.run.disqualified
+            ? null
+            : this.props.row.place;
     }
     renderTotalScoreCell() {
         if (!this.props.showTotalScore) {
             return null;
         }
         let content = "—";
-        if (this.props.row.run.performed) {
+        if (this.props.row.run.status === "OK") {
             content = (
                 <span>
                     <strong>
@@ -69,7 +80,7 @@ export default class Row extends React.PureComponent {
             <tr>
                 <td className="w-7 place">
                     <p className="text-center">
-                        { this.props.row.place }
+                        { this.getPlace() }
                     </p>
                 </td>
                 <td className="w-6 number">

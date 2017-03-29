@@ -11,7 +11,7 @@ export default class ResultsTable1 extends React.PureComponent {
                     advances: PT.bool.isRequired,
                     run: PT.shape({
                         id: PT.number.isRequired,
-                        performed: PT.bool.isRequired,
+                        status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
                     }).isRequired,
                 }).isRequired
             ).isRequired,
@@ -39,8 +39,8 @@ export default class ResultsTable1 extends React.PureComponent {
         if (!row) {
             return "none";
         }
-        if (!row.run.performed) {
-            return "not_performed";
+        if (row.run.status !== "OK") {
+            return row.run.status;
         }
         return row.advances ? "advanced" : "not_advanced";
     }
@@ -53,7 +53,7 @@ export default class ResultsTable1 extends React.PureComponent {
         if (prev_status === next_status) {
             return null;
         }
-        if (next_status !== "not_performed" && !has_next_tour) {
+        if (!["NP", "DQ"].includes(next_status) && !has_next_tour) {
             return null;
         }
         return (
@@ -68,8 +68,8 @@ export default class ResultsTable1 extends React.PureComponent {
     }
     render() {
         const has_next_tour = this.props.tour.next_tour_id !== null;
-        const show_total_score = ["rosfarr.formation", "rosfarr.formation_acro"].indexOf(
-            this.props.tour.scoring_system_name) < 0;
+        const is_formation = ["rosfarr.formation", "rosfarr.formation_acro"].includes(this.props.tour.scoring_system_name)
+        const show_total_score = !is_formation;
         const djs_map = new Map(this.props.tour.discipline.discipline_judges.map(dj => [dj.id, dj]));
         let rows = [];
         for (let idx = 0; idx < this.props.table.length; ++idx) {
@@ -83,6 +83,7 @@ export default class ResultsTable1 extends React.PureComponent {
             rows.push(
                 <Row
                     disciplineJudgesMap={ djs_map }
+                    isFormation={ is_formation }
                     key={ row.run.id }
                     row={ row }
                     showTotalScore={ show_total_score }

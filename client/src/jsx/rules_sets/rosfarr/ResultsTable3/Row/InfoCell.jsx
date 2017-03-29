@@ -12,7 +12,9 @@ export default class InfoCell extends React.PureComponent {
                 advances: PT.bool.isRequired,
                 place: PT.number,
                 run: PT.shape({
+                    status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
                     performed: PT.bool.isRequired,
+                    disqualified: PT.bool.isRequired,
                     total_score: PT.string.isRequired,
                     acrobatics: PT.arrayOf(
                         PT.shape({
@@ -37,11 +39,15 @@ export default class InfoCell extends React.PureComponent {
                         PT.shape({
                             discipline_judge_id: PT.number.isRequired,
                             data: PT.shape({
-                                total_score: PT.number.isRequired,
+                                total_score: PT.oneOfType([
+                                    PT.number.isRequired,
+                                    PT.string.isRequired,
+                                ]).isRequired,
                             }),
                         }).isRequired
                     ).isRequired,
                     verbose_total_score: PT.shape({
+                        card: PT.oneOf(["OK", "YC", "RC"]),
                         previous_tour: PT.shape({
                             primary_score: PT.number,
                             secondary_score: PT.number,
@@ -50,7 +56,6 @@ export default class InfoCell extends React.PureComponent {
                             primary_score: PT.number,
                             secondary_score: PT.number,
                         }),
-                        total_penalty: PT.number,
                     }),
                 }).isRequired,
             }).isRequired,
@@ -62,10 +67,12 @@ export default class InfoCell extends React.PureComponent {
     }
 
     getCard() {
-        if (!this.props.row.run.performed) {
-            return "—";
+        if (this.props.row.run.status !== "OK") {
+            return "";
         }
-        return this.props.row.run.verbose_total_score.total_penalty.toFixed();
+        const card = this.props.row.run.verbose_total_score.card;
+        const is_formation = ["rosfarr.formation", "rosfarr.formation_acro"].includes(this.props.tour.scoring_system_name);
+        return _(`results.cards.verbose_${card}`, is_formation);
     }
     renderParticipantInfo() {
         return (
@@ -84,20 +91,23 @@ export default class InfoCell extends React.PureComponent {
         );
     }
     renderHeadJudgePenalty() {
-        if (!this.props.row.run.performed) {
+        if (this.props.row.run.status !== "OK") {
             return null;
+        }
+        const card = this.getCard();
+        if (card === "") {
+            return;
         }
         return (
             <p>
                 <strong>
-                    { `${_("results.labels.penalty")}: ` }
+                    { this.getCard() }
                 </strong>
-                { this.getCard() }
             </p>
         );
     }
     renderAcroTable() {
-        if (!this.props.row.run.performed) {
+        if (this.props.row.run.status !== "OK") {
             return null;
         }
         if (["rosfarr.acro", "rosfarr.am_final_acro"].indexOf(this.props.tour.scoring_system_name) < 0) {
@@ -161,7 +171,7 @@ export default class InfoCell extends React.PureComponent {
         );
     }
     renderAmClassAcroScore() {
-        if (!this.props.row.run.performed) {
+        if (this.props.row.run.status !== "OK") {
             return null;
         }
         if (this.props.tour.scoring_system_name !== "rosfarr.am_final_acro") {
@@ -179,10 +189,10 @@ export default class InfoCell extends React.PureComponent {
         );
     }
     renderTotalScore() {
-        if (!this.props.row.run.performed) {
+        if (this.props.row.run.status !== "OK") {
             return null;
         }
-        if (["rosfarr.formation", "rosfarr.formation_acro"].indexOf(this.props.tour.scoring_system_name) >= 0) {
+        if (["rosfarr.formation", "rosfarr.formation_acro"].includes(this.props.tour.scoring_system_name)) {
             return null;
         }
         return (
@@ -201,6 +211,18 @@ export default class InfoCell extends React.PureComponent {
             <p>
                 <em>
                     { _("results.labels.not_performed") }
+                </em>
+            </p>
+        )
+    }
+    renderDisqualifiedLabel() {
+        if (!this.props.row.run.disqualified) {
+            return null;
+        }
+        return (
+            <p>
+                <em>
+                    { _("results.labels.disqualified") }
                 </em>
             </p>
         )
@@ -231,6 +253,7 @@ export default class InfoCell extends React.PureComponent {
                 { this.renderAmClassAcroScore() }
                 { this.renderTotalScore() }
                 { this.renderNotPerformedLabel() }
+                { this.renderDisqualifiedLabel() }
                 { this.renderNextTourLabel() }
             </td>
         );

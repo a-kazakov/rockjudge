@@ -12,7 +12,10 @@ export default class AdminScoreInput extends React.PureComponent {
             score: PT.shape({
                 data: PT.shape({
                     raw_data: PT.object.isRequired,
-                    total_score: PT.number.isRequired,
+                    total_score: PT.oneOfType([
+                        PT.number.isRequired,
+                        PT.string.isRequired,
+                    ]).isRequired,
                 }).isRequired,
             }).isRequired,
             tour: PT.object.isRequired,
@@ -26,7 +29,7 @@ export default class AdminScoreInput extends React.PureComponent {
             if (this.props.disciplineJudge.role === "head_judge") {
                 let result = this.props.score.data.raw_data.penalty === null
                     ? "—"
-                    : this.props.score.data.total_score.toFixed();
+                    : this.props.score.data.total_score;
                 if (this.props.score.data.raw_data.nexttour) {
                     result += "/NT";
                 }
@@ -39,7 +42,7 @@ export default class AdminScoreInput extends React.PureComponent {
             if (this.props.disciplineJudge.role === "tech_judge") {
                 return (
                     <span>
-                        { this.props.score.data.total_score.toFixed() }
+                        { this.props.score.data.total_score }
                     </span>
                 );
             }

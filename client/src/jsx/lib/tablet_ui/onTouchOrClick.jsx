@@ -1,3 +1,7 @@
+function prevent(e) {
+    e.preventDefault();
+}
+
 export default function onTouchOrClick(handler) {
     let f = (event) => {
         event.preventDefault();
@@ -6,5 +10,6 @@ export default function onTouchOrClick(handler) {
     return {
         onTouchStart: f,
         onClick: f,
+        onTouchEnd: prevent,
     }
 }

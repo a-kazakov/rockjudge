@@ -43,6 +43,10 @@ class RulesSetLoader {
         }
     }
 
+    get ready() {
+        return this._loaded;
+    }
+
     get meta() {
         this._checkIfLoaded();
         return this._meta;

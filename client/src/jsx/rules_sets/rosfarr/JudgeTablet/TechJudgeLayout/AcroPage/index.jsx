@@ -25,7 +25,6 @@ export default class AcroPage extends React.PureComponent {
                 key={ run.id }
                 run={ run }
                 tour={ this.props.tour }
-                onAcroOverride={ this.props.onAcroOverride }
                 onScoreConfirm={ this.props.onScoreConfirm }
             />
         );

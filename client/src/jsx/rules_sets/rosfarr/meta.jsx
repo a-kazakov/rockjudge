@@ -11,6 +11,8 @@ const meta = {
         "rosfarr.formation",
         "rosfarr.formation_acro",
         "rosfarr.simplified",
+        "rosfarr.solo",
+        "rosfarr.am_qual",
         "rosfarr.am_final_fw",
         "rosfarr.am_final_acro",
     ],

@@ -1,11 +1,11 @@
 .HeadJudgeLayout {
-    .not-performed-switch {
+    .status-switch {
         margin-top: 20px;
         text-align: center;
-        button.not-performed {
+        button.not-performed, button.disqualified {
             .button-red();
         }
-        button.performed {
+        button.performed, button.not-disqualified {
             .button-green();
         }
     }

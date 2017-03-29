@@ -11,7 +11,7 @@ export default class Participant extends React.PureComponent {
             }).isRequired,
             layoutClass: PT.func.isRequired,
             run: PT.shape({
-                performed: PT.bool.isRequired,
+                status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
                 participant: PT.shape({
                     number: PT.number.isRequired,
                     name: PT.string.isRequired,
@@ -101,10 +101,12 @@ export default class Participant extends React.PureComponent {
             </div>
         );
     }
-    renderNotPerformingMessage() {
+    renderNotOkStatusMessage() {
         return (
             <div className="not-performing">
-                { _("tablet.global.not_performing") }
+                { this.props.run.status === "NP"
+                    ? _("tablet.global.not_performing")
+                    : _("tablet.global.disqualified") }
             </div>
         );
     }
@@ -119,9 +121,9 @@ export default class Participant extends React.PureComponent {
                 <h2>
                     { header }
                 </h2>
-                { this.props.run.performed
+                { this.props.run.status === "OK"
                     ? this.renderScoringLayout()
-                    : this.renderNotPerformingMessage() }
+                    : this.renderNotOkStatusMessage() }
             </div>
         );
     }

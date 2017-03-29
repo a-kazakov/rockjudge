@@ -15,6 +15,7 @@ export default class ScoringLayout extends React.PureComponent {
             }).isRequired,
             run: PT.shape({
                 id: PT.number.isRequired,
+                status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
                 acrobatics: PT.arrayOf(
                     PT.object.isRequired,
                 ).isRequired,
@@ -45,7 +46,7 @@ export default class ScoringLayout extends React.PureComponent {
         this.score = this.getScore();
     }
 
-    handleConfirm = () => {
+    handleConfirmation = () => {
         this.props.onScoreConfirm(this.score.id);
     }
     handleAcroOverride = (acro_idx, value) => {
@@ -59,36 +60,53 @@ export default class ScoringLayout extends React.PureComponent {
         }).send();
     }
 
-    renderContent() {
-        return this.props.run.acrobatics.map((acro, idx) =>
-            <Element
-                acro={ acro }
-                idx={ idx }
-                key={ idx }
-                readOnly={ this.score.confirmed }
-                onAcroOverride={ this.handleAcroOverride }
-            />
+    renderScoringLayout() {
+        return (
+            <div>
+                { this.props.run.acrobatics.map((acro, idx) =>
+                    <Element
+                        acro={ acro }
+                        idx={ idx }
+                        key={ idx }
+                        readOnly={ this.score.confirmed }
+                        onAcroOverride={ this.handleAcroOverride }
+                    />
+                ) }
+                <ConfirmationButton
+                    confirmed={ this.score.confirmed }
+                    onConfirm={ this.handleConfirmation }
+                />
+            </div>
+        )
+    }
+    renderNotOkStatusMessage() {
+        return (
+            <div className="not-performing">
+                { this.props.run.status === "NP"
+                    ? _("tablet.global.not_performing")
+                    : _("tablet.global.disqualified") }
+            </div>
         );
     }
     render() {
         this.setupCache();
-        const header = _("global.phrases.participant_n",
-            this.props.run.participant.number,
-            this.props.run.participant.name,
-            this.props.run.participant.sportsmen.length);
         if (this.score === null) {
             return (
                 <div />
             );
         }
+        const header = _("global.phrases.participant_n",
+            this.props.run.participant.number,
+            this.props.run.participant.name,
+            this.props.run.participant.sportsmen.length);
         return (
             <div className="layout-participant">
-                <h2>{ header }</h2>
-                { this.renderContent() }
-                <ConfirmationButton
-                    confirmed={ this.score.confirmed }
-                    onConfirm={ this.handleConfirm }
-                />
+                <h2>
+                    { header }
+                </h2>
+                { this.props.run.status === "OK"
+                    ? this.renderScoringLayout()
+                    : this.renderNotOkStatusMessage() }
             </div>
         );
     }

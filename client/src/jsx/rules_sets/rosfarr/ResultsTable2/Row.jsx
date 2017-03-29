@@ -7,6 +7,7 @@ export default class Row extends React.PureComponent {
         const PT = React.PropTypes;
         return {
             disciplineJudgesMap: PT.instanceOf(Map).isRequired,
+            isFormation: PT.bool.isRequired,
             lineDisciplineJudges: PT.arrayOf(
                 PT.shape({
                     role: PT.string.isRequired,
@@ -16,7 +17,8 @@ export default class Row extends React.PureComponent {
                 additional_data: PT.object.isRequired,
                 place: PT.number,
                 run: PT.shape({
-                    performed: PT.bool.isRequired,
+                    status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
+                    disqualified: PT.bool.isRequired,
                     participant: PT.shape({
                         number: PT.number.isRequired,
                         club: PT.shape({
@@ -29,13 +31,13 @@ export default class Row extends React.PureComponent {
                         }).isRequired
                     ).isRequired,
                     verbose_total_score: PT.shape({
+                        card: PT.oneOf(["OK", "YC", "RC"]),
                         primary_score: PT.number,
                         secondary_score: PT.number,
                         previous_tour: PT.shape({
                             primary_score: PT.number,
                             secondary_score: PT.number,
                         }),
-                        total_penalty: PT.number,
                     }),
                 }).isRequired,
             }).isRequired,
@@ -51,10 +53,16 @@ export default class Row extends React.PureComponent {
     }
 
     getCard() {
-        if (!this.props.row.run.performed) {
+        if (this.props.row.run.status !== "OK") {
             return "—";
         }
-        return this.props.row.run.verbose_total_score.total_penalty.toFixed();
+        const card = this.props.row.run.verbose_total_score.card;
+        return _(`results.cards.${card}`, this.props.isFormation);
+    }
+    getPlace() {
+        return this.props.row.run.disqualified
+            ? null
+            : this.props.row.place;
     }
     renderFormationScore(score) {
         return (
@@ -67,7 +75,7 @@ export default class Row extends React.PureComponent {
         );
     }
     renderScore(discipline_judge, score) {
-        if (!this.props.row.run.performed) {
+        if (this.props.row.run.status !== "OK") {
             return (
                 <p className="text-center">
                     &mdash;
@@ -88,7 +96,7 @@ export default class Row extends React.PureComponent {
         if (!this.props.showTotalScore) {
             return null;
         }
-        if (!this.props.row.run.performed) {
+        if (this.props.row.run.status !== "OK") {
             return (
                 <td className="total-score">
                     <p className="text-center">
@@ -141,7 +149,7 @@ export default class Row extends React.PureComponent {
             <tr>
                 <td className="place">
                     <p className="text-center">
-                        { this.props.row.place }
+                        { this.getPlace() }
                     </p>
                 </td>
                 <td className="number">

@@ -64,7 +64,9 @@ export default class DisciplineResultsTable extends React.PureComponent {
             <tr key={ `R${row.run.id}` }>
                 <td className="w-8 place">
                     <p className="text-center">
-                        { row.place === null ? "" : row.place }
+                        { row.run.disqualified
+                            ? _("results.labels.dq")
+                            : (row.place === null ? "" : row.place) }
                     </p>
                 </td>
                 <td className="w-8 number">

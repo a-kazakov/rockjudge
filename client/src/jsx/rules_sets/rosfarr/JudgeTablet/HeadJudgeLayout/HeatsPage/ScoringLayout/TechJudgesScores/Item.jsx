@@ -1,3 +1,5 @@
+import _ from "l10n";
+
 import makeClassName from "common/makeClassName";
 import VerboseJudgeScore from "common/VerboseJudgeScore";
 
@@ -12,7 +14,13 @@ export default class Item extends React.PureComponent {
             score: PT.shape({
                 confirmed: PT.bool.isRequired,
                 data: PT.shape({
-                    total_score: PT.number.isRequired,
+                    raw_data: PT.shape({
+                        card: PT.string,
+                    }).isRequired,
+                    total_score: PT.oneOfType([
+                        PT.number.isRequired,
+                        PT.string.isRequired,
+                    ]).isRequired,
                 }).isRequired,
             }).isRequired,
             showVerbose: PT.bool.isRequired,
@@ -30,7 +38,6 @@ export default class Item extends React.PureComponent {
                     { this.props.judge.name }
                 </div>
                 <VerboseJudgeScore
-                    performed
                     disciplineJudge={ this.props.disciplineJudge }
                     score={ this.props.score }
                     tour={ this.props.tour }
@@ -43,17 +50,28 @@ export default class Item extends React.PureComponent {
         const total_score = this.props.score ? this.props.score.data.total_score : 0;
         return makeClassName({
             "confirmed": this.props.score && this.props.score.confirmed,
-            "green": -total_score < 1,
-            "yellow": 1 <= -total_score && -total_score < 10,
-            "red": 10 <= -total_score && -total_score < 50,
-            "black": 50 <= -total_score,
+            "green": total_score === "OK",
+            "yellow": total_score === "YC",
+            "red": total_score === "RC",
         });
     }
     render() {
+        const is_formation = ["rosfarr.formation", "rosfarr.formation_acro"].includes(this.props.tour.scoring_system_name);
+        const cards = is_formation
+            ? {
+                "OK": _("tablet.tech_judge.ok"),
+                "YC": _("tablet.tech_judge.form_yellow_card"),
+                "RC": _("tablet.tech_judge.form_red_card"),
+            }
+            : {
+                "OK": _("tablet.tech_judge.ok"),
+                "YC": _("tablet.tech_judge.yellow_card"),
+                "RC": _("tablet.tech_judge.red_card"),
+            };
         return (
             <td className={ this.getClassName() }>
-                { this.props.score
-                    ? this.props.score.data.total_score.toFixed()
+                { this.props.score && this.props.score.data.raw_data.card
+                    ? cards[this.props.score.data.raw_data.card]
                     : "—" }
                 { this.renderVerboseScore() }
             </td>

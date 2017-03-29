@@ -3,14 +3,12 @@ import getScoringType from "common/getScoringType";
 import ConfirmationButton from "./ConfirmationButton";
 import AcroScore from "./AcroScore";
 import DanceScore from "./DanceScore";
-import DanceHalvedScore from "./DanceHalvedScore";
 import FormationScore from "./FormationScore";
 import FormationAcroScore from "./FormationAcroScore";
 import SimplifiedScore from "./SimplifiedScore";
+import SoloScore from "./SoloScore";
 import HeadJudgeScore from "./HeadJudgeScore";
-import HeadJudgeFormationScore from "./HeadJudgeFormationScore";
 import TechJudgeScore from "./TechJudgeScore";
-import TechJudgeFormationScore from "./TechJudgeFormationScore";
 
 export default class Editor extends React.PureComponent {
     static get propTypes() {
@@ -28,18 +26,6 @@ export default class Editor extends React.PureComponent {
         };
     }
     renderBody(scoring_type) {
-        if (
-            scoring_type === "head" &&
-            ["rosfarr.formation", "rosfarr.formation_acro"].indexOf(this.props.tour.scoring_system_name) >= 0
-        ) {
-            scoring_type = "head_formation";
-        }
-        if (
-            scoring_type === "tech" &&
-            ["rosfarr.formation", "rosfarr.formation_acro"].indexOf(this.props.tour.scoring_system_name) >= 0
-        ) {
-            scoring_type = "tech_formation";
-        }
         const score_props = {
             score:     this.props.score,
             readOnly:  this.props.readOnly,
@@ -55,10 +41,6 @@ export default class Editor extends React.PureComponent {
             return (
                 <DanceScore { ...score_props } />
             );
-        case "dance_halved":
-            return (
-                <DanceHalvedScore { ...score_props } />
-            );
         case "formation":
             return (
                 <FormationScore { ...score_props } />
@@ -71,21 +53,17 @@ export default class Editor extends React.PureComponent {
             return (
                 <SimplifiedScore { ...score_props } />
             );
+        case "solo":
+            return (
+                <SoloScore { ...score_props } />
+            );
         case "head":
             return (
                 <HeadJudgeScore { ...score_props } />
             );
-        case "head_formation":
-            return (
-                <HeadJudgeFormationScore { ...score_props } />
-            );
         case "tech":
             return (
                 <TechJudgeScore { ...score_props } />
-            );
-        case "tech_formation":
-            return (
-                <TechJudgeFormationScore { ...score_props } />
             );
         default:
             console.error(`Unknown scoring type: ${scoring_type}`);

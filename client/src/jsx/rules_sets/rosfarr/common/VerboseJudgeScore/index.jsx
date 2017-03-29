@@ -12,10 +12,13 @@ export default class VerboseJudgeScore extends React.PureComponent {
         return {
             additionalData: PT.object,
             disciplineJudge: PT.object.isRequired,
-            performed: PT.bool.isRequired,
+            showScore: PT.bool.isRequired,
             score: PT.shape({
                 data: PT.shape({
-                    total_score: PT.number.isRequired,
+                    total_score: PT.oneOfType([
+                        PT.number.isRequired,
+                        PT.string.isRequired,
+                    ]).isRequired,
                 }).isRequired,
             }).isRequired,
             tour: PT.shape({
@@ -23,9 +26,14 @@ export default class VerboseJudgeScore extends React.PureComponent {
             }).isRequired,
         };
     }
+    static get defaultProps() {
+        return {
+            showScore: true,
+        }
+    }
 
     render() {
-        if (!this.props.performed) {
+        if (!this.props.showScore) {
             return (
                 <p className="text-center">
                     &mdash;
@@ -36,7 +44,6 @@ export default class VerboseJudgeScore extends React.PureComponent {
         const scoring_type = getScoringType(this.props.disciplineJudge, this.props.tour.scoring_system_name);
         switch (scoring_type) {
         case "dance":
-        case "dance_halved":
             ScoreComponent = DanceScore;
             break;
         case "acro":

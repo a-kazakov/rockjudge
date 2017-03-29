@@ -581,24 +581,14 @@ class Api:
         return {}
 
     @classmethod
-    def run_mark_performed(cls, request):
+    def run_set_status(cls, request):
         run = cls.get_model(Run, "run_id", request)
         check_auth(
             competition_id=run.tour.discipline.competition_id,
             request=request,
             allowed_access_levels=("admin", "judge_*", "any_judge", ),
         )
-        run.set_performed_flag(True, request.ws_message)
-
-    @classmethod
-    def run_mark_not_performed(cls, request):
-        run = cls.get_model(Run, "run_id", request)
-        check_auth(
-            competition_id=run.tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", "judge_*", "any_judge", ),
-        )
-        run.set_performed_flag(False, request.ws_message)
+        run.set_status(request.body["status"], request.ws_message)
 
     @classmethod
     def tour_find_active(cls, request):

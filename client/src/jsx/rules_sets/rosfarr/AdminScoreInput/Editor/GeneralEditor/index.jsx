@@ -87,15 +87,18 @@ export default class GeneralEditor extends React.PureComponent {
                 onSubmit={ this.handleSubmission }
             >
                 <div className="fields">
-                    { this.props.fields.map(f =>
-                        <Item
-                            field={ f }
-                            key={ f.key }
-                            readOnly={ this.props.readOnly }
-                            value={ this.state.values[f.key] }
-                            onChange={ this.handleChange }
-                        />
-                    ) }
+                    { this.props.fields.map(f => {
+                        const read_only = this.props.readOnly || f.readOnly || false;
+                        return (
+                            <Item
+                                field={ f }
+                                key={ f.key }
+                                readOnly={ read_only }
+                                value={ read_only ? f.defaultValue : this.state.values[f.key] }
+                                onChange={ this.handleChange }
+                            />
+                        );
+                    } ) }
                 </div>
                 { this.renderButtons() }
             </form>

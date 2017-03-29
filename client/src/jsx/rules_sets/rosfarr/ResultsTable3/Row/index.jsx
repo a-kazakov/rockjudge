@@ -16,7 +16,8 @@ export default class Row extends React.PureComponent {
                 additional_data: PT.object.isRequired,
                 place: PT.number,
                 run: PT.shape({
-                    performed: PT.bool.isRequired,
+                    disqualified: PT.bool.isRequired,
+                    status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
                     scores: PT.arrayOf(
                         PT.shape({
                             discipline_judge_id: PT.number.isRequired,
@@ -38,13 +39,18 @@ export default class Row extends React.PureComponent {
         };
     }
 
+    getPlace() {
+        return this.props.row.run.disqualified
+            ? null
+            : this.props.row.place;
+    }
     renderScore(discipline_judge, score) {
         return (
             <VerboseJudgeScore
                 additionalData={ this.props.row.additional_data }
                 disciplineJudge={ discipline_judge }
-                performed={ this.props.row.run.performed }
                 score={ score }
+                showScore={ this.props.row.run.status === "OK" }
                 tour={ this.props.tour }
             />
         );
@@ -62,7 +68,7 @@ export default class Row extends React.PureComponent {
             <tr>
                 <td className="place">
                     <p className="text-center">
-                        { this.props.row.place }
+                        { this.getPlace() }
                     </p>
                 </td>
                 <InfoCell

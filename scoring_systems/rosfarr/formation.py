@@ -24,19 +24,3 @@ def update_score(score, client_data):
 def get_run_data_to_inherit(run, discipline_judges=None):
     return FormationRunScore(run, discipline_judges=discipline_judges, scoring_system="rosfarr.formation") \
         .serialize_data_to_inherit()
-
-
-def get_tablet_css():
-    return ["tablet.less"]
-
-
-def get_tablet_js():
-    return ["tablet.js"]
-
-
-def get_admin_css():
-    return ["tour_admin.less"]
-
-
-def get_admin_js():
-    return ["tour_admin.js", "tour_results.js"]

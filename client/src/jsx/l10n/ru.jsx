@@ -259,7 +259,8 @@ export default function translate(src, ...args) {
                 "delete_with_finalized_tours": "Невозможно удалить участника, принявшего участие хотя бы в одном финализированном туре",
             },
             "run": {
-                "set_performed_flag_on_finalized": "Невозможно изменить статус захода финализинованного тура",
+                "bad_status": "Некорректный статус",
+                "set_status_on_finalized": "Невозможно изменить статус захода финализинованного тура",
             },
             "score": {
                 "score_not_exist": "Попытка получить значение несуществующей оценки судьи",
@@ -327,6 +328,11 @@ export default function translate(src, ...args) {
                     return n_sp === 2 ? `Пара №${n}` : `Участник №${n}`;
                 },
             },
+            "statuses": {
+                "OK": "Без нарушений",
+                "NP": "Пара не выступила (без дисквалификации)",
+                "DQ": "Дисквалификация",
+            },
         },
         "judging": {
             "buttons": {
@@ -360,7 +366,7 @@ export default function translate(src, ...args) {
                 "number": "№",
                 "old_score": "База",
                 "participant_name": "Участник",
-                "performed": "В",
+                "status": "Статус",
                 "total_score": "Сумма баллов",
             },
         },
@@ -580,11 +586,11 @@ export default function translate(src, ...args) {
             "rosfarr": {
                 "tablet": {
                     "acro_judge": {
-                        "fall_down": "Падения (-30)",
+                        "fall_down": "Падения (−30)",
                     },
                     "dance_judge": {
                         "acrobatics": "Акробатика",
-                        "big_mistakes": "Большие ошибки (-30)",
+                        "big_mistakes": "Большие ошибки (−30)",
                         "composition": "Композиция",
                         "dance_figs": "Танцевальные фигуры",
                         "dance_tech": "Техника танцевания",
@@ -607,7 +613,7 @@ export default function translate(src, ...args) {
                         "dance_judge_scores": "Оценки линейных судей",
                         "ok": "OK",
                         "penalty_type": "Штрафные санкции",
-                        "previous_penalties": "Предыдущие штрафы",
+                        "previous_cards": "Предыдущие карточки",
                         "red_card": "-30",
                         "yellow_card": "-3",
                         "form_yellow_card": "-5",
@@ -638,6 +644,7 @@ export default function translate(src, ...args) {
                     },
                     "headers": {
                         "participants_advanced": "Прошли в следующий тур",
+                        "participants_disqualified": "Дисквалификация",
                         "participants_not_advanced": "Не прошли в следующий тур",
                         "participants_not_performed": "Не выступали",
                     },
@@ -646,6 +653,7 @@ export default function translate(src, ...args) {
                         "acrobatics": "Акробатика",
                         "acrobatics_verbose": "Акробатика (заявка/факт)",
                         "card": "Штраф",
+                        "disqualified": "Дисквалифицирован",
                         "fw_score": "Результат ТН",
                         "fw_score_short": "ТН",
                         "info": "Участник, результат",

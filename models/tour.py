@@ -64,7 +64,7 @@ class Tour(BaseModel):
                 return [
                     (row["run"].participant, row["run"].get_data_to_inherit())
                     for row in prev_tour.scoring_system.get_tour_results(prev_tour)
-                    if not row["advances"]
+                    if not row["advances"] and not row["run"].disqualified
                 ]
             result = []
             while True:

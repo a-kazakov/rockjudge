@@ -9,19 +9,34 @@ export default class TechScore extends React.PureComponent {
             score: PT.shape({
                 id: PT.number.isRequired,
                 data: PT.shape({
-                    total_score: PT.number.isRequired,
+                    total_score: PT.string.isRequired,
                     raw_data: PT.shape({
                         jump_steps: PT.number,
-                        penalty: PT.number,
-                        timing_violation: PT.bool,
+                        card: PT.string,
+                        time: PT.number,
                     }).isRequired,
                 }).isRequired,
             }).isRequired,
         };
     }
 
+    pad(num, size) {
+        const s = `0000${num}`;
+        return s.substr(s.length - size);
+    }
+    getTime() {
+        let val = this.props.score.data.raw_data.time;
+        if (val === null) {
+            return "—"
+        }
+        let m = 0, s = 0;
+        m = Math.floor(val / 60);
+        val %= 60;
+        s = Math.floor(val);
+        return `${m}:${this.pad(s, 2)}`;
+    }
+
     render() {
-        const tv = this.props.score.data.raw_data.timing_violation;
         return (
             <table className="score-breakdown"><tbody>
                 <tr>
@@ -34,18 +49,10 @@ export default class TechScore extends React.PureComponent {
                 </tr>
                 <tr>
                     <th>
-                        <p>{ _("results.breakdown.tv") }:</p>
+                        <p>{ _("results.breakdown.time") }:</p>
                     </th>
                     <td>
-                        <p>{ tv === true ? "✗" : tv === false ? "✓" : "?" }</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        <p>{ _("results.breakdown.penalty")  }:</p>
-                    </th>
-                    <td className="total-score">
-                        <p>{ formatScore(this.props.score.data.raw_data.penalty, "$") }</p>
+                        <p>{ this.getTime() }</p>
                     </td>
                 </tr>
             </tbody></table>

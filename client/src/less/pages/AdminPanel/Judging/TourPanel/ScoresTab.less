@@ -15,7 +15,7 @@
                 &.heat       { width: 40px;  }
                 &.judge      { width: 50px;  }
                 &.total      { width: 120px; }
-                &.performed  { width: 20px;  }
+                &.status     { width: 60px;  }
             }
             > td {
                 position: relative;
@@ -44,6 +44,45 @@
                   padding: 0;
                   border: 0;
                   text-align: center;
+                }
+                &.status {
+                    .status-controls {
+                        position: absolute;
+                        left: 0;
+                        right: 0;
+                        top: 0;
+                        bottom: 0;
+                    }
+                    input[type='radio'] {
+                        margin: 2px;
+                        cursor: pointer;
+                        -webkit-appearance: none;
+                        width: 14px;
+                        height: 14px;
+                        border: 1px solid darkgray;
+                        border-radius: 50%;
+                        outline: none;
+                    }
+                    input[type='radio']:before {
+                        content: '';
+                        display: block;
+                        width: 50%;
+                        height: 50%;
+                        margin: 25% auto;
+                        border-radius: 50%;
+                    }
+                    input[type='radio']:checked:before {
+                      background: black;
+                    }
+                    .status-ok {
+                        background-color: @color-green;
+                    }
+                    .status-np {
+                        background-color: @color-yellow;
+                    }
+                    .status-dq {
+                        background-color: @color-red;
+                    }
                 }
                 &.acrobatics.editing {
                     background-color: @color-contrast;
@@ -136,6 +175,18 @@
                 background-color: lighten(@color-light, 10%);
                 > td.confirmed-score {
                     background-color: darken(@color-green, 10%);
+                }
+            }
+            &.not-performed {
+                background-color: lighten(@color-yellow, 20%);
+                &.odd-heat {
+                    background-color: lighten(@color-yellow, 10%);
+                }
+            }
+            &.disqualified {
+                background-color: lighten(@color-red, 20%);
+                &.odd-heat {
+                    background-color: lighten(@color-red, 10%);
                 }
             }
         }

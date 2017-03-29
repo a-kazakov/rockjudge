@@ -49,8 +49,8 @@ export default class DanceScore extends React.PureComponent {
                 fields={ [
                     this.makeField("fw_woman",       "FW", genScale("?reduction")),
                     this.makeField("fw_man",         "FM", genScale("?reduction")),
-                    this.makeField("dance_figs",     "DF", genScale("?numbers", { max: 25 })),
-                    this.makeField("composition",    "C",  genScale("?numbers", { max: 20 })),
+                    this.makeField("dance_figs",     "DF", genScale("?numbers", { max: 10, step: 0.5 })),
+                    this.makeField("composition",    "C",  genScale("?numbers", { max: 10, step: 0.5 })),
                     this.makeField("small_mistakes", "SM", genScale("numbers",  { max: 100 })),
                     this.makeField("big_mistakes",   "BM", genScale("numbers",  { max: 100 })),
                 ] }

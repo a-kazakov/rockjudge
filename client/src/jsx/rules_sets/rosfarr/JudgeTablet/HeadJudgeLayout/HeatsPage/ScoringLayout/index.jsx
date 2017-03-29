@@ -1,11 +1,11 @@
 import _ from "l10n";
 
-import PenaltyInput from "./PenaltyInput";
+import CardInput from "./CardInput";
 import TechJudgesScores from "./TechJudgesScores";
 import LineJudgesScores from "./LineJudgesScores";
 import AcrobaticOverrides from "./AcrobaticOverrides";
-import PreviousPenalties from "./PreviousPenalties";
-import NotPerformedSwitch from "./NotPerformedSwitch";
+import PreviousCards from "./PreviousCards";
+import StatusSwitch from "./StatusSwitch";
 
 export default class ScoringLayout extends React.PureComponent {
     static get propTypes() {
@@ -15,7 +15,7 @@ export default class ScoringLayout extends React.PureComponent {
                 id: PT.number.isRequired,
             }).isRequired,
             run: PT.shape({
-                performed: PT.bool.isRequired,
+                status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
                 participant: PT.shape({
                     number: PT.number.isRequired,
                     name: PT.string.isRequired,
@@ -66,13 +66,13 @@ export default class ScoringLayout extends React.PureComponent {
             this.props.run.participant.number,
             this.props.run.participant.name,
             this.props.run.participant.sportsmen.length);
-        if (!this.props.run.performed) {
+        if (this.props.run.status !== "OK") {
             return (
                 <div className="layout-participant">
                     <h2>
                         { header }
                     </h2>
-                    <NotPerformedSwitch
+                    <StatusSwitch
                         run={ this.props.run }
                     />
                 </div>
@@ -83,12 +83,12 @@ export default class ScoringLayout extends React.PureComponent {
                 <h2>
                     { header }
                 </h2>
-                <PenaltyInput
+                <CardInput
                     score={ this.score }
                     scoringSystemName={ this.props.tour.scoring_system_name }
                     onScoreUpdate={ this.handleScoreUpdate }
                 />
-                <PreviousPenalties
+                <PreviousCards
                     run={ this.props.run }
                 />
                 <TechJudgesScores
@@ -104,7 +104,7 @@ export default class ScoringLayout extends React.PureComponent {
                 <AcrobaticOverrides
                     run={ this.props.run }
                 />
-                <NotPerformedSwitch
+                <StatusSwitch
                     run={ this.props.run }
                 />
             </div>

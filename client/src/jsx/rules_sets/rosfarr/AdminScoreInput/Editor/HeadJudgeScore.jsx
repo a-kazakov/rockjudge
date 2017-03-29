@@ -8,7 +8,7 @@ export default class HeadJudgeScore extends React.PureComponent {
                 data: PT.shape({
                     raw_data: PT.shape({
                         penalty: PT.number,
-                        nexttour: PT.bool,
+                        card: PT.oneOf(["OK", "YC", "RC"]).isRequired,
                     }).isRequired,
                 }).isRequired,
             }).isRequired,
@@ -20,7 +20,7 @@ export default class HeadJudgeScore extends React.PureComponent {
 
     handleSubmission = (data) => {
         this.props.onSubmit({
-            penalty:  parseInt(data.penalty),
+            card:     data.card,
             nexttour: data.nexttour === "true",
         });
     }
@@ -39,12 +39,10 @@ export default class HeadJudgeScore extends React.PureComponent {
         return (
             <GeneralEditor
                 fields={ [
-                    this.makeField("penalty", "P", [
-                        ["", "—"],
-                        ["0", "OK"],
-                        ["-3", "-3"],
-                        ["-30", "-30"],
-                        ["-100", "-100"],
+                    this.makeField("card", "P", [
+                        ["OK", "OK"],
+                        ["YC", "YC"],
+                        ["RC", "RC"],
                     ]),
                     this.makeField("nexttour", "NT", [
                         ["false", "No"],

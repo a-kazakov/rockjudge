@@ -33,8 +33,8 @@ export default class ScoringLayout extends React.PureComponent {
             <div>
                 { this.renderPart("fw_woman", "reduction") }
                 { this.renderPart("fw_man", "reduction") }
-                { this.renderPart("dance_figs", "integer", { min: 0, max: 25 }) }
-                { this.renderPart("composition", "integer", { min: 0, max: 20 }) }
+                { this.renderPart("dance_figs", "point5", { min: 0, max: 10, step: 0.5 }) }
+                { this.renderPart("composition", "point5", { min: 0, max: 10, step: 0.5 }) }
                 <Mistakes
                     readOnly={ this.props.readOnly }
                     scoreData={ this.props.scoreData }

@@ -29,7 +29,6 @@ export default class Item extends React.PureComponent {
                     { this.props.judge.name }
                 </div>
                 <VerboseJudgeScore
-                    performed
                     disciplineJudge={ this.props.disciplineJudge }
                     score={ this.props.score }
                     tour={ this.props.tour }

@@ -16,6 +16,7 @@ export default class GeneralLayout extends React.PureComponent {
                 runs: PT.arrayOf(
                     PT.shape({
                         heat: PT.number.isRequired,
+                        status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
                         scores: PT.arrayOf(
                             PT.shape({
                                 discipline_judge_id: PT.number.isRequired,
@@ -34,6 +35,7 @@ export default class GeneralLayout extends React.PureComponent {
         this.state = {
             heat: this.getFirstNonConfirmedHeat(),
         };
+        this.setupCache();
     }
 
     componentWillReceiveProps(next_props) {
@@ -50,12 +52,12 @@ export default class GeneralLayout extends React.PureComponent {
     getFirstNonConfirmedHeat() {
         for (const run of this.props.tour.runs) {
             for (const score of run.scores) {
-                if (score.discipline_judge_id === this.props.disciplineJudge.id && !score.confirmed && run.performed) {
+                if (score.discipline_judge_id === this.props.disciplineJudge.id && !score.confirmed && run.status === "OK") {
                     return run.heat;
                 }
             }
         }
-        return this.heats_count;
+        return this.heats_count || Math.max(1, ...this.props.tour.runs.map(run => run.heat));
     }
     setupCache() {
         this.heats_count = Math.max(1, ...this.props.tour.runs.map(run => run.heat));

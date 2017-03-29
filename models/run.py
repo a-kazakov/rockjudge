@@ -18,12 +18,12 @@ class Run(BaseModel):
     participant = peewee.ForeignKeyField(Participant)
     tour = peewee.ForeignKeyField(Tour, related_name="runs")
     heat = peewee.IntegerField()
-    performed = peewee.BooleanField(default=True)
+    status = peewee.CharField(max_length=2, default="OK")  # OK, NP, DQ
     program_name = peewee.CharField(null=True)
     acrobatics = postgres_ext.BinaryJSONField(default={})
     inherited_data = postgres_ext.BinaryJSONField(default={})
 
-    RO_PROPS = ["program_name", "performed", "inherited_data"]
+    RO_PROPS = ["program_name", "status", "performed", "disqualified", "inherited_data"]
     RW_PROPS = ["heat"]
 
     PF_SCHEMA = {
@@ -109,12 +109,14 @@ class Run(BaseModel):
         )
         ws_message.add_message("tour_results_changed", {"tour_id": self.tour_id})
 
-    def set_performed_flag(self, new_value, ws_message):
-        if new_value == self.performed:
+    def set_status(self, new_value, ws_message):
+        if new_value == self.status:
             return
         if self.tour.finalized:
-            raise ApiError("errors.run.set_performed_flag_on_finalized")
-        self.performed = new_value
+            raise ApiError("errors.run.set_status_on_finalized")
+        if new_value not in ["OK", "NP", "DQ"]:
+            raise ApiError("errors.run.bad_status")
+        self.status = new_value
         self.save()
         ws_message.add_model_update(
             model_type=self.__class__,
@@ -122,6 +124,14 @@ class Run(BaseModel):
             schema={}
         )
         ws_message.add_message("tour_results_changed", {"tour_id": self.tour_id})
+
+    @property
+    def performed(self):
+        return self.status != "NP"
+
+    @property
+    def disqualified(self):
+        return self.status == "DQ"
 
     def update_model(self, new_data, ws_message):
         self.update_model_base(new_data)

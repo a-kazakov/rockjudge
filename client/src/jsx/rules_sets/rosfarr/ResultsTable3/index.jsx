@@ -14,7 +14,6 @@ export default class ResultsTable3 extends React.PureComponent {
                     advances: PT.bool.isRequired,
                     run: PT.shape({
                         id: PT.number.isRequired,
-                        performed: PT.bool.isRequired,
                     }).isRequired,
                 }).isRequired
             ).isRequired,

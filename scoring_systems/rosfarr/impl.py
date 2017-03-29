@@ -11,11 +11,11 @@ POSSIBLE_DEDUCTIONS = {0, 5, 10, 25, 50, 75, 100}
 
 
 def apply_reduction(base_score, reduction):
-    return base_score * (100 - reduction) // 100
+    return base_score * frac((100 - reduction), 100)
 
 
 def m100(score):
-    return round(100 * score)
+    return frac(round(100 * score), 100)
 
 
 class BaseScore:
@@ -55,21 +55,23 @@ class BaseScore:
             new_value = original_value + value["delta"]
             return cls.clear_value(key, new_value, original_value)
         if type(value) is float:
-            return round(100 * value) / 100
+            return round(value * 100) / 100
         return value
 
     def update(self, new_data):
         self.data = {
-            key: (self.clear_value(key, new_data[key],
-                                   old_value if old_value is not None else None)
+            key: (self.clear_value(key, new_data[key], old_value)
                   if key in new_data else old_value)
             for key, old_value in self.data.items()
         }
         self.score.set_data(self.data)
 
     def serialize(self):
+        total_score = self.total_score
+        if type(total_score) is frac:
+            total_score = float(total_score)
         return {
-            "total_score": self.total_score / 100,
+            "total_score": total_score,
             "raw_data": self.data,
         }
 
@@ -166,8 +168,8 @@ class DanceScore(BaseScore):
     SCORES_VALIDATORS = {
         "fw_man": lambda x: type(x) is int and x in POSSIBLE_DEDUCTIONS,
         "fw_woman": lambda x: type(x) is int and x in POSSIBLE_DEDUCTIONS,
-        "dance_figs": lambda x: type(x) is int and 0 <= x <= 25,
-        "composition": lambda x: type(x) is int and 0 <= x <= 20,
+        "dance_figs": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "composition": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
         "small_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
         "big_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
     }
@@ -175,16 +177,47 @@ class DanceScore(BaseScore):
     @staticmethod
     def get_total_score(raw_scores):
         return sum([
-            apply_reduction(m100(10), raw_scores["fw_man"]),
-            apply_reduction(m100(10), raw_scores["fw_woman"]),
-            m100(raw_scores["dance_figs"]),
-            m100(raw_scores["composition"]),
+            apply_reduction(10, raw_scores["fw_man"]),
+            apply_reduction(10, raw_scores["fw_woman"]),
+            m100(raw_scores["dance_figs"]) * frac(5, 2),
+            m100(raw_scores["composition"]) * 2,
              -5 * m100(raw_scores["small_mistakes"]),  # NOQA
             -30 * m100(raw_scores["big_mistakes"]),
         ])
 
 
-class FinalDanceScore(BaseScore):
+class SoloScore(BaseScore):
+    DEFAULT_SCORES = {
+        "fw": 100,
+        "dance_figs": 0,
+        "composition": 0,
+        "small_mistakes": 0,
+        "big_mistakes": 0,
+    }
+    INITIAL_SCORES = {
+        "small_mistakes": 0,
+        "big_mistakes": 0,
+    }
+    SCORES_VALIDATORS = {
+        "fw": lambda x: type(x) is int and x in POSSIBLE_DEDUCTIONS,
+        "dance_figs": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "composition": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "small_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+        "big_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+    }
+
+    @staticmethod
+    def get_total_score(raw_scores):
+        return sum([
+            apply_reduction(20, raw_scores["fw"]),
+            m100(raw_scores["dance_figs"]) * frac(5, 2),
+            m100(raw_scores["composition"]) * 2,
+             -5 * m100(raw_scores["small_mistakes"]),  # NOQA
+            -30 * m100(raw_scores["big_mistakes"]),
+        ])
+
+
+class AmQualDanceScore(BaseScore):
     DEFAULT_SCORES = {
         "fw_man": 100,
         "fw_woman": 100,
@@ -200,8 +233,8 @@ class FinalDanceScore(BaseScore):
     SCORES_VALIDATORS = {
         "fw_man": lambda x: type(x) is int and x in POSSIBLE_DEDUCTIONS,
         "fw_woman": lambda x: type(x) is int and x in POSSIBLE_DEDUCTIONS,
-        "dance_figs": lambda x: type(x) in (float, int) and 0 <= x <= 12.5 and round(x * 100) % 50 == 0,
-        "composition": lambda x: type(x) in (float, int) and 0 <= x <= 12.5 and round(x * 100) % 50 == 0,
+        "dance_figs": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "composition": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
         "small_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
         "big_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
     }
@@ -209,9 +242,43 @@ class FinalDanceScore(BaseScore):
     @staticmethod
     def get_total_score(raw_scores):
         return sum([
-            apply_reduction(m100(5), raw_scores["fw_man"]),
-            apply_reduction(m100(5), raw_scores["fw_woman"]),
-            m100(raw_scores["dance_figs"]),
+            apply_reduction(10, raw_scores["fw_man"]) * frac(13, 10),
+            apply_reduction(10, raw_scores["fw_woman"]) * frac(13, 10),
+            m100(raw_scores["dance_figs"]) * frac(5, 2) * frac(13, 10),
+            m100(raw_scores["composition"]) * 2 * frac(13, 10),
+             -5 * m100(raw_scores["small_mistakes"]),  # NOQA
+            -30 * m100(raw_scores["big_mistakes"]),
+        ])
+
+
+class AmFinalDanceScore(BaseScore):
+    DEFAULT_SCORES = {
+        "fw_man": 100,
+        "fw_woman": 100,
+        "dance_figs": 0,
+        "composition": 0,
+        "small_mistakes": 0,
+        "big_mistakes": 0,
+    }
+    INITIAL_SCORES = {
+        "small_mistakes": 0,
+        "big_mistakes": 0,
+    }
+    SCORES_VALIDATORS = {
+        "fw_man": lambda x: type(x) is int and x in POSSIBLE_DEDUCTIONS,
+        "fw_woman": lambda x: type(x) is int and x in POSSIBLE_DEDUCTIONS,
+        "dance_figs": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "composition": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "small_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+        "big_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+    }
+
+    @staticmethod
+    def get_total_score(raw_scores):
+        return sum([
+            apply_reduction(5, raw_scores["fw_man"]),
+            apply_reduction(5, raw_scores["fw_woman"]),
+            m100(raw_scores["dance_figs"]) * frac(5, 4),
             m100(raw_scores["composition"]),
              -5 * m100(raw_scores["small_mistakes"]),  # NOQA
             -30 * m100(raw_scores["big_mistakes"]),
@@ -238,7 +305,7 @@ class AcroScore:
                 base_score = override.score if override is not None else acro["score"]
                 result += apply_reduction(m100(base_score), reduction)
         result -= 30 * m100(self.data["mistakes"])
-        result = min(6500, result)
+        result = min(65, result)
         return result
 
     def update(self, new_data):
@@ -256,7 +323,7 @@ class AcroScore:
 
     def serialize(self):
         return {
-            "total_score": self.total_score / 100,
+            "total_score": float(self.total_score),
             "raw_data": self.data,
         }
 
@@ -266,27 +333,26 @@ class HeadScore:
         self.score = score
         raw_data = score.get_data()
         self.data = {
-            "penalty": raw_data.pop("penalty", None),
+            "card": raw_data.pop("card", "OK"),
             "nexttour": raw_data.pop("nexttour", False),
         }
 
     @property
     def total_score(self):
-        return (m100(self.data["penalty"])
-                if self.data["penalty"] is not None
-                else 0)
+        return self.data["card"] or "—"
 
     def update(self, new_data):
-        penalty = new_data.pop("penalty", self.data["penalty"])
+        card = new_data.pop("card", self.data["card"])
+        print(card)
         self.data = {
-            "penalty": int(penalty) if penalty is not None else None,
+            "card": card if card in [None, "OK", "YC", "RC"] else self.data["card"],
             "nexttour": bool(new_data.pop("nexttour", self.data["nexttour"])),
         }
         self.score.set_data(self.data)
 
     def serialize(self):
         return {
-            "total_score": self.total_score / 100,
+            "total_score": self.total_score,
             "raw_data": self.data,
         }
 
@@ -294,23 +360,21 @@ class HeadScore:
 class TechScore(BaseScore):
     DEFAULT_SCORES = {
         "jump_steps": 0,
-        "timing_violation": None,
-        "penalty": 0,
+        "time": None,
+        "card": None,
     }
     INITIAL_SCORES = {
         "jump_steps": 0,
-        "timing_violation": None,
-        "penalty": 0,
     }
     SCORES_VALIDATORS = {
         "jump_steps": lambda x: type(x) is int and 0 <= x <= 100,
-        "timing_violation": lambda x: x in [None, True, False],
-        "penalty": lambda x: type(x) is int and -100 <= x <= 0,
+        "time": lambda x: type(x) is int and 0 <= x <= 24 * 60 * 60,
+        "card": lambda x: x in ["OK", "YC", "RC"],
     }
 
     @staticmethod
     def get_total_score(raw_scores):
-        return m100(raw_scores["penalty"])
+        return raw_scores["card"] or "—"
 
 
 def ScoreWrapper(score, scoring_system, discipline_judge=None):
@@ -322,10 +386,12 @@ def ScoreWrapper(score, scoring_system, discipline_judge=None):
     if role == "tech_judge":
         return TechScore(score)
     if role in ["acro_judge", "dance_judge"]:
+        if scoring_system == "rosfarr.am_qual":
+            return AmQualDanceScore(score) if role == "dance_judge" else AcroScore(score)
         if scoring_system == "rosfarr.am_final_fw":
-            return FinalDanceScore(score)
+            return AmFinalDanceScore(score)
         if scoring_system == "rosfarr.am_final_acro":
-            return FinalDanceScore(score) if role == "dance_judge" else AcroScore(score)
+            return AmFinalDanceScore(score) if role == "dance_judge" else AcroScore(score)
         if scoring_system == "rosfarr.no_acro":
             return DanceScore(score)
         if scoring_system == "rosfarr.acro":
@@ -336,6 +402,8 @@ def ScoreWrapper(score, scoring_system, discipline_judge=None):
             return FormationAcroScore(score)
         if scoring_system == "rosfarr.simplified":
             return SimplifiedScore(score)
+        if scoring_system == "rosfarr.solo":
+            return SoloScore(score)
     raise ApiError("errors.score.score_not_exist")
 
 
@@ -405,6 +473,7 @@ class RunScore:
             self.dance_scores = SmallScoresSet(self.dance_judges_total_scores) \
                 if len(self.dance_judges_total_scores) < 5 \
                 else LargeScoresSet(self.dance_judges_total_scores)
+        self.card = self.get_card()
 
     @property
     def head_judge_score(self):
@@ -436,16 +505,21 @@ class RunScore:
                     self.scoring_system in ["rosfarr.acro", "rosfarr.am_final_acro"]:
                 yield discipline_judge, score
 
-    @property
-    def penalties(self):
-        if self.head_judge_score is None:
-            return 0
-        if self.head_judge_score_wrapper.data["penalty"] is not None:
-            return self.head_judge_score_wrapper.total_score
-        tj_scores = list(self.tech_judge_scores)
-        if len(tj_scores) == 0:
-            return 0
-        return min(ScoreWrapper(score, self.scoring_system, dj).total_score for dj, score in self.tech_judge_scores)
+    def get_card(self):
+        cards = []
+        if self.head_judge_score is not None:
+            cards.append(self.head_judge_score_wrapper.data["card"])
+        for dj, score in self.tech_judge_scores:
+            cards.append(ScoreWrapper(score, self.scoring_system, dj).data["card"])
+        for ct in ["RC", "YC"]:
+            if ct in cards:
+                result = ct
+                break
+        else:
+            result = "OK"
+        if result == "YC" and len(self.run.inherited_data.get("cards", [])) > 0:
+            result = "RC"
+        return result
 
     @property
     def nexttour_score(self):
@@ -464,28 +538,31 @@ class RunScore:
     @property
     def sorting_score(self):
         prev_primary, prev_secondary = self.get_prev_score()
+        penalty = -30 if self.card == "RC" else 0
+        if self.run.disqualified:
+            return (10**16, )
         if not self.run.performed:
             if self.scoring_system == "rosfarr.am_final_acro":
-                return (10000000000000000, -prev_primary, -prev_secondary)
-            return (10000000000000000, )
+                return (10**15, -prev_primary, -prev_secondary)
+            return (10**15, )
         if self.scoring_system == "rosfarr.am_final_acro":
             return (
-                -(self.dance_scores.primary_score + self.acro_scores.primary_score + self.penalties + prev_primary),
-                -(self.dance_scores.secondary_score + self.acro_scores.secondary_score + self.penalties +
+                -(self.dance_scores.primary_score + self.acro_scores.primary_score + penalty + prev_primary),
+                -(self.dance_scores.secondary_score + self.acro_scores.secondary_score + penalty +
                   prev_secondary),
-                -(self.dance_scores.primary_score + self.acro_scores.primary_score + self.penalties),
-                -(self.dance_scores.secondary_score + self.acro_scores.secondary_score + self.penalties),
+                -(self.dance_scores.primary_score + self.acro_scores.primary_score + penalty),
+                -(self.dance_scores.secondary_score + self.acro_scores.secondary_score + penalty),
                 self.nexttour_score,
             )
         if self.scoring_system == "rosfarr.acro":
             return (
-                -(self.dance_scores.primary_score + self.acro_scores.primary_score + self.penalties),
-                -(self.dance_scores.secondary_score + self.acro_scores.secondary_score + self.penalties),
+                -(self.dance_scores.primary_score + self.acro_scores.primary_score + penalty),
+                -(self.dance_scores.secondary_score + self.acro_scores.secondary_score + penalty),
                 self.nexttour_score,
             )
         return (
-            -(self.dance_scores.primary_score + self.penalties),
-            -(self.dance_scores.secondary_score + self.penalties),
+            -(self.dance_scores.primary_score + penalty),
+            -(self.dance_scores.secondary_score + penalty),
             self.nexttour_score,
         )
 
@@ -493,56 +570,58 @@ class RunScore:
     def verbose_display_score(self):
         sorting_score = self.sorting_score
         prev_primary, prev_secondary = self.get_prev_score()
+        if self.run.disqualified:
+            return {}
         if not self.run.performed:
             if self.scoring_system == "rosfarr.am_final_acro":
                 return {
                     "previous_tour": {
-                        "primary_score": float(prev_primary / 100.0),
-                        "secondary_score": float(prev_secondary / 100.0),
+                        "primary_score": float(prev_primary),
+                        "secondary_score": float(prev_secondary),
                     },
                 }
             return {}
         if self.scoring_system == "rosfarr.am_final_acro":
             return {
+                "card": self.card,
                 "previous_tour": {
-                    "primary_score": float(prev_primary / 100.0),
-                    "secondary_score": float(prev_secondary / 100.0),
+                    "primary_score": float(prev_primary),
+                    "secondary_score": float(prev_secondary),
                 },
                 "current_tour": {
-                    "primary_score": float(-sorting_score[2] / 100.0),
-                    "secondary_score": float(-sorting_score[3] / 100.0),
+                    "primary_score": float(-sorting_score[2]),
+                    "secondary_score": float(-sorting_score[3]),
                 },
-                "primary_score": float(-sorting_score[0] / 100.0),
-                "secondary_score": float(-sorting_score[1] / 100.0),
+                "primary_score": float(-sorting_score[0]),
+                "secondary_score": float(-sorting_score[1]),
                 "nexttour": bool(sorting_score[4] == -1),
-                "total_penalty": self.penalties / 100,
             }
         return {
-            "primary_score": float(-sorting_score[0] / 100.0),
-            "secondary_score": float(-sorting_score[1] / 100.0),
+            "card": self.card,
+            "primary_score": float(-sorting_score[0]),
+            "secondary_score": float(-sorting_score[1]),
             "nexttour": bool(sorting_score[2] == -1),
-            "total_penalty": float(self.penalties / 100.0),
         }
 
     @property
     def display_score(self):
-        if not self.run.performed:
+        if self.run.status != "OK":
             return "—"
         sorting_score = self.sorting_score
-        return "{:.2f} / {:.2f}".format(-sorting_score[0] / 100.0, -sorting_score[1] / 100.0)
+        return "{:.2f} / {:.2f}".format(float(-sorting_score[0]), float(-sorting_score[1]))
 
     def serialize_data_to_inherit(self):
-        if "penalties" in self.run.inherited_data:
-            current_penalties = copy.deepcopy(self.run.inherited_data["penalties"])
+        if "cards" in self.run.inherited_data:
+            current_cards = copy.deepcopy(self.run.inherited_data["cards"])
         else:
-            current_penalties = []
-        if self.penalties != 0:
-            current_penalties.append({
+            current_cards = []
+        if self.card != "OK" and self.run.status == "OK":
+            current_cards.append({
                 "tour": self.run.tour.name,
-                "penalty": int(self.penalties) // 100,
+                "card": self.card,
             })
         result = {
-            "penalties": current_penalties,
+            "cards": current_cards,
         }
         if self.scoring_system == "rosfarr.am_final_fw":
             sorting_score = self.sorting_score
@@ -591,7 +670,7 @@ class TourScores:
             lastest_sorting_score = row["sorting_score"]
             row.update({
                 "place": place,
-                "advances": num_advances >= place and row["run_score"].run.performed,
+                "advances": num_advances >= place and row["run_score"].run.status == "OK",
             })
         return table
 
@@ -632,9 +711,11 @@ class FormationRunScore:
             self.head_judge_score_wrapper = ScoreWrapper(score, scoring_system, discipline_judge=discipline_judge)
             self.head_judge_total_score = self.head_judge_score_wrapper.total_score
             self.has_next_tour = self.head_judge_score_wrapper.data["nexttour"]
-        if run.performed:
+        self.card = self.get_card()
+        if run.status == "OK":
+            penalty = -15 if self.card == "RC" else 0
             self.dance_judges_total_scores = [
-                ScoreWrapper(l_score, scoring_system, discipline_judge=l_discipline_judge).total_score + self.penalties
+                ScoreWrapper(l_score, scoring_system, discipline_judge=l_discipline_judge).total_score + penalty
                 for l_discipline_judge, l_score
                 in self.dance_judge_scores
             ]
@@ -661,18 +742,34 @@ class FormationRunScore:
             if discipline_judge.role == "dance_judge":
                 yield discipline_judge, score
 
-    def serialize_data_to_inherit(self):
-        if "penalties" in self.run.inherited_data:
-            current_penalties = copy.deepcopy(self.run.inherited_data["penalties"])
+    def get_card(self):
+        cards = []
+        if self.head_judge_score is not None:
+            cards.append(self.head_judge_score_wrapper.data["card"])
+        for dj, score in self.tech_judge_scores:
+            cards.append(ScoreWrapper(score, self.scoring_system, dj).data["card"])
+        for ct in ["RC", "YC"]:
+            if ct in cards:
+                result = ct
+                break
         else:
-            current_penalties = []
-        if self.penalties != 0:
-            current_penalties.append({
+            result = "OK"
+        if result == "YC" and len(self.run.inherited_data.get("cards", [])) > 0:
+            result = "RC"
+        return result
+
+    def serialize_data_to_inherit(self):
+        if "cards" in self.run.inherited_data:
+            current_cards = copy.deepcopy(self.run.inherited_data["cards"])
+        else:
+            current_cards = []
+        if self.cards != 0:
+            current_cards.append({
                 "tour": self.run.tour.name,
-                "penalty": int(self.penalties) // 100,
+                "card": self.cards,
             })
         return {
-            "penalties": current_penalties,
+            "cards": current_cards,
         }
 
     def serialize(self):
@@ -701,9 +798,12 @@ class FormationRunScore:
     def penalties(self):
         if self.head_judge_score is None:
             return 0
-        if self.head_judge_score_wrapper.data["penalty"] is not None:
+        if self.head_judge_score_wrapper.data["card"] is not None:
             return self.head_judge_score_wrapper.total_score
-        return min(ScoreWrapper(score, self.scoring_system, dj).total_score for dj, score in self.tech_judge_scores)
+        tj_scores = list(self.tech_judge_scores)
+        if len(tj_scores) == 0:
+            return 0
+        return min(ScoreWrapper(score, self.scoring_system, dj).total_score for dj, score in tj_scores)
 
     @property
     def nexttour_score(self):
@@ -714,12 +814,12 @@ class FormationRunScore:
     @property
     def verbose_display_score(self):
         return {
-            "total_penalty": self.penalties / 100,
+            "card": self.card,
         }
 
     @property
     def display_score(self):
-        if not self.run.performed:
+        if self.run.status != "OK":
             return "—"
         return "SK"
 
@@ -754,7 +854,7 @@ class FormationTourScores:
         return [{
             "run": run_score.run,
             "place": place,
-            "advances": place <= self.tour.num_advances,
+            "advances": place <= self.tour.num_advances and run_score.run.status == "OK",
             "additional_data": {
                 "places": run_score.get_places(),
             }

@@ -5,7 +5,7 @@ import IntegerInput from "tablet_ui/IntegerInput";
 
 import ConfirmationButton from "JudgeTablet/ConfirmationButton";
 
-import PreviousPenalties from "JudgeTablet/HeadJudgeLayout/HeatsPage/ScoringLayout/PreviousPenalties";
+import PreviousCards from "JudgeTablet/HeadJudgeLayout/HeatsPage/ScoringLayout/PreviousCards";
 
 import StopWatch from "./StopWatch";
 
@@ -17,6 +17,7 @@ export default class ScoringLayout extends React.PureComponent {
                 id: PT.number.isRequired,
             }).isRequired,
             run: PT.shape({
+                status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
                 participant: PT.shape({
                     number: PT.number.isRequired,
                     name: PT.string.isRequired,
@@ -59,11 +60,80 @@ export default class ScoringLayout extends React.PureComponent {
     }
 
     handleJumpStepsChange = (value) => this.handleScoreChange("jump_steps", value);
-    handleTimingViolationChange = (value) => this.handleScoreChange("timing_violation", value);
-    handlePenaltyChange = (value) => this.handleScoreChange("penalty", value);
+    handleTimeChange = (value) => this.handleScoreChange("time", value);
+    handleCardChange = (value) => this.handleScoreChange("card", value);
 
     genOnScoreUpdate(score_part) {
         return (new_value) => this.onScoreUpdate(score_part, new_value);
+    }
+
+    renderScoringLayout() {
+        const score = this.score.data;
+        const cards = ["rosfarr.formation", "rosfarr.formation_acro"].includes(this.props.tour.scoring_system_name)
+            ? [
+                [null,  "—"],
+                ["OK",  _("tablet.tech_judge.ok")],
+                ["YC",  _("tablet.tech_judge.form_yellow_card")],
+                ["RC",  _("tablet.tech_judge.form_red_card")],
+            ]
+            : [
+                [null,  "—"],
+                ["OK",  _("tablet.tech_judge.ok")],
+                ["YC",  _("tablet.tech_judge.yellow_card")],
+                ["RC",  _("tablet.tech_judge.red_card")],
+            ];
+        return (
+            <div>
+                <h3>
+                    { _("tablet.tech_judge.card_type") }
+                </h3>
+                <SelectorInput
+                    choices={ cards }
+                    readOnly={ this.score.confirmed }
+                    value={ score.raw_data.card }
+                    onChange={ this.handleCardChange }
+                />
+                <PreviousCards
+                    run={ this.props.run }
+                />
+                <div className="spacer" />
+                <div className="jump-steps">
+                    <h3>{ _("tablet.tech_judge.jump_steps") }</h3>
+                    <IntegerInput
+                        sendDeltas
+                        readOnly={ this.score.confirmed }
+                        value={ score.raw_data.jump_steps }
+                        onChange={ this.handleJumpStepsChange }
+                    />
+                    <div className="spacer" />
+                </div>
+                <div className="timing">
+                    <h3>
+                        { _("tablet.tech_judge.timing") }
+                    </h3>
+                    <StopWatch
+                        readOnly={ this.score.confirmed }
+                        scoreId={ this.score.id }
+                        value={ score.raw_data.time }
+                        onChange={ this.handleTimeChange }
+                    />
+                </div>
+                <div className="spacer clearfix" />
+                <ConfirmationButton
+                    confirmed={ this.score.confirmed }
+                    onConfirm={ this.handleConfirmation }
+                />
+            </div>
+        )
+    }
+    renderNotOkStatusMessage() {
+        return (
+            <div className="not-performing">
+                { this.props.run.status === "NP"
+                    ? _("tablet.global.not_performing")
+                    : _("tablet.global.disqualified") }
+            </div>
+        );
     }
     render() {
         this.setupCache();
@@ -72,66 +142,18 @@ export default class ScoringLayout extends React.PureComponent {
                 <div />
             );
         }
-        const score = this.score.data;
         const header = _("global.phrases.participant_n",
             this.props.run.participant.number,
             this.props.run.participant.name,
             this.props.run.participant.sportsmen.length);
-        const penalties = ["rosfarr.formation", "rosfarr.formation_acro"].indexOf(this.props.tour.scoring_system_name) >= 0
-            ? [
-                [0,    _("tablet.tech_judge.ok")],
-                [-5,   _("tablet.tech_judge.form_yellow_card")],
-                [-15,  _("tablet.tech_judge.form_red_card")],
-            ]
-            : [
-                [0,    _("tablet.tech_judge.ok")],
-                [-3,   _("tablet.tech_judge.yellow_card")],
-                [-30,  _("tablet.tech_judge.red_card")],
-                [-100, _("tablet.tech_judge.black_card")],
-            ];
         return (
             <div className="layout-participant">
                 <h2>
                     { header }
                 </h2>
-                <h3>
-                    { _("tablet.head_judge.penalty_type") }
-                </h3>
-                <SelectorInput
-                    choices={ penalties }
-                    readOnly={ this.score.confirmed }
-                    value={ score.raw_data.penalty }
-                    onChange={ this.handlePenaltyChange }
-                />
-                <PreviousPenalties
-                    run={ this.props.run }
-                />
-                <div className="spacer" />
-                <h3>{ _("tablet.tech_judge.jump_steps") }</h3>
-                <IntegerInput
-                    sendDeltas
-                    readOnly={ this.score.confirmed }
-                    value={ score.raw_data.jump_steps }
-                    onChange={ this.handleJumpStepsChange }
-                />
-                <div className="spacer" />
-                <h3>
-                    { _("tablet.tech_judge.timing") }
-                </h3>
-                <StopWatch
-                    scoreId={ this.score.id }
-                />
-                <SelectorInput
-                    choices={ [[true, "X"], [null, "-"], [false, "OK"]] }
-                    readOnly={ this.score.confirmed }
-                    value={ score.raw_data.timing_violation }
-                    onChange={ this.handleTimingViolationChange }
-                />
-                <div className="spacer" />
-                <ConfirmationButton
-                    confirmed={ this.score.confirmed }
-                    onConfirm={ this.handleConfirmation }
-                />
+                { this.props.run.status === "OK"
+                    ? this.renderScoringLayout()
+                    : this.renderNotOkStatusMessage() }
             </div>
         );
     }
