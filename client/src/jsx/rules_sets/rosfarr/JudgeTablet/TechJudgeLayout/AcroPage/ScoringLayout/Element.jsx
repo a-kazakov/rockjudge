@@ -19,6 +19,23 @@ export default class Element extends React.PureComponent {
         this.props.onAcroOverride(this.props.idx, value);
     }
 
+    formatDescriptionChunk = (text, idx) => {
+        if (text === "") {
+            return null;
+        }
+        return (
+            idx % 2 === 0
+                ? <span key={ idx }>{ text }</span>
+                : <span className="highlight" key={ idx }>{ text }</span>
+        );
+    }
+    renderDescription() {
+        const chunks = this.props.acro.description.split("_");
+        if (chunks.length % 2 === 0) {
+            return this.props.acro.description;
+        }
+        return chunks.map(this.formatDescriptionChunk)
+    }
     render() {
         return (
             <div className="tech-judge-acro">
@@ -31,7 +48,7 @@ export default class Element extends React.PureComponent {
                     />
                 </div>
                 <div className="description">
-                    { this.props.acro.description }
+                    { this.renderDescription() }
                 </div>
                 <div className="clearfix" />
             </div>
