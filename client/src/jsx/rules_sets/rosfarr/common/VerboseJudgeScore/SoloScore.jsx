@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import formatScore from "./formatScore";
 
-export default class DanceScore extends React.PureComponent {
+export default class SoloScore extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -11,8 +11,7 @@ export default class DanceScore extends React.PureComponent {
                 data: PT.shape({
                     total_score: PT.number.isRequired,
                     raw_data: PT.shape({
-                        fw_woman: PT.number,
-                        fw_man: PT.number,
+                        fw: PT.number,
                         dance_figs: PT.number,
                         composition: PT.number,
                         small_mistakes: PT.number,
@@ -29,18 +28,10 @@ export default class DanceScore extends React.PureComponent {
             <table className="score-breakdown"><tbody>
                 <tr>
                     <th>
-                        <p>{ _("results.breakdown.fw") }:</p>
+                        <p>{ _("results.breakdown.fw_solo") }:</p>
                     </th>
                     <td>
-                        <p>{ formatScore(this.props.score.data.raw_data.fw_woman, "-$%") }</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        <p>{ _("results.breakdown.fm") }:</p>
-                    </th>
-                    <td>
-                        <p>{ formatScore(this.props.score.data.raw_data.fw_man, "-$%") }</p>
+                        <p>{ formatScore(this.props.score.data.raw_data.fw, "-$%") }</p>
                     </td>
                 </tr>
                 <tr>
@@ -88,4 +79,4 @@ export default class DanceScore extends React.PureComponent {
     }
 }
 
-DanceScore.displayName = "rules_sets_rosfarr_ResultsTable3_Row_DanceScore";
+SoloScore.displayName = "rules_sets_rosfarr_ResultsTable3_Row_SoloScore";

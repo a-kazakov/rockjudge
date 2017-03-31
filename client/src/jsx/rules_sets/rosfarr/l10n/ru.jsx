@@ -130,6 +130,7 @@ export default function translate(src, ...args) {
                 "fd": "П",
                 "fm": "ОХм",
                 "fw": "ОХж",
+                "fw_solo": "ОХ",
                 "i": "ОВ",
                 "m": "Ош",
                 "p": "М",

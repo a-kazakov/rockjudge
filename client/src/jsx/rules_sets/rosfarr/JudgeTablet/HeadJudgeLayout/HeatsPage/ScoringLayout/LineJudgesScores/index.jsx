@@ -48,7 +48,11 @@ export default class LineJudgeScore extends React.PureComponent {
             verboseIdx: selected_idx,
         });
     }
-    handleHideVerboseScore = () => this.setState({ verboseIdx: null });
+
+    handleHideVerboseScore = (event) => {
+        event.preventDefault();
+        this.setState({ verboseIdx: null });
+    }
 
     renderNumbers() {
         return this.scores.map(score => {
@@ -89,6 +93,7 @@ export default class LineJudgeScore extends React.PureComponent {
                         ref={ this.makeScoresRowRef }
                         onMouseMove={ this.handleShowVerboseScore }
                         onMouseOut={ this.handleHideVerboseScore }
+                        onMouseUp={ this.handleHideVerboseScore }
                         onTouchCancel={ this.handleHideVerboseScore }
                         onTouchEnd={ this.handleHideVerboseScore }
                         onTouchMove={ this.handleShowVerboseScore }

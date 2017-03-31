@@ -2,6 +2,7 @@ import getScoringType from "common/getScoringType";
 
 import AcroScore from "./AcroScore";
 import DanceScore from "./DanceScore";
+import SoloScore from "./SoloScore";
 import FormationAcroScore from "./FormationAcroScore";
 import FormationScore from "./FormationScore";
 import TechScore from "./TechScore";
@@ -54,6 +55,9 @@ export default class VerboseJudgeScore extends React.PureComponent {
             break;
         case "formation_acro":
             ScoreComponent = FormationAcroScore;
+            break;
+        case "solo":
+            ScoreComponent = SoloScore;
             break;
         case "tech":
             ScoreComponent = TechScore;
