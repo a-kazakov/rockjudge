@@ -36,15 +36,18 @@ class Commands:
         db_setup.setup()
 
     @staticmethod
-    def reset():
+    def reset(password=""):
         from app import ModelManager
-        print("Are you sure want to reset everything? Type 'Yes, I'm sure!' to continue.")
-        if input() == "Yes, I'm sure!":
-            print("Resetting ...")
-            ModelManager.instance().reset()
-            print("Done")
+        if password != "yes-i-am-sure":
+            print("Are you sure want to reset everything? Type 'Yes, I'm sure!' to continue.")
+            if input() == "Yes, I'm sure!":
+                print("Resetting ...")
+                ModelManager.instance().reset()
+                print("Done")
+            else:
+                print("Wrong password")
         else:
-            print("Wrong password")
+            ModelManager.instance().reset()
 
     @staticmethod
     def test():
