@@ -24,22 +24,22 @@ export default class DanceScore extends React.PureComponent {
     }
     handleSubmission = (data) => {
         this.props.onSubmit({
-            fw_woman:       data["fw_woman"]    === "" ? null : parseInt(data.fw_woman),
-            fw_man:         data["fw_man"]      === "" ? null : parseInt(data.fw_man),
-            dance_figs:     data["dance_figs"]  === "" ? null : parseInt(data.dance_figs),
-            composition:    data["composition"] === "" ? null : parseInt(data.composition),
+            fw_woman:       data["fw_woman"]    === "" ? null : parseFloat(data.fw_woman),
+            fw_man:         data["fw_man"]      === "" ? null : parseFloat(data.fw_man),
+            dance_figs:     data["dance_figs"]  === "" ? null : parseFloat(data.dance_figs),
+            composition:    data["composition"] === "" ? null : parseFloat(data.composition),
             small_mistakes: parseInt(data.small_mistakes),
             big_mistakes:   parseInt(data.big_mistakes),
         });
     }
 
-    makeField(key, label, scale) {
+    makeField(key, label, scale, float=false) {
         const value = this.props.score.data.raw_data[key];
         return {
             key: key,
             label: `${label}:`,
             options: scale,
-            defaultValue: value === null ? "" : value.toString(),
+            defaultValue: value === null ? "" : float ? value.toFixed(1) : value.toString(),
         }
     }
 
@@ -49,8 +49,8 @@ export default class DanceScore extends React.PureComponent {
                 fields={ [
                     this.makeField("fw_woman",       "FW", genScale("?reduction")),
                     this.makeField("fw_man",         "FM", genScale("?reduction")),
-                    this.makeField("dance_figs",     "DF", genScale("?numbers", { max: 10, step: 0.5 })),
-                    this.makeField("composition",    "C",  genScale("?numbers", { max: 10, step: 0.5 })),
+                    this.makeField("dance_figs",     "DF", genScale("?numbers", { max: 10, step: 0.5 }), true),
+                    this.makeField("composition",    "C",  genScale("?numbers", { max: 10, step: 0.5 }), true),
                     this.makeField("small_mistakes", "SM", genScale("numbers",  { max: 100 })),
                     this.makeField("big_mistakes",   "BM", genScale("numbers",  { max: 100 })),
                 ] }
