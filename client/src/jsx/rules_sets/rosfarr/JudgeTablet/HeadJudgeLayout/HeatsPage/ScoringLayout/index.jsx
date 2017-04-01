@@ -91,6 +91,7 @@ export default class ScoringLayout extends React.PureComponent {
                 <PreviousCards
                     run={ this.props.run }
                 />
+                <div className="spacer" />
                 <TechJudgesScores
                     disciplineJudges={ this.props.tour.discipline.discipline_judges }
                     run={ this.props.run }

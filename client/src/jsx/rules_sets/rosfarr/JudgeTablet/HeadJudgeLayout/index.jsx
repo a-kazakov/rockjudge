@@ -45,7 +45,7 @@ export default class HeadJudgeLayout extends React.PureComponent {
     }
 
     getHeatsCount() {
-        return Math.max(...this.props.tour.runs.map(run => run.heat));
+        return Math.max(1, ...this.props.tour.runs.map(run => run.heat));
     }
 
     setHeat = (heat) => this.setState({ heat });

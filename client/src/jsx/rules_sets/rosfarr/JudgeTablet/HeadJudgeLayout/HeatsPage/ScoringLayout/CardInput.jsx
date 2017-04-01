@@ -23,7 +23,7 @@ export default class CardInput extends React.PureComponent {
     }
 
     render() {
-        const penalties = [
+        const cards = [
             ["OK", _("tablet.head_judge.ok")],
             ["YC", _("tablet.head_judge.yellow_card")],
             ["RC", _("tablet.head_judge.red_card")],
@@ -34,7 +34,7 @@ export default class CardInput extends React.PureComponent {
                     { _("tablet.head_judge.card") }
                 </h3>
                 <SelectorInput
-                    choices={ penalties }
+                    choices={ cards }
                     value={ this.props.score.data.raw_data.card }
                     onChange={ this.handleChange }
                 />

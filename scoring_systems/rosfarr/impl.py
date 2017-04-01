@@ -763,14 +763,15 @@ class FormationRunScore:
             current_cards = copy.deepcopy(self.run.inherited_data["cards"])
         else:
             current_cards = []
-        if self.cards != 0:
+        if self.card != "OK" and self.run.status == "OK":
             current_cards.append({
                 "tour": self.run.tour.name,
-                "card": self.cards,
+                "card": self.card,
             })
-        return {
+        result = {
             "cards": current_cards,
         }
+        return result
 
     def serialize(self):
         scores = {}

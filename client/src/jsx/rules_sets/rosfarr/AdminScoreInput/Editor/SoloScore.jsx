@@ -8,7 +8,7 @@ export default class SoloScore extends React.PureComponent {
             score: PT.shape({
                 data: PT.shape({
                     raw_data: PT.shape({
-                        fw:         PT.number,
+                        fw:             PT.number,
                         dance_figs:     PT.number,
                         composition:    PT.number,
                         small_mistakes: PT.number,
@@ -23,9 +23,9 @@ export default class SoloScore extends React.PureComponent {
     }
     handleSubmission = (data) => {
         this.props.onSubmit({
-            fw:             data["fw"]          === "" ? null : parseInt(data.fw_man),
-            dance_figs:     data["dance_figs"]  === "" ? null : parseInt(data.dance_figs),
-            composition:    data["composition"] === "" ? null : parseInt(data.composition),
+            fw:             data["fw"]          === "" ? null : parseInt(data.fw),
+            dance_figs:     data["dance_figs"]  === "" ? null : parseFloat(data.dance_figs),
+            composition:    data["composition"] === "" ? null : parseFloat(data.composition),
             small_mistakes: parseInt(data.small_mistakes),
             big_mistakes:   parseInt(data.big_mistakes),
         });

@@ -83,9 +83,12 @@ export default class ActionsPage extends React.PureComponent {
 
     hasUnconfirmedScores() {
         const runs = this.props.tour.runs;
+        if (runs.length === 0) {
+            return false;
+        }
         const latest_heat = runs[runs.length - 1].heat;
         if (latest_heat === runs[0].heat) {
-            return false
+            return false;
         }
         const latest_runs = runs.filter(r => r.heat === latest_heat);
         const prev_runs = runs.filter(r => r.heat === latest_heat - 1);

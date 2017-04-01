@@ -23,7 +23,6 @@ export default class PreviousCards extends React.PureComponent {
         }
         return (
             <div>
-                <div className="spacer" />
                 <h3>{ _("tablet.head_judge.previous_cards") }</h3>
                 <table className="full-width"><tbody>
                     { this.props.run.inherited_data.cards.map((d, idx) =>

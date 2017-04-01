@@ -13,7 +13,6 @@ export default class AcroPage extends React.PureComponent {
                 }).isRequired,
             ).isRequired,
             tour: PT.object.isRequired,
-            onAcroOverride: PT.func.isRequired,
             onScoreConfirm: PT.func.isRequired,
         };
     }
