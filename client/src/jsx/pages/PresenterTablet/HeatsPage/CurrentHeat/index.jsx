@@ -15,11 +15,17 @@ export default class CurrentHeat extends React.PureComponent {
             ).isRequired,
         };
     }
+    renderHeader() {
+        if (this.props.runs.length === 0) {
+            return _("presenter.labels.no_runs");
+        }
+        return `${_("tablet.headers.heat")}: ${this.props.heat} / ${this.props.maxHeat}`;
+    }
     render() {
         return (
             <div className="heat">
                 <h3>
-                    { `${_("tablet.headers.heat")}: ${this.props.heat} / ${this.props.maxHeat}` }
+                    { this.renderHeader() }
                 </h3>
                 { this.props.runs.map(run =>
                     <RunInfo

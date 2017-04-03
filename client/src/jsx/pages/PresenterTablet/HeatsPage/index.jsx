@@ -107,7 +107,7 @@ export default class HeatsPage extends React.PureComponent {
     }
 
     getHeatsCount() {
-        return Math.max(...this.state.tour.runs.map(run => run.heat));
+        return Math.max(1, ...this.state.tour.runs.map(run => run.heat));
     }
 
     render() {

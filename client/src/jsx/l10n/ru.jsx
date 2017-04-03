@@ -495,6 +495,7 @@ export default function translate(src, ...args) {
                 "estimated_beginning": "Начало",
                 "estimated_duration": "Длит.",
                 "no_active_tour": "Нет активного тура",
+                "no_runs": "В этом туре нет заходов",
                 "place": "место",
                 "tour": "Тур",
             },
