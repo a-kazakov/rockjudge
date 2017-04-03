@@ -10,7 +10,7 @@ export default class StatusSwitch extends React.PureComponent {
         return {
             run: PT.shape({
                 id: PT.number.isRequired,
-                performed: PT.bool.isRequired,
+                status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
                 disqualified: PT.bool.isRequired,
             }).isRequired,
         };
@@ -28,7 +28,7 @@ export default class StatusSwitch extends React.PureComponent {
     handleSetStatusDQ = () => this.changeStatus("DQ");
 
     renderButton() {
-        if (!this.props.run.performed) {
+        if (this.props.run.status === "NP") {
             return (
                 <button
                     className="performed"
@@ -39,7 +39,7 @@ export default class StatusSwitch extends React.PureComponent {
                 </button>
             );
         }
-        if (this.props.run.disqualified) {
+        if (this.props.run.status === "DQ") {
             return (
                 <button
                     className="not-disqualified"

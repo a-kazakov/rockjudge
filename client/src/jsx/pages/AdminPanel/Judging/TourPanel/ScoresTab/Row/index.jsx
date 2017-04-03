@@ -19,7 +19,7 @@ export default class Row extends React.PureComponent {
             run: PT.shape({
                 id: PT.number.isRequired,
                 heat: PT.number.isRequired,
-                performed: PT.bool.isRequired,
+                status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
                 disqualified: PT.bool.isRequired,
                 total_score: PT.string.isRequired,
                 participant: PT.shape({
@@ -52,8 +52,8 @@ export default class Row extends React.PureComponent {
         return makeClassName({
             "odd-heat": this.props.run.heat % 2 === 1,
             "even-heat": this.props.run.heat % 2 === 0,
-            "not-performed": !this.props.run.performed,
-            "disqualified": this.props.run.disqualified,
+            "not-performed": this.props.run.status === "NP",
+            "disqualified": this.props.run.status === "DQ",
         });
     }
     render() {

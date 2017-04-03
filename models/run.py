@@ -127,7 +127,7 @@ class Run(BaseModel):
 
     @property
     def performed(self):
-        return self.status != "NP"
+        return self.status == "OK"
 
     @property
     def disqualified(self):

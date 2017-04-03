@@ -39,7 +39,7 @@ export default class HeadJudgeScore extends React.PureComponent {
         return (
             <GeneralEditor
                 fields={ [
-                    this.makeField("card", "P", [
+                    this.makeField("card", "C", [
                         ["OK", "OK"],
                         ["YC", "YC"],
                         ["RC", "RC"],

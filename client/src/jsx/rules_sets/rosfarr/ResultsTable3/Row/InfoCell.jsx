@@ -13,8 +13,6 @@ export default class InfoCell extends React.PureComponent {
                 place: PT.number,
                 run: PT.shape({
                     status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                    performed: PT.bool.isRequired,
-                    disqualified: PT.bool.isRequired,
                     total_score: PT.string.isRequired,
                     acrobatics: PT.arrayOf(
                         PT.shape({
@@ -204,7 +202,7 @@ export default class InfoCell extends React.PureComponent {
         );
     }
     renderNotPerformedLabel() {
-        if (this.props.row.run.performed) {
+        if (this.props.row.run.status !== "NP") {
             return null;
         }
         return (
@@ -216,7 +214,7 @@ export default class InfoCell extends React.PureComponent {
         )
     }
     renderDisqualifiedLabel() {
-        if (!this.props.row.run.disqualified) {
+        if (!this.props.row.run.status !== "DQ") {
             return null;
         }
         return (
