@@ -291,9 +291,14 @@ class AcroScore:
         raw_data = score.get_data()
         num_acros = len(score.run.acrobatics)
         self.data = {
-            "reductions": raw_data.pop("reductions", [None] * num_acros),
-            "mistakes": raw_data.pop("mistakes", 0),
+            "reductions": raw_data.get("reductions", [None] * num_acros),
+            "mistakes": raw_data.get("mistakes", 0),
         }
+        diff = len(self.data["reductions"]) - num_acros
+        if diff < 0:
+            self.data["reductions"] += [None] * -diff
+        elif diff > 0:
+            self.data["reductions"] = self.data["reductions"][:num_acros]
 
     @property
     def total_score(self):
@@ -315,9 +320,11 @@ class AcroScore:
         if "reductions" in new_data:
             for idx, reduction in enumerate(new_data["reductions"]):
                 if reduction is not None and idx < len(self.data["reductions"]):
-                    cleared_reduction = reduction \
-                        if type(reduction) is int and reduction in POSSIBLE_DEDUCTIONS \
+                    cleared_reduction = (
+                        reduction
+                        if type(reduction) is int and reduction in POSSIBLE_DEDUCTIONS
                         else None
+                    )
                     self.data["reductions"][idx] = cleared_reduction
         self.score.set_data(self.data)
 
