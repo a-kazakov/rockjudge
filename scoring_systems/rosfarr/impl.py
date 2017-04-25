@@ -242,13 +242,13 @@ class AmQualDanceScore(BaseScore):
     @staticmethod
     def get_total_score(raw_scores):
         return sum([
-            apply_reduction(10, raw_scores["fw_man"]) * frac(13, 10),
-            apply_reduction(10, raw_scores["fw_woman"]) * frac(13, 10),
-            m100(raw_scores["dance_figs"]) * frac(5, 2) * frac(13, 10),
-            m100(raw_scores["composition"]) * 2 * frac(13, 10),
+            apply_reduction(10, raw_scores["fw_man"]),
+            apply_reduction(10, raw_scores["fw_woman"]),
+            m100(raw_scores["dance_figs"]) * frac(5, 2),
+            m100(raw_scores["composition"]) * 2,
              -5 * m100(raw_scores["small_mistakes"]),  # NOQA
             -30 * m100(raw_scores["big_mistakes"]),
-        ])
+        ]) * frac(10, 13)
 
 
 class AmFinalDanceScore(BaseScore):

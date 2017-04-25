@@ -80,7 +80,7 @@ export default class DanceScore extends React.PureComponent {
                         <p>{ _("results.breakdown.t")  }:</p>
                     </th>
                     <td className="total-score">
-                        <p>{ this.props.score.data.total_score }</p>
+                        <p>{ this.props.score.data.total_score.toFixed(3).replace(/\.?0+$/, "") }</p>
                     </td>
                 </tr>
             </tbody></table>
