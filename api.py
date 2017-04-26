@@ -591,6 +591,16 @@ class Api:
         run.set_status(request.body["status"], request.ws_message)
 
     @classmethod
+    def run_reset(cls, request):
+        run = cls.get_model(Run, "run_id", request)
+        check_auth(
+            competition_id=run.tour.discipline.competition_id,
+            request=request,
+            allowed_access_levels=("admin", ),
+        )
+        run.reset(request.ws_message)
+
+    @classmethod
     def tour_find_active(cls, request):
         tour = Tour.get_active()
         return {

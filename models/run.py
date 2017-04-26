@@ -39,7 +39,6 @@ class Run(BaseModel):
     PF_CHILDREN = {
         "acrobatics": {
             "acrobatic_overrides": {},
-            "participant": {},
         },
         "participant": None,
         "scores": None,
@@ -134,6 +133,8 @@ class Run(BaseModel):
         return self.status == "DQ"
 
     def update_model(self, new_data, ws_message):
+        if self.tour.finalized:
+            raise ApiError("errors.run.modify_finalized")
         self.update_model_base(new_data)
         ws_message.add_model_update(
             model_type=Tour,
@@ -142,6 +143,23 @@ class Run(BaseModel):
                 "runs": {},
             }
         )
+
+    def reset(self, ws_message):
+        from models.score import Score
+        from models.acrobatic_override import AcrobaticOverride
+        if self.tour.finalized:
+            raise ApiError("errors.run.modify_finalized")
+        Score.update(score_data={}, confirmed=False).where(Score.run == self).execute()
+        AcrobaticOverride.delete().where(AcrobaticOverride.run == self).execute()
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id,
+            schema={
+                "scores": {},
+                "acrobatics": {},
+            }
+        )
+        ws_message.add_message("tour_results_changed", {"tour_id": self.tour_id})
 
     def serialize_acrobatics(self, children=None):
         acro_list = []

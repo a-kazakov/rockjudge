@@ -1,6 +1,7 @@
 import makeClassName from "common/makeClassName";
 
 import AcrobaticsCell from "./AcrobaticsCell";
+import ActionsCell from "./ActionsCell";
 import HeatCell from "./HeatCell";
 import StatusCell from "./StatusCell";
 import ScoreCell from "./ScoreCell";
@@ -56,6 +57,21 @@ export default class Row extends React.PureComponent {
             "disqualified": this.props.run.status === "DQ",
         });
     }
+    renderActionsCell() {
+        if (this.props.readOnly) {
+            return null;
+        }
+        return (
+            <ActionsCell
+                opened={ this.props.nowEditing.type === "actions" &&
+                          this.props.nowEditing.run_id === this.props.run.id }
+                readOnly={ this.props.readOnly }
+                run={ this.props.run }
+                onEditRequest={ this.props.onEditRequest }
+                onStopEditing={ this.props.onStopEditing }
+            />
+        );
+    }
     render() {
         let scores_map = new Map();
         for (const score of this.props.run.scores) {
@@ -110,6 +126,7 @@ export default class Row extends React.PureComponent {
                     { this.props.run.total_score }
                 </td>
                 { scores }
+                { this.renderActionsCell() }
             </tr>
         );
     }

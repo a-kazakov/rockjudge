@@ -217,6 +217,9 @@ export default class ScoresTab extends React.PureComponent {
                                     { rules_set.get_judge_table_mark(discipline_judge) }
                                 </th>
                             ) }
+                            { this.state.tour.finalized
+                                ? null
+                                : this.renderTableHeaderCell("actions") }
                         </tr>
                         { this.state.tour.runs.map(run =>
                             <Row
