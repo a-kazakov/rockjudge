@@ -3840,6 +3840,10 @@ supports-color@^3.2.3:
   dependencies:
     has-flag "^1.0.0"
 
+sweetalert2:
+  version "6.6.2"
+  resolved "https://registry.yarnpkg.com/sweetalert2/-/sweetalert2-6.6.2.tgz#baa8895e7d006ebd0182e7366ced053540d1bb0d"
+
 syntax-error@^1.1.1:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/syntax-error/-/syntax-error-1.3.0.tgz#1ed9266c4d40be75dc55bf9bb1cb77062bb96ca1"

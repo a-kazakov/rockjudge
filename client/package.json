@@ -8,7 +8,9 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "sweetalert2": "^6.6.2"
+  },
   "devDependencies": {
     "babel-eslint": "^6.1.2",
     "babel-plugin-syntax-trailing-function-commas": "^6.13.0",

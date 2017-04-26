@@ -4,7 +4,6 @@ import Api from "common/server/Api";
 import makeClassName from "common/makeClassName";
 
 import showConfirm from "common/dialogs/showConfirm";
-import closeDialog from "common/dialogs/closeDialog";
 
 import Button from "./Button"
 
@@ -43,8 +42,8 @@ export default class ActionsCell extends React.PureComponent {
                     run_id: this.props.run.id,
                 })
                     .send();
-                closeDialog();
-            }
+            },
+            true
         );
         this.props.onStopEditing();
     }

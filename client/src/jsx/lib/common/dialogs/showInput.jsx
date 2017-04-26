@@ -1,10 +1,12 @@
-export default function showInput(title, text, callback) {
+import swal from "sweetalert2"
+
+export default function showInput(title, text, callback, validator=null) {
     swal({
         title: title,
         text: text,
         showCancelButton: true,
         closeOnConfirm: false,
-        type: "input",
-        animation: false,
-    }, callback);
+        input: "text",
+        inputValidator: validator,
+    }).then(callback);
 }

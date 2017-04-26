@@ -2,7 +2,6 @@ import _ from "l10n";
 import Api from "common/server/Api";
 
 import showInput from "common/dialogs/showInput";
-import showInputError from "common/dialogs/showInputError";
 import showSuccess from "common/dialogs/showSuccess";
 
 export default class Unfinalize extends React.PureComponent {
@@ -33,11 +32,7 @@ export default class Unfinalize extends React.PureComponent {
         showInput(
             _("admin.headers.unfinalize_tour"),
             _("admin.confirms.unfinalize_tour"),
-            value => {
-                if (value !== "unfinalize") {
-                    showInputError(_("admin.messages.invalid_passcode"));
-                    return false;
-                }
+            () => {
                 Api("tour.unfinalize", {
                     tour_id: Number(this._select.value),
                 })
@@ -45,7 +40,16 @@ export default class Unfinalize extends React.PureComponent {
                         showSuccess(_("global.messages.success"));
                     })
                     .send();
-            }
+            },
+            value => {
+                return new Promise((resolve, reject) => {
+                    if (value !== "unfinalize") {
+                        reject(_("admin.messages.invalid_passcode"));
+                    } else {
+                        resolve();
+                    }
+                });
+            },
         );
     }
 
