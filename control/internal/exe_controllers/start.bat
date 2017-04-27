@@ -17,6 +17,7 @@ start "" "cmd" /c set qedit_val=%qedit_val% ^& call "%~dpnx0"&exit
 :mainstart
 
 pushd "%~dp0\data"
+chcp 65001
 rockjudge.exe start
 popd
 

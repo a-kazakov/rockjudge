@@ -50,11 +50,11 @@ class SqlLoggingHandler(logging.StreamHandler):
         self.cnt = 0
 
     def emit(self, record):
-        import re
+        # import re
         # import traceback
         # record = record.msg[0]
-#        record = re.sub(r'SELECT.+?FROM', 'SELECT * FROM', record)
-#        record = re.sub(r'(%s, )+%s', '...', record)
+        # record = re.sub(r'SELECT.+?FROM', 'SELECT * FROM', record)
+        # record = re.sub(r'(%s, )+%s', '...', record)
         # print(record)
         # print(traceback.print_stack())
         self.cnt += 1

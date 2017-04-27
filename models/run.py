@@ -12,12 +12,14 @@ class Run(BaseModel):
     class Meta:
         indexes = (
             (("participant", "tour"), True),
+            (("heat", "heat_secondary", "participant"), False),
         )
-        order_by = ["heat", "participant"]
+        order_by = ["heat", "heat_secondary", "participant"]
 
     participant = peewee.ForeignKeyField(Participant)
     tour = peewee.ForeignKeyField(Tour, related_name="runs")
     heat = peewee.IntegerField()
+    heat_secondary = peewee.IntegerField()
     status = peewee.CharField(max_length=2, default="OK")  # OK, NP, DQ
     program_name = peewee.CharField(null=True)
     acrobatics = postgres_ext.BinaryJSONField(default={})
@@ -63,16 +65,6 @@ class Run(BaseModel):
                 "scores": {},
             },
         )
-
-    def create_scores(self):
-        from models import Score
-        scores_judge_ids = {score.discipline_judge_id for score in self.scores}
-        for discipline_judge in self.tour.discipline_judges:
-            if discipline_judge.id not in scores_judge_ids:
-                Score.create(
-                    run=self,
-                    discipline_judge=discipline_judge,
-                )
 
     def get_acrobatic_override(self, acrobatic_idx):
         for override in self.acrobatic_overrides:

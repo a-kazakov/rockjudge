@@ -108,13 +108,9 @@ class Tour(BaseModel):
             Score,
         )
         self.smart_prefetch({
-            "runs": {
-                "discipline": {
-                    "discipline_judges": {},
-                },
-                "scores": {},
-            },
+            "runs": {},
         })
+        # Make sets
         estimated_participants = []
         inherited_data = {}
         for participant, data in self.estimate_participants():
@@ -124,6 +120,7 @@ class Tour(BaseModel):
         new_participant_ids = {participant.id for participant in estimated_participants}
         participant_ids_to_create = new_participant_ids - existing_participant_ids
         participant_ids_to_delete = existing_participant_ids - new_participant_ids
+        # Delete runs
         if len(participant_ids_to_delete) > 0:
             runs_to_delete = Run.select().where(
                 (Run.tour == self) &
@@ -133,26 +130,59 @@ class Tour(BaseModel):
             Score.delete().where(Score.run << runs_to_delete).execute()
             AcrobaticOverride.delete().where(AcrobaticOverride.run << runs_to_delete).execute()
             Run.delete().where(Run.id << runs_to_delete).execute()
-        new_runs = [run for run in self.runs if run.participant_id not in participant_ids_to_delete]
-        self.runs = new_runs
-        for participant_id in participant_ids_to_create:
-            run = Run.create(
-                participant=participant_id,
-                heat=0,
-                tour=self,
-            )
-            if self.default_program != "":
+        # Create runs
+        runs_to_create = [
+            {
+                "participant": participant_id,
+                "heat": 0,
+                "heat_secondary": random.randint(0, 10**9),
+                "tour": self,
+            } for participant_id in participant_ids_to_create
+        ]
+        if len(runs_to_create) > 0:
+            Run.insert_many(runs_to_create).execute()
+        # Refetch all runs
+        self.smart_prefetch({
+            "runs": {
+                "discipline": {
+                    "discipline_judges": {},
+                },
+                "participant": {},
+                "scores": {},
+            },
+        })
+        # Load acrobatics (N queries)
+        if self.default_program != "":
+            for participant_id in participant_ids_to_create:
                 run.load_acrobatics(run.participant.get_default_program(self.default_program), WsMessage())
-            self.runs.append(run)
+        # Load inherited data (N queries)
         for run in self.runs:
-            run.create_scores()
-            run.inherited_data = inherited_data[run.participant_id] if run.participant_id in inherited_data else {}
+            run.inherited_data = (
+                inherited_data[run.participant_id]
+                if run.participant_id in inherited_data
+                else {}
+            )
             run.save()
+        # Create scores
+        scores_to_create = []
+        for run in self.runs:
+            scores_judge_ids = {score.discipline_judge_id for score in run.scores}
+            scores_to_create += [
+                {
+                    "run": run,
+                    "discipline_judge": discipline_judge,
+                }
+                for discipline_judge in self.discipline_judges
+                if discipline_judge.id not in scores_judge_ids
+            ]
+        if len(scores_to_create) > 0:
+            Score.insert_many(scores_to_create).execute()
+        # Permute heats
         prev_tour = self.get_prev_tour(throw=False)
         if prev_tour is None or prev_tour.finalized or prev_tour.hope_tour:
-            self.shuffle_heats(ws_message=None, broadcast=False, preserve_existing=True)
+            self.shuffle_heats(ws_message=None, broadcast=False, preserve_existing=True, prefetched=True)
         else:
-            self.clone_heats(prev_tour, ws_message=None, broadcast=False)
+            self.clone_heats(prev_tour, ws_message=None, broadcast=False, prefetched=True)
 
     @staticmethod
     def weighted_shuffle(runs, participants_per_heat):
@@ -192,12 +222,13 @@ class Tour(BaseModel):
                 free_slots.remove(slot)
         return result
 
-    def shuffle_heats(self, ws_message, preserve_existing=False, broadcast=True):
-        self.smart_prefetch({
-            "runs": {
-                "participant": {}
-            },
-        })
+    def shuffle_heats(self, ws_message, preserve_existing=False, broadcast=True, prefetched=False):
+        if not prefetched:
+            self.smart_prefetch({
+                "runs": {
+                    "participant": {}
+                },
+            })
         heats = defaultdict(list)
         # Assertions
         if self.participants_per_heat <= 0:
@@ -245,10 +276,11 @@ class Tour(BaseModel):
                 },
             )
 
-    def clone_heats(self, source, ws_message, broadcast=True):
-        self.smart_prefetch({
-            "runs": {},
-        })
+    def clone_heats(self, source, ws_message, broadcast=True, prefetched=False):
+        if not prefetched:
+            self.smart_prefetch({
+                "runs": {},
+            })
         source.smart_prefetch({
             "runs": {},
         })
