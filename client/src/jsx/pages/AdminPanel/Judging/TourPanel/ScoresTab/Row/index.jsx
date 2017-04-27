@@ -11,6 +11,8 @@ export default class Row extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
+            heatPosition: PT.number.isRequired,
+            heatSize: PT.number.isRequired,
             readOnly: PT.bool.isRequired,
             nowEditing: PT.shape({
                 type: PT.string,
@@ -45,6 +47,7 @@ export default class Row extends React.PureComponent {
                 }).isRequired,
             }).isRequired,
             onEditRequest: PT.func.isRequired,
+            onPositionMove: PT.func.isRequired,
             onStopEditing: PT.func.isRequired,
         };
     }
@@ -63,11 +66,14 @@ export default class Row extends React.PureComponent {
         }
         return (
             <ActionsCell
+                heatPosition={ this.props.heatPosition }
+                heatSize={ this.props.heatSize }
                 opened={ this.props.nowEditing.type === "actions" &&
                           this.props.nowEditing.run_id === this.props.run.id }
                 readOnly={ this.props.readOnly }
                 run={ this.props.run }
                 onEditRequest={ this.props.onEditRequest }
+                onPositionMove={ this.props.onPositionMove }
                 onStopEditing={ this.props.onStopEditing }
             />
         );

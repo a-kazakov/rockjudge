@@ -342,6 +342,7 @@ export default function translate(src, ...args) {
                 "edit_acrobatic_override": "Изменить",
                 "init_tour": "Пересоздать тур",
                 "finalize_tour": "Финализировать",
+                "move_to_position": pos => `На ${pos} позицию в заходе`,
                 "reset_acrobatic_override": "Сброс",
                 "shuffle_heats": "Перемешать заходы",
                 "start_tour": "Начать тур",
@@ -354,7 +355,7 @@ export default function translate(src, ...args) {
                 "load_program": "Вы действительно хотите перезагрузить программу для этого участника?",
                 "shuffle_heats": "Вы действительно хотите перемешать заходы?",
                 "stop_tour": "Вы действительно хотите остановить этот тур?",
-                "reset_score": name => `Вы действительно хотите сбросить оценки судей?`,
+                "reset_score": "Вы действительно хотите сбросить оценки судей?",
             },
             "headers": {
                 "acrobatic_overrides": "Корректировки базовых оценок акробатики",

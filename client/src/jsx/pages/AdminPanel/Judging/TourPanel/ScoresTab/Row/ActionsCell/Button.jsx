@@ -1,7 +1,12 @@
+import makeClassName from "common/makeClassName";
+
+
 export default class Button extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
+            mkey: PT.any,
+            style: PT.oneOf(["red", "dark"]),
             text: PT.string.isRequired,
             onClick: PT.func.isRequired,
         };
@@ -9,13 +14,19 @@ export default class Button extends React.PureComponent {
 
     handleClick = (event) => {
         event.stopPropagation();
-        this.props.onClick();
+        this.props.onClick(this.props.mkey);
     }
 
+    getClassName() {
+        return makeClassName({
+            "red": this.props.style === "red",
+            "dark": this.props.style === "dark",
+        });
+    }
     render() {
         return (
             <button
-                className="button"
+                className={ this.getClassName() }
                 onClick={ this.handleClick }
             >
                 { this.props.text }

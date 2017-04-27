@@ -181,6 +181,29 @@ export default class ScoresTab extends React.PureComponent {
             nowEditing: {},
         });
     }
+    handlePositionMove = (heat, old_pos, new_pos) => {
+        const heat_runs = this.state.tour.runs.filter(r => r.heat === heat);
+        const old_ids = heat_runs.map(r => r.id)
+        const new_ids = old_pos <= new_pos
+            ? [].concat(
+                old_ids.slice(0, old_pos),
+                old_ids.slice(old_pos + 1, new_pos + 1),
+                [old_ids[old_pos]],
+                old_ids.slice(new_pos + 1)
+            )
+            : [].concat(
+                old_ids.slice(0, new_pos),
+                [old_ids[old_pos]],
+                old_ids.slice(new_pos, old_pos),
+                old_ids.slice(old_pos + 1)
+            )
+        console.log(heat_runs, old_ids, new_ids)
+        Api("tour.permute_within_heat", {
+            "tour_id": this.props.tour.id,
+            "run_ids": new_ids,
+        })
+            .send();
+    }
 
     // Rendering
 
@@ -190,6 +213,39 @@ export default class ScoresTab extends React.PureComponent {
                 { _(`judging.labels.${code}`) }
             </th>
         );
+    }
+    renderRuns() {
+        const runs = this.state.tour.runs;
+        let heat_positions = runs.map(() => 0);
+        let heat_sizes = runs.map(() => 0);
+        for (let i = 1; i < runs.length; ++i) {
+            heat_positions[i] = runs[i].heat === runs[i - 1].heat
+                ? heat_positions[i - 1] + 1
+                : 0;
+        }
+        for (let i = runs.length - 1; i >= 0; --i) {
+            heat_sizes[i] = i === runs.length - 1 || heat_positions[i + 1] <= heat_positions[i]
+                ? heat_positions[i] + 1
+                : heat_sizes[i + 1];
+        }
+        let result = [];
+        for (let i = 0; i < runs.length; ++i) {
+            result.push(
+                <Row
+                    heatPosition={ heat_positions[i] }
+                    heatSize={ heat_sizes[i] }
+                    key={ runs[i].id }
+                    nowEditing={ this.state.nowEditing }
+                    readOnly={ this.state.tour.finalized }
+                    run={ runs[i] }
+                    tour={ this.state.tour }
+                    onEditRequest={ this.handleEditRequest }
+                    onPositionMove={ this.handlePositionMove }
+                    onStopEditing={ this.handleStopEditing }
+                />
+            );
+        }
+        return result;
     }
     render() {
         if (this.state.tour === null) {
@@ -221,17 +277,7 @@ export default class ScoresTab extends React.PureComponent {
                                 ? null
                                 : this.renderTableHeaderCell("actions") }
                         </tr>
-                        { this.state.tour.runs.map(run =>
-                            <Row
-                                key={ run.id }
-                                nowEditing={ this.state.nowEditing }
-                                readOnly={ this.state.tour.finalized }
-                                run={ run }
-                                tour={ this.state.tour }
-                                onEditRequest={ this.handleEditRequest }
-                                onStopEditing={ this.handleStopEditing }
-                            />
-                        ) }
+                        { this.renderRuns() }
                     </tbody>
                 </table>
             </div>

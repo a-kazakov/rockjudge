@@ -1,6 +1,5 @@
 import json
 import peewee
-import random
 
 from playhouse import postgres_ext
 
@@ -73,7 +72,6 @@ class Participant(BaseModel):
         from models import Program
         if len(objects) == 0:
             return
-        random.shuffle(objects)
         clubs_ids = [obj["club"] for obj in objects]
         clubs = {
             club.external_id: club

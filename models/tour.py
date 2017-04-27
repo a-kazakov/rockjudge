@@ -153,7 +153,7 @@ class Tour(BaseModel):
         })
         # Load acrobatics (N queries)
         if self.default_program != "":
-            for participant_id in participant_ids_to_create:
+            for run in self.runs:
                 run.load_acrobatics(run.participant.get_default_program(self.default_program), WsMessage())
         # Load inherited data (N queries)
         for run in self.runs:
@@ -398,6 +398,26 @@ class Tour(BaseModel):
                 model_id=score.id,
             )
 
+    def permute_within_heat(self, run_ids, ws_message):
+        if self.finalized:
+            raise ApiError("errors.score.update_on_finalized_tour")
+        self.smart_prefetch({
+            "runs": {}
+        })
+        id_to_run = {run.id: run for run in self.runs}
+        for idx, run_id in enumerate(run_ids):
+            run = id_to_run.get(run_id, None)
+            if run is None:
+                continue
+            run.heat_secondary = idx
+            run.save()
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id,
+            schema={
+                "runs": {},
+            }
+        )
 
     def finalize(self, ws_message):
         self.check_prev_tour_finalized()

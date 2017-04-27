@@ -622,6 +622,17 @@ class Api:
         }
 
     @classmethod
+    def tour_permute_within_heat(cls, request):
+        tour = cls.get_model(Tour, "tour_id", request)
+        check_auth(
+            competition_id=tour.discipline.competition_id,
+            request=request,
+            allowed_access_levels=("admin", ),
+        )
+        tour.permute_within_heat(request.body["run_ids"], ws_message=request.ws_message)
+        return {}
+
+    @classmethod
     def tour_start(cls, request):
         tour = cls.get_model(Tour, "tour_id", request)
         check_auth(
