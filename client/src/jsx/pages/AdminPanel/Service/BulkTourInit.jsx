@@ -73,7 +73,7 @@ export default class BulkTourInit extends React.PureComponent {
     }
 
     handleClick = () => {
-        showConfirm(_("admin.confirms.bulk_tour_init"), this.run, true);
+        showConfirm(_("admin.confirms.bulk_tour_init"), this.run);
     }
 
     renderStatus() {

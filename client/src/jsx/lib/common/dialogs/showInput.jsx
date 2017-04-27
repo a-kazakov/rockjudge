@@ -5,7 +5,6 @@ export default function showInput(title, text, callback, validator=null) {
         title: title,
         text: text,
         showCancelButton: true,
-        closeOnConfirm: false,
         input: "text",
         inputValidator: validator,
     }).then(callback);

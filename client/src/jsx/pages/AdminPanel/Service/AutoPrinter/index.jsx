@@ -82,15 +82,13 @@ export default class AutoPrinter extends React.PureComponent {
                 saveAs(new Blob(["dummy"], {type : 'text/plain'}), `autoprinter_dummy_${Math.random()}.tmp`);
                 saveAs(new Blob(["dummy"], {type : 'text/plain'}), `autoprinter_dummy_${Math.random()}.tmp`);
                 this._queue.addJob("test", null, 1);
-            },
-            true
+            }
         );
     }
     handlePrintFirstToursHeats = () =>
         showConfirm(
             _("admin.auto_printer.confirm_print_first_tours_heats"),
-            this.printFirstToursHeats,
-            true
+            this.printFirstToursHeats
         );
 
     getToursFromCompetition(competition) {

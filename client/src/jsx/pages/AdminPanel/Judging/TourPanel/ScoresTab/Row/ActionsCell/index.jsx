@@ -51,7 +51,6 @@ export default class ActionsCell extends React.PureComponent {
                 })
                     .send();
             },
-            true
         );
         this.props.onStopEditing();
     }
