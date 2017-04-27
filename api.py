@@ -554,6 +554,20 @@ class Api:
         score.unconfirm(ws_message=request.ws_message)
         return {}
 
+
+    @classmethod
+    def tour_confirm_heat(cls, request):
+        discipline_judge = cls.get_model(DisciplineJudge, "discipline_judge_id", request)
+        tour = cls.get_model(Tour, "tour_id", request)
+        check_auth(
+            competition_id=discipline_judge.judge.competition_id,
+            request=request,
+            allowed_access_levels=("admin", "any_judge", "judge_{}".format(discipline_judge.judge_id), ),
+        )
+        tour.confirm_heat(discipline_judge, request.body["heat"], ws_message=request.ws_message)
+        return {}
+
+
     @classmethod
     def acrobatic_override_set(cls, request):
         run = cls.get_model(Run, "run_id", request)

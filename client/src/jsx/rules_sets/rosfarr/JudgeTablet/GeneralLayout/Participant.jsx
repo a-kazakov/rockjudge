@@ -1,7 +1,5 @@
 import _ from "l10n";
 
-import ConfirmationButton from "JudgeTablet/ConfirmationButton";
-
 export default class Participant extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
@@ -17,88 +15,51 @@ export default class Participant extends React.PureComponent {
                     name: PT.string.isRequired,
                     sportsmen: PT.array.isRequired,
                 }).isRequired,
-                scores: PT.arrayOf(
-                    PT.shape({
-                        discipline_judge_id: PT.number.isRequired,
-                    }).isRequired,
-                ).isRequired,
             }).isRequired,
-            onScoreConfirm: PT.func.isRequired,
+            score: PT.shape({
+                id: PT.number.isRequired,
+                confirmed: PT.bool.isRequired,
+                data: PT.shape({
+                    raw_data: PT.object.isRequired,
+                }).isRequired,
+                discipline_judge_id: PT.number.isRequired,
+            }).isRequired,
             onScoreUpdate: PT.func.isRequired,
         };
     }
 
-    getScore() {
-        for (const score of this.props.run.scores) {
-            if (score.discipline_judge_id === this.props.disciplineJudge.id) {
-                return score;
-            }
-        }
-        return null;
-    }
-    setupCache() {
-        this.score = this.getScore();
-    }
-
-    canConfirm() {
-        const score_data = this.score.data.raw_data;
-        for (const key of Object.keys(score_data)) {
-            const value = score_data[key];
-            if (Array.isArray(value)) {
-                if (value.filter(a => a === null).length !== 0) {
-                    return false;
-                }
-            } else {
-                if (value === null) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    handleConfirm = () => {
-        this.props.onScoreConfirm(this.score.id);
-    }
     handleScoreUpdate = (key, value) => {
-        if (this.score.confirmed) {
+        if (this.props.score.confirmed) {
             return;
         }
         let score_data = {};
         score_data[key] = value;
-        this.props.onScoreUpdate(this.score.id, score_data);
+        this.props.onScoreUpdate(this.props.score.id, score_data);
     }
     handleAcroReductionUpdate = (acro_idx, value) => {
-        if (this.score.confirmed) {
+        if (this.props.score.confirmed) {
             return;
         }
-        let reductions = this.score.data.raw_data.reductions.map(() => null);
+        let reductions = this.props.score.data.raw_data.reductions.map(() => null);
         reductions[acro_idx] = value;
         this.onScoreUpdate("reductions", reductions);
     }
 
     renderScoringLayout() {
-        const score_data = this.score.data.raw_data;
+        const score_data = this.props.score.data.raw_data;
         const ScoringComponent = this.props.layoutClass;
-        if (this.score === null) {
+        if (this.props.score === null) {
             return (
                 <div />
             );
         }
         return (
-            <div>
-                <ScoringComponent
-                    readOnly={ this.score.confirmed }
-                    score={ this.score }
-                    scoreData={ score_data }
-                    onScoreUpdate={ this.handleScoreUpdate }
-                />
-                <ConfirmationButton
-                    canConfirm={ this.canConfirm() }
-                    confirmed={ this.score.confirmed }
-                    onConfirm={ this.handleConfirm }
-                />
-            </div>
+            <ScoringComponent
+                readOnly={ this.props.score.confirmed }
+                score={ this.props.score }
+                scoreData={ score_data }
+                onScoreUpdate={ this.handleScoreUpdate }
+            />
         );
     }
     renderNotOkStatusMessage() {
@@ -111,7 +72,6 @@ export default class Participant extends React.PureComponent {
         );
     }
     render() {
-        this.setupCache();
         const header = _("global.phrases.participant_n",
             this.props.run.participant.number,
             this.props.run.participant.name,

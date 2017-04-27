@@ -2,8 +2,6 @@ import _ from "l10n";
 
 import { Api } from "HostModules";
 
-import ConfirmationButton from "JudgeTablet/ConfirmationButton";
-
 import Element from "./Element";
 
 export default class ScoringLayout extends React.PureComponent {
@@ -24,33 +22,18 @@ export default class ScoringLayout extends React.PureComponent {
                     name: PT.string.isRequired,
                     sportsmen: PT.array.isRequired,
                 }).isRequired,
-                scores: PT.arrayOf(
-                    PT.shape({
-                        discipline_judge_id: PT.number.isRequired,
-                    }).isRequired,
-                ).isRequired,
+            }).isRequired,
+            score: PT.shape({
+                confirmed: PT.bool.isRequired,
+                id: PT.number.isRequired,
+                data: PT.object.isRequired,
             }).isRequired,
             onScoreConfirm: PT.func.isRequired,
         };
     }
 
-    getScore() {
-        for (const score of this.props.run.scores) {
-            if (score.discipline_judge_id === this.props.disciplineJudge.id) {
-                return score;
-            }
-        }
-        return null;
-    }
-    setupCache() {
-        this.score = this.getScore();
-    }
-
-    handleConfirmation = () => {
-        this.props.onScoreConfirm(this.score.id);
-    }
     handleAcroOverride = (acro_idx, value) => {
-        if (this.score.confirmed) {
+        if (this.props.score.confirmed) {
             return;
         }
         Api("acrobatic_override.set", {
@@ -68,14 +51,10 @@ export default class ScoringLayout extends React.PureComponent {
                         acro={ acro }
                         idx={ idx }
                         key={ idx }
-                        readOnly={ this.score.confirmed }
+                        readOnly={ this.props.score.confirmed }
                         onAcroOverride={ this.handleAcroOverride }
                     />
                 ) }
-                <ConfirmationButton
-                    confirmed={ this.score.confirmed }
-                    onConfirm={ this.handleConfirmation }
-                />
             </div>
         )
     }
@@ -89,8 +68,7 @@ export default class ScoringLayout extends React.PureComponent {
         );
     }
     render() {
-        this.setupCache();
-        if (this.score === null) {
+        if (this.props.score === null) {
             return (
                 <div />
             );

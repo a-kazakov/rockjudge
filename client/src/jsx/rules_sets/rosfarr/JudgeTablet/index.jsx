@@ -17,6 +17,7 @@ export default class JudgeTablet extends React.PureComponent {
         return {
             disciplineJudge: PT.object.isRequired,
             tour: PT.shape({
+                id: PT.number.isRequired,
                 scoring_system_name: PT.string.isRequired,
             }).isRequired,
         };
@@ -43,6 +44,13 @@ export default class JudgeTablet extends React.PureComponent {
     handleScoreConfirm = (score_id) => {
         Api("score.confirm", { score_id: score_id }).send();
     }
+    handleHeatConfirm = (heat) => {
+        Api("tour.confirm_heat", {
+            tour_id: this.props.tour.id,
+            discipline_judge_id: this.props.disciplineJudge.id,
+            heat: heat,
+        }).send();
+    }
 
     render() {
         const scoring_type = getScoringType(this.props.disciplineJudge, this.props.tour.scoring_system_name);
@@ -57,6 +65,7 @@ export default class JudgeTablet extends React.PureComponent {
                 <LayoutClass
                     disciplineJudge={ this.props.disciplineJudge }
                     tour={ this.props.tour }
+                    onHeatConfirm={ this.handleHeatConfirm }
                     onScoreConfirm={ this.handleScoreConfirm }
                     onScoreUpdate={ this.handleScoreUpdate }
                 />

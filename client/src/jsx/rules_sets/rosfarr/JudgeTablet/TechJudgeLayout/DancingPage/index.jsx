@@ -12,9 +12,9 @@ export default class DancingPage extends React.PureComponent {
                     id: PT.number.isRequired,
                 }).isRequired,
             ).isRequired,
+            scores: PT.instanceOf(Map).isRequired,
             tour: PT.object.isRequired,
             onScoreUpdate: PT.func.isRequired,
-            onScoreConfirm: PT.func.isRequired,
         };
     }
 
@@ -24,19 +24,17 @@ export default class DancingPage extends React.PureComponent {
                 disciplineJudge={ this.props.disciplineJudge }
                 key={ run.id }
                 run={ run }
+                score={ this.props.scores.get(run.id) }
                 tour={ this.props.tour }
-                onScoreConfirm={ this.props.onScoreConfirm }
                 onScoreUpdate={ this.props.onScoreUpdate }
             />
         );
     }
     render() {
         return (
-            <div className="body">
-                <Grid>
-                    { this.renderScores() }
-                </Grid>
-            </div>
+            <Grid>
+                { this.renderScores() }
+            </Grid>
         );
     }
 }

@@ -32,6 +32,8 @@ class Score(BaseModel):
         self.save()
 
     def confirm(self, ws_message):
+        if self.run.tour.finalized:
+            raise ApiError("errors.score.update_on_finalized_tour")
         self.confirmed = True
         self.save()
         ws_message.add_model_update(
@@ -40,6 +42,8 @@ class Score(BaseModel):
         )
 
     def unconfirm(self, ws_message):
+        if self.run.tour.finalized:
+            raise ApiError("errors.score.update_on_finalized_tour")
         self.confirmed = False
         self.save()
         ws_message.add_model_update(

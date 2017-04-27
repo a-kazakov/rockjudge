@@ -3,8 +3,6 @@ import _ from "l10n";
 import SelectorInput from "tablet_ui/SelectorInput";
 import IntegerInput from "tablet_ui/IntegerInput";
 
-import ConfirmationButton from "JudgeTablet/ConfirmationButton";
-
 import PreviousCards from "JudgeTablet/HeadJudgeLayout/HeatsPage/ScoringLayout/PreviousCards";
 
 import StopWatch from "./StopWatch";
@@ -23,40 +21,23 @@ export default class ScoringLayout extends React.PureComponent {
                     name: PT.string.isRequired,
                     sportsmen: PT.array.isRequired,
                 }).isRequired,
-                scores: PT.arrayOf(
-                    PT.shape({
-                        discipline_judge_id: PT.number.isRequired,
-                    }).isRequired,
-                ).isRequired,
+            }).isRequired,
+            score: PT.shape({
+                confirmed: PT.bool.isRequired,
+                id: PT.number.isRequired,
+                data: PT.object.isRequired,
             }).isRequired,
             tour: PT.shape({
                 scoring_system_name: PT.string.isRequired,
             }).isRequired,
-            onScoreConfirm: PT.func.isRequired,
             onScoreUpdate: PT.func.isRequired,
         };
     }
 
-    getScore() {
-        for (const score of this.props.run.scores) {
-            if (score.discipline_judge_id === this.props.disciplineJudge.id) {
-                return score;
-            }
-        }
-        return null;
-    }
-
-    setupCache() {
-        this.score = this.getScore();
-    }
-
-    handleConfirmation = () => {
-        this.props.onScoreConfirm(this.score.id);
-    }
     handleScoreChange = (part, value) => {
         let data = {};
         data[part] = value;
-        this.props.onScoreUpdate(this.score.id, data);
+        this.props.onScoreUpdate(this.props.score.id, data);
     }
 
     handleJumpStepsChange = (value) => this.handleScoreChange("jump_steps", value);
@@ -68,7 +49,7 @@ export default class ScoringLayout extends React.PureComponent {
     }
 
     renderScoringLayout() {
-        const score = this.score.data;
+        const score = this.props.score.data;
         const cards = ["rosfarr.formation", "rosfarr.formation_acro"].includes(this.props.tour.scoring_system_name)
             ? [
                 [null,  "—"],
@@ -89,7 +70,7 @@ export default class ScoringLayout extends React.PureComponent {
                 </h3>
                 <SelectorInput
                     choices={ cards }
-                    readOnly={ this.score.confirmed }
+                    readOnly={ this.props.score.confirmed }
                     value={ score.raw_data.card }
                     onChange={ this.handleCardChange }
                 />
@@ -101,7 +82,7 @@ export default class ScoringLayout extends React.PureComponent {
                     <h3>{ _("tablet.tech_judge.jump_steps") }</h3>
                     <IntegerInput
                         sendDeltas
-                        readOnly={ this.score.confirmed }
+                        readOnly={ this.props.score.confirmed }
                         value={ score.raw_data.jump_steps }
                         onChange={ this.handleJumpStepsChange }
                     />
@@ -112,17 +93,13 @@ export default class ScoringLayout extends React.PureComponent {
                         { _("tablet.tech_judge.timing") }
                     </h3>
                     <StopWatch
-                        readOnly={ this.score.confirmed }
-                        scoreId={ this.score.id }
+                        readOnly={ this.props.score.confirmed }
+                        scoreId={ this.props.score.id }
                         value={ score.raw_data.time }
                         onChange={ this.handleTimeChange }
                     />
                 </div>
-                <div className="spacer clearfix" />
-                <ConfirmationButton
-                    confirmed={ this.score.confirmed }
-                    onConfirm={ this.handleConfirmation }
-                />
+                <div className="clearfix" />
             </div>
         )
     }
@@ -136,8 +113,7 @@ export default class ScoringLayout extends React.PureComponent {
         );
     }
     render() {
-        this.setupCache();
-        if (this.score === null) {
+        if (this.props.score === null) {
             return (
                 <div />
             );

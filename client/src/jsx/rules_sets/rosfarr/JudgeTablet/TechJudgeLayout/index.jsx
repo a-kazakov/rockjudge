@@ -3,6 +3,7 @@ import _ from "l10n";
 import Header from "JudgeTablet/Header";
 import Footer from "JudgeTablet/Footer";
 import FooterItem from "JudgeTablet/Footer/FooterItem";
+import ConfirmationButton from "JudgeTablet/ConfirmationButton";
 
 import DancingPage from "./DancingPage";
 import AcroPage from "./AcroPage";
@@ -30,7 +31,7 @@ export default class TechJudgeLayout extends React.PureComponent {
                     }).isRequired,
                 ).isRequired,
             }).isRequired,
-            onScoreConfirm: PT.func.isRequired,
+            onHeatConfirm: PT.func.isRequired,
             onScoreUpdate: PT.func.isRequired,
         };
     }
@@ -64,10 +65,24 @@ export default class TechJudgeLayout extends React.PureComponent {
         }
         return this.heats_count || Math.max(1, ...this.props.tour.runs.map(run => run.heat));
     }
+    getScores() {
+        let result = new Map();
+        for (const run of this.runs) {
+            result.set(run.id, null);
+            for (const score of run.scores) {
+                if (score.discipline_judge_id === this.props.disciplineJudge.id) {
+                    result.set(run.id, score);
+                    break;
+                }
+            }
+        }
+        return result;
+    }
     setupCache() {
         this.heats_count = Math.max(1, ...this.props.tour.runs.map(run => run.heat));
         this.runs = this.props.tour.runs.filter(run => run.heat === this.state.heat);
         this.first_non_confirmed_heat = this.getFirstNonConfirmedHeat();
+        this.scores = this.getScores();
     }
 
 
@@ -78,13 +93,17 @@ export default class TechJudgeLayout extends React.PureComponent {
     handleNextHeatClick = () => this.updateHeat(1);
     handlePageChange = (page) => this.setState({ page });
 
+    handleConfirm = () => {
+        this.props.onHeatConfirm(this.state.heat);
+    }
+
     renderDancing() {
         return (
             <DancingPage
                 disciplineJudge={ this.props.disciplineJudge }
                 runs={ this.runs }
+                scores={ this.scores }
                 tour={ this.props.tour }
-                onScoreConfirm={ this.props.onScoreConfirm }
                 onScoreUpdate={ this.props.onScoreUpdate }
             />
         );
@@ -94,8 +113,8 @@ export default class TechJudgeLayout extends React.PureComponent {
             <AcroPage
                 disciplineJudge={ this.props.disciplineJudge }
                 runs={ this.runs }
+                scores={ this.scores }
                 tour={ this.props.tour }
-                onScoreConfirm={ this.props.onScoreConfirm }
                 onScoreUpdate={ this.props.onScoreUpdate }
             />
         );
@@ -123,7 +142,7 @@ export default class TechJudgeLayout extends React.PureComponent {
         }
     }
     renderFooter() {
-        if (["rosfarr.acro", "rosfarr.am_final_acro"].indexOf(this.props.tour.scoring_system_name) < 0) {
+        if (["rosfarr.acro", "rosfarr.am_qual", "rosfarr.am_final_acro"].indexOf(this.props.tour.scoring_system_name) < 0) {
             return null;
         }
         return (
@@ -144,7 +163,15 @@ export default class TechJudgeLayout extends React.PureComponent {
         return (
             <div className="rosfarr-JudgeTablet TechJudgeLayout">
                 { this.renderHeader() }
-                { this.renderBody() }
+                <div className="body">
+                    { this.renderBody() }
+                    <ConfirmationButton
+                        canConfirm
+                        confirmed={ Array.from(this.scores.values()).every(s => s.confirmed) }
+                        key={ this.state.heat }
+                        onConfirm={ this.handleConfirm }
+                    />
+                </div>
                 { this.renderFooter() }
             </div>
         );

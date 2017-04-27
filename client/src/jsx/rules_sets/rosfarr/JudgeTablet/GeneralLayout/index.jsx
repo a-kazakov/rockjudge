@@ -2,6 +2,8 @@ import Header from "JudgeTablet/Header";
 import Grid from "JudgeTablet/Grid";
 import Participant from "./Participant";
 
+import ConfirmationButton from "JudgeTablet/ConfirmationButton";
+
 export default class GeneralLayout extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
@@ -25,6 +27,7 @@ export default class GeneralLayout extends React.PureComponent {
                     }).isRequired,
                 ).isRequired,
             }).isRequired,
+            onHeatConfirm: PT.func.isRequired,
             onScoreConfirm: PT.func.isRequired,
             onScoreUpdate: PT.func.isRequired,
         };
@@ -49,6 +52,32 @@ export default class GeneralLayout extends React.PureComponent {
         }
     }
 
+    canConfirm() {
+        for (const score of this.scores.values()) {
+            const score_data = score.data.raw_data;
+            if (score.confirmed) {
+                continue;
+            }
+            for (const key of Object.keys(score_data)) {
+                const value = score_data[key];
+                if (Array.isArray(value)) {
+                    if (value.filter(a => a === null).length !== 0) {
+                        return false;
+                    }
+                } else {
+                    if (value === null) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    handleConfirm = () => {
+        this.props.onHeatConfirm(this.state.heat);
+    }
+
     getFirstNonConfirmedHeat() {
         for (const run of this.props.tour.runs) {
             for (const score of run.scores) {
@@ -59,10 +88,24 @@ export default class GeneralLayout extends React.PureComponent {
         }
         return this.heats_count || Math.max(1, ...this.props.tour.runs.map(run => run.heat));
     }
+    getScores() {
+        let result = new Map();
+        for (const run of this.runs) {
+            result.set(run.id, null);
+            for (const score of run.scores) {
+                if (score.discipline_judge_id === this.props.disciplineJudge.id) {
+                    result.set(run.id, score);
+                    break;
+                }
+            }
+        }
+        return result;
+    }
     setupCache() {
         this.heats_count = Math.max(1, ...this.props.tour.runs.map(run => run.heat));
         this.runs = this.props.tour.runs.filter(run => run.heat === this.state.heat);
         this.first_non_confirmed_heat = this.getFirstNonConfirmedHeat();
+        this.scores = this.getScores();
     }
 
 
@@ -87,17 +130,24 @@ export default class GeneralLayout extends React.PureComponent {
                 />
                 <div className="body">
                     <Grid>
-                        { this.props.tour.runs.filter(run => run.heat === this.state.heat).map(run =>
+                        { this.runs.map(run =>
                             <Participant
                                 disciplineJudge={ this.props.disciplineJudge }
                                 key={ run.id }
                                 layoutClass={ this.props.layoutClass }
                                 run={ run }
+                                score={ this.scores.get(run.id) }
                                 onScoreConfirm={ this.props.onScoreConfirm }
                                 onScoreUpdate={ this.props.onScoreUpdate }
                             />
                         )}
                     </Grid>
+                    <ConfirmationButton
+                        canConfirm={ this.canConfirm() }
+                        confirmed={ Array.from(this.scores.values()).every(s => s.confirmed) }
+                        key={ this.state.heat }
+                        onConfirm={ this.handleConfirm }
+                    />
                 </div>
             </div>
         );

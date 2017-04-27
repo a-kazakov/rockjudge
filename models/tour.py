@@ -348,6 +348,25 @@ class Tour(BaseModel):
             }
         )
 
+    def confirm_heat(self, discipline_judge, heat, ws_message):
+        if self.finalized:
+            raise ApiError("errors.score.update_on_finalized_tour")
+        from models.score import Score
+        from models.run import Run
+        scores = Score.select().join(Run).where(
+            (Score.discipline_judge == discipline_judge) &
+            (Score.confirmed == False) &  # NOQA
+            (Run.heat == heat)
+        ).execute()
+        ids = [score.id for score in scores]
+        Score.update(confirmed=True).where(Score.id << ids).execute()
+        for score in scores:
+            ws_message.add_model_update(
+                model_type=Score,
+                model_id=score.id,
+            )
+
+
     def finalize(self, ws_message):
         self.check_prev_tour_finalized()
         if self.active:
