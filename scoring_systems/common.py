@@ -29,7 +29,10 @@ class SkatingSystem:
     @property
     def places_by_runs(self):
         if not hasattr(self, "_places_by_runs"):
-            self._places_by_runs = list(zip(*self.places_by_judges))
+            if len(self.places_by_judges) > 0:
+                self._places_by_runs = list(zip(*self.places_by_judges))
+            else:
+                self._places_by_runs = self.scores_by_runs
         return self._places_by_runs
 
     def compute_skating_table_row(self, places):

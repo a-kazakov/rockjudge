@@ -837,33 +837,50 @@ class FormationTourScores:
         self.tour = tour
         self.discipline_judges = list(tour.discipline_judges)
         self.dance_discipline_judges = [judge for judge in self.discipline_judges if judge.role == "dance_judge"]
-        self.run_scores = [
+        self.good_run_scores = [
             FormationRunScore(run, scoring_system, discipline_judges=self.discipline_judges)
             for run in self.tour.runs
+            if run.status == "OK"
         ]
-        self.skating = SkatingSystem([rs.dance_judges_total_scores for rs in self.run_scores])
-        for run_score, places in zip(self.run_scores, self.skating.places_by_runs):
+        self.np_runs = [run for run in self.tour.runs if run.status == "NP"]
+        self.dq_runs = [run for run in self.tour.runs if run.status == "DQ"]
+        self.skating = SkatingSystem([rs.dance_judges_total_scores for rs in self.good_run_scores])
+        for run_score, places in zip(self.good_run_scores, self.skating.places_by_runs):
             run_score.populate_with_places(places)
         self.calc_places()
 
     def calc_places(self):
-        tmp = zip(self.skating.places, [rs.nexttour_score for rs in self.run_scores], count())
-        tmp = sorted(tmp, key=lambda x: (x[0], x[1],))
+        tmp_good = zip(self.skating.places, [rs.nexttour_score for rs in self.good_run_scores], count())
+        tmp_good = sorted(tmp_good, key=lambda x: (x[0], x[1],))
         current_place = 1
         latest_row = None
-        self.places = [0] * len(tmp)
-        for idx, (place, nt, row_idx) in enumerate(tmp):
+        self.places = [None] * len(tmp_good)
+        for idx, (place, nt, row_idx) in enumerate(tmp_good):
             if (place, nt,) != latest_row:
                 current_place = idx + 1
             latest_row = (place, nt,)
             self.places[row_idx] = current_place
 
     def get_results(self):
-        return [{
-            "run": run_score.run,
-            "place": place,
-            "advances": place <= self.tour.num_advances and run_score.run.status == "OK",
-            "additional_data": {
-                "places": run_score.get_places(),
-            }
-        } for place, run_score in sorted(zip(self.places, self.run_scores), key=lambda x: x[0])]
+        return (
+            [{
+                "run": run_score.run,
+                "place": place,
+                "advances": place <= self.tour.num_advances and run_score.run.status == "OK",
+                "additional_data": {
+                    "places": run_score.get_places(),
+                }
+            } for place, run_score in sorted(zip(self.places, self.good_run_scores), key=lambda x: x[0])] +
+            [{
+                "run": run,
+                "place": len(self.good_run_scores) + 1,
+                "advances": False,
+                "additional_data": {},
+            } for run in self.np_runs] +
+            [{
+                "run": run,
+                "place": None,
+                "advances": False,
+                "additional_data": {},
+            } for run in self.dq_runs]
+        )

@@ -214,7 +214,7 @@ export default class InfoCell extends React.PureComponent {
         )
     }
     renderDisqualifiedLabel() {
-        if (!this.props.row.run.status !== "DQ") {
+        if (this.props.row.run.status !== "DQ") {
             return null;
         }
         return (
