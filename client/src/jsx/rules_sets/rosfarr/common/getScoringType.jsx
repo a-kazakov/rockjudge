@@ -17,8 +17,12 @@ export default function getScoringType(discipline_judge, scoring_system_name) {
         switch (scoring_system_name) {
         case "rosfarr.am_final_fw":
             return "dance";
-        default:
+        case "rosfarr.am_final_acro":
+        case "rosfarr.am_qual":
+        case "acro":
             return "acro";
+        default:
+            return null
         }
     case "tech_judge":
         return "tech";

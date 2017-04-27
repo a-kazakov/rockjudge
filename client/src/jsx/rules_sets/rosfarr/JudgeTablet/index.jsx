@@ -1,3 +1,5 @@
+import _ from "l10n";
+
 import getScoringType from "common/getScoringType";
 
 import AcrobaticsLayout from "./AcrobaticsLayout";
@@ -54,6 +56,15 @@ export default class JudgeTablet extends React.PureComponent {
 
     render() {
         const scoring_type = getScoringType(this.props.disciplineJudge, this.props.tour.scoring_system_name);
+        if (scoring_type === null) {
+            return (
+                <div className="rosfarr-JudgeTablet">
+                    <div className="error-message">
+                        { _("tablet.global.wrong_judge_role") }
+                    </div>
+                </div>
+            );
+        }
         let LayoutClass = JudgeTablet.LAYOUTS[scoring_type];
         if (!LayoutClass) {
             return (

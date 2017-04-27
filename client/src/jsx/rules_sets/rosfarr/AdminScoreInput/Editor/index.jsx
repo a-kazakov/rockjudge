@@ -1,3 +1,5 @@
+import _ from "l10n";
+
 import getScoringType from "common/getScoringType";
 
 import ConfirmationButton from "./ConfirmationButton";
@@ -24,6 +26,30 @@ export default class Editor extends React.PureComponent {
             onDiscard: PT.func.isRequired,
             onSubmit: PT.func.isRequired,
         };
+    }
+
+    handleDiscardClick = (event) => {
+        event.stopPropagation();
+        this.props.onDiscard();
+    }
+
+    renderWrongJudgeRoleMessage() {
+        return (
+            <div className="score-editor">
+                <div className="error-message">
+                    { _("admin.messages.wrong_judge_role") }
+                </div>
+                <div className="buttons">
+                    <button
+                        className="discard-button"
+                        type="button"
+                        onClick={ this.handleDiscardClick }
+                    >
+                        { _("global.buttons.discard") }
+                    </button>
+                </div>
+            </div>
+        );
     }
     renderBody(scoring_type) {
         const score_props = {
@@ -65,6 +91,8 @@ export default class Editor extends React.PureComponent {
             return (
                 <TechJudgeScore { ...score_props } />
             );
+        case null:
+            return this.renderWrongJudgeRoleMessage();
         default:
             console.error(`Unknown scoring type: ${scoring_type}`);
         }

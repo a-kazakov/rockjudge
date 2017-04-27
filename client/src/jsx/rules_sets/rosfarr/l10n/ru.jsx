@@ -25,6 +25,9 @@ export default function translate(src, ...args) {
                 "unconfirm_score": "Отмена фиксации",
                 "unfinalize": "Отменить финализацию",
             },
+            "messages": {
+                "wrong_judge_role": "Неверно выбран тип судьи для данного тура",
+            },
         },
         "tablet": {
             "acro_judge": {
@@ -85,6 +88,7 @@ export default function translate(src, ...args) {
                 "mark_not_performed": "Невыход на площадку",
                 "not_performing": "Не выступает",
                 "total_score": "Сумма баллов",
+                "wrong_judge_role": "Для Вас неверно выбрана роль (например, судья акробатики в танцевальных дисциплинах).\nОбратитесь за помощью к администратору.",
             },
             "head_judge": {
                 "acrobatic_overrides": "Корректировки акробатики",
