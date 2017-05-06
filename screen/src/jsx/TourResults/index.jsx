@@ -1,5 +1,3 @@
-import { TourResultsLoader } from "HostModules";
-
 import Renderer from "./Renderer";
 
 export default class TourResults extends React.Component {
@@ -18,9 +16,7 @@ export default class TourResults extends React.Component {
 
     render() {
         return (
-            <TourResultsLoader
-                renderer={ Renderer }
-                showLoader={ false }
+            <Renderer
                 tourId={ this.props.competition.screen_data.controls_state.tour_id }
             />
         );

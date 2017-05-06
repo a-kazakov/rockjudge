@@ -1,5 +1,3 @@
-import DisciplineResultsLoader from "common/components/DisciplineResultsLoader";
-
 import DisciplineSelector from "./DisciplineSelector";
 import ResultsRenderer from "./ResultsRenderer";
 
@@ -31,9 +29,8 @@ export default class ResultsPage extends React.PureComponent {
             );
         }
         return (
-            <DisciplineResultsLoader
+            <ResultsRenderer
                 disciplineId={ this.state.currentDisciplineId }
-                renderer={ ResultsRenderer }
             />
         );
     }

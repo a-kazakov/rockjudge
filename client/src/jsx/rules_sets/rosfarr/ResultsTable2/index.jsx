@@ -4,7 +4,7 @@ import Row from "./Row";
 import ColumnsWidths from "./ColumnsWidths";
 
 import getJudgeTableMark from "getJudgeTableMark";
-import makeResultsTable from "common/makeResultsTable";
+import makeTourResultsTable from "common/makeTourResultsTable";
 
 export default class ResultsTable2 extends React.PureComponent {
     static get propTypes() {
@@ -85,7 +85,7 @@ export default class ResultsTable2 extends React.PureComponent {
         const has_next_tour = this.props.tour.next_tour_id !== null;
         const widths = new ColumnsWidths(line_judges.length, show_total_score);
         const djs_map = new Map(this.props.tour.discipline.discipline_judges.map(dj => [dj.id, dj]));
-        const table = makeResultsTable(this.props.tour);
+        const table = makeTourResultsTable(this.props.tour);
         let rows = [];
         for (let idx = 0; idx < table.length; ++idx) {
             rows.push(this.renderAdvancesHeader(

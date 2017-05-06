@@ -37,7 +37,6 @@ export default class JudgeTablet extends React.PureComponent {
         message_dispatcher.removeListener(this.reload_listener);
         message_dispatcher.removeListener(this.db_update_listener);
         message_dispatcher.removeListener(this.active_tour_update_listener);
-        this.freeStorage();
     }
 
     get TOUR_SCHEMA() {

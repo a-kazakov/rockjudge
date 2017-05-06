@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import Row from "./Row"
 
-import makeResultsTable from "common/makeResultsTable";
+import makeTourResultsTable from "common/makeTourResultsTable";
 
 export default class ResultsTable1 extends React.PureComponent {
     static get propTypes() {
@@ -78,7 +78,7 @@ export default class ResultsTable1 extends React.PureComponent {
         const is_formation = ["rosfarr.formation", "rosfarr.formation_acro"].includes(this.props.tour.scoring_system_name)
         const show_total_score = !is_formation;
         const djs_map = new Map(this.props.tour.discipline.discipline_judges.map(dj => [dj.id, dj]));
-        const table = makeResultsTable(this.props.tour);
+        const table = makeTourResultsTable(this.props.tour);
         let rows = [];
         for (let idx = 0; idx < table.length; ++idx) {
             rows.push(this.renderAdvancesHeader(

@@ -2,8 +2,6 @@ import _ from "l10n";
 
 import rules_set from "rules_sets/loader";
 
-import DisciplineResultsLoader from "common/components/DisciplineResultsLoader";
-
 export default class Results extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
@@ -25,12 +23,12 @@ export default class Results extends React.PureComponent {
         if (!this.props.config.disciplines[discipline.id]) {
             return null;
         }
+        const Renderer = rules_set.discipline_results_table;
         return (
             <div key={ discipline.id }>
                 <h5><p>{ discipline.name }</p></h5>
-                <DisciplineResultsLoader
-                    disciplineId={ discipline.id }
-                    renderer={ rules_set.discipline_results_table }
+                <Renderer
+                    discipline={ discipline }
                 />
             </div>
         )

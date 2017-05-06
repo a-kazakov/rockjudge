@@ -1,5 +1,3 @@
-import { DisciplineResultsLoader } from "HostModules";
-
 import Renderer from "./Renderer";
 
 export default class HeatsOneParticipant extends React.Component {
@@ -23,11 +21,12 @@ export default class HeatsOneParticipant extends React.Component {
 
     render() {
         return (
-            <DisciplineResultsLoader
-                disciplineId={ this.controls.discipline_id }
-                position={ this.controls.position }
-                renderer={ Renderer }
-            />
+            <div className="discipline-results">
+                <Renderer
+                    disciplineId={ this.controls.discipline_id }
+                    position={ this.controls.position }
+                />
+            </div>
         );
     }
 }

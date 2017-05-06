@@ -70,6 +70,14 @@ export default class CompetitionReport extends React.PureComponent {
                 discipline_judges: {
                     judge: {},
                 },
+                results: {},
+                tours: {
+                    runs: {
+                        participant: {
+                            club: {},
+                        },
+                    },
+                },
             },
             judges: {},
             clubs: {

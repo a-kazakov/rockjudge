@@ -4,7 +4,7 @@ import Row from "./Row";
 import ColumnsWidths from "./ColumnsWidths";
 
 import getJudgeTableMark from "getJudgeTableMark";
-import makeResultsTable from "common/makeResultsTable";
+import makeTourResultsTable from "common/makeTourResultsTable";
 
 export default class ResultsTable3 extends React.PureComponent {
     static get propTypes() {
@@ -61,7 +61,7 @@ export default class ResultsTable3 extends React.PureComponent {
             dj => ["acro_judge", "dance_judge"].indexOf(dj.role) >= 0);
         const widths = new ColumnsWidths(line_judges.length);
         const djs_map = new Map(this.props.tour.discipline.discipline_judges.map(dj => [dj.id, dj]));
-        const table = makeResultsTable(this.props.tour);
+        const table = makeTourResultsTable(this.props.tour);
         return (
             <div className="ResultsTable3">
                 <table className="bordered-table">

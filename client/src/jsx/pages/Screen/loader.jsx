@@ -2,8 +2,8 @@ import Api from "common/server/Api";
 import storage from "common/server/storage";
 import message_dispatcher from "common/server/message_dispatcher";
 
-import TourResultsLoader from "common/components/TourResultsLoader";
-import DisciplineResultsLoader from "common/components/DisciplineResultsLoader";
+import makeTourResultsTable from "common/makeTourResultsTable";
+import makeDisciplineResultsTable from "common/makeDisciplineResultsTable";
 
 class RulesSetLoader {
     constructor() {
@@ -40,8 +40,8 @@ window.registerScreen = function(...args) {
         Api,
         storage: storage.getDomain("screen"),
         message_dispatcher,
-        TourResultsLoader,
-        DisciplineResultsLoader,
+        makeTourResultsTable,
+        makeDisciplineResultsTable,
     };
 }
 

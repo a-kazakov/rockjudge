@@ -1,36 +1,45 @@
 import _ from "l10n";
 
+import makeDisciplineResultsTable from "common/makeDisciplineResultsTable";
+
 export default class DisciplineResultsTable extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
-            table: PT.arrayOf(
-                PT.shape({
-                    place: PT.number,
-                    run: PT.shape({
-                        participant: PT.shape({
-                            number: PT.number.isRequired,
-                            coaches: PT.string.isRequired,
-                            sportsmen: PT.arrayOf(
-                                PT.shape({
-                                    last_name: PT.string.isRequired,
-                                    first_name: PT.string.isRequired,
-                                    year_of_birth: PT.number.isRequired,
-                                    substitute: PT.bool.isRequired,
-                                })
-                            ),
-                            club: PT.shape({
-                                city: PT.string.isRequired,
-                                name: PT.string.isRequired,
-                            }).isRequired,
-                        }).isRequired,
+            discipline: PT.shape({
+                results: PT.arrayOf(
+                    PT.shape({
+                        run_id: PT.number.isRequired,
+                        place: PT.isRequired,
                     }).isRequired,
-                    tour: PT.shape({
+                ).isRequired,
+                tours: PT.arrayOf(
+                    PT.shape({
                         name: PT.string.isRequired,
+                        runs: PT.arrayOf(
+                            PT.shape({
+                                participant: PT.shape({
+                                    number: PT.number.isRequired,
+                                    coaches: PT.string.isRequired,
+                                    sportsmen: PT.arrayOf(
+                                        PT.shape({
+                                            last_name: PT.string.isRequired,
+                                            first_name: PT.string.isRequired,
+                                            year_of_birth: PT.number.isRequired,
+                                            substitute: PT.bool.isRequired,
+                                        })
+                                    ),
+                                    club: PT.shape({
+                                        city: PT.string.isRequired,
+                                        name: PT.string.isRequired,
+                                    }).isRequired,
+                                }).isRequired,
+                            }).isRequired,
+                        ).isRequired,
                     }).isRequired,
-                }).isRequired
-            ).isRequired,
-        };
+                ).isRequired,
+            }).isRequired,
+        }
     }
 
     static transformDocx(docx) {
@@ -117,7 +126,7 @@ export default class DisciplineResultsTable extends React.PureComponent {
     }
     renderRows() {
         let result = [];
-        const table = this.props.table;
+        const table = makeDisciplineResultsTable(this.props.discipline);
         for (let i = 0; i < table.length; ++i) {
             const header = this.renderRowHeader(table[i - 1], table[i]);
             if (header !== null) {

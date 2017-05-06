@@ -13,7 +13,6 @@ export default class Renderer extends React.PureComponent {
                 filename: PT.string.isRequired,
                 onDone: PT.func.isRequired,
             }),
-            table: PT.arrayOf(PT.object.isRequired).isRequired,
             discipline: PT.object.isRequired,
         };
     }

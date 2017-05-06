@@ -1,32 +1,100 @@
+import { Api, storage, message_dispatcher, makeDisciplineResultsTable } from "HostModules";
+
 export default class Renderer extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
-            discipline: PT.shape({
-                name: PT.string.isRequired,
-            }).isRequired,
+            disciplineId: PT.number.isRequired,
             position: PT.number,
-            table: PT.arrayOf(
-                PT.shape({
-                    place: PT.number,
-                    run: PT.shape({
-                        participant: PT.shape({
-                            name: PT.string.isRequired,
-                            club: PT.shape({
-                                name: PT.string.isRequired,
-                            }).isRequired,
-                        }).isRequired,
-                    }).isRequired,
-                }).isRequired,
-            ).isRequired,
         };
+    }
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            discipline: null,
+        };
+    }
+
+    componentWillMount() {
+        this.setupStorage();
+        this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData);
+        this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage);
+        this.loadData();
+    }
+    componentWillReceiveProps(next_props) {
+        if (this.props.disciplineId !== next_props.disciplineId) {
+            this.setState({
+                discipline: null,
+            });
+            this.freeStorage(this.props.disciplineId);
+            this.setupStorage(next_props.disciplineId);
+        }
+    }
+    componentDidUpdate(prev_props) {
+        if (prev_props.disciplineId !== this.props.disciplineId) {
+            this.loadData();
+        }
+    }
+    componentWillUnmount() {
+        message_dispatcher.removeListener(this.reload_listener);
+        message_dispatcher.removeListener(this.db_update_listener);
+        this.freeStorage();
+    }
+
+    get SCHEMA() {
+        return {
+            results: {},
+            competition: {},
+            discipline_judges: {
+                judge: {},
+            },
+            tours: {
+                runs: {
+                    participant: {
+                        club: {},
+                    },
+                },
+            },
+        };
+    }
+
+    setupStorage(discipline_id=null) {
+        if (discipline_id === null) {
+            discipline_id = this.props.disciplineId;
+        }
+        this.storage = storage.getDomain(`juding_scores_${discipline_id}`);
+    }
+    freeStorage(discipline_id=null) {
+        if (discipline_id === null) {
+            discipline_id = this.props.disciplineId;
+        }
+        storage.delDomain(`juding_scores_${discipline_id}`);
+    }
+
+    reloadFromStorage = () => {
+        const serialized = this.storage.get("Discipline")
+            .by_id(this.props.disciplineId)
+            .serialize(this.SCHEMA);
+        this.setState({
+            discipline: serialized,
+        });
+    }
+    loadData = () => {
+        Api("discipline.get", {
+            discipline_id: this.props.disciplineId,
+            children: this.SCHEMA,
+        })
+            .addToDB("Discipline", this.props.disciplineId, this.storage)
+            .onSuccess(this.reloadFromStorage)
+            .send();
     }
 
     renderEmpty() {
         return (
             <div className="Awarding">
                 <div className="discipline-name">
-                    { this.props.discipline.name }
+                    { this.state.discipline.name }
                 </div>
             </div>
         );
@@ -42,14 +110,18 @@ export default class Renderer extends React.Component {
         );
     }
     render() {
-        const row = this.props.table[this.props.position];
+        if (this.state.discipline === null) {
+            return null;
+        }
+        const table = makeDisciplineResultsTable(this.state.discipline)
+        const row = table[this.props.position];
         if (!row) {
             return this.renderEmpty();
         }
         return (
             <div className="Awarding">
                 <div className="discipline-name">
-                    { this.props.discipline.name }
+                    { this.state.discipline.name }
                 </div>
                 { this.renderPlace(row) }
                 <div className="participant-name">

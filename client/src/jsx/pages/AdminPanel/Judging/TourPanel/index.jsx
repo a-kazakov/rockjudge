@@ -72,7 +72,6 @@ export default class TourPanel extends React.PureComponent {
         return {
             discipline: {
                 competition: {},
-                results: {},
                 discipline_judges: {
                     judge: {},
                 },

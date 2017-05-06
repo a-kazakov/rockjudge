@@ -1,4 +1,4 @@
-export default function makeResultsTable(tour) {
+export default function makeTourResultsTable(tour) {
     // Build runs index
     let runs_index = new Map();
     for (const run of tour.runs) {
