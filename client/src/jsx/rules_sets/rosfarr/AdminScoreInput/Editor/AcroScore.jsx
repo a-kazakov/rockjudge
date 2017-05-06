@@ -8,7 +8,6 @@ export default class DanceScore extends React.PureComponent {
             score: PT.shape({
                 data: PT.shape({
                     raw_data: PT.shape({
-                        reductions: PT.arrayOf(PT.number),
                         mistakes:   PT.number,
                     }).isRequired,
                 }).isRequired,
@@ -20,16 +19,14 @@ export default class DanceScore extends React.PureComponent {
     }
 
     handleSubmission = (data) => {
-        let reductions = this.props.score.data.raw_data.reductions.slice(); // clone
-        for (const key of Object.keys(data)) {
-            if (key[0] === "A") {
-                const s_val = data[key];
-                reductions[parseInt(key.slice(1))] = s_val === "" ? -1 : parseInt(s_val);
-            }
-        }
         this.props.onSubmit({
-            reductions: reductions,
-            mistakes:   parseInt(data.mistakes),
+            a1: data["a1"] === "" ? null : parseInt(data.a1),
+            a2: data["a2"] === "" ? null : parseInt(data.a2),
+            a3: data["a3"] === "" ? null : parseInt(data.a3),
+            a4: data["a4"] === "" ? null : parseInt(data.a4),
+            a5: data["a5"] === "" ? null : parseInt(data.a5),
+            a6: data["a6"] === "" ? null : parseInt(data.a6),
+            mistakes: parseInt(data.mistakes),
         });
     }
 
@@ -43,18 +40,17 @@ export default class DanceScore extends React.PureComponent {
         }
     }
     render() {
-        let fields = this.props.score.data.raw_data.reductions.map((red, idx) => ({
-            key: `A${idx}`,
-            label: `A${idx + 1}:`,
-            options: genScale("?reduction"),
-            defaultValue: this.props.score.data.raw_data.reductions[idx] === null
-                ? ""
-                : this.props.score.data.raw_data.reductions[idx].toString(),
-        }));
-        fields.push(this.makeField("mistakes", "FD", genScale("numbers", { max: 100 })))
         return (
             <GeneralEditor
-                fields={ fields }
+                fields={ [
+                    this.makeField("a1", "A1", genScale("?reduction")),
+                    this.makeField("a2", "A2", genScale("?reduction")),
+                    this.makeField("a3", "A3", genScale("?reduction")),
+                    this.makeField("a4", "A4", genScale("?reduction")),
+                    this.makeField("a5", "A5", genScale("?reduction")),
+                    this.makeField("a6", "A6", genScale("?reduction")),
+                    this.makeField("mistakes", "FD", genScale("numbers",  { max: 100 })),
+                ] }
                 readOnly={ this.props.readOnly }
                 onDiscard={ this.props.onDiscard }
                 onSubmit={ this.handleSubmission }

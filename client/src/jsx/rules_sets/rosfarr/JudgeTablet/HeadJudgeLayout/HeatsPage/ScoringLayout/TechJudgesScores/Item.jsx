@@ -11,6 +11,7 @@ export default class Item extends React.PureComponent {
             judge: PT.shape({
                 name: PT.string.isRequired,
             }).isRequired,
+            run: PT.object.isRequired,
             score: PT.shape({
                 confirmed: PT.bool.isRequired,
                 data: PT.shape({
@@ -39,6 +40,7 @@ export default class Item extends React.PureComponent {
                 </div>
                 <VerboseJudgeScore
                     disciplineJudge={ this.props.disciplineJudge }
+                    run={ this.props.run }
                     score={ this.props.score }
                     tour={ this.props.tour }
                 />

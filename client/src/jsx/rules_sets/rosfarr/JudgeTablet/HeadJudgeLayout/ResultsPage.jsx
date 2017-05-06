@@ -8,6 +8,7 @@ export default class ResultsPage extends React.PureComponent {
         return {
             tour: PT.shape({
                 id: PT.number.isRequired,
+                results: PT.object.isRequired,
             }).isRequired,
         };
     }
@@ -17,9 +18,8 @@ export default class ResultsPage extends React.PureComponent {
     render() {
         return (
             <div className="body results">
-                <TourResultsLoader
-                    renderer={ ResultsTable2 }
-                    tourId={ this.props.tour.id }
+                <ResultsTable2
+                    tour={ this.props.tour }
                 />
             </div>
         )

@@ -49,6 +49,7 @@ export default class Row extends React.PureComponent {
             <VerboseJudgeScore
                 additionalData={ this.props.row.additional_data }
                 disciplineJudge={ discipline_judge }
+                run={ this.props.row.run }
                 score={ score }
                 showScore={ this.props.row.run.status === "OK" }
                 tour={ this.props.tour }

@@ -1,4 +1,6 @@
 import _ from "l10n";
+import Api from "common/server/Api";
+import Loader from "common/components/Loader";
 
 import NavButton from "./NavButton";
 
@@ -11,6 +13,9 @@ import ScoresTabButtons from "./ScoresTab/Buttons";
 import HeatsTabButtons from "./HeatsTab/Buttons";
 import TourResultsTabButtons from "./TourResultsTab/Buttons";
 import DisciplineResultsTabButtons from "./DisciplineResultsTab/Buttons";
+
+import storage from "common/server/storage";
+import message_dispatcher from "common/server/message_dispatcher";
 
 export default class TourPanel extends React.PureComponent {
     static get propTypes() {
@@ -26,19 +31,93 @@ export default class TourPanel extends React.PureComponent {
         };
     }
 
+    // Initialization
+
     constructor(props) {
         super(props);
         this.state = {
+            tour: null,
             page: this.getPageFromHash(),
         };
     }
 
+    componentWillMount() {
+        this.setupStorage();
+        this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData);
+        this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage);
+        this.loadData();
+    }
     componentWillReceiveProps(next_props) {
-        if (next_props.tour.id !== this.props.tour.id) {
+        if (this.props.tour.id !== next_props.tour.id) {
             this.setState({
+                tour: null,
                 page: this.getDefaultPage(next_props.tour),
             });
+            this.freeStorage(this.props.tour.id);
+            this.setupStorage(next_props.tour.id);
         }
+    }
+    componentDidUpdate(prev_props) {
+        if (prev_props.tour.id !== this.props.tour.id) {
+            this.loadData();
+        }
+    }
+    componentWillUnmount() {
+        message_dispatcher.removeListener(this.reload_listener);
+        message_dispatcher.removeListener(this.db_update_listener);
+        this.freeStorage();
+    }
+
+    get SCHEMA() {
+        return {
+            discipline: {
+                competition: {},
+                results: {},
+                discipline_judges: {
+                    judge: {},
+                },
+            },
+            results: {},
+            runs: {
+                acrobatics: {},
+                scores: {},
+                participant: {
+                    programs: {},
+                    club: {},
+                },
+            },
+        };
+    }
+
+    setupStorage(tour_id=null) {
+        if (tour_id === null) {
+            tour_id = this.props.tour.id;
+        }
+        this.storage = storage.getDomain(`juding_scores_${tour_id}`);
+    }
+    freeStorage(tour_id=null) {
+        if (tour_id === null) {
+            tour_id = this.props.tour.id;
+        }
+        storage.delDomain(`juding_scores_${tour_id}`);
+    }
+
+    reloadFromStorage = () => {
+        const serialized = this.storage.get("Tour")
+            .by_id(this.props.tour.id)
+            .serialize(this.SCHEMA);
+        this.setState({
+            tour: serialized,
+        });
+    }
+    loadData = () => {
+        Api("tour.get", {
+            tour_id: this.props.tour.id,
+            children: this.SCHEMA,
+        })
+            .addToDB("Tour", this.props.tour.id, this.storage)
+            .onSuccess(this.reloadFromStorage)
+            .send();
     }
 
     getDefaultPage(tour) {
@@ -131,7 +210,7 @@ export default class TourPanel extends React.PureComponent {
     }
     renderBody() {
         const props = {
-            tour: this.props.tour,
+            tour: this.state.tour,
             ref: this.makeBodyRef,
             onPageSwitch: this.handlePageSwitch,
         };
@@ -158,6 +237,11 @@ export default class TourPanel extends React.PureComponent {
         }
     }
     render() {
+        if (this.state.tour === null) {
+            return (
+                <Loader />
+            );
+        }
         return (
             <div className="TourPanel">
                 { this.renderHeader() }

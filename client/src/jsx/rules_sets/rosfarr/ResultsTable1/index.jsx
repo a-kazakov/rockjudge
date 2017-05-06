@@ -2,22 +2,29 @@ import _ from "l10n";
 
 import Row from "./Row"
 
+import makeResultsTable from "common/makeResultsTable";
+
 export default class ResultsTable1 extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
-            table: PT.arrayOf(
-                PT.shape({
-                    advances: PT.bool.isRequired,
-                    run: PT.shape({
-                        id: PT.number.isRequired,
-                        status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                    }).isRequired,
-                }).isRequired
-            ).isRequired,
             tour: PT.shape({
                 scoring_system_name: PT.string.isRequired,
                 next_tour_id: PT.number,
+                results: PT.arrayOf(
+                    PT.shape({
+                        place: PT.number,
+                        advances: PT.bool.isRequired,
+                        run_id: PT.number.isRequired,
+                        additional_data: PT.object.isRequired,
+                    }).isRequired,
+                ).isRequired,
+                runs: PT.arrayOf(
+                    PT.shape({
+                        id: PT.number.isRequired,
+                        status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
+                    }).isRequired,
+                ).isRequired,
                 discipline: PT.shape({
                     discipline_judges: PT.arrayOf(
                         PT.shape({
@@ -71,15 +78,16 @@ export default class ResultsTable1 extends React.PureComponent {
         const is_formation = ["rosfarr.formation", "rosfarr.formation_acro"].includes(this.props.tour.scoring_system_name)
         const show_total_score = !is_formation;
         const djs_map = new Map(this.props.tour.discipline.discipline_judges.map(dj => [dj.id, dj]));
+        const table = makeResultsTable(this.props.tour);
         let rows = [];
-        for (let idx = 0; idx < this.props.table.length; ++idx) {
+        for (let idx = 0; idx < table.length; ++idx) {
             rows.push(this.renderAdvancesHeader(
-                this.props.table[idx - 1],
-                this.props.table[idx],
+                table[idx - 1],
+                table[idx],
                 has_next_tour,
                 5 + show_total_score
             ));
-            const row = this.props.table[idx];
+            const row = table[idx];
             rows.push(
                 <Row
                     disciplineJudgesMap={ djs_map }

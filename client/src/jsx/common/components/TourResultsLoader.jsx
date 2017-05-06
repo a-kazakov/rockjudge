@@ -22,7 +22,6 @@ export default class TourResultsLoader extends React.PureComponent {
         super(props);
         this.state = {
             tour: null,
-            results: null,
         };
     }
 
@@ -71,6 +70,7 @@ export default class TourResultsLoader extends React.PureComponent {
                     judge: {},
                 },
             },
+            results: {},
             runs: {
                 acrobatics: {},
                 scores: {},
@@ -96,22 +96,8 @@ export default class TourResultsLoader extends React.PureComponent {
 
     makeRendererRef = (ref) => this._renderer = ref;
 
-    handleTourResultsChanged = (message) => {
-        if (!message) {
-            this.loadResults();
-            return;
-        }
-        let tour_storage = this.storage.get("Tour").by_id(message["tour_id"]);
-        if (!tour_storage) {
-            return;
-        }
-        if (tour_storage.id === this.props.tourId) {
-            this.loadResults();
-        }
-    }
-
     getMergedResults() {
-        if (this.state.results === null || this.state.tour === null) {
+        if (this.state.tour === null) {
             return null;
         }
         // Build runs index
@@ -120,7 +106,7 @@ export default class TourResultsLoader extends React.PureComponent {
             runs_index.set(run.id, run);
         }
         // Merge results
-        const result = this.state.results.map(row => ({
+        const result = this.state.tour.results.map(row => ({
             place: row.place,
             advances: row.advances,
             additional_data: row.additional_data,
@@ -129,17 +115,6 @@ export default class TourResultsLoader extends React.PureComponent {
         return result;
     }
 
-    loadResults = () => {
-        Api("tour.get_results", {
-            tour_id: this.props.tourId,
-        })
-        .onSuccess(response => {
-            this.setState({
-                results: response,
-            });
-        })
-        .send();
-    }
     loadData = () => {
         Api("tour.get", {
             tour_id: this.props.tourId,

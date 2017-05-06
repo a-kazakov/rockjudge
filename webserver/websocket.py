@@ -56,6 +56,7 @@ class WsMessage:
     def __init__(self, ws_client_id=None):
         self.ws_client_id = ws_client_id
         self.model_updates = []
+        self.tour_results_updates = set()
         self.messages = []
 
     def add_model_update(self, model_type, model_id, schema=None):
@@ -66,6 +67,9 @@ class WsMessage:
             "model_id": model_id,
             "schema": schema,
         })
+
+    def add_tour_results_update(self, tour_id):
+        self.tour_results_updates.add(tour_id)
 
     def add_message(self, message, data=None):
         self.messages.append((message, data, ))
@@ -79,6 +83,7 @@ class WsMessage:
                 base[k] = v
 
     def serialize(self):
+        from models import Tour
         schemas = OrderedDict()
         for x in self.model_updates:
             key = (x["model_type"], x["model_id"])
@@ -90,6 +95,16 @@ class WsMessage:
             model = model_type.get(model_type.id == model_id)
             model.smart_prefetch(schema)
             updates.append(model.serialize_as_child(schema))
+        for tour_id in self.tour_results_updates:
+            discipline = Tour.get(id=tour_id).discipline
+            discipline.prefetch_for_results()
+            tour = next(t for t in discipline.tours if t.id == tour_id)
+            updates.append(tour.serialize_as_child({
+                "discipline": {
+                    "results": {},
+                },
+                "results": {},
+            }))
         return {
             "model_updates": updates,
             "messages": self.messages,

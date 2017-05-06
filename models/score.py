@@ -15,6 +15,9 @@ class Score(BaseModel):
             "tour": {},
         }
     }
+    PF_CHILDREN = {
+        "run": None,
+    }
 
     run = peewee.ForeignKeyField(Run, related_name="scores")
     discipline_judge = peewee.ForeignKeyField(DisciplineJudge)
@@ -23,13 +26,6 @@ class Score(BaseModel):
 
     def get_sorting_key(self, discipline_judge=None):
         return self.discipline_judge.get_sorting_key()
-
-    def get_data(self):
-        return dict(self.score_data)
-
-    def set_data(self, score_data):
-        self.score_data = score_data
-        self.save()
 
     def confirm(self, ws_message):
         if self.run.tour.finalized:
@@ -57,25 +53,37 @@ class Score(BaseModel):
                 return
         if self.run.tour.finalized:
             raise ApiError("errors.score.update_on_finalized_tour")
-        self.run.tour.scoring_system.update_score(self, new_data["score_data"])
+        self.score_data = self.run.tour.scoring_system.get_updated_score(
+            score_id=self.id,
+            score_data=self.score_data,
+            judge_role=self.discipline_judge.role,
+            client_data=new_data["score_data"],
+        )
+        self.save()
         ws_message.add_model_update(
             model_type=self.__class__,
             model_id=self.id,
+            schema={
+                "run": {},
+            },
         )
-        ws_message.add_model_update(
-            model_type=Run,
-            model_id=self.run_id,
-        )
-        ws_message.add_message("tour_results_changed", {"tour_id": self.run.tour_id})
+        ws_message.add_tour_results_update(self.run.tour_id)
 
     def serialize(self, children={}, discipline_judge=None):
-        if discipline_judge is not None:
-            self.discipline_judge = discipline_judge
-        return {
-            "discipline_judge_id": self.discipline_judge_id,
-            "data": self.run.tour.scoring_system.serialize_score(self, discipline_judge=discipline_judge),
+        if discipline_judge is None:
+            discipline_judge = self.discipline_judge
+        result = {
+            "discipline_judge_id": discipline_judge.id,
+            "data": self.run.tour.scoring_system.serialize_score(
+                score_id=self.id,
+                score_data=self.score_data,
+                judge_role=discipline_judge.role,
+                acro_scores=self.run.get_acro_scores(),
+            ),
             "confirmed": self.confirmed,
         }
+        result = self.serialize_upper_child(result, "run", children)
+        return result
 
     def export(self):
         return self.serialize()

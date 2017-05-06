@@ -11,6 +11,9 @@ class PrefetchedModel:
     PF_SCHEMA = {}
     PF_CHILDREN = {}
 
+    def get_sorting_key(self):  # Default
+        return 0
+
     @classmethod
     def _isUpperChild(cls, child_name):
         rel_manager = getattr(cls, child_name)
@@ -147,6 +150,14 @@ class PrefetchedModel:
         pf_schema = self._optimize_prefetch_schema(pf_schema)
         self.prefetch(pf_schema)
 
+    @classmethod
+    def smart_prefetch_multiple(cls, models, s_schema):
+        pf_schema = cls._gen_prefetch_schema(s_schema)
+        pf_schema = cls._optimize_prefetch_schema(pf_schema)
+        new_schema = cls._expand_prefetch_schema(pf_schema)
+        for child_schema in new_schema:
+            cls._prefetch_impl(models, child_schema)
+
 
 class BaseModel(peewee.Model, PrefetchedModel):
     class Meta:
@@ -154,9 +165,6 @@ class BaseModel(peewee.Model, PrefetchedModel):
 
     RW_PROPS = []
     RO_PROPS = []
-
-    def get_sorting_key(self):  # Default
-        return 0
 
     def get_back_ref(self, field):
         return None

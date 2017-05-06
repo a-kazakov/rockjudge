@@ -194,21 +194,41 @@ class Discipline(BaseModel):
             }
         )
 
-    def get_serialized_results(self):
+    def prefetch_for_results(self):
+        self.smart_prefetch({
+            "discipline_judges": {},
+            "tours": {},
+        })
+        tours_for_further_prefetch = [
+            t for t in self.tours
+            if not t.finalized or t.cached_results is None
+        ]
+        tour_proxy.smart_prefetch_multiple(tours_for_further_prefetch, {
+            "runs": {},
+        })
+        # Restore disciplines
+        for t in tours_for_further_prefetch:
+            t.discipline = self
+
+    @property
+    def results(self):
+        from models import Run
         result = []
         participants_added = set()
-        tours = list(reversed(list(self.tours)))
+        tours = list(reversed(self.tours))
+        all_runs = Run.select().where(Run.tour << tours).execute()
+        runs_by_id = {run.id: run for run in all_runs}
         for idx, tour in enumerate(tours):
             skip_place = not tour.finalized or (idx > 0 and tours[idx - 1].hope_tour)
-            tour_results = tour.scoring_system.get_tour_results(tour)
+            tour_results = tour.results
             place_offset = tours[idx + 1].total_advanced if idx < len(tours) - 1 and tour.hope_tour else 0
             for row in tour_results:
-                p_id = row["run"].participant.id
+                p_id = runs_by_id[row["run_id"]].participant_id
                 if p_id in participants_added:
                     continue
                 row = {
                     "place": row["place"] + place_offset if not skip_place and not row["advances"] else None,
-                    "run_id": row["run"].id,
+                    "run_id": row["run_id"],
                 }
                 participants_added.add(p_id)
                 result.append(row)
@@ -220,13 +240,15 @@ class Discipline(BaseModel):
         result = self.serialize_lower_child(result, "discipline_judges", children)
         result = self.serialize_lower_child(result, "tours", children)
         result = self.serialize_lower_child(result, "participants", children)
+        if "results" in children:
+            result["results"] = self.results
         return result
 
     def export(self):
         result = self.serialize_props()
         result.update({
             "id": self.id,
-            "results": self.get_serialized_results(),
+            "results": self.results,
             "tours": [tour.export() for tour in self.tours],
             "discipline_judges": [dj.export() for dj in self.discipline_judges],
             "participants": [

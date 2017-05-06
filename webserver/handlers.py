@@ -1,5 +1,7 @@
 import hashlib
 import json
+import logging
+import time
 
 import tornado.gen
 import tornado.web
@@ -8,12 +10,29 @@ import scoring_systems
 import settings
 from api import Api
 from db import Database
+from log import log_api
 from models import (
     Client,
     Competition,
     Judge,
 )
 from webserver.websocket import WsMessage
+
+
+class SqlLoggingHandler(logging.StreamHandler):
+    def __init__(self):
+        super().__init__()
+        self.cnt = 0
+
+    def emit(self, record):
+        # import re
+        # import traceback
+        # record = record.msg[0]
+        # record = re.sub(r'SELECT.+?FROM', 'SELECT * FROM', record)
+        # record = re.sub(r'(%s, )+%s', '...', record)
+        # print(record)
+        # print(traceback.print_stack())
+        self.cnt += 1
 
 
 class StaticFileHandlerNoCache(tornado.web.StaticFileHandler):
@@ -115,47 +134,67 @@ class ApiRequest:
 
 class ApiHandler(tornado.web.RequestHandler):
     def post(self):
-        data = json.loads(self.get_argument("data"))
-        method = self.get_argument("method")
         try:
-            ws_client_id = self.get_argument("ws_client_id")
-        except:
-            # TODO: add logging here
-            ws_client_id = None
-        ws_message = WsMessage(ws_client_id)
-        client = None
-        if method not in ("auth.register", "auth.exchange_keys", ):  # Check signature
+            begin = time.time()
+            hdlr = SqlLoggingHandler()
+            logger = logging.getLogger('peewee')
+            logger.setLevel(logging.DEBUG)
+            logger.addHandler(hdlr)
+            data = json.loads(self.get_argument("data"))
+            method = self.get_argument("method")
             try:
-                client = Client.get(id=self.get_argument("client_id"))
-                correct_sig_src = "{client_id}|{method}|{data}|{random}|{secret}".format(
-                    client_id=self.get_argument("client_id"),
-                    method=method,
-                    data=self.get_argument("data"),
-                    random=self.get_argument("random"),
-                    secret=client.secret,
-                )
-                correct_sig = hashlib.md5(correct_sig_src.encode()).hexdigest()
-                if correct_sig != self.get_argument("signature"):
-                    raise ValueError
+                ws_client_id = self.get_argument("ws_client_id")
             except:
-                self.write(json.dumps({
-                    "success": False,
-                    "code": "errors.auth.invalid_signature",
-                }, ensure_ascii=False))
-                return
-        request = ApiRequest(
-            body=data,
-            client=client,
-            method=method,
-            remote_ip=self.request.remote_ip,
-            ws_message=ws_message,
-        )
-        result = Api.call(request)
-        response = json.dumps(result, ensure_ascii=False)
-        if not ws_message.empty():
-            with Database.instance().db.transaction():
-                ws_message.send()
-        self.write(response)
+                # TODO: add logging here
+                ws_client_id = None
+            ws_message = WsMessage(ws_client_id)
+            client = None
+            if method not in ("auth.register", "auth.exchange_keys", ):  # Check signature
+                try:
+                    client = Client.get(id=self.get_argument("client_id"))
+                    correct_sig_src = "{client_id}|{method}|{data}|{random}|{secret}".format(
+                        client_id=self.get_argument("client_id"),
+                        method=method,
+                        data=self.get_argument("data"),
+                        random=self.get_argument("random"),
+                        secret=client.secret,
+                    )
+                    correct_sig = hashlib.md5(correct_sig_src.encode()).hexdigest()
+                    if correct_sig != self.get_argument("signature"):
+                        raise ValueError
+                except:
+                    response = json.dumps({
+                        "success": False,
+                        "code": "errors.auth.invalid_signature",
+                    }, ensure_ascii=False)
+                    self.write(response)
+                    return
+            request = ApiRequest(
+                body=data,
+                client=client,
+                method=method,
+                remote_ip=self.request.remote_ip,
+                ws_message=ws_message,
+            )
+            result = Api.call(request)
+            response = json.dumps(result, ensure_ascii=False)
+            if not ws_message.empty():
+                with Database.instance().db.transaction():
+                    ws_message.send()
+            self.write(response)
+        finally:
+            logger.removeHandler(hdlr)
+            total_time = time.time() - begin
+            log_api(
+                time=begin,
+                latency=total_time,
+                queries=hdlr.cnt + 1,
+                method=method,
+                body=data,
+                exception="",
+                response=response
+            )
+            print("Api call: {:<35s} {:4d}ms {:4d} queries".format(method, int(1000 * total_time), hdlr.cnt))
 
     def get(self):
         self.post()

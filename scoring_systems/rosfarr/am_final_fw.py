@@ -1,26 +1,90 @@
-from .impl import (
-    ScoreWrapper,
-    RunScore,
-    TourScores,
-)
+from fractions import Fraction as frac
+
+from .implementation.tour_contexts import TourContextNjs
+from .implementation.run_contexts import RunContextNjsFirstProgram
+from .implementation.score_contexts import ScoreContextBase
 
 
-def get_tour_results(tour):
-    return TourScores(tour, scoring_system="rosfarr.am_final_fw").get_results()
+SS_NAME = "am_final_fw"
 
 
-def get_run_scores(run, discipline_judges=None):
-    return RunScore(run, discipline_judges=discipline_judges, scoring_system="rosfarr.am_final_fw").serialize()
+def get_tour_results(runs, judges_roles, num_advances, tour_name):
+    context = TourContextNjs(
+        run_infos=runs,
+        judges_roles=judges_roles,
+        num_advances=num_advances,
+        tour_name=tour_name,
+        scoring_system_name=SS_NAME,
+    )
+    return context.results
 
 
-def serialize_score(score, discipline_judge=None):
-    return ScoreWrapper(score, discipline_judge=discipline_judge, scoring_system="rosfarr.am_final_fw").serialize()
+def get_run_scores(run_id, scores_ids, scores, judges_ids, judges_roles, acro_scores, inherited_data, status, tour_name):
+    if status != "OK":
+        return {
+            "total_run_score": "—",
+            "verbose_run_score": {},
+        }
+    context = RunContextNjsFirstProgram(
+        run_id=run_id,
+        scores_ids=scores_ids,
+        raw_scores=scores,
+        judges_roles=judges_roles,
+        acro_scores=acro_scores,
+        inherited_data=inherited_data,
+        status=status,
+        tour_name=tour_name,
+        scoring_system_name=SS_NAME,
+    )
+    return {
+        "total_run_score": context.display_score,
+        "verbose_run_score": {
+            "card": context.card,
+            "primary_score": float(context.first_score),
+            "secondary_score": float(context.second_score),
+            "nexttour": context.nexttour_mark,
+        },
+    }
 
 
-def update_score(score, client_data):
-    ScoreWrapper(score, scoring_system="rosfarr.am_final_fw").update(client_data)
+def serialize_score(score_id, score_data, judge_role, acro_scores):
+    context = ScoreContextBase.make(
+        score_id=score_id,
+        raw_data=score_data,
+        judge_role=judge_role,
+        acro_scores=acro_scores,
+        scoring_system_name=SS_NAME,
+    )
+    return {
+        "raw_data": context.user_data,
+        "total_score": (float(context.total_score)
+                        if type(context.total_score) is frac
+                        else context.total_score),
+    }
 
 
-def get_run_data_to_inherit(run, discipline_judges=None):
-    return RunScore(run, discipline_judges=discipline_judges, scoring_system="rosfarr.am_final_fw") \
-        .serialize_data_to_inherit()
+def get_updated_score(score_id, score_data, judge_role, client_data):
+    context = ScoreContextBase.make(
+        score_id=score_id,
+        raw_data=score_data,
+        judge_role=judge_role,
+        acro_scores=None,
+        scoring_system_name=SS_NAME,
+    )
+    context.update(client_data)
+    return context.db_data
+
+
+def get_run_data_to_inherit(run_id, scores_ids, scores, judges_roles, acro_scores, inherited_data, status, tour_name):
+    context = RunContextNjsFirstProgram(
+        run_id=run_id,
+        scores_ids=scores_ids,
+        raw_scores=scores,
+        judges_roles=judges_roles,
+        acro_scores=acro_scores,
+        inherited_data=inherited_data,
+        status=status,
+        tour_name=tour_name,
+        scoring_system_name=SS_NAME,
+    )
+    return context.data_to_inherit

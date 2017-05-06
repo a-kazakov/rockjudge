@@ -4,22 +4,29 @@ import Row from "./Row";
 import ColumnsWidths from "./ColumnsWidths";
 
 import getJudgeTableMark from "getJudgeTableMark";
+import makeResultsTable from "common/makeResultsTable";
 
 export default class ResultsTable3 extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
-           table: PT.arrayOf(
-                PT.shape({
-                    advances: PT.bool.isRequired,
-                    run: PT.shape({
-                        id: PT.number.isRequired,
-                    }).isRequired,
-                }).isRequired
-            ).isRequired,
             tour: PT.shape({
                 scoring_system_name: PT.string.isRequired,
                 next_tour_id: PT.number,
+                results: PT.arrayOf(
+                    PT.shape({
+                        place: PT.number,
+                        advances: PT.bool.isRequired,
+                        run_id: PT.number.isRequired,
+                        additional_data: PT.object.isRequired,
+                    }).isRequired,
+                ).isRequired,
+                runs: PT.arrayOf(
+                    PT.shape({
+                        id: PT.number.isRequired,
+                        status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
+                    }).isRequired,
+                ).isRequired,
                 discipline: PT.shape({
                     discipline_judges: PT.arrayOf(
                         PT.shape({
@@ -54,7 +61,7 @@ export default class ResultsTable3 extends React.PureComponent {
             dj => ["acro_judge", "dance_judge"].indexOf(dj.role) >= 0);
         const widths = new ColumnsWidths(line_judges.length);
         const djs_map = new Map(this.props.tour.discipline.discipline_judges.map(dj => [dj.id, dj]));
-
+        const table = makeResultsTable(this.props.tour);
         return (
             <div className="ResultsTable3">
                 <table className="bordered-table">
@@ -80,7 +87,7 @@ export default class ResultsTable3 extends React.PureComponent {
                         </tr>
                     </thead>
                     <tbody>
-                        { this.props.table.map(row =>
+                        { table.map(row =>
                             <Row
                                 disciplineJudgesMap={ djs_map }
                                 key={ row.run.id }

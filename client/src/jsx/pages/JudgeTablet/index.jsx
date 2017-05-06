@@ -42,6 +42,7 @@ export default class JudgeTablet extends React.PureComponent {
 
     get TOUR_SCHEMA() {
         return {
+            results: {},
             runs: {
                 participant: {},
                 scores: {},
@@ -96,7 +97,7 @@ export default class JudgeTablet extends React.PureComponent {
         })
             .addToDB("Tour", this._current_active_tour_id, this.tour_storage)
             .onSuccess(this.reloadFromStorage)
-            .send()
+            .send();
     }
 
     getJudgeFromStorage() {

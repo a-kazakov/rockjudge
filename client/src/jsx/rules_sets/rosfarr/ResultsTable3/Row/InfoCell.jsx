@@ -114,9 +114,9 @@ export default class InfoCell extends React.PureComponent {
         if (this.props.row.run.acrobatics.length === 0) {
             return null;
         }
-        const has_acro_overrides = this.props.row.run.acrobatics.findIndex(
+        const has_acro_overrides = this.props.row.run.acrobatics.some(
             element => element.score !== element.original_score
-        ) > 0;
+        );
         const acro_cell_width = `${(100 / this.props.row.run.acrobatics.length)}%`;
         return (
             <div>

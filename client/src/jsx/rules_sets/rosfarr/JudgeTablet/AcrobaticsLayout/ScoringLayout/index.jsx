@@ -7,6 +7,7 @@ export default class ScoringLayout extends React.PureComponent {
         const PT = React.PropTypes;
         return {
             readOnly: PT.bool.isRequired,
+            run: PT.object.isRequired,
             score: PT.object.isRequired,
             scoreData: PT.shape({
                 reductions: PT.any.isRequired,
@@ -16,10 +17,17 @@ export default class ScoringLayout extends React.PureComponent {
         };
     }
 
+    static canConfirm(score_data, run) {
+        for (let idx = 1; idx <= Math.min(run.acrobatics.length, 6); ++idx) {
+            if (score_data[`a${idx}`] === null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     handleAcroReductionUpdate = (acro_idx, value) => {
-        let reductions = this.props.scoreData.reductions.map(() => null);
-        reductions[acro_idx] = value;
-        this.props.onScoreUpdate("reductions", reductions);
+        this.props.onScoreUpdate(`a${acro_idx + 1}`, value);
     }
 
     render() {
@@ -27,7 +35,8 @@ export default class ScoringLayout extends React.PureComponent {
             <div>
                 <Elements
                     readOnly={ this.props.readOnly }
-                    reductions={ this.props.scoreData.reductions }
+                    run={ this.props.run }
+                    scoreData={ this.props.scoreData }
                     onAcroReductionUpdate={ this.handleAcroReductionUpdate }
                 />
                 <Mistakes

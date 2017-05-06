@@ -77,6 +77,7 @@ export default class TechJudgeScore extends React.PureComponent {
                     disciplineJudge={ dj }
                     judge={ dj.judge }
                     key={ dj.id }
+                    run={ this.props.run }
                     score={ score }
                     showVerbose={ this.state.verboseIdx === idx }
                     tour={ this.props.tour }

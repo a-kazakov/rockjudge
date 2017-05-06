@@ -3,6 +3,8 @@ import random
 
 from collections import defaultdict
 
+from playhouse import postgres_ext
+
 from exceptions import ApiError
 from models.base_model import BaseModel
 from models.discipline import Discipline
@@ -26,6 +28,7 @@ class Tour(BaseModel):
     total_advanced = peewee.IntegerField(default=0)
     discipline = peewee.ForeignKeyField(Discipline, related_name="raw_tours")
     scoring_system_name = peewee.CharField()
+    cached_results = postgres_ext.BinaryJSONField(null=True, default=None)
 
     RW_PROPS = ["name", "num_advances", "participants_per_heat", "hope_tour", "scoring_system_name", "default_program"]
     RO_PROPS = ["finalized", "active"]
@@ -37,7 +40,16 @@ class Tour(BaseModel):
             "discipline": {
                 "discipline_judges": None,
             },
-        }
+        },
+        "results": {
+            "runs": {
+                "scores": None,
+                "acrobatic_overrides": None,
+            },
+            "discipline": {
+                "discipline_judges": None,
+            },
+        },
     }
 
     def full_prefetch(self):
@@ -61,16 +73,18 @@ class Tour(BaseModel):
             prev_tour = self.get_prev_tour(throw=True)
             prev_tour.full_prefetch()
             if self.hope_tour:
+                run_by_id = {run.id: run for run in prev_tour.runs}
                 return [
-                    (row["run"].participant, row["run"].get_data_to_inherit())
-                    for row in prev_tour.scoring_system.get_tour_results(prev_tour)
-                    if not row["advances"] and not row["run"].disqualified
+                    (run_by_id[row["run_id"]].participant, run_by_id[row["run_id"]].get_data_to_inherit())
+                    for row in prev_tour.results
+                    if not row["advances"] and not run_by_id[row["run_id"]].disqualified
                 ]
             result = []
             while True:
+                run_by_id = {run.id: run for run in prev_tour.runs}
                 result += [
-                    (row["run"].participant, row["run"].get_data_to_inherit())
-                    for row in prev_tour.scoring_system.get_tour_results(prev_tour)
+                    (run_by_id[row["run_id"]].participant, run_by_id[row["run_id"]].get_data_to_inherit())
+                    for row in prev_tour.results
                     if row["advances"]
                 ]
                 if prev_tour.hope_tour:
@@ -334,6 +348,9 @@ class Tour(BaseModel):
     def discipline_judges(self):
         return list(self.discipline.discipline_judges)
 
+    def discipline_judges_by_id(self):
+        return {dj.id: dj for dj in self.discipline_judges}
+
     def get_prev_tour(self, throw=False):
         prev_tours_list = list(self.prev_tour)
         if prev_tours_list == []:
@@ -364,7 +381,6 @@ class Tour(BaseModel):
             raise ApiError("error.tour.init_finalized")
         self.check_prev_tour_finalized(False)
         self.create_participant_runs()
-        ws_message.add_message("tour_results_changed", {"tour_id": self.id})
         ws_message.add_model_update(
             model_type=self.__class__,
             model_id=self.id,
@@ -379,6 +395,7 @@ class Tour(BaseModel):
                 }
             }
         )
+        ws_message.add_tour_results_update(self.id)
 
     def confirm_heat(self, discipline_judge, heat, ws_message):
         if self.finalized:
@@ -423,30 +440,34 @@ class Tour(BaseModel):
         self.check_prev_tour_finalized()
         if self.active:
             self.stop(ws_message)
+        results = self.results
+        self.cached_results = results
         self.finalized = True
         self.total_advanced = len([
             None
-            for row in self.scoring_system.get_tour_results(self)
+            for row in results
             if row["advances"]
         ])
         self.save()
         if self.next_tour:
             self.next_tour.init(ws_message)
-        ws_message.add_message("tour_results_changed", {"tour_id": self.id})
         ws_message.add_model_update(
             model_type=self.__class__,
-            model_id=self.id
+            model_id=self.id,
+            schema={}
         )
+        ws_message.add_tour_results_update(self.id)
 
     def unfinalize(self, ws_message):
         self.check_next_tour_not_finalized()
         self.finalized = False
         self.save()
-        ws_message.add_message("tour_results_changed", {"tour_id": self.id})
         ws_message.add_model_update(
             model_type=self.__class__,
-            model_id=self.id
+            model_id=self.id,
+            schema={}
         )
+        ws_message.add_tour_results_update(self.id)
 
     @property
     def scoring_system(self):
@@ -545,13 +566,28 @@ class Tour(BaseModel):
         if self.active:
             ws_message.add_message("active_tour_update", {"tour_id": None})
 
-    def get_serialized_results(self):
-        return [{
-            "run_id": row["run"].id,
-            "place": row["place"],
-            "advances": row["advances"],
-            "additional_data": row["additional_data"],
-        } for row in self.scoring_system.get_tour_results(self)]
+    @property
+    def results(self):
+        if self.finalized and self.cached_results is not None:
+            return self.cached_results
+        ordered_djs = sorted(self.discipline_judges, key=lambda dj: dj.id)
+        ss_runs = []
+        for run in self.runs:
+            ordered_scores = sorted(run.scores, key=lambda s: s.discipline_judge_id)
+            ss_runs.append({
+                "run_id": run.id,
+                "scores": [s.score_data for s in ordered_scores],
+                "scores_ids": [s.id for s in ordered_scores],
+                "acro_scores": run.get_acro_scores(),
+                "inherited_data": run.inherited_data,
+                "status": run.status,
+            })
+        return self.scoring_system.get_tour_results(
+            runs=ss_runs,
+            judges_roles=[dj.role for dj in self.discipline_judges],
+            num_advances=self.get_actual_num_advances(),
+            tour_name=self.name,
+        )
 
     def serialize(self, children={}):
         result = self.serialize_props()
@@ -560,6 +596,8 @@ class Tour(BaseModel):
         result = self.serialize_lower_child(
             result, "runs", children,
             lambda x, c: x.serialize(discipline_judges=list(self.discipline_judges), children=c))
+        if "results" in children:
+            result["results"] = self.results
         return result
 
     def export(self):

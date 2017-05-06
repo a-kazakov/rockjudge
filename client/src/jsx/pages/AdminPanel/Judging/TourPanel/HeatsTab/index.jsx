@@ -1,9 +1,7 @@
 import _ from "l10n";
 import Api from "common/server/Api";
 import Docx from "common/Docx";
-import Loader from "common/components/Loader";
 import storage from "common/server/storage";
-import message_dispatcher from "common/server/message_dispatcher";
 
 import Paper from "pages/AdminPanel/common/Paper";
 
@@ -19,6 +17,19 @@ export default class HeatsTab extends React.PureComponent {
             }),
             tour: PT.shape({
                 id: PT.number.isRequired,
+                finalized: PT.bool.isRequired,
+                discipline: PT.shape({
+                    discipline_judges: PT.arrayOf(
+                        PT.shape({
+                            id: PT.number.isRequired,
+                        }).isRequired,
+                    ).isRequired,
+                }).isRequired,
+                runs: PT.arrayOf(
+                    PT.shape({
+                        heat: PT.number.isRequired,
+                    }).isRequired,
+                ).isRequired,
             }).isRequired,
         };
     }
@@ -30,35 +41,19 @@ export default class HeatsTab extends React.PureComponent {
         };
     }
 
-    componentWillMount() {
-        this.setupStorage();
-        this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData);
-        this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage);
-        this.loadData();
+    componentDidMount() {
+        this.checkAutoDocx();
     }
-    componentWillReceiveProps(next_props) {
-        if (this.props.tour.id !== next_props.tour.id) {
-            this.setState({
-                tour: null,
-            });
-            this.freeStorage(this.props.tour.id);
-            this.setupStorage(next_props.tour.id);
-        }
+    componentDidUpdate() {
+        this.checkAutoDocx();
     }
-    componentDidUpdate(prev_props) {
-        if (prev_props.tour.id !== this.props.tour.id) {
-            this.loadData();
-        }
-        if (this.props.autoDocx && !this._docx_done && this.state.tour !== null) {
+
+    checkAutoDocx() {
+        if (this.props.autoDocx && !this._docx_done && this.props.tour !== null) {
             this._docx_done = true;
             this.createDocx(this.props.autoDocx.filename);
             this.props.autoDocx.onDone(this.props.autoDocx.filename);
         }
-    }
-    componentWillUnmount() {
-        message_dispatcher.removeListener(this.reload_listener);
-        message_dispatcher.removeListener(this.db_update_listener);
-        this.freeStorage();
     }
 
     get SCHEMA() {
@@ -134,7 +129,7 @@ export default class HeatsTab extends React.PureComponent {
     }
     renderRows() {
         let result = [];
-        let runs = this.state.tour.runs;
+        let runs = this.props.tour.runs;
         for (let i = 0; i < runs.length; ++i) {
             const header = this.renderHeatHeader(runs[i - 1], runs[i]);
             if (header) {
@@ -150,19 +145,14 @@ export default class HeatsTab extends React.PureComponent {
         return result;
     }
     render() {  // eslint-disable-line react/sort-comp
-        if (this.state.tour === null) {
-            return (
-                <Loader />
-            );
-        }
         return (
             <div className="HeatsTab">
                 <Paper
-                    header={ `${this.state.tour.discipline.competition.name}, ${this.state.tour.discipline.competition.date}` }
+                    header={ `${this.props.tour.discipline.competition.name}, ${this.props.tour.discipline.competition.date}` }
                     ref={ this.makePrintableRef }
                     title1={ _("admin.headers.tour_heats") }
-                    title2={ this.state.tour.discipline.name }
-                    title3={ this.state.tour.name }
+                    title2={ this.props.tour.discipline.name }
+                    title3={ this.props.tour.name }
                 >
                     <table className="bordered-table">
                         <thead>
@@ -195,10 +185,10 @@ export default class HeatsTab extends React.PureComponent {
 
     createDocx(filename="tour-heats.docx") {
         Docx(filename)
-            .setHeader(`${this.state.tour.discipline.competition.name}, ${this.state.tour.discipline.competition.date}`)
+            .setHeader(`${this.props.tour.discipline.competition.name}, ${this.props.tour.discipline.competition.date}`)
             .setTitle1(_("admin.headers.tour_heats"))
-            .setTitle2(this.state.tour.discipline.name)
-            .setTitle3(this.state.tour.name)
+            .setTitle2(this.props.tour.discipline.name)
+            .setTitle3(this.props.tour.name)
             .setBody(this._printable.getPrintableHTML())
             .addStyle(".heat-number", "background", "#ccc")
             .addStyle(".heat-number", "text-align", "left")

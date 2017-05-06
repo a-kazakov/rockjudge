@@ -53,18 +53,19 @@ export default class GeneralLayout extends React.PureComponent {
     }
 
     canConfirm() {
-        for (const score of this.scores.values()) {
+        for (const run of this.runs) {
+            const score = this.scores.get(run.id);
             const score_data = score.data.raw_data;
             if (score.confirmed) {
                 continue;
             }
-            for (const key of Object.keys(score_data)) {
-                const value = score_data[key];
-                if (Array.isArray(value)) {
-                    if (value.filter(a => a === null).length !== 0) {
-                        return false;
-                    }
-                } else {
+            if (this.props.layoutClass.canConfirm) {
+                if (!this.props.layoutClass.canConfirm(score_data, run)) {
+                    return false;
+                }
+            } else {
+                for (const key of Object.keys(score_data)) {
+                    const value = score_data[key];
                     if (value === null) {
                         return false;
                     }

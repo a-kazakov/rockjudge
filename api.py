@@ -1,16 +1,13 @@
 import base64
 import json
-import logging
 import os
 import random
-import time
 import traceback
 from datetime import datetime
 
 import settings
 from db import Database
 from exceptions import ApiError
-from log import log_api
 from auth import check_auth
 from models import (
     Client,
@@ -42,22 +39,6 @@ class IdTransformer:
                 current_id_type = id_type
             return id_value
         raise ApiError("errors.api.unable_to_get", wanted_id_type)
-
-
-class SqlLoggingHandler(logging.StreamHandler):
-    def __init__(self):
-        super().__init__()
-        self.cnt = 0
-
-    def emit(self, record):
-        # import re
-        # import traceback
-        # record = record.msg[0]
-        # record = re.sub(r'SELECT.+?FROM', 'SELECT * FROM', record)
-        # record = re.sub(r'(%s, )+%s', '...', record)
-        # print(record)
-        # print(traceback.print_stack())
-        self.cnt += 1
 
 
 class Api:
@@ -698,12 +679,15 @@ class Api:
     @classmethod
     def tour_finalize(cls, request):
         tour = cls.get_model(Tour, "tour_id", request)
+        tour.smart_prefetch({
+            "discipline": {},
+            "results": {},
+        })
         check_auth(
             competition_id=tour.discipline.competition_id,
             request=request,
             allowed_access_levels=("admin", "judge_*", "any_judge", ),
         )
-        tour.full_prefetch()
         tour.finalize(ws_message=request.ws_message)
         return {}
 
@@ -743,25 +727,26 @@ class Api:
     @classmethod
     def discipline_get_results(cls, request):
         discipline = cls.get_model(Discipline, "discipline_id", request, pf_children={
-            "competition": {
-                "judges": {},
-            },
-            "tours": {
-                "runs": {
-                    "scores": {},
-                    "acrobatics": {},
-                    "participant": {
-                        "club": {},
-                    },
-                },
-            }
+            # "competition": {
+            #     "judges": {},
+            # },
+            # "tours": {
+            #     "runs": {
+            #         # "scores": {},
+            #         # "acrobatics": {},
+            #         # "participant": {
+            #         #     "club": {},
+            #         # },
+            #     },
+            # }
         })
         check_auth(
             competition_id=discipline.competition_id,
             request=request,
             allowed_access_levels="*",
         )
-        return discipline.get_serialized_results()
+        discipline.prefetch_for_results()
+        return discipline.results
 
     @classmethod
     def competition_load(cls, request):
@@ -799,13 +784,6 @@ class Api:
         return {}
 
     @classmethod
-    def service_ping(cls, request):
-        return None
-        # payload = base64.b64encode(os.urandom(request.body["payload_size"] * 10000000 // 13333333)).decode()
-        # request.ws_message.add_message("ping_reply", {"ping_id": request.body["ping_id"], "payload": payload})
-        # return {}
-
-    @classmethod
     def service_report_js_error(cls, request):
         filename = "error_js_{:%Y-%m-%d.%H-%M-%S.%f}_{:09d}.json".format(datetime.now(), random.randint(0, 10**9 - 1))
         if not settings.DEBUG:
@@ -839,14 +817,8 @@ class Api:
     @classmethod
     def call(cls, request):
         ex_str = None
-        hdlr = SqlLoggingHandler()
-        logger = logging.getLogger('peewee')
-        logger.setLevel(logging.DEBUG)
-        logger.addHandler(hdlr)
         try:
-            begin = time.time()
             response = None
-
             parts = request.method.split(".")
             if len(parts) != 2:
                 response = {
@@ -870,22 +842,11 @@ class Api:
             }
         except Exception as ex:
             ex_str = traceback.format_exc()
+            print(ex_str)
             response = {
                 "success": False,
                 "code": "errors.global.internal_server_error",
                 "args": [],
             }
-            print(ex_str)
         finally:
-            total_time = time.time() - begin
-            if request.method not in ["service.ping"]:
-                log_api(
-                    time=begin,
-                    latency=total_time,
-                    queries=hdlr.cnt + 1,
-                    request=request,
-                    exception=ex_str,
-                    response=response)
-            logger.removeHandler(hdlr)
-            print("Api call: {:<35s} {:4d}ms {:4d} queries".format(request.method, int(1000 * total_time), hdlr.cnt))
             return response

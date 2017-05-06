@@ -36,6 +36,10 @@ export default class TechJudgeLayout extends React.PureComponent {
         };
     }
 
+    static canConfirm() {
+        return true;
+    }
+
     constructor(props) {
         super(props);
         this.state = {

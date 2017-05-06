@@ -56,6 +56,7 @@ export default class Participant extends React.PureComponent {
         return (
             <ScoringComponent
                 readOnly={ this.props.score.confirmed }
+                run={ this.props.run }
                 score={ this.props.score }
                 scoreData={ score_data }
                 onScoreUpdate={ this.handleScoreUpdate }

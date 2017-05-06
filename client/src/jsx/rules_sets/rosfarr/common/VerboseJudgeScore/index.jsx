@@ -22,6 +22,7 @@ export default class VerboseJudgeScore extends React.PureComponent {
                     ]).isRequired,
                 }).isRequired,
             }).isRequired,
+            run: PT.object.isRequired,
             tour: PT.shape({
                 scoring_system_name: PT.string.isRequired,
             }).isRequired,
@@ -70,6 +71,7 @@ export default class VerboseJudgeScore extends React.PureComponent {
             );
         }
         const props = {
+            run: this.props.run,
             score: this.props.score,
             additionalData: this.props.additionalData,
             scoringType: scoring_type,

@@ -1,10 +1,7 @@
 import _ from "l10n";
 import Api from "common/server/Api";
-import Loader from "common/components/Loader";
 import showConfirm from "common/dialogs/showConfirm";
 import closeDialog from "common/dialogs/closeDialog";
-import storage from "common/server/storage";
-import message_dispatcher from "common/server/message_dispatcher";
 
 import rules_set from "rules_sets/loader";
 
@@ -16,94 +13,29 @@ export default class ScoresTab extends React.PureComponent {
         return {
             tour: PT.shape({
                 id: PT.number.isRequired,
+                finalized: PT.bool.isRequired,
+                discipline: PT.shape({
+                    discipline_judges: PT.arrayOf(
+                        PT.shape({
+                            id: PT.number.isRequired,
+                        }).isRequired,
+                    ).isRequired,
+                }).isRequired,
+                runs: PT.arrayOf(
+                    PT.shape({
+                        heat: PT.number.isRequired,
+                    }).isRequired,
+                ).isRequired,
             }).isRequired,
             onPageSwitch: PT.func.isRequired,
         };
     }
 
-    // Initialization
-
     constructor(props) {
         super(props);
         this.state = {
-            tour: null,
             nowEditing: {},
         };
-    }
-
-    componentWillMount() {
-        this.setupStorage();
-        this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData);
-        this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage);
-        this.loadData();
-    }
-    componentWillReceiveProps(next_props) {
-        if (this.props.tour.id !== next_props.tour.id) {
-            this.setState({
-                tour: null,
-            });
-            this.freeStorage(this.props.tour.id);
-            this.setupStorage(next_props.tour.id);
-        }
-    }
-    componentDidUpdate(prev_props) {
-        if (prev_props.tour.id !== this.props.tour.id) {
-            this.loadData();
-        }
-    }
-    componentWillUnmount() {
-        message_dispatcher.removeListener(this.reload_listener);
-        message_dispatcher.removeListener(this.db_update_listener);
-        this.freeStorage();
-    }
-
-    get SCHEMA() {
-        return {
-            discipline: {
-                competition: {},
-                discipline_judges: {
-                    judge: {},
-                },
-            },
-            runs: {
-                acrobatics: {},
-                scores: {},
-                participant: {
-                    programs: {},
-                },
-            },
-        };
-    }
-
-    setupStorage(tour_id=null) {
-        if (tour_id === null) {
-            tour_id = this.props.tour.id;
-        }
-        this.storage = storage.getDomain(`juding_scores_${tour_id}`);
-    }
-    freeStorage(tour_id=null) {
-        if (tour_id === null) {
-            tour_id = this.props.tour.id;
-        }
-        storage.delDomain(`juding_scores_${tour_id}`);
-    }
-
-    reloadFromStorage = () => {
-        const serialized = this.storage.get("Tour")
-            .by_id(this.props.tour.id)
-            .serialize(this.SCHEMA);
-        this.setState({
-            tour: serialized,
-        });
-    }
-    loadData = () => {
-        Api("tour.get", {
-            tour_id: this.props.tour.id,
-            children: this.SCHEMA,
-        })
-            .addToDB("Tour", this.props.tour.id, this.storage)
-            .onSuccess(this.reloadFromStorage)
-            .send();
     }
 
     // Listeners
@@ -182,7 +114,7 @@ export default class ScoresTab extends React.PureComponent {
         });
     }
     handlePositionMove = (heat, old_pos, new_pos) => {
-        const heat_runs = this.state.tour.runs.filter(r => r.heat === heat);
+        const heat_runs = this.props.tour.runs.filter(r => r.heat === heat);
         const old_ids = heat_runs.map(r => r.id)
         const new_ids = old_pos <= new_pos
             ? [].concat(
@@ -215,7 +147,7 @@ export default class ScoresTab extends React.PureComponent {
         );
     }
     renderRuns() {
-        const runs = this.state.tour.runs;
+        const runs = this.props.tour.runs;
         let heat_positions = runs.map(() => 0);
         let heat_sizes = runs.map(() => 0);
         for (let i = 1; i < runs.length; ++i) {
@@ -236,9 +168,9 @@ export default class ScoresTab extends React.PureComponent {
                     heatSize={ heat_sizes[i] }
                     key={ runs[i].id }
                     nowEditing={ this.state.nowEditing }
-                    readOnly={ this.state.tour.finalized }
+                    readOnly={ this.props.tour.finalized }
                     run={ runs[i] }
-                    tour={ this.state.tour }
+                    tour={ this.props.tour }
                     onEditRequest={ this.handleEditRequest }
                     onPositionMove={ this.handlePositionMove }
                     onStopEditing={ this.handleStopEditing }
@@ -248,12 +180,7 @@ export default class ScoresTab extends React.PureComponent {
         return result;
     }
     render() {
-        if (this.state.tour === null) {
-            return (
-                <Loader />
-            );
-        }
-        const discipline_judges = this.state.tour.discipline.discipline_judges;
+        const discipline_judges = this.props.tour.discipline.discipline_judges;
         return (
             <div className="ScoresTab">
                 <table className="scores-table">
@@ -273,7 +200,7 @@ export default class ScoresTab extends React.PureComponent {
                                     { rules_set.get_judge_table_mark(discipline_judge) }
                                 </th>
                             ) }
-                            { this.state.tour.finalized
+                            { this.props.tour.finalized
                                 ? null
                                 : this.renderTableHeaderCell("actions") }
                         </tr>

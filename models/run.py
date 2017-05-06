@@ -1,3 +1,5 @@
+from fractions import Fraction as frac
+
 import peewee
 
 from playhouse import postgres_ext
@@ -30,7 +32,6 @@ class Run(BaseModel):
 
     PF_SCHEMA = {
         "scores": {},
-        "participant": {},
         "acrobatic_overrides": {},
         "tour": {
             "discipline": {
@@ -44,10 +45,22 @@ class Run(BaseModel):
         },
         "participant": None,
         "scores": None,
+        "tour": None,
     }
 
     def get_data_to_inherit(self):
-        return self.tour.scoring_system.get_run_data_to_inherit(self, self.tour.discipline_judges)
+        ordered_scores = sorted(self.scores, key=lambda s: s.discipline_judge_id)
+        ordered_djs = sorted(self.tour.discipline_judges, key=lambda dj: dj.id)
+        return self.tour.scoring_system.get_run_data_to_inherit(
+            run_id=self.id,
+            scores_ids=[s.id for s in ordered_scores],
+            scores=[s.score_data for s in ordered_scores],
+            judges_roles=[dj.role for dj in ordered_djs],
+            inherited_data=self.inherited_data,
+            acro_scores=self.get_acro_scores(),
+            status=self.status,
+            tour_name=self.tour.name,
+        )
 
     def load_acrobatics(self, program, ws_message):
         if program is None:
@@ -98,7 +111,7 @@ class Run(BaseModel):
                 "scores": {},
             },
         )
-        ws_message.add_message("tour_results_changed", {"tour_id": self.tour_id})
+        ws_message.add_tour_results_update(self.tour_id)
 
     def set_status(self, new_value, ws_message):
         if new_value == self.status:
@@ -114,7 +127,7 @@ class Run(BaseModel):
             model_id=self.id,
             schema={}
         )
-        ws_message.add_message("tour_results_changed", {"tour_id": self.tour_id})
+        ws_message.add_tour_results_update(self.tour_id)
 
     @property
     def performed(self):
@@ -151,7 +164,13 @@ class Run(BaseModel):
                 "acrobatics": {},
             }
         )
-        ws_message.add_message("tour_results_changed", {"tour_id": self.tour_id})
+        ws_message.add_tour_results_update(self.tour_id)
+
+    def get_acro_scores(self):
+        acro_list = [acro["score"] for acro in self.acrobatics]
+        for override in self.acrobatic_overrides:
+            acro_list[override.acrobatic_idx] = override.score
+        return acro_list
 
     def serialize_acrobatics(self, children=None):
         acro_list = []
@@ -165,10 +184,23 @@ class Run(BaseModel):
         return acro_list
 
     def serialize(self, children={}, discipline_judges=None):
-        scores_obj = self.tour.scoring_system.get_run_scores(self, discipline_judges=discipline_judges)
+        ordered_scores = sorted(self.scores, key=lambda s: s.discipline_judge_id)
+        ordered_djs = sorted(self.tour.discipline_judges, key=lambda dj: dj.id)
+        scores_obj = self.tour.scoring_system.get_run_scores(
+            run_id=self.id,
+            scores_ids=[s.id for s in ordered_scores],
+            scores=[s.score_data for s in ordered_scores],
+            judges_ids=[j.id for j in ordered_djs],
+            judges_roles=[j.role for j in ordered_djs],
+            inherited_data=self.inherited_data,
+            acro_scores=self.get_acro_scores(),
+            status=self.status,
+            tour_name=self.tour.name,
+        )
         result = self.serialize_props()
         result["total_score"] = scores_obj["total_run_score"]
         result["verbose_total_score"] = scores_obj["verbose_run_score"]
+        result = self.serialize_upper_child(result, "tour", children)
         result = self.serialize_upper_child(result, "participant", children)
         if discipline_judges is not None:
             rev_discipline_judges = {

@@ -7,7 +7,7 @@ from models.competition import Competition
 
 class Judge(BaseModel):
     class Meta:
-        order_by = ["sp", "number", "role_description"]
+        order_by = ["sp", "number", "role_description", "name", ]
         indexes = (
             (("competition", "external_id",), True),
         )
