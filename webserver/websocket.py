@@ -4,6 +4,8 @@ import time
 
 from collections import OrderedDict
 
+import tornado.ioloop
+
 from sockjs.tornado import SockJSConnection
 
 
@@ -53,6 +55,8 @@ class WebSocketClients(SockJSConnection):
 
 
 class WsMessage:
+    latest_updates = {}
+    wating_updates = set()
     def __init__(self, ws_client_id=None):
         self.ws_client_id = ws_client_id
         self.model_updates = []
@@ -82,8 +86,33 @@ class WsMessage:
             else:
                 base[k] = v
 
-    def serialize(self):
+    @staticmethod
+    def get_tour_result(tour_id):
         from models import Tour
+        discipline = Tour.get(id=tour_id).discipline
+        discipline.prefetch_for_results()
+        tour = next(t for t in discipline.tours if t.id == tour_id)
+        return tour.serialize_as_child({
+            "discipline": {
+                "results": {},
+            },
+            "results": {},
+        })
+
+    @classmethod
+    def push_tour_result_update(cls, tour_id):
+        upd = cls.get_tour_result(tour_id)
+        cls.latest_updates[tour_id] = time.time()
+        cls.wating_updates.discard(tour_id)
+        counter_val = WebSocketClients.get_counter_val()
+        print("Pushed separate results update")
+        try:
+            WebSocketClients.broadcast(counter_val, {"model_updates": [upd], "messages": [], })
+        except Exception as ex:
+            WebSocketClients.broadcast(counter_val, None)
+            raise ex
+
+    def serialize(self):
         schemas = OrderedDict()
         for x in self.model_updates:
             key = (x["model_type"], x["model_id"])
@@ -96,15 +125,18 @@ class WsMessage:
             model.smart_prefetch(schema)
             updates.append(model.serialize_as_child(schema))
         for tour_id in self.tour_results_updates:
-            discipline = Tour.get(id=tour_id).discipline
-            discipline.prefetch_for_results()
-            tour = next(t for t in discipline.tours if t.id == tour_id)
-            updates.append(tour.serialize_as_child({
-                "discipline": {
-                    "results": {},
-                },
-                "results": {},
-            }))
+            if tour_id in self.wating_updates:
+                continue
+            time_since_latest_update = time.time() - self.latest_updates.get(tour_id, 0)
+            self.latest_updates[tour_id] = time.time()
+            if time_since_latest_update < 0.75:
+                self.wating_updates.add(tour_id)
+                tornado.ioloop.IOLoop.instance().call_later(
+                    0.75 - time_since_latest_update,
+                    self.push_tour_result_update, tour_id,
+                )
+                continue
+            updates.append(self.get_tour_result(tour_id))
         return {
             "model_updates": updates,
             "messages": self.messages,

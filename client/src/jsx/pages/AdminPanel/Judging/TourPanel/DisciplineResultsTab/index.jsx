@@ -107,7 +107,6 @@ export default class DisciplineResultsTab extends React.PureComponent {
     // Rendering
 
     render() {
-        console.log(this.state);
         if (this.state.discipline === null) {
             return (
                 <Loader />

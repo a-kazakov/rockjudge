@@ -55,7 +55,6 @@ export default class JudgeTablet extends React.PureComponent {
     }
 
     render() {
-        console.log(this.props.tour);
         const scoring_type = getScoringType(this.props.disciplineJudge, this.props.tour.scoring_system_name);
         if (scoring_type === null) {
             return (

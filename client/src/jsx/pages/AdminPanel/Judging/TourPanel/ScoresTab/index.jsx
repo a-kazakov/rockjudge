@@ -129,7 +129,6 @@ export default class ScoresTab extends React.PureComponent {
                 old_ids.slice(new_pos, old_pos),
                 old_ids.slice(old_pos + 1)
             )
-        console.log(heat_runs, old_ids, new_ids)
         Api("tour.permute_within_heat", {
             "tour_id": this.props.tour.id,
             "run_ids": new_ids,
