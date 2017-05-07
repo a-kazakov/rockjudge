@@ -45,6 +45,13 @@ export default class Row extends React.PureComponent {
             : this.props.row.place;
     }
     renderScore(discipline_judge, score) {
+        if (!score) {
+            return (
+                <p className="text-center">
+                    &mdash;
+                </p>
+            )
+        }
         return (
             <VerboseJudgeScore
                 additionalData={ this.props.row.additional_data }

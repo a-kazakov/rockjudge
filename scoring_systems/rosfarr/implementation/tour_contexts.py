@@ -106,8 +106,8 @@ class TourContextFormation(TourContextBase):
                 "additional_data": {
                     "places": {
                         score.score_id: judge_place
-                        for score, judge_place
-                        in zip(run.scores_by_role["dance_judge"], judge_places)
+                        for score, judge_place in zip(run.scores_by_role["dance_judge"], judge_places)
+                        if score.score_id is not None
                     },
                 },
             }

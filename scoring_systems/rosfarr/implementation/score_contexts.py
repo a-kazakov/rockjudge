@@ -179,7 +179,7 @@ class ScoreContextSolo(ScoreContextBase):
     def _total_score(self):
         return (
             20 +
-            frac(-1, 20) * float_to_frac(self.counting_score["fw"]) +
+            frac(-1, 5) * float_to_frac(self.counting_score["fw"]) +
             frac(5, 2) * float_to_frac(self.counting_score["dance_figs"]) +
             frac(2) * float_to_frac(self.counting_score["composition"]) +
             frac(-5) * float_to_frac(self.counting_score["small_mistakes"]) +

@@ -85,6 +85,13 @@ export default class Row extends React.PureComponent {
         if (discipline_judge.role === "dance_judge" && this.isFormation()) {
             return this.renderFormationScore(score);
         }
+        if (!score) {
+            return (
+                <p className="text-center">
+                    &mdash;
+                </p>
+            )
+        }
         return (
             <p className="text-center">
                 { score.data.total_score.toFixed(2) }

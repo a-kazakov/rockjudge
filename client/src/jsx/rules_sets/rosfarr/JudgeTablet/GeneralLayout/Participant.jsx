@@ -23,7 +23,7 @@ export default class Participant extends React.PureComponent {
                     raw_data: PT.object.isRequired,
                 }).isRequired,
                 discipline_judge_id: PT.number.isRequired,
-            }).isRequired,
+            }),
             onScoreUpdate: PT.func.isRequired,
         };
     }
@@ -46,13 +46,15 @@ export default class Participant extends React.PureComponent {
     }
 
     renderScoringLayout() {
-        const score_data = this.props.score.data.raw_data;
-        const ScoringComponent = this.props.layoutClass;
         if (this.props.score === null) {
             return (
-                <div />
+                <div className="not-performing">
+                    { _("tablet.global.no_score") }
+                </div>
             );
         }
+        const score_data = this.props.score.data.raw_data;
+        const ScoringComponent = this.props.layoutClass;
         return (
             <ScoringComponent
                 readOnly={ this.props.score.confirmed }

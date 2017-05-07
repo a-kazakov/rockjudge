@@ -570,14 +570,15 @@ class Tour(BaseModel):
     def results(self):
         if self.finalized and self.cached_results is not None:
             return self.cached_results
-        ordered_djs = sorted(self.discipline_judges, key=lambda dj: dj.id)
+        ordered_djs = list(self.discipline_judges)
         ss_runs = []
         for run in self.runs:
-            ordered_scores = sorted(run.scores, key=lambda s: s.discipline_judge_id)
+            scores_index = {s.discipline_judge_id: s for s in run.scores}
+            ordered_scores = [scores_index.get(dj.id, None) for dj in ordered_djs]
             ss_runs.append({
                 "run_id": run.id,
-                "scores": [s.score_data for s in ordered_scores],
-                "scores_ids": [s.id for s in ordered_scores],
+                "scores": [(s.score_data if s is not None else {}) for s in ordered_scores],
+                "scores_ids": [(s.id if s is not None else None) for s in ordered_scores],
                 "acro_scores": run.get_acro_scores(),
                 "inherited_data": run.inherited_data,
                 "status": run.status,

@@ -49,12 +49,13 @@ class Run(BaseModel):
     }
 
     def get_data_to_inherit(self):
-        ordered_scores = sorted(self.scores, key=lambda s: s.discipline_judge_id)
-        ordered_djs = sorted(self.tour.discipline_judges, key=lambda dj: dj.id)
+        ordered_djs = list(self.tour.discipline_judges)
+        scores_index = {s.discipline_judge_id: s for s in self.scores}
+        ordered_scores = [scores_index.get(dj.id, None) for dj in ordered_djs]
         return self.tour.scoring_system.get_run_data_to_inherit(
             run_id=self.id,
-            scores_ids=[s.id for s in ordered_scores],
-            scores=[s.score_data for s in ordered_scores],
+            scores_ids=[(s.id if s is not None else None) for s in ordered_scores],
+            scores=[(s.score_data if s is not None else {}) for s in ordered_scores],
             judges_roles=[dj.role for dj in ordered_djs],
             inherited_data=self.inherited_data,
             acro_scores=self.get_acro_scores(),
@@ -184,12 +185,13 @@ class Run(BaseModel):
         return acro_list
 
     def serialize(self, children={}, discipline_judges=None):
-        ordered_scores = sorted(self.scores, key=lambda s: s.discipline_judge_id)
-        ordered_djs = sorted(self.tour.discipline_judges, key=lambda dj: dj.id)
+        ordered_djs = list(self.tour.discipline_judges)
+        scores_index = {s.discipline_judge_id: s for s in self.scores}
+        ordered_scores = [scores_index.get(dj.id, None) for dj in ordered_djs]
         scores_obj = self.tour.scoring_system.get_run_scores(
             run_id=self.id,
-            scores_ids=[s.id for s in ordered_scores],
-            scores=[s.score_data for s in ordered_scores],
+            scores_ids=[(s.id if s is not None else None) for s in ordered_scores],
+            scores=[(s.score_data if s is not None else {}) for s in ordered_scores],
             judges_ids=[j.id for j in ordered_djs],
             judges_roles=[j.role for j in ordered_djs],
             inherited_data=self.inherited_data,

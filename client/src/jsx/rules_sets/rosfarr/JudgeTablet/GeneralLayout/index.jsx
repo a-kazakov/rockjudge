@@ -55,6 +55,9 @@ export default class GeneralLayout extends React.PureComponent {
     canConfirm() {
         for (const run of this.runs) {
             const score = this.scores.get(run.id);
+            if (!score) {
+                return false;
+            }
             const score_data = score.data.raw_data;
             if (score.confirmed) {
                 continue;
@@ -81,10 +84,18 @@ export default class GeneralLayout extends React.PureComponent {
 
     getFirstNonConfirmedHeat() {
         for (const run of this.props.tour.runs) {
+            let found = false;
             for (const score of run.scores) {
-                if (score.discipline_judge_id === this.props.disciplineJudge.id && !score.confirmed && run.status === "OK") {
-                    return run.heat;
+                if (score.discipline_judge_id === this.props.disciplineJudge.id) {
+                    if (!score.confirmed && run.status === "OK") {
+                        return run.heat;
+                    }
+                    found = true;
+                    continue;
                 }
+            }
+            if (!found) {
+                return run.heat;
             }
         }
         return this.heats_count || Math.max(1, ...this.props.tour.runs.map(run => run.heat));
@@ -145,7 +156,7 @@ export default class GeneralLayout extends React.PureComponent {
                     </Grid>
                     <ConfirmationButton
                         canConfirm={ this.canConfirm() }
-                        confirmed={ Array.from(this.scores.values()).every(s => s.confirmed) }
+                        confirmed={ Array.from(this.scores.values()).every(s => s && s.confirmed) }
                         key={ this.state.heat }
                         onConfirm={ this.handleConfirm }
                     />
