@@ -77,7 +77,6 @@ export default class JudgeTablet extends React.PureComponent {
                     disciplineJudge={ this.props.disciplineJudge }
                     tour={ this.props.tour }
                     onHeatConfirm={ this.handleHeatConfirm }
-                    onScoreConfirm={ this.handleScoreConfirm }
                     onScoreUpdate={ this.handleScoreUpdate }
                 />
             </div>

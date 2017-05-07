@@ -28,7 +28,6 @@ export default class ScoringLayout extends React.PureComponent {
                 id: PT.number.isRequired,
                 data: PT.object.isRequired,
             }).isRequired,
-            onScoreConfirm: PT.func.isRequired,
         };
     }
 

@@ -28,7 +28,6 @@ export default class GeneralLayout extends React.PureComponent {
                 ).isRequired,
             }).isRequired,
             onHeatConfirm: PT.func.isRequired,
-            onScoreConfirm: PT.func.isRequired,
             onScoreUpdate: PT.func.isRequired,
         };
     }
@@ -149,7 +148,6 @@ export default class GeneralLayout extends React.PureComponent {
                                 layoutClass={ this.props.layoutClass }
                                 run={ run }
                                 score={ this.scores.get(run.id) }
-                                onScoreConfirm={ this.props.onScoreConfirm }
                                 onScoreUpdate={ this.props.onScoreUpdate }
                             />
                         )}

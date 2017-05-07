@@ -14,7 +14,6 @@ export default class AcroPage extends React.PureComponent {
             ).isRequired,
             scores: PT.instanceOf(Map).isRequired,
             tour: PT.object.isRequired,
-            onScoreConfirm: PT.func.isRequired,
         };
     }
 
@@ -26,7 +25,6 @@ export default class AcroPage extends React.PureComponent {
                 run={ run }
                 score={ this.props.scores.get(run.id) }
                 tour={ this.props.tour }
-                onScoreConfirm={ this.props.onScoreConfirm }
             />
         );
     }

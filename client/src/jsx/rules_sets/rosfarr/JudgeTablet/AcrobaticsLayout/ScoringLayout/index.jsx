@@ -10,7 +10,6 @@ export default class ScoringLayout extends React.PureComponent {
             run: PT.object.isRequired,
             score: PT.object.isRequired,
             scoreData: PT.shape({
-                reductions: PT.any.isRequired,
                 mistakes: PT.any.isRequired,
             }).isRequired,
             onScoreUpdate: PT.func.isRequired,

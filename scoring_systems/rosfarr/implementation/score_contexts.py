@@ -133,10 +133,10 @@ class ScoreContextDance(ScoreContextBase):
         "big_mistakes": 0,
     }
     SCORES_VALIDATORS = {
-        "fw_man": lambda x: type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "fw_woman": lambda x: type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "dance_figs": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
-        "composition": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "fw_man": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
+        "fw_woman": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
+        "dance_figs": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "composition": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
         "small_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
         "big_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
     }
@@ -169,9 +169,9 @@ class ScoreContextSolo(ScoreContextBase):
         "big_mistakes": 0,
     }
     SCORES_VALIDATORS = {
-        "fw": lambda x: type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "dance_figs": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
-        "composition": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "fw": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
+        "dance_figs": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "composition": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
         "small_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
         "big_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
     }
@@ -233,12 +233,12 @@ class ScoreContextAcro(ScoreContextBase):
         "mistakes": 0,
     }
     SCORES_VALIDATORS = {
-        "a1": lambda x: type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "a2": lambda x: type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "a3": lambda x: type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "a4": lambda x: type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "a5": lambda x: type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "a6": lambda x: type(x) is int and x in POSSIBLE_REDUCTIONS,
+        "a1": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
+        "a2": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
+        "a3": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
+        "a4": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
+        "a5": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
+        "a6": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
         "mistakes": lambda x: type(x) is int and 0 <= x <= 100,
     }
 
@@ -270,9 +270,9 @@ class ScoreContextFormation(ScoreContextBase):
         "mistakes": 0,
     }
     SCORES_VALIDATORS = {
-        "dance_tech": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
-        "dance_figs": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
-        "impression": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "dance_tech": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "dance_figs": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "impression": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
         "mistakes": lambda x: type(x) is int and 0 <= x <= 100,
     }
 
@@ -303,10 +303,10 @@ class ScoreContextFormationAcro(ScoreContextBase):
         "big_mistakes": 0,
     }
     SCORES_VALIDATORS = {
-        "acrobatics": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
-        "dance_tech": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
-        "dance_figs": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
-        "impression": lambda x: type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "acrobatics": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "dance_tech": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "dance_figs": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
+        "impression": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
         "small_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
         "big_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
     }
@@ -335,7 +335,7 @@ class ScoreContextTech(ScoreContextBase):
     }
     SCORES_VALIDATORS = {
         "jump_steps": lambda x: type(x) is int and 0 <= x <= 100,
-        "time": lambda x: type(x) is int and 0 <= x <= 24 * 60 * 60,
+        "time": lambda x: x is None or type(x) is int and 0 <= x <= 24 * 60 * 60,
         "card": lambda x: x in (None, "OK", "YC", "RC",),
     }
 
@@ -354,7 +354,7 @@ class ScoreContextHead(ScoreContextBase):
     }
     SCORES_VALIDATORS = {
         "nexttour": lambda x: type(x) is bool,
-        "card": lambda x: x in (None, "OK", "YC", "RC",)
+        "card": lambda x: x in ("OK", "YC", "RC",)
     }
 
     def _total_score(self):
