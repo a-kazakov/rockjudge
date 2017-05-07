@@ -2,6 +2,7 @@ import HeatsTab from "pages/AdminPanel/Judging/TourPanel/HeatsTab";
 import TourResultsTab from "pages/AdminPanel/Judging/TourPanel/TourResultsTab";
 import DisciplineResultsTab from "pages/AdminPanel/Judging/TourPanel/DisciplineResultsTab";
 import TestPage from "./TestPage";
+import TourLoader from "./TourLoader";
 
 export default class ActiveJob extends React.PureComponent {
     static get propTypes() {
@@ -27,32 +28,36 @@ export default class ActiveJob extends React.PureComponent {
         switch (this.props.queueItem.type) {
         case "heats":
             return (
-                <HeatsTab
+                <TourLoader
                     autoDocx={ docx_params }
-                    tour={ this.props.queueItem.tour }
+                    renderer={ HeatsTab }
+                    tourId={ this.props.queueItem.tour.id }
                 />
             );
         case "results_1":
             return (
-                <TourResultsTab
+                <TourLoader
                     autoDocx={ docx_params }
-                    tour={ this.props.queueItem.tour }
+                    renderer={ TourResultsTab }
+                    tourId={ this.props.queueItem.tour.id }
                     verbosity={ 1 }
                 />
             );
         case "results_2":
             return (
-                <TourResultsTab
+                <TourLoader
                     autoDocx={ docx_params }
-                    tour={ this.props.queueItem.tour }
+                    renderer={ TourResultsTab }
+                    tourId={ this.props.queueItem.tour.id }
                     verbosity={ 2 }
                 />
             );
         case "results_3":
             return (
-                <TourResultsTab
+                <TourLoader
                     autoDocx={ docx_params }
-                    tour={ this.props.queueItem.tour }
+                    renderer={ TourResultsTab }
+                    tourId={ this.props.queueItem.tour.id }
                     verbosity={ 3 }
                 />
             );

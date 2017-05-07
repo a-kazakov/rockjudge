@@ -1,5 +1,3 @@
-import { TourResultsLoader } from "HostModules";
-
 import ResultsTable2 from "ResultsTable2";
 
 export default class ResultsPage extends React.PureComponent {
@@ -8,7 +6,7 @@ export default class ResultsPage extends React.PureComponent {
         return {
             tour: PT.shape({
                 id: PT.number.isRequired,
-                results: PT.object.isRequired,
+                results: PT.array.isRequired,
             }).isRequired,
         };
     }

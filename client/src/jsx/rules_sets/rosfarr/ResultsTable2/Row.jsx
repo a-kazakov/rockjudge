@@ -21,9 +21,8 @@ export default class Row extends React.PureComponent {
                     disqualified: PT.bool.isRequired,
                     participant: PT.shape({
                         number: PT.number.isRequired,
-                        club: PT.shape({
-                            name: PT.string.isRequired,
-                        }).isRequired,
+                        name: PT.string.isRequired,
+                        sportsmen: PT.array.isRequired,
                     }).isRequired,
                     scores: PT.arrayOf(
                         PT.shape({

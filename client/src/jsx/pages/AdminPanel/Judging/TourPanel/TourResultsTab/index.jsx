@@ -12,21 +12,6 @@ export default class TourResultsTab extends React.PureComponent {
         };
     }
 
-    componentDidMount() {
-        this.checkAutoDocx();
-    }
-    componentDidUpdate() {
-        this.checkAutoDocx();
-    }
-
-    checkAutoDocx() {
-        if (this.props.autoDocx && !this._docx_done && this.props.tour !== null) {
-            this._docx_done = true;
-            this.createDocx(this.props.autoDocx.filename);
-            this.props.autoDocx.onDone(this.props.autoDocx.filename);
-        }
-    }
-
     makeResultsRef = (ref) => this._results = ref;
 
     handleSignal = (message) => {

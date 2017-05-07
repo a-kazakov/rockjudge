@@ -1,6 +1,6 @@
 from fractions import Fraction as frac
 
-from .implementation.tour_contexts import TourContextFormation
+from .implementation.tour_contexts import TourContextNjs
 from .implementation.run_contexts import RunContextNjs
 from .implementation.score_contexts import ScoreContextBase
 
@@ -9,7 +9,7 @@ SS_NAME = "solo"
 
 
 def get_tour_results(runs, judges_roles, num_advances, tour_name):
-    context = TourContextFormation(
+    context = TourContextNjs(
         run_infos=runs,
         judges_roles=judges_roles,
         num_advances=num_advances,
@@ -37,9 +37,11 @@ def get_run_scores(run_id, scores_ids, scores, judges_ids, judges_roles, acro_sc
         scoring_system_name=SS_NAME,
     )
     return {
-        "total_run_score": ("SK" if status == "OK" else "—"),
+        "total_run_score": context.display_score,
         "verbose_run_score": {
             "card": context.card,
+            "primary_score": float(context.first_score),
+            "secondary_score": float(context.second_score),
             "nexttour": context.nexttour_mark,
         },
     }
