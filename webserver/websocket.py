@@ -1,5 +1,7 @@
+import base64
 import copy
 import json
+import lz4framed as lz4
 import time
 
 from collections import OrderedDict
@@ -7,6 +9,8 @@ from collections import OrderedDict
 import tornado.ioloop
 
 from sockjs.tornado import SockJSConnection
+
+from db import Database
 
 
 class WebSocketClients(SockJSConnection):
@@ -26,7 +30,7 @@ class WebSocketClients(SockJSConnection):
     def on_open(self, request):
         ws_client_id = str(int(10**6 * time.time()))
         self.clients[ws_client_id] = self
-        self.send(json.dumps({
+        self.send(self.encode_message({
             "ws_client_id": ws_client_id
         }))
 
@@ -34,6 +38,13 @@ class WebSocketClients(SockJSConnection):
         for key, val in self.clients.items():
             if val is self:
                 del self.clients[key]
+
+    @staticmethod
+    def encode_message(message):
+        json_message = json.dumps(message, ensure_ascii=False)
+        lz4_message = lz4.compress(json_message.encode("utf-8"), level=4)
+        b64_message = base64.b64encode(lz4_message).decode()
+        return b64_message
 
     @classmethod
     def broadcast(cls, counter_val, msg, ws_client_id=None):
@@ -44,12 +55,12 @@ class WebSocketClients(SockJSConnection):
             message, cl_id = cls.pending_messages[cls.next_to_send]
             if message is not None:
                 clients = copy.copy(cls.clients)
-                json_message = json.dumps(message, ensure_ascii=False)
+                encoded = cls.encode_message(message)
                 if cl_id in cls.clients:
-                    cls.clients[cl_id].send(json_message)
+                    cls.clients[cl_id].send(encoded)
                     del clients[cl_id]
                 if len(clients) > 0:
-                    super(cls, list(clients.values())[0]).broadcast(clients.values(), json_message)
+                    super(cls, list(clients.values())[0]).broadcast(clients.values(), encoded)
             del cls.pending_messages[cls.next_to_send]
             cls.next_to_send += 1
 
@@ -57,6 +68,7 @@ class WebSocketClients(SockJSConnection):
 class WsMessage:
     latest_updates = {}
     wating_updates = set()
+
     def __init__(self, ws_client_id=None):
         self.ws_client_id = ws_client_id
         self.model_updates = []
@@ -101,7 +113,8 @@ class WsMessage:
 
     @classmethod
     def push_tour_result_update(cls, tour_id):
-        upd = cls.get_tour_result(tour_id)
+        with Database.instance().db.transaction():
+            upd = cls.get_tour_result(tour_id)
         cls.latest_updates[tour_id] = time.time()
         cls.wating_updates.discard(tour_id)
         counter_val = WebSocketClients.get_counter_val()

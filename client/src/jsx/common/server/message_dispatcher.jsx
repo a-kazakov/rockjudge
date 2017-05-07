@@ -1,3 +1,6 @@
+import lz4 from "lz4-asm";
+import { TextDecoder } from "text-encoding";
+
 import connection_status from "common/connection_status";
 
 import storage from "common/server/storage";
@@ -17,10 +20,10 @@ class MessageDispatcher {
             console.log("Connected to websocket.");
             if (this.closed) {
                 this.handleMessage({
-                    data: JSON.stringify({
+                    raw_data: {
                         messages: [["reload_data", null]],
                         model_updates: [],
-                    }),
+                    },
                 })
             }
         };
@@ -33,7 +36,13 @@ class MessageDispatcher {
         this.ws.onmessage = this.handleMessage;
     }
     handleMessage = (message) => {
-        let data = JSON.parse(message.data);
+        let data = message.raw_data;
+        if (!data) {
+            const lz4_blob = Uint8Array.from(atob(message.data), c => c.charCodeAt(0));
+            const json_blob = lz4.decompress(lz4_blob);
+            const json_str = (new TextDecoder("utf-8")).decode(json_blob);
+            data = JSON.parse(json_str);
+        }
         if (data["ws_client_id"]) {
             window.ws_client_id = data["ws_client_id"];
             return;
