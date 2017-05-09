@@ -24,6 +24,7 @@ class Judge(BaseModel):
 
     PF_CHILDREN = {
         "competition": None,
+        "discipline_judges": None,
     }
 
     @classmethod

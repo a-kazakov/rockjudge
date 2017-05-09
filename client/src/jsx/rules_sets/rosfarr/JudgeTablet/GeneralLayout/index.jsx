@@ -61,6 +61,9 @@ export default class GeneralLayout extends React.PureComponent {
             if (score.confirmed) {
                 continue;
             }
+            if (run.status !== "OK") {
+                continue;
+            }
             if (this.props.layoutClass.canConfirm) {
                 if (!this.props.layoutClass.canConfirm(score_data, run)) {
                     return false;
@@ -126,6 +129,11 @@ export default class GeneralLayout extends React.PureComponent {
     handlePrevHeatClick = () => this.updateHeat(-1);
     handleNextHeatClick = () => this.updateHeat(1);
 
+    checkRunConfirmed = (run) => {
+        const score = this.scores.get(run.id);
+        return run.status !== "OK" || (score && score.confirmed);
+    }
+
     render() {
         this.setupCache();
         return (
@@ -154,7 +162,7 @@ export default class GeneralLayout extends React.PureComponent {
                     </Grid>
                     <ConfirmationButton
                         canConfirm={ this.canConfirm() }
-                        confirmed={ Array.from(this.scores.values()).every(s => s && s.confirmed) }
+                        confirmed={ this.runs.every(this.checkRunConfirmed) }
                         key={ this.state.heat }
                         onConfirm={ this.handleConfirm }
                     />

@@ -75,7 +75,7 @@ class TourContextFormation(TourContextBase):
 
     def _skating_object(self):
         return SkatingSystem([
-            [score.total_score for score in run.scores_by_role["dance_judge"]]
+            [score.total_score + run.penalty for score in run.scores_by_role["dance_judge"]]
             for run in self.runs_by_status["OK"]
         ])
 
