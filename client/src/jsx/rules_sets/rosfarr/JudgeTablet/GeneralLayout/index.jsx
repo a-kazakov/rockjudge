@@ -96,6 +96,9 @@ export default class GeneralLayout extends React.PureComponent {
 
     getFirstNonConfirmedHeat() {
         for (const run of this.props.tour.runs) {
+            if (run.heat <= 0) {
+                continue;
+            }
             let found = false;
             for (const score of run.scores) {
                 if (score.discipline_judge_id === this.props.disciplineJudge.id) {
@@ -134,7 +137,7 @@ export default class GeneralLayout extends React.PureComponent {
                    !s.confirmed;
         }
         for (const run of props.tour.runs) {
-            if (run.status !== "OK") {
+            if (run.status !== "OK" || run.heat <= 0) {
                 continue;
             }
             if (run.scores.some(checkScoreIsBad)) {

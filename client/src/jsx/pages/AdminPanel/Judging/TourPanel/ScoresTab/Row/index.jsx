@@ -58,6 +58,7 @@ export default class Row extends React.PureComponent {
             "even-heat": this.props.run.heat % 2 === 0,
             "not-performed": this.props.run.status === "NP",
             "disqualified": this.props.run.status === "DQ",
+            "zero-heat": this.props.run.heat <= 0,
         });
     }
     renderActionsCell() {

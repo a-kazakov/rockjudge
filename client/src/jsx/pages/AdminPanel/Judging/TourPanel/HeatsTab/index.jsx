@@ -18,7 +18,13 @@ export default class HeatsTab extends React.PureComponent {
             tour: PT.shape({
                 id: PT.number.isRequired,
                 finalized: PT.bool.isRequired,
+                name: PT.string.isRequired,
                 discipline: PT.shape({
+                    name: PT.string.isRequired,
+                    competition: PT.shape({
+                        name: PT.string.isRequired,
+                        date: PT.string.isRequired,
+                    }).isRequired,
                     discipline_judges: PT.arrayOf(
                         PT.shape({
                             id: PT.number.isRequired,
@@ -131,6 +137,9 @@ export default class HeatsTab extends React.PureComponent {
         let result = [];
         let runs = this.props.tour.runs;
         for (let i = 0; i < runs.length; ++i) {
+            if (runs[i].heat <= 0) {
+                continue;
+            }
             const header = this.renderHeatHeader(runs[i - 1], runs[i]);
             if (header) {
                 result.push(header);

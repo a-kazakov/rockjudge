@@ -38,13 +38,13 @@
                     background-color: #999;
                 }
                 &.heat input {
-                  width: 100%;
-                  box-sizing: border-box;
-                  height: 18px;
-                  margin: -2px;
-                  padding: 0;
-                  border: 0;
-                  text-align: center;
+                    width: 100%;
+                    box-sizing: border-box;
+                    height: 18px;
+                    margin: -2px;
+                    padding: 0;
+                    border: 0;
+                    text-align: center;
                 }
                 &.actions {
                     position: relative;
@@ -205,6 +205,15 @@
                 > td.confirmed-score {
                     background-color: darken(@color-green, 10%);
                 }
+            }
+            &.zero-heat:not(.not-performed):not(.disqualified) {
+                background: repeating-linear-gradient(
+                  -45deg,
+                  lighten(@color-light, 10%),
+                  lighten(@color-light, 10%) 10px,
+                  @color-white 10px,
+                  @color-white 20px
+                );
             }
             &.not-performed {
                 background-color: lighten(@color-yellow, 20%);

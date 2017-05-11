@@ -33,7 +33,7 @@ export default class Header extends React.PureComponent {
     static get defaultProps() {
         return {
             canConfirm: false,
-            canReturn: true,
+            canReturn: false,
             hideHeatsButtons: false,
         };
     }

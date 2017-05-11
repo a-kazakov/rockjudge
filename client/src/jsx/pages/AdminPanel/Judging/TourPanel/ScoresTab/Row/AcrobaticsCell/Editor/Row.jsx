@@ -113,7 +113,9 @@ export default class Row extends React.PureComponent {
     render() {
         return (
             <tr>
-                <td className="description">{ this.props.element.description }</td>
+                <td className="description">
+                    { this.props.element.description }
+                </td>
                 <td className="old-score">
                     { this.props.element.original_score.toFixed(1) }
                 </td>

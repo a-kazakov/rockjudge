@@ -15,6 +15,20 @@ export default class HeatCell extends React.PureComponent {
         };
     }
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            inputValue: this.props.run.heat.toString(),
+        }
+    }
+    componentWillReceiveProps(next_props) {
+        if (!this.props.editing && next_props.editing) {
+            this.setState({
+                inputValue: next_props.run.heat.toString(),
+            });
+        }
+    }
+
     makeInputRef = (ref) => {
         if (ref && !this._input) {
             ref.select();
@@ -22,6 +36,11 @@ export default class HeatCell extends React.PureComponent {
         this._input = ref;
     }
 
+    handleChange = (event) => {
+        this.setState({
+            inputValue: event.target.value.replace(/[^\d]/, ""),
+        });
+    }
     handleKeyUp = (event) => {
         if (event.keyCode === 13) { // Enter
             this.submit();
@@ -60,9 +79,9 @@ export default class HeatCell extends React.PureComponent {
                 <td className="heat">
                     <input
                         className="input-heat"
-                        defaultValue={ this.props.run.heat.toString() }
                         ref={ this.makeInputRef }
-                        type="text"
+                        value={ this.state.inputValue }
+                        onChange={ this.handleChange }
                         onKeyUp={ this.handleKeyUp }
                     />
                 </td>
