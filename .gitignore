@@ -9,3 +9,5 @@ dist/**
 external-tools/**
 **/node_modules/**
 /error_js*
+/static/js/**
+/static/css/**
