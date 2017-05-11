@@ -6,6 +6,8 @@ export default class Header extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
+            canFinish: PT.bool,
+            canReturn: PT.bool,
             heat: PT.number.isRequired,
             heatsCount: PT.number.isRequired,
             hideHeatsButtons: PT.bool,
@@ -21,6 +23,8 @@ export default class Header extends React.PureComponent {
                     name: PT.string.isRequired,
                 }).isRequired,
             }).isRequired,
+            onFinishClick: PT.func,
+            onReturnClick: PT.func,
             onNextHeatClick: PT.func.isRequired,
             onPrevHeatClick: PT.func.isRequired,
         };
@@ -28,14 +32,25 @@ export default class Header extends React.PureComponent {
 
     static get defaultProps() {
         return {
+            canConfirm: false,
+            canReturn: true,
             hideHeatsButtons: false,
         };
     }
 
     renderPrevHeatButton() {
         if (this.props.hideHeatsButtons || this.props.heat <= 1) {
+            if (!this.props.canReturn) {
+                return (
+                    <div className="button-container" />
+                );
+            }
             return (
-                <div className="button-container" />
+                <div className="button-container left">
+                    <button { ...onTouchEndOrClick(this.props.onReturnClick) }>
+                        { _("tablet.buttons.return") }
+                    </button>
+                </div>
             );
         }
         return (
@@ -48,8 +63,17 @@ export default class Header extends React.PureComponent {
     }
     renderNextHeatButton() {
         if (this.props.hideHeatsButtons || this.props.heat >= this.props.maxHeat) {
+            if (!this.props.canFinish) {
+                return (
+                    <div className="button-container" />
+                );
+            }
             return (
-                <div className="button-container" />
+                <div className="button-container right">
+                    <button { ...onTouchEndOrClick(this.props.onFinishClick) }>
+                        { _("tablet.buttons.finish") }
+                    </button>
+                </div>
             );
         }
         return (

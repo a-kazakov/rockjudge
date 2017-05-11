@@ -2,6 +2,7 @@ import Header from "JudgeTablet/Header";
 import Grid from "JudgeTablet/Grid";
 import Participant from "./Participant";
 
+import ResultsTable2 from "ResultsTable2";
 import ConfirmationButton from "JudgeTablet/ConfirmationButton";
 
 export default class GeneralLayout extends React.PureComponent {
@@ -36,6 +37,7 @@ export default class GeneralLayout extends React.PureComponent {
         super(props);
         this.state = {
             heat: this.getFirstNonConfirmedHeat(),
+            showResults: false,
         };
         this.setupCache();
     }
@@ -46,8 +48,16 @@ export default class GeneralLayout extends React.PureComponent {
             this.props = next_props;
             this.setState({
                 heat: this.getFirstNonConfirmedHeat(),
+                showResults: false,
             });
             this.props = prev_props;
+        }
+        if (this.state.showResults) {
+            if (!this.checkCanFinish(next_props)) {
+                this.setState({
+                    showResults: false,
+                });
+            }
         }
     }
 
@@ -115,11 +125,30 @@ export default class GeneralLayout extends React.PureComponent {
         }
         return result;
     }
+    checkCanFinish(props=null) {
+        if (props === null) {
+            props = this.props;
+        }
+        function checkScoreIsBad(s) {
+            return s.discipline_judge_id === props.disciplineJudge.id &&
+                   !s.confirmed;
+        }
+        for (const run of props.tour.runs) {
+            if (run.status !== "OK") {
+                continue;
+            }
+            if (run.scores.some(checkScoreIsBad)) {
+                return false;
+            }
+        }
+        return true;
+    }
     setupCache() {
         this.heats_count = Math.max(1, ...this.props.tour.runs.map(run => run.heat));
         this.runs = this.props.tour.runs.filter(run => run.heat === this.state.heat);
         this.first_non_confirmed_heat = this.getFirstNonConfirmedHeat();
         this.scores = this.getScores();
+        this.can_finish = this.checkCanFinish();
     }
 
 
@@ -128,10 +157,44 @@ export default class GeneralLayout extends React.PureComponent {
 
     handlePrevHeatClick = () => this.updateHeat(-1);
     handleNextHeatClick = () => this.updateHeat(1);
+    handleFinishClick = () => this.setState({ showResults: true });
+    handleReturnClick = () => this.setState({ showResults: false });
 
     checkRunConfirmed = (run) => {
         const score = this.scores.get(run.id);
         return run.status !== "OK" || (score && score.confirmed);
+    }
+
+    renderBody() {
+        if (this.state.showResults) {
+            return (
+                <div className="body">
+                    <ResultsTable2 tour={ this.props.tour } />
+                </div>
+            );
+        }
+        return (
+            <div className="body">
+                <Grid>
+                    { this.runs.map(run =>
+                        <Participant
+                            disciplineJudge={ this.props.disciplineJudge }
+                            key={ run.id }
+                            layoutClass={ this.props.layoutClass }
+                            run={ run }
+                            score={ this.scores.get(run.id) }
+                            onScoreUpdate={ this.props.onScoreUpdate }
+                        />
+                    )}
+                </Grid>
+                <ConfirmationButton
+                    canConfirm={ this.canConfirm() }
+                    confirmed={ this.runs.every(this.checkRunConfirmed) }
+                    key={ this.state.heat }
+                    onConfirm={ this.handleConfirm }
+                />
+            </div>
+        );
     }
 
     render() {
@@ -139,34 +202,20 @@ export default class GeneralLayout extends React.PureComponent {
         return (
             <div className="rosfarr-JudgeTablet GeneralLayout">
                 <Header
+                    canFinish={ !this.state.showResults && this.can_finish }
+                    canReturn={ this.state.showResults }
                     heat={ this.state.heat }
                     heatsCount={ this.heats_count }
+                    hideHeatsButtons={ this.state.showResults }
                     judge={ this.props.disciplineJudge.judge }
                     maxHeat={ this.first_non_confirmed_heat }
                     tour={ this.props.tour }
+                    onFinishClick={ this.handleFinishClick }
                     onNextHeatClick={ this.handleNextHeatClick }
                     onPrevHeatClick={ this.handlePrevHeatClick }
+                    onReturnClick={ this.handleReturnClick }
                 />
-                <div className="body">
-                    <Grid>
-                        { this.runs.map(run =>
-                            <Participant
-                                disciplineJudge={ this.props.disciplineJudge }
-                                key={ run.id }
-                                layoutClass={ this.props.layoutClass }
-                                run={ run }
-                                score={ this.scores.get(run.id) }
-                                onScoreUpdate={ this.props.onScoreUpdate }
-                            />
-                        )}
-                    </Grid>
-                    <ConfirmationButton
-                        canConfirm={ this.canConfirm() }
-                        confirmed={ this.runs.every(this.checkRunConfirmed) }
-                        key={ this.state.heat }
-                        onConfirm={ this.handleConfirm }
-                    />
-                </div>
+                { this.renderBody() }
             </div>
         );
     }

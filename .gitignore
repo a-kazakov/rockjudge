@@ -8,3 +8,4 @@ settings_prod.py
 dist/**
 external-tools/**
 **/node_modules/**
+/error_js*
