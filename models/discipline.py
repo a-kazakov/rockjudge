@@ -227,7 +227,9 @@ class Discipline(BaseModel):
                 if p_id in participants_added:
                     continue
                 row = {
-                    "place": row["place"] + place_offset if not skip_place and not row["advances"] else None,
+                    "place": (row["place"] + place_offset
+                              if not skip_place and not row["advances"] and row["place"] is not None
+                              else None),
                     "run_id": row["run_id"],
                 }
                 participants_added.add(p_id)

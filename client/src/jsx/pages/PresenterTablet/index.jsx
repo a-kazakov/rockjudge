@@ -28,7 +28,7 @@ export default class PresenterTablet extends React.PureComponent {
         };
         message_dispatcher.addListener("db_update", this.reloadFromStorage);
         message_dispatcher.addListener("reload_data", this.loadData);
-        message_dispatcher.addListener("active_tour_update", this.handleActiveTourUpdate);
+        message_dispatcher.addListener("active_tours_update", this.handleActiveToursUpdate);
         this.loadData();
     }
 
@@ -60,15 +60,24 @@ export default class PresenterTablet extends React.PureComponent {
             .onSuccess(this.reloadFromStorage)
             .send();
 
-        Api("tour.find_active", {})
-            .onSuccess(this.handleActiveTourUpdate)
+        Api("competition.get_active_tours", { competition_id: this.props.competitionId })
+            .onSuccess((response) => this.handleActiveToursUpdate({
+                competition_id: this.props.competitionId,
+                active_tours: response,
+            }))
             .send();
     }
 
-    handleActiveTourUpdate = (data) => {
-        if (data.tour_id !== this.state.activeTourId) {
+    handleActiveToursUpdate = (data) => {
+        const { competition_id, active_tours } = data;
+        if (competition_id !== this.props.competitionId) {
+            return;
+        }
+        const tour_info = active_tours[0] || null;
+        const tour_id = tour_info && tour_info.tour_id;
+        if (tour_id !== this.state.activeTourId) {
             this.setState({
-                activeTourId: data.tour_id,
+                activeTourId: tour_id,
                 heat: 1,
             })
         }

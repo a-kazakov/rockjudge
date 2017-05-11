@@ -323,7 +323,13 @@ class Tour(BaseModel):
         check_permissions("tour.start", {"tour": self})
         if self.finalized:
             raise ApiError("errors.tour.start_finalized")
-        active_tours = list(self.select().where(Tour.active == True))  # NOQA
+        if self.active:
+            return
+        competition_id = self.discipline.competition_id
+        active_tours = list(self.__class__.select().join(Discipline).where(
+            (Tour.active == True) &  # NOQA
+            (Discipline.competition == competition_id)
+        ))
         for tour in active_tours:
             tour.stop(ws_message=ws_message, broadcast=False)
         self.active = True
@@ -332,7 +338,7 @@ class Tour(BaseModel):
             model_type=self.__class__,
             model_id=self.id,
         )
-        ws_message.add_message("active_tour_update", {"tour_id": self.id})
+        ws_message.add_active_tours_update(self.discipline.competition_id)
 
     def stop(self, ws_message, broadcast=True):
         self.active = False
@@ -342,7 +348,7 @@ class Tour(BaseModel):
             model_id=self.id,
         )
         if broadcast:
-            ws_message.add_message("active_tour_update", {"tour_id": None})
+            ws_message.add_active_tours_update(self.discipline.competition_id)
 
     @property
     def discipline_judges(self):
@@ -564,7 +570,7 @@ class Tour(BaseModel):
             }
         )
         if self.active:
-            ws_message.add_message("active_tour_update", {"tour_id": None})
+            ws_message.add_active_tours_update(discipline.competition_id)
 
     @property
     def results(self):

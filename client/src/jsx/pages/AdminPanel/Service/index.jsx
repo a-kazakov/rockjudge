@@ -69,7 +69,7 @@ export default class Service extends React.PureComponent {
                     <h3>
                         { _("admin.headers.about") }
                     </h3>
-                    { _("admin.alerts.about", "v1.2", "01.04.2017") }
+                    { _("admin.alerts.about", "v1.3 prerelease", "09.05.2017") }
                 </div>
             </div>
         );

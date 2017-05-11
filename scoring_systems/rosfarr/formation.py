@@ -37,7 +37,7 @@ def get_run_scores(run_id, scores_ids, scores, judges_ids, judges_roles, acro_sc
         scoring_system_name=SS_NAME,
     )
     return {
-        "total_run_score": "SK",
+        "total_run_score": ("SK" if status == "OK" else "—"),
         "verbose_run_score": {
             "card": context.card,
             "nexttour": context.nexttour_mark,

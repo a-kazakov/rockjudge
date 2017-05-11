@@ -73,6 +73,7 @@ class WsMessage:
         self.ws_client_id = ws_client_id
         self.model_updates = []
         self.tour_results_updates = set()
+        self.active_tours_updates = set()
         self.messages = []
 
     def add_model_update(self, model_type, model_id, schema=None):
@@ -86,6 +87,9 @@ class WsMessage:
 
     def add_tour_results_update(self, tour_id):
         self.tour_results_updates.add(tour_id)
+
+    def add_active_tours_update(self, competition_id):
+        self.active_tours_updates.add(competition_id)
 
     def add_message(self, message, data=None):
         self.messages.append((message, data, ))
@@ -126,17 +130,37 @@ class WsMessage:
             raise ex
 
     def serialize(self):
+        from models import Competition
+        updates = []
+        messages = copy.copy(self.messages)
+        # Models
         schemas = OrderedDict()
         for x in self.model_updates:
             key = (x["model_type"], x["model_id"])
             if key not in schemas:
                 schemas[key] = {}
             self.merge_schemas(schemas[key], x["schema"])
-        updates = []
         for (model_type, model_id), schema in schemas.items():
             model = model_type.get(model_type.id == model_id)
             model.smart_prefetch(schema)
             updates.append(model.serialize_as_child(schema))
+        # Active tours
+        for competition_id in self.active_tours_updates:
+            active_tours = Competition.get(id=competition_id).get_active_tours()
+            for tour in active_tours:
+                tour.smart_prefetch({
+                    "discipline": {
+                        "discipline_judges": {},
+                    },
+                })
+            messages.append(("active_tours_update", {
+                "competition_id": competition_id,
+                "active_tours": [{
+                    "tour_id": tour.id,
+                    "judges": [dj.judge_id for dj in tour.discipline_judges],
+                } for tour in active_tours],
+            }))
+        # Tour results
         for tour_id in self.tour_results_updates:
             if tour_id in self.wating_updates:
                 continue
@@ -152,7 +176,7 @@ class WsMessage:
             updates.append(self.get_tour_result(tour_id))
         return {
             "model_updates": updates,
-            "messages": self.messages,
+            "messages": messages,
         }
 
     def send(self):

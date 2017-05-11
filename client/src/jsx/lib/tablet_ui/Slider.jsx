@@ -75,7 +75,6 @@ export default  class Slider extends React.PureComponent {
         this.props.onActivate();
     }
     handleTouchStart = (event) => {
-        event.preventDefault();
         if (this.state.finished || this.props.done) {
             return;
         }
@@ -86,7 +85,6 @@ export default  class Slider extends React.PureComponent {
         });
     }
     handleTouchMove = (event) => {
-        event.preventDefault();
         if (this.state.finished || this.props.done) {
             return;
         }

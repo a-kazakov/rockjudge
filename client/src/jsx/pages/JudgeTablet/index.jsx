@@ -29,14 +29,14 @@ export default class JudgeTablet extends React.PureComponent {
     componentDidMount() {
         this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData);
         this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage);
-        this.active_tour_update_listener = message_dispatcher.addListener("active_tour_update", this.handleActiveTourUpdate);
+        this.active_tours_update_listener = message_dispatcher.addListener("active_tours_update", this.handleActiveToursUpdate);
         this.loadData();
     }
 
     componentWillUnmount() {
         message_dispatcher.removeListener(this.reload_listener);
         message_dispatcher.removeListener(this.db_update_listener);
-        message_dispatcher.removeListener(this.active_tour_update_listener);
+        message_dispatcher.removeListener(this.active_tours_update_listener);
     }
 
     get TOUR_SCHEMA() {
@@ -70,8 +70,13 @@ export default class JudgeTablet extends React.PureComponent {
         }
     }
 
-    handleActiveTourUpdate = (data) => {
-        const { tour_id } = data;
+    handleActiveToursUpdate = (data) => {
+        const { competition_id, active_tours } = data;
+        if (this.state.judge === null || competition_id !== this.state.judge.competition.id) {
+            return;
+        }
+        const tour_info = active_tours[0] || null;
+        const tour_id = tour_info && tour_info.tour_id;
         if (tour_id === this._current_active_tour_id) {
             return;
         }
@@ -140,11 +145,17 @@ export default class JudgeTablet extends React.PureComponent {
             children: this.JUDGE_SCHEMA,
         })
             .addToDB("Judge", this.props.judgeId)
-            .onSuccess(this.reloadFromStorage)
-            .send();
-
-        Api("tour.find_active", {})
-            .onSuccess(this.handleActiveTourUpdate)
+            .onSuccess(() => {
+                this.reloadFromStorage();
+                Api("competition.get_active_tours", {
+                    competition_id: this.state.judge.competition.id,
+                })
+                    .onSuccess((response) => this.handleActiveToursUpdate({
+                        competition_id: this.state.judge.competition.id,
+                        active_tours: response,
+                    }))
+                    .send();
+            })
             .send();
     }
 

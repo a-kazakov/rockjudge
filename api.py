@@ -603,6 +603,26 @@ class Api:
         }
 
     @classmethod
+    def competition_get_active_tours(cls, request):
+        competition = cls.get_model(Competition, "competition_id", request, pf_children={})
+        check_auth(
+            competition_id=competition.id,
+            request=request,
+            allowed_access_levels=("admin", "presenter", "any_judge", "judge_*",),
+        )
+        active_tours = competition.get_active_tours()
+        for tour in active_tours:
+            tour.smart_prefetch({
+                "discipline": {
+                    "discipline_judges": {},
+                },
+            })
+        return [{
+            "tour_id": tour.id,
+            "judges": [dj.judge_id for dj in tour.discipline_judges],
+        } for tour in active_tours]
+
+    @classmethod
     def tour_permute_within_heat(cls, request):
         tour = cls.get_model(Tour, "tour_id", request)
         check_auth(

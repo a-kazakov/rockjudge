@@ -83,6 +83,16 @@ class Competition(BaseModel):
         )
         ws_message.add_message("competition_list_update")
 
+    def get_active_tours(self):
+        from models import (
+            Discipline,
+            Tour,
+        )
+        return list(Tour.select().join(Discipline).where(
+            (Tour.active == True) &  # NOQA
+            (Discipline.competition == self)
+        ))
+
     def delete_model(self, ws_message):
         self.deleted = True
         self.active = False
