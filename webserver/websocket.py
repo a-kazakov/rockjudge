@@ -85,8 +85,8 @@ class WsMessage:
             "schema": schema,
         })
 
-    def add_tour_results_update(self, tour_id):
-        self.tour_results_updates.add(tour_id)
+    def add_tour_results_update(self, tour_id, immediate=False):
+        self.tour_results_updates.add((tour_id, immediate, ))
 
     def add_active_tours_update(self, competition_id):
         self.active_tours_updates.add(competition_id)
@@ -117,6 +117,8 @@ class WsMessage:
 
     @classmethod
     def push_tour_result_update(cls, tour_id):
+        if tour_id not in cls.wating_updates:
+            return
         with Database.instance().db.transaction():
             upd = cls.get_tour_result(tour_id)
         cls.latest_updates[tour_id] = time.time()
@@ -161,11 +163,13 @@ class WsMessage:
                 } for tour in active_tours],
             }))
         # Tour results
-        for tour_id in self.tour_results_updates:
+        for tour_id, immediate in self.tour_results_updates:
+            if immediate:
+                self.wating_updates.discard(tour_id)
+                self.latest_updates.pop(tour_id, 0)
             if tour_id in self.wating_updates:
                 continue
             time_since_latest_update = time.time() - self.latest_updates.get(tour_id, 0)
-            self.latest_updates[tour_id] = time.time()
             if time_since_latest_update < 0.75:
                 self.wating_updates.add(tour_id)
                 tornado.ioloop.IOLoop.instance().call_later(
@@ -173,6 +177,7 @@ class WsMessage:
                     self.push_tour_result_update, tour_id,
                 )
                 continue
+            self.latest_updates[tour_id] = time.time()
             updates.append(self.get_tour_result(tour_id))
         return {
             "model_updates": updates,

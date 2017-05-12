@@ -537,10 +537,22 @@ class Tour(BaseModel):
         if "scoring_system_name" in new_data:
             self.validate_scoring_system_name(self.discipline, new_data["scoring_system_name"])
         self.update_model_base(new_data)
-        ws_message.add_model_update(
-            model_type=self.__class__,
-            model_id=self.id,
-        )
+        if "scoring_system_name" in new_data:
+            ws_message.add_model_update(
+                model_type=self.__class__,
+                model_id=self.id,
+                schema={
+                    "runs": {
+                        "scores": {},
+                    },
+                }
+            )
+            ws_message.add_tour_results_update(self.id, immediate=True)
+        else:
+            ws_message.add_model_update(
+                model_type=self.__class__,
+                model_id=self.id,
+            )
 
     def delete_model(self, ws_message):
         if self.finalized:
