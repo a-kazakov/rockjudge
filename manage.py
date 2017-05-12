@@ -16,6 +16,7 @@ AsyncIOMainLoop().install()
 
 import settings
 
+
 class Commands:
     @staticmethod
     def start():
