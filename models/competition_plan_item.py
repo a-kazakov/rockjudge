@@ -17,7 +17,7 @@ class CompetitionPlanItem(BaseModel):
 
     competition = peewee.ForeignKeyField(Competition, related_name="plan", on_delete="RESTRICT")
     tour = peewee.ForeignKeyField(Tour, default=None, null=True, related_name="competition_plan_entries", on_delete="CASCADE")
-    verbose_name = peewee.CharField(default="")
+    verbose_name = peewee.CharField(max_length=10000, default="")
     estimated_beginning = peewee.CharField(default="")
     estimated_duration = peewee.CharField(default="")
     sp = peewee.IntegerField()
