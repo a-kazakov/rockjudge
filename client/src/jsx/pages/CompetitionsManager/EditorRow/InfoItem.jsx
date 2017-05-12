@@ -26,7 +26,10 @@ export default class InfoItem extends React.PureComponent {
 
     handleMoveDown = () => this.props.onMoveDown(this.props.idx);
     handleMoveUp = () => this.props.onMoveUp(this.props.idx);
-    handleItemRemove = () => this.props.onDelete(this.props.idx);
+    handleItemRemove = (event) => {
+        event.preventDefault();
+        this.props.onDelete(this.props.idx);
+    }
 
     render() {
         const [label, value] = this.props.item;
