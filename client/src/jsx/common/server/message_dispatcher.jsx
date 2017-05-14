@@ -38,7 +38,12 @@ class MessageDispatcher {
     handleMessage = (message) => {
         let data = message.raw_data;
         if (!data) {
-            const lz4_blob = Uint8Array.from(atob(message.data), c => c.charCodeAt(0));
+            const raw = atob(message.data);
+            const rawLength = raw.length;
+            const lz4_blob = new Uint8Array(new ArrayBuffer(rawLength));
+            for (let i = 0; i < rawLength; ++i) {
+                lz4_blob[i] = raw.charCodeAt(i);
+            }
             const json_blob = lz4.decompress(lz4_blob);
             const json_str = (new TextDecoder("utf-8")).decode(json_blob);
             data = JSON.parse(json_str);

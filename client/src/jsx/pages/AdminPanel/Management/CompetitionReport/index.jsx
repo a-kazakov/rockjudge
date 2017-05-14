@@ -100,6 +100,9 @@ export default class CompetitionReport extends React.PureComponent {
     }
 
     reloadFromStorage = () => {
+        if (this.state.competition === null) {
+            return;
+        }
         const competition = this.storage.get("Competition")
             .by_id(this.props.competition.id)
             .serialize(this.SCHEMA);
