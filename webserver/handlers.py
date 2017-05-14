@@ -147,7 +147,7 @@ class ApiHandler(tornado.web.RequestHandler):
             except:
                 # TODO: add logging here
                 ws_client_id = None
-            ws_message = WsMessage(ws_client_id)
+            ws_message = WsMessage(client_id=ws_client_id, broadcast=True)
             client = None
             if method not in ("auth.register", "auth.exchange_keys", ):  # Check signature
                 try:
@@ -178,9 +178,7 @@ class ApiHandler(tornado.web.RequestHandler):
             )
             result = Api.call(request)
             response = json.dumps(result, ensure_ascii=False)
-            if not ws_message.empty():
-                with Database.instance().db.transaction():
-                    ws_message.send()
+            ws_message.make_transaction_and_send()
             self.write(response)
         finally:
             logger.removeHandler(hdlr)

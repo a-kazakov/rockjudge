@@ -26,6 +26,8 @@ from models import (
 )
 
 
+OBJECTS = {}
+
 class IdTransformer:
     @classmethod
     def execute(cls, request, wanted_id_type):
@@ -45,7 +47,10 @@ class Api:
     @staticmethod
     def get_model(model_type, id_name, request, pf_children=None):
         model_id = request.body[id_name]
-        model = model_type.get(model_type.id == model_id)
+        try:
+            model = model_type.get(model_type.id == model_id)
+        except model_type.DoesNotExist:
+            raise ApiError("errors.model_does_not_exist.{}".format(model_type.__name__.lower()))
         if pf_children is None:
             if "children" in request.body:
                 model.smart_prefetch(request.body["children"])
@@ -127,6 +132,18 @@ class Api:
             allowed_access_levels=("admin", ),
         )
         return program.serialize(children=request.body["children"])
+
+    # Requests
+
+    @classmethod
+    def judge_request(cls, request):
+        judge = cls.get_model(Judge, "judge_id", {})
+        check_auth(
+            competition_id=judge.competition_id,
+            request=request,
+            allowed_access_levels=("judge_{}".format(judge.id), "any_judge", "admin", ),
+        )
+
 
     # Setters
 
