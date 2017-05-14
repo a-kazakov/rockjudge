@@ -100,12 +100,12 @@ export default class CompetitionReport extends React.PureComponent {
     }
 
     reloadFromStorage = () => {
-        if (this.state.competition === null) {
-            return;
-        }
         const competition = this.storage.get("Competition")
             .by_id(this.props.competition.id)
             .serialize(this.SCHEMA);
+        if (competition === null) {
+            return;
+        }
         let config = Object.assign({}, this.state.config); // clone
         let new_disciplines = {};
         competition.disciplines.forEach(discipline => {
