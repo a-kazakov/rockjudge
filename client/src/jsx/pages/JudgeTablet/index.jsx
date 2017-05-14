@@ -1,6 +1,6 @@
 import Api from "common/server/Api";
 import storage from "common/server/storage";
-import message_dispatcher from "common/server/message_dispatcher";
+import websocket from "common/server/websocket";
 import FullscreenButton from "common/components/FullscreenButton"
 import Loader from "common/components/Loader";
 
@@ -27,16 +27,16 @@ export default class JudgeTablet extends React.PureComponent {
     }
 
     componentDidMount() {
-        this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData);
-        this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage);
-        this.active_tours_update_listener = message_dispatcher.addListener("active_tours_update", this.handleActiveToursUpdate);
+        this.reload_listener = websocket.addListener("reload_data", this.loadData);
+        this.db_update_listener = websocket.addListener("db_update", this.reloadFromStorage);
+        this.active_tours_update_listener = websocket.addListener("active_tours_update", this.handleActiveToursUpdate);
         this.loadData();
     }
 
     componentWillUnmount() {
-        message_dispatcher.removeListener(this.reload_listener);
-        message_dispatcher.removeListener(this.db_update_listener);
-        message_dispatcher.removeListener(this.active_tours_update_listener);
+        websocket.removeListener(this.reload_listener);
+        websocket.removeListener(this.db_update_listener);
+        websocket.removeListener(this.active_tours_update_listener);
     }
 
     get TOUR_SCHEMA() {

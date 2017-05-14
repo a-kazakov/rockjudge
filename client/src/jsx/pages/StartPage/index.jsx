@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import Api from "common/server/Api";
 import Loader from "common/components/Loader";
-import message_dispatcher from "common/server/message_dispatcher";
+import websocket from "common/server/websocket";
 
 import keys_storage from "common/keys_storage";
 
@@ -17,10 +17,10 @@ export default class StartPage extends React.PureComponent {
             activeCompetitionId: null,
             competitionsNames: null,
         };
-        message_dispatcher.addListener("db_update", this.reloadFromStorage);
-        message_dispatcher.addListener("reload_data", this.loadData);
-        message_dispatcher.addListener("access_levels_changed", this.handleAccessLevelsChange);
-        message_dispatcher.addListener("competition_list_update", this.loadCompetitionsNames);
+        websocket.addListener("db_update", this.reloadFromStorage);
+        websocket.addListener("reload_data", this.loadData);
+        websocket.addListener("access_levels_changed", this.handleAccessLevelsChange);
+        websocket.addListener("competition_list_update", this.loadCompetitionsNames);
         this.loadData();
     }
 

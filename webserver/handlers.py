@@ -8,7 +8,10 @@ import tornado.web
 
 import scoring_systems
 import settings
-from api import Api
+from api import (
+    Api,
+    ApiRequest,
+)
 from db import Database
 from log import log_api
 from models import (
@@ -127,13 +130,9 @@ class StartPageHandler(tornado.web.RequestHandler):
         )
 
 
-class ApiRequest:
-    def __init__(self, **kwargs):
-        self.__dict__.update(kwargs)
-
-
 class ApiHandler(tornado.web.RequestHandler):
     def post(self):
+        response = "";
         try:
             begin = time.time()
             hdlr = SqlLoggingHandler()

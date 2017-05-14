@@ -2,7 +2,7 @@ import Api from "common/server/Api";
 import FullscreenButton from "common/components/FullscreenButton"
 import Loader from "common/components/Loader";
 import storage from "common/server/storage";
-import message_dispatcher from "common/server/message_dispatcher";
+import websocket from "common/server/websocket";
 
 import HeatsPage from "./HeatsPage";
 import InfoPage from "./InfoPage";
@@ -26,9 +26,9 @@ export default class PresenterTablet extends React.PureComponent {
             competition: null,
             activeTourId: null,
         };
-        message_dispatcher.addListener("db_update", this.reloadFromStorage);
-        message_dispatcher.addListener("reload_data", this.loadData);
-        message_dispatcher.addListener("active_tours_update", this.handleActiveToursUpdate);
+        websocket.addListener("db_update", this.reloadFromStorage);
+        websocket.addListener("reload_data", this.loadData);
+        websocket.addListener("active_tours_update", this.handleActiveToursUpdate);
         this.loadData();
     }
 

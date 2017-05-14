@@ -1,7 +1,7 @@
 import _ from "l10n";
 import Api from "common/server/Api";
 import storage from "common/server/storage";
-import message_dispatcher from "common/server/message_dispatcher";
+import websocket from "common/server/websocket";
 import Loader from "common/components/Loader";
 
 import NavigationButton from "./NavigationButton";
@@ -25,8 +25,8 @@ export default class AdminPanel extends React.PureComponent {
             activeApp: this.getActiveAppFromHash(),
             competition: null,
         };
-        message_dispatcher.addListener("db_update", this.reloadFromStorage);
-        message_dispatcher.addListener("reload_data", this.loadData);
+        websocket.addListener("db_update", this.reloadFromStorage);
+        websocket.addListener("reload_data", this.loadData);
         this.loadData();
     }
 

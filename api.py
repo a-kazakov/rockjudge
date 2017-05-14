@@ -26,7 +26,10 @@ from models import (
 )
 
 
-OBJECTS = {}
+class ApiRequest:
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+
 
 class IdTransformer:
     @classmethod
@@ -852,24 +855,25 @@ class Api:
     # Service
 
     @classmethod
+    def call_nocatch(cls, request):
+        response = None
+        parts = request.method.split(".")
+        if len(parts) != 2:
+            raise ApiError("errors.global.invalid_method_name")
+        else:
+            internal_name = "_".join(parts)
+            with Database.instance().db.transaction():
+                return getattr(cls, internal_name)(request)
+
+    @classmethod
     def call(cls, request):
         ex_str = None
         try:
-            response = None
-            parts = request.method.split(".")
-            if len(parts) != 2:
-                response = {
-                    "success": False,
-                    "message": "Invalid method name: {}".format(request.method),
-                }
-            else:
-                internal_name = "_".join(parts)
-                with Database.instance().db.transaction():
-                    result = getattr(cls, internal_name)(request)
-                response = {
-                    "success": True,
-                    "response": result
-                }
+            result = cls.call_nocatch(request)
+            response = {
+                "success": True,
+                "response": result
+            }
         except ApiError as ex:
             ex_str = traceback.format_exc()
             response = {

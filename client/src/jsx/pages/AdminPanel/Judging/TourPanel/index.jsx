@@ -15,7 +15,7 @@ import TourResultsTabButtons from "./TourResultsTab/Buttons";
 import DisciplineResultsTabButtons from "./DisciplineResultsTab/Buttons";
 
 import storage from "common/server/storage";
-import message_dispatcher from "common/server/message_dispatcher";
+import websocket from "common/server/websocket";
 
 export default class TourPanel extends React.PureComponent {
     static get propTypes() {
@@ -43,8 +43,8 @@ export default class TourPanel extends React.PureComponent {
 
     componentWillMount() {
         this.setupStorage();
-        this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData);
-        this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage);
+        this.reload_listener = websocket.addListener("reload_data", this.loadData);
+        this.db_update_listener = websocket.addListener("db_update", this.reloadFromStorage);
         this.loadData();
     }
     componentWillReceiveProps(next_props) {
@@ -63,8 +63,8 @@ export default class TourPanel extends React.PureComponent {
         }
     }
     componentWillUnmount() {
-        message_dispatcher.removeListener(this.reload_listener);
-        message_dispatcher.removeListener(this.db_update_listener);
+        websocket.removeListener(this.reload_listener);
+        websocket.removeListener(this.db_update_listener);
         this.freeStorage();
     }
 

@@ -3,7 +3,7 @@ import { saveAs } from "file-saver";
 import _ from "l10n";
 import Api from "common/server/Api";
 import storage from "common/server/storage";
-import message_dispatcher from "common/server/message_dispatcher";
+import websocket from "common/server/websocket";
 import Loader from "common/components/Loader";
 import showConfirm from "common/dialogs/showConfirm";
 
@@ -36,15 +36,15 @@ export default class AutoPrinter extends React.PureComponent {
 
     componentWillMount() {
         this.loadData();
-        this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage);
-        this.reload_data_listener = message_dispatcher.addListener("reload_data", this.loadData);
+        this.db_update_listener = websocket.addListener("db_update", this.reloadFromStorage);
+        this.reload_data_listener = websocket.addListener("reload_data", this.loadData);
     }
     componentDidUpdate() {
         localStorage.setItem(`auto_printer_${this.props.competitionId}`, JSON.stringify(this.state.actions));
     }
     componentWillUnmount() {
-        message_dispatcher.removeListener(this.db_update_listener);
-        message_dispatcher.removeListener(this.reload_data_listener);
+        websocket.removeListener(this.db_update_listener);
+        websocket.removeListener(this.reload_data_listener);
     }
 
     loadData = () => {

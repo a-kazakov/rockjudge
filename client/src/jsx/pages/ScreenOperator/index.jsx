@@ -2,7 +2,7 @@ import _ from "l10n";
 import Api from "common/server/Api";
 import clone from "common/tools/clone";
 import storage from "common/server/storage";
-import message_dispatcher from "common/server/message_dispatcher";
+import websocket from "common/server/websocket";
 import FullscreenButton from "common/components/FullscreenButton"
 import Loader from "common/components/Loader";
 
@@ -31,8 +31,8 @@ export default class ScreenOperator extends React.PureComponent {
             competition: null,
             pendingData: null,
         };
-        message_dispatcher.addListener("db_update", this.reloadFromStorage.bind(this));
-        message_dispatcher.addListener("reload_data", this.loadData.bind(this));
+        websocket.addListener("db_update", this.reloadFromStorage.bind(this));
+        websocket.addListener("reload_data", this.loadData.bind(this));
         this.loadData();
     }
 

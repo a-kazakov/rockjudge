@@ -3,6 +3,7 @@ import copy
 import json
 import lz4framed as lz4
 import time
+import traceback
 
 from collections import OrderedDict
 
@@ -86,14 +87,66 @@ class WebSocketClients(SockJSConnection):
     _client_id = None
 
     def on_message(self, msg):
-        pass
+        from api import (
+            Api,
+            ApiRequest,
+            ApiError,
+        )
+        from models import Client
+        request_start_time = time.time()
+        public_ws_message = WsMessage(client_id=self._client_id, broadcast=True)
+        private_ws_message = WsMessage(client_id=self._client_id, broadcast=False)
+        method = ""
+        try:
+            signature, json_data = msg.split("|", 1)
+            data = json.loads(json_data)
+            method = data["method"]
+            client = Client.get_and_validate(
+                client_id=data["client_id"],
+                method=data["method"],
+                str_data=json_data,
+                random=data["random"],
+                signature=signature,
+            )
+            request = ApiRequest(
+                method=data["method"],
+                body=data["params"],
+                client=client,
+                remote_ip=self._ws_request.ip,
+                ws_message=public_ws_message,
+                private_ws_message=private_ws_message,
+            )
+            response = Api.call_nocatch(request)
+            if data["response_key"] is not None:
+                private_ws_message.add_api_response(data["response_key"], {
+                    "success": True,
+                    "response": response,
+                })
+        except ApiError as ex:
+            if data["response_key"] is not None:
+                private_ws_message.add_api_response(data["response_key"], {
+                    "success": False,
+                    "code": ex.code,
+                    "args": ex.args,
+                })
+        except Exception:
+            ex_str = traceback.format_exc()
+            print(ex_str)
+            if data["response_key"] is not None:
+                private_ws_message.add_api_response(data["response_key"], {
+                    "success": False,
+                    "code": "errors.global.internal_server_error",
+                })
+        finally:
+            private_ws_message.make_transaction_and_send()
+            public_ws_message.make_transaction_and_send()
+            total_time = time.time() - request_start_time
+            print("FastApi call: {:<35s} {:4d}ms".format(method, int(1000 * total_time)))
 
     def on_open(self, request):
         manager = WebSocketConnectionsManager.instance()
         self._client_id = manager.add_connection(self)
-        manager.queue_message(token=None, message_object={
-            "ws_client_id": self._client_id
-        })
+        self._ws_request = request
 
     def on_close(self):
         WebSocketConnectionsManager.instance().remove_connection(self._client_id)
@@ -160,6 +213,8 @@ class WsMessage:
         self._tour_results_updates = []
         self._active_tours_updates = set()
         self._messages = []
+        self._api_responses = {}
+        self._need_transaction = False
         self._empty = True
 
     def make_transaction_and_send(self):
@@ -180,10 +235,21 @@ class WsMessage:
             broadcast=self._broadcast,
         )
 
+    def send_no_transaction(self):
+        if self._empty:
+            return
+        manager.queue_message(
+            token=None,  # No transaction -- no token
+            message_object=self.serialize(),
+            client_id=self._client_id,
+            broadcast=self._broadcast,
+        )
+
     # Requests
 
     def add_model_update(self, model_type, model_id, schema=None):
         self._empty = False
+        self._need_transaction = True
         if schema is None:
             schema = {}
         self._model_updates.append({
@@ -194,6 +260,7 @@ class WsMessage:
 
     def add_tour_results_update(self, tour_id, immediate=False):
         self._empty = False
+        self._need_transaction = True
         self._tour_results_updates.append((
             tour_id,
             immediate,
@@ -201,6 +268,7 @@ class WsMessage:
 
     def add_active_tours_update(self, competition_id):
         self._empty = False
+        self._need_transaction = True
         self._active_tours_updates.add(competition_id)
 
     def add_message(self, message, data=None):
@@ -209,6 +277,9 @@ class WsMessage:
             message,
             data,
         ))
+
+    def add_api_response(key, response):
+        self._api_responses[key] = response
 
     # Resolving
 
@@ -263,4 +334,5 @@ class WsMessage:
         return {
             "model_updates": updates,
             "messages": messages,
+            "api_responses": self._api_responses,
         }

@@ -1,6 +1,6 @@
 import Api from "common/server/Api";
 import storage from "common/server/storage";
-import message_dispatcher from "common/server/message_dispatcher";
+import websocket from "common/server/websocket";
 
 import ScreenManifest from "common/ScreenManifest";
 
@@ -25,14 +25,14 @@ export default class Screen extends React.PureComponent {
 
     componentWillMount() {
         this.loadData();
-        this._message_dispatchers = [
-            message_dispatcher.addListener("db_update", this.reloadFromStorage),
-            message_dispatcher.addListener("reload_data", this.loadData),
+        this._websockets = [
+            websocket.addListener("db_update", this.reloadFromStorage),
+            websocket.addListener("reload_data", this.loadData),
         ];
     }
     componentWillUnmount() {
-        for (const md of this._message_dispatchers) {
-            message_dispatcher.removeListener(md);
+        for (const md of this._websockets) {
+            websocket.removeListener(md);
         }
     }
 

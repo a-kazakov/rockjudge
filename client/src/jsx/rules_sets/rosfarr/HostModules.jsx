@@ -1,9 +1,11 @@
 export let Api = null;
-export let message_dispatcher = null;
+export let FastApi = null;
+export let websocket = null;
 export let storage = null;
 
 export function setup(data) {
-    Api                      = data.Api;
-    message_dispatcher       = data.message_dispatcher;
-    storage                  = data.storage;
+    Api       = data.Api;
+    FastApi   = data.FastApi;
+    websocket = data.websocket;
+    storage   = data.storage;
 }

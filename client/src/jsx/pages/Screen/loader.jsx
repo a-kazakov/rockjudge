@@ -1,6 +1,6 @@
 import Api from "common/server/Api";
 import storage from "common/server/storage";
-import message_dispatcher from "common/server/message_dispatcher";
+import websocket from "common/server/websocket";
 
 import makeTourResultsTable from "common/makeTourResultsTable";
 import makeDisciplineResultsTable from "common/makeDisciplineResultsTable";
@@ -39,7 +39,7 @@ window.registerScreen = function(...args) {
     return {
         Api,
         storage: storage.getDomain("screen"),
-        message_dispatcher,
+        websocket,
         makeTourResultsTable,
         makeDisciplineResultsTable,
     };

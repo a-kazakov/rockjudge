@@ -1,6 +1,7 @@
 import Api from "common/server/Api";
+import FastApi from "common/server/FastApi";
 import storage from "common/server/storage";
-import message_dispatcher from "common/server/message_dispatcher";
+import websocket from "common/server/websocket";
 
 class RulesSetLoader {
     constructor() {
@@ -94,7 +95,7 @@ const loader = new RulesSetLoader();
 
 window.registerRulesSet = function(...args) {
     loader.load(...args);
-    return { Api, storage, message_dispatcher };
+    return { Api, FastApi, storage, websocket };
 }
 
 export default loader;

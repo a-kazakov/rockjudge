@@ -1,3 +1,7 @@
+import _ from "l10n";
+import showError from "common/dialogs/showError";
+import waiting_api_requests from "common/server/waiting_api_requests";
+
 import lz4 from "lz4-asm";
 import { TextDecoder } from "text-encoding";
 
@@ -5,11 +9,12 @@ import connection_status from "common/connection_status";
 
 import storage from "common/server/storage";
 
-class MessageDispatcher {
+class WebSocketHandler {
     constructor() {
         this.closed = false;
         this.listeners = {};
         this.listeners_cnt = 0;
+        this.send_queue = [];
         this.connect();
     }
     connect = () => {
@@ -23,9 +28,11 @@ class MessageDispatcher {
                     raw_data: {
                         messages: [["reload_data", null]],
                         model_updates: [],
+                        api_responses: {},
                     },
                 })
             }
+            this.closed = false;
         };
         this.ws.onclose = () => {
             connection_status.setFail();
@@ -34,6 +41,13 @@ class MessageDispatcher {
             setTimeout(this.connect, 500);
         };
         this.ws.onmessage = this.handleMessage;
+    }
+    send = (message) => {
+        if (this.closed) {
+            showError(_("errors.global.no_connection"));
+            return;
+        }
+        this.ws.send(message);
     }
     handleMessage = (message) => {
         let data = message.raw_data;
@@ -47,10 +61,6 @@ class MessageDispatcher {
             const json_blob = lz4.decompress(lz4_blob);
             const json_str = (new TextDecoder("utf-8")).decode(json_blob);
             data = JSON.parse(json_str);
-        }
-        if (data["ws_client_id"]) {
-            window.ws_client_id = data["ws_client_id"];
-            return;
         }
         for (const data_message of data.messages) {
             const [msg_type, msg_data] = data_message;
@@ -74,6 +84,10 @@ class MessageDispatcher {
                 }
             }
         }
+        for (const api_response_key of Object.keys(data.api_responses)) {
+            const api_response_body = data.api_responses[api_response_key];
+            waiting_api_requests.push_response(api_response_key, api_response_body);
+        }
     }
     getListenerId() {
         return this.listeners_cnt++;
@@ -96,5 +110,5 @@ class MessageDispatcher {
 }
 
 
-const message_dispatcher = new MessageDispatcher();
-export default message_dispatcher;
+const websocket = new WebSocketHandler();
+export default websocket;

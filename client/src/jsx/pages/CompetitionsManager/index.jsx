@@ -1,6 +1,6 @@
 import _ from "l10n";
 import Api from "common/server/Api";
-import message_dispatcher from "common/server/message_dispatcher";
+import websocket from "common/server/websocket";
 import storage from "common/server/storage";
 
 import Loader from "common/components/Loader";
@@ -21,9 +21,9 @@ export default class CompetitionsManager extends React.PureComponent {
         this.state = {
             competitions: null,
         }
-        message_dispatcher.addListener("db_update", this.reloadFromStorage);
-        message_dispatcher.addListener("competition_list_update", this.loadData);
-        message_dispatcher.addListener("reload_data", this.loadData);
+        websocket.addListener("db_update", this.reloadFromStorage);
+        websocket.addListener("competition_list_update", this.loadData);
+        websocket.addListener("reload_data", this.loadData);
         this.loadData();
     }
     reloadFromStorage = () => {
