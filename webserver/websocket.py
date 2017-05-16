@@ -13,7 +13,6 @@ from sockjs.tornado import SockJSConnection
 
 from db import Database
 
-
 class WebSocketConnectionsManager:
     _instance = None
 
@@ -44,8 +43,9 @@ class WebSocketConnectionsManager:
         return self._latest_issued_token
 
     def invalidate_message_token(self, token):
-        self._pending_messages[token] = None
-        self._flush_queue()
+        if token not in self._pending_messages:
+            self._pending_messages[token] = None
+            self._flush_queue()
 
     @staticmethod
     def encode_message(message_object):
@@ -87,11 +87,7 @@ class WebSocketClients(SockJSConnection):
     _client_id = None
 
     def on_message(self, msg):
-        from api import (
-            Api,
-            ApiRequest,
-            ApiError,
-        )
+        from api import ApiRequest
         from models import Client
         request_start_time = time.time()
         public_ws_message = WsMessage(client_id=self._client_id, broadcast=True)
@@ -101,13 +97,16 @@ class WebSocketClients(SockJSConnection):
             signature, json_data = msg.split("|", 1)
             data = json.loads(json_data)
             method = data["method"]
-            client = Client.get_and_validate(
-                client_id=data["client_id"],
-                method=data["method"],
-                str_data=json_data,
-                random=data["random"],
-                signature=signature,
-            )
+            if method not in ("auth.register", "auth.exchange_keys", ):
+                client = Client.get_and_validate(
+                    client_id=data["client_id"],
+                    method=data["method"],
+                    str_data=json_data,
+                    random=data["random"],
+                    signature=signature,
+                )
+            else:
+                client = None
             request = ApiRequest(
                 method=data["method"],
                 body=data["params"],
@@ -115,14 +114,10 @@ class WebSocketClients(SockJSConnection):
                 remote_ip=self._ws_request.ip,
                 ws_message=public_ws_message,
                 private_ws_message=private_ws_message,
+                response_key=data["response_key"],
             )
-            response = Api.call_nocatch(request)
-            if data["response_key"] is not None:
-                private_ws_message.add_api_response(data["response_key"], {
-                    "success": True,
-                    "response": response,
-                })
-        except ApiError as ex:
+            private_ws_message.add_api_call(request)
+        except ApiError:
             if data["response_key"] is not None:
                 private_ws_message.add_api_response(data["response_key"], {
                     "success": False,
@@ -141,7 +136,7 @@ class WebSocketClients(SockJSConnection):
             private_ws_message.make_transaction_and_send()
             public_ws_message.make_transaction_and_send()
             total_time = time.time() - request_start_time
-            print("FastApi call: {:<35s} {:4d}ms".format(method, int(1000 * total_time)))
+            print("Api call: {:<35s} {:4d}ms".format(method, int(1000 * total_time)))
 
     def on_open(self, request):
         manager = WebSocketConnectionsManager.instance()
@@ -213,6 +208,7 @@ class WsMessage:
         self._tour_results_updates = []
         self._active_tours_updates = set()
         self._messages = []
+        self._api_calls = []
         self._api_responses = {}
         self._need_transaction = False
         self._empty = True
@@ -225,25 +221,27 @@ class WsMessage:
             token = manager.request_message_token()
             try:
                 data = self.serialize()
-            except Exception:
+                if data is not None:
+                    manager.queue_message(
+                        token=token,
+                        message_object=data,
+                        client_id=self._client_id,
+                        broadcast=self._broadcast,
+                    )
+            finally:
                 manager.invalidate_message_token(token)
-                raise
-        manager.queue_message(
-            token=token,
-            message_object=data,
-            client_id=self._client_id,
-            broadcast=self._broadcast,
-        )
 
     def send_no_transaction(self):
         if self._empty:
             return
-        manager.queue_message(
-            token=None,  # No transaction -- no token
-            message_object=self.serialize(),
-            client_id=self._client_id,
-            broadcast=self._broadcast,
-        )
+        data = self.serialize()
+        if data is not None:
+            manager.queue_message(
+                token=None,  # No transaction -- no token
+                message_object=data,
+                client_id=self._client_id,
+                broadcast=self._broadcast,
+            )
 
     # Requests
 
@@ -278,8 +276,13 @@ class WsMessage:
             data,
         ))
 
-    def add_api_response(key, response):
-        self._api_responses[key] = response
+    def add_api_call(self, request):
+        self._empty = False
+        self._api_calls.append(request)
+
+    def add_api_response(self, response_key, response):
+        self._empty = False
+        self._api_responses[response_key] = response
 
     # Resolving
 
@@ -293,8 +296,9 @@ class WsMessage:
 
     def serialize(self):
         from models import Competition
-        updates = []
+        from api import Api
         messages = copy.copy(self._messages)
+        updates = []
         # Models
         schemas = OrderedDict()
         for x in self._model_updates:
@@ -331,8 +335,16 @@ class WsMessage:
             upd = TourResultsUpdateGetter.instance(tour_id).get_results(force=immediate)
             if upd is not None:
                 updates.append(upd)
-        return {
-            "model_updates": updates,
-            "messages": messages,
-            "api_responses": self._api_responses,
-        }
+        # Api call
+        api_responses = copy.copy(self._api_responses)
+        for request in self._api_calls:
+            result = Api.call(request)
+            if request.response_key is not None:
+                api_responses[request.response_key] = result
+        if len(updates) > 0 or len(messages) > 0 or len(api_responses) > 0:
+            return {
+                "model_updates": updates,
+                "messages": messages,
+                "api_responses": api_responses,
+            }
+        return None

@@ -40,13 +40,6 @@ export default class HeatsTab extends React.PureComponent {
         };
     }
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            tour: null,
-        };
-    }
-
     componentDidMount() {
         this.checkAutoDocx();
     }
@@ -60,50 +53,6 @@ export default class HeatsTab extends React.PureComponent {
             this.createDocx(this.props.autoDocx.filename);
             this.props.autoDocx.onDone(this.props.autoDocx.filename);
         }
-    }
-
-    get SCHEMA() {
-        return {
-            discipline: {
-                competition: {},
-            },
-            runs: {
-                participant: {
-                    club: {},
-                },
-            },
-        };
-    }
-
-    setupStorage(tour_id=null) {
-        if (tour_id === null) {
-            tour_id = this.props.tour.id;
-        }
-        this.storage = storage.getDomain(`heats_${tour_id}`);
-    }
-    freeStorage(tour_id=null) {
-        if (tour_id === null) {
-            tour_id = this.props.tour.id;
-        }
-        storage.delDomain(`heats_${tour_id}`);
-    }
-
-    reloadFromStorage = () => {
-        const serialized = this.storage.get("Tour")
-            .by_id(this.props.tour.id)
-            .serialize(this.SCHEMA);
-        this.setState({
-            tour: serialized,
-        });
-    }
-    loadData = () => {
-        Api("tour.get", {
-            tour_id: this.props.tour.id,
-            children: this.SCHEMA,
-        })
-            .addToDB("Tour", this.props.tour.id, this.storage)
-            .onSuccess(this.reloadFromStorage)
-            .send();
     }
 
     makePrintableRef = (ref) => this._printable = ref;

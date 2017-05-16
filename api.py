@@ -875,7 +875,6 @@ class Api:
                 "response": result
             }
         except ApiError as ex:
-            ex_str = traceback.format_exc()
             response = {
                 "success": False,
                 "code": ex.code,

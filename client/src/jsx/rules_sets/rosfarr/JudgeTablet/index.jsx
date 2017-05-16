@@ -11,7 +11,7 @@ import SoloLayout from "./SoloLayout";
 import HeadJudgeLayout from "./HeadJudgeLayout";
 import TechJudgeLayout from "./TechJudgeLayout";
 
-import { FastApi } from "HostModules";
+import { Api } from "HostModules";
 
 export default class JudgeTablet extends React.PureComponent {
     static get propTypes() {
@@ -41,10 +41,10 @@ export default class JudgeTablet extends React.PureComponent {
             score_data: new_score,
             force: false,
         };
-        FastApi("score.set", { score_id: score_id, data: request }).send();
+        Api("score.set", { score_id: score_id, data: request }).send();
     }
     handleHeatConfirm = (heat) => {
-        FastApi("tour.confirm_heat", {
+        Api("tour.confirm_heat", {
             tour_id: this.props.tour.id,
             discipline_judge_id: this.props.disciplineJudge.id,
             heat: heat,

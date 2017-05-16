@@ -1,7 +1,7 @@
 import md5 from "js-md5";
 import BN from "bn.js";
 
-import FastApi from "common/server/FastApi";
+import Api from "common/server/Api";
 
 class KeysStorage {
     constructor() {
@@ -46,7 +46,7 @@ class KeysStorage {
         }
 
         // Diffie-hellman
-        FastApi("auth.register", {})
+        Api("auth.register", {})
             .disableSignature()
             .onSuccess(response => {
                 const client_id = response.client_id;
@@ -65,7 +65,7 @@ class KeysStorage {
                 const dh_gab_red = dh_ga_red.redPow(dh_b);
                 const secret = dh_gab_red.fromRed().toString(16);
                 // Making new request
-                FastApi("auth.exchange_keys", {
+                Api("auth.exchange_keys", {
                     client_id: client_id,
                     data: {
                         dh_gb: dh_gb_red.fromRed().toString(10),

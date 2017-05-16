@@ -191,7 +191,7 @@ class ApiHandler(tornado.web.RequestHandler):
                 exception="",
                 response=response
             )
-            print("Api call: {:<35s} {:4d}ms {:4d} queries".format(method, int(1000 * total_time), hdlr.cnt))
+            print("Legacy api call: {:<35s} {:4d}ms {:4d} queries".format(method, int(1000 * total_time), hdlr.cnt))
 
     def get(self):
         self.post()

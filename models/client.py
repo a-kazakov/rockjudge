@@ -39,18 +39,20 @@ class Client(BaseModel):
 
     @classmethod
     def get_and_validate(cls, client_id, method, str_data, random, signature):
-        client = Client.get(id=client_id)
-        if method not in ("auth.register", "auth.exchange_keys", ):
-            correct_sig_src = "{client_id}|{method}|{data}|{random}|{secret}".format(
-                client_id=client_id,
-                method=method,
-                data=str_data,
-                random=random,
-                secret=client.secret,
-            )
-            correct_sig = hashlib.md5(correct_sig_src.encode("utf-8")).hexdigest()
-            if correct_sig != signature:
-                raise ApiError("errors.auth.invalid_signature")
+        try:
+            client = Client.get(id=client_id)
+        except cls.DoesNotExist:
+            raise ApiError("errors.auth.invalid_signature")
+        correct_sig_src = "{client_id}|{method}|{data}|{random}|{secret}".format(
+            client_id=client_id,
+            method=method,
+            data=str_data,
+            random=random,
+            secret=client.secret,
+        )
+        correct_sig = hashlib.md5(correct_sig_src.encode("utf-8")).hexdigest()
+        if correct_sig != signature:
+            raise ApiError("errors.auth.invalid_signature")
         return client
 
     def finilaze_model(self, request):

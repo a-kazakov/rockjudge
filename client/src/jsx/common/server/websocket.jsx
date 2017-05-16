@@ -12,6 +12,7 @@ import storage from "common/server/storage";
 class WebSocketHandler {
     constructor() {
         this.closed = false;
+        this.opened = false;
         this.listeners = {};
         this.listeners_cnt = 0;
         this.send_queue = [];
@@ -21,8 +22,13 @@ class WebSocketHandler {
         console.log("Connecting to websocket...");
         this.ws = new SockJS(`http://${window.location.host}/ws`);
         this.ws.onopen = () => {
+            this.opened = true;
             connection_status.setOk();
             console.log("Connected to websocket.");
+            for (const message of this.send_queue) {
+                this.ws.send(message);
+            }
+            this.send_queue = [];
             if (this.closed) {
                 this.handleMessage({
                     raw_data: {
@@ -38,13 +44,14 @@ class WebSocketHandler {
             connection_status.setFail();
             console.log("Connection to websocket closed.");
             this.closed = true;
+            this.opened = false;
             setTimeout(this.connect, 500);
         };
         this.ws.onmessage = this.handleMessage;
     }
     send = (message) => {
-        if (this.closed) {
-            showError(_("errors.global.no_connection"));
+        if (!this.opened) {
+            this.send_queue.push(message);
             return;
         }
         this.ws.send(message);
