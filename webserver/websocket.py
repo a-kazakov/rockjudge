@@ -11,7 +11,10 @@ import tornado.ioloop
 
 from sockjs.tornado import SockJSConnection
 
-from db import Database
+from db import (
+    Database,
+    StatsCounter,
+)
 
 class WebSocketConnectionsManager:
     _instance = None
@@ -89,54 +92,53 @@ class WebSocketClients(SockJSConnection):
     def on_message(self, msg):
         from api import ApiRequest
         from models import Client
-        request_start_time = time.time()
-        public_ws_message = WsMessage(client_id=self._client_id, broadcast=True)
-        private_ws_message = WsMessage(client_id=self._client_id, broadcast=False)
-        method = ""
-        try:
-            signature, json_data = msg.split("|", 1)
-            data = json.loads(json_data)
-            method = data["method"]
-            if method not in ("auth.register", "auth.exchange_keys", ):
-                client = Client.get_and_validate(
-                    client_id=data["client_id"],
+        with StatsCounter() as stats:
+            public_ws_message = WsMessage(client_id=self._client_id, broadcast=True)
+            private_ws_message = WsMessage(client_id=self._client_id, broadcast=False)
+            method = ""
+            try:
+                signature, json_data = msg.split("|", 1)
+                data = json.loads(json_data)
+                method = data["method"]
+                if method not in ("auth.register", "auth.exchange_keys", ):
+                    client = Client.get_and_validate(
+                        client_id=data["client_id"],
+                        method=data["method"],
+                        str_data=json_data,
+                        random=data["random"],
+                        signature=signature,
+                    )
+                else:
+                    client = None
+                request = ApiRequest(
                     method=data["method"],
-                    str_data=json_data,
-                    random=data["random"],
-                    signature=signature,
+                    body=data["params"],
+                    client=client,
+                    remote_ip=self._ws_request.ip,
+                    ws_message=public_ws_message,
+                    private_ws_message=private_ws_message,
+                    response_key=data["response_key"],
                 )
-            else:
-                client = None
-            request = ApiRequest(
-                method=data["method"],
-                body=data["params"],
-                client=client,
-                remote_ip=self._ws_request.ip,
-                ws_message=public_ws_message,
-                private_ws_message=private_ws_message,
-                response_key=data["response_key"],
-            )
-            private_ws_message.add_api_call(request)
-        except ApiError:
-            if data["response_key"] is not None:
-                private_ws_message.add_api_response(data["response_key"], {
-                    "success": False,
-                    "code": ex.code,
-                    "args": ex.args,
-                })
-        except Exception:
-            ex_str = traceback.format_exc()
-            print(ex_str)
-            if data["response_key"] is not None:
-                private_ws_message.add_api_response(data["response_key"], {
-                    "success": False,
-                    "code": "errors.global.internal_server_error",
-                })
-        finally:
-            private_ws_message.make_transaction_and_send()
-            public_ws_message.make_transaction_and_send()
-            total_time = time.time() - request_start_time
-            print("Api call: {:<35s} {:4d}ms".format(method, int(1000 * total_time)))
+                private_ws_message.add_api_call(request)
+            except ApiError:
+                if data["response_key"] is not None:
+                    private_ws_message.add_api_response(data["response_key"], {
+                        "success": False,
+                        "code": ex.code,
+                        "args": ex.args,
+                    })
+            except Exception:
+                ex_str = traceback.format_exc()
+                print(ex_str)
+                if data["response_key"] is not None:
+                    private_ws_message.add_api_response(data["response_key"], {
+                        "success": False,
+                        "code": "errors.global.internal_server_error",
+                    })
+            finally:
+                private_ws_message.make_transaction_and_send()
+                public_ws_message.make_transaction_and_send()
+                print("Api call: {:<35s} {:4d}ms {:4d} queries".format(method, stats.time, stats.queries))
 
     def on_open(self, request):
         manager = WebSocketConnectionsManager.instance()
