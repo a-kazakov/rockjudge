@@ -1,9 +1,7 @@
 import _ from "l10n";
-import Api from "common/server/Api";
+import LoadingComponent from "common/server/LoadingComponent";
 import Loader from "common/components/Loader";
 import Docx from "common/Docx";
-import storage from "common/server/storage";
-import websocket from "common/server/websocket";
 
 import ConfigPanel from "pages/AdminPanel/common/ConfigPanel";
 import Paper from "pages/AdminPanel/common/Paper";
@@ -14,7 +12,7 @@ import Judges from "./Judges";
 import DisciplineJudges from "./DisciplineJudges";
 import Results from "./Results";
 
-export default class CompetitionReport extends React.PureComponent {
+export default class CompetitionReport extends LoadingComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -23,6 +21,34 @@ export default class CompetitionReport extends React.PureComponent {
             }).isRequired,
         };
     }
+
+    CLASS_ID = "competition_report";
+    API_MODELS = {
+        competition: {
+            model_type: "Competition",
+            model_id_getter: props => props.competition.id,
+            schema: {
+                disciplines: {
+                    discipline_judges: {
+                        judge: {},
+                    },
+                    results: {},
+                    tours: {
+                        runs: {
+                            participant: {
+                                club: {},
+                            },
+                        },
+                    },
+                },
+                judges: {},
+                clubs: {
+                    participants: {},
+                },
+            }
+        }
+    };
+
 
     constructor(props) {
         super(props);
@@ -38,95 +64,19 @@ export default class CompetitionReport extends React.PureComponent {
         };
     }
 
-    componentWillMount() {
-        this.setupStorage();
-        this.reload_listener = websocket.addListener("reload_data", this.loadData);
-        this.db_update_listener = websocket.addListener("db_update", this.reloadFromStorage);
-        this.loadData();
-    }
-    componentWillReceiveProps(next_props) {
-        if (this.props.competition.id !== next_props.competition.id) {
-            this.setState({
-                competition: null,
-            });
-            this.freeStorage(this.props.competition.id);
-            this.setupStorage(next_props.competition.id);
+    getAdditionalStateUpdate(nextState) {
+        if (nextState.competition === null) {
+            return {};
         }
-    }
-    componentDidUpdate(prev_props) {
-        if (prev_props.competition.id !== this.props.competition.id) {
-            this.loadData();
-        }
-    }
-    componentWillUnmount() {
-        websocket.removeListener(this.reload_listener);
-        websocket.removeListener(this.db_update_listener);
-        this.freeStorage();
-    }
-
-    get SCHEMA() {
-        return {
-            disciplines: {
-                discipline_judges: {
-                    judge: {},
-                },
-                results: {},
-                tours: {
-                    runs: {
-                        participant: {
-                            club: {},
-                        },
-                    },
-                },
-            },
-            judges: {},
-            clubs: {
-                participants: {},
-            },
-        };
-    }
-
-    setupStorage(competition_id=null) {
-        if (competition_id === null) {
-            competition_id = this.props.competition.id;
-        }
-        this.storage = storage.getDomain(`competition_report_${competition_id}`);
-    }
-    freeStorage(competition_id=null) {
-        if (competition_id === null) {
-            competition_id = this.props.competition.id;
-        }
-        storage.delDomain(`competition_report_${competition_id}`);
-    }
-
-    reloadFromStorage = () => {
-        const competition = this.storage.get("Competition")
-            .by_id(this.props.competition.id)
-            .serialize(this.SCHEMA);
-        if (competition === null) {
-            return;
-        }
-        let config = Object.assign({}, this.state.config); // clone
+        let config = Object.assign({}, nextState.config); // clone
         let new_disciplines = {};
-        competition.disciplines.forEach(discipline => {
+        for (const discipline of nextState.competition.disciplines)  {
             new_disciplines[discipline.id] = (discipline.id in config.disciplines)
                 ? config.disciplines[discipline.id]
                 : true;
-        })
+        }
         config.disciplines = new_disciplines;
-        this.setState({
-            config: config,
-            competition: competition,
-        });
-    }
-    loadData = () => {
-        Api("competition.get", {
-            competition_id: this.props.competition.id,
-            children: this.SCHEMA,
-        })
-            .addToDB("Competition", this.props.competition.id, this.storage)
-            .onSuccess(this.reloadFromStorage)
-            .send();
+        return { config };
     }
 
     makePrintableRef = (ref) => this._printable = ref;

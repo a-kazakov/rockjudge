@@ -1,6 +1,6 @@
-import { Api, storage, message_dispatcher } from "HostModules";
+import LoadingComponent from "LoadingComponent";
 
-export default class HeatsOneParticipant extends React.Component {
+export default class HeatsOneParticipant extends LoadingComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -21,69 +21,30 @@ export default class HeatsOneParticipant extends React.Component {
         };
     }
 
+    CLASS_ID = "screen_heat_one_participant";
+    API_MODELS = {
+        tour: {
+            model_type: "Tour",
+            model_id_getter: props => props.competition.screen_data.controls_state.tour_id,
+            schema: {
+                discipline: {
+                    discipline_judges: {},
+                },
+                runs: {
+                    participant: {
+                        club: {},
+                    },
+                    scores: {},
+                },
+            },
+        },
+    };
+
     constructor(props) {
         super(props);
         this.state = {
             tour: null,
         };
-    }
-
-    componentWillMount() {
-        this._message_dispatchers = [
-            message_dispatcher.addListener("db_update", this.reloadFromStorage),
-            message_dispatcher.addListener("reload_date", this.loadData),
-        ];
-        this.loadData();
-    }
-    componentWillReceiveProps(next_props) {
-        if (next_props.competition.screen_data.controls_state.tour_id !== this.controls.tour_id) {
-            this.setState({
-                tour: null,
-            });
-        }
-    }
-    componentDidUpdate(prev_props) {
-        if (prev_props.competition.screen_data.controls_state.tour_id !== this.controls.tour_id) {
-            this.loadData();
-        }
-    }
-    componentWillUnmount() {
-        for (const md of this._message_dispatchers) {
-            message_dispatcher.removeListener(md);
-        }
-    }
-
-    get SCHEMA() {
-        return {
-            discipline: {
-                discipline_judges: {},
-            },
-            runs: {
-                participant: {
-                    club: {},
-                },
-                scores: {},
-            },
-        }
-    }
-
-    loadData = () => {
-        Api("tour.get", {
-            tour_id: this.controls.tour_id,
-            children: this.SCHEMA,
-        })
-            .addToDB("Tour", this.controls.tour_id, storage)
-            .onSuccess(this.reloadFromStorage)
-            .send();
-    }
-    reloadFromStorage = () => {
-        const serialized = storage
-            .get("Tour")
-            .by_id(this.controls.tour_id)
-            .serialize(this.SCHEMA);
-        this.setState({
-            tour: serialized,
-        });
     }
 
     get controls() {

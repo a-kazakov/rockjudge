@@ -1,8 +1,9 @@
 import Api from "common/server/Api";
+import websocket from "common/server/websocket";
+
+import LoadingComponent from "common/server/LoadingComponent";
 import FullscreenButton from "common/components/FullscreenButton"
 import Loader from "common/components/Loader";
-import storage from "common/server/storage";
-import websocket from "common/server/websocket";
 
 import HeatsPage from "./HeatsPage";
 import InfoPage from "./InfoPage";
@@ -10,13 +11,30 @@ import LeftBar from "./LeftBar";
 import PlanPage from "./PlanPage";
 import ResultsPage from "./ResultsPage";
 
-export default class PresenterTablet extends React.PureComponent {
+export default class PresenterTablet extends LoadingComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
             competitionId: PT.number.isRequired,
         };
     }
+
+    CLASS_ID = "presenter_tablet";
+    API_MODELS = {
+        competition: {
+            model_type: "Competition",
+            model_id_getter: props => props.competitionId,
+            schema: {
+                clubs: {},
+                disciplines: {
+                    tours: {},
+                },
+                judges: {},
+                plan: {},
+            },
+        },
+    };
+
 
     constructor(props) {
         super(props);
@@ -26,61 +44,38 @@ export default class PresenterTablet extends React.PureComponent {
             competition: null,
             activeTourId: null,
         };
-        websocket.addListener("db_update", this.reloadFromStorage);
-        websocket.addListener("reload_data", this.loadData);
-        websocket.addListener("active_tours_update", this.handleActiveToursUpdate);
-        this.loadData();
     }
 
-    get SCHEMA() {
-        return {
-            clubs: {},
-            disciplines: {
-                tours: {},
-            },
-            judges: {},
-            plan: {},
-        };
+    componentDidMount() {
+        super.componentDidMount();
+        this.active_tours_update_listener = websocket.addListener("active_tours_update", this.handleActiveToursUpdateMessage);
+        Api("competition.get_active_tours", { competition_id: this.props.competitionId })
+            .onSuccess(this.handleActiveToursUpdate)
+            .send();
     }
 
-    reloadFromStorage = () => {
-        const competition = storage.get("Competition")
-            .by_id(this.props.competitionId)
-            .serialize(this.SCHEMA)
+    componentWillUnmount() {
+        super.componentWillUnmount();
+        websocket.removeListener(this.active_tours_update_listener);
+    }
+
+    handleActiveToursUpdate = (active_tours) => {
+        const tour_info = active_tours[0] || null;
+        const tour_id = tour_info && tour_info.tour_id;
+        if (tour_id === this.state.activeTourId) {
+            return;
+        }
         this.setState({
-            competition: competition,
+            activeTourId: tour_id,
+            heat: 1,
         });
     }
-    loadData = () => {
-        Api("competition.get", {
-            competition_id: this.props.competitionId,
-            children: this.SCHEMA,
-        })
-            .addToDB("Competition", this.props.competitionId)
-            .onSuccess(this.reloadFromStorage)
-            .send();
-
-        Api("competition.get_active_tours", { competition_id: this.props.competitionId })
-            .onSuccess((response) => this.handleActiveToursUpdate({
-                competition_id: this.props.competitionId,
-                active_tours: response,
-            }))
-            .send();
-    }
-
-    handleActiveToursUpdate = (data) => {
+    handleActiveToursUpdateMessage = (data) => {
         const { competition_id, active_tours } = data;
         if (competition_id !== this.props.competitionId) {
             return;
         }
-        const tour_info = active_tours[0] || null;
-        const tour_id = tour_info && tour_info.tour_id;
-        if (tour_id !== this.state.activeTourId) {
-            this.setState({
-                activeTourId: tour_id,
-                heat: 1,
-            })
-        }
+        this.handleActiveToursUpdate(active_tours);
     }
 
     handleHeatChange = (heat) => this.setState({ heat });

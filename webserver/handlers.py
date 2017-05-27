@@ -88,6 +88,7 @@ class JudgeHandler(tornado.web.RequestHandler):
         return self.render(
             "judge.html",
             judge_id=judge_id,
+            competition_id=judge.competition_id,
             rules_set=judge.competition.rules_set,
             settings=settings,
         )

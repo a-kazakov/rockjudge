@@ -1,13 +1,11 @@
-import Api from "common/server/Api";
-import storage from "common/server/storage";
-import websocket from "common/server/websocket";
+import LoadingComponent from "common/server/LoadingComponent";
 import Loader from "common/components/Loader";
 
 import CurrentHeat from "./CurrentHeat";
 import Header from "./Header";
 import NoTourScreen from "./NoTourScreen";
 
-export default class HeatsPage extends React.PureComponent {
+export default class HeatsPage extends LoadingComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -17,6 +15,23 @@ export default class HeatsPage extends React.PureComponent {
         };
     }
 
+    CLASS_ID = "presenter_tablet_heats";
+    API_MODELS = {
+        tour: {
+            model_type: "Tour",
+            model_id_getter: props => props.activeTourId,
+            schema: {
+                discipline: {},
+                runs: {
+                    participant: {
+                        "club": {},
+                        "sportsmen": {},
+                    },
+                },
+            },
+        },
+    };
+
     constructor(props) {
         super(props);
         this.state = {
@@ -24,79 +39,10 @@ export default class HeatsPage extends React.PureComponent {
         };
     }
 
-    componentWillMount() {
-        this.setupStorage();
-        this.reload_listener = websocket.addListener("reload_data", this.loadData);
-        this.db_update_listener = websocket.addListener("db_update", this.reloadFromStorage);
-        this.loadData();
-    }
-    componentWillReceiveProps(next_props) {
-        if (this.props.activeTourId !== next_props.activeTourId) {
-            this.setState({
-                tour: null,
-            });
-            this.freeStorage(this.props.activeTourId);
-            this.setupStorage(next_props.activeTourId);
-            this.loadData();
-        }
-    }
-    componentDidUpdate(prev_props) {
-        if (prev_props.activeTourId !== this.props.activeTourId) {
-            this.loadData();
-        }
-    }
-    componentWillUnmount() {
-        websocket.removeListener(this.reload_listener);
-        websocket.removeListener(this.db_update_listener);
-        this.freeStorage();
-    }
-
-    get SCHEMA() {
-        return {
-            discipline: {},
-            runs: {
-                participant: {
-                    "club": {},
-                    "sportsmen": {},
-                },
-            },
-        };
-    }
-
-    setupStorage(tour_id=null) {
-        if (tour_id === null) {
-            tour_id = this.props.activeTourId;
-        }
-        this.storage = storage.getDomain(`heats_${tour_id}`);
-    }
-    freeStorage(tour_id=null) {
-        if (tour_id === null) {
-            tour_id = this.props.activeTourId;
-        }
-        storage.delDomain(`heats_${tour_id}`);
-    }
-
-    reloadFromStorage = () => {
-        if (this.props.activeTourId === null) {
-            return;
-        }
-        const s_tour = this.storage.get("Tour").by_id(this.props.activeTourId);
-        const serialized = s_tour ? s_tour.serialize(this.SCHEMA) : null;
+    onIdChanged = () => {
         this.setState({
-            tour: serialized,
+            heat: 1,
         });
-    }
-    loadData = () => {
-        if (this.props.activeTourId === null) {
-            return;
-        }
-        Api("tour.get", {
-            tour_id: this.props.activeTourId,
-            children: this.SCHEMA,
-        })
-            .addToDB("Tour", this.props.activeTourId, this.storage)
-            .onSuccess(this.reloadFromStorage)
-            .send();
     }
 
     handlePrevHeatClick = () => {

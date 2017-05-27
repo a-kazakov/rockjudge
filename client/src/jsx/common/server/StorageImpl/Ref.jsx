@@ -7,4 +7,7 @@ export default class Ref {
     get() {
         return this.storage.get(this.model_name).by_id(this.id);
     }
+    equals(other) {
+        return other && other.id === this.id && other.model === this.model && other.storage === this.storage;
+    }
 }

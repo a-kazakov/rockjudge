@@ -1,10 +1,9 @@
 import _ from "l10n";
 import Api from "common/server/Api";
 import clone from "common/tools/clone";
-import storage from "common/server/storage";
-import websocket from "common/server/websocket";
 import FullscreenButton from "common/components/FullscreenButton"
 import Loader from "common/components/Loader";
+import LoadingComponent from "common/server/LoadingComponent";
 
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
@@ -15,7 +14,8 @@ import TourHeatControls from "./TourHeatControls";
 import TourControls from "./TourControls";
 import DisciplinePlaceControls from "./DisciplinePlaceControls";
 
-export default class ScreenOperator extends React.PureComponent {
+
+export default class ScreenOperator extends LoadingComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -24,6 +24,19 @@ export default class ScreenOperator extends React.PureComponent {
         };
     }
 
+    CLASS_ID = "screen_operator";
+    API_MODELS = {
+        competition: {
+            model_type: "Competition",
+            model_id_getter: props => props.competitionId,
+            schema: {
+                disciplines: {
+                    tours: {},
+                },
+            }
+        },
+    };
+
     constructor(props) {
         super(props);
         this.manifest = new ScreenManifest(this.props.manifest)
@@ -31,36 +44,6 @@ export default class ScreenOperator extends React.PureComponent {
             competition: null,
             pendingData: null,
         };
-        websocket.addListener("db_update", this.reloadFromStorage.bind(this));
-        websocket.addListener("reload_data", this.loadData.bind(this));
-        this.loadData();
-    }
-
-    get SCHEMA() {
-        return {
-            disciplines: {
-                tours: {},
-            },
-        };
-    }
-
-    loadData() {
-        Api("competition.get", {
-            competition_id: this.props.competitionId,
-            children: this.SCHEMA,
-        })
-            .addToDB("Competition", this.props.competitionId)
-            .onSuccess(this.reloadFromStorage.bind(this))
-            .send();
-    }
-    reloadFromStorage() {
-        const s_competition = storage.get("Competition").by_id(this.props.competitionId);
-        if (!s_competition) {
-            return;
-        }
-        this.setState({
-            competition: s_competition.serialize(this.SCHEMA),
-        })
     }
 
     get data() {

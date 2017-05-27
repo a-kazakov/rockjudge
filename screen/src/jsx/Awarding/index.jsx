@@ -1,6 +1,6 @@
 import Renderer from "./Renderer";
 
-export default class HeatsOneParticipant extends React.Component {
+export default class Awarding extends React.Component {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -31,4 +31,4 @@ export default class HeatsOneParticipant extends React.Component {
     }
 }
 
-HeatsOneParticipant.displayName = "HeatsOneParticipant";
+Awarding.displayName = "Awarding";

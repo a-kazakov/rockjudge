@@ -90,7 +90,10 @@ class WebSocketClients(SockJSConnection):
     _client_id = None
 
     def on_message(self, msg):
-        from api import ApiRequest
+        from api import (
+            ApiRequest,
+            ApiError,
+        )
         from models import Client
         with StatsCounter() as stats:
             public_ws_message = WsMessage(client_id=self._client_id, broadcast=True)
@@ -120,7 +123,7 @@ class WebSocketClients(SockJSConnection):
                     response_key=data["response_key"],
                 )
                 private_ws_message.add_api_call(request)
-            except ApiError:
+            except ApiError as ex:
                 if data["response_key"] is not None:
                     private_ws_message.add_api_response(data["response_key"], {
                         "success": False,

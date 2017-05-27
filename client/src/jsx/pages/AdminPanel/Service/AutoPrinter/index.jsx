@@ -1,22 +1,33 @@
 import { saveAs } from "file-saver";
 
 import _ from "l10n";
-import Api from "common/server/Api";
-import storage from "common/server/storage";
-import websocket from "common/server/websocket";
+import LoadingComponent from "common/server/LoadingComponent";
 import Loader from "common/components/Loader";
 import showConfirm from "common/dialogs/showConfirm";
 
 import JobQueue from "./JobQueue";
 import Table from "./Table";
 
-export default class AutoPrinter extends React.PureComponent {
+export default class AutoPrinter extends LoadingComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
             competitionId: PT.number.isRequired,
         };
     }
+
+    CLASS_ID = "auto_printer";
+    API_MODELS = {
+        competition: {
+            model_type: "Competition",
+            model_id_getter: props => props.competitionId,
+            schema: {
+                disciplines: {
+                    tours: {},
+                },
+            },
+        },
+    };
 
     constructor(props) {
         super(props);
@@ -26,48 +37,7 @@ export default class AutoPrinter extends React.PureComponent {
             competition: null,
             actions: initial_actions,
         };
-        this.SCHEMA = {
-            disciplines: {
-                tours: {},
-            },
-        };
         this.POSSIBLE_ACTIONS = ["heats", "results_1", "results_2", "results_3", "discipline_results"];
-    }
-
-    componentWillMount() {
-        this.loadData();
-        this.db_update_listener = websocket.addListener("db_update", this.reloadFromStorage);
-        this.reload_data_listener = websocket.addListener("reload_data", this.loadData);
-    }
-    componentDidUpdate() {
-        localStorage.setItem(`auto_printer_${this.props.competitionId}`, JSON.stringify(this.state.actions));
-    }
-    componentWillUnmount() {
-        websocket.removeListener(this.db_update_listener);
-        websocket.removeListener(this.reload_data_listener);
-    }
-
-    loadData = () => {
-        Api("competition.get", {
-            competition_id: this.props.competitionId,
-            children: this.SCHEMA,
-        })
-            .addToDB("Competition", this.props.competitionId)
-            .onSuccess(this.reloadFromStorage)
-            .send();
-    }
-    reloadFromStorage = () => {
-        const new_competition_ref = storage.get("Competition").by_id(this.props.competitionId);
-        if (!new_competition_ref) {
-            return;
-        }
-        const new_competition = new_competition_ref.serialize(this.SCHEMA);
-        if (this.state.competition) {
-            this.dispatchCompetitionUpdate(this.state.competition, new_competition);
-        }
-        this.setState({
-            competition: new_competition,
-        });
     }
 
     makeQueueRef = (ref) => this._queue = ref;

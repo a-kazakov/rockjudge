@@ -7,7 +7,7 @@ import Awarding from "./Awarding";
 
 import { setup } from "./HostModules";
 
-class Screen extends React.Component {
+class Screen extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {

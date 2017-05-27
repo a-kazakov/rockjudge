@@ -8,10 +8,12 @@ export default class ModelsStorage {
         this.storage = storage;
     }
     getModelOrCreate(id) {
+        let created = false;
         if (!this.models.has(id)) {
             this.models.set(id, new Model(this.storage, id, this));
+            created = true;
         }
-        return this.models.get(id);
+        return [this.models.get(id), created];
     }
     update(id, data) {
         const model = this.models.get(id);

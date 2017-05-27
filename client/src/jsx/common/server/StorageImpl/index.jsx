@@ -4,6 +4,21 @@ export default class StorageImpl {
     constructor() {
         this.model_storages = new Map();
         this.domains = new Map();
+        this._listeners = new Map();
+        this._next_listener_id = 0;
+    }
+    addListener(callback) {
+        const listener_id = this._next_listener_id;
+        this._listeners.set(listener_id, callback);
+        return listener_id;
+    }
+    removeListener(listener_id) {
+        this._listeners.delete(listener_id);
+    }
+    triggerListeners() {
+        for (const callback of this._listeners.values()) {
+            callback();
+        }
     }
     getDomain(domain) {
         if (!this.domains.has(domain)) {
@@ -44,15 +59,18 @@ export default class StorageImpl {
         return data_changed;
     }
     updateModel(model_type, model_id, data) {
-        let data_changed = this.updateModelNode(model_type, model_id, data);
-        for (const domain of this.domains.values()) {
-            data_changed = domain.updateModel(model_type, model_id, data) || data_changed;
+        const data_changed = this.updateModelNode(model_type, model_id, data);
+        if (data_changed) {
+            this.triggerListeners();
         }
-        return data_changed;
+        for (const domain of this.domains.values()) {
+            domain.updateModel(model_type, model_id, data);
+        }
     }
     addModel(model_type, model_id, data, schema) {
-        const model = this.get(model_type).getModelOrCreate(model_id);
+        const [model, created] = this.get(model_type).getModelOrCreate(model_id);
         model.updateSchema(schema);
         this.updateModelNode(model_type, model_id, data);
+        this.triggerListeners();
     }
 }

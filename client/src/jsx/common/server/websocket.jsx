@@ -79,17 +79,8 @@ class WebSocketHandler {
                 listeners[key](msg_data);
             }
         }
-        let data_changed = false;
         for (const model_info of data.model_updates) {
-            data_changed = storage.updateModel(model_info.model, model_info.id, model_info.data) || data_changed;
-        }
-        if (data_changed) {
-            const listeners = this.listeners["db_update"] || {};
-            for (const key of Object.keys(listeners)) {
-                if (listeners[key]) {
-                    listeners[key]();
-                }
-            }
+            storage.updateModel(model_info.model, model_info.id, model_info.data);
         }
         for (const api_response_key of Object.keys(data.api_responses)) {
             const api_response_body = data.api_responses[api_response_key];

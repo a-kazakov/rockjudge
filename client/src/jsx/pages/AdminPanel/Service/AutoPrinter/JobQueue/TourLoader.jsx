@@ -1,9 +1,7 @@
-import websocket from "common/server/websocket";
-import storage from "common/server/storage";
-import Api from "common/server/Api";
+import LoadingComponent from "common/server/LoadingComponent";
 
 
-export default class TourLoader extends React.Component {
+export default class TourLoader extends LoadingComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -12,86 +10,34 @@ export default class TourLoader extends React.Component {
         };
     }
 
+    CLASS_ID = "auto_printer_tour_loader";
+    API_MODELS = {
+        tour: {
+            model_type: "Tour",
+            model_id_getter: props => props.tourId,
+            schema: {
+                results: {},
+                discipline: {
+                    competition: {},
+                    discipline_judges: {
+                        judge: {},
+                    },
+                },
+                runs: {
+                    participant: {
+                        club: {},
+                    },
+                    scores: {},
+                },
+            },
+        },
+    };
+
     constructor(props) {
         super(props);
         this.state = {
             tour: null,
         };
-    }
-
-    componentWillMount() {
-        this.setupStorage();
-        this.reload_listener = websocket.addListener("reload_data", this.loadData);
-        this.db_update_listener = websocket.addListener("db_update", this.reloadFromStorage);
-        this.loadData();
-    }
-    componentWillReceiveProps(next_props) {
-        if (this.props.tourId !== next_props.tourId) {
-            this.setState({
-                tour: null,
-            });
-            this.freeStorage(this.props.tourId);
-            this.setupStorage(next_props.tourId);
-        }
-    }
-    componentDidUpdate(prev_props) {
-        if (prev_props.tourId !== this.props.tourId) {
-            this.loadData();
-        }
-    }
-    componentWillUnmount() {
-        websocket.removeListener(this.reload_listener);
-        websocket.removeListener(this.db_update_listener);
-        this.freeStorage();
-    }
-
-    get SCHEMA() {
-        return {
-            results: {},
-            discipline: {
-                competition: {},
-                discipline_judges: {
-                    judge: {},
-                },
-            },
-            runs: {
-                participant: {
-                    club: {},
-                },
-                scores: {},
-            },
-        };
-    }
-
-    setupStorage(tour_id=null) {
-        if (tour_id === null) {
-            tour_id = this.props.tourId;
-        }
-        this.storage = storage.getDomain(`juding_scores_${tour_id}`);
-    }
-    freeStorage(tour_id=null) {
-        if (tour_id === null) {
-            tour_id = this.props.tourId;
-        }
-        storage.delDomain(`juding_scores_${tour_id}`);
-    }
-
-    reloadFromStorage = () => {
-        const serialized = this.storage.get("Tour")
-            .by_id(this.props.tourId)
-            .serialize(this.SCHEMA);
-        this.setState({
-            tour: serialized,
-        });
-    }
-    loadData = () => {
-        Api("tour.get", {
-            tour_id: this.props.tourId,
-            children: this.SCHEMA,
-        })
-            .addToDB("Tour", this.props.tourId, this.storage)
-            .onSuccess(this.reloadFromStorage)
-            .send();
     }
 
     render() {

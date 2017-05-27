@@ -1,5 +1,5 @@
 import _ from "l10n";
-import Api from "common/server/Api";
+import LoadingComponent from "common/server/LoadingComponent";
 import Loader from "common/components/Loader";
 
 import NavButton from "./NavButton";
@@ -14,10 +14,7 @@ import HeatsTabButtons from "./HeatsTab/Buttons";
 import TourResultsTabButtons from "./TourResultsTab/Buttons";
 import DisciplineResultsTabButtons from "./DisciplineResultsTab/Buttons";
 
-import storage from "common/server/storage";
-import websocket from "common/server/websocket";
-
-export default class TourPanel extends React.PureComponent {
+export default class TourPanel extends LoadingComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -31,6 +28,31 @@ export default class TourPanel extends React.PureComponent {
         };
     }
 
+    CLASS_ID = "tour_panel";
+    API_MODELS = {
+        tour: {
+            model_type: "Tour",
+            model_id_getter: props => props.tour.id,
+            schema: {
+                discipline: {
+                    competition: {},
+                    discipline_judges: {
+                        judge: {},
+                    },
+                },
+                results: {},
+                runs: {
+                    acrobatics: {},
+                    scores: {},
+                    participant: {
+                        programs: {},
+                        club: {},
+                    },
+                },
+            },
+        },
+    };
+
     // Initialization
 
     constructor(props) {
@@ -41,82 +63,10 @@ export default class TourPanel extends React.PureComponent {
         };
     }
 
-    componentWillMount() {
-        this.setupStorage();
-        this.reload_listener = websocket.addListener("reload_data", this.loadData);
-        this.db_update_listener = websocket.addListener("db_update", this.reloadFromStorage);
-        this.loadData();
-    }
-    componentWillReceiveProps(next_props) {
-        if (this.props.tour.id !== next_props.tour.id) {
-            this.setState({
-                tour: null,
-                page: this.getDefaultPage(next_props.tour),
-            });
-            this.freeStorage(this.props.tour.id);
-            this.setupStorage(next_props.tour.id);
-        }
-    }
-    componentDidUpdate(prev_props) {
-        if (prev_props.tour.id !== this.props.tour.id) {
-            this.loadData();
-        }
-    }
-    componentWillUnmount() {
-        websocket.removeListener(this.reload_listener);
-        websocket.removeListener(this.db_update_listener);
-        this.freeStorage();
-    }
-
-    get SCHEMA() {
-        return {
-            discipline: {
-                competition: {},
-                discipline_judges: {
-                    judge: {},
-                },
-            },
-            results: {},
-            runs: {
-                acrobatics: {},
-                scores: {},
-                participant: {
-                    programs: {},
-                    club: {},
-                },
-            },
-        };
-    }
-
-    setupStorage(tour_id=null) {
-        if (tour_id === null) {
-            tour_id = this.props.tour.id;
-        }
-        this.storage = storage.getDomain(`juding_scores_${tour_id}`);
-    }
-    freeStorage(tour_id=null) {
-        if (tour_id === null) {
-            tour_id = this.props.tour.id;
-        }
-        storage.delDomain(`juding_scores_${tour_id}`);
-    }
-
-    reloadFromStorage = () => {
-        const serialized = this.storage.get("Tour")
-            .by_id(this.props.tour.id)
-            .serialize(this.SCHEMA);
+    onIdChanged(model_type, new_value, next_props) {
         this.setState({
-            tour: serialized,
+            page: this.getDefaultPage(next_props.tour),
         });
-    }
-    loadData = () => {
-        Api("tour.get", {
-            tour_id: this.props.tour.id,
-            children: this.SCHEMA,
-        })
-            .addToDB("Tour", this.props.tour.id, this.storage)
-            .onSuccess(this.reloadFromStorage)
-            .send();
     }
 
     getDefaultPage(tour) {

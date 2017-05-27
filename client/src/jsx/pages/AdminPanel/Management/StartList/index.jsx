@@ -25,6 +25,23 @@ export default class StartList extends React.PureComponent {
         };
     }
 
+    CLASS_ID = "start_list";
+    API_MODELS = {
+        competition: {
+            model_type: "Competition",
+            model_id_getter: props => props.competition.id,
+            schema: {
+                disciplines: {
+                    participants: {
+                        club: {},
+                        programs: {},
+                    },
+                },
+                clubs: {},
+            }
+        }
+    };
+
     constructor(props) {
         super(props);
         this.state = {
@@ -40,90 +57,27 @@ export default class StartList extends React.PureComponent {
             },
         }
     }
-    componentWillMount() {
-        this.setupStorage();
-        this.reload_listener = websocket.addListener("reload_data", this.loadData);
-        this.db_update_listener = websocket.addListener("db_update", this.reloadFromStorage);
-        this.loadData();
-    }
-    componentWillReceiveProps(next_props) {
-        if (this.props.competition.id !== next_props.competition.id) {
-            this.setState({
-                competition: null,
-            });
-            this.freeStorage(this.props.competition.id);
-            this.setupStorage(next_props.competition.id);
-        }
-    }
-    componentDidUpdate(prev_props) {
-        if (prev_props.competition.id !== this.props.competition.id) {
-            this.loadData();
-        }
-    }
-    componentWillUnmount() {
-        websocket.removeListener(this.reload_listener);
-        websocket.removeListener(this.db_update_listener);
-        this.freeStorage();
-    }
 
-    get SCHEMA() {
-        return {
-            disciplines: {
-                participants: {
-                    club: {},
-                    programs: {},
-                },
-            },
-            clubs: {},
-        };
-    }
-
-    setupStorage(competition_id=null) {
-        if (competition_id === null) {
-            competition_id = this.props.competition.id;
+    getAdditionalStateUpdate(nextState) {
+        if (nextState.competition === null) {
+            return {};
         }
-        this.storage = storage.getDomain(`start_list_${competition_id}`);
-    }
-    freeStorage(competition_id=null) {
-        if (competition_id === null) {
-            competition_id = this.props.competition.id;
-        }
-        storage.delDomain(`start_list_${competition_id}`);
-    }
-
-    reloadFromStorage = () => {
-        const competition = this.storage.get("Competition")
-            .by_id(this.props.competition.id)
-            .serialize(this.SCHEMA);
-        let config = Object.assign({}, this.state.config); // clone
+        let config = Object.assign({}, nextState.config); // clone
         let new_disciplines_config = {};
         let new_clubs_config = {};
-        for (const discipline of competition.disciplines) {
+        for (const discipline of nextState.competition.disciplines) {
             new_disciplines_config[discipline.id] = (discipline.id in config.disciplines)
                 ? config.disciplines[discipline.id]
                 : true;
         }
-        competition.clubs.forEach(club => {
+        for (const club of nextState.competition.clubs) {
             new_clubs_config[club.id] = (club.id in config.clubs)
                 ? config.clubs[club.id]
                 : true;
-        });
+        };
         config.disciplines = new_disciplines_config;
         config.clubs = new_clubs_config;
-        this.setState({
-            config: config,
-            competition: competition,
-        });
-    }
-
-    loadData = () => {
-        Api("competition.get", {
-            competition_id: this.props.competition.id,
-            children: this.SCHEMA,
-        })
-            .addToDB("Competition", this.props.competition.id, this.storage)
-            .onSuccess(this.reloadFromStorage)
-            .send();
+        return { config };
     }
 
     makeNumbersRef = (ref) => this._numbers = ref;

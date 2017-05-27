@@ -1,14 +1,12 @@
-import Api from "common/server/Api";
-import Loader from "common/components/Loader";
+import LoadingComponent from "common/server/LoadingComponent";
 
-import storage from "common/server/storage";
-import websocket from "common/server/websocket";
+import Loader from "common/components/Loader";
 
 import makeDisciplineResultsTable from "common/makeDisciplineResultsTable";
 
 import Row from "./Row";
 
-export default class ResultsRenderer extends React.PureComponent {
+export default class ResultsRenderer extends LoadingComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -16,84 +14,32 @@ export default class ResultsRenderer extends React.PureComponent {
         };
     }
 
+    CLASS_ID = "presenter_tablet_results";
+    API_MODELS = {
+        discipline: {
+            model_type: "Discipline",
+            model_id_getter: props => props.disciplineId,
+            schema: {
+                results: {},
+                discipline_judges: {
+                    judge: {},
+                },
+                tours: {
+                    runs: {
+                        participant: {
+                            club: {},
+                        },
+                    },
+                },
+            },
+        },
+    };
+
     constructor(props) {
         super(props);
         this.state = {
             discipline: null,
         };
-    }
-
-    componentWillMount() {
-        this.setupStorage();
-        this.reload_listener = websocket.addListener("reload_data", this.loadData);
-        this.db_update_listener = websocket.addListener("db_update", this.reloadFromStorage);
-        this.loadData();
-    }
-    componentWillReceiveProps(next_props) {
-        if (this.props.disciplineId !== next_props.disciplineId) {
-            this.setState({
-                discipline: null,
-            });
-            this.freeStorage(this.props.disciplineId);
-            this.setupStorage(next_props.disciplineId);
-        }
-    }
-    componentDidUpdate(prev_props) {
-        if (prev_props.disciplineId !== this.props.disciplineId) {
-            this.loadData();
-        }
-    }
-    componentWillUnmount() {
-        websocket.removeListener(this.reload_listener);
-        websocket.removeListener(this.db_update_listener);
-        this.freeStorage();
-    }
-
-    get SCHEMA() {
-        return {
-            results: {},
-            discipline_judges: {
-                judge: {},
-            },
-            tours: {
-                runs: {
-                    participant: {
-                        club: {},
-                    },
-                },
-            },
-        };
-    }
-
-    setupStorage(discipline_id=null) {
-        if (discipline_id === null) {
-            discipline_id = this.props.disciplineId;
-        }
-        this.storage = storage.getDomain(`juding_scores_${discipline_id}`);
-    }
-    freeStorage(discipline_id=null) {
-        if (discipline_id === null) {
-            discipline_id = this.props.disciplineId;
-        }
-        storage.delDomain(`juding_scores_${discipline_id}`);
-    }
-
-    reloadFromStorage = () => {
-        const serialized = this.storage.get("Discipline")
-            .by_id(this.props.disciplineId)
-            .serialize(this.SCHEMA);
-        this.setState({
-            discipline: serialized,
-        });
-    }
-    loadData = () => {
-        Api("discipline.get", {
-            discipline_id: this.props.disciplineId,
-            children: this.SCHEMA,
-        })
-            .addToDB("Discipline", this.props.disciplineId, this.storage)
-            .onSuccess(this.reloadFromStorage)
-            .send();
     }
 
     renderRowHeader(prev_row, next_row) {

@@ -1,15 +1,33 @@
-import { Api, storage, message_dispatcher, makeTourResultsTable } from "HostModules";
+import LoadingComponent from "LoadingComponent";
+import { makeTourResultsTable } from "HostModules";
 
 const PARTICIPANTS_PER_PAGE = 15;
 const REFRESH_INTERVAL = 7000;
 
-export default class Renderer extends React.Component {
+export default class Renderer extends LoadingComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
             tourId: PT.number.isRequired,
         };
     }
+
+    CLASS_ID = "screen_tour_results";
+    API_MODELS = {
+        tour: {
+            model_type: "Tour",
+            model_id_getter: props => props.tourId,
+            schema: {
+                results: {},
+                discipline: {},
+                runs: {
+                    participant: {
+                        club: {},
+                    },
+                },
+            },
+        },
+    };
 
     constructor(props) {
         super(props);
@@ -19,82 +37,14 @@ export default class Renderer extends React.Component {
         };
     }
 
-    componentWillMount() {
+    onIdChanged() {
+        this.setState({
+            page: 0,
+        });
+        clearInterval(this._interval);
         this._interval = setInterval(() => this.setState({
             page: this.state.page + 1,
         }), REFRESH_INTERVAL);
-        this.setupStorage();
-        this.reload_listener = message_dispatcher.addListener("reload_data", this.loadData);
-        this.db_update_listener = message_dispatcher.addListener("db_update", this.reloadFromStorage);
-        this.loadData();
-    }
-    componentWillReceiveProps(next_props) {
-        if (this.props.tourId !== next_props.tourId) {
-            this.setState({
-                page: 0,
-                tour: null,
-            });
-            this.freeStorage(this.props.tourId);
-            this.setupStorage(next_props.tourId);
-            clearInterval(this._interval);
-            this._interval = setInterval(() => this.setState({
-                page: this.state.page + 1,
-            }), REFRESH_INTERVAL);
-        }
-    }
-    componentDidUpdate(prev_props) {
-        if (prev_props.tourId !== this.props.tourId) {
-            this.loadData();
-        }
-    }
-    componentWillUnmount() {
-        message_dispatcher.removeListener(this.reload_listener);
-        message_dispatcher.removeListener(this.db_update_listener);
-        this.freeStorage();
-        clearInterval(this._interval);
-    }
-
-    get SCHEMA() {
-        return {
-            results: {},
-            discipline: {},
-            runs: {
-                participant: {
-                    club: {},
-                },
-            },
-        };
-    }
-
-    setupStorage(tour_id=null) {
-        if (tour_id === null) {
-            tour_id = this.props.tourId;
-        }
-        this.storage = storage.getDomain(`juding_scores_${tour_id}`);
-    }
-    freeStorage(tour_id=null) {
-        if (tour_id === null) {
-            tour_id = this.props.tourId;
-        }
-        storage.delDomain(`juding_scores_${tour_id}`);
-    }
-
-    reloadFromStorage = () => {
-        const serialized = this.storage.get("Tour")
-            .by_id(this.props.tourId)
-            .serialize(this.SCHEMA);
-        this.setState({
-            tour: serialized,
-        });
-    }
-    loadData = () => {
-        Api("tour.get", {
-            tour_id: this.props.tourId,
-            children: this.SCHEMA,
-        })
-            .addToDB("Tour", this.props.tourId, this.storage)
-            .onSuccess(this.reloadFromStorage)
-            .send();
     }
 
     renderRow = (row) => {

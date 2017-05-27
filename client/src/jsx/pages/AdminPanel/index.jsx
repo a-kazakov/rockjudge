@@ -1,7 +1,5 @@
 import _ from "l10n";
-import Api from "common/server/Api";
-import storage from "common/server/storage";
-import websocket from "common/server/websocket";
+import LoadingComponent from "common/server/LoadingComponent";
 import Loader from "common/components/Loader";
 
 import NavigationButton from "./NavigationButton";
@@ -9,13 +7,33 @@ import Management from "./Management";
 import Judging from "./Judging";
 import Service from "./Service";
 
-export default class AdminPanel extends React.PureComponent {
+export default class AdminPanel extends LoadingComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
             competitionId: PT.number.isRequired,
         };
     }
+
+    CLASS_ID = "admin_panel";
+    API_MODELS = {
+        competition: {
+            model_type: "Competition",
+            model_id_getter: props => props.competitionId,
+            schema: {
+                clients: {},
+                clubs: {},
+                judges: {},
+                plan: {},
+                disciplines: {
+                    discipline_judges: {
+                        judge: {},
+                    },
+                    tours: {},
+                },
+            },
+        },
+    };
 
     // Intialization
 
@@ -25,42 +43,6 @@ export default class AdminPanel extends React.PureComponent {
             activeApp: this.getActiveAppFromHash(),
             competition: null,
         };
-        websocket.addListener("db_update", this.reloadFromStorage);
-        websocket.addListener("reload_data", this.loadData);
-        this.loadData();
-    }
-
-    get SCHEMA() {
-        return {
-            clients: {},
-            clubs: {},
-            judges: {},
-            plan: {},
-            disciplines: {
-                discipline_judges: {
-                    judge: {},
-                },
-                tours: {},
-            },
-        };
-    }
-
-    reloadFromStorage = () => {
-        const competition = storage.get("Competition")
-            .by_id(this.props.competitionId)
-            .serialize(this.SCHEMA);
-        this.setState({
-            competition: competition,
-        });
-    }
-    loadData = () => {
-        Api("competition.get", {
-            competition_id: this.props.competitionId,
-            children: this.SCHEMA,
-        })
-            .addToDB("Competition", this.props.competitionId)
-            .onSuccess(this.reloadFromStorage)
-            .send();
     }
 
     // Navigation

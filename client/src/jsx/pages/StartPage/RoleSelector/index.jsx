@@ -1,7 +1,5 @@
-import Api from "common/server/Api";
 import Loader from "common/components/Loader";
-import storage from "common/server/storage";
-import websocket from "common/server/websocket";
+import LoadingComponent from "common/server/LoadingComponent";
 
 import AccessRequest from "./AccessRequest";
 import NoAccess from "./NoAccess";
@@ -9,7 +7,8 @@ import Presenter from "./Presenter";
 import SingleJudge from "./SingleJudge";
 import UniversalSelector from "./UniversalSelector";
 
-export default class RoleSelector extends React.PureComponent {
+
+export default class RoleSelector extends LoadingComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -21,64 +20,24 @@ export default class RoleSelector extends React.PureComponent {
         };
     }
 
+    CLASS_ID = "start_page_role_selector";
+    API_MODELS = {
+        competition: {
+            model_type: "Competition",
+            model_id_getter: props => props.competition.id,
+            schema: {
+                judges: {
+                    discipline_judges: {},
+                },
+            }
+        },
+    };
+
     constructor(props) {
         super(props);
         this.state = {
             competition: null,
         };
-    }
-
-    componentWillMount() {
-        this.setupStorage();
-        this.reload_listener = websocket.addListener("reload_data", this.loadData);
-        this.db_update_listener = websocket.addListener("db_update", this.reloadFromStorage);
-        this.loadData();
-    }
-    componentWillReceiveProps(next_props) {
-        if (this.props.competition.id !== next_props.competition.id) {
-            this.setState({
-                competition: null,
-            });
-            this.freeStorage(this.props.competition.id);
-            this.setupStorage(next_props.competition.id);
-        }
-    }
-    componentDidUpdate(prev_props) {
-        if (
-            prev_props.competition.id !== this.props.competition.id ||
-            (
-                window.location.hostname !== "127.0.0.1" &&
-                (!prev_props.accessLevel || prev_props.accessLevel === "none")
-            )
-        ) {
-            this.loadData();
-        }
-    }
-    componentWillUnmount() {
-        websocket.removeListener(this.reload_listener);
-        websocket.removeListener(this.db_update_listener);
-        this.freeStorage();
-    }
-
-    get SCHEMA() {
-        return {
-            judges: {
-                discipline_judges: {},
-            },
-        };
-    }
-
-    setupStorage(competition_id=null) {
-        if (competition_id === null) {
-            competition_id = this.props.competition.id;
-        }
-        this.storage = storage.getDomain(`heats_${competition_id}`);
-    }
-    freeStorage(competition_id=null) {
-        if (competition_id === null) {
-            competition_id = this.props.competition.id;
-        }
-        storage.delDomain(`heats_${competition_id}`);
     }
 
     get has_access() {
