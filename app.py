@@ -23,6 +23,7 @@ class Application(tornado.web.Application):
             xsrf_cookies=False,
             debug=settings.DEBUG,
             compress_response=True,
+            websocket_ping_interval=60,
         )
         super().__init__(urls.handlers, **config)
 
