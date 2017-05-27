@@ -8,13 +8,13 @@ import traceback
 from collections import OrderedDict
 
 import tornado.ioloop
-
-from sockjs.tornado import SockJSConnection
+import tornado.websocket
 
 from db import (
     Database,
     StatsCounter,
 )
+
 
 class WebSocketConnectionsManager:
     _instance = None
@@ -53,9 +53,7 @@ class WebSocketConnectionsManager:
     @staticmethod
     def encode_message(message_object):
         json_message = json.dumps(message_object, ensure_ascii=False)
-        lz4_message = lz4.compress(json_message.encode("utf-8"), level=4)
-        b64_message = base64.b64encode(lz4_message)
-        return b64_message
+        return json_message
 
     def queue_message(self, token, message_object, client_id=None, broadcast=False):
         message_binary = self.encode_message(message_object)
@@ -78,15 +76,15 @@ class WebSocketConnectionsManager:
             conn = self._connections.get(client_id)
             if conn is None:
                 return
-            conn.send(message_binary)
+            conn.write_message(message_binary)
         if broadcast:
             for conn_client_id, conn in self._connections.items():
                 if client_id == conn_client_id:  # Already sent
                     continue
-                conn.send(message_binary)
+                conn.write_message(message_binary)
 
 
-class WebSocketClients(SockJSConnection):
+class WebSocketHandler(tornado.websocket.WebSocketHandler):
     _client_id = None
 
     def on_message(self, msg):
@@ -117,7 +115,7 @@ class WebSocketClients(SockJSConnection):
                     method=data["method"],
                     body=data["params"],
                     client=client,
-                    remote_ip=self._ws_request.ip,
+                    remote_ip=self.request.remote_ip,
                     ws_message=public_ws_message,
                     private_ws_message=private_ws_message,
                     response_key=data["response_key"],
@@ -143,13 +141,18 @@ class WebSocketClients(SockJSConnection):
                 public_ws_message.make_transaction_and_send()
                 print("Api call: {:<35s} {:4d}ms {:4d} queries".format(method, stats.time, stats.queries))
 
-    def on_open(self, request):
+    def open(self):
         manager = WebSocketConnectionsManager.instance()
         self._client_id = manager.add_connection(self)
-        self._ws_request = request
 
     def on_close(self):
         WebSocketConnectionsManager.instance().remove_connection(self._client_id)
+
+    def get_compression_options(self):
+        return {
+            "compression_level": 4,
+            "mem_level": 9,
+        }
 
 
 class TourResultsUpdateGetter:
@@ -240,6 +243,7 @@ class WsMessage:
         if self._empty:
             return
         data = self.serialize()
+        manager = WebSocketConnectionsManager.instance()
         if data is not None:
             manager.queue_message(
                 token=None,  # No transaction -- no token

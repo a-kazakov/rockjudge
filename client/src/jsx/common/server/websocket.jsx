@@ -2,9 +2,6 @@ import _ from "l10n";
 import showError from "common/dialogs/showError";
 import waiting_api_requests from "common/server/waiting_api_requests";
 
-import lz4 from "lz4-asm";
-import { TextDecoder } from "text-encoding";
-
 import connection_status from "common/connection_status";
 
 import storage from "common/server/storage";
@@ -20,7 +17,7 @@ class WebSocketHandler {
     }
     connect = () => {
         console.log("Connecting to websocket...");
-        this.ws = new SockJS(`http://${window.location.host}/ws`);
+        this.ws = new WebSocket(`ws://${window.location.host}/ws`);
         this.ws.onopen = () => {
             this.opened = true;
             connection_status.setOk();
@@ -59,15 +56,7 @@ class WebSocketHandler {
     handleMessage = (message) => {
         let data = message.raw_data;
         if (!data) {
-            const raw = atob(message.data);
-            const rawLength = raw.length;
-            const lz4_blob = new Uint8Array(new ArrayBuffer(rawLength));
-            for (let i = 0; i < rawLength; ++i) {
-                lz4_blob[i] = raw.charCodeAt(i);
-            }
-            const json_blob = lz4.decompress(lz4_blob);
-            const json_str = (new TextDecoder("utf-8")).decode(json_blob);
-            data = JSON.parse(json_str);
+            data = JSON.parse(message.data);
         }
         for (const data_message of data.messages) {
             const [msg_type, msg_data] = data_message;

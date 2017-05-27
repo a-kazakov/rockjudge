@@ -9,9 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "lz4-asm": "^0.3.3",
-    "sweetalert2": "^6.6.2",
-    "text-encoding": "^0.6.4"
+    "sweetalert2": "^6.6.2"
   },
   "devDependencies": {
     "babel-eslint": "^6.1.2",

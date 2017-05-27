@@ -1,6 +1,5 @@
 import os.path
 
-from sockjs.tornado import SockJSRouter
 from tornado.web import StaticFileHandler
 
 from webserver.handlers import (
@@ -15,13 +14,11 @@ from webserver.handlers import (
     StartPageHandler,
     StaticFileHandlerNoCache,
 )
-from webserver.websocket import WebSocketClients
+from webserver.websocket import WebSocketHandler
 
 
 STATIC_PATH = os.path.join(os.path.dirname(__file__), 'static')
 SCREEN_STATIC_PATH = os.path.join(os.path.join(os.path.dirname(__file__), 'screen'), 'static')
-
-ws_router = SockJSRouter(WebSocketClients, '/ws')
 
 handlers = [
     (r"/$", StartPageHandler),
@@ -36,4 +33,5 @@ handlers = [
     (r"/static/(.*)", StaticFileHandlerNoCache, {"path": STATIC_PATH}),
     (r"/judge/(\d+)$", JudgeHandler),
     (r"/api", ApiHandler),
-] + ws_router.urls
+    (r"/ws", WebSocketHandler),
+]

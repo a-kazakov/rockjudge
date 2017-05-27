@@ -68,33 +68,6 @@ export default class JudgeTablet extends LoadingComponent {
         };
     }
 
-    reloadFromStorage = () => {
-        const judge = this.getJudgeFromStorage();
-        const tour = this.getTourFromStorage();
-        const disciplineJudge = this.getDisciplineJudgeFromTour(tour);
-        this.setState({ judge, tour, disciplineJudge });
-    }
-
-    loadData = () => {
-        Api("judge.get", {
-            judge_id: this.props.judgeId,
-            children: this.JUDGE_SCHEMA,
-        })
-            .addToDB("Judge", this.props.judgeId)
-            .onSuccess(() => {
-                this.reloadFromStorage();
-                Api("competition.get_active_tours", {
-                    competition_id: this.state.judge.competition.id,
-                })
-                    .onSuccess((response) => this.handleActiveToursUpdate({
-                        competition_id: this.state.judge.competition.id,
-                        active_tours: response,
-                    }))
-                    .send();
-            })
-            .send();
-    }
-
     // Rendering
 
     renderBody() {

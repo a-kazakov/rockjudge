@@ -13,14 +13,13 @@
 <body>
   {% block body %}{% end %}
   <div id="connection_status"></div>
-  {% if False %}
+  {% if settings.DEBUG %}
     <script src="/static/thirdparty/react/react.js"></script>
     <script src="/static/thirdparty/react/react-dom.js"></script>
   {% else %}
     <script src="/static/thirdparty/react/react.min.js"></script>
     <script src="/static/thirdparty/react/react-dom.min.js"></script>
   {% end %}
-  <script src="/static/thirdparty/sockjs/sockjs.js"></script>
   {% block scripts %}{% end %}
 </body>
 </html>

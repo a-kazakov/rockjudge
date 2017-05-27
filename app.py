@@ -22,6 +22,7 @@ class Application(tornado.web.Application):
             login_url='/',
             xsrf_cookies=False,
             debug=settings.DEBUG,
+            compress_response=True,
         )
         super().__init__(urls.handlers, **config)
 
