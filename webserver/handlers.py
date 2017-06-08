@@ -12,7 +12,6 @@ from api import (
     Api,
     ApiRequest,
 )
-from db import Database
 from log import log_api
 from models import (
     Client,
