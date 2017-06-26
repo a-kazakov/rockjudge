@@ -622,7 +622,7 @@ class Tour(BaseModel):
         result = self.serialize_props()
         result.update({
             "id": self.id,
-            "results": self.get_serialized_results(),
+            "results": self.results,
             "runs": [run.export() for run in self.runs],
         })
         return result
