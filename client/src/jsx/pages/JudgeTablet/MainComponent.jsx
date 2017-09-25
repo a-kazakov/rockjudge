@@ -11,7 +11,7 @@ export default class JudgeTablet extends LoadingComponent {
         const PT = React.PropTypes;
         return {
             judgeId: PT.number.isRequired,
-            activeTourId: PT.number.isRequired,
+            activeTourId: PT.number,
         };
     }
 
@@ -22,7 +22,7 @@ export default class JudgeTablet extends LoadingComponent {
             model_id_getter: props => props.judgeId,
             schema: {
                 competition: {},
-            }
+            },
         },
         tour: {
             model_type: "Tour",

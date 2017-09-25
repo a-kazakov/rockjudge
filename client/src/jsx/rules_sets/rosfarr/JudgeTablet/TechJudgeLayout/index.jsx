@@ -220,8 +220,8 @@ export default class TechJudgeLayout extends React.PureComponent {
         }
         return (
             <ConfirmationButton
-                canConfirm
-                confirmed={ Array.from(this.scores.values()).every(s => s.confirmed) }
+                canConfirm={ Array.from(this.scores.values()).every(s => s !== null) }
+                confirmed={ Array.from(this.scores.values()).every(s => s !== null && s.confirmed) }
                 key={ this.state.heat }
                 onConfirm={ this.handleConfirm }
             />

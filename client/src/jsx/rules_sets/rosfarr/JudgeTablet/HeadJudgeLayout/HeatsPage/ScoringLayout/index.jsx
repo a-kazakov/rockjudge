@@ -57,11 +57,6 @@ export default class ScoringLayout extends React.PureComponent {
 
     render() {
         this.setupCache();
-        if (this.score === null) {
-            return (
-                <div />
-            );
-        }
         const header = _("global.phrases.participant_n",
             this.props.run.participant.number,
             this.props.run.participant.name,
@@ -77,6 +72,18 @@ export default class ScoringLayout extends React.PureComponent {
                     />
                 </div>
             )
+        }
+        if (this.score === null) {
+            return (
+                <div className="layout-participant">
+                    <h2>
+                        { header }
+                    </h2>
+                    <div className="not-performing">
+                        { _("tablet.global.no_score") }
+                    </div>
+                </div>
+            );
         }
         return (
             <div className="layout-participant">

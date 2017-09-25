@@ -26,7 +26,7 @@ export default class ScoringLayout extends React.PureComponent {
                 confirmed: PT.bool.isRequired,
                 id: PT.number.isRequired,
                 data: PT.object.isRequired,
-            }).isRequired,
+            }),
             tour: PT.shape({
                 scoring_system_name: PT.string.isRequired,
             }).isRequired,
@@ -49,6 +49,13 @@ export default class ScoringLayout extends React.PureComponent {
     }
 
     renderScoringLayout() {
+        if (this.props.score === null) {
+            return (
+                <div className="not-performing">
+                    { _("tablet.global.no_score") }
+                </div>
+            );
+        }
         const score = this.props.score.data;
         const cards = ["rosfarr.formation", "rosfarr.formation_acro"].includes(this.props.tour.scoring_system_name)
             ? [
@@ -113,11 +120,6 @@ export default class ScoringLayout extends React.PureComponent {
         );
     }
     render() {
-        if (this.props.score === null) {
-            return (
-                <div />
-            );
-        }
         const header = _("global.phrases.participant_n",
             this.props.run.participant.number,
             this.props.run.participant.name,
