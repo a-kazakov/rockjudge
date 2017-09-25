@@ -1,9 +1,7 @@
 import _ from "l10n";
-import Api from "common/server/Api";
+import LoadingComponent from "common/server/LoadingComponent";
 import Loader from "common/components/Loader";
 import Docx from "common/Docx";
-import storage from "common/server/storage";
-import websocket from "common/server/websocket";
 
 import ConfigPanel from "pages/AdminPanel/common/ConfigPanel";
 import Paper from "pages/AdminPanel/common/Paper";
@@ -15,7 +13,7 @@ import DisciplinesSummary from "./DisciplinesSummary";
 import Numbers from "./Numbers";
 import groupParticipants from "./groupParticipants";
 
-export default class StartList extends React.PureComponent {
+export default class StartList extends LoadingComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -38,8 +36,8 @@ export default class StartList extends React.PureComponent {
                     },
                 },
                 clubs: {},
-            }
-        }
+            },
+        },
     };
 
     constructor(props) {
@@ -74,7 +72,7 @@ export default class StartList extends React.PureComponent {
             new_clubs_config[club.id] = (club.id in config.clubs)
                 ? config.clubs[club.id]
                 : true;
-        };
+        }
         config.disciplines = new_disciplines_config;
         config.clubs = new_clubs_config;
         return { config };

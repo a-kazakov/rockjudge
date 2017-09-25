@@ -15,7 +15,7 @@ class ApiImpl {
     constructor(method, data) {
         this.method = method;
         this.data = data;
-        this.cb_success = null;
+        this.cb_success = () => {};
         this.cb_error = (msg, code, args) => showError(code ? _(code, ...(args || [])) : msg);
         this.cb_fail = (...fail_info) => console.error("API fail", ...fail_info);
         this.cb_done = () => {};

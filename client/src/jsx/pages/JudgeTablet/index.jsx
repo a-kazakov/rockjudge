@@ -1,7 +1,5 @@
 import Api from "common/server/Api";
 import websocket from "common/server/websocket";
-import FullscreenButton from "common/components/FullscreenButton"
-import Loader from "common/components/Loader";
 
 import MainComponent from "./MainComponent";
 

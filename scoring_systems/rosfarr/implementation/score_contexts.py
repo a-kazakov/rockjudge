@@ -359,3 +359,12 @@ class ScoreContextHead(ScoreContextBase):
 
     def _total_score(self):
         return self.counting_score["card"]
+
+
+class ScoreContextNull(ScoreContextBase):
+    DEFAULT_SCORES = {}
+    INITIAL_SCORES = {}
+    SCORES_VALIDATORS = {}
+
+    def _total_score(self):
+        return 0.0
