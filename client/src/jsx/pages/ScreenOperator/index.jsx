@@ -33,7 +33,7 @@ export default class ScreenOperator extends LoadingComponent {
                 disciplines: {
                     tours: {},
                 },
-            }
+            },
         },
     };
 

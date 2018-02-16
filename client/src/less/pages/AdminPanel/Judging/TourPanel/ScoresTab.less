@@ -13,10 +13,38 @@
                 &.name       { width: 300px; }
                 &.acrobatics { width: 120px; }
                 &.heat       { width: 40px;  }
-                &.judge      { width: 50px;  }
+                &.judge      { width: 50px; cursor: pointer; }
                 &.total      { width: 120px; }
                 &.status     { width: 60px; min-width: 60px; }
                 &.actions    { width: 20px; }
+                &.actions, &.judge {
+                    position: relative;
+                    cursor: pointer;
+                    &.opened {
+                        background-color: @color-contrast;
+                    }
+                    > .menu {
+                        color: @color-white;
+                        position: absolute;
+                        right: 50%;
+                        top: 50%;
+                        background-color: @color-medium;
+                        z-index: 10;
+                        padding: 10px;
+                        width: 250px;
+                        > button {
+                            .button-white();
+                            display: block;
+                            width: 100%;
+                            &.red {
+                                .button-red();
+                            }
+                            &.dark {
+                                .button-primary();
+                            }
+                        }
+                    }
+                }
             }
             > td {
                 position: relative;
@@ -45,34 +73,6 @@
                     padding: 0;
                     border: 0;
                     text-align: center;
-                }
-                &.actions {
-                    position: relative;
-                    cursor: pointer;
-                    &.opened {
-                        background-color: @color-contrast;
-                    }
-                    > .menu {
-                        color: @color-white;
-                        position: absolute;
-                        right: 50%;
-                        top: 50%;
-                        background-color: @color-medium;
-                        z-index: 10;
-                        padding: 10px;
-                        width: 250px;
-                        > button {
-                            .button-white();
-                            display: block;
-                            width: 100%;
-                            &.red {
-                                .button-red();
-                            }
-                            &.dark {
-                                .button-primary();
-                            }
-                        }
-                    }
                 }
                 &.status {
                     .status-controls {

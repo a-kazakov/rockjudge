@@ -25,7 +25,7 @@ export default class HeatSelector extends LoadingComponent {
                 runs: {
                     participant: {},
                 },
-            }
+            },
         },
     };
 

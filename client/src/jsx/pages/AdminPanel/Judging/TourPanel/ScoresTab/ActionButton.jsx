@@ -1,7 +1,7 @@
 import makeClassName from "common/makeClassName";
 
 
-export default class Button extends React.PureComponent {
+export default class ActionButton extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -15,7 +15,7 @@ export default class Button extends React.PureComponent {
     handleClick = (event) => {
         event.stopPropagation();
         this.props.onClick(this.props.mkey);
-    }
+    };
 
     getClassName() {
         return makeClassName({
@@ -34,5 +34,3 @@ export default class Button extends React.PureComponent {
         );
     }
 }
-
-Button.displayName = "pages_AdminPanel_Judging_TourPanel_ScoresTab_Row_ActionsCell_Button";

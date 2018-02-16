@@ -20,14 +20,6 @@ export default class LoadingComponent extends React.PureComponent {
             }
         }
     }
-    _handleStateUpdate = (key, data) => {
-        const upd = {[key]: data};
-        let add = {};
-        if (this.getAdditionalStateUpdate) {
-            add = this.getAdditionalStateUpdate(Object.assign({}, this.state, upd));
-        }
-        this.setState(Object.assign({}, upd, add));
-    }
     componentWillReceiveProps(nextProps) {
         for (const key of Object.keys(this.API_MODELS)) {
             const params = this.API_MODELS[key];
@@ -63,4 +55,12 @@ export default class LoadingComponent extends React.PureComponent {
             }
         }
     }
+    _handleStateUpdate = (key, data) => {
+        const upd = {[key]: data};
+        let add = {};
+        if (this.getAdditionalStateUpdate) {
+            add = this.getAdditionalStateUpdate(Object.assign({}, this.state, upd));
+        }
+        this.setState(Object.assign({}, upd, add));
+    };
 }

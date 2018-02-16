@@ -1,5 +1,3 @@
-import _ from "l10n";
-import showError from "common/dialogs/showError";
 import waiting_api_requests from "common/server/waiting_api_requests";
 
 import connection_status from "common/connection_status";
@@ -45,14 +43,14 @@ class WebSocketHandler {
             setTimeout(this.connect, 500);
         };
         this.ws.onmessage = this.handleMessage;
-    }
+    };
     send = (message) => {
         if (!this.opened) {
             this.send_queue.push(message);
             return;
         }
         this.ws.send(message);
-    }
+    };
     handleMessage = (message) => {
         let data = message.raw_data;
         if (!data) {

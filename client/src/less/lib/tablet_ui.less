@@ -37,7 +37,6 @@
         .button-tablet-primary();
         width: 32.333%;
         display: inline-block;
-        margin: 0;
         font-weight: bold;
         vertical-align: middle;
         margin: 0.5%;
@@ -84,7 +83,9 @@
 }
 
 .SelectorInput {
-    margin-bottom: 10px;
+    &:not(.compact) {
+        margin-bottom: 10px;
+    }
     &.one-row {
         .loop-width-1row(26);
     }
@@ -113,12 +114,34 @@
             .button-tablet-primary();
         }
     }
+    .compact button {
+        line-height: 24px;
+    }
     button {
         vertical-align: top;
         margin: 0.5%;
         box-sizing: border-box;
+        font-size: 16px !important;
         &.active {
             .button-tablet-primary();
+            &.active-red {
+                background-color: @color-red;
+                border-color: @color-red;
+                color: @color-white;
+            }
+            &.active-green {
+                background-color: @color-green;
+                border-color: @color-green;
+                color: @color-white;
+            }
+            &.active-yellow {
+                background-color: @color-yellow;
+                border-color: @color-yellow;
+            }
+            &.active-white {
+                background-color: @color-light;
+                border-color: @color-light;
+            }
             background-color: @color-contrast;
             border-color: @color-contrast;
             color: @color-dark;

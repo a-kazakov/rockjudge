@@ -9,16 +9,30 @@ export default class Model {
         return storage.get(model_name).getModelOrCreate(id);
     }
     static compareValues(x, y) {
-        if (x === y) return true;
-        if (!(x instanceof Object) || !(y instanceof Object)) return false;
+        if (x === y) {
+            return true;
+        }
+        if (!(x instanceof Object) || !(y instanceof Object)) {
+            return false;
+        }
         for (let p in x) {
-            if (!x.hasOwnProperty(p)) continue;
-            if (!y.hasOwnProperty(p)) return false;
-            if (x[p] === y[p]) continue;
-            if (!Model.compareValues(x[p], y[p])) return false;
+            if (!x.hasOwnProperty(p)) {
+                continue;
+            }
+            if (!y.hasOwnProperty(p)) {
+                return false;
+            }
+            if (x[p] === y[p]) {
+                continue;
+            }
+            if (!Model.compareValues(x[p], y[p])) {
+                return false;
+            }
         }
         for (let p in y) {
-            if (y.hasOwnProperty(p) && !x.hasOwnProperty(p)) return false;
+            if (y.hasOwnProperty(p) && !x.hasOwnProperty(p)) {
+                return false;
+            }
         }
         return true;
     }
@@ -91,7 +105,7 @@ export default class Model {
             }
             if (!data_changed) {
                 if (prev_values && this[key].length === prev_values.length) {
-                    for (let i = 0; i < prev_values; ++i) {
+                    for (let i = 0; i < prev_values.length; ++i) {
                         if (!prev_values[i].equals(this[key][i])) {
                             data_changed = true;
                             break;
@@ -128,7 +142,7 @@ export default class Model {
     }
 
     unsafeSerialize(schema) {
-        let result = {}
+        let result = {};
         for (const [key, key_type] of this.__key_types.entries()) {
             switch (key_type) {
             case LOWER_KEY:
@@ -145,7 +159,7 @@ export default class Model {
                 result[key] = this[key];
             }
         }
-        result.id = this.id
+        result.id = this.id;
         for (const key of Object.keys(schema)) {
             if (!(key in result)) {
                 console.warn("Failed to serialize result: Shema:", schema, "Fetched data:", result);

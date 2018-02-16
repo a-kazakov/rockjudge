@@ -2,6 +2,7 @@ import importlib
 
 RULES_SETS = [
     "rosfarr",
+    "skating",
 ]
 
 MODULES = {}

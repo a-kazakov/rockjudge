@@ -14,6 +14,7 @@ export default class Item extends React.PureComponent {
                 PT.number.isRequired,
                 PT.bool.isRequired,
             ]),
+            style: PT.oneOf(["active-green", "active-red", "active-yellow", "active-white"]),
             onClick: PT.func.isRequired,
         };
     }
@@ -23,7 +24,7 @@ export default class Item extends React.PureComponent {
             return;
         }
         this.props.onClick(this.props.value);
-    }
+    };
 
     getClassName() {
         return makeClassName({
@@ -31,6 +32,10 @@ export default class Item extends React.PureComponent {
             "score-btn": true,
             "active": this.props.active,
             "read-only": this.props.readOnly,
+            "active-red": this.props.style === "active-red",
+            "active-green": this.props.style === "active-green",
+            "active-yellow": this.props.style === "active-yellow",
+            "active-white": this.props.style === "active-white",
         });
     }
     render() {

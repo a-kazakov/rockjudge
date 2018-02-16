@@ -11,3 +11,5 @@ external-tools/**
 /error_js*
 /static/js/**
 /static/css/**
+/.idea/**
+/venv/**

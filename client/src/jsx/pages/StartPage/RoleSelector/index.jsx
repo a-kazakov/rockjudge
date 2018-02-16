@@ -1,3 +1,4 @@
+import Api from "common/server/Api";
 import Loader from "common/components/Loader";
 import LoadingComponent from "common/server/LoadingComponent";
 
@@ -29,7 +30,7 @@ export default class RoleSelector extends LoadingComponent {
                 judges: {
                     discipline_judges: {},
                 },
-            }
+            },
         },
     };
 
@@ -57,7 +58,7 @@ export default class RoleSelector extends LoadingComponent {
         this.setState({
             competition: serialized,
         });
-    }
+    };
     loadData = () => {
         if (!this.has_access) {
             return
@@ -69,7 +70,7 @@ export default class RoleSelector extends LoadingComponent {
             .addToDB("Competition", this.props.competition.id, this.storage)
             .onSuccess(this.reloadFromStorage)
             .send();
-    }
+    };
 
     renderBody() {
         if (window.location.hostname !== "127.0.0.1") {

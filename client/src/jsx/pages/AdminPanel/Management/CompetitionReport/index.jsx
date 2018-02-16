@@ -45,8 +45,8 @@ export default class CompetitionReport extends LoadingComponent {
                 clubs: {
                     participants: {},
                 },
-            }
-        }
+            },
+        },
     };
 
 

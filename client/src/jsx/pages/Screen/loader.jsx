@@ -1,7 +1,6 @@
 import Api from "common/server/Api";
 import storage from "common/server/storage";
 import websocket from "common/server/websocket";
-import LoadingComponent from "common/server/LoadingComponent";
 
 import makeTourResultsTable from "common/makeTourResultsTable";
 import makeDisciplineResultsTable from "common/makeDisciplineResultsTable";

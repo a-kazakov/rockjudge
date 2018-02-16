@@ -1,6 +1,6 @@
 from itertools import count
 
-from scoring_systems.common import SkatingSystem
+from .skating_system import SkatingSystem
 from .common import CachedClass
 
 from .run_contexts import RunContextBase

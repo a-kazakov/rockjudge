@@ -42,15 +42,15 @@ export default class StatusCell extends React.PureComponent {
                     <input
                         checked={ this.props.run.status === "NP" }
                         className="status-np"
-                        type="radio"
                         title={ _("global.statuses.NP") }
+                        type="radio"
                         onChange={ this.handleSetStatusNP }
                     />
                     <input
                         checked={ this.props.run.status === "DQ" }
                         className="status-dq"
-                        type="radio"
                         title={ _("global.statuses.DQ") }
+                        type="radio"
                         onChange={ this.handleSetStatusDQ }
                     />
                 </div>

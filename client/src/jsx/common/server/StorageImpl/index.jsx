@@ -68,7 +68,7 @@ export default class StorageImpl {
         }
     }
     addModel(model_type, model_id, data, schema) {
-        const [model, created] = this.get(model_type).getModelOrCreate(model_id);
+        const [model, created] = this.get(model_type).getModelOrCreate(model_id); // eslint-disable-line no-unused-vars
         model.updateSchema(schema);
         this.updateModelNode(model_type, model_id, data);
         this.triggerListeners();

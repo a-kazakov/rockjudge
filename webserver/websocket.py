@@ -1,7 +1,5 @@
-import base64
 import copy
 import json
-import lz4framed as lz4
 import time
 import traceback
 

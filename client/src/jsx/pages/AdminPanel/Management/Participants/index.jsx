@@ -24,8 +24,8 @@ export default class Participants extends LoadingComponent {
                     club: {},
                     programs: {},
                 },
-            }
-        }
+            },
+        },
     };
 
     constructor(props) {

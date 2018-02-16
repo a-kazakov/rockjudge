@@ -248,7 +248,11 @@ class Tour(BaseModel):
         if self.participants_per_heat <= 0:
             return
         # Adding fake runs to last but one heat
-        if self.participants_per_heat >= 3 and len(self.runs) % self.participants_per_heat == 1:
+        if (
+            self.participants_per_heat >= 3 and
+            len(self.runs) % self.participants_per_heat == 1 and
+                len(self.runs) > 1
+        ):
             heats[len(self.runs) // self.participants_per_heat] = \
                 [None] * (self.participants_per_heat - (self.participants_per_heat + 1) // 2)
         # Filling with existing heats (only if preserving evisting)
@@ -421,6 +425,69 @@ class Tour(BaseModel):
                 model_id=score.id,
             )
 
+    def confirm_all(self, discipline_judge, ws_message):
+        if self.finalized:
+            raise ApiError("errors.score.update_on_finalized_tour")
+        from models.score import Score
+        from models.run import Run
+        scores = Score.select().join(Run).where(
+            (Score.discipline_judge == discipline_judge) &
+            (Score.confirmed == False)  # noqa
+        ).execute()
+        ids = [score.id for score in scores]
+        Score.update(confirmed=True).where(Score.id << ids).execute()
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id,
+            schema={
+                "runs": {
+                    "scores": {},
+                },
+            },
+        )
+
+    def unconfirm_all(self, discipline_judge, ws_message):
+        if self.finalized:
+            raise ApiError("errors.score.update_on_finalized_tour")
+        from models.score import Score
+        from models.run import Run
+        scores = Score.select().join(Run).where(
+            (Score.discipline_judge == discipline_judge) &
+            (Score.confirmed == True)  # noqa
+        ).execute()
+        ids = [score.id for score in scores]
+        Score.update(confirmed=False).where(Score.id << ids).execute()
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id,
+            schema={
+                "runs": {
+                    "scores": {},
+                },
+            },
+        )
+
+    def reset_judge_scores(self, discipline_judge, ws_message):
+        if self.finalized:
+            raise ApiError("errors.score.update_on_finalized_tour")
+        from models.score import Score
+        from models.run import Run
+        scores = Score.select().join(Run).where(Score.discipline_judge == discipline_judge).execute()
+        ids = [score.id for score in scores]
+        Score.update(
+            score_data={},
+            confirmed=False,
+        ).where(Score.id << ids).execute()
+        ws_message.add_model_update(
+            model_type=self.__class__,
+            model_id=self.id,
+            schema={
+                "runs": {
+                    "scores": {},
+                },
+            },
+        )
+
     def permute_within_heat(self, run_ids, ws_message):
         if self.finalized:
             raise ApiError("errors.score.update_on_finalized_tour")
@@ -547,12 +614,12 @@ class Tour(BaseModel):
                     },
                 }
             )
-            ws_message.add_tour_results_update(self.id, immediate=True)
         else:
             ws_message.add_model_update(
                 model_type=self.__class__,
                 model_id=self.id,
             )
+        ws_message.add_tour_results_update(self.id, immediate=True)
 
     def delete_model(self, ws_message):
         if self.finalized:

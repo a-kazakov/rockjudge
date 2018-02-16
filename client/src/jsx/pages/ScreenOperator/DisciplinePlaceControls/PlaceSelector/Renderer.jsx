@@ -32,7 +32,7 @@ export default class Renderer extends LoadingComponent {
                         },
                     },
                 },
-            }
+            },
         },
     };
 

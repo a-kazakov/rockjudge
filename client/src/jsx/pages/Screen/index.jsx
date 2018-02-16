@@ -18,7 +18,7 @@ export default class Screen extends LoadingComponent {
         competition: {
             model_type: "Competition",
             model_id_getter: props => props.competitionId,
-            schema: {}
+            schema: {},
         },
     };
 

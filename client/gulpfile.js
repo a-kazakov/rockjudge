@@ -179,6 +179,9 @@ addPrimaryJsxTask('screen_operator');
 addRulesSetLessTask('rosfarr');
 addRulesSetJsxTask('rosfarr');
 
+addRulesSetLessTask('skating');
+addRulesSetJsxTask('skating');
+
 addGroupTasks();
 
 gulp.task('default', gulp.series('all'));

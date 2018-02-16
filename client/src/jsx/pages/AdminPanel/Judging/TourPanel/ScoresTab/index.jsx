@@ -3,9 +3,8 @@ import Api from "common/server/Api";
 import showConfirm from "common/dialogs/showConfirm";
 import closeDialog from "common/dialogs/closeDialog";
 
-import rules_set from "rules_sets/loader";
-
 import Row from "./Row";
+import JudgeHeaderCell from "./JudgeHeaderCell";
 
 export default class ScoresTab extends React.PureComponent {
     static get propTypes() {
@@ -102,17 +101,17 @@ export default class ScoresTab extends React.PureComponent {
         default:
             console.error("Unknown signal received:", message);
         }
-    }
+    };
     handleEditRequest = (info) => {
         this.setState({
             nowEditing: info,
         });
-    }
+    };
     handleStopEditing = () => {
         this.setState({
             nowEditing: {},
         });
-    }
+    };
     handlePositionMove = (heat, old_pos, new_pos) => {
         const heat_runs = this.props.tour.runs.filter(r => r.heat === heat);
         const old_ids = heat_runs.map(r => r.id)
@@ -128,13 +127,13 @@ export default class ScoresTab extends React.PureComponent {
                 [old_ids[old_pos]],
                 old_ids.slice(new_pos, old_pos),
                 old_ids.slice(old_pos + 1)
-            )
+            );
         Api("tour.permute_within_heat", {
             "tour_id": this.props.tour.id,
             "run_ids": new_ids,
         })
             .send();
-    }
+    };
 
     // Rendering
 
@@ -192,12 +191,17 @@ export default class ScoresTab extends React.PureComponent {
                             { this.renderTableHeaderCell("status") }
                             { this.renderTableHeaderCell("total_score") }
                             { discipline_judges.map(discipline_judge =>
-                                <th
-                                    className="judge"
+                                <JudgeHeaderCell
+                                    disciplineJudge={ discipline_judge }
                                     key={ discipline_judge.id }
-                                >
-                                    { rules_set.get_judge_table_mark(discipline_judge) }
-                                </th>
+                                    opened={
+                                        this.state.nowEditing.type === "judge_actions" &&
+                                        this.state.nowEditing.discipline_judge_id === discipline_judge.id
+                                    }
+                                    tour={ this.props.tour }
+                                    onEditRequest={ this.handleEditRequest }
+                                    onStopEditing={ this.handleStopEditing }
+                                />
                             ) }
                             { this.props.tour.finalized
                                 ? null

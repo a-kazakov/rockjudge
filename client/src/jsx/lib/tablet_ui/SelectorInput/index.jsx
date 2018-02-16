@@ -15,6 +15,8 @@ export default class SelectorInput extends React.PureComponent {
                     ]),
                 ),
             ).isRequired,
+            compact: PT.bool.isRequired,
+            multiple: PT.bool.isRequired,
             readOnly: PT.bool,
             rowSize: PT.number,
             style: PT.oneOf(["grid", "one-line", "two-lines"]),
@@ -28,10 +30,31 @@ export default class SelectorInput extends React.PureComponent {
     }
     static get defaultProps() {
         return {
+            compact: false,
+            multiple: false,
             readOnly: false,
             rowSize: 10,
             style: "one-line",
         };
+    }
+
+    isSelected(val) {
+        if (!this.props.multiple) {
+            return this.props.value === val;
+        }
+        if (this.props.value instanceof Set) {
+            return this.props.value.has(val);
+        }
+        return this.props.value.includes(val)
+    }
+    isValueEmpty() {
+        if (!this.props.multiple) {
+            return this.props.value === null;
+        }
+        if (this.props.value instanceof Set) {
+            return this.props.value.size === 0;
+        }
+        return this.props.value.length === 0;
     }
 
     getButtonsCount() {
@@ -44,9 +67,10 @@ export default class SelectorInput extends React.PureComponent {
     getClassName() {
         return makeClassName({
             "SelectorInput": true,
+            "compact": this.props.compact,
             "one-row": this.props.style !== "two-lines",
             "two-rows": this.props.style === "two-lines",
-            "selected": this.props.value !== null,
+            "selected": !this.props.multiple && !this.isValueEmpty(),
             [`n-${this.getButtonsCount()}`]: true,
         });
     }
@@ -62,12 +86,13 @@ export default class SelectorInput extends React.PureComponent {
                     <br key={ `br${idx}` } />
                 );
             }
-            const [value, text] = this.props.choices[idx];
+            const [value, text, style] = this.props.choices[idx];
             result.push(
                 <Item
-                    active={ value === this.props.value }
+                    active={ this.isSelected(value) }
                     key={ idx }
                     readOnly={ this.props.readOnly }
+                    style={ style }
                     text={ text }
                     value={ value }
                     onClick={ this.props.onChange }

@@ -5,7 +5,7 @@ import makeClassName from "common/makeClassName";
 
 import showConfirm from "common/dialogs/showConfirm";
 
-import Button from "./Button"
+import ActionButton from "../ActionButton"
 
 
 export default class ActionsCell extends React.PureComponent {
@@ -37,11 +37,11 @@ export default class ActionsCell extends React.PureComponent {
                 run_id: this.props.run.id,
             });
         }
-    }
+    };
     handleMoveToPos = (next_pos) => {
         this.props.onPositionMove(this.props.run.heat, this.props.heatPosition, next_pos);
         this.props.onStopEditing();
-    }
+    };
     handleResetScore = () => {
         showConfirm(
             [_("judging.confirms.reset_score"), this.props.run.participant.name],
@@ -53,7 +53,7 @@ export default class ActionsCell extends React.PureComponent {
             },
         );
         this.props.onStopEditing();
-    }
+    };
 
     getClassName() {
         return makeClassName({
@@ -71,7 +71,8 @@ export default class ActionsCell extends React.PureComponent {
         for (let idx = 0; idx < this.props.heatSize; ++idx) {
             if (this.props.heatPosition !== idx) {
                 result.push(
-                    <Button
+                    <ActionButton
+                        key={ idx }
                         mkey={ idx }
                         text={ _("judging.buttons.move_to_position", idx + 1) }
                         onClick={ this.handleMoveToPos }
@@ -88,13 +89,13 @@ export default class ActionsCell extends React.PureComponent {
         return (
             <div className="menu">
                 { this.renderMoveToPositionButtons() }
-                <Button
+                <ActionButton
                     style="red"
                     text={ _("judging.buttons.reset_score") }
                     onClick={ this.handleResetScore }
                 />
                 <br />
-                <Button
+                <ActionButton
                     style="dark"
                     text={ _("judging.buttons.close_actions_menu") }
                     onClick={ this.props.onStopEditing }
@@ -118,5 +119,3 @@ export default class ActionsCell extends React.PureComponent {
         );
     }
 }
-
-ActionsCell.displayName = "pages_AdminPanel_Judging_TourPanel_ScoresTab_Row_ActionsCell";

@@ -1,7 +1,5 @@
 import _ from "l10n";
-import Api from "common/server/Api";
 import Docx from "common/Docx";
-import storage from "common/server/storage";
 
 import Paper from "pages/AdminPanel/common/Paper";
 

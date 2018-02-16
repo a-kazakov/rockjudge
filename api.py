@@ -236,7 +236,7 @@ class Api:
         check_auth(
             competition_id=tour.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin", "any_judge", ),
         )
         tour.update_model(request.body["data"], ws_message=request.ws_message)
         return {}
@@ -568,6 +568,41 @@ class Api:
         tour.confirm_heat(discipline_judge, request.body["heat"], ws_message=request.ws_message)
         return {}
 
+    @classmethod
+    def tour_confirm_all(cls, request):
+        discipline_judge = cls.get_model(DisciplineJudge, "discipline_judge_id", request)
+        tour = cls.get_model(Tour, "tour_id", request)
+        check_auth(
+            competition_id=discipline_judge.judge.competition_id,
+            request=request,
+            allowed_access_levels=("admin", "any_judge", "judge_{}".format(discipline_judge.judge_id), ),
+        )
+        tour.confirm_all(discipline_judge, ws_message=request.ws_message)
+        return {}
+
+    @classmethod
+    def tour_unconfirm_all(cls, request):
+        discipline_judge = cls.get_model(DisciplineJudge, "discipline_judge_id", request)
+        tour = cls.get_model(Tour, "tour_id", request)
+        check_auth(
+            competition_id=discipline_judge.judge.competition_id,
+            request=request,
+            allowed_access_levels=("admin", ),
+        )
+        tour.unconfirm_all(discipline_judge, ws_message=request.ws_message)
+        return {}
+
+    @classmethod
+    def tour_reset_judge_scores(cls, request):
+        discipline_judge = cls.get_model(DisciplineJudge, "discipline_judge_id", request)
+        tour = cls.get_model(Tour, "tour_id", request)
+        check_auth(
+            competition_id=discipline_judge.judge.competition_id,
+            request=request,
+            allowed_access_levels=("admin", ),
+        )
+        tour.reset_judge_scores(discipline_judge, ws_message=request.ws_message)
+        return {}
 
     @classmethod
     def acrobatic_override_set(cls, request):
