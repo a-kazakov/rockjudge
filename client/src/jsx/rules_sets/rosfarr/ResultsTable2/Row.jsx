@@ -153,12 +153,18 @@ export default class Row extends React.PureComponent {
     render() {
         return (
             <tr>
-                <td className="place">
+                <td
+                    className="place"
+                    style={ { borderRight: "1pt solid black" } }
+                >
                     <p className="text-center">
                         { this.getPlace() }
                     </p>
                 </td>
-                <td className="number">
+                <td
+                    className="number"
+                    style={ { fontWeight: "bold" } }
+                >
                     <p className="text-center">
                         { this.props.row.run.participant.number }
                     </p>

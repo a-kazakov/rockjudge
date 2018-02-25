@@ -28,11 +28,12 @@ export default class Results extends React.PureComponent {
             <div key={ discipline.id }>
                 <h5><p>{ discipline.name }</p></h5>
                 <Renderer
+                    forCompetitionReport
                     discipline={ discipline }
                 />
             </div>
         )
-    }
+    };
     render() {
         let has_disciplines = false;
         for (let i = 0; i < this.props.competition.disciplines.length; ++i) {
@@ -46,7 +47,7 @@ export default class Results extends React.PureComponent {
             return null;
         }
         return (
-            <div>
+            <div className="rules-set">
                 <h4>
                     <p>
                         { _("admin.headers.competition_results") }

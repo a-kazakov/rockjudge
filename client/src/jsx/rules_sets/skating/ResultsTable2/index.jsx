@@ -40,9 +40,11 @@ export default class ResultsTable2 extends React.PureComponent {
 
     static transformDocx(docx) {
         docx
-            .addStyle(".bordered-table", "font-size", "9pt")
-            .addStyle(".advances-header", "background-color", "#ddd")
-            .addStyle(".total-score", "font-weight", "bold");
+            .addStyle("table", "font-size", "9pt")
+            .addStyle("th", "border-bottom", "1pt solid black")
+            .addStyle("th.advances-header", "border-bottom", "1pt solid black")
+            .addStyle("th.advances-header", "padding-top", "10pt")
+            .addStyle("td", "border-bottom", "0.5pt solid #aaa");
     }
 
     getRowStatus(row) {
@@ -111,34 +113,34 @@ export default class ResultsTable2 extends React.PureComponent {
         }
         return (
             <div className="ResultsTable2">
-                <table className="bordered-table">
+                <table>
                     <thead>
                         <tr>
                             <th className="place" style={ widths.genPlaceStyle() }>
-                                <p>
+                                <p className="text-center">
                                     { _("results.labels.place") }
                                 </p>
                             </th>
                             <th className="number" style={ widths.genNumberStyle() }>
-                                <p>
+                                <p className="text-center">
                                     { _("results.labels.number") }
                                 </p>
                             </th>
                             <th className="participant" style={ widths.genNameStyle() }>
-                                <p>
+                                <p className="text-left">
                                     { _("results.labels.participant_name") }
                                 </p>
                             </th>
                             { show_total_score ? (
                                 <th className="total-score" style={ widths.genTotalScoreStyle() }>
-                                    <p>
+                                    <p className="text-center">
                                         { _("results.labels.total_score") }
                                     </p>
                                 </th>
                             ) : null }
                             { line_judges.map(dj =>
                                 <th key={ dj.id } style={ widths.genJudgeStyle() }>
-                                    <p>
+                                    <p className="text-center">
                                         { getJudgeTableMark(dj) }
                                     </p>
                                 </th>

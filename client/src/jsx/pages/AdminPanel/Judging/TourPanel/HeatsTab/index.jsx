@@ -63,36 +63,33 @@ export default class HeatsTab extends React.PureComponent {
         default:
             console.error("Unknown message:", message)
         }
-    }
+    };
 
-    renderHeatHeader(prev_row, next_row) {
-        const need_render = (typeof prev_row === "undefined") || (prev_row.heat !== next_row.heat)
-        if (!need_render) {
-            return null;
-        }
+    checkHeatsDiffer(prev_row, next_row) {
         return (
-            <tr key={ `H${next_row.heat}` }>
-                <th className="heat-number" colSpan="3">
-                    <p>
-                        { _("global.phrases.heat_n", next_row.heat) }
-                    </p>
-                </th>
-            </tr>
+            (typeof prev_row === "undefined") ||
+            (typeof next_row === "undefined") ||
+            (prev_row.heat !== next_row.heat)
         );
     }
+
     renderRows() {
+        const runs = this.props.tour.runs;
+        let counts = new Map();
+        for (const run of runs) {
+            counts.set(run.heat, (counts.get(run.heat) || 0) + 1)
+        }
         let result = [];
-        let runs = this.props.tour.runs;
         for (let i = 0; i < runs.length; ++i) {
             if (runs[i].heat <= 0) {
                 continue;
             }
-            const header = this.renderHeatHeader(runs[i - 1], runs[i]);
-            if (header) {
-                result.push(header);
-            }
             result.push(
                 <Row
+                    headerCells={ counts.get(runs[i].heat)  }
+                    heat={ runs[i].heat }
+                    isFirstCell={ this.checkHeatsDiffer(runs[i - 1], runs[i]) }
+                    isLastCell={ this.checkHeatsDiffer(runs[i], runs[i + 1]) }
                     key={ runs[i].id }
                     participant={ runs[i].participant }
                 />
@@ -107,24 +104,28 @@ export default class HeatsTab extends React.PureComponent {
                     header={ `${this.props.tour.discipline.competition.name}, ${this.props.tour.discipline.competition.date}` }
                     ref={ this.makePrintableRef }
                     title1={ _("admin.headers.tour_heats") }
-                    title2={ this.props.tour.discipline.name }
-                    title3={ this.props.tour.name }
+                    title2={ `${this.props.tour.discipline.name} — ${this.props.tour.name}` }
                 >
-                    <table className="bordered-table">
+                    <table>
                         <thead>
                             <tr>
                                 <th className="w-8">
-                                    <p>
+                                    <p className="text-center">
+                                        { _("judging.labels.heat") }
+                                    </p>
+                                </th>
+                                <th className="w-8">
+                                    <p className="text-center">
                                         { _("judging.labels.number") }
                                     </p>
                                 </th>
                                 <th>
-                                    <p>
+                                    <p className="text-left">
                                         { _("judging.labels.participant_name") }
                                     </p>
                                 </th>
                                 <th>
-                                    <p>
+                                    <p className="text-left">
                                         { _("judging.labels.club") }
                                     </p>
                                 </th>
@@ -143,14 +144,13 @@ export default class HeatsTab extends React.PureComponent {
         Docx(filename)
             .setHeader(`${this.props.tour.discipline.competition.name}, ${this.props.tour.discipline.competition.date}`)
             .setTitle1(_("admin.headers.tour_heats"))
-            .setTitle2(this.props.tour.discipline.name)
-            .setTitle3(this.props.tour.name)
+            .setTitle2(`${this.props.tour.discipline.name} — ${this.props.tour.name}`)
             .setBody(this._printable.getPrintableHTML())
-            .addStyle(".heat-number", "background", "#ccc")
-            .addStyle(".heat-number", "text-align", "left")
             .addStyle("td, th", "font-size", "12pt")
+            .addStyle("td, th", "line-height", "15pt")
+            .addStyle("th", "border-bottom", "1pt solid black")
+            .addStyle(".club-name", "font-size", "10pt")
+            .addStyle(".club-name", "line-height", "15pt")
             .save();
     }
 }
-
-HeatsTab.displayName = "AdminPanel_Judging_TourPanel_HeatsTab";

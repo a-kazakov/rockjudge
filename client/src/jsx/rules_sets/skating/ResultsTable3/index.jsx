@@ -40,14 +40,15 @@ export default class ResultsTable3 extends React.PureComponent {
 
     static transformDocx(docx) {
         docx
-            .addStyle(".bordered-table", "font-size", "9pt")
-            .addStyle(".bordered-table .acro-table td", "font-size", "9pt")
-            .addStyle(".bordered-table .acro-table td", "padding", "0 3pt")
-            .addStyle(".bordered-table .acro-table td", "border", "0.5pt solid black")
-            .addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "font-size", "9pt")
-            .addStyle(".bordered-table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none")
-            .addStyle(".bordered-table .score-breakdown th", "padding", "0 1pt 0 0")
-            .addStyle(".bordered-table .score-breakdown td", "padding", "0 0 0 1pt")
+            .addStyle("table", "font-size", "9pt")
+            .addStyle("table .acro-table td", "font-size", "9pt")
+            .addStyle("table .acro-table td", "padding", "0 3pt")
+            .addStyle("table .acro-table td", "border", "0.5pt solid black")
+            .addStyle("table .score-breakdown td, .bordered-table .score-breakdown th", "font-size", "9pt")
+            .addStyle("table .score-breakdown td, .bordered-table .score-breakdown th", "border", "none")
+            .addStyle("table .score-breakdown th", "padding", "0 1pt 0 0")
+            .addStyle("table .score-breakdown td", "padding", "0 0 0 1pt")
+            .addStyle("table td", "border-top", "1pt solid black")
             .addStyle(".score-breakdown th", "text-align", "right")
             .addStyle(".score-breakdown td", "text-align", "left")
             .addStyle(".score-breakdown td", "text-align", "left")
@@ -64,7 +65,7 @@ export default class ResultsTable3 extends React.PureComponent {
         const table = makeTourResultsTable(this.props.tour);
         return (
             <div className="ResultsTable3">
-                <table className="bordered-table">
+                <table>
                     <thead>
                         <tr>
                             <th className="place" style={ widths.genPlaceStyle() }>

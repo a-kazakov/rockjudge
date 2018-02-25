@@ -67,8 +67,7 @@ export default class Renderer extends React.PureComponent {
                 margins={ [10, 10, 15, 10] }
                 ref={ this.makePrintableRef }
                 title1={ _("admin.headers.tour_results") }
-                title2={ this.props.tour.discipline.name }
-                title3={ this.props.tour.name }
+                title2={ `${this.props.tour.discipline.name} — ${this.props.tour.name}` }
             >
                 { this.renderNonFinalizedWarning() }
                 { this.renderBody() }
@@ -81,8 +80,7 @@ export default class Renderer extends React.PureComponent {
             .setMargins([10, 10, 15, 10])
             .setHeader(`${this.props.tour.discipline.competition.name}, ${this.props.tour.discipline.competition.date}`)
             .setTitle1(_("admin.headers.tour_results"))
-            .setTitle2(this.props.tour.discipline.name)
-            .setTitle3(this.props.tour.name)
+            .setTitle2(`${this.props.tour.discipline.name} — ${this.props.tour.name}`)
             .setBody(this._printable.getPrintableHTML());
         if (this.getRenderingComponent().transformDocx) {
             this.getRenderingComponent().transformDocx(docx);
@@ -90,5 +88,3 @@ export default class Renderer extends React.PureComponent {
         docx.save();
     }
 }
-
-Renderer.displayName = "AdminPanel_Judging_TourPanel_TourResultsTab_Renderer";

@@ -3,7 +3,7 @@ export default class ColumnsWidths {
         this.judge_width = Math.round((has_total_score ? 55 : 65) / (n_judges + 1));
         this.total_score_width = has_total_score ? 14 : 0;
         this.place_width = 6;
-        this.number_width = 3;
+        this.number_width = 4;
         this.name_width = 100 - this.judge_width * (n_judges + 1) -
             this.total_score_width - this.place_width - this.number_width;
     }

@@ -61,7 +61,7 @@ export default class Section extends React.PureComponent {
             );
         }
         return (
-            <table className="bordered-table"><thead>
+            <table className="outer"><thead>
                 <tr>
                     <th className="w-8 number">
                         <p>
@@ -69,7 +69,7 @@ export default class Section extends React.PureComponent {
                         </p>
                     </th>
                     <th className="w-27 name">
-                        <p>
+                        <p className="text-left">
                             { _("models.participant.sportsmen") }
                         </p>
                     </th>
@@ -79,12 +79,12 @@ export default class Section extends React.PureComponent {
                         </p>
                     </th>
                     <th className="w-28 club">
-                        <p>
+                        <p className="text-left">
                             { _("models.participant.club_name") }
                         </p>
                     </th>
                     <th className="w-28 coaches">
-                        <p>
+                        <p className="text-left">
                             { _("models.participant.coaches") }
                         </p>
                     </th>

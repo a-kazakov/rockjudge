@@ -16,7 +16,7 @@ export default class TourResultsTab extends React.PureComponent {
 
     handleSignal = (message) => {
         this._results.handleSignal(message);
-    }
+    };
 
     // Rendering
 
@@ -37,5 +37,3 @@ export default class TourResultsTab extends React.PureComponent {
     }
 }
 
-
-TourResultsTab.displayName = "AdminPanel_Judging_TourPanel_TourResultsTab";

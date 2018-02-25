@@ -30,22 +30,22 @@ class DocxImpl {
                 "margin": 0,
             },
             "h1": {
-                "font-size": "20pt",
-                "font-weight": "bold",
+                "font-size": "12pt",
+                "font-weight": "normal",
                 "text-align": "center",
-                "margin-top": "10pt",
+                "margin": "0",
             },
             "h2": {
                 "font-size": "16pt",
                 "font-weight": "bold",
                 "text-align": "center",
-                "margin-top": "6pt",
+                "margin": "0",
             },
             "h3": {
                 "font-size": "16pt",
                 "font-weight": "bold",
                 "text-align": "center",
-                "margin-top": "4pt",
+                "margin": "0",
             },
             "h4 p": {
                 "font-size": "14pt",
@@ -63,7 +63,7 @@ class DocxImpl {
                 "font-weight": "bold",
                 "margin": 0,
                 "padding-bottom": "2pt",
-                "margin-bottom": "20pt",
+                "margin-bottom": "5pt",
                 "text-align": "center",
             },
             "p": {
@@ -83,7 +83,7 @@ class DocxImpl {
             ".bordered-table td, .bordered-table th": {
                 "border": "1pt solid black",
             },
-        }
+        };
         this.addWidthCss();
     }
     addWidthCss() {
@@ -131,7 +131,7 @@ class DocxImpl {
     renderStyleBlock(selector, data) {
         const css_pairs = Object.keys(data).map(
             key => `${key}: ${data[key]};`
-        )
+        );
         return `${selector} { ${css_pairs.join(" ")} }`;
     }
     renderStyles() {

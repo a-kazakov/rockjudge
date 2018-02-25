@@ -74,7 +74,10 @@ export default class Row extends React.PureComponent {
     render() {
         return (
             <tr>
-                <td className="place">
+                <td
+                    className="place"
+                    style={ { borderRight: "1pt solid black" } }
+                >
                     <p className="text-center">
                         { this.getPlace() }
                     </p>

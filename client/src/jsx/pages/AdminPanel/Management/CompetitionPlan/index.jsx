@@ -37,7 +37,8 @@ export default class CompetitionPlan extends React.PureComponent {
 
     handleDocxCreation = () => {
         this.createDocx();
-    }
+    };
+
 
     genTours() {
         let result = [];
@@ -176,8 +177,10 @@ export default class CompetitionPlan extends React.PureComponent {
         Docx(filename)
             .setMargins([10, 15, 10, 15])
             .setHeader(`${this.props.competition.name}, ${this.props.competition.date}`)
-            .setTitle1(_("admin.headers.competition_plan"))
+            .setTitle2(_("admin.headers.competition_plan"))
             .setBody(ReactDOM.findDOMNode(this._printable).innerHTML)
+            .addStyle("th", "border-bottom", "1pt solid black")
+            .addStyle("td", "border-bottom", "0.5pt solid #aaa")
             .save();
     }
 }

@@ -6,6 +6,7 @@ export default class DisciplineResultsTable extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
+            forCompetitionReport: PT.bool.isRequired,
             discipline: PT.shape({
                 results: PT.arrayOf(
                     PT.shape({
@@ -41,16 +42,26 @@ export default class DisciplineResultsTable extends React.PureComponent {
             }).isRequired,
         }
     }
+    static get defaultProps() {
+        return {
+            forCompetitionReport: false,
+        };
+    }
 
     static transformDocx(docx) {
         docx
-            .addStyle(".tour-name", "background", "#ddd")
-            .addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none")
-            .addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0")
-            .addStyle(".sportsmen", "width", "100%");
+            .addStyle("table.discipline-results th.tour-name", "padding-top", "10pt")
+            .addStyle("table.discipline-results th", "border-bottom", "1pt solid black")
+            .addStyle("table.discipline-results td", "border-bottom", "0.5pt solid #aaa")
+            .addStyle("table.discipline-results .sportsmen td, .bordered-table .sportsmen th", "border", "none")
+            .addStyle("table.discipline-results .sportsmen td, .bordered-table .sportsmen th", "padding", "0")
+            .addStyle("table.discipline-results .sportsmen", "width", "100%");
     }
 
     renderRowHeader(prev_row, next_row) {
+        if (this.props.forCompetitionReport) {
+            return null;
+        }
         const need_render =
             typeof prev_row === "undefined" ||
             prev_row.tour.id !== next_row.tour.id;
@@ -60,7 +71,7 @@ export default class DisciplineResultsTable extends React.PureComponent {
         return (
             <tr key={ `H${next_row.run.id}` }>
                 <th className="tour-name" colSpan="6">
-                    <p className="text-center">
+                    <p className="text-left">
                         { next_row.tour.name }
                     </p>
                 </th>
@@ -71,7 +82,10 @@ export default class DisciplineResultsTable extends React.PureComponent {
         let p = row.run.participant;
         return (
             <tr key={ `R${row.run.id}` }>
-                <td className="w-8 place">
+                <td
+                    className="w-8 place"
+                    style={ { borderRight: "1pt solid black" } }
+                >
                     <p className="text-center">
                         { row.run.disqualified
                             ? _("results.labels.dq")
@@ -79,19 +93,25 @@ export default class DisciplineResultsTable extends React.PureComponent {
                     </p>
                 </td>
                 <td className="w-8 number">
-                    <p className="text-center">
+                    <p
+                        className="text-center"
+                        style={ { fontWeight: "bold" } }
+                    >
                         { p.number }
                     </p>
                 </td>
-                <td className="w-36" colSpan="2">
+                <td
+                    className="w-36"
+                    colSpan="2"
+                >
                     <table className="sportsmen"><tbody>
                         { p.formation_name ? (
                             <tr>
-                                <th colSpan="2">
-                                    <p className="text-left">
+                                <td colSpan="2">
+                                    <p className="text-left" style={{ fontWeight: "bold" }}>
                                         { p.formation_name }
                                     </p>
-                                </th>
+                                </td>
                             </tr>
                         ) : null }
                         { p.sportsmen.map((s, idx) =>
@@ -139,7 +159,7 @@ export default class DisciplineResultsTable extends React.PureComponent {
     render() {
         return (
             <div className="DisciplineResultsTable">
-                <table className="bordered-table">
+                <table className="discipline-results">
                     <thead>
                         <tr>
                             <th className="w-8">
@@ -153,7 +173,7 @@ export default class DisciplineResultsTable extends React.PureComponent {
                                 </p>
                             </th>
                             <th className="w-27">
-                                <p>
+                                <p className="text-left">
                                     { _("results.labels.sportsmen") }
                                 </p>
                             </th>
@@ -163,12 +183,12 @@ export default class DisciplineResultsTable extends React.PureComponent {
                                 </p>
                             </th>
                             <th className="w-24">
-                                <p>
+                                <p className="text-left">
                                     { _("results.labels.participant_club") }
                                 </p>
                             </th>
                             <th className="w-24">
-                                <p>
+                                <p className="text-left">
                                     { _("results.labels.participant_coaches") }
                                 </p>
                             </th>
@@ -182,5 +202,3 @@ export default class DisciplineResultsTable extends React.PureComponent {
         );
     }
 }
-
-DisciplineResultsTable.displayName = "rules_sets_rosfarr_DisciplineResultsTable";

@@ -72,8 +72,8 @@ export default class DisciplineJudges extends React.PureComponent {
                         { _("admin.headers.discipline_judges") }
                     </p>
                 </h4>
-                <table className="bordered-table"><tbody>
-                    <tr>
+                <table className="discipline-judges"><tbody>
+                    <tr className="header">
                         <th className="w-40">
                             <p className="text-left">
                                 { _("admin.labels.discipline") }
@@ -91,11 +91,11 @@ export default class DisciplineJudges extends React.PureComponent {
                         const discipline = this.props.competition.disciplines[idx];
                         return (
                             <tr key={ discipline.id }>
-                                <th className="w-40">
+                                <td className="w-40" style={ {borderRight: "1pt solid black", fontWeight: "bold" } }>
                                     <p className="text-left">
                                         { discipline.name }
                                     </p>
-                                </th>
+                                </td>
                                 { row.map((cell, row_idx) =>
                                     <td key={ row_idx } style={ style }>
                                         <p className="text-center">

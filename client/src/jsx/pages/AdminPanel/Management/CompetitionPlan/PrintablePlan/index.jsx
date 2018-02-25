@@ -20,14 +20,14 @@ export default class PrintablePlan extends React.PureComponent {
     render() {
         return (
             <div className="print-only">
-                <table className="bordered-table">
+                <table>
                     <thead>
                         <tr>
                             <th>
                                 <p>{ _("models.competition_plan_item.estimated_beginning") }</p>
                             </th>
                             <th>
-                                <p>{ _("models.competition_plan_item.discipline") }</p>
+                                <p className="text-left">{ _("models.competition_plan_item.discipline") }</p>
                             </th>
                             <th>
                                 <p>{ _("models.competition_plan_item.tour") }</p>
@@ -51,5 +51,3 @@ export default class PrintablePlan extends React.PureComponent {
         );
     }
 }
-
-PrintablePlan.displayName = "AdminPanel_Management_CompetitionPlan_PrintablePlan";

@@ -24,7 +24,10 @@ export default class DisciplinesSummary extends React.PureComponent {
         return (
             <div className="summary">
                 <ClubsShown { ...this.props } />
-                <table className="bordered-table"><tbody>
+                <table className="outer"><tbody>
+                    <tr>
+                        <th colSpan={ 4 }>&nbsp;</th>
+                    </tr>
                     { disciplines.map(discipline =>
                         <StatInfo
                             tableRow

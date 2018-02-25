@@ -30,79 +30,86 @@ export default class SportsmenList extends React.PureComponent {
             .cmp(a.gender, b.gender)
             .cmp(a.year_of_birth, b.year_of_birth)
             .end()
-        )
+        );
         return (
-            <table className="bordered-table"><tbody>
-                <tr>
-                    <th className="w-5">
-                        <p>
-                            &nbsp;
-                        </p>
-                    </th>
-                    <th className="w-35">
-                        <p className="text-left">
-                            { _("models.participant.sportsman") }
-                        </p>
-                    </th>
-                    <th className="w-15">
-                        <p className="text-center">
-                            { _("models.participant.yob") }
-                        </p>
-                    </th>
-                    <th className="w-15">
-                        <p className="text-center">
-                            { _("models.participant.gender") }
-                        </p>
-                    </th>
-                    <th className="w-15">
-                        <p className="text-center">
-                            { _("models.participant.substitute_n") }
-                        </p>
-                    </th>
-                    <th className="w-15">
-                        <p className="text-center">
-                            { _("models.participant.substitute_y") }
-                        </p>
-                    </th>
-                </tr>
-                { sportsmen.map((s, idx) =>
-                    <tr key={ idx }>
-                        <td className="w-5">
-                            <p className="text-right">
-                                { idx + 1 }
+            <table className="outer">
+                <thead>
+                    <tr>
+                        <th className="w-5">
+                            <p>
+                                &nbsp;
                             </p>
-                        </td>
-                        <td className="w-35">
+                        </th>
+                        <th className="w-35">
                             <p className="text-left">
-                                { `${s.last_name} ${s.first_name}` }
+                                { _("models.participant.sportsman") }
                             </p>
-                        </td>
-                        <td className="w-15">
+                        </th>
+                        <th className="w-15">
                             <p className="text-center">
-                                { s.year_of_birth }
+                                { _("models.participant.yob") }
                             </p>
-                        </td>
-                        <td className="w-15">
+                        </th>
+                        <th className="w-15">
                             <p className="text-center">
-                                { s.gender === "F"
-                                    ? _("models.participant.gender_f")
-                                    : _("models.participant.gender_m")
-                                }
+                                { _("models.participant.gender") }
                             </p>
-                        </td>
-                        <td className="w-15">
+                        </th>
+                        <th className="w-15">
                             <p className="text-center">
-                                { s.p_count }
+                                { _("models.participant.substitute_n") }
                             </p>
-                        </td>
-                        <td className="w-15">
+                        </th>
+                        <th className="w-15">
                             <p className="text-center">
-                                { s.s_count }
+                                { _("models.participant.substitute_y") }
                             </p>
-                        </td>
+                        </th>
                     </tr>
-                ) }
-            </tbody></table>
+                </thead>
+                <tbody>
+                    { sportsmen.map((s, idx) =>
+                        <tr key={ idx }>
+                            <td
+                                className="w-5"
+                                style={ { borderRight: "1pt solid black" } }
+                            >
+                                <p className="text-right">
+                                    { idx + 1 }
+                                </p>
+                            </td>
+                            <td className="w-35">
+                                <p className="text-left">
+                                    { `${s.last_name} ${s.first_name}` }
+                                </p>
+                            </td>
+                            <td className="w-15">
+                                <p className="text-center">
+                                    { s.year_of_birth }
+                                </p>
+                            </td>
+                            <td className="w-15">
+                                <p className="text-center">
+                                    { s.gender === "F"
+                                        ? _("models.participant.gender_f")
+                                        : _("models.participant.gender_m")
+                                    }
+                                </p>
+                            </td>
+                            <td className="w-15">
+                                <p className="text-center">
+                                    { s.p_count }
+                                </p>
+                            </td>
+                            <td className="w-15">
+                                <p className="text-center">
+                                    { s.s_count }
+                                </p>
+                            </td>
+                        </tr>
+                    ) }
+                </tbody>
+            </table>
         );
     }
 }

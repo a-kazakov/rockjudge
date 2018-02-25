@@ -9,9 +9,15 @@
         .scrollable();
         padding: 5px;
         .Paper {
-            .bordered-table .inner td, .bordered-table .inner th {
+            table.outer .inner td, table.outer .inner th {
                 border: none;
                 padding: 0;
+            }
+            table.outer th {
+                border-bottom: 1pt solid black;
+            }
+            table.outer td {
+                border-bottom: 0.5pt solid #aaa;
             }
             .inner {
                 width: 100%;
@@ -20,7 +26,7 @@
                 border-top: none !important;
             }
             .has-acro td {
-                border-bottom: 1px solid #555 !important;
+                border-bottom: 0.5pt solid #aaa !important;
             }
             .has-acro td td {
                 border-bottom: none !important;

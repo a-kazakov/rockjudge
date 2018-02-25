@@ -64,11 +64,14 @@ export default class StatInfo extends React.PureComponent {
         if (this.props.tableRow) {
             return (
                 <tr>
-                    <th className="w-45">
+                    <td
+                        className="w-45"
+                        style={ { borderRight: "1pt solid black", fontWeight: "bold", } }
+                    >
                         <p className="text-left">
                             { this.props.label }
                         </p>
-                    </th>
+                    </td>
                     <td className="w-15">
                         <p className="text-left">
                             { _("admin.phrases.n_participants", this.props.participants.length) }

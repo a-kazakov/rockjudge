@@ -38,8 +38,11 @@ export default class ResultsTable1 extends React.PureComponent {
 
     static transformDocx(docx) {
         docx
-            .addStyle(".bordered-table", "font-size", "12pt")
-            .addStyle(".advances-header", "background-color", "#ddd");
+            .addStyle("table", "font-size", "12pt")
+            .addStyle("td", "border-bottom", "0.5pt solid #aaa")
+            .addStyle("th", "border-bottom", "1pt solid black")
+            .addStyle("th.advances-header", "border-bottom", "1pt solid black")
+            .addStyle("th.advances-header", "padding-top", "10pt");
     }
 
     getRowStatus(row) {
@@ -100,7 +103,7 @@ export default class ResultsTable1 extends React.PureComponent {
         }
         return (
             <div className="ResultsTable1">
-                <table className="bordered-table">
+                <table>
                     <thead>
                         <tr>
                             <th className="w-7 place">
@@ -114,12 +117,12 @@ export default class ResultsTable1 extends React.PureComponent {
                                 </p>
                             </th>
                             <th className="w-30 participant">
-                                <p>
+                                <p className="text-left">
                                     { _("results.labels.participant_name") }
                                 </p>
                             </th>
                             <th className="club">
-                                <p>
+                                <p className="text-left">
                                     { _("results.labels.participant_club") }
                                 </p>
                             </th>

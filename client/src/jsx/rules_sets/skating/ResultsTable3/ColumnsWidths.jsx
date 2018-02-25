@@ -12,6 +12,7 @@ export default class ColumnsWidths {
     genInfoStyle() {
         return {
             width: `${this.info_width}%`,
+            textAlign: "left",
         }
     }
     genJudgeStyle() {

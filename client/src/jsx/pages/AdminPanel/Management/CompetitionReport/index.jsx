@@ -6,6 +6,8 @@ import Docx from "common/Docx";
 import ConfigPanel from "pages/AdminPanel/common/ConfigPanel";
 import Paper from "pages/AdminPanel/common/Paper";
 
+import rules_set from "rules_sets/loader";
+
 import Info from "./Info";
 import Clubs from "./Clubs";
 import Judges from "./Judges";
@@ -128,7 +130,7 @@ export default class CompetitionReport extends LoadingComponent {
                     <Paper
                         margins={ [10, 15, 10, 25] }
                         ref={ this.makePrintableRef }
-                        title1={ title }
+                        title2={ title }
                     >
                         <div>
                             <Info { ...this.state } />
@@ -144,16 +146,16 @@ export default class CompetitionReport extends LoadingComponent {
     }
 
     createDocx = () => {
-        Docx("report.docx")
+        let docx = Docx("report.docx")
             .setMargins([10, 15, 10, 25])
-            .setTitle1(this.getTitle())
+            .setTitle2(this.getTitle())
             .setBody(this._printable.getPrintableHTML())
-            .addStyle(".spacer td", "height", "5pt")
-            .addStyle(".tour-name", "background", "#ddd")
-            .addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "border", "none")
-            .addStyle(".bordered-table .sportsmen td, .bordered-table .sportsmen th", "padding", "0")
-            .addStyle(".sportsmen", "width", "100%")
-            .save();
+            .addStyle("table.discipline-judges td", "border-bottom", "0.5pt solid #aaa")
+            .addStyle("table.discipline-judges tr.header th", "border-bottom", "1pt solid black");
+        if (rules_set.discipline_results_table.transformDocx) {
+            rules_set.discipline_results_table.transformDocx(docx);
+        }
+        docx.save();
     }
 }
 

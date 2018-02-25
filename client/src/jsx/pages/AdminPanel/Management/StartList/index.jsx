@@ -171,7 +171,7 @@ export default class StartList extends LoadingComponent {
                         header={ `${this.state.competition.name}, ${this.state.competition.date}` }
                         margins={ [10, 15, 10, 25] }
                         ref={ this.makePrintableRef }
-                        title1={ this.getTitle() }
+                        title2={ this.getTitle() }
                     >
                         { this.renderBody() }
                     </Paper>
@@ -185,13 +185,15 @@ export default class StartList extends LoadingComponent {
         Docx(filename)
             .setMargins([10, 15, 10, 25])
             .setHeader(`${this.state.competition.name}, ${this.state.competition.date}`)
-            .setTitle1(this.getTitle())
+            .setTitle2(this.getTitle())
             .setBody(this._printable.getPrintableHTML())
-            .addStyle(".bordered-table .inner td, .bordered-table .inner th", "border", "none")
-            .addStyle(".bordered-table .inner td, .bordered-table .inner th", "padding", "0")
+            .addStyle("table.outer .inner td, table.outer .inner th", "border", "none")
+            .addStyle("table.outer .inner td, table.outer .inner th", "padding", "0")
+            .addStyle("table.outer th", "border-bottom", "1pt solid black")
+            .addStyle("table.outer td", "border-bottom", "0.5pt solid #aaa")
             .addStyle(".inner", "width", "100%")
             .addStyle(".acro", "border-top", "none !important")
-            .addStyle(".has-acro td", "border-bottom", "1px solid #555 !important")
+            .addStyle(".has-acro td", "border-bottom", "0.5pt solid #aaa !important")
             .addStyle(".has-acro td td", "border-bottom", "none !important")
             .addStyle("tr.tr-acro", "page-break-inside", "auto")
             .save();

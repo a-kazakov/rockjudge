@@ -19,10 +19,13 @@ export default class Row extends React.PureComponent {
         const class_name = this.props.acroIncluded ? "has-acro" : "";
         const coaches = this.props.participant.coaches.split(",").map(
             coach => [coach.trim(), <br key="X" />]
-        )
+        );
         return (
             <tr className={ class_name }>
-                <td className="w-8 number">
+                <td
+                    className="w-8 number"
+                    style={ { borderRight: "1pt solid black" } }
+                >
                     <p className="text-center">
                         { this.props.participant.number }
                     </p>

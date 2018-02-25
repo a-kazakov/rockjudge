@@ -283,6 +283,8 @@ class Tour(BaseModel):
                 run = rev_runs[run_id]
                 if run.heat != heat:
                     run.heat = heat
+                    if not preserve_existing:
+                        run.heat_secondary = random.randint(0, 10**9)
                     run.save()
         # Broadcasting
         if broadcast:
