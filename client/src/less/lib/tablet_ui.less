@@ -1,3 +1,5 @@
+@jumbo-size: 55px;
+
 .Slider {
     .inner {
         position: absolute;
@@ -29,17 +31,55 @@
     }
 }
 
+.CheckboxInput {
+    .flex-row();
+    padding-bottom: 5px;
+    .square {
+        width: 20px;
+        height: 20px;
+        box-sizing: border-box;
+        border: 2px solid @color-dark;
+        flex-grow: 0;
+        flex-shrink: 0;
+        &.checked {
+            border: none;
+            text-align: center;
+            line-height: 24px;
+            font-size: 21px;
+            background-color: @color-contrast;
+        }
+    }
+    .label {
+        font-size: 14px;
+        line-height: 16px;
+        padding: 2px 0 2px 5px;
+    }
+}
+
 .IntegerInput {
     display: inline-block;
     margin-bottom: 7px;
     width: 100%;
     .tbtn {
         .button-tablet-primary();
-        width: 32.333%;
+        width: ~"calc(33.333% - 2px)";
         display: inline-block;
         font-weight: bold;
         vertical-align: middle;
-        margin: 0.5%;
+        margin: 1px;
+    }
+    &.jumbo {
+        button.tbtn {
+            width: ~"calc(33.333% - 2px)";
+            margin: 1px;
+            height: @jumbo-size;
+            font-size: 16px;
+        }
+        .value {
+            font-size: 16px;
+            height: @jumbo-size;
+            line-height: @jumbo-size;
+        }
     }
     .value {
         width: 33.333%;
@@ -64,7 +104,8 @@
     .loop-width-1row((@counter - 1));
     &.n-@{counter} {
         button {
-            width: ((99.99%) / @counter) - 1.01%;
+            @base: ((99.99%) / @counter);
+            width: ~"calc(@{base} - 2px)";
         }
     }
 }
@@ -73,10 +114,12 @@
     .loop-width-2rows((@counter - 1));
     &.n-@{counter} {
         button {
-            @btn-width: 2 * (99.99%) / (@counter + 1) - 1.01%;
-            width: @btn-width;
+            @base: 2 * (99.99%) / (@counter + 1);
+            //@btn-width: - 0.31%;
+            width: ~"calc(@{base} - 2px)";
             &:nth-child(2n) {
-                 margin: 45px (@btn-width / -2) 0 (@btn-width / -2) !important;
+                @halfbase: @base / -2;
+                margin: 45px ~"calc(@{halfbase} + 1px)" 0 ~"calc(@{halfbase} + 1px)" !important;
             }
         }
     }
@@ -114,12 +157,15 @@
             .button-tablet-primary();
         }
     }
-    .compact button {
-        line-height: 24px;
+    &.jumbo {
+        button.tbtn {
+            font-size: 14px !important;
+            height: @jumbo-size !important;
+        }
     }
     button {
         vertical-align: top;
-        margin: 0.5%;
+        margin: 1px;
         box-sizing: border-box;
         &.active {
             .button-tablet-primary();
@@ -143,7 +189,7 @@
             }
             background-color: @color-contrast;
             border-color: @color-contrast;
-            color: @color-dark;
+            //color: @color-dark;
         }
     }
 }

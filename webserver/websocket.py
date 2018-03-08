@@ -169,21 +169,22 @@ class TourResultsUpdateGetter:
 
     def get_results(self, force=False):
         if force:
-            self._latest_update = 0
+            # self._latest_update = 0
             self._is_waiting = False
+            return self._fetch_results()
         if self._is_waiting:
             return None
-        t = time.time()
-        to_wait = self._latest_update - t + 0.75
-        self._latest_update = t
-        if to_wait > 0:
-            self._is_waiting = True
-            tornado.ioloop.IOLoop.instance().call_later(
-                to_wait,
-                self._push_results,
-            )
-            return None
-        return self._fetch_results()
+        # t = time.time()
+        # to_wait = self._latest_update - t + 0.75
+        # self._latest_update = t
+        # if to_wait > 0:
+        self._is_waiting = True
+        tornado.ioloop.IOLoop.instance().call_later(
+            0.75,
+            self._push_results,
+        )
+        return None
+        # return self._fetch_results()
 
     def _fetch_results(self):
         from models import Tour

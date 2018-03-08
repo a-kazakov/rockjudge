@@ -20,8 +20,12 @@ export default class NumberSelectorInput extends React.PureComponent {
     makeChoices(min, max, step, decimal_size) {
         let result = [];
         for (let value = min; value <= max; value += step) {
-            const text = value.toFixed(decimal_size);
-            result.push([Number(text), text]);
+            let text = value.toFixed(decimal_size);
+            const tail = value - Math.floor(value);
+            if (decimal_size === 0 && Math.abs(tail - 0.5) < 0.01) {
+                text = "½";
+            }
+            result.push([value, text]);
         }
         return result;
     }

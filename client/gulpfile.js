@@ -182,6 +182,9 @@ addRulesSetJsxTask('rosfarr');
 addRulesSetLessTask('skating');
 addRulesSetJsxTask('skating');
 
+addRulesSetLessTask('vftsarr');
+addRulesSetJsxTask('vftsarr');
+
 addGroupTasks();
 
 gulp.task('default', gulp.series('all'));

@@ -10,7 +10,7 @@ from scoring_systems.rosfarr import solo
 
 
 META = {
-    "name": "РосФАРР",
+    "name": "РосФАРР (до 2017, устаревшая)",
     "scoring_systems": [
         "am_final_acro",
         "am_final_fw",

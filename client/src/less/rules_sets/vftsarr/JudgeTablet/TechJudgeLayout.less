@@ -1,0 +1,175 @@
+@jumbo-size: 55px;
+@server-time-height: 30px;
+
+.stopwatch {
+    width: 100%;
+    .time {
+        line-height: 31px;
+        vertical-align: middle;
+        text-align: center;
+        font-weight: bold;
+        font-size: 16px;
+        width: 40%;
+        margin-bottom: 2px;
+        display: inline-block;
+    }
+    .server-time {
+        vertical-align: middle;
+        text-align: center;
+        line-height: @server-time-height;
+        width: 100%;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        display: inline-block;
+    }
+    .btn-ctl {
+        vertical-align: middle;
+        width: ~"calc(15% - 2px)";
+        display: inline-block;
+    }
+    .btn-toggle, .btn-reset {
+        vertical-align: middle;
+        width: ~"calc(50% - 2px)";
+        display: inline-block;
+    }
+    .btn-submit-time, .btn-discard-time {
+        margin-bottom: 15px;
+        vertical-align: middle;
+        width: ~"calc(50% - 2px)";
+        display: inline-block;
+    }
+    &.read-only {
+        .tbtn:not(.ignore-readonly) {
+            background-color: #777 !important;
+            border-color: #777 !important;
+        }
+    }
+    button.tbtn {
+        .button-tablet-primary();
+         margin: 1px;
+         height: @jumbo-size !important;
+         font-size: 14px !important;
+    }
+    .tbtn.btn-discard-time {
+        .button-tablet-red();
+    }
+    .tbtn.btn-toggle {
+        .button-tablet-green();
+        &.active {
+            .button-tablet-red();
+        }
+    }
+}
+
+.jump-steps-timing {
+    .flex-row();
+    .jump-steps {
+        margin-left: 15px;
+        width: 100px;
+        flex-grow: 0;
+        flex-shrink: 0;
+        .IntegerInput {
+            display: flex;
+            flex-direction: column-reverse;
+            button, div {
+                width: 100%;
+            }
+            div.value {
+                height: (@jumbo-size + @server-time-height) / 2;
+                line-height: (@jumbo-size + @server-time-height) / 2;
+            }
+            button {
+                &:last-child {
+                    height: (2 * @jumbo-size) + 1;
+                }
+                &:not(:last-child) {
+                    height: (@jumbo-size + @server-time-height) / 2;
+                }
+                font-size: 150%;
+            }
+        }
+    }
+    .timing {
+        flex-grow: 1;
+    }
+}
+.item:not(:last-child) .jump-steps-timing {
+    flex-direction: row-reverse;
+    .jump-steps {
+        margin-left: 0;
+        margin-right: 15px;
+    }
+}
+
+.sections {
+    .flex-row();
+    .acro-section {
+        flex-grow: 1;
+        padding: 10px;
+    }
+    .dance-section {
+        flex-grow: 0;
+        flex-shrink: 0;
+        width: 400px;
+        border-left: 2px solid black;
+        padding: 10px;
+    }
+}
+
+.position-selector {
+    .flex-col();
+    justify-content: center;
+    align-items: center;
+    .prompt {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+    .buttons {
+        .flex-row();
+        justify-content: center;
+        align-items: baseline;
+        button {
+            .button-tablet-primary();
+            .button-large();
+            width: 200px;
+            margin: 10px;
+        }
+    }
+}
+
+.tech-judge-acro {
+    padding: 5px 0;
+    border-top: 2px solid @color-dark;
+    .controls {
+        width: 200px;
+        margin-bottom: -4px;
+        margin-left: 10px;
+        float: right;
+    }
+    .description {
+        font-size: 13px;
+        line-height: 17px;
+        .highlight {
+            font-weight: bold;
+            font-size: 15px;
+        }
+    }
+}
+.tablet-acro-override-input {
+    width: 100%;
+    .buttons {
+        button {
+            .button-tablet-primary();
+            width: ~'calc(25% - 2px)';
+            margin: 1px;
+            height: ~"calc(@{jumbo-size} - 5px)";
+            // &:disabled {
+            //     background-color: desaturate(lighten(@color-dark, 40%), 10%);
+            // }
+        }
+    }
+    .value {
+        text-align: center;
+        font-weight: bold;
+    }
+}

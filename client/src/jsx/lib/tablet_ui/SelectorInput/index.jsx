@@ -16,6 +16,8 @@ export default class SelectorInput extends React.PureComponent {
                 ),
             ).isRequired,
             compact: PT.bool.isRequired,
+            highlightLower: PT.bool.isRequired,
+            jumbo: PT.bool,
             multiple: PT.bool.isRequired,
             readOnly: PT.bool,
             rowSize: PT.number,
@@ -31,6 +33,8 @@ export default class SelectorInput extends React.PureComponent {
     static get defaultProps() {
         return {
             compact: false,
+            highlightLower: false,
+            jumbo: false,
             multiple: false,
             readOnly: false,
             rowSize: 10,
@@ -68,6 +72,7 @@ export default class SelectorInput extends React.PureComponent {
         return makeClassName({
             "SelectorInput": true,
             "compact": this.props.compact,
+            "jumbo": this.props.jumbo,
             "one-row": this.props.style !== "two-lines",
             "two-rows": this.props.style === "two-lines",
             "selected": !this.props.multiple && !this.isValueEmpty(),
@@ -76,6 +81,13 @@ export default class SelectorInput extends React.PureComponent {
     }
     renderRows() {
         let result = [];
+        let selected_idx = null;
+        for (let idx = 0; idx < this.props.choices.length; ++idx) {
+            const [value, text, style] = this.props.choices[idx];
+            if (this.isSelected(value)) {
+                selected_idx = idx;
+            }
+        }
         for (let idx = 0; idx < this.props.choices.length; ++idx) {
             if (
                 this.props.style === "grid" &&
@@ -89,7 +101,10 @@ export default class SelectorInput extends React.PureComponent {
             const [value, text, style] = this.props.choices[idx];
             result.push(
                 <Item
-                    active={ this.isSelected(value) }
+                    active={ this.props.highlightLower
+                        ? selected_idx !== null && idx <= selected_idx
+                        : idx === selected_idx
+                    }
                     key={ idx }
                     readOnly={ this.props.readOnly }
                     style={ style }
@@ -109,5 +124,3 @@ export default class SelectorInput extends React.PureComponent {
         );
     }
 }
-
-SelectorInput.displayName = "tablet_ui_SelectorInput";

@@ -1,0 +1,180 @@
+.vftsarr-JudgeTablet {
+    .fill-space();
+    .flex-col();
+    header {
+        .flex-item();
+        .flex-row();
+        background-color: @color-medium;
+        color: white;
+        min-height: 40px;
+        padding: 10px;
+        h1 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: normal;
+        }
+        h2 {
+            margin: 0;
+            font-size: 13px;
+            font-weight: normal;
+        }
+        .button-container {
+            .flex-item();
+            width: 120px;
+            &.left {
+                .flex-centered();
+                align-items: flex-start;
+            }
+            &.right {
+                .flex-centered();
+                align-items: flex-end;
+            }
+            button {
+                .button-primary();
+            }
+        }
+        .data {
+            .flex-item-stretch();
+            .flex-row();
+            .box {
+                .flex-item-stretch();
+                .flex-centered();
+            }
+        }
+    }
+    .not-performing {
+        font-weight: bold;
+        text-align: center;
+        margin: 20px 0;
+        white-space: pre-wrap;
+    }
+    .body {
+        .flex-item-stretch();
+        .tablet-scrollable();
+        &.last-page {
+            .flex-col();
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 20px;
+            white-space: pre-wrap;
+            button {
+                .button-tablet-primary();
+                .button-large();
+                font-weight: normal;
+                margin-top: 20px;
+            }
+        }
+        table.formation-layout {
+            width: 100%;
+            border-collapse: collapse;
+            td {
+                h3:not(.primary) {
+                    font-weight: initial;
+                }
+                h3.primary {
+                    float: left;
+                }
+                &.part-1 {
+                    width: 48%;
+                    padding-right: 4%;
+                    h3:not(.primary) {
+                        text-align: right;
+                    }
+                }
+                &.part-2 {
+                    width: 40%;
+                    padding-right: 4%;
+                }
+                &.part-3 {
+                    width: 12%;
+                }
+            }
+        }
+        h2 {
+            text-align: center;
+            font-weight: bold;
+            margin: 5px 0;
+            font-size: 16px;
+        }
+        h3 {
+            font-weight: bold;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        .mistakes {
+            button {
+                background-color: @color-red !important;
+                border-color: @color-red !important;
+                margin: 0;
+            }
+            .value {
+                background-color: @color-light-red !important;
+            }
+        }
+        table.mistakes {
+            width: 100%;
+            table-layout: fixed;
+            td:not(:first-child) {
+                padding-left: 5px;
+            }
+            td:not(:last-child) {
+                padding-right: 5px;
+            }
+        }
+        div.mistakes {
+            margin: 0 auto;
+            width: 300px;
+        }
+        .confirm.hidden {
+            visibility: hidden;
+        }
+    }
+    .ResultsTable2 {
+        p {
+            margin: 0;
+            padding: 0;
+            font-size: 12px;
+        }
+        .text-left {
+            text-align: left;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .text-center {
+            text-align: center;
+        }
+        margin: 10px;
+    }
+    .error-message {
+        .flex-item-stretch();
+        .flex-col();
+        justify-content: center;
+        text-align: center;
+        font-size: 20px;
+        white-space: pre-wrap;
+    }
+    footer {
+        .flex-item();
+        .flex-row();
+        justify-content: center;
+        height: 30px;
+        background-color: @color-medium;
+        button {
+            .flex-item();
+            width: 200px;
+            background-color: @color-medium;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            &.active {
+                background-color: @color-dark;
+            }
+        }
+    }
+    @import "./Grid";
+    @import "./HeadJudgeLayout";
+    @import "./TechJudgeLayout";
+}

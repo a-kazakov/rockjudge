@@ -1,6 +1,7 @@
 import importlib
 
 RULES_SETS = [
+    "vftsarr",
     "rosfarr",
     "skating",
 ]

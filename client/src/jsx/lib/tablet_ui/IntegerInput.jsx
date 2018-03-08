@@ -6,6 +6,7 @@ export default class IntegerInput extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
+            jumbo: PT.bool,
             readOnly: PT.bool,
             sendDeltas: PT.bool,
             value: PT.number.isRequired,
@@ -14,6 +15,7 @@ export default class IntegerInput extends React.PureComponent {
     }
     static get defaultProps() {
         return {
+            jumbo: false,
             readOnly: false,
             sendDeltas: false,
         }
@@ -28,7 +30,7 @@ export default class IntegerInput extends React.PureComponent {
         } else {
             this.props.onChange(this.props.value - 1);
         }
-    }
+    };
     handlePlus = () => {
         if (this.props.readOnly) {
             return;
@@ -38,12 +40,13 @@ export default class IntegerInput extends React.PureComponent {
         } else {
             this.props.onChange(this.props.value + 1);
         }
-    }
+    };
 
 
     getClassName() {
         return makeClassName({
             "IntegerInput": true,
+            "jumbo": this.props.jumbo,
             "read-only": this.props.readOnly,
         });
     }

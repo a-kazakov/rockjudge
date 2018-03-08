@@ -49,5 +49,3 @@ export default class Item extends React.PureComponent {
         );
     }
 }
-
-Item.displayName = "tablet_ui_SelectorInput_Item";
