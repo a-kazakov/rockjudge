@@ -78,8 +78,6 @@ export default class ResultsTable1 extends React.PureComponent {
     }
     render() {
         const has_next_tour = this.props.tour.next_tour_id !== null;
-        const is_formation = ["vftsarr.formation", "vftsarr.formation_acro"].includes(this.props.tour.scoring_system_name)
-        const show_total_score = !is_formation;
         const djs_map = new Map(this.props.tour.discipline.discipline_judges.map(dj => [dj.id, dj]));
         const table = makeTourResultsTable(this.props.tour);
         let rows = [];
@@ -88,16 +86,15 @@ export default class ResultsTable1 extends React.PureComponent {
                 table[idx - 1],
                 table[idx],
                 has_next_tour,
-                5 + show_total_score
+                6,
             ));
             const row = table[idx];
             rows.push(
                 <Row
                     disciplineJudgesMap={ djs_map }
-                    isFormation={ is_formation }
                     key={ row.run.id }
                     row={ row }
-                    showTotalScore={ show_total_score }
+                    tour={ this.props.tour }
                 />
             );
         }
@@ -126,14 +123,12 @@ export default class ResultsTable1 extends React.PureComponent {
                                     { _("results.labels.participant_club") }
                                 </p>
                             </th>
-                            { show_total_score ? (
-                                <th className="w-18 score">
-                                    <p>
-                                        { _("results.labels.total_score") }
-                                    </p>
-                                </th>
-                            ) : null }
-                            <th className="w-8 card">
+                            <th className="w-10 score">
+                                <p>
+                                    { _("results.labels.total_score") }
+                                </p>
+                            </th>
+                            <th className="w-12 card">
                                 <p className="text-center">
                                     { _("results.labels.card") }
                                 </p>

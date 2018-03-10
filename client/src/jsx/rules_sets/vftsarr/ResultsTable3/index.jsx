@@ -51,16 +51,16 @@ export default class ResultsTable3 extends React.PureComponent {
             .addStyle("table.results-table td", "border-top", "1pt solid black")
             .addStyle("table.score-breakdown th", "text-align", "right")
             .addStyle("table.score-breakdown td", "text-align", "left")
-            .addStyle("table.score-breakdown td", "text-align", "left")
-            .addStyle("table.score-breakdown", "width", "50pt")
-            .addStyle("table.score-breakdown th", "width", "20pt")
+            .addStyle("table.score-breakdown", "width", "100%")
+            .addStyle("table.score-breakdown th", "width", "50%")
+            .addStyle("table.score-breakdown th", "min-width", "20pt")
             .addStyle(".advances-header", "background-color", "#ddd")
             .addStyle(".total-score", "font-weight", "bold");
     }
 
     render() {
         const line_judges = this.props.tour.discipline.discipline_judges.filter(
-            dj => ["acro_judge", "dance_judge"].indexOf(dj.role) >= 0);
+            dj => ["acro_judge", "dance_judge"].includes(dj.role));
         const widths = new ColumnsWidths(line_judges.length);
         const djs_map = new Map(this.props.tour.discipline.discipline_judges.map(dj => [dj.id, dj]));
         const table = makeTourResultsTable(this.props.tour);

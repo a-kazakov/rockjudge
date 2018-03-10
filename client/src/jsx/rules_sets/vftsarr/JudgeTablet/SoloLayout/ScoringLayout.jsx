@@ -2,21 +2,19 @@ import _ from "l10n";
 
 import Mistakes from "JudgeTablet/components/Mistakes";
 import GeneralScale from "JudgeTablet/components/GeneralScale";
+import checkSS from "common/checkSS";
 
 export default class ScoringLayout extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
             readOnly: PT.bool.isRequired,
-            rough: PT.bool,
             score: PT.object.isRequired,
             scoreData: PT.object.isRequired,
+            tour: PT.shape({
+                scoring_system_name: PT.string.isRequired,
+            }).scoring_system_name,
             onScoreUpdate: PT.func.isRequired,
-        };
-    }
-    static get defaultProps() {
-        return {
-            rough: false,
         };
     }
 
@@ -34,7 +32,7 @@ export default class ScoringLayout extends React.PureComponent {
         );
     }
     render() {
-        const step = this.props.rough ? 1 : 0.5;
+        const step = checkSS(this.props.tour.scoring_system_name, "rough") ? 1 : 0.5;
         return (
             <div>
                 { this.renderPart("fw", "reduction") }

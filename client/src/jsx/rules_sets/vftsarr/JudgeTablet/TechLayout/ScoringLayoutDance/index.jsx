@@ -6,6 +6,7 @@ import StopWatch from "common/StopWatch";
 
 import CardInput from "JudgeTablet/components/CardInput";
 import PreviousCards from "JudgeTablet/components/PreviousCards";
+import checkSS from "common/checkSS";
 
 export default class ScoringLayoutDance extends React.PureComponent {
     static get propTypes() {
@@ -40,7 +41,7 @@ export default class ScoringLayoutDance extends React.PureComponent {
     };
 
     renderFormationUndercountInput() {
-        if (!this.props.tour.scoring_system_name.includes("formation")) {
+        if (!checkSS(this.props.tour.scoring_system_name, "formation")) {
             return null;
         }
         return (

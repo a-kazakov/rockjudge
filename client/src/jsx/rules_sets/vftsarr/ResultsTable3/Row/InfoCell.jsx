@@ -1,6 +1,8 @@
 import _ from "l10n";
 
 import getParticipantDisplay from "common/getParticipantDisplay";
+import getCardReasons from "common/getCardReasons";
+import checkSS from "common/checkSS";
 
 export default class InfoCell extends React.PureComponent {
     static get propTypes() {
@@ -64,14 +66,6 @@ export default class InfoCell extends React.PureComponent {
         };
     }
 
-    getCard() {
-        if (this.props.row.run.status !== "OK") {
-            return "";
-        }
-        const card = this.props.row.run.verbose_total_score.card;
-        const is_formation = ["vftsarr.formation", "vftsarr.formation_acro"].includes(this.props.tour.scoring_system_name);
-        return _(`results.cards.verbose_${card}`, is_formation);
-    }
     renderParticipantInfo() {
         return (
             <div>
@@ -88,27 +82,40 @@ export default class InfoCell extends React.PureComponent {
             </div>
         );
     }
-    renderHeadJudgePenalty() {
+    renderCard() {
         if (this.props.row.run.status !== "OK") {
             return null;
         }
-        const card = this.getCard();
-        if (card === "") {
-            return;
+        const card = this.props.row.run.verbose_total_score.card;
+        const texts = getCardReasons(this.props.tour.scoring_system_name)
+            .filter(cr => this.props.row.run.verbose_total_score.card_reasons[cr])
+            .map(cr => _(`cards_reasons.long.${cr.toLowerCase()}`));
+        let result = [];
+        if (card === "OK") {
+            return null;
         }
-        return (
-            <p>
+        result.push(
+            <p key="C">
                 <strong>
-                    { this.getCard() }
+                    { _(`cards.verbose.${card}`) }
                 </strong>
             </p>
         );
+        result = result.concat(texts.map((text, idx) => (
+            <p
+                key={ idx }
+                style={ { marginLeft: "5pt", fontStyle: "italic"} }
+            >
+                { text }
+            </p>
+        )));
+        return result;
     }
     renderAcroTable() {
         if (this.props.row.run.status !== "OK") {
             return null;
         }
-        if (["vftsarr.acro", "vftsarr.am_final_acro"].indexOf(this.props.tour.scoring_system_name) < 0) {
+        if (!checkSS(this.props.tour.scoring_system_name, "acro")) {
             return null;
         }
         if (this.props.row.run.acrobatics.length === 0) {
@@ -117,7 +124,6 @@ export default class InfoCell extends React.PureComponent {
         const has_acro_overrides = this.props.row.run.acrobatics.some(
             element => element.score !== element.original_score
         );
-        const acro_cell_width = `${(100 / this.props.row.run.acrobatics.length)}%`;
         return (
             <div>
                 <p>
@@ -128,28 +134,33 @@ export default class InfoCell extends React.PureComponent {
                         }:
                     </strong>
                 </p>
-                <table className="acro-table"><tbody>
-                    <tr>
-                        { this.props.row.run.acrobatics.map((acro, idx) =>
-                            <td key={ idx } style={ { width: acro_cell_width } }>
-                                <p className="text-center">
-                                    { acro.original_score.toFixed(1) }
-                                </p>
-                            </td>
-                        ) }
-                    </tr>
-                    { has_acro_overrides ? (
+                <table
+                    className="acro-table"
+                    style={ {tableLayout: "fixed"} }
+                >
+                    <tbody>
                         <tr>
                             { this.props.row.run.acrobatics.map((acro, idx) =>
-                                <td key={ idx } style={ { width: acro_cell_width } }>
+                                <td key={ idx }>
                                     <p className="text-center">
-                                        { acro.score.toFixed(1) }
+                                        { acro.original_score.toFixed(1) }
                                     </p>
                                 </td>
                             ) }
                         </tr>
-                    ) : null }
-                </tbody></table>
+                        { has_acro_overrides ? (
+                            <tr>
+                                { this.props.row.run.acrobatics.map((acro, idx) =>
+                                    <td key={ idx }>
+                                        <p className="text-center">
+                                            { acro.score.toFixed(1) }
+                                        </p>
+                                    </td>
+                                ) }
+                            </tr>
+                        ) : null }
+                    </tbody>
+                </table>
             </div>
         );
     }
@@ -157,14 +168,13 @@ export default class InfoCell extends React.PureComponent {
         if (this.props.tour.scoring_system_name !== "vftsarr.am_final_acro") {
             return null;
         }
-        const p_score = this.props.row.run.verbose_total_score.previous_tour.primary_score.toFixed(2);
-        const s_score = this.props.row.run.verbose_total_score.previous_tour.secondary_score.toFixed(2);
+        const score = this.props.row.run.verbose_total_score.fw_score.toFixed(3);
         return (
             <p>
                 <strong>
                     { _("results.labels.fw_score") }
                 </strong>
-                { `: ${p_score} / ${s_score}` }
+                { `: ${score}` }
             </p>
         );
     }
@@ -175,22 +185,18 @@ export default class InfoCell extends React.PureComponent {
         if (this.props.tour.scoring_system_name !== "vftsarr.am_final_acro") {
             return null;
         }
-        const p_score = this.props.row.run.verbose_total_score.current_tour.primary_score.toFixed(2);
-        const s_score = this.props.row.run.verbose_total_score.current_tour.secondary_score.toFixed(2);
+        const score = this.props.row.run.verbose_total_score.acro_score.toFixed(3);
         return (
             <p>
                 <strong>
                     { _("results.labels.acro_score") }
                 </strong>
-                { `: ${p_score} / ${s_score}` }
+                { `: ${score}` }
             </p>
         );
     }
     renderTotalScore() {
         if (this.props.row.run.status !== "OK") {
-            return null;
-        }
-        if (["vftsarr.formation", "vftsarr.formation_acro"].includes(this.props.tour.scoring_system_name)) {
             return null;
         }
         return (
@@ -245,7 +251,7 @@ export default class InfoCell extends React.PureComponent {
         return (
             <td className="info-block">
                 { this.renderParticipantInfo() }
-                { this.renderHeadJudgePenalty() }
+                { this.renderCard() }
                 { this.renderAcroTable() }
                 { this.renderAmClassFwScore() }
                 { this.renderAmClassAcroScore() }

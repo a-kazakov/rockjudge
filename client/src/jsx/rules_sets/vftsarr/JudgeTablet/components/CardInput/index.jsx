@@ -11,8 +11,8 @@ export default class CardInput extends React.PureComponent {
         return {
             readOnly: PT.bool.isRequired,
             scoreData: PT.shape({
-                card: PT.oneOf(["OK", "YC", "RC"]).isRequired,
-                card_reasons: PT.object.isRequired,
+                card: PT.oneOf(["OK", "YC", "RC"]),
+                card_reasons: PT.object,
             }).isRequired,
             tour: PT.shape({
                 scoring_system_name: PT.string.isRequired,

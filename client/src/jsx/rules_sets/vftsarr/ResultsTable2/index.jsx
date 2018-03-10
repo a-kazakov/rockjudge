@@ -1,9 +1,6 @@
 import _ from "l10n";
 
 import Row from "./Row";
-import ColumnsWidths from "./ColumnsWidths";
-
-import getJudgeTableMark from "getJudgeTableMark";
 import makeTourResultsTable from "common/makeTourResultsTable";
 
 export default class ResultsTable2 extends React.PureComponent {
@@ -80,13 +77,12 @@ export default class ResultsTable2 extends React.PureComponent {
     }
 
     render() {
-        const is_formation = ["vftsarr.formation", "vftsarr.formation_acro"].includes(this.props.tour.scoring_system_name)
-        const show_total_score = !is_formation;
-        const line_judges = this.props.tour.discipline.discipline_judges.filter(
-            dj => ["acro_judge", "dance_judge"].indexOf(dj.role) >= 0);
+        // const show_total_score = !is_formation;
+        // const line_judges = this.props.tour.discipline.discipline_judges.filter(
+        //     dj => ["acro_judge", "dance_judge"].indexOf(dj.role) >= 0);
         const has_next_tour = this.props.tour.next_tour_id !== null;
-        const widths = new ColumnsWidths(line_judges.length, show_total_score);
-        const djs_map = new Map(this.props.tour.discipline.discipline_judges.map(dj => [dj.id, dj]));
+        // const widths = new ColumnsWidths(line_judges.length, show_total_score);
+        // const djs_map = new Map(this.props.tour.discipline.discipline_judges.map(dj => [dj.id, dj]));
         const table = makeTourResultsTable(this.props.tour);
         let rows = [];
         for (let idx = 0; idx < table.length; ++idx) {
@@ -94,16 +90,12 @@ export default class ResultsTable2 extends React.PureComponent {
                 table[idx - 1],
                 table[idx],
                 has_next_tour,
-                4 + line_judges.length + show_total_score
+                6,
             ));
             rows.push(
                 <Row
-                    disciplineJudgesMap={ djs_map }
-                    isFormation={ is_formation }
                     key={ table[idx].run.id }
-                    lineDisciplineJudges={ line_judges }
                     row={ table[idx] }
-                    showTotalScore={ show_total_score }
                     tour={ this.props.tour }
                 />
             );
@@ -113,36 +105,32 @@ export default class ResultsTable2 extends React.PureComponent {
                 <table>
                     <thead>
                         <tr>
-                            <th className="place" style={ widths.genPlaceStyle() }>
-                                <p>
+                            <th className="w-6">
+                                <p className="place">
                                     { _("results.labels.place") }
                                 </p>
                             </th>
-                            <th className="number" style={ widths.genNumberStyle() }>
-                                <p>
+                            <th className="w-4">
+                                <p className="text-center">
                                     { _("results.labels.number") }
                                 </p>
                             </th>
-                            <th className="participant" style={ widths.genNameStyle() }>
+                            <th className="w-20">
                                 <p className="text-left">
                                     { _("results.labels.participant_name") }
                                 </p>
                             </th>
-                            { show_total_score ? (
-                                <th className="total-score" style={ widths.genTotalScoreStyle() }>
-                                    <p>
-                                        { _("results.labels.total_score") }
-                                    </p>
-                                </th>
-                            ) : null }
-                            { line_judges.map(dj =>
-                                <th key={ dj.id } style={ widths.genJudgeStyle() }>
-                                    <p>
-                                        { getJudgeTableMark(dj) }
-                                    </p>
-                                </th>
-                            ) }
-                            <th className="card" style={ widths.genJudgeStyle() }>
+                            <th className="w-50">
+                                <p className="text-center">
+                                    { _("results.labels.criterias") }
+                                </p>
+                            </th>
+                            <th className="w-7">
+                                <p className="text-center">
+                                    { _("results.labels.total_score") }
+                                </p>
+                            </th>
+                            <th className="w-13">
                                 <p className="text-center">
                                     { _("results.labels.card") }
                                 </p>

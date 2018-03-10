@@ -76,7 +76,6 @@ export default class JudgeTablet extends React.PureComponent {
             <div className="vftsarr-JudgeTablet">
                 <LayoutClass
                     disciplineJudge={ this.props.disciplineJudge }
-                    rough={ this.props.tour.scoring_system_name.indexOf("_rough") >= 0 }
                     tour={ this.props.tour }
                     onHeatConfirm={ this.handleHeatConfirm }
                     onScoreConfirm={ this.handleScoreConfirm }

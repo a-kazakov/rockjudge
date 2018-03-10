@@ -9,7 +9,6 @@ export default class DanceScore extends React.PureComponent {
             score: PT.shape({
                 id: PT.number.isRequired,
                 data: PT.shape({
-                    total_score: PT.number.isRequired,
                     raw_data: PT.shape({
                         fw_woman: PT.number,
                         fw_man: PT.number,
@@ -73,14 +72,6 @@ export default class DanceScore extends React.PureComponent {
                     </th>
                     <td className="mistakes">
                         <p>{ formatScore(this.props.score.data.raw_data.big_mistakes) }</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        <p>{ _("results.breakdown.t")  }:</p>
-                    </th>
-                    <td className="total-score">
-                        <p>{ this.props.score.data.total_score.toFixed(3).replace(/\.?0+$/, "") }</p>
                     </td>
                 </tr>
             </tbody></table>

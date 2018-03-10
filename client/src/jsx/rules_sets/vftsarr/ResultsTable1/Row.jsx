@@ -1,13 +1,14 @@
 import _ from "l10n";
 
 import getParticipantDisplay from "common/getParticipantDisplay";
+import getCardReasons from "common/getCardReasons";
+import getCard from "common/getCard";
 
 export default class Row extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
             disciplineJudgesMap: PT.instanceOf(Map).isRequired,
-            isFormation: PT.bool.isRequired,
             row: PT.shape({
                 place: PT.number,
                 run: PT.shape({
@@ -26,25 +27,17 @@ export default class Row extends React.PureComponent {
                     ).isRequired,
                     verbose_total_score: PT.shape({
                         card: PT.oneOf(["OK", "YC", "RC"]),
-                        total_penalty: PT.number,
-                        primary_score: PT.number,
-                        secondary_score: PT.number,
-                        previous_tour: PT.shape({
-                            primary_score: PT.number,
-                            secondary_score: PT.number,
-                        }),
+                        card_reasons: PT.object,
+                        score_value: PT.number,
+                        fw_score: PT.number,
+                        acro_score: PT.number,
                     }),
                 }).isRequired,
             }).isRequired,
-            showTotalScore: PT.bool.isRequired,
+            tour: PT.shape({
+                scoring_system_name: PT.string.isRequired,
+            }).isRequired,
         };
-    }
-    getCard() {
-        if (this.props.row.run.status !== "OK") {
-            return "—";
-        }
-        const card = this.props.row.run.verbose_total_score.card;
-        return _(`results.cards.${card}`, this.props.isFormation);
     }
     getPlace() {
         return this.props.row.run.disqualified
@@ -52,23 +45,12 @@ export default class Row extends React.PureComponent {
             : this.props.row.place;
     }
     renderTotalScoreCell() {
-        if (!this.props.showTotalScore) {
-            return null;
-        }
         let content = "—";
         if (this.props.row.run.status === "OK") {
-            content = (
-                <span>
-                    <strong>
-                        { this.props.row.run.verbose_total_score.primary_score.toFixed(2) }
-                    </strong>
-                    &nbsp;{ "/ " }
-                    { this.props.row.run.verbose_total_score.secondary_score.toFixed(2) }
-                </span>
-            );
+            content =  this.props.row.run.verbose_total_score.score_value.toFixed(3);
         }
         return (
-            <td className="w-18 score">
+            <td className="score">
                 <p className="text-center">
                     { content }
                 </p>
@@ -79,7 +61,7 @@ export default class Row extends React.PureComponent {
         return (
             <tr>
                 <td
-                    className="w-7 place"
+                    className="place"
                     style={ { borderRight: "1pt solid black" } }
                 >
                     <p className="text-center">
@@ -87,26 +69,28 @@ export default class Row extends React.PureComponent {
                     </p>
                 </td>
                 <td
-                    className="w-6 number"
+                    className="number"
                     style={ { fontWeight: "bold" } }
                 >
                     <p className="text-center">
                         { this.props.row.run.participant.number }
                     </p>
                 </td>
-                <td className="w-30 participant">
-                    { getParticipantDisplay(this.props.row.run.participant)
-                 }</td>
+                <td className="participant">
+                    { getParticipantDisplay(this.props.row.run.participant) }
+                </td>
                 <td className="club">
                     <p>
                         { this.props.row.run.participant.club.name }
                     </p>
                 </td>
                 { this.renderTotalScoreCell() }
-                <td className="w-8 card">
-                    <p className="text-center">
-                        { this.getCard() }
-                    </p>
+                <td className="card">
+                    { getCard(
+                        this.props.row.run,
+                        this.props.tour,
+                        {reasons_style: {fontSize: "8pt"}, p_class: "text-center"})
+                    }
                 </td>
             </tr>
         );

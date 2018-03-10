@@ -7,8 +7,8 @@ export default class HeadJudgeScore extends React.PureComponent {
             score: PT.shape({
                 data: PT.shape({
                     raw_data: PT.shape({
-                        penalty: PT.number,
-                        card: PT.oneOf(["OK", "YC", "RC"]).isRequired,
+                        bonus: PT.number,
+                        card: PT.oneOf(["OK", "YC", "RC"]),
                     }).isRequired,
                 }).isRequired,
             }).isRequired,
@@ -23,7 +23,7 @@ export default class HeadJudgeScore extends React.PureComponent {
             card:     data.card,
             nexttour: data.nexttour === "true",
         });
-    }
+    };
 
     makeField(key, label, scale) {
         const value = this.props.score.data.raw_data[key];

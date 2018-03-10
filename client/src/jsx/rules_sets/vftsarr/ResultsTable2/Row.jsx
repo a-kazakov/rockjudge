@@ -1,24 +1,24 @@
 import _ from "l10n";
 
 import getParticipantDisplay from "common/getParticipantDisplay";
+import getCardReasons from "common/getCardReasons";
+import { CRITERIAS_ORDER } from "common/constants";
+import getCard from "common/getCard";
 
 export default class Row extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
-            disciplineJudgesMap: PT.instanceOf(Map).isRequired,
-            isFormation: PT.bool.isRequired,
-            lineDisciplineJudges: PT.arrayOf(
-                PT.shape({
-                    role: PT.string.isRequired,
-                }).isRequired
-            ).isRequired,
+            // disciplineJudgesMap: PT.instanceOf(Map).isRequired,
+            // lineDisciplineJudges: PT.arrayOf(
+            //     PT.shape({
+            //         role: PT.string.isRequired,
+            //     }).isRequired
+            // ).isRequired,
             row: PT.shape({
-                additional_data: PT.object.isRequired,
                 place: PT.number,
                 run: PT.shape({
                     status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                    disqualified: PT.bool.isRequired,
                     participant: PT.shape({
                         number: PT.number.isRequired,
                         name: PT.string.isRequired,
@@ -31,77 +31,26 @@ export default class Row extends React.PureComponent {
                     ).isRequired,
                     verbose_total_score: PT.shape({
                         card: PT.oneOf(["OK", "YC", "RC"]),
-                        primary_score: PT.number,
-                        secondary_score: PT.number,
-                        previous_tour: PT.shape({
-                            primary_score: PT.number,
-                            secondary_score: PT.number,
-                        }),
+                        criterias_scores: PT.object,
+                        score_value: PT.number,
+                        acro_score: PT.number,
+                        fw_score: PT.number,
                     }),
                 }).isRequired,
             }).isRequired,
             tour: PT.shape({
                 scoring_system_name: PT.string.isRequired,
             }).isRequired,
-            showTotalScore: PT.bool.isRequired,
         };
     }
 
-    isFormation() {
-        return ["vftsarr.formation", "vftsarr.formation_acro"].indexOf(this.props.tour.scoring_system_name) >= 0;
-    }
-
-    getCard() {
-        if (this.props.row.run.status !== "OK") {
-            return "—";
-        }
-        const card = this.props.row.run.verbose_total_score.card;
-        return _(`results.cards.${card}`, this.props.isFormation);
-    }
     getPlace() {
-        return this.props.row.run.disqualified
+        return this.props.row.run.status === "DQ"
             ? null
             : this.props.row.place;
     }
-    renderFormationScore(score) {
-        return (
-            <p className="text-center">
-                <strong>
-                    { this.props.row.additional_data.places[score.id] }
-                </strong>
-                { ` (${score.data.total_score.toFixed(1)})` }
-            </p>
-        );
-    }
-    renderScore(discipline_judge, score) {
-        if (this.props.row.run.status !== "OK") {
-            return (
-                <p className="text-center">
-                    &mdash;
-                </p>
-            );
-        }
-        if (discipline_judge.role === "dance_judge" && this.isFormation()) {
-            return this.renderFormationScore(score);
-        }
-        if (!score) {
-            return (
-                <p className="text-center">
-                    &mdash;
-                </p>
-            )
-        }
-        return (
-            <p className="text-center">
-                { score.data.total_score.toFixed(2) }
-            </p>
-        );
-    }
     renderTotalScoreCell() {
         const total_score = this.props.row.run.verbose_total_score;
-        if (!this.props.showTotalScore) {
-            return null;
-        }
         if (this.props.row.run.status !== "OK") {
             return (
                 <td className="total-score">
@@ -112,20 +61,22 @@ export default class Row extends React.PureComponent {
             );
         }
         if (this.props.tour.scoring_system_name === "vftsarr.am_final_acro") {
-            const p_score = total_score.previous_tour.primary_score.toFixed(2);
-            const s_score = total_score.previous_tour.secondary_score.toFixed(2);
+            const fw_score = total_score.fw_score.toFixed(3);
+            const acro_score = total_score.acro_score.toFixed(3);
             return (
                 <td className="total-score">
                     <p className="text-center">
                         <em>
-                            { `${_("results.labels.fw_score_short") }: ${p_score} / ${s_score}` }
+                            { `${_("results.labels.fw_score_short") }: ${fw_score}` }
+                        </em>
+                        <br />
+                        <em>
+                            { `${_("results.labels.acro_score_short") }: ${acro_score}` }
                         </em>
                         <br />
                         <strong>
-                            { total_score.primary_score.toFixed(2) }
+                            { `${_("results.labels.total_score") }: ${total_score.score_value.toFixed(3)}` }
                         </strong>
-                        &nbsp;{ "/ " }
-                        { total_score.secondary_score.toFixed(2) }
                     </p>
                 </td>
             );
@@ -134,21 +85,78 @@ export default class Row extends React.PureComponent {
             <td className="total-score">
                 <p className="text-center">
                     <strong>
-                        { total_score.primary_score.toFixed(2) }
+                        { total_score.score_value.toFixed(3) }
                     </strong>
-                    &nbsp;{ "/ " }
-                    { total_score.secondary_score.toFixed(2) }
                 </p>
             </td>
         );
     }
-    renderJudgesScores() {
-        const scores_map = new Map(this.props.row.run.scores.map(score => [score.discipline_judge_id, score]));
-        return this.props.lineDisciplineJudges.map((dj, idx) =>
-            <td key={ dj ? dj.id : `I${idx}` }>
-                { this.renderScore(dj, scores_map.get(dj.id)) }
-            </td>
+    renderCriterias(criterias, table_key) {
+        const ROW_SIZE = 5;
+        let row_buffer = [];
+        let rows = [];
+        for (let idx = 0; idx < criterias.length; ++idx) {
+            const cr_name = criterias[idx];
+            const cr_value = this.props.row.run.verbose_total_score.criterias_scores[cr_name];
+            const cr_name_loc = _(`score_parts.components.short.${cr_name}`);
+            row_buffer.push(
+                <td
+                    key={ cr_name }
+                    style={ { "border": "none" } }
+                >
+                    <strong>
+                        { `${cr_name_loc}: ` }
+                    </strong>
+                    { cr_value.toFixed(3) }
+                </td>
+            );
+            if (row_buffer.length >= ROW_SIZE) {
+                rows.push(
+                    <tr key={ idx }>
+                        { row_buffer }
+                    </tr>
+                );
+                row_buffer = [];
+            }
+        }
+        if (row_buffer.length >= ROW_SIZE) {
+            rows.push(
+                <tr key={ idx }>
+                    { row_buffer }
+                </tr>
+            );
+            row_buffer = [];
+        }
+        return (
+            <table
+                key={ table_key }
+                style={ { width: "100%", "tableLayout": "fixed" } }
+            >
+                <tbody>
+                    { rows }
+                </tbody>
+            </table>
         );
+    }
+    renderJudgesScores() {
+        const criterias = this.props.row.run.verbose_total_score.criterias_scores;
+        if (!criterias) {
+            return (
+                <span>&mdash;</span>
+            );
+        }
+        const acro_criterias = Object.keys(criterias)
+            .filter(c => /^a\d$/.test(c))
+            .sort((a, b) => CRITERIAS_ORDER.get(a) - CRITERIAS_ORDER.get(b));
+        const dance_criterias = Object.keys(criterias)
+            .filter(c => !/^a\d$/.test(c))
+            .sort((a, b) => CRITERIAS_ORDER.get(a) - CRITERIAS_ORDER.get(b));
+        const result = [];
+        result.push(this.renderCriterias(dance_criterias, "dance"));
+        if (acro_criterias.length > 0) {
+            result.push(this.renderCriterias(acro_criterias, "acro"));
+        }
+        return result;
     }
     render() {
         return (
@@ -169,15 +177,19 @@ export default class Row extends React.PureComponent {
                         { this.props.row.run.participant.number }
                     </p>
                 </td>
-                <td className="participant">
+                <td>
                     { getParticipantDisplay(this.props.row.run.participant) }
                 </td>
+                <td className="text-center">
+                    { this.renderJudgesScores() }
+                </td>
                 { this.renderTotalScoreCell() }
-                { this.renderJudgesScores() }
-                <td className="card">
-                    <p className="text-center">
-                        { this.getCard() }
-                    </p>
+                <td>
+                    { getCard(
+                        this.props.row.run,
+                        this.props.tour,
+                        {reasons_style: {fontSize: "8pt"}, p_class: "text-center"})
+                    }
                 </td>
             </tr>
         );

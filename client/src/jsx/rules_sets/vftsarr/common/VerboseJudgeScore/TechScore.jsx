@@ -1,7 +1,8 @@
 import _ from "l10n";
 
 import formatScore from "./formatScore";
-import getCardReasons from "../getCardReasons";
+import getCardReasons from "common/getCardReasons";
+import checkSS from "common/checkSS";
 
 export default class TechScore extends React.PureComponent {
     static get propTypes() {
@@ -45,8 +46,7 @@ export default class TechScore extends React.PureComponent {
     }
 
     renderFallDowns() {
-        const ss = this.props.tour.scoring_system_name;
-        if (!ss.includes("acro") && ss !== "vftsarr.am_qual") {
+        if (!checkSS(this.props.tour.scoring_system_name, "acro")) {
             return null;
         }
         return (
@@ -61,8 +61,7 @@ export default class TechScore extends React.PureComponent {
         );
     }
     renderUndercount() {
-        const ss = this.props.tour.scoring_system_name;
-        if (!ss.includes("formation")) {
+        if (!checkSS(this.props.tour.scoring_system_name, "formation")) {
             return null;
         }
         return (
@@ -85,7 +84,10 @@ export default class TechScore extends React.PureComponent {
         }
         return (
             <tr>
-                <td colSpan={ 2 } className="card-reason">
+                <td
+                    className="card-reason"
+                    colSpan={ 2 }
+                >
                     { texts.map((text, idx) => (
                         <div key={ idx }>
                             { text }

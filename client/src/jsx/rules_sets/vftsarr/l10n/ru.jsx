@@ -186,14 +186,16 @@ export default function translate(src, ...args) {
             },
             "labels": {
                 "acro_score": "Результат акро",
+                "acro_score_shoer": "Акро",
                 "acrobatics": "Акробатика",
                 "acrobatics_verbose": "Акробатика (заявка/факт)",
-                "card": "Штраф",
+                "card": "Карточка",
                 "disqualified": "Дисквалифицирован",
                 "dq": "Дискв.",
                 "fw_score": "Результат ТН",
                 "fw_score_short": "ТН",
                 "info": "Участник, результат",
+                "criterias": "Оценки по компонентам",
                 "next_tour": "Следующий тур",
                 "not_performed": "Не принимал участие",
                 "number": "№",
@@ -221,6 +223,11 @@ export default function translate(src, ...args) {
             },
         },
         "cards": {
+            "verbose": {
+                "OK": "Зеленая карточка",
+                "YC": "Желтая карточка",
+                "RC": "Красная карточка",
+            },
             "long": {
                 "OK": "ОК",
                 "YC": "Желтая",
@@ -251,7 +258,7 @@ export default function translate(src, ...args) {
                 "forbidden_acro": "Запрещ. акро",
                 "no_required_acro": "Группы акро",
                 "acro_count": "Кол-во акро",
-                "basic_steps_count": "ТФ I гр.",
+                "basic_steps_count": "Кол. ТФ I гр.",
                 "incomplete_couple": "Неполная пара",
                 "other": "Другое",
             },

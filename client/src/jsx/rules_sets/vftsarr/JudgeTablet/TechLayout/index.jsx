@@ -1,13 +1,7 @@
 import GeneralLayout from "JudgeTablet/GeneralLayout";
 import ScoringLayoutDance from "./ScoringLayoutDance";
 import TechAcroLayout from "./TechAcroLayout";
-
-const ACRO_DISCIPLINES = [
-    "vftsarr.acro",
-    "vftsarr.formation_acro",
-    "vftsarr.am_final_acro",
-    "vftsarr.am_qual",
-];
+import checkSS from "common/checkSS";
 
 export default class TechLayout extends React.PureComponent {
     static get propTypes() {
@@ -34,7 +28,7 @@ export default class TechLayout extends React.PureComponent {
         );
     }
     render() {
-        return ACRO_DISCIPLINES.includes(this.props.tour.scoring_system_name)
+        return checkSS(this.props.tour.scoring_system_name, "acro")
             ? this.renderAcroLayout()
             : this.renderDanceLayout();
     }

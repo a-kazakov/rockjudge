@@ -1,23 +1,8 @@
 import _ from "l10n";
 
-import Row from "./Row";
+import { CRITERIAS_ORDER } from "common/constants";
 
-const CRITERIAS_ORDER = new Map([
-    "fw",
-    "fw_woman",
-    "fw_man",
-    "dance_figs",
-    "composition",
-    "mistakes",
-    "a1",
-    "a2",
-    "a3",
-    "a4",
-    "a5",
-    "a6",
-    "a7",
-    "a8",
-].map((value, idx) => [value, idx]));
+import Row from "./Row";
 
 const COMPLEX_CRITERIAS = new Map([
     ["mistakes", ["small_mistakes", "big_mistakes"]],

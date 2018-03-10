@@ -57,18 +57,11 @@ export default class Item extends React.PureComponent {
         });
     }
     render() {
-        const is_formation = ["vftsarr.formation", "vftsarr.formation_acro"].includes(this.props.tour.scoring_system_name);
-        const cards = is_formation
-            ? {
-                "OK": _("tablet.tech_judge.ok"),
-                "YC": _("tablet.tech_judge.form_yellow_card"),
-                "RC": _("tablet.tech_judge.form_red_card"),
-            }
-            : {
-                "OK": _("tablet.tech_judge.ok"),
-                "YC": _("tablet.tech_judge.yellow_card"),
-                "RC": _("tablet.tech_judge.red_card"),
-            };
+        const cards = {
+            "OK": _("tablet.tech_judge.ok"),
+            "YC": _("tablet.tech_judge.yellow_card"),
+            "RC": _("tablet.tech_judge.red_card"),
+        };
         return (
             <td className={ this.getClassName() }>
                 { this.props.score && this.props.score.data.raw_data.card

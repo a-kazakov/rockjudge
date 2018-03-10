@@ -3,6 +3,7 @@ const SCALE_SIZES = {
     "composition": 20,
     "figures": 20,
     "mistakes": 30,
+    "points": 40,
 };
 
 export default class Cell extends React.PureComponent {

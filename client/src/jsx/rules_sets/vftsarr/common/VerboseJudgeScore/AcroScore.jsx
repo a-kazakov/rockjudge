@@ -12,7 +12,6 @@ export default class AcroScore extends React.PureComponent {
             score: PT.shape({
                 id: PT.number.isRequired,
                 data: PT.shape({
-                    total_score: PT.number.isRequired,
                     raw_data: PT.shape({
                         mistakes: PT.number,
                     }).isRequired,
@@ -22,6 +21,9 @@ export default class AcroScore extends React.PureComponent {
     }
 
     render() {
+        if (this.props.run.acrobatics.length === 0) {
+                return null;
+        }
         return (
             <table className="score-breakdown"><tbody>
                 { this.props.run.acrobatics.slice(0, 6).map((acro, idx) =>
@@ -34,22 +36,6 @@ export default class AcroScore extends React.PureComponent {
                         </td>
                     </tr>
                 ) }
-                <tr>
-                    <th>
-                        <p>{ _("results.breakdown.fd") }:</p>
-                    </th>
-                    <td className="mistakes">
-                        <p>{ formatScore(this.props.score.data.raw_data.mistakes) }</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        <p>{ _("results.breakdown.t")  }:</p>
-                    </th>
-                    <td className="total-score">
-                        <p>{ this.props.score.data.total_score }</p>
-                    </td>
-                </tr>
             </tbody></table>
         );
     }

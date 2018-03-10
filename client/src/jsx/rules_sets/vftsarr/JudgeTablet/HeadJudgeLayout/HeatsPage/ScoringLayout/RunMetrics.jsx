@@ -1,5 +1,5 @@
 import _ from "l10n";
-import getCardReasons from "../../../../common/getCardReasons";
+import getCardReasons from "common/getCardReasons";
 
 export default class RunMetrics extends React.PureComponent {
     static get propTypes() {
@@ -7,8 +7,8 @@ export default class RunMetrics extends React.PureComponent {
         return {
             run: PT.shape({
                 verbose_total_score: PT.shape({
-                    card: PT.oneOf(["OK", "YC", "RC"]).isRequired,
-                    card_reasons: PT.object.isRequired,
+                    card: PT.oneOf(["OK", "YC", "RC"]),
+                    card_reasons: PT.object,
                     mistakes: PT.number,
                     undercount: PT.number,
                 }),

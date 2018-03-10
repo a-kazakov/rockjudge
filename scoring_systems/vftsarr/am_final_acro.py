@@ -44,6 +44,11 @@ class AmFinalAcroEndpoints(Endpoints):
             "total_run_score": context.display_score,
             "verbose_run_score": {
                 "card": context.card,
+                "card_reasons": context.card_reasons,
+                "criterias_scores": {
+                    key: float(value)
+                    for key, value in context.criterias_scores.items()
+                },
                 "score_value": float(context.total_score),
                 "bonus": context.bonus,
                 "fw_score": float(context.fw_total_score),

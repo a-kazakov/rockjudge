@@ -162,7 +162,7 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
 
     display_score: str
     def _display_score(self) -> str:
-        return "{:.2f}".format(float(self.total_score))
+        return "{:.3f}".format(float(self.total_score))
 
     sorting_score: Tuple[Union[int, frac], ...]
     def _sorting_score(self) -> Tuple[Union[int, frac], ...]:

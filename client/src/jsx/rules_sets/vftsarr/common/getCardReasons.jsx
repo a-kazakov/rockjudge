@@ -1,3 +1,5 @@
+import checkSS from "common/checkSS";
+
 const ARR_CARD_REASONS = {
     "base": {
         "DURATION": 10,
@@ -18,11 +20,10 @@ const ARR_CARD_REASONS = {
 
 export default function getCardReasons(scoring_system_name) {
     const card_groups = ["base"];
-    const ssn = scoring_system_name;
-    if (ssn.includes("acro") || ssn === "vftsarr.am_qual") {
+    if (checkSS(scoring_system_name, "acro")) {
         card_groups.push("acro");
     }
-    if (ssn.includes("formation")) {
+    if (checkSS(scoring_system_name, "formation")) {
         card_groups.push("formation");
     }
     let pairs = [];
