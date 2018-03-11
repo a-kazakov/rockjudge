@@ -28,22 +28,22 @@ export default class StartPage extends React.PureComponent {
         Api("auth.get_access_levels", {})
             .onSuccess(competitionAccesses => this.setState({ competitionAccesses }))
             .send();
-    }
+    };
     loadCompetitionsNames = () => {
         Api("competition.get_active_names", {})
             .onSuccess(competitionsNames => this.setState({ competitionsNames }))
             .send();
-    }
+    };
     loadData = () => {
         this.loadAccessLevels();
         this.loadCompetitionsNames();
-    }
+    };
 
     handleAccessLevelsChange = (data) => {
         if (data.client_id === keys_storage.client_id) {
             this.loadAccessLevels();
         }
-    }
+    };
 
     handleCompetitionSelect = (activeCompetitionId) => this.setState({ activeCompetitionId });
 

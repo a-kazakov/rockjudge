@@ -41,6 +41,17 @@ export default class RoleSelector extends LoadingComponent {
         };
     }
 
+    componentDidMount() {
+        if (this.has_access) {
+            this._initLoader();
+        }
+    }
+    componentDidUpdate() {
+        if (!this._loader_inited && this.has_access) {
+            this._initLoader();
+        }
+    }
+
     get has_access() {
         if (window.location.hostname === "127.0.0.1") {
             return true;
@@ -58,18 +69,6 @@ export default class RoleSelector extends LoadingComponent {
         this.setState({
             competition: serialized,
         });
-    };
-    loadData = () => {
-        if (!this.has_access) {
-            return
-        }
-        Api("competition.get", {
-            competition_id: this.props.competition.id,
-            children: this.SCHEMA,
-        })
-            .addToDB("Competition", this.props.competition.id, this.storage)
-            .onSuccess(this.reloadFromStorage)
-            .send();
     };
 
     renderBody() {
