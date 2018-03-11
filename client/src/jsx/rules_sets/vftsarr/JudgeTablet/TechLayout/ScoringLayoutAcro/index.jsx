@@ -31,7 +31,7 @@ export default class ScoringLayoutAcro extends React.PureComponent {
                 data: PT.object.isRequired,
             }).isRequired,
             scoreData: PT.shape({
-                mistakes: PT.number.isRequired,
+                fall_down: PT.number.isRequired,
             }).isRequired,
             onScoreUpdate: PT.func.isRequired,
         };

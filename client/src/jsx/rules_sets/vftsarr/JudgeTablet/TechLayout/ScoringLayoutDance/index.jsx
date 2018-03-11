@@ -51,7 +51,7 @@ export default class ScoringLayoutDance extends React.PureComponent {
                     jumbo
                     sendDeltas
                     readOnly={ this.props.score.confirmed }
-                    value={ this.props.scoreData.jump_steps }
+                    value={ this.props.scoreData.undercount }
                     onChange={ this.handleUndercountChange }
                 />
             </div>

@@ -113,7 +113,7 @@ export default class ResultsTable1 extends React.PureComponent {
                                     { _("results.labels.number") }
                                 </p>
                             </th>
-                            <th className="w-30 participant">
+                            <th className="w-25 participant">
                                 <p className="text-left">
                                     { _("results.labels.participant_name") }
                                 </p>

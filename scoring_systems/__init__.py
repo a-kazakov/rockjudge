@@ -1,19 +1,18 @@
 import importlib
+from typing import List, Tuple
+
 
 RULES_SETS = [
     "vftsarr",
     "rosfarr",
-    "skating",
+    # "skating",
 ]
 
 MODULES = {}
 
 for rules_set in RULES_SETS:
-    try:
-        MODULES[rules_set] = importlib.import_module("scoring_systems." + rules_set)
-        print("Imported module {}".format(rules_set))
-    except ImportError:
-        pass
+    MODULES[rules_set] = importlib.import_module("scoring_systems." + rules_set)
+    print("Imported module {}".format(rules_set))
 
 
 def get_scoring_system(tour):
@@ -21,9 +20,9 @@ def get_scoring_system(tour):
     return MODULES[rules_set].SCORING_SYSTEMS[scoring_system]
 
 
-def get_rules_sets_names():
-    return {
-        rules_set: module.META["name"]
-        for rules_set, module
-        in MODULES.items()
-    }
+def get_rules_sets_names() -> List[Tuple[str, str]]:
+    return [
+        (rules_set, MODULES[rules_set].META["name"], )
+        for rules_set
+        in RULES_SETS
+    ]

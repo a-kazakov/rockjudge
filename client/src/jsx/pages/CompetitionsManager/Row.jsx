@@ -36,7 +36,7 @@ export default class Row extends React.PureComponent {
         })
             .onSuccess(this.handleStopEditing)
             .send();
-    }
+    };
     handleDeletion = (event) => {
         event.stopPropagation();
         showConfirm(
@@ -49,7 +49,7 @@ export default class Row extends React.PureComponent {
                     .send();
             }
         );
-    }
+    };
 
     renderEditor() {
         return (

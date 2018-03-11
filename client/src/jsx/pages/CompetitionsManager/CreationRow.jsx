@@ -7,7 +7,11 @@ export default class CreationRow extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
-            rulesSets: PT.object.isRequired,
+            rulesSets: PT.arrayOf(
+                PT.arrayOf(
+                    PT.string.isRequired,
+                ).isRequired,
+            ).isRequired,
         };
     }
 
@@ -27,7 +31,7 @@ export default class CreationRow extends React.PureComponent {
         })
             .onSuccess(this.handleStopEditing)
             .send();
-    }
+    };
 
     renderEditor() {
         const empty_data = {
@@ -35,8 +39,8 @@ export default class CreationRow extends React.PureComponent {
             "date": "",
             "active": true,
             "info": [],
-            "rules_set": Object.keys(this.props.rulesSets).sort()[0],
-        }
+            "rules_set": this.props.rulesSets[0][0],
+        };
         return (
             <EditorRow
                 newCompetition

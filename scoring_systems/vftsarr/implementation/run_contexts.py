@@ -318,7 +318,10 @@ class RunContextFormation(RunContextBase):
         )
 
 
-class RunContextFormationAcro(RunContextFormation):
+class RunContextFormationAcro(RunContextFormation, RunContextAcroBase):
+    def _elements_count(self) -> int:
+        return 6
+
     def _scoring_criterias(self) -> Tuple[str, ...]:
         return (
             "fw",
@@ -328,3 +331,6 @@ class RunContextFormationAcro(RunContextFormation):
             "mistakes",
             *[f"a{x}" for x in range(1, 9)],
         )
+
+    def _total_score(self) -> frac:
+        return RunContextBase._total_score(self) - self.undercount - frac(30 * self.fall_down)

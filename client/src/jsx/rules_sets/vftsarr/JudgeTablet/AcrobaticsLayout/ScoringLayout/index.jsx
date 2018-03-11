@@ -28,7 +28,7 @@ export default class ScoringLayout extends React.PureComponent {
     render() {
         return (
             <div>
-                { this.props.run.acrobatics.slice(0, 6).map((acro, acro_idx) =>
+                { this.props.run.acrobatics.slice(0, 8).map((acro, acro_idx) =>
                     <Element
                         acroIdx={ acro_idx }
                         key={ acro_idx }

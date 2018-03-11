@@ -12,7 +12,11 @@ export default class CompetitionsManager extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
-            rulesSets: PT.object.isRequired,
+            rulesSets: PT.arrayOf(
+                PT.arrayOf(
+                    PT.string.isRequired,
+                ).isRequired,
+            ).isRequired,
         };
     }
 
@@ -20,7 +24,7 @@ export default class CompetitionsManager extends React.PureComponent {
         super(props);
         this.state = {
             competitions: null,
-        }
+        };
         websocket.addListener("db_update", this.reloadFromStorage);
         websocket.addListener("competition_list_update", this.loadData);
         websocket.addListener("reload_data", this.loadData);
@@ -31,7 +35,7 @@ export default class CompetitionsManager extends React.PureComponent {
         this.setState({
             competitions: serialized,
         });
-    }
+    };
     loadData = () => {
         Api("competition.get_all", {
             children: {},
@@ -44,7 +48,7 @@ export default class CompetitionsManager extends React.PureComponent {
                 this.reloadFromStorage();
             })
             .send();
-    }
+    };
 
     renderTable() {
         return (

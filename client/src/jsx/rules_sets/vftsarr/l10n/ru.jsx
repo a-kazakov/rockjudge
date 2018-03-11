@@ -248,7 +248,7 @@ export default function translate(src, ...args) {
                 "no_required_acro": "Отсутствие требуемых групп акробатики",
                 "acro_count": "Недопустимое кол-во акробатических элементов",
                 "basic_steps_count": "Недостаток танцевальных фигур I группы",
-                "incomplete_couple": "Неполная пара в формейшн-минст",
+                "incomplete_couple": "Неполная пара в формейшн-микст",
                 "other": "Другие ограничения в фигурах",
             },
             "short": {

@@ -3,9 +3,8 @@ export default function getScoringType(discipline_judge, scoring_system_name) {
     case "dance_judge":
         switch (scoring_system_name) {
         case "vftsarr.formation":
-            return "formation";
         case "vftsarr.formation_acro":
-            return "formation_acro";
+            return "formation";
         case "vftsarr.simplified":
             return "simplified";
         case "vftsarr.solo":
@@ -18,6 +17,7 @@ export default function getScoringType(discipline_judge, scoring_system_name) {
         switch (scoring_system_name) {
         case "vftsarr.am_final_fw":
             return "dance";
+        case "vftsarr.formation_acro":
         case "vftsarr.am_final_acro":
         case "vftsarr.am_qual":
         case "vftsarr.acro":

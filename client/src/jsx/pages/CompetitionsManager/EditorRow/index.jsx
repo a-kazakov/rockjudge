@@ -16,7 +16,11 @@ export default class EditorRow extends React.PureComponent {
                 rules_set: PT.string.isRequired,
             }).isRequired,
             newCompetition: PT.bool,
-            rulesSets: PT.object,
+            rulesSets: PT.arrayOf(
+                PT.arrayOf(
+                    PT.string.isRequired,
+                ).isRequired,
+            ).isRequired,
             onStopEditing: PT.func.isRequired,
             onSubmit: PT.func.isRequired,
         };
@@ -46,7 +50,7 @@ export default class EditorRow extends React.PureComponent {
             date:   this._date.value,
             active: this._active.checked,
             info:   this._info.value,
-        }
+        };
         if (this.props.newCompetition) {
             Object.assign(result, {
                 rules_set: this._rules_set.value,
@@ -70,7 +74,6 @@ export default class EditorRow extends React.PureComponent {
         if (!this.props.newCompetition) {
             return null;
         }
-        const rules_sets = Object.keys(this.props.rulesSets).sort();
         return (
             <label className="full-width">
                 { _("models.competition.rules_set") }
@@ -80,9 +83,9 @@ export default class EditorRow extends React.PureComponent {
                     ref={ this.makeRulesSetRef }
                     tabIndex={ this.props.baseTabIndex + 5 }
                 >
-                    { rules_sets.map(ss =>
+                    { this.props.rulesSets.map(([ss, name]) =>
                         <option key={ ss } value={ ss }>
-                            { this.props.rulesSets[ss] }
+                            { name }
                         </option>
                     ) }
                 </select>

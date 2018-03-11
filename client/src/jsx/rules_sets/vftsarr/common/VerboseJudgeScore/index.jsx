@@ -51,7 +51,6 @@ export default class VerboseJudgeScore extends React.PureComponent {
             ScoreComponent = AcroScore;
             break;
         case "formation":
-        case "formation_acro":
             ScoreComponent = FormationScore;
             break;
         case "solo":

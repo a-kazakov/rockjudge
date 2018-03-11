@@ -55,9 +55,12 @@ class Competition(BaseModel):
             Discipline,
             Judge,
         )
+        print(">>> Decode 1")
         data = import_file_protector.decode(encoded_data)
+        print(">>> Decode 2")
         if data is None:
             raise ApiError("errors.admin.load_syntax_error")
+        print(">>> Decode 3")
         if "clubs" in data and items["clubs"]:
             Club.load_models(self, data["clubs"])
         if "judges" in data and items["judges"]:

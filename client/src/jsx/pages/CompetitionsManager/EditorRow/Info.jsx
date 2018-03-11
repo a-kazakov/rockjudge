@@ -30,33 +30,33 @@ export default class Info extends React.PureComponent {
         let value = this.state.value.slice();
         value.push(["", ""]);
         this.setState({ value });
-    }
+    };
 
     handleChange = (idx, new_item) => {
         let value = this.state.value.slice();
         value[idx] = new_item;
         this.setState({ value });
-    }
+    };
 
     handleMoveUp = (idx) => {
         let value = this.state.value.slice();
         const [row] = value.splice(idx, 1);
         value.splice(idx - 1, 0, row);
         this.setState({ value });
-    }
+    };
 
     handleMoveDown = (idx) => {
         let value = this.state.value.slice();
         const [row] = value.splice(idx, 1);
         value.splice(idx + 1, 0, row);
         this.setState({ value });
-    }
+    };
 
     handleDeletion = (idx) => {
         let value = this.state.value.slice();
         value.splice(idx, 1);
         this.setState({ value });
-    }
+    };
 
     render() {
         return (

@@ -28,7 +28,6 @@ export default class JudgeTablet extends React.PureComponent {
         "acro": AcrobaticsLayout,
         "dance": DanceLayout,
         "formation": FormationLayout,
-        "formation_acro": FormationLayout,
         "simplified": SimplifiedLayout,
         "solo": SoloLayout,
         "head": HeadJudgeLayout,

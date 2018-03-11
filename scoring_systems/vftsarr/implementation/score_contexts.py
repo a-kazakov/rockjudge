@@ -232,7 +232,7 @@ class ScoreContextDance(ScoreContextBase):
 
     def _total_score(self):
         num_set = sum(self.user_data[key] is not None for key in self.INITIAL_SCORES.keys())
-        if num_set <= sum(value is None for value in self.INITIAL_SCORES.values()):
+        if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
             return "–"
         if num_set == len(self.DEFAULT_SCORES):
             return "🗸"
@@ -289,8 +289,12 @@ class ScoreContextSolo(ScoreContextBase):
     }
 
     def _total_score(self):
-        all_set = all(self.user_data[key] is not None for key in self.DEFAULT_SCORES.keys())
-        return "🗸" if all_set else "–"
+        num_set = sum(self.user_data[key] is not None for key in self.INITIAL_SCORES.keys())
+        if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
+            return "–"
+        if num_set == len(self.DEFAULT_SCORES):
+            return "🗸"
+        return "..."
 
 
 class ScoreContextSoloRough(ScoreContextSolo):
@@ -350,7 +354,7 @@ class ScoreContextAcro(ScoreContextBase):
 
 class ScoreContextFormation(ScoreContextBase):
     DEFAULT_SCORES = {
-        "fw": 0,
+        "fw": 100,
         "df_accuracy": 0,
         "df_difficulty": 0,
         "df_art": 0,
@@ -400,8 +404,12 @@ class ScoreContextFormation(ScoreContextBase):
     }
 
     def _total_score(self):
-        all_set = all(self.user_data[key] is not None for key in self.DEFAULT_SCORES.keys())
-        return "🗸" if all_set else "–"
+        num_set = sum(self.user_data[key] is not None for key in self.INITIAL_SCORES.keys())
+        if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
+            return "–"
+        if num_set == len(self.DEFAULT_SCORES):
+            return "🗸"
+        return "..."
 
 
 class ScoreContextTechDance(ScoreContextBase):
