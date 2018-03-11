@@ -9,24 +9,31 @@ export default class JobQueue extends React.PureComponent {
             queue: [],
             nowRendering: null,
         };
+        this._pending_jobs = [];
         this.scheduleJob();
     }
 
-    addJob = (job_type, tour, copies) => {
-        let new_queue = this.state.queue.slice(); // clone
-        new_queue.push({
+    addJob = (job_type, tour, copies, submit=true) => {
+        this._pending_jobs.push({
             type: job_type,
             tour: tour,
             copies: copies,
             id: Math.random(),
         });
+        if (submit) {
+            this.submitJobs();
+        }
+    };
+    submitJobs() {
         this.setState({
-            queue: new_queue,
+            queue: [].concat(this.state.queue, this._pending_jobs),
         });
+        this._pending_jobs = [];
     }
+
     scheduleJob = () => {
         setTimeout(this.processJob, 1000);
-    }
+    };
     processJob = () => {
         if (this.state.nowRendering) {
             return;
@@ -41,14 +48,14 @@ export default class JobQueue extends React.PureComponent {
             queue: this.state.queue.slice(1),
             nowRendering: job,
         });
-    }
+    };
     retryJob = () => {
         this.setState({
             queue: [this.state.nowRendering].concat(this.state.queue),
             nowRendering: null,
         });
         this.scheduleJob();
-    }
+    };
     handleDocxCreated = (filename) => {
         clearTimeout(this.timer);
         setTimeout(() => {
@@ -64,7 +71,7 @@ export default class JobQueue extends React.PureComponent {
             });
             this.scheduleJob();
         }, 1000);
-    }
+    };
     renderActiveJob() {
         if (!this.state.nowRendering) {
             return null;

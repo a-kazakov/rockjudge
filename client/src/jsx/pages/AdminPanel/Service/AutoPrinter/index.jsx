@@ -39,10 +39,18 @@ export default class AutoPrinter extends LoadingComponent {
         };
         this.POSSIBLE_ACTIONS = ["heats", "results_1", "results_2", "results_3", "discipline_results"];
     }
+    componentWillUpdate(nextProps, nextState) {
+        if (this.state.competition && nextState.competition) {
+            this.dispatchCompetitionUpdate(this.state.competition, nextState.competition);
+        }
+    }
 
     makeQueueRef = (ref) => this._queue = ref;
 
-    handleActionsChange = (actions) => this.setState({ actions });
+    handleActionsChange = (actions) => {
+        localStorage.setItem(`auto_printer_${this.props.competitionId}`, JSON.stringify(actions));
+        this.setState({ actions });
+    };
 
     handlePrintTestPage = () => {
         showConfirm(
@@ -54,12 +62,14 @@ export default class AutoPrinter extends LoadingComponent {
                 this._queue.addJob("test", null, 1);
             }
         );
-    }
-    handlePrintFirstToursHeats = () =>
+    };
+
+    handlePrintFirstToursHeats = () => {
         showConfirm(
             _("admin.auto_printer.confirm_print_first_tours_heats"),
             this.printFirstToursHeats
         );
+    };
 
     getToursFromCompetition(competition) {
         let result = [];
@@ -100,11 +110,11 @@ export default class AutoPrinter extends LoadingComponent {
         return tours[next_idx];
     }
 
-    doTheJob(tour, action_type, copies) {
+    doTheJob(tour, action_type, copies, submit=true) {
         if (!tour) {
             return;
         }
-        this._queue.addJob(action_type, tour, copies);
+        this._queue.addJob(action_type, tour, copies, submit);
     }
     doActionsForTour(tour) {
         const actions = this.state.actions[tour.id];
@@ -114,9 +124,10 @@ export default class AutoPrinter extends LoadingComponent {
             const action_tour = action_type === "heats" ? next_tour : tour;
             const actions_row = action_type === "heats" ? next_tour_actions : actions;
             if (actions_row && actions_row[action_type]) {
-                this.doTheJob(action_tour, action_type, actions_row[action_type]);
+                this.doTheJob(action_tour, action_type, actions_row[action_type], false);
             }
         }
+        this._queue.submitJobs();
     }
 
     printFirstToursHeats = () => {
@@ -126,9 +137,10 @@ export default class AutoPrinter extends LoadingComponent {
             if (!tour || !this.state.actions[tour.id] || !this.state.actions[tour.id]["heats"]) {
                 continue;
             }
-            this.doTheJob(tour, "heats", this.state.actions[tour.id]["heats"]);
+            this.doTheJob(tour, "heats", this.state.actions[tour.id]["heats"], false);
         }
-    }
+        this._queue.submitJobs();
+    };
 
     render() {
         if (!this.state.competition) {

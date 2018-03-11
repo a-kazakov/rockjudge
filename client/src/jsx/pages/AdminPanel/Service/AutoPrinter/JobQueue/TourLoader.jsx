@@ -28,6 +28,7 @@ export default class TourLoader extends LoadingComponent {
                         club: {},
                     },
                     scores: {},
+                    acrobatics: {},
                 },
             },
         },
