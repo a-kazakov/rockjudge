@@ -1,9 +1,9 @@
 import _ from "l10n";
 
 import getParticipantDisplay from "common/getParticipantDisplay";
-import getCardReasons from "common/getCardReasons";
-import { CRITERIAS_ORDER } from "common/constants";
+import {CRITERIAS_ORDER} from "common/constants";
 import getCard from "common/getCard";
+import checkSS from "common/checkSS";
 
 export default class Row extends React.PureComponent {
     static get propTypes() {
@@ -35,6 +35,8 @@ export default class Row extends React.PureComponent {
                         score_value: PT.number,
                         acro_score: PT.number,
                         fw_score: PT.number,
+                        undercount: PT.number,
+                        fall_down: PT.number,
                     }),
                 }).isRequired,
             }).isRequired,
@@ -95,6 +97,8 @@ export default class Row extends React.PureComponent {
         const ROW_SIZE = 5;
         let row_buffer = [];
         let rows = [];
+        const cell_width = Math.min(ROW_SIZE, criterias.length);
+        const cell_style = { "border": "none", "width": `${cell_width}%` };
         for (let idx = 0; idx < criterias.length; ++idx) {
             const cr_name = criterias[idx];
             const cr_value = this.props.row.run.verbose_total_score.criterias_scores[cr_name];
@@ -102,12 +106,14 @@ export default class Row extends React.PureComponent {
             row_buffer.push(
                 <td
                     key={ cr_name }
-                    style={ { "border": "none" } }
+                    style={ cell_style }
                 >
-                    <strong>
-                        { `${cr_name_loc}: ` }
-                    </strong>
-                    { cr_value.toFixed(3) }
+                    <p className="text-center">
+                        <strong>
+                            { `${cr_name_loc} ` }
+                        </strong>
+                        { cr_value.toFixed(3) }
+                    </p>
                 </td>
             );
             if (row_buffer.length >= ROW_SIZE) {
@@ -119,18 +125,28 @@ export default class Row extends React.PureComponent {
                 row_buffer = [];
             }
         }
-        if (row_buffer.length >= ROW_SIZE) {
+        if (row_buffer.length > 0) {
+            if (rows.length > 0) {
+                while (row_buffer.length < ROW_SIZE) {
+                    row_buffer.push(
+                        <td key={row_buffer.length}>
+                            <p>
+                                &nbsp;
+                            </p>
+                        </td>
+                    );
+                }
+            }
             rows.push(
-                <tr key={ idx }>
+                <tr key="last">
                     { row_buffer }
                 </tr>
             );
-            row_buffer = [];
         }
         return (
             <table
                 key={ table_key }
-                style={ { width: "100%", "tableLayout": "fixed" } }
+                style={ { width: "100%", tableLayout: "fixed" } }
             >
                 <tbody>
                     { rows }
@@ -158,6 +174,43 @@ export default class Row extends React.PureComponent {
         }
         return result;
     }
+    renderAdditionalData() {
+        const need_undercount = checkSS(this.props.tour.scoring_system_name, "formation") &&
+            this.props.row.run.verbose_total_score.undercount > 0;
+        const need_fall_down = checkSS(this.props.tour.scoring_system_name, "acro") &&
+            this.props.row.run.verbose_total_score.fall_down > 0;
+        if (!need_undercount && !need_fall_down) {
+            return null;
+        }
+        return (
+            <table style={ {width: "100%"} }>
+                <tbody>
+                    <tr>
+                        { need_undercount ? (
+                            <td style={ {border: "none"} }>
+                                <p className="text-center">
+                                    <strong>
+                                        { `${_("score_parts.tech.long.undercount")}: ` }
+                                    </strong>
+                                    { this.props.row.run.verbose_total_score.undercount}
+                                </p>
+                            </td>
+                        ) : null }
+                        { need_fall_down ? (
+                            <td style={ {border: "none"} }>
+                                <p className="text-center">
+                                    <strong>
+                                        { `${_("score_parts.tech.long.fall_down")}: ` }
+                                    </strong>
+                                    { this.props.row.run.verbose_total_score.fall_down}
+                                </p>
+                            </td>
+                        ) : null }
+                    </tr>
+                </tbody>
+            </table>
+        );
+    }
     render() {
         return (
             <tr>
@@ -182,6 +235,7 @@ export default class Row extends React.PureComponent {
                 </td>
                 <td className="text-center">
                     { this.renderJudgesScores() }
+                    { this.renderAdditionalData() }
                 </td>
                 { this.renderTotalScoreCell() }
                 <td>

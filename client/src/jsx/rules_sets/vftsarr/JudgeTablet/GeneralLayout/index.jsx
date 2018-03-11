@@ -4,6 +4,7 @@ import Participant from "./Participant";
 
 import ResultsTable2 from "ResultsTable2";
 import ConfirmationButton from "JudgeTablet/components/ConfirmationButton";
+import LastPage from "../components/LastPage";
 
 export default class GeneralLayout extends React.PureComponent {
     static get propTypes() {
@@ -43,7 +44,7 @@ export default class GeneralLayout extends React.PureComponent {
         super(props);
         this.state = {
             heat: this.getFirstNonConfirmedHeat(),
-            showResults: false,
+            showLastPage: false,
         };
         this.setupCache();
     }
@@ -54,14 +55,14 @@ export default class GeneralLayout extends React.PureComponent {
             this.props = next_props;
             this.setState({
                 heat: this.getFirstNonConfirmedHeat(),
-                showResults: false,
+                showLastPage: false,
             });
             this.props = prev_props;
         }
-        if (this.state.showResults) {
+        if (this.state.showLastPage) {
             if (!this.checkCanFinish(next_props)) {
                 this.setState({
-                    showResults: false,
+                    showLastPage: false,
                 });
             }
         }
@@ -112,7 +113,7 @@ export default class GeneralLayout extends React.PureComponent {
                         return run.heat;
                     }
                     found = true;
-                    continue;
+                    break;
                 }
             }
             if (!found) {
@@ -137,6 +138,9 @@ export default class GeneralLayout extends React.PureComponent {
     checkCanFinish(props=null) {
         if (props === null) {
             props = this.props;
+        }
+        if (this.state.heat !== this.heats_count) {
+            return false;
         }
         function checkScoreIsBad(s) {
             return s.discipline_judge_id === props.disciplineJudge.id &&
@@ -166,8 +170,8 @@ export default class GeneralLayout extends React.PureComponent {
 
     handlePrevHeatClick = () => this.updateHeat(-1);
     handleNextHeatClick = () => this.updateHeat(1);
-    handleFinishClick = () => this.setState({ showResults: true });
-    handleReturnClick = () => this.setState({ showResults: false });
+    handleFinishClick = () => this.setState({ showLastPage: true });
+    handleReturnClick = () => this.setState({ showLastPage: false });
 
     checkRunConfirmed = (run) => {
         const score = this.scores.get(run.id);
@@ -175,11 +179,9 @@ export default class GeneralLayout extends React.PureComponent {
     };
 
     renderBody() {
-        if (this.state.showResults) {
+        if (this.state.showLastPage) {
             return (
-                <div className="body">
-                    <ResultsTable2 tour={ this.props.tour } />
-                </div>
+                <LastPage />
             );
         }
         return (
@@ -212,11 +214,11 @@ export default class GeneralLayout extends React.PureComponent {
         return (
             <div className="vftsarr-JudgeTablet GeneralLayout">
                 <Header
-                    canFinish={ !this.state.showResults && this.can_finish }
-                    canReturn={ this.state.showResults }
+                    canFinish={ !this.state.showLastPage && this.can_finish }
+                    canReturn={ this.state.showLastPage }
                     heat={ this.state.heat }
                     heatsCount={ this.heats_count }
-                    hideHeatsButtons={ this.state.showResults }
+                    hideHeatsButtons={ this.state.showLastPage }
                     judge={ this.props.disciplineJudge.judge }
                     maxHeat={ this.first_non_confirmed_heat }
                     tour={ this.props.tour }

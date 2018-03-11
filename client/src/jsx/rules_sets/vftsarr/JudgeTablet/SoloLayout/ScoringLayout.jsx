@@ -13,7 +13,7 @@ export default class ScoringLayout extends React.PureComponent {
             scoreData: PT.object.isRequired,
             tour: PT.shape({
                 scoring_system_name: PT.string.isRequired,
-            }).scoring_system_name,
+            }).isRequired,
             onScoreUpdate: PT.func.isRequired,
         };
     }

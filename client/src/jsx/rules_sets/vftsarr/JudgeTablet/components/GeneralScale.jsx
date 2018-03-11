@@ -7,7 +7,7 @@ export default class GeneralScale extends React.PureComponent {
         return {
             code: PT.any,
             header: PT.string,
-            scale: PT.oneOf(["point5", "integer", "grid", "reduction"]).isRequired,
+            scale: PT.oneOf(["number", "integer", "grid", "reduction"]).isRequired,
             onChange: PT.func.isRequired,
         };
     }

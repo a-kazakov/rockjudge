@@ -55,7 +55,7 @@ export default class TechScore extends React.PureComponent {
                     <p>{ _("score_parts.components.short.fall_down") }:</p>
                 </th>
                 <td>
-                    <p>{ formatScore(this.props.score.data.raw_data.mistakes, "$") }</p>
+                    <p>{ formatScore(this.props.score.data.raw_data.fall_down, "$") }</p>
                 </td>
             </tr>
         );
@@ -78,7 +78,7 @@ export default class TechScore extends React.PureComponent {
     renderCardsReasons() {
         const texts = getCardReasons(this.props.tour.scoring_system_name)
             .filter(cr => this.props.score.data.raw_data.card_reasons[cr])
-            .map(cr => _(`cards_reasons.short.${cr.toLowerCase()}`));
+            .map(cr => _(`card_reasons.short.${cr.toLowerCase()}`));
         if (texts.length === 0) {
             return null;
         }

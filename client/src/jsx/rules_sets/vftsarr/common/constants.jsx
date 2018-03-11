@@ -4,6 +4,7 @@ export const CRITERIAS_ORDER = new Map([
     "fw_man",
     "dance_figs",
     "composition",
+    "figures",
     "mistakes",
     "a1",
     "a2",
@@ -13,4 +14,4 @@ export const CRITERIAS_ORDER = new Map([
     "a6",
     "a7",
     "a8",
-].map((value, idx) => [value, idx]));
+].map((value, idx) => [value, idx + 1]));

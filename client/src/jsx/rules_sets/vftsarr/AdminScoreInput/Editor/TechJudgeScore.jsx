@@ -1,5 +1,9 @@
 import GeneralEditor from "./GeneralEditor"
-import genScale from "./genScale";
+import NumberBlock from "./GeneralEditor/blocks/NumberBlock";
+import SelectorBlock from "./GeneralEditor/blocks/SelectorBlock";
+import CardReasonsBlock from "./GeneralEditor/blocks/CardReasonsBlock";
+import TimeBlock from "./GeneralEditor/blocks/TimeBlock";
+import checkSS from "../../common/checkSS";
 
 export default class TechJudgeScore extends React.PureComponent {
     static get propTypes() {
@@ -7,12 +11,11 @@ export default class TechJudgeScore extends React.PureComponent {
         return {
             score: PT.shape({
                 data: PT.shape({
-                    raw_data: PT.shape({
-                        jump_steps: PT.number.isRequired,
-                        card: PT.oneOf(["OK", "YC", "RC"]),
-                        time: PT.number,
-                    }).isRequired,
+                    raw_data: PT.object.isRequired,
                 }).isRequired,
+            }).isRequired,
+            tour: PT.shape({
+                scoring_system_name: PT.string.isRequired,
             }).isRequired,
             readOnly: PT.bool.isRequired,
             onDiscard: PT.func.isRequired,
@@ -20,64 +23,67 @@ export default class TechJudgeScore extends React.PureComponent {
         };
     }
 
-    handleSubmission = (data) => {
-        this.props.onSubmit({
-            card:       data.card === "" ? null : data.card,
-            jump_steps: parseInt(data.jump_steps),
-        });
-    }
-
-    makeField(key, label, scale, read_only=false) {
-        const value = this.props.score.data.raw_data[key];
-        return {
-            key: key,
-            label: `${label}:`,
-            options: scale,
-            defaultValue: value === null ? "" : value.toString(),
-            readOnly: read_only,
+    renderFallDown() {
+        if (!checkSS(this.props.tour.scoring_system_name, "acro")) {
+            return null;
         }
-    }
-
-    pad(num, size) {
-        const s = `0000${num}`;
-        return s.substr(s.length - size);
-    }
-    getTime() {
-        let val = this.props.score.data.raw_data.time;
-        if (val === null) {
-            return "—"
-        }
-        let m = 0, s = 0;
-        m = Math.floor(val / 60);
-        val %= 60;
-        s = Math.floor(val);
-        return `${m}:${this.pad(s, 2)}`;
-    }
-
-    render() {
-        const time_field = (
-            this.props.score.data.raw_data.time === null
-                ? [["", "—"]]
-                : [[this.props.score.data.raw_data.time.toString(), this.getTime()]]
-        );
         return (
-            <GeneralEditor
-                fields={ [
-                    this.makeField("card", "C", [
-                        ["", "—"],
-                        ["OK", "OK"],
-                        ["YC", "YC"],
-                        ["RC", "RC"],
-                    ]),
-                    this.makeField("jump_steps", "JS", genScale("numbers", { max: 100 })),
-                    this.makeField("time", "T", time_field, true),
-                ] }
-                readOnly={ this.props.readOnly }
-                onDiscard={ this.props.onDiscard }
-                onSubmit={ this.handleSubmission }
+            <NumberBlock
+                field="fall_down"
+                label="FD"
+                max={ 100 }
             />
         );
     }
+    renderUndercount() {
+        if (!checkSS(this.props.tour.scoring_system_name, "formation")) {
+            return null;
+        }
+        return (
+            <NumberBlock
+                field="undercount"
+                label="UC"
+                max={ 100 }
+            />
+        );
+    }
+    render() {
+        return (
+            <GeneralEditor
+                initialData={ this.props.score.data.raw_data }
+                readOnly={ this.props.readOnly }
+                onDiscard={ this.props.onDiscard }
+                onSubmit={ this.props.onSubmit }
+            >
+                <NumberBlock
+                    field="jump_steps"
+                    label="BS"
+                    max={ 100 }
+                />
+                <TimeBlock
+                    nullable
+                    field="time"
+                    label="T"
+                />
+                { this.renderFallDown() }
+                { this.renderUndercount() }
+                <SelectorBlock
+                    nullable
+                    field="card"
+                    label="C"
+                    options={ [
+                        ["OK", "OK"],
+                        ["YC", "YC"],
+                        ["RC", "RC"],
+                    ] }
+                />
+                <CardReasonsBlock
+                    field="card_reasons"
+                    label="Card reasons"
+                    scoringSystemName={ this.props.tour.scoring_system_name }
+                />
+            </GeneralEditor>
+        );
+    }
 }
-
 

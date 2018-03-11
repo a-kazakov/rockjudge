@@ -49,6 +49,8 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
             return RunContextAcro
         if scoring_system_name == "simplified":
             return RunContextSimplified
+        if scoring_system_name in ("solo", "solo_rough", ):
+            return RunContextSolo
         return RunContextDance
 
     @classmethod
@@ -197,21 +199,31 @@ class RunContextDance(RunContextBase):
         )
 
 
+class RunContextSolo(RunContextBase):
+    def _scoring_criterias(self) -> Tuple[str, ...]:
+        return (
+            "fw",
+            "dance_figs",
+            "composition",
+            "mistakes",
+        )
+
+
 class RunContextAcroBase(RunContextBase):
     elements_count: int
     @abstractmethod
     def _elements_count(self) -> int:
         pass
 
-    mistakes: frac
-    def _mistakes(self) -> frac:
+    fall_down: frac
+    def _fall_down(self) -> frac:
         return safe_max(
-            s.counting_score["mistakes"]
+            s.counting_score["fall_down"]
             for s in self.scores_by_role["tech_judge"]
         )
 
     def _total_score(self) -> frac:
-        return super()._total_score() - frac(30 * self.mistakes)
+        return super()._total_score() - frac(30 * self.fall_down)
 
     def _scoring_criterias(self) -> Tuple[str, ...]:
         return (
@@ -238,6 +250,7 @@ class RunContextAmQual(RunContextAcro):
                 score_value *= frac(10, 13)
             result += score_value
         result += self.penalty
+        result -=  30 * self.fall_down
         return result
 
 

@@ -17,68 +17,40 @@ export default class FormationScore extends React.PureComponent {
                         dance_tech: PT.number,
                         dance_figs: PT.number,
                         impression: PT.number,
-                        mistakes: PT.number,
+                        small_mistakes: PT.number,
+                        big_mistakes: PT.number,
                     }).isRequired,
                 }).isRequired,
             }).isRequired,
         };
     }
 
+    renderRow(component, fmt="@") {
+        return (
+            <tr>
+                <th>
+                    <p>{ _(`score_parts.components.short.${component}`) }:</p>
+                </th>
+                <td>
+                    <p>{ formatScore(this.props.score.data.raw_data[component], fmt) }</p>
+                </td>
+            </tr>
+        )
+    }
     render() {
         return (
             <table className="score-breakdown"><tbody>
-                <tr>
-                    <th>
-                        <p>{ _("results.breakdown.dt") }:</p>
-                    </th>
-                    <td>
-                        <p>{ formatScore(this.props.score.data.raw_data.dance_tech, "@") }</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        <p>{ _("results.breakdown.df") }:</p>
-                    </th>
-                    <td>
-                        <p>{ formatScore(this.props.score.data.raw_data.dance_figs, "@") }</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        <p>{ _("results.breakdown.i")  }:</p>
-                    </th>
-                    <td>
-                        <p>{ formatScore(this.props.score.data.raw_data.impression, "@") }</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        <p>{ _("results.breakdown.m") }:</p>
-                    </th>
-                    <td className="mistakes">
-                        <p>{ formatScore(this.props.score.data.raw_data.mistakes) }</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        <p>{ _("results.breakdown.t")  }:</p>
-                    </th>
-                    <td className="total-score">
-                        <p>{ this.props.score.data.total_score }</p>
-                    </td>
-                </tr>
-                { this.props.additionalData
-                    ? (
-                        <tr>
-                            <th>
-                                <p>{ _("results.breakdown.p")  }:</p>
-                            </th>
-                            <td className="total-score">
-                                <p>{ this.props.additionalData.places[this.props.score.id] }</p>
-                            </td>
-                        </tr>
-                    ) : null
-                }
+                { this.renderRow("df_accuracy") }
+                { this.renderRow("df_difficulty") }
+                { this.renderRow("df_art") }
+                { this.renderRow("c_ideas") }
+                { this.renderRow("c_structure") }
+                { this.renderRow("c_bonus") }
+                { this.renderRow("fig_execution") }
+                { this.renderRow("fig_patterns") }
+                { this.renderRow("fig_transitions") }
+                { this.renderRow("small_mistakes", "$") }
+                { this.renderRow("big_mistakes", "$") }
             </tbody></table>
         );
     }

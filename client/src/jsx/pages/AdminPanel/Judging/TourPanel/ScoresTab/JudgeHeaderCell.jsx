@@ -42,7 +42,7 @@ export default class JudgeHeaderCell extends React.PureComponent {
         showConfirm(
             [
                 _("judging.confirms.confirm_all"),
-                `${_("global.phrases.judge_n", judge.number)}: ${judge.name}`,
+                `${judge.role_description || _("global.phrases.judge_n", judge.number)}: ${judge.name}`,
             ],
             () => {
                 Api("tour.confirm_all", {
@@ -59,7 +59,7 @@ export default class JudgeHeaderCell extends React.PureComponent {
         showConfirm(
             [
                 _("judging.confirms.unconfirm_all"),
-                `${_("global.phrases.judge_n", judge.number)}: ${judge.name}`,
+                `${judge.role_description || _("global.phrases.judge_n", judge.number)}: ${judge.name}`,
             ],
             () => {
                 Api("tour.unconfirm_all", {
@@ -76,7 +76,7 @@ export default class JudgeHeaderCell extends React.PureComponent {
         showConfirm(
             [
                 _("judging.confirms.reset_judge_scores"),
-                `${_("global.phrases.judge_n", judge.number)}: ${judge.name}`,
+                `${judge.role_description || _("global.phrases.judge_n", judge.number)}: ${judge.name}`,
             ],
             () => {
                 Api("tour.reset_judge_scores", {

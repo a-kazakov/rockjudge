@@ -6,7 +6,6 @@ import ConfirmationButton from "./ConfirmationButton";
 import AcroScore from "./AcroScore";
 import DanceScore from "./DanceScore";
 import FormationScore from "./FormationScore";
-import FormationAcroScore from "./FormationAcroScore";
 import SimplifiedScore from "./SimplifiedScore";
 import SoloScore from "./SoloScore";
 import HeadJudgeScore from "./HeadJudgeScore";
@@ -31,7 +30,7 @@ export default class Editor extends React.PureComponent {
     handleDiscardClick = (event) => {
         event.stopPropagation();
         this.props.onDiscard();
-    }
+    };
 
     renderWrongJudgeRoleMessage() {
         return (
@@ -54,6 +53,7 @@ export default class Editor extends React.PureComponent {
     renderBody(scoring_type) {
         const score_props = {
             score:     this.props.score,
+            tour:      this.props.tour,
             readOnly:  this.props.readOnly,
             onSubmit:  this.props.onSubmit,
             onDiscard: this.props.onDiscard,
@@ -68,12 +68,9 @@ export default class Editor extends React.PureComponent {
                 <DanceScore { ...score_props } />
             );
         case "formation":
-            return (
-                <FormationScore { ...score_props } />
-            );
         case "formation_acro":
             return (
-                <FormationAcroScore { ...score_props } />
+                <FormationScore { ...score_props } />
             );
         case "simplified":
             return (

@@ -100,7 +100,7 @@ export default function translate(src, ...args) {
                 "mark_not_performed": "Невыход на площадку",
                 "no_score": "Для этого захода не заведена карточка в системе.\nОбратитесь за помощью к администратору, ему необходимо пересоздать тур.",
                 "not_performing": "Не выступает",
-                "total_score": "Сумма баллов",
+                "total_score": "Итог",
                 "wrong_judge_role": "Для Вас неверно выбрана роль (например, судья акробатики в танцевальных дисциплинах).\nОбратитесь за помощью к администратору.",
             },
             "head_judge": {
@@ -186,7 +186,7 @@ export default function translate(src, ...args) {
             },
             "labels": {
                 "acro_score": "Результат акро",
-                "acro_score_shoer": "Акро",
+                "acro_score_short": "А",
                 "acrobatics": "Акробатика",
                 "acrobatics_verbose": "Акробатика (заявка/факт)",
                 "card": "Карточка",
@@ -239,7 +239,7 @@ export default function translate(src, ...args) {
                 "RC": "КК",
             },
         },
-        "cards_reasons": {
+        "card_reasons": {
             "long": {
                 "duration": "Недопустимая продолжительность программы",
                 "music": "Недопустимая фонограмма",
@@ -285,16 +285,23 @@ export default function translate(src, ...args) {
                     "fw_man": "ОХм",
                     "fw_woman": "ОХж",
                     "points": "Б",
-                    "df_accuracy": "Т",
-                    "df_difficulty": "Сл",
-                    "df_art": "Г",
-                    "c_ideas": "Ид",
-                    "c_structure": "П",
+                    "df_accuracy": "Точн",
+                    "df_difficulty": "Слож",
+                    "df_art": "Гарм",
+                    "c_ideas": "Идеи",
+                    "c_structure": "Пстн",
                     "c_bonus": "Бон",
-                    "fig_execution": "С",
-                    "fig_patterns": "Пос",
+                    "fig_execution": "Синх",
+                    "fig_patterns": "Пстр",
                     "fig_transitions": "Пер",
-                    "figures": "Ф",
+                    "figures": "ФФ",
+                },
+            },
+            "tech": {
+                "long": {
+                    "fall_down": "Падения",
+                    "time": "Время",
+                    "undercount": "Недостаток спортсменов",
                 },
             },
         },

@@ -63,7 +63,7 @@ export default class VerboseJudgeScore extends React.PureComponent {
         default:
             return (
                 <p className="text-center">
-                    { this.props.score.data.total_score.toFixed(2) }
+                    { this.props.score.data.total_score }
                 </p>
             );
         }

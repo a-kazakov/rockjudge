@@ -36,6 +36,27 @@
                 display: inline-block;
                 width: 49.99%;
                 vertical-align: top;
+                &.item-large {
+                    width: 100%;
+                    .score-label {
+                        text-align: left;
+                        display: block;
+                        width: auto;
+                    }
+                    .score-value {
+                        display: block;
+                        width: auto;
+                        .read-only {
+                            padding: 5px;
+                            height: auto;
+                            min-height: 16px;
+                            text-align: left;
+                            div {
+                                margin-bottom: 3px;
+                            }
+                        }
+                    }
+                }
                 .score-label {
                     padding: 5px;
                     width: 37.9%;
@@ -50,6 +71,21 @@
                     display: inline-block;
                     width: 62%;
                     font-weight: normal;
+                    label {
+                        .flex-row();
+                        color: white;
+                        text-align: left;
+                        margin-bottom: 5px;
+                        line-height: 1.1;
+                        .input {
+                            width: 25px;
+                            flex-grow: 0;
+                            flex-shrink: 0;
+                        }
+                        .text {
+                            flex-grow: 1;
+                        }
+                    }
                     select {
                         width: 100%;
                         border: none;

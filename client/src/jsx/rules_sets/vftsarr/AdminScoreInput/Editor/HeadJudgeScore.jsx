@@ -1,4 +1,7 @@
 import GeneralEditor from "./GeneralEditor"
+import NumberBlock from "./GeneralEditor/blocks/NumberBlock";
+import SelectorBlock from "./GeneralEditor/blocks/SelectorBlock";
+import CardReasonsBlock from "./GeneralEditor/blocks/CardReasonsBlock";
 
 export default class HeadJudgeScore extends React.PureComponent {
     static get propTypes() {
@@ -6,11 +9,11 @@ export default class HeadJudgeScore extends React.PureComponent {
         return {
             score: PT.shape({
                 data: PT.shape({
-                    raw_data: PT.shape({
-                        bonus: PT.number,
-                        card: PT.oneOf(["OK", "YC", "RC"]),
-                    }).isRequired,
+                    raw_data: PT.object.isRequired,
                 }).isRequired,
+            }).isRequired,
+            tour: PT.shape({
+                scoring_system_name: PT.string.isRequired,
             }).isRequired,
             readOnly: PT.bool.isRequired,
             onDiscard: PT.func.isRequired,
@@ -18,41 +21,36 @@ export default class HeadJudgeScore extends React.PureComponent {
         };
     }
 
-    handleSubmission = (data) => {
-        this.props.onSubmit({
-            card:     data.card,
-            nexttour: data.nexttour === "true",
-        });
-    };
-
-    makeField(key, label, scale) {
-        const value = this.props.score.data.raw_data[key];
-        return {
-            key: key,
-            label: `${label}:`,
-            options: scale,
-            defaultValue: value === null ? "" : value.toString(),
-        }
-    }
-
     render() {
         return (
             <GeneralEditor
-                fields={ [
-                    this.makeField("card", "C", [
+                initialData={ this.props.score.data.raw_data }
+                readOnly={ this.props.readOnly }
+                onDiscard={ this.props.onDiscard }
+                onSubmit={ this.props.onSubmit }
+            >
+                <NumberBlock
+                    field="bonus"
+                    label="B"
+                    max={ 10 }
+                    min={ -10 }
+                />
+                <SelectorBlock
+                    nullable
+                    field="card"
+                    label="C"
+                    options={ [
                         ["OK", "OK"],
                         ["YC", "YC"],
                         ["RC", "RC"],
-                    ]),
-                    this.makeField("nexttour", "NT", [
-                        ["false", "No"],
-                        ["true",  "Yes"],
-                    ]),
-                ] }
-                readOnly={ this.props.readOnly }
-                onDiscard={ this.props.onDiscard }
-                onSubmit={ this.handleSubmission }
-            />
+                    ] }
+                />
+                <CardReasonsBlock
+                    field="card_reasons"
+                    label="Card reasons"
+                    scoringSystemName={ this.props.tour.scoring_system_name }
+                />
+            </GeneralEditor>
         );
     }
 }

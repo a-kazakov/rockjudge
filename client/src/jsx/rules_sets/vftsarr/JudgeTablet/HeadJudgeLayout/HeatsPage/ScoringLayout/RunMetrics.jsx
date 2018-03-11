@@ -10,7 +10,7 @@ export default class RunMetrics extends React.PureComponent {
                     card: PT.oneOf(["OK", "YC", "RC"]),
                     card_reasons: PT.object,
                     mistakes: PT.number,
-                    undercount: PT.number,
+                    fall_down: PT.number,
                 }),
             }).isRequired,
             tour: PT.shape({
@@ -35,7 +35,7 @@ export default class RunMetrics extends React.PureComponent {
     renderCardReasons() {
         const texts = getCardReasons(this.props.tour.scoring_system_name)
             .filter(cr => this.props.run.verbose_total_score.card_reasons[cr])
-            .map(cr => _(`cards_reasons.short.${cr.toLowerCase()}`));
+            .map(cr => _(`card_reasons.short.${cr.toLowerCase()}`));
         if (texts.length === 0) {
             return null;
         }
@@ -71,8 +71,8 @@ export default class RunMetrics extends React.PureComponent {
         );
     }
     renderAcroFalldown() {
-        const mistakes = this.props.run.verbose_total_score.mistakes;
-        if (typeof mistakes === "undefined") {
+        const fall_down = this.props.run.verbose_total_score.fall_down;
+        if (typeof fall_down === "undefined") {
             return null;
         }
         return (
@@ -81,7 +81,7 @@ export default class RunMetrics extends React.PureComponent {
                     { _("tablet.head_judge.fall_down") }
                 </th>
                 <td>
-                    { mistakes }
+                    { fall_down }
                 </td>
             </tr>
         );

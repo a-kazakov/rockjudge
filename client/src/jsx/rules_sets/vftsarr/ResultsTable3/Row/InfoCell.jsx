@@ -48,14 +48,12 @@ export default class InfoCell extends React.PureComponent {
                     ).isRequired,
                     verbose_total_score: PT.shape({
                         card: PT.oneOf(["OK", "YC", "RC"]),
-                        previous_tour: PT.shape({
-                            primary_score: PT.number,
-                            secondary_score: PT.number,
-                        }),
-                        current_tour: PT.shape({
-                            primary_score: PT.number,
-                            secondary_score: PT.number,
-                        }),
+                        criterias_scores: PT.object,
+                        score_value: PT.number,
+                        acro_score: PT.number,
+                        fw_score: PT.number,
+                        undercount: PT.number,
+                        fall_down: PT.number,
                     }),
                 }).isRequired,
             }).isRequired,
@@ -89,7 +87,7 @@ export default class InfoCell extends React.PureComponent {
         const card = this.props.row.run.verbose_total_score.card;
         const texts = getCardReasons(this.props.tour.scoring_system_name)
             .filter(cr => this.props.row.run.verbose_total_score.card_reasons[cr])
-            .map(cr => _(`cards_reasons.long.${cr.toLowerCase()}`));
+            .map(cr => _(`card_reasons.long.${cr.toLowerCase()}`));
         let result = [];
         if (card === "OK") {
             return null;
@@ -124,6 +122,7 @@ export default class InfoCell extends React.PureComponent {
         const has_acro_overrides = this.props.row.run.acrobatics.some(
             element => element.score !== element.original_score
         );
+        const acro_cell_width = `${(100 / this.props.row.run.acrobatics.length)}%`;
         return (
             <div>
                 <p>
@@ -141,7 +140,7 @@ export default class InfoCell extends React.PureComponent {
                     <tbody>
                         <tr>
                             { this.props.row.run.acrobatics.map((acro, idx) =>
-                                <td key={ idx }>
+                                <td key={ idx } style={ { width: acro_cell_width } }>
                                     <p className="text-center">
                                         { acro.original_score.toFixed(1) }
                                     </p>
@@ -151,7 +150,7 @@ export default class InfoCell extends React.PureComponent {
                         { has_acro_overrides ? (
                             <tr>
                                 { this.props.row.run.acrobatics.map((acro, idx) =>
-                                    <td key={ idx }>
+                                    <td key={ idx } style={ { width: acro_cell_width } }>
                                         <p className="text-center">
                                             { acro.score.toFixed(1) }
                                         </p>
@@ -166,6 +165,9 @@ export default class InfoCell extends React.PureComponent {
     }
     renderAmClassFwScore() {
         if (this.props.tour.scoring_system_name !== "vftsarr.am_final_acro") {
+            return null;
+        }
+        if (this.props.row.run.status === "DQ") {
             return null;
         }
         const score = this.props.row.run.verbose_total_score.fw_score.toFixed(3);
@@ -231,6 +233,37 @@ export default class InfoCell extends React.PureComponent {
             </p>
         )
     }
+    renderUndercount() {
+        const need_fall_down = checkSS(this.props.tour.scoring_system_name, "formation") &&
+            this.props.row.run.verbose_total_score.undercount > 0;
+        if (!need_fall_down) {
+            return null;
+        }
+        return (
+            <p>
+                <strong>
+                    { `${_("score_parts.tech.long.undercount")}: ` }
+                </strong>
+                { this.props.row.run.verbose_total_score.undercount}
+            </p>
+        );
+    }
+    renderFallDown() {
+        const need_fall_down = checkSS(this.props.tour.scoring_system_name, "acro") &&
+            this.props.row.run.verbose_total_score.fall_down > 0;
+        if (!need_fall_down) {
+            return null;
+        }
+        return (
+            <p>
+                <strong>
+                    { `${_("score_parts.tech.long.undercount")}: ` }
+                </strong>
+                { this.props.row.run.verbose_total_score.fall_down}
+            </p>
+        );
+    }
+
     renderNextTourLabel() {
         if (this.props.tour.next_tour_id === null) {
             return null;
@@ -253,6 +286,8 @@ export default class InfoCell extends React.PureComponent {
                 { this.renderParticipantInfo() }
                 { this.renderCard() }
                 { this.renderAcroTable() }
+                { this.renderUndercount() }
+                { this.renderFallDown() }
                 { this.renderAmClassFwScore() }
                 { this.renderAmClassAcroScore() }
                 { this.renderTotalScore() }

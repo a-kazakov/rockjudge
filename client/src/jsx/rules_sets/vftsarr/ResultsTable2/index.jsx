@@ -77,12 +77,7 @@ export default class ResultsTable2 extends React.PureComponent {
     }
 
     render() {
-        // const show_total_score = !is_formation;
-        // const line_judges = this.props.tour.discipline.discipline_judges.filter(
-        //     dj => ["acro_judge", "dance_judge"].indexOf(dj.role) >= 0);
         const has_next_tour = this.props.tour.next_tour_id !== null;
-        // const widths = new ColumnsWidths(line_judges.length, show_total_score);
-        // const djs_map = new Map(this.props.tour.discipline.discipline_judges.map(dj => [dj.id, dj]));
         const table = makeTourResultsTable(this.props.tour);
         let rows = [];
         for (let idx = 0; idx < table.length; ++idx) {
@@ -115,7 +110,7 @@ export default class ResultsTable2 extends React.PureComponent {
                                     { _("results.labels.number") }
                                 </p>
                             </th>
-                            <th className="w-20">
+                            <th className="w-17">
                                 <p className="text-left">
                                     { _("results.labels.participant_name") }
                                 </p>
@@ -125,7 +120,7 @@ export default class ResultsTable2 extends React.PureComponent {
                                     { _("results.labels.criterias") }
                                 </p>
                             </th>
-                            <th className="w-7">
+                            <th className="w-11">
                                 <p className="text-center">
                                     { _("results.labels.total_score") }
                                 </p>

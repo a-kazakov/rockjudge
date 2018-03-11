@@ -33,6 +33,7 @@ export default class ScoringLayoutAcro extends React.PureComponent {
             scoreData: PT.shape({
                 mistakes: PT.number.isRequired,
             }).isRequired,
+            onScoreUpdate: PT.func.isRequired,
         };
     }
 
@@ -46,8 +47,8 @@ export default class ScoringLayoutAcro extends React.PureComponent {
             score: value,
         }).send();
     };
-    handleMistakesChange = (value) => {
-        this.props.onScoreUpdate("mistakes", value);
+    handleFallDownChange = (value) => {
+        this.props.onScoreUpdate("fall_down", value);
     };
 
     renderScoringLayout() {
@@ -89,8 +90,8 @@ export default class ScoringLayoutAcro extends React.PureComponent {
                         jumbo
                         sendDeltas
                         readOnly={ this.props.readOnly }
-                        value={ this.props.scoreData.mistakes }
-                        onChange={ this.handleMistakesChange }
+                        value={ this.props.scoreData.fall_down }
+                        onChange={ this.handleFallDownChange }
                     />
                 </div>
             </div>

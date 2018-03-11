@@ -22,7 +22,7 @@ export default class AcroScore extends React.PureComponent {
 
     render() {
         if (this.props.run.acrobatics.length === 0) {
-                return null;
+            return null;
         }
         return (
             <table className="score-breakdown"><tbody>

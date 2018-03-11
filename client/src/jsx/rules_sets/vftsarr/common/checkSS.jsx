@@ -10,6 +10,12 @@ const GROUPS = (function () {
             "am_final_acro",
             "formation_acro",
         ],
+        "acro_6": [
+            "am_final_acro",
+        ],
+        "acro_8": [
+            "formation_acro",
+        ],
         "rough": [
             "dance_rough",
             "solo_rough",

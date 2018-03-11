@@ -20,7 +20,7 @@ export default class Item extends React.PureComponent {
     render() {
         return (
             <CheckboxInput
-                label={ _(`cards_reasons.long.${this.props.reason.toLowerCase()}`) }
+                label={ _(`card_reasons.long.${this.props.reason.toLowerCase()}`) }
                 readOnly={ this.props.readOnly }
                 value={ this.props.selected }
                 onChange={ this.handleChange }

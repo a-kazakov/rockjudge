@@ -64,7 +64,7 @@ class Endpoints:
         if isinstance(context, RunContextFormation):
             result["verbose_run_score"]["undercount"] = int(context.undercount)
         if isinstance(context, RunContextAcroBase):
-            result["verbose_run_score"]["mistakes"] = int(context.mistakes)
+            result["verbose_run_score"]["fall_down"] = int(context.fall_down)
         return result
 
     def serialize_score(self, score_id, score_data, judge_role, acro_scores):

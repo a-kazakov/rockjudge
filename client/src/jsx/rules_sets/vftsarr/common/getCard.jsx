@@ -13,13 +13,17 @@ export default function getCard(run, tour, params={}) {
         p_class: "",
     }, params);
     if (run.status !== "OK") {
-        return "—";
+        return (
+            <p className="p-class">
+                —
+            </p>
+        );
     }
     const loc_prefix = verbose ? "long" : "short";
     const card = run.verbose_total_score.card;
     const texts = getCardReasons(tour.scoring_system_name)
         .filter(cr => run.verbose_total_score.card_reasons[cr])
-        .map(cr => _(`cards_reasons.${loc_prefix}.${cr.toLowerCase()}`));
+        .map(cr => _(`card_reasons.${loc_prefix}.${cr.toLowerCase()}`));
     let result = [];
     if (card === "OK") {
         result.push(

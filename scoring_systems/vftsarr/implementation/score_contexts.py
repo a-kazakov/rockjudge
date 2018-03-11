@@ -193,8 +193,8 @@ class ScoreContextSimplified(ScoreContextBase):
         "points": lambda x: frac(x["points"]),
     }
 
-    def _total_score(self):
-        return frac(int(self.counting_score["points"]))
+    def _total_score(self) -> Union[str, float, int, frac]:
+        return str(int(self.counting_score["points"]))
 
 
 class ScoreContextDance(ScoreContextBase):
@@ -231,8 +231,12 @@ class ScoreContextDance(ScoreContextBase):
     }
 
     def _total_score(self):
-        all_set = all(self.user_data[key] is not None for key in self.DEFAULT_SCORES.keys())
-        return "🗸" if all_set else "–"
+        num_set = sum(self.user_data[key] is not None for key in self.INITIAL_SCORES.keys())
+        if num_set <= sum(value is None for value in self.INITIAL_SCORES.values()):
+            return "–"
+        if num_set == len(self.DEFAULT_SCORES):
+            return "🗸"
+        return "..."
 
 
 class ScoreContextDanceRough(ScoreContextDance):
@@ -391,7 +395,7 @@ class ScoreContextFormation(ScoreContextBase):
         "fw": make_apply_reduction("fw"),
         "dance_figs": lambda x: float_to_frac(x["df_accuracy"] + x["df_difficulty"] + x["df_art"]) * frac(2),
         "composition": lambda x: float_to_frac(x["c_ideas"] + x["c_structure"] + x["c_bonus"]) * frac(3, 2),
-        "figures": lambda x: float_to_frac(x["c_ideas"] + x["c_structure"] + x["c_bonus"]) * frac(3, 2),
+        "figures": lambda x: float_to_frac(x["fig_execution"] + x["fig_patterns"] + x["fig_transitions"]) * frac(3, 2),
         "mistakes": make_combine_mistakes(small_mistakes=-2, big_mistakes=-10),
     }
 
@@ -430,27 +434,27 @@ class ScoreContextTechAcro(ScoreContextBase):
         "time": None,
         "card": "OK",
         "card_reasons": {key: False for key in get_all_card_reasons("base", "acro")},
-        "mistakes": 0,
+        "fall_down": 0,
     }
     INITIAL_SCORES = {
         "jump_steps": 0,
         "time": None,
         "card": "OK",
         "card_reasons": {key: False for key in get_all_card_reasons("base", "acro")},
-        "mistakes": 0,
+        "fall_down": 0,
     }
     SCORES_VALIDATORS = {
         "jump_steps": lambda x: type(x) is int and 0 <= x <= 100,
         "time": lambda x: x is None or type(x) is int and 0 <= x <= 24 * 60 * 60,
         "card": lambda x: x in ("OK", "YC", "RC",),
         "card_reasons": make_validate_card_reasons("base", "acro"),
-        "mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+        "fall_down": lambda x: type(x) is int and 0 <= x <= 100,
     }
 
     def _total_score(self):
         card = self.user_data["card"] or "—"
-        mistakes = self.user_data["mistakes"]
-        return f"{card}, {mistakes}"
+        fall_down = self.user_data["fall_down"]
+        return f"{card}, {fall_down}"
 
 
 class ScoreContextTechFormation(ScoreContextBase):
@@ -489,7 +493,7 @@ class ScoreContextTechFormationAcro(ScoreContextBase):
         "card": "OK",
         "card_reasons": {key: False for key in get_all_card_reasons("base", "acro", "formation")},
         "undercount": 0,
-        "mistakes": 0,
+        "fall_down": 0,
     }
     INITIAL_SCORES = {
         "jump_steps": 0,
@@ -497,7 +501,7 @@ class ScoreContextTechFormationAcro(ScoreContextBase):
         "card": "OK",
         "card_reasons": {key: False for key in get_all_card_reasons("base", "acro", "formation")},
         "undercount": 0,
-        "mistakes": 0,
+        "fall_down": 0,
     }
     SCORES_VALIDATORS = {
         "jump_steps": lambda x: type(x) is int and 0 <= x <= 100,
@@ -505,13 +509,14 @@ class ScoreContextTechFormationAcro(ScoreContextBase):
         "card": lambda x: x in ("OK", "YC", "RC",),
         "card_reasons": make_validate_card_reasons("base", "acro", "formation"),
         "undercount": lambda x: type(x) is int and 0 <= x <= 100,
-        "mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+        "fall_down": lambda x: type(x) is int and 0 <= x <= 100,
     }
 
     def _total_score(self):
         card = self.user_data["card"] or "—"
         missing = self.user_data["undercount"]
-        return f"{card}, {missing}"
+        fall_down = self.user_data["fall_down"]
+        return f"{card}, {missing}/{fall_down}"
 
 
 class ScoreContextHead(ScoreContextBase):
@@ -526,13 +531,20 @@ class ScoreContextHead(ScoreContextBase):
         "card_reasons": {key: False for key in get_all_card_reasons("base", "acro", "formation")},
     }
     SCORES_VALIDATORS = {
-        "nexttour": lambda x: type(x) is bool,
+        "bonus": lambda x: type(x) is int and -10 <= x <= 10,
         "card": lambda x: x in ("OK", "YC", "RC",),
         "card_reasons": make_validate_card_reasons("base", "acro", "formation"),
     }
 
     def _total_score(self):
-        return self.counting_score["card"]
+        result = self.counting_score["card"]
+        bonus = self.counting_score["bonus"]
+        if bonus != 0:
+            result += " / "
+            if bonus > 0:
+                result += "+"
+            result += str(bonus)
+        return result
 
 
 class ScoreContextNull(ScoreContextBase):
