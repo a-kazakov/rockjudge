@@ -53,7 +53,7 @@ def run(*cmd, **kwargs):
 
 
 def runpython(*cmd, **kwargs):
-    run(*(["py", "-3"] + list(cmd)), **kwargs)
+    run(*(["python"] + list(cmd)), **kwargs)
 
 
 def copyfiles(src, dest):
@@ -62,10 +62,7 @@ def copyfiles(src, dest):
 
 
 def jp(*parts):
-    res = parts[0]
-    for p in parts[1:]:
-        res = os.path.join(res, p)
-    return res
+    return os.path.join(*parts)
 
 
 HOME = os.getcwd()
@@ -96,21 +93,27 @@ def task_prepare_python_sources():
 
 def task_build_python_module(module):
     with task("Building module {}".format(module)):
-        with pushd(jp(SERVER_SRC_PATH, module)):
+        with pushd(module):
             runpython("_compile.py", "build_ext", "--inplace")
 
 
 @task("Building python sources")
 def task_build_all_python_modules():
-    with ProcessPoolExecutor(4) as p:
-        p.map(task_build_python_module, ["protection", "models", "scoring_systems", "webserver"])
+    with pushd(SERVER_SRC_PATH):
+        modules = [
+            root
+            for root, _dirs, files in os.walk(".")
+            if "_compile.py" in files
+        ]
+        with ProcessPoolExecutor(len(modules)) as p:
+            p.map(task_build_python_module, modules)
 
 
 @task("Bundling python modules")
 def task_bundle_python_modules():
     with pushd(SERVER_BUILD_PATH):
-        runpython(jp(HOME, "control", "internal", "make_exe_spec.py"))
-        runpython(jp(HOME, "external-tools", "pyinstaller", "pyinstaller.py"), "exe.spec")
+        runpython(jp(HOME, "control", "internal", "make_exe_spec.py"), SERVER_SRC_PATH)
+        run("pyinstaller", "exe.spec")
         run("robocopy", jp(SERVER_BUILD_PATH, "dist", "rockjudge"), jp(HOME, "dist", "data"), "/s", success_codes=(0, 1, 2, 3))
 
 
@@ -169,7 +172,7 @@ def task_build_print_server():
     os.makedirs(jp(HOME, "dist", "print_server"), exist_ok=True)
     shutil.copy(jp(HOME, "tools", "print.py"), PRINTER_BUILD_PATH)
     with pushd(PRINTER_BUILD_PATH):
-        runpython(jp(HOME, "external-tools", "pyinstaller", "pyinstaller.py"), "-F", jp(PRINTER_BUILD_PATH, "print.py"))
+        run("pyinstaller", "-F", jp(PRINTER_BUILD_PATH, "print.py"))
     shutil.copy(jp(PRINTER_BUILD_PATH, "dist", "print.exe"), jp(HOME, "dist", "print_server"))
     shutil.copy(jp(HOME, "tools", "print-config-sample.txt"), jp(HOME, "dist", "print_server", "print-config.txt"))
 

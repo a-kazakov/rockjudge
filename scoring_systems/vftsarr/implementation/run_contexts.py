@@ -5,8 +5,7 @@ from collections import defaultdict
 from fractions import Fraction as frac
 from typing import Any, DefaultDict, Dict, List, Tuple, Type, Union
 
-from scoring_systems.vftsarr.implementation.common import float_to_frac, get_scaled_median, safe_max
-from .common import CachedClass
+from .common import CachedClass, get_scaled_median, safe_max
 from .score_contexts import ScoreContextBase
 
 

@@ -8,8 +8,7 @@ class ApiLogItem(BaseModel):
     class Meta:
         order_by = ["id"]
         indexes = (
-            (("method"), False),
-            (("data"), False),
+            (("method", ), False),
         )
     time = peewee.DoubleField()
     latency = peewee.DoubleField()

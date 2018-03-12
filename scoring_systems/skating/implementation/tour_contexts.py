@@ -1,8 +1,8 @@
 from typing import Any, Dict, List
 
-from scoring_systems.skating.implementation.common import CachedClass
-from scoring_systems.skating.implementation.run_contexts import RunContextBase
-from scoring_systems.skating.types import JudgeRole, RunInfo, ScoringSystemName, TourName
+from .common import CachedClass
+from .run_contexts import RunContextBase
+from ..types import JudgeRole, RunInfo, ScoringSystemName, TourName
 
 
 class TourContextBase(CachedClass):

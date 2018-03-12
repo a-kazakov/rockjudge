@@ -14,7 +14,7 @@ from tornado.platform.asyncio import AsyncIOMainLoop
 # This should happen before any app imports
 AsyncIOMainLoop().install()
 
-import settings
+import settings  # noqa
 
 
 class Commands:
@@ -63,17 +63,6 @@ class Commands:
         with open(filename, "wt", encoding="utf-8") as f:
             json.dump(data, f, indent=2, sort_keys=True, ensure_ascii=False)
         print("Success.")
-
-    @staticmethod
-    def replay(filename):
-        from api import Api
-        from webserver.websocket import WsMessage
-        from app import ModelManager
-        ModelManager.instance().reset()
-        with open(filename, "rt", encoding="utf-8") as f:
-            log = json.load(f)
-        for cmd in log:
-            Api.call(cmd["method"], cmd["request"], WsMessage())
 
 
 if __name__ == "__main__":

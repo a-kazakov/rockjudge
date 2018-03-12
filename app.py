@@ -60,7 +60,8 @@ class ModelManager:
         while len(q) > 0:
             model = q.popleft()
             try:
-                model.create_table(True)
+                with Database.instance().db.transaction():
+                    model.create_table(True)
                 to_kill = len(q)
             except Exception as ex:
                 latest_ex = ex

@@ -1,8 +1,8 @@
 from typing import Any, List, Tuple, Type, Optional
 
-from scoring_systems.skating.implementation.common import CachedClass, JUDGE_ROLES
-from scoring_systems.skating.implementation.score_contexts import ScoreContextBase
-from scoring_systems.skating.types import (
+from .common import CachedClass, JUDGE_ROLES
+from .score_contexts import ScoreContextBase
+from ..types import (
     AcroScore,
     JudgeRole,
     RunId,

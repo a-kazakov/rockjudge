@@ -1,7 +1,7 @@
 import itertools
 from abc import ABCMeta, abstractmethod
 from fractions import Fraction as frac
-from typing import Any, Callable, Dict, Iterable, Set, Union
+from typing import Any, Callable, Dict, Set, Union
 
 from .common import CachedClass, float_to_frac
 

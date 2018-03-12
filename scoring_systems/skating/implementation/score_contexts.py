@@ -1,8 +1,8 @@
 from fractions import Fraction as frac
 from typing import Any, Callable, Dict, List, Type, Optional
 
-from scoring_systems.skating.implementation.common import CachedClass
-from scoring_systems.skating.types import JudgeRole, ScoreId, ScoreRawData, ScoringSystemName, TotalScoreType, AcroScore
+from .common import CachedClass
+from ..types import JudgeRole, ScoreId, ScoreRawData, ScoringSystemName, TotalScoreType, AcroScore
 
 
 def float_to_frac(value: float) -> frac:
