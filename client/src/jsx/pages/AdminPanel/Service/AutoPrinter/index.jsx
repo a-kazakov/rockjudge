@@ -71,6 +71,13 @@ export default class AutoPrinter extends LoadingComponent {
         );
     };
 
+    handlePrintAllDocs = () => {
+        showConfirm(
+            _("admin.auto_printer.confirm_print_all_docs"),
+            this.printAllDocs
+        );
+    };
+
     getToursFromCompetition(competition) {
         let result = [];
         for (const discipline of competition.disciplines) {
@@ -134,10 +141,26 @@ export default class AutoPrinter extends LoadingComponent {
         for (const discipline of this.state.competition.disciplines) {
             let tour = Object.assign({}, discipline.tours[0]);
             tour.discipline = discipline;
-            if (!tour || !this.state.actions[tour.id] || !this.state.actions[tour.id]["heats"]) {
+            if (!this.state.actions[tour.id] || !this.state.actions[tour.id]["heats"]) {
                 continue;
             }
             this.doTheJob(tour, "heats", this.state.actions[tour.id]["heats"], false);
+        }
+        this._queue.submitJobs();
+    };
+
+    printAllDocs = () => {
+        for (const discipline of this.state.competition.disciplines) {
+            let tour = Object.assign({}, discipline.tours[0]);
+            tour.discipline = discipline;
+            if (!this.state.actions[tour.id]) {
+                continue;
+            }
+            for (const action of this.POSSIBLE_ACTIONS) {
+                if (this.state.actions[tour.id][action]) {
+                    this.doTheJob(tour, action, this.state.actions[tour.id][action], false);
+                }
+            }
         }
         this._queue.submitJobs();
     };
@@ -184,6 +207,12 @@ export default class AutoPrinter extends LoadingComponent {
                                 onClick={ this.handlePrintFirstToursHeats }
                             >
                                 { _("admin.auto_printer.print_fitst_tours_heats") }
+                            </button>
+                            <button
+                                type="button"
+                                onClick={ this.handlePrintAllDocs }
+                            >
+                                { _("admin.auto_printer.print_all_docs") }
                             </button>
                         </div>
                     </div>

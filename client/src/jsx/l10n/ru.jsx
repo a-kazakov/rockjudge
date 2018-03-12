@@ -42,11 +42,13 @@ export default function translate(src, ...args) {
                 ),
             },
             "auto_printer": {
+                "confirm_print_all_docs": "Напечатать всю отмеченную документацию?",
                 "confirm_print_first_tours_heats": "Напечатать заходы первых туров?",
                 "confirm_print_test_page": "Напечатать тестовую страницу?",
                 "discipline": "Дисциплина",
                 "discipline_results": "Результаты дисциплины",
                 "heats": "Заходы",
+                "print_all_docs": "Печать всей выбранной документации",
                 "print_fitst_tours_heats": "Печать заходов первых туров",
                 "print_test_page": "Печать тестовой страницы",
                 "queue": "Очередь печати",
