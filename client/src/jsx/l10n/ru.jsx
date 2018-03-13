@@ -542,7 +542,7 @@ export default function translate(src, ...args) {
                     </span>
                 ),
                 "pending_access_request": "Ожидается авторизация устройства ...",
-                "single_judge_access": "Данный планшет авторизован для работы от имени следующего судьи",
+                "single_judge_access": "Этот планшет авторизован для работы от имени следующего судьи",
                 "no_competitions": "Нет активных соревнований",
             },
             "roles": {

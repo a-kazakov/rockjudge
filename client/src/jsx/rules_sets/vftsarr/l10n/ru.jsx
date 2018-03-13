@@ -277,6 +277,7 @@ export default function translate(src, ...args) {
                     "fall_down": "Пад",
                     "undercount": "Нед",
                     "big_mistakes": "БО",
+                    "card": "Карт",
                     "composition": "К",
                     "dance_figs": "ТФ",
                     "mistakes": "Ош",

@@ -118,6 +118,14 @@ export default class TechScore extends React.PureComponent {
                 </tr>
                 { this.renderFallDowns() }
                 { this.renderUndercount() }
+                <tr>
+                    <th>
+                        <p>{ _("score_parts.components.short.card") }:</p>
+                    </th>
+                    <td>
+                        <p>{ _(`cards.short.${this.props.score.data.raw_data.card}`) }</p>
+                    </td>
+                </tr>
                 { this.renderCardsReasons() }
             </tbody></table>
         );
