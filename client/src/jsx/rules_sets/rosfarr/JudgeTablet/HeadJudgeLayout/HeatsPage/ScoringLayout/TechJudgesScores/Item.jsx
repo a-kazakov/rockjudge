@@ -49,7 +49,7 @@ export default class Item extends React.PureComponent {
         );
     }
     getClassName() {
-        const total_score = this.props.score ? this.props.score.data.total_score : 0;
+        const total_score = this.props.score?.data.total_score || "–";
         return makeClassName({
             "confirmed": this.props.score && this.props.score.confirmed,
             "green": total_score === "OK",

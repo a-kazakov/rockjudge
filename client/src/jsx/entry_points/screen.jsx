@@ -1,4 +1,4 @@
-import "babel-polyfill";
+import "@babel/polyfill";
 import "common/error_handler";
 
 import Screen from "pages/Screen";

@@ -62,7 +62,7 @@ export default class HeatsTableItem extends React.PureComponent {
                     if (run.status !== "OK") {
                         return this.renderScore(null, null);
                     }
-                    const score = run.scores.find(s => s && s.discipline_judge_id === this.props.disciplineJudge.id);
+                    const score = run.scores.find(s => s?.discipline_judge_id === this.props.disciplineJudge.id);
                     if (typeof score === "undefined") {
                         return this.renderScore(null, null);
                     }
@@ -85,7 +85,7 @@ export default class HeatsTableItem extends React.PureComponent {
                     if (run.status !== "OK") {
                         return this.renderNote(null, null);
                     }
-                    const score = run.scores.find(s => s && s.discipline_judge_id === this.props.disciplineJudge.id);
+                    const score = run.scores.find(s => s?.discipline_judge_id === this.props.disciplineJudge.id);
                     if (typeof score === "undefined") {
                         return this.renderNote(null, null);
                     }
@@ -129,7 +129,7 @@ export default class HeatsTableItem extends React.PureComponent {
                     if (run.status !== "OK") {
                         return this.renderNotePic(null, null);
                     }
-                    const score = run.scores.find(s => s && s.discipline_judge_id === this.props.disciplineJudge.id);
+                    const score = run.scores.find(s => s?.discipline_judge_id === this.props.disciplineJudge.id);
                     if (typeof score === "undefined") {
                         return this.renderNotePic(null, null);
                     }

@@ -88,11 +88,11 @@ export default class Row extends React.PureComponent {
             const score = scores_map.get(discipline_judge.id);
             return (
                 <ScoreCell
-                    confirmed={ score && score.confirmed }
+                    confirmed={ score?.confirmed || false }
                     disciplineJudge={ discipline_judge }
                     editing={ this.props.nowEditing.type === "score" &&
-                              this.props.nowEditing.score_id === (score && score.id) }
-                    key={ (score && score.id) ||  `I${idx}` }
+                              this.props.nowEditing.score_id === score?.id }
+                    key={ score?.id ||  `I${idx}` }
                     readOnly={ this.props.readOnly }
                     score={ score }
                     tour={ this.props.tour }

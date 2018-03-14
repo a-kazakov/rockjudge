@@ -165,7 +165,7 @@ export default class GeneralLayout extends React.PureComponent {
 
     checkRunConfirmed = (run) => {
         const score = this.scores.get(run.id);
-        return run.status !== "OK" || (score && score.confirmed);
+        return run.status !== "OK" || score?.confirmed;
     }
 
     renderBody() {

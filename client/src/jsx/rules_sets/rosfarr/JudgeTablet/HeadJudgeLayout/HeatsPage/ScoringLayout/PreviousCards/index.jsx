@@ -19,7 +19,9 @@ export default class PreviousCards extends React.PureComponent {
 
     render() {
         if (!this.props.run.inherited_data.cards || this.props.run.inherited_data.cards.length === 0) {
-            return <div />;
+            return (
+                <div />
+            );
         }
         return (
             <div>

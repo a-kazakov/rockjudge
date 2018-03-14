@@ -70,7 +70,7 @@ export default class TourPanel extends LoadingComponent {
     }
 
     getDefaultPage(tour) {
-        return (tour && tour.finalized)
+        return tour?.finalized
             ? "results-1"
             : "tour-admin";
     }

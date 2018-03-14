@@ -31,7 +31,7 @@ export default class QualificationSimpleLayout extends React.PureComponent {
     render() {
         const scores = this.props.tour.runs
             .filter(run => run.status === "OK")
-            .map(run => run.scores.find(score => score && score.discipline_judge_id === this.props.disciplineJudge.id))
+            .map(run => run.scores.find(score => score?.discipline_judge_id === this.props.disciplineJudge.id))
             .filter(score => score);  // Case if score not found
         const crosses = scores.filter(score => score.data.raw_data.cross).length;
 

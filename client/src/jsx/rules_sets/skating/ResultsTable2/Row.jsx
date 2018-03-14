@@ -89,7 +89,7 @@ export default class Row extends React.PureComponent {
     renderJudgesScores() {
         const scores_map = new Map(this.props.row.run.scores.map(score => [score.discipline_judge_id, score]));
         return this.props.lineDisciplineJudges.map((dj, idx) =>
-            <td key={ dj ? dj.id : `I${idx}` }>
+            <td key={ dj?.id || `I${idx}` }>
                 { this.renderScore(dj, scores_map.get(dj.id)) }
             </td>
         );
