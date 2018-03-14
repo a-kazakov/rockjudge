@@ -213,14 +213,14 @@ export default class TechAcroLayout extends React.PureComponent {
     handleFinishClick = () => this.setState({ showLastPage: true });
     handleReturnClick = () => this.setState({ showLastPage: false });
 
-    handleScoreUpdate = (key, value) => {
+    handleScoreUpdate = (key, value, force=false) => {
         if (this.current_score.confirmed) {
             return;
         }
         const score_data = key === null
             ? value
             : {[key]: value};
-        this.props.onScoreUpdate(this.current_score.id, score_data);
+        this.props.onScoreUpdate(this.current_score.id, score_data, force);
     };
 
     handleJudgingPositionSelected = (judgingPosition) => {

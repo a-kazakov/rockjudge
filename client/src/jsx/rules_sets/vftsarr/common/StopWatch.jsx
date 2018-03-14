@@ -21,11 +21,15 @@ export default class StopWatch extends React.PureComponent {
         }
     }
 
+    static now() {
+        return (new Date()).getTime();
+    }
+
     constructor(props) {
         super(props);
         let state = stopwatches[this.props.stopwatchId] || {
             active: false,
-            value: 0,
+            value: props.value !== null ? props.value * 1000 : 0,
             interval: null,
         };
         if (state.active) {
@@ -34,44 +38,68 @@ export default class StopWatch extends React.PureComponent {
         this.state = state;
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (this.state.active && nextProps.readOnly) {
+            this.stop(true);
+        }
+        if (!this.state.active && nextProps.value !== this.flooredStateValue()) {
+            this.setState({ value: nextProps.value * 1000 });
+        }
+    }
+
     componentWillUnmount() {
         clearInterval(this.state.interval);
         stopwatches[this.props.stopwatchId] = this.state;
     }
 
-    now() {
-        return (new Date()).getTime();
+    isSynchronized() {
+        return !this.active && this.flooredStateValue() === this.props.value;
+    }
+    flooredStateValue() {
+        return Math.floor(this.state.value / 1000)
     }
 
     start() {
         this.setState({
             active: true,
-            start_at: this.now() - this.state.value,
+            start_at: this.constructor.now() - this.state.value,
             interval: setInterval(this.handleTick, 10),
         });
     }
-    stop() {
+    stop(force_submit=false) {
         clearInterval(this.state.interval);
+        this.submitValue(this.value(), force_submit);
         this.setState({
             active: false,
             value: this.value(),
         });
     }
+    submitValue(value) {
+        let floored_value = Math.floor(value / 1000);
+        if (floored_value === 0) {
+            floored_value = null;
+        }
+        this.props.onChange(floored_value, true);
+    }
 
     handleToggle = () => {
+        if (this.props.readOnly) {
+            return;
+        }
         if (this.state.active) {
             this.stop();
         } else {
             this.start();
         }
-    }
+    };
     handleReset = () => {
         clearInterval(this.state.interval);
         this.setState({
             active: false,
             value: 0,
         });
-    }
+        this.submitValue(0);
+    };
     handleTick = () => {
         const new_value = this.value();
         if (new_value !== this.state.value) {
@@ -79,35 +107,25 @@ export default class StopWatch extends React.PureComponent {
                 value: this.value(),
             });
         }
-    }
+    };
     modStart(delta) {
+        const next_value = Math.max(0, this.state.value + 1000 * delta);
         this.setState({
-            start_at: Math.min(this.state.start_at - 1000 * delta, this.now()),
-            value: Math.max(0, this.state.value + 1000 * delta),
+            start_at: Math.min(this.state.start_at - 1000 * delta, this.constructor.now()),
+            value: next_value,
         });
-    }
-    handleMinus10 = () => this.modStart(-10)
-    handleMinus1 = () => this.modStart(-1)
-    handlePlus1 = () => this.modStart(1)
-    handlePlus10 = () => this.modStart(10)
-
-    handleTimeSubmission = () => {
-        if (this.props.readOnly) {
-            return;
+        if (!this.state.active) {
+            this.submitValue(next_value);
         }
-        this.props.onChange(Math.floor(this.state.value / 1000));
     }
-
-    handleTimeDiscard = () => {
-        if (this.props.readOnly) {
-            return;
-        }
-        this.props.onChange(null);
-    }
+    handleMinus10 = () => this.modStart(-10);
+    handleMinus1 = () => this.modStart(-1);
+    handlePlus1 = () => this.modStart(1);
+    handlePlus10 = () => this.modStart(10);
 
     value() {
         return this.state.active
-            ? (this.now() - this.state.start_at)
+            ? (this.constructor.now() - this.state.start_at)
             : this.state.value;
     }
 
@@ -169,7 +187,7 @@ export default class StopWatch extends React.PureComponent {
                 >
                     &minus;1
                 </button>
-                <div className="time">
+                <div className={ makeClassName({"time": true, "synchronized": this.isSynchronized()}) }>
                     { this.getStrValue() }
                 </div>
                 <button
@@ -184,23 +202,6 @@ export default class StopWatch extends React.PureComponent {
                 >
                     +10
                 </button>
-                <button
-                    className="tbtn btn-submit-time"
-                    { ...onTouchOrClick(this.handleTimeSubmission) }
-                >
-                    { _("tablet.buttons.submit_time") }
-                </button>
-                { this.props.value === null ? null : (
-                    <button
-                        className="tbtn btn-discard-time"
-                        { ...onTouchOrClick(this.handleTimeDiscard) }
-                    >
-                        { _("tablet.buttons.discard_time") }
-                    </button>
-                ) }
-                <div className="server-time">
-                    { _("tablet.tech_judge.server_time", this.props.value === null ? null : this.getStrValue(this.props.value * 1000)) }
-                </div>
             </div>
         )
     }

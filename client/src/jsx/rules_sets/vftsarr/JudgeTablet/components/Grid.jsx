@@ -1,3 +1,5 @@
+import makeClassName from "../../../../lib/common/makeClassName";
+
 export default class Grid extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
@@ -37,7 +39,7 @@ export default class Grid extends React.PureComponent {
         this.asym_layout = this.two_rows && this.children.length % 2 === 0;
     }
 
-    renderRow(elements, is_second_row) {
+    renderRow(elements, is_second_row, is_compact) {
         if (elements === null) {
             return null;
         }
@@ -52,7 +54,7 @@ export default class Grid extends React.PureComponent {
         }
         return (
             <table className={ class_name } style={ { width: row_width } }><tbody>
-                <tr>
+                <tr className={ makeClassName({"compact-row": is_compact}) }>
                     { elements.map((e, idx) =>
                         <td
                             className="item"
@@ -75,10 +77,12 @@ export default class Grid extends React.PureComponent {
         const second_row = this.two_rows
             ? this.children.filter((x, idx) => idx % 2 === 1)
             : null;
+        const max_row_size = Math.max(first_row.length, second_row?.length || 0);
+        const is_compact = max_row_size >= 3;
         return (
             <div className={ class_name } style={ { maxWidth: this.max_width } }>
-                { this.renderRow(first_row, false) }
-                { this.renderRow(second_row, true) }
+                { this.renderRow(first_row, false, is_compact) }
+                { this.renderRow(second_row, true, is_compact) }
             </div>
         )
     }

@@ -3,40 +3,24 @@
 
 .stopwatch {
     width: 100%;
+    margin-bottom: 10px;
     .time {
         line-height: 31px;
         vertical-align: middle;
         text-align: center;
-        font-weight: bold;
+        font-weight: normal;
         font-size: 16px;
         width: 40%;
         margin-bottom: 2px;
         display: inline-block;
     }
-    .server-time {
+    .btn-toggle, .btn-reset, .btn-ctl {
         vertical-align: middle;
-        text-align: center;
-        line-height: @server-time-height;
-        width: 100%;
-        margin-top: 5px;
-        margin-bottom: 10px;
+        width: ~"calc(50% - 2px)";
         display: inline-block;
     }
     .btn-ctl {
-        vertical-align: middle;
         width: ~"calc(15% - 2px)";
-        display: inline-block;
-    }
-    .btn-toggle, .btn-reset {
-        vertical-align: middle;
-        width: ~"calc(50% - 2px)";
-        display: inline-block;
-    }
-    .btn-submit-time, .btn-discard-time {
-        margin-bottom: 15px;
-        vertical-align: middle;
-        width: ~"calc(50% - 2px)";
-        display: inline-block;
     }
     &.read-only {
         .tbtn:not(.ignore-readonly) {
@@ -45,13 +29,10 @@
         }
     }
     button.tbtn {
-        .button-tablet-primary();
+         .button-tablet-primary();
          margin: 1px;
          height: @jumbo-size !important;
          font-size: 14px !important;
-    }
-    .tbtn.btn-discard-time {
-        .button-tablet-red();
     }
     .tbtn.btn-toggle {
         .button-tablet-green();
@@ -61,43 +42,74 @@
     }
 }
 
-.jump-steps-timing {
+.dance-part {
     .flex-row();
-    .jump-steps {
-        margin-left: 15px;
-        width: 100px;
-        flex-grow: 0;
-        flex-shrink: 0;
-        .IntegerInput {
-            display: flex;
-            flex-direction: column-reverse;
-            button, div {
-                width: 100%;
-            }
-            div.value {
-                height: (@jumbo-size + @server-time-height) / 2;
-                line-height: (@jumbo-size + @server-time-height) / 2;
-            }
-            button {
-                &:last-child {
-                    height: (2 * @jumbo-size) + 1;
-                }
-                &:not(:last-child) {
-                    height: (@jumbo-size + @server-time-height) / 2;
-                }
-                font-size: 150%;
-            }
-        }
-    }
-    .timing {
+    flex-direction: row-reverse;
+    .main-part{
         flex-grow: 1;
     }
+    .side-part {
+        margin-left: 15px;
+        flex-grow: 0;
+        flex-shrink: 0;
+        width: 100px
+    }
 }
-.item:not(:last-child) .jump-steps-timing {
+
+.item:not(:last-child) .dance-part {
     flex-direction: row-reverse;
-    .jump-steps {
+    .side-part {
         margin-left: 0;
         margin-right: 15px;
+    }
+}
+
+@media (max-width: 1000px) {
+    .compact-row {
+        .dance-part {
+            display: block;
+        }
+        .side-part {
+            margin: 0 !important;
+            width: auto;
+            .IntegerInput {
+                display: block;
+                button, div {
+                    width: ~'calc(33.3% - 2px)';
+                    height: @jumbo-size !important;
+                    font-size: 100%;
+                }
+                div.value {
+                    height: (@jumbo-size + @server-time-height) / 2;
+                    line-height: (@jumbo-size + @server-time-height) / 2;
+                }
+            }
+        }
+
+    }
+}
+
+.side-part {
+    .IntegerInput {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: stretch;
+        button, div {
+            width: 100%;
+        }
+        div.value {
+            height: (@jumbo-size + @server-time-height) / 2;
+            line-height: (@jumbo-size + @server-time-height) / 2;
+        }
+        button {
+            &:last-child {
+                height: (2 * @jumbo-size) + 1;
+            }
+            &:not(:last-child) {
+                height: (@jumbo-size + @server-time-height) / 2;
+            }
+            font-size: 150%;
+        }
     }
 }
 
@@ -110,7 +122,7 @@
     .dance-section {
         flex-grow: 0;
         flex-shrink: 0;
-        width: 400px;
+        width: 430px;
         border-left: 2px solid black;
         padding: 10px;
     }

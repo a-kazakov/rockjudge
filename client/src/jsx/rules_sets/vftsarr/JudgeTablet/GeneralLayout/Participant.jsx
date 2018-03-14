@@ -29,14 +29,14 @@ export default class Participant extends React.PureComponent {
         };
     }
 
-    handleScoreUpdate = (key, value) => {
-        if (this.props.score.confirmed) {
+    handleScoreUpdate = (key, value, force=false) => {
+        if (this.props.score.confirmed && !force) {
             return;
         }
         const score_data = key === null
             ? value
             : {[key]: value};
-        this.props.onScoreUpdate(this.props.score.id, score_data);
+        this.props.onScoreUpdate(this.props.score.id, score_data, force);
     };
 
     renderScoringLayout() {

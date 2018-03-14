@@ -72,7 +72,7 @@ export default class Item extends React.PureComponent {
             };
         return (
             <td className={ this.getClassName() }>
-                { this.props.score && this.props.score.data.raw_data.card
+                { this.props.score.data.raw_data.card
                     ? cards[this.props.score.data.raw_data.card]
                     : "—" }
                 { this.renderVerboseScore() }

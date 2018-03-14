@@ -34,12 +34,12 @@ export default class JudgeTablet extends React.PureComponent {
         "tech": TechLayout,
     };
 
-    handleScoreUpdate = (score_id, new_score) => {
-        const request = {
+    handleScoreUpdate = (score_id, new_score, force=false) => {
+        const data = {
             score_data: new_score,
             force: false,
         };
-        Api("score.set", { score_id: score_id, data: request }).send();
+        Api("score.set", {score_id, data, force}).send();
     };
     handleHeatConfirm = (heat) => {
         Api("tour.confirm_heat", {
