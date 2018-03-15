@@ -282,7 +282,7 @@ class ScoreContextSolo(ScoreContextBase):
         "big_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
     }
     CRITERIAS_MODIFIERS = {
-        "fw": make_apply_reduction("fw"),
+        "fw": make_apply_reduction("fw", max_value=20),
         "dance_figs": make_multiply("dance_figs", frac(5, 2)),
         "composition": make_multiply("composition", frac(2)),
         "mistakes": make_combine_mistakes(small_mistakes=-5, big_mistakes=-30),
@@ -399,7 +399,7 @@ class ScoreContextFormation(ScoreContextBase):
         "fw": make_apply_reduction("fw"),
         "dance_figs": lambda x: float_to_frac(x["df_accuracy"] + x["df_difficulty"] + x["df_art"]) * frac(2),
         "composition": lambda x: float_to_frac(x["c_ideas"] + x["c_structure"] + x["c_bonus"]) * frac(3, 2),
-        "figures": lambda x: float_to_frac(x["fig_execution"] + x["fig_patterns"] + x["fig_transitions"]) * frac(3, 2),
+        "figures": lambda x: float_to_frac(x["fig_execution"] + x["fig_patterns"] + x["fig_transitions"]) * frac(2),
         "mistakes": make_combine_mistakes(small_mistakes=-2, big_mistakes=-10),
     }
 

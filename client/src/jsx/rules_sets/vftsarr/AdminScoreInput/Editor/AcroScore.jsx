@@ -29,14 +29,14 @@ export default class DanceScore extends React.PureComponent {
                 initialData={ this.props.score.data.raw_data }
                 readOnly={ this.props.readOnly }
                 onDiscard={ this.props.onDiscard }
-                onSubmit={ this.handleSubmission }
+                onSubmit={ this.props.onSubmit }
             >
                 { range(1, acro_count + 1).map(idx => (
                     <ReductionBlock
                         nullable
                         field={ `a${idx}` }
                         key={ idx }
-                        label={ `A1${idx}` }
+                        label={ `A${idx}` }
                     />
                 )) }
             </GeneralEditor>

@@ -70,7 +70,7 @@ export default class FormationScore extends React.PureComponent {
                 />
                 <NumberBlock
                     nullable
-                    field="c_bunos"
+                    field="c_bonus"
                     label="C-B"
                     max={ 1 }
                     step={ 0.5 }
