@@ -197,9 +197,7 @@ class Api:
     def score_set(cls, request):
         score = cls.get_model(Score, "score_id", request)
         judge = score.discipline_judge.judge
-        access_levels = ("admin", )
-        if not request.body.get("force", False):
-            access_levels += ("any_judge", "judge_{}".format(judge.id), )
+        access_levels = ("admin", "any_judge", "judge_*", )
         check_auth(
             competition_id=judge.competition_id,
             request=request,

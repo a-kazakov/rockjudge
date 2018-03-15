@@ -28,20 +28,20 @@ export default class ScoreCell extends React.PureComponent {
             type: "score",
             score_id: this.props.score.id,
         });
-    }
+    };
 
     handleSubmission = (data) => {
         let request = {
             score_data: data,
             force: true,
-        }
+        };
         Api("score.set", {
             score_id: this.props.score.id,
             data: request,
         })
             .onSuccess(this.props.onStopEditing)
             .send();
-    }
+    };
     handleConfirmationToggle = () => {
         if (this.props.score.confirmed) {
             Api("score.unconfirm", {
@@ -54,7 +54,7 @@ export default class ScoreCell extends React.PureComponent {
             })
                 .send();
         }
-    }
+    };
 
     getClasssName() {
         let result = "judge rules-set";

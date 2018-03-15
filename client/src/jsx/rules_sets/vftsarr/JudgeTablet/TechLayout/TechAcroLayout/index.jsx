@@ -214,7 +214,7 @@ export default class TechAcroLayout extends React.PureComponent {
     handleReturnClick = () => this.setState({ showLastPage: false });
 
     handleScoreUpdate = (key, value, force=false) => {
-        if (this.current_score.confirmed) {
+        if (this.current_score.confirmed && !force) {
             return;
         }
         const score_data = key === null

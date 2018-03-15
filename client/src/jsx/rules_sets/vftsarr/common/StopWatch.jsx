@@ -146,7 +146,6 @@ export default class StopWatch extends React.PureComponent {
         return makeClassName({
             "tbtn": true,
             "btn-toggle": true,
-            "ignore-readonly": true,
             "active": this.state.active,
         });
     }
@@ -170,19 +169,19 @@ export default class StopWatch extends React.PureComponent {
                     }
                 </button>
                 <button
-                    className="tbtn btn-reset ignore-readonly"
+                    className="tbtn btn-reset"
                     { ...onTouchOrClick(this.handleReset) }
                 >
                     { _("tablet.buttons.reset_stopwatch") }
                 </button>
                 <button
-                    className="tbtn btn-ctl ignore-readonly"
+                    className="tbtn btn-ctl"
                     { ...onTouchOrClick(this.handleMinus10 ) }
                 >
                     &minus;10
                 </button>
                 <button
-                    className="tbtn btn-ctl ignore-readonly"
+                    className="tbtn btn-ctl"
                     { ...onTouchOrClick(this.handleMinus1 ) }
                 >
                     &minus;1
@@ -191,13 +190,13 @@ export default class StopWatch extends React.PureComponent {
                     { this.getStrValue() }
                 </div>
                 <button
-                    className="tbtn btn-ctl ignore-readonly"
+                    className="tbtn btn-ctl"
                     { ...onTouchOrClick(this.handlePlus1 ) }
                 >
                     +1
                 </button>
                 <button
-                    className="tbtn btn-ctl ignore-readonly"
+                    className="tbtn btn-ctl"
                     { ...onTouchOrClick(this.handlePlus10 ) }
                 >
                     +10
