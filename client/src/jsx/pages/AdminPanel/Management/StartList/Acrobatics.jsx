@@ -17,6 +17,30 @@ export default class Acrobatics extends React.PureComponent {
             }).isRequired,
         };
     }
+    formatDescriptionChunk = (text, idx) => {
+        if (text === "") {
+            return null;
+        }
+        return (
+            idx % 2 === 0
+                ? (
+                    <span key={ idx }>
+                        { text }
+                    </span>
+                ) : (
+                    <strong key={ idx }>
+                        { text }
+                    </strong>
+                )
+        );
+    };
+    formatDescription(text) {
+        const chunks = text.split("_");
+        if (chunks.length % 2 === 0) {
+            return text;
+        }
+        return chunks.map(this.formatDescriptionChunk)
+    }
     render() {
         return (
             <tr className="tr-acro">
@@ -41,7 +65,7 @@ export default class Acrobatics extends React.PureComponent {
                                         </td>
                                         <td className="w-90">
                                             <p className="text-left">
-                                                { a.description }
+                                                { this.formatDescription(a.description) }
                                             </p>
                                         </td>
                                         <td className="w-7">

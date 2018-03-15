@@ -42,7 +42,7 @@ export default class ResultsTable3 extends React.PureComponent {
         docx
             .addStyle("table.results-table", "font-size", "9pt")
             .addStyle("table.results-table .acro-table td", "font-size", "9pt")
-            .addStyle("table.results-table .acro-table td", "padding", "0 3pt")
+            .addStyle("table.results-table .acro-table td", "padding", "0")
             .addStyle("table.results-table .acro-table td", "border", "0.5pt solid black")
             .addStyle("table.results-table table.score-breakdown td, .bordered-table table.score-breakdown th", "font-size", "9pt")
             .addStyle("table.results-table table.score-breakdown td, .bordered-table table.score-breakdown th", "border", "none")

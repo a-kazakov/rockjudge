@@ -47,6 +47,7 @@ export default class Row extends React.PureComponent {
                     rowSpan={ this.props.headerCells }
                     style={ Object.assign({}, style, {
                         borderRight: "1pt solid black",
+                        verticalAlign: "middle",
                     }) }
                 >
                     <p className="text-center">

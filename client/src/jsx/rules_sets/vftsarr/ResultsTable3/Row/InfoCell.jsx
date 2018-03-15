@@ -3,6 +3,7 @@ import _ from "l10n";
 import getParticipantDisplay from "common/getParticipantDisplay";
 import getCardReasons from "common/getCardReasons";
 import checkSS from "common/checkSS";
+import floatToFixed from "../../../../lib/common/floatToFixed";
 
 export default class InfoCell extends React.PureComponent {
     static get propTypes() {
@@ -123,6 +124,7 @@ export default class InfoCell extends React.PureComponent {
             element => element.score !== element.original_score
         );
         const acro_cell_width = `${(100 / this.props.row.run.acrobatics.length)}%`;
+        const table_layout = this.props.row.run.acrobatics.length > 6 ? "auto" : "fixed";
         return (
             <div>
                 <p>
@@ -135,27 +137,27 @@ export default class InfoCell extends React.PureComponent {
                 </p>
                 <table
                     className="acro-table"
-                    style={ {tableLayout: "fixed"} }
+                    style={ {tableLayout: table_layout} }
                 >
                     <tbody>
                         <tr>
-                            { this.props.row.run.acrobatics.map((acro, idx) =>
+                            { this.props.row.run.acrobatics.map((acro, idx) => (
                                 <td key={ idx } style={ { width: acro_cell_width } }>
                                     <p className="text-center">
-                                        { acro.original_score.toFixed(1) }
+                                        { floatToFixed(acro.original_score, 1) }
                                     </p>
                                 </td>
-                            ) }
+                            )) }
                         </tr>
                         { has_acro_overrides ? (
                             <tr>
-                                { this.props.row.run.acrobatics.map((acro, idx) =>
+                                { this.props.row.run.acrobatics.map((acro, idx) => (
                                     <td key={ idx } style={ { width: acro_cell_width } }>
                                         <p className="text-center">
-                                            { acro.score.toFixed(1) }
+                                            { floatToFixed(acro.score, 1) }
                                         </p>
                                     </td>
-                                ) }
+                                )) }
                             </tr>
                         ) : null }
                     </tbody>
@@ -257,7 +259,7 @@ export default class InfoCell extends React.PureComponent {
         return (
             <p>
                 <strong>
-                    { `${_("score_parts.tech.long.undercount")}: ` }
+                    { `${_("score_parts.tech.long.fall_down")}: ` }
                 </strong>
                 { this.props.row.run.verbose_total_score.fall_down}
             </p>

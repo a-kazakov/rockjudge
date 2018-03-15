@@ -26,7 +26,7 @@ export default class AcroScore extends React.PureComponent {
         }
         return (
             <table className="score-breakdown"><tbody>
-                { this.props.run.acrobatics.slice(0, 6).map((acro, idx) =>
+                { this.props.run.acrobatics.slice(0, 8).map((acro, idx) =>
                     <tr key={ idx }>
                         <th>
                             <p>{ _("results.breakdown.acro_n", idx + 1) }:</p>

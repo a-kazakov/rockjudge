@@ -9,12 +9,6 @@ export default class Row extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
-            // disciplineJudgesMap: PT.instanceOf(Map).isRequired,
-            // lineDisciplineJudges: PT.arrayOf(
-            //     PT.shape({
-            //         role: PT.string.isRequired,
-            //     }).isRequired
-            // ).isRequired,
             row: PT.shape({
                 place: PT.number,
                 run: PT.shape({
@@ -129,7 +123,10 @@ export default class Row extends React.PureComponent {
             if (rows.length > 0) {
                 while (row_buffer.length < ROW_SIZE) {
                     row_buffer.push(
-                        <td key={row_buffer.length}>
+                        <td
+                            key={ row_buffer.length }
+                            style={ cell_style }
+                        >
                             <p>
                                 &nbsp;
                             </p>
