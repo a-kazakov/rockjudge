@@ -4,8 +4,8 @@ from typing import List, Tuple
 
 RULES_SETS = [
     "vftsarr",
+    "skating",
     "rosfarr",
-    # "skating",
 ]
 
 MODULES = {}

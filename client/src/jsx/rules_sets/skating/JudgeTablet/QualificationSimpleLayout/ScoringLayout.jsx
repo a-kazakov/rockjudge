@@ -32,7 +32,7 @@ export default class ScoringLayout extends React.PureComponent {
         return (
             <div>
                 <SelectorInput
-                    compact
+                    jumbo
                     choices={ [
                         [false, "-", "active-red"],
                         [true, "X", "active-green"],

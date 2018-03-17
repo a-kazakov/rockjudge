@@ -9,5 +9,9 @@ export default function showConfirm(message, action) {
         showCancelButton: true,
         confirmButtonText: _("global.labels.yes"),
         cancelButtonText: _("global.labels.no"),
-    }).then(action);
+    }).then((data) => {
+        if (data.value) {
+            action();
+        }
+    );
 }
