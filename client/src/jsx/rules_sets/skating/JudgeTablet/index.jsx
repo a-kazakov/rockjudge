@@ -2,6 +2,7 @@ import _ from "l10n";
 
 import getScoringType from "common/getScoringType";
 
+import FinalSimpleLayout from "./FinalSimpleLayout";
 import HeadJudgeLayout from "./HeadJudgeLayout";
 import QualificationSimpleLayout from "./QualificationSimpleLayout";
 
@@ -21,6 +22,7 @@ export default class JudgeTablet extends React.PureComponent {
 
     static LAYOUTS = {
         "qualification_simple": QualificationSimpleLayout,
+        "final_simple": FinalSimpleLayout,
         "head": HeadJudgeLayout,
     };
 

@@ -5,12 +5,14 @@ const meta = {
     ],
     "scoring_systems": [
         "skating.qualification_simple",
+        "skating.final_simple",
+        "skating.final_summary",
     ],
     "suggested_programs": [
         "default",
         "qualification",
         "final",
     ],
-}
+};
 
 export default meta;

@@ -8,7 +8,7 @@
     padding: 0 10px 1px;
     text-decoration: none;
     border: 1px solid @bg-color;
-    &:not(button) {
+    &:not(button):not(td) {
         line-height: 27px;
         display: inline-block;
         vertical-align: top;
@@ -69,8 +69,10 @@
     font-weight: bold;
     padding: 0;
     height: 35px;
-    display: inline-block;
     touch-action: none;
+    &:not(td) {
+        display: inline-block;
+    }
 }
 
 .button-tablet-primary {

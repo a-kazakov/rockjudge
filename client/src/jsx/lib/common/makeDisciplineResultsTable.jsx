@@ -1,4 +1,4 @@
-export default function makeTourResultsTable(discipline) {
+export default function makeDisciplineResultsTable(discipline) {
     // Build runs index
     let tours_index = new Map();
     let runs_index = new Map();

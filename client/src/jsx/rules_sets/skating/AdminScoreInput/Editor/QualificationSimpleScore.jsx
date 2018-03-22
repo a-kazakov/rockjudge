@@ -1,5 +1,5 @@
 import GeneralEditor from "./GeneralEditor"
-import genScale from "../../../rosfarr/AdminScoreInput/Editor/genScale";
+import genScale from "./genScale";
 
 export default class QualificationSimpleScore extends React.PureComponent {
     static get propTypes() {

@@ -1,8 +1,8 @@
 from fractions import Fraction as frac
-from typing import Any, Callable, Dict, List, Type, Optional
+from typing import Any, Callable, Dict, List, Optional, Type
 
 from .common import CachedClass
-from ..types import JudgeRole, ScoreId, ScoreRawData, ScoringSystemName, TotalScoreType, AcroScore
+from ..types import AcroScore, JudgeRole, ScoreId, ScoreRawData, ScoringSystemName, TotalScoreType
 
 
 def float_to_frac(value: float) -> frac:
@@ -56,6 +56,10 @@ class ScoreContextBase(CachedClass):
         if judge_role == "dance_judge":
             if scoring_system_name == "qualification_simple":
                 return ScoreContextDanceSimpleQualification
+            if scoring_system_name == "final_simple":
+                return ScoreContextDanceSimpleFinal
+        if scoring_system_name == "final":
+            return ScoreContextDanceSimpleQualification
         if judge_role == "head_judge":
             return ScoreContextHeadQualification
         return ScoreContextNull
@@ -77,9 +81,8 @@ class ScoreContextBase(CachedClass):
             scoring_system_name,
         )
 
-    total_score: TotalScoreType
-
-    def _total_score(self) -> TotalScoreType:
+    @property
+    def total_score(self) -> TotalScoreType:
         raise NotImplementedError
 
     @staticmethod
@@ -87,9 +90,8 @@ class ScoreContextBase(CachedClass):
         raise NotImplementedError
 
 
-    user_data: ScoreRawData
-
-    def _user_data(self) -> ScoreRawData:
+    @property
+    def user_data(self) -> ScoreRawData:
         result = ScoreRawData({
             **self.INITIAL_SCORES,
             **{
@@ -101,9 +103,8 @@ class ScoreContextBase(CachedClass):
         result["completed"] = self.check_is_completed(result)
         return result
 
-    counting_score: ScoreRawData
-
-    def _counting_score(self) -> ScoreRawData:
+    @property
+    def counting_score(self) -> ScoreRawData:
         return {
             key: (value if value is not None else self.DEFAULT_SCORES[key])
             for key, value in self.user_data.items()
@@ -151,7 +152,8 @@ class ScoreContextDanceSimpleQualification(ScoreContextBase):
         "note_pics": lambda x: isinstance(x, str) and len(x) <= 4,
     }
 
-    def _total_score(self) -> TotalScoreType:
+    @property
+    def total_score(self) -> TotalScoreType:
         if self.user_data["cross"] is None:
             return ""
         return (
@@ -165,6 +167,28 @@ class ScoreContextDanceSimpleQualification(ScoreContextBase):
         return user_data["cross"] is not None
 
 
+class ScoreContextDanceSimpleFinal(ScoreContextBase):
+    DEFAULT_SCORES = {
+        "place": 0,
+    }
+    INITIAL_SCORES = {
+        "place": None,
+    }
+    SCORES_VALIDATORS = {
+        "place": lambda x: x is None or (isinstance(x, int) and 1 <= x <= 100),
+    }
+
+    @property
+    def total_score(self) -> TotalScoreType:
+        if self.user_data["place"] is None:
+            return ""
+        return str(self.user_data["place"])
+
+    @staticmethod
+    def check_is_completed(user_data: ScoreRawData) -> bool:
+        return user_data["place"] is not None
+
+
 class ScoreContextHeadQualification(ScoreContextBase):
     DEFAULT_SCORES = {
         "bonus": 0,
@@ -176,7 +200,8 @@ class ScoreContextHeadQualification(ScoreContextBase):
         "bonus": lambda x: isinstance(x, int) and -10 <= x <= 10,
     }
 
-    def _total_score(self) -> TotalScoreType:
+    @property
+    def total_score(self) -> TotalScoreType:
         return self.counting_score["bonus"]
 
     @staticmethod
@@ -189,5 +214,10 @@ class ScoreContextNull(ScoreContextBase):
     INITIAL_SCORES = {}
     SCORES_VALIDATORS = {}
 
-    def _total_score(self):
+    @property
+    def total_score(self):
         return ""
+
+    @staticmethod
+    def check_is_completed(user_data: ScoreRawData) -> bool:
+        return True

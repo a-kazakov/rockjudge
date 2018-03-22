@@ -2,8 +2,14 @@
 @paper-height: 595pt / 210 * 297;
 
 .Paper {
-    width: @paper-width;
-    min-height: @paper-height;
+    &.portrait {
+        width: @paper-width;
+        min-height: @paper-height;
+    }
+    &.landscape {
+        width: @paper-height;
+        min-height: @paper-width;
+    }
     box-sizing: border-box;
     padding: 28.35pt 42.5pt;
     background-color: white;

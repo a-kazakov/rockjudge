@@ -42,8 +42,11 @@ export default class SelectorInput extends React.PureComponent {
         };
     }
 
-    isSelected(val) {
+    isSelected(val, idx, first_value_idx) {
         if (!this.props.multiple) {
+            if (this.props.highlightLower) {
+                return first_value_idx !== null && idx <= first_value_idx;
+            }
             return this.props.value === val;
         }
         if (this.props.value instanceof Set) {
@@ -81,11 +84,12 @@ export default class SelectorInput extends React.PureComponent {
     }
     renderRows() {
         let result = [];
-        let selected_idx = null;
+        let first_value_idx = null;
         for (let idx = 0; idx < this.props.choices.length; ++idx) {
             const [value, text, style] = this.props.choices[idx];
-            if (this.isSelected(value)) {
-                selected_idx = idx;
+            if (this.props.value === value) {
+                first_value_idx = idx;
+                break;
             }
         }
         for (let idx = 0; idx < this.props.choices.length; ++idx) {
@@ -101,10 +105,7 @@ export default class SelectorInput extends React.PureComponent {
             const [value, text, style] = this.props.choices[idx];
             result.push(
                 <Item
-                    active={ this.props.highlightLower
-                        ? selected_idx !== null && idx <= selected_idx
-                        : idx === selected_idx
-                    }
+                    active={ this.isSelected(value, idx, first_value_idx) }
                     key={ idx }
                     readOnly={ this.props.readOnly }
                     style={ style }

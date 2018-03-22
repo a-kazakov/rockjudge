@@ -8,6 +8,7 @@ export default class Paper extends React.PureComponent {
             title1: PT.string,
             title2: PT.string,
             title3: PT.string,
+            orientation: PT.oneOf(["portrait", "landscape"]),
         };
     }
     static get defaultProps() {
@@ -16,6 +17,7 @@ export default class Paper extends React.PureComponent {
             title1: null,
             title2: null,
             title3: null,
+            orientation: "portrait",
         };
     }
 
@@ -55,11 +57,13 @@ export default class Paper extends React.PureComponent {
         )
     }
     getStyle() {
-        if (!this.props.margins) {
+        const margins = this.props.margins ||
+            (this.props.orientation === "portrait" ? [10, 15, 10, 15] : [10, 10, 10, 10]);
+        if (!margins) {
             return {};
         }
         return {
-            padding: this.props.margins
+            padding: margins
                 .map(v => 2.834645669291 * v)
                 .map(v => `${v.toFixed(3)}pt`)
                 .join(" "),
@@ -67,7 +71,10 @@ export default class Paper extends React.PureComponent {
     }
     render() {
         return (
-            <div className="Paper" style={ this.getStyle() }>
+            <div
+                className={ `Paper ${this.props.orientation}` }
+                style={ this.getStyle() }
+            >
                 { this.renderHeader() }
                 { this.renderTitle1() }
                 { this.renderTitle2() }
@@ -77,5 +84,3 @@ export default class Paper extends React.PureComponent {
         );
     }
 }
-
-Paper.displayName = "AdminPanel_components_Paper";

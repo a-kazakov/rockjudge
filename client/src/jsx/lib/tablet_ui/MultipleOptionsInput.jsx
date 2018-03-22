@@ -21,7 +21,7 @@ export default class MultipleOptionsInput extends React.PureComponent {
         return (
             <SelectorInput
                 multiple
-                value={ this.props.value }
+                value={ value }
                 onChange={ this.handleChange }
                 { ...other_props }
             />

@@ -83,13 +83,13 @@ export default class HeatsTableItem extends React.PureComponent {
             <tr>
                 { this.props.heatRuns.map(run => {
                     if (run.status !== "OK") {
-                        return this.renderNote(null, null);
+                        return this.renderNoteNumber(null);
                     }
                     const score = run.scores.find(s => s?.discipline_judge_id === this.props.disciplineJudge.id);
                     if (typeof score === "undefined") {
-                        return this.renderNote(null, null);
+                        return this.renderNoteNumber(null);
                     }
-                    return this.renderNoteNumber(score.data.raw_data.note_number, score.data.raw_data.note_pics);
+                    return this.renderNoteNumber(score.data.raw_data.note_number);
                 } ) }
             </tr>
         );
@@ -127,11 +127,11 @@ export default class HeatsTableItem extends React.PureComponent {
             <tr>
                 { this.props.heatRuns.map(run => {
                     if (run.status !== "OK") {
-                        return this.renderNotePic(null, null);
+                        return this.renderNotePic(null);
                     }
                     const score = run.scores.find(s => s?.discipline_judge_id === this.props.disciplineJudge.id);
                     if (typeof score === "undefined") {
-                        return this.renderNotePic(null, null);
+                        return this.renderNotePic(null);
                     }
                     return this.renderNotePic(score.data.raw_data.note_pics);
                 } ) }

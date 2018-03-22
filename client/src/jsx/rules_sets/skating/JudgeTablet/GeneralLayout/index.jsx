@@ -133,19 +133,7 @@ export default class GeneralLayout extends React.PureComponent {
     handleFinishClick = () => this.setState({ showResults: true });
     handleReturnClick = () => this.setState({ showResults: false });
 
-    renderBody() {
-        if (this.state.showResults) {
-            const ConfirmationClass = this.props.confirmationClass;
-            if (ConfirmationClass === null) {
-                return null;
-            }
-            return (
-                <ConfirmationClass
-                    disciplineJudge={ this.props.disciplineJudge }
-                    tour={ this.props.tour }
-                />
-            );
-        }
+    renderScoringLayout() {
         return (
             <div className="body">
                 <Grid>
@@ -162,6 +150,21 @@ export default class GeneralLayout extends React.PureComponent {
                 </Grid>
             </div>
         );
+    }
+    renderBody() {
+        if (this.state.showResults) {
+            const ConfirmationClass = this.props.confirmationClass;
+            if (ConfirmationClass === null) {
+                return null;
+            }
+            return (
+                <ConfirmationClass
+                    disciplineJudge={ this.props.disciplineJudge }
+                    tour={ this.props.tour }
+                />
+            );
+        }
+        return this.renderScoringLayout();
     }
     renderFooter() {
         if (this.props.footerText === null) {

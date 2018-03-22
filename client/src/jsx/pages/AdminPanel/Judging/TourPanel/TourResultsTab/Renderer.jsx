@@ -35,7 +35,7 @@ export default class Renderer extends React.PureComponent {
         default:
             console.error("Unknown message:", message)
         }
-    }
+    };
 
     getRenderingComponent() {
         switch (this.props.verbosity) {
@@ -61,10 +61,15 @@ export default class Renderer extends React.PureComponent {
         );
     }
     render() { // eslint-disable-line react/sort-comp
+        const Component = this.getRenderingComponent();
+        const orientation = Component.getPaperOrientation
+            ? Component.getPaperOrientation(this.props.tour)
+            : "portrait";
         return (
             <Paper
                 header={ `${this.props.tour.discipline.competition.name}, ${this.props.tour.discipline.competition.date}` }
                 margins={ [10, 10, 15, 10] }
+                orientation={ orientation }
                 ref={ this.makePrintableRef }
                 title1={ _("admin.headers.tour_results") }
                 title2={ `${this.props.tour.discipline.name} — ${this.props.tour.name}` }
@@ -83,7 +88,7 @@ export default class Renderer extends React.PureComponent {
             .setTitle2(`${this.props.tour.discipline.name} — ${this.props.tour.name}`)
             .setBody(this._printable.getPrintableHTML());
         if (this.getRenderingComponent().transformDocx) {
-            this.getRenderingComponent().transformDocx(docx);
+            this.getRenderingComponent().transformDocx(docx, this.props.tour);
         }
         docx.save();
     }

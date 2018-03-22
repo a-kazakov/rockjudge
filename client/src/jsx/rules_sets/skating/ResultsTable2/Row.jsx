@@ -12,7 +12,13 @@ export default class Row extends React.PureComponent {
                 }).isRequired
             ).isRequired,
             row: PT.shape({
-                additional_data: PT.object.isRequired,
+                additional_data: PT.shape({
+                    skating_row: PT.arrayOf(
+                        PT.arrayOf(
+                            PT.number,
+                        ).isRequired,
+                    ).isRequired,
+                }).isRequired,
                 place: PT.number,
                 run: PT.shape({
                     status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
@@ -27,15 +33,14 @@ export default class Row extends React.PureComponent {
                             discipline_judge_id: PT.number.isRequired,
                         }).isRequired
                     ).isRequired,
-                    verbose_total_score: PT.shape({
-                        crosses: PT.number.isRequired,
-                    }),
+                    total_score: PT.string.isRequired,
                 }).isRequired,
             }).isRequired,
             tour: PT.shape({
                 scoring_system_name: PT.string.isRequired,
             }).isRequired,
             showTotalScore: PT.bool.isRequired,
+            verbose: PT.bool.isRequired,
         };
     }
 
@@ -81,7 +86,7 @@ export default class Row extends React.PureComponent {
         return (
             <td className="total-score">
                 <p className="text-center">
-                    {this.props.row.run.verbose_total_score.crosses}
+                    { this.props.row.run.total_score }
                 </p>
             </td>
         );
@@ -93,6 +98,27 @@ export default class Row extends React.PureComponent {
                 { this.renderScore(dj, scores_map.get(dj.id)) }
             </td>
         );
+    }
+    renderSkatingValues() {
+        if (!this.props.verbose || !this.props.isFinal) {
+            return null;
+        }
+        const quorum = Math.floor((this.props.lineDisciplineJudges.length + 1.001) / 2);
+        let result = [];
+        let idx = 0;
+        for (const [pr, sec] of this.props.row.additional_data.skating_row) {
+            const text = pr === null ? "-" : pr < quorum ? `${pr}` : `${pr} (${sec})`;
+            const color = pr < quorum ? "#999" : "#000";
+            const borderLeft = idx === 0 ? "1pt solid black" : "none";
+            result.push(
+                <td key={ idx++ } style={ { color, borderLeft } }>
+                    <p className="text-center">
+                        { text }
+                    </p>
+                </td>
+            )
+        }
+        return result;
     }
     render() {
         return (
@@ -118,6 +144,7 @@ export default class Row extends React.PureComponent {
                 </td>
                 { this.renderTotalScoreCell() }
                 { this.renderJudgesScores() }
+                { this.renderSkatingValues() }
             </tr>
         );
     }

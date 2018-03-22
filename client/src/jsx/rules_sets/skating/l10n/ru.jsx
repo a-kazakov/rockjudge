@@ -44,10 +44,6 @@ export default function translate(src, ...args) {
             },
         },
         "tablet": {
-            "acro_judge": {
-                "fall_down": "Падения (−30)",
-                "acro_n": (n) => `Акробатика ${n + 1}`,
-            },
             "alerts": {
                 "has_unconfirmed_scores": "Имеются незафиксированные оценки судей в последнем заходе.",
             },
@@ -81,6 +77,8 @@ export default function translate(src, ...args) {
                 heat: (n) => `Заход ${n}`,
                 "notes": "Заметки",
                 "confirmation_page": "Подтверждение оценок",
+                "participant": "Участник",
+                "multiple_participants": "Несколько участников",
             },
             "global": {
                 "confirm_score": "Зафиксировать",
@@ -162,6 +160,7 @@ export default function translate(src, ...args) {
                 "sportsmen_year_of_birth": "Г.р.",
                 "sub": "зап",
                 "total_score": "Итог",
+                "tours_places_sum": "Σ",
             },
             "cards": {
                 "RC": (is_formation) => is_formation ? "КК (−15)" : "КК (−30)",
@@ -206,6 +205,8 @@ export default function translate(src, ...args) {
             "skating": {
                 "base_name": "Скейтинг система",
                 "qualification_simple": "Отборочные туры, только кресты",
+                "final_simple": "Финал, упрощенная система",
+                "final_summary": "Сводка нескольких финалов",
             },
         },
         "judge_roles": {

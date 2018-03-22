@@ -1,8 +1,7 @@
 import _ from "l10n";
 
-import Row from "./Row"
-
 import makeTourResultsTable from "common/makeTourResultsTable";
+import CustomTable from "common/CustomTable";
 
 export default class ResultsTable1 extends React.PureComponent {
     static get propTypes() {
@@ -36,16 +35,7 @@ export default class ResultsTable1 extends React.PureComponent {
         };
     }
 
-    static transformDocx(docx) {
-        docx
-            .addStyle("table", "font-size", "12pt")
-            .addStyle("td", "border-bottom", "0.5pt solid #aaa")
-            .addStyle("th", "border-bottom", "1pt solid black")
-            .addStyle("th.advances-header", "border-bottom", "1pt solid black")
-            .addStyle("th.advances-header", "padding-top", "10pt");
-    }
-
-    getRowStatus(row) {
+    static getRowStatus(row) {
         if (!row) {
             return "none";
         }
@@ -54,95 +44,90 @@ export default class ResultsTable1 extends React.PureComponent {
         }
         return row.advances ? "advanced" : "not_advanced";
     }
-    getStatusHeader(row_status) {
-        return _(`results.headers.participants_${row_status}`);
+
+    setupCache() {
+        this.is_final = this.props.tour.scoring_system_name.includes("final");
+        this.show_total_score = !this.is_final;
+        this.has_next_tour = this.props.tour.next_tour_id !== null;
+        this.table = makeTourResultsTable(this.props.tour);
     }
-    renderAdvancesHeader(prev_row, next_row, has_next_tour, n_cols) {
-        const prev_status = this.getRowStatus(prev_row);
-        const next_status = this.getRowStatus(next_row);
+
+    getCols() {
+        let result = [{
+            "key": "place",
+            "title":  _("results.labels.place"),
+            "textAlign": "center",
+            "lines": ["right"],
+            "width": 7,
+        }, {
+            "key": "number",
+            "title":  _("results.labels.number"),
+            "textAlign": "center",
+            "fontWeight": "bold",
+            "width": 6,
+        }, {
+            "key": "participant_name",
+            "title":  _("results.labels.participant_name"),
+            "width": 35,
+        }, {
+            "key": "participant_club",
+            "title":  _("results.labels.participant_club"),
+        }];
+        if (this.show_total_score) {
+            result.push({
+                key: "total_score",
+                title: _("results.labels.total_score"),
+                width: 10,
+            });
+        }
+        return result;
+    }
+
+    getAdvancesRow(prev_row, next_row) {
+        const prev_status = this.constructor.getRowStatus(prev_row);
+        const next_status = this.constructor.getRowStatus(next_row);
         if (prev_status === next_status) {
             return null;
         }
-        if (!["NP", "DQ"].includes(next_status) && !has_next_tour) {
+        if (!["NP", "DQ"].includes(next_status) && !this.has_next_tour) {
             return null;
         }
-        return (
-            <tr key={ `AH${next_row.run.id}` }>
-                <th className="advances-header" colSpan={ n_cols }>
-                    <p className="text-left">
-                        { this.getStatusHeader(next_status) }
-                    </p>
-                </th>
-            </tr>
-        )
+        return _(`results.headers.participants_${next_status}`);
     }
-    render() {
-        const is_final = [
-            "skating.final_simple",
-            "skating.final_3d",
-            "skating.final_4d",
-        ].includes(this.props.tour.scoring_system_name);
-        const show_total_score = !is_final;
-        const has_next_tour = this.props.tour.next_tour_id !== null;
-        const djs_map = new Map(this.props.tour.discipline.discipline_judges.map(dj => [dj.id, dj]));
-        const table = makeTourResultsTable(this.props.tour);
-        let rows = [];
-        for (let idx = 0; idx < table.length; ++idx) {
-            rows.push(this.renderAdvancesHeader(
-                table[idx - 1],
-                table[idx],
-                has_next_tour,
-                5 + show_total_score
-            ));
-            const row = table[idx];
-            rows.push(
-                <Row
-                    disciplineJudgesMap={ djs_map }
-                    isFormation={ is_final }
-                    key={ row.run.id }
-                    row={ row }
-                    showTotalScore={ show_total_score }
-                />
-            );
+
+    getRows() {
+        let result = [];
+        for (let idx = 0; idx < this.table.length; ++idx) {
+            const adv_text = this.getAdvancesRow(this.table[idx - 1], this.table[idx]);
+            if (adv_text !== null) {
+                result.push({
+                    _type: "section_header",
+                    "title": adv_text,
+                })
+            }
+            const row = this.table[idx];
+            result.push({
+                "run_id": row.run.id,
+                "place": row.place,
+                "number": row.run.participant.number,
+                "participant_name": row.run.participant.name,
+                "participant_club": row.run.participant.club.name,
+                "total_score": row.run.total_score,
+            });
         }
+        return result;
+    }
+
+    render() {
+        this.setupCache();
         return (
             <div className="ResultsTable1">
-                <table>
-                    <thead>
-                        <tr>
-                            <th className="w-7 place">
-                                <p className="text-center">
-                                    { _("results.labels.place") }
-                                </p>
-                            </th>
-                            <th className="w-6 number">
-                                <p className="text-center">
-                                    { _("results.labels.number") }
-                                </p>
-                            </th>
-                            <th className="w-35 participant">
-                                <p className="text-left">
-                                    { _("results.labels.participant_name") }
-                                </p>
-                            </th>
-                            <th className="club">
-                                <p className="text-left">
-                                    { _("results.labels.participant_club") }
-                                </p>
-                            </th>
-                            { show_total_score ? (
-                                <th className="w-10 score">
-                                    <p className="text-center">
-                                        { _("results.labels.total_score") }
-                                    </p>
-                                </th>
-                            ) : null }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        { rows }
-                    </tbody>
-                </table>
+                <CustomTable
+                    cols={ this.getCols() }
+                    fontSize="12pt"
+                    rowKey="run_id"
+                    rows={ this.getRows() }
+                />
             </div>
         );
     }

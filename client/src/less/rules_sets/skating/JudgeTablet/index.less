@@ -151,6 +151,36 @@
                 }
             }
         }
+        .places-table {
+            table-layout: fixed;
+            border-collapse: separate;
+            border-spacing: 2px;
+            box-sizing: border-box;
+            width: ~"calc(100% - 10px)";
+            margin: 10px;
+            color: @color-dark;
+            td.btn {
+                .button-tablet-primary();
+                text-align: center;
+                &.in-active-col {
+                    background-color: @color-medium;
+                    border-color: @color-medium;
+                }
+                &.active {
+                    background-color: @color-contrast;
+                    border-color: @color-contrast;
+                }
+            }
+            .participant {
+                text-align: left;
+                width: 40%;
+                padding-left: 15px;
+                .multiple-participants {
+                    font-weight: bold;
+                    color: @color-red;
+                }
+            }
+        }
         .multiple-rows {
             .spacer {
                 display: none;
