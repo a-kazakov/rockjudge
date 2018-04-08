@@ -8,8 +8,11 @@ const meta = {
     "scoring_systems": [
         "vftsarr.dance",
         "vftsarr.dance_rough",
+        "vftsarr.dance_extended",
         "vftsarr.acro",
+        "vftsarr.acro_extended",
         "vftsarr.formation",
+        "vftsarr.formation_simplified",
         "vftsarr.formation_acro",
         "vftsarr.simplified",
         "vftsarr.solo",
@@ -24,6 +27,6 @@ const meta = {
         "quarterfinal",
         "final",
     ],
-}
+};
 
 export default meta;

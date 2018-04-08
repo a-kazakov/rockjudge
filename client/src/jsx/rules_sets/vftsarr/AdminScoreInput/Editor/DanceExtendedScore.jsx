@@ -1,9 +1,8 @@
 import GeneralEditor from "./GeneralEditor"
 import ReductionBlock from "./GeneralEditor/blocks/ReductionBlock";
 import NumberBlock from "./GeneralEditor/blocks/NumberBlock";
-import checkSS from "../../common/checkSS";
 
-export default class DanceScore extends React.PureComponent {
+export default class DanceExtendedScore extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -22,7 +21,6 @@ export default class DanceScore extends React.PureComponent {
     }
 
     render() {
-        const step = checkSS(this.props.tour.scoring_system_name, "rough") ? 1 : 0.5;
         return (
             <GeneralEditor
                 initialData={ this.props.score.data.raw_data }
@@ -42,15 +40,45 @@ export default class DanceScore extends React.PureComponent {
                 />
                 <NumberBlock
                     nullable
-                    field="dance_figs"
-                    label="DF"
-                    step={ step }
+                    field="df_accuracy"
+                    label="DF-Pr"
+                    max={ 5 }
+                    step={ 0.5 }
                 />
                 <NumberBlock
                     nullable
-                    field="composition"
-                    label="C"
-                    step={ step }
+                    field="df_complexity"
+                    label="DF-C"
+                    max={ 4 }
+                    step={ 0.5 }
+                />
+                <NumberBlock
+                    nullable
+                    field="df_art"
+                    label="DF-A"
+                    max={ 1 }
+                    step={ 0.5 }
+                />
+                <NumberBlock
+                    nullable
+                    field="c_idea"
+                    label="C-I"
+                    max={ 5 }
+                    step={ 0.5 }
+                />
+                <NumberBlock
+                    nullable
+                    field="c_performance"
+                    label="C-P"
+                    max={ 4 }
+                    step={ 0.5 }
+                />
+                <NumberBlock
+                    nullable
+                    field="c_bonus"
+                    label="C-B"
+                    max={ 1 }
+                    step={ 0.5 }
                 />
                 <NumberBlock
                     field="small_mistakes"

@@ -13,5 +13,5 @@ export default function showConfirm(message, action) {
         if (data.value) {
             action();
         }
-    );
+    });
 }

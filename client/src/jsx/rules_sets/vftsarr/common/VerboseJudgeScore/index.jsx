@@ -5,6 +5,9 @@ import DanceScore from "./DanceScore";
 import SoloScore from "./SoloScore";
 import FormationScore from "./FormationScore";
 import TechScore from "./TechScore";
+import FormationSimplifiedScore from "./FormationSimplifiedScore";
+import DanceExtendedScore from "./DanceExtendedScore";
+
 
 export default class VerboseJudgeScore extends React.PureComponent {
     static get propTypes() {
@@ -47,11 +50,17 @@ export default class VerboseJudgeScore extends React.PureComponent {
         case "dance":
             ScoreComponent = DanceScore;
             break;
+        case "dance_extended":
+            ScoreComponent = DanceExtendedScore;
+            break;
         case "acro":
             ScoreComponent = AcroScore;
             break;
         case "formation":
             ScoreComponent = FormationScore;
+            break;
+        case "formation_simplified":
+            ScoreComponent = FormationSimplifiedScore;
             break;
         case "solo":
             ScoreComponent = SoloScore;

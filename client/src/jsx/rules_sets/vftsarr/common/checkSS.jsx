@@ -3,9 +3,11 @@ const GROUPS = (function () {
         "formation": [
             "formation",
             "formation_acro",
+            "formation_simplified",
         ],
         "acro": [
             "acro",
+            "acro_extended",
             "am_qual",
             "am_final_acro",
             "formation_acro",

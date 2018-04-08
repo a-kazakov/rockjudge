@@ -1,9 +1,8 @@
 import GeneralEditor from "./GeneralEditor"
 import ReductionBlock from "./GeneralEditor/blocks/ReductionBlock";
 import NumberBlock from "./GeneralEditor/blocks/NumberBlock";
-import checkSS from "../../common/checkSS";
 
-export default class DanceScore extends React.PureComponent {
+export default class FormationSimplifiedScore extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -22,7 +21,6 @@ export default class DanceScore extends React.PureComponent {
     }
 
     render() {
-        const step = checkSS(this.props.tour.scoring_system_name, "rough") ? 1 : 0.5;
         return (
             <GeneralEditor
                 initialData={ this.props.score.data.raw_data }
@@ -32,25 +30,26 @@ export default class DanceScore extends React.PureComponent {
             >
                 <ReductionBlock
                     nullable
-                    field="fw_woman"
+                    field="fw"
                     label="FW"
-                />
-                <ReductionBlock
-                    nullable
-                    field="fw_man"
-                    label="FM"
                 />
                 <NumberBlock
                     nullable
                     field="dance_figs"
                     label="DF"
-                    step={ step }
+                    step={ 0.5 }
                 />
                 <NumberBlock
                     nullable
                     field="composition"
                     label="C"
-                    step={ step }
+                    step={ 0.5 }
+                />
+                <NumberBlock
+                    nullable
+                    field="figures"
+                    label="F"
+                    step={ 0.5 }
                 />
                 <NumberBlock
                     field="small_mistakes"

@@ -51,10 +51,10 @@ def make_multiply(criteria: str, multiplier: frac) -> Callable[[Dict[str, Any]],
     return multiply
 
 
-def make_combine_mistakes(**values: Union[int, frac]) -> Callable[[Dict[str, Any]], frac]:
-    def combine_mistakes(score: Dict[str, Any]) -> frac:
+def make_combine_fields(**values: Union[int, frac]) -> Callable[[Dict[str, Any]], frac]:
+    def combine_fields(score: Dict[str, Any]) -> frac:
         return sum(float_to_frac(score[key]) * frac(value) for key, value in values.items())
-    return combine_mistakes
+    return combine_fields
 
 
 def make_validate_card_reasons(*card_groups: str) -> Callable[[Any], bool]:
@@ -67,6 +67,35 @@ def make_validate_card_reasons(*card_groups: str) -> Callable[[Any], bool]:
         )
     return validate_card_reasons
 
+def make_validate_number(
+    min_value: int = 0,
+    max_value: int = 10,
+    allow_halves: bool = False,
+    allow_none: bool = False,
+) -> Callable[[Any], bool]:
+    def validate_number(value: Any) -> bool:
+        if value is None:
+            return allow_none
+        if not isinstance(value, (int, float, )):
+            return False
+        denominator = 50 if allow_halves else 100
+        if round(value * 100) % denominator != 0:
+            return False
+        if not (min_value - 1e-5 < value < max_value + 1e-5):
+            return False
+        return True
+    return validate_number
+
+def validate_reduction(value: Any) -> bool:
+    if value is None:
+        return True
+    if not isinstance(value, int):
+        return False
+    return value in POSSIBLE_REDUCTIONS
+
+
+def validate_card(value: Any) -> bool:
+    return value in ("OK", "YC", "RC")
 
 
 class ScoreContextBase(CachedClass, metaclass=ABCMeta):
@@ -84,12 +113,16 @@ class ScoreContextBase(CachedClass, metaclass=ABCMeta):
         if judge_role == "dance_judge":
             if scoring_system_name in ("formation", "formation_acro", ):
                 return ScoreContextFormation
+            if scoring_system_name == "formation_simplified":
+                return ScoreContextFormationSimplified
             if scoring_system_name == "simplified":
                 return ScoreContextSimplified
             if scoring_system_name == "solo":
                 return ScoreContextSolo
             if scoring_system_name == "solo_rough":
                 return ScoreContextSoloRough
+            if scoring_system_name in ("dance_extended", "acro_extended", ):
+                return ScoreContextDanceExtended
             if scoring_system_name == "dance_rough":
                 return ScoreContextDanceRough
             if scoring_system_name in ("am_final_fw", "am_final_acro", ):
@@ -102,6 +135,7 @@ class ScoreContextBase(CachedClass, metaclass=ABCMeta):
                 "am_final_acro",
                 "am_qual",
                 "acro",
+                "acro_extended",
                 "formation_acro",
             ):
                 return ScoreContextAcro
@@ -111,9 +145,10 @@ class ScoreContextBase(CachedClass, metaclass=ABCMeta):
                 "am_final_acro",
                 "am_qual",
                 "acro",
+                "acro_extended",
             ):
                 return ScoreContextTechAcro
-            if scoring_system_name == "formation":
+            if scoring_system_name in ("formation", "formation_simplified", ):
                 return ScoreContextTechFormation
             if scoring_system_name == "formation_acro":
                 return ScoreContextTechFormationAcro
@@ -187,7 +222,7 @@ class ScoreContextSimplified(ScoreContextBase):
         "points": None,
     }
     SCORES_VALIDATORS = {
-        "points": lambda x: type(x) is int and 1 <= x <= 40,
+        "points": make_validate_number(min_value=1, max_value=40, allow_none=True),
     }
     CRITERIAS_MODIFIERS = {
         "points": lambda x: frac(x["points"]),
@@ -195,6 +230,60 @@ class ScoreContextSimplified(ScoreContextBase):
 
     def _total_score(self) -> Union[str, float, int, frac]:
         return str(int(self.counting_score["points"]))
+
+
+class ScoreContextDanceExtended(ScoreContextBase):
+    DEFAULT_SCORES = {
+        "fw_man": 100,
+        "fw_woman": 100,
+        "df_accuracy": 0,
+        "df_complexity": 0,
+        "df_art": 0,
+        "c_idea": 0,
+        "c_performance": 0,
+        "c_bonus": 0,
+        "small_mistakes": 0,
+        "big_mistakes": 0,
+    }
+    INITIAL_SCORES = {
+        "fw_woman": None,
+        "fw_man": None,
+        "df_accuracy": None,
+        "df_complexity": None,
+        "df_art": None,
+        "c_idea": None,
+        "c_performance": None,
+        "c_bonus": None,
+        "small_mistakes": 0,
+        "big_mistakes": 0,
+    }
+    SCORES_VALIDATORS = {
+        "fw_man": validate_reduction,
+        "fw_woman": validate_reduction,
+        "df_accuracy": make_validate_number(max_value=5, allow_halves=True, allow_none=True),
+        "df_complexity": make_validate_number(max_value=4, allow_halves=True, allow_none=True),
+        "df_art": make_validate_number(max_value=1, allow_halves=True, allow_none=True),
+        "c_idea": make_validate_number(max_value=5, allow_halves=True, allow_none=True),
+        "c_performance": make_validate_number(max_value=4, allow_halves=True, allow_none=True),
+        "c_bonus": make_validate_number(max_value=1, allow_halves=True, allow_none=True),
+        "small_mistakes": make_validate_number(max_value=100),
+        "big_mistakes": make_validate_number(max_value=100),
+    }
+    CRITERIAS_MODIFIERS = {
+        "fw_woman": make_apply_reduction("fw_woman"),
+        "fw_man": make_apply_reduction("fw_man"),
+        "dance_figs": make_combine_fields(df_accuracy=frac(5, 2), df_complexity=frac(5, 2), df_art=frac(5, 2)),
+        "composition": make_combine_fields(c_idea=2, c_performance=2, c_bonus=2),
+        "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-30),
+    }
+
+    def _total_score(self):
+        num_set = sum(self.user_data[key] is not None for key in self.INITIAL_SCORES.keys())
+        if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
+            return "–"
+        if num_set == len(self.DEFAULT_SCORES):
+            return "🗸"
+        return "..."
 
 
 class ScoreContextDance(ScoreContextBase):
@@ -215,19 +304,19 @@ class ScoreContextDance(ScoreContextBase):
         "big_mistakes": 0,
     }
     SCORES_VALIDATORS = {
-        "fw_man": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "fw_woman": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "dance_figs": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
-        "composition": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
-        "small_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
-        "big_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+        "fw_man": validate_reduction,
+        "fw_woman": validate_reduction,
+        "dance_figs": make_validate_number(allow_halves=True, allow_none=True),
+        "composition": make_validate_number(allow_halves=True, allow_none=True),
+        "small_mistakes": make_validate_number(max_value=100),
+        "big_mistakes": make_validate_number(max_value=100),
     }
     CRITERIAS_MODIFIERS = {
         "fw_woman": make_apply_reduction("fw_woman"),
         "fw_man": make_apply_reduction("fw_man"),
         "dance_figs": make_multiply("dance_figs", frac(5, 2)),
         "composition": make_multiply("composition", frac(2)),
-        "mistakes": make_combine_mistakes(small_mistakes=-5, big_mistakes=-30),
+        "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-30),
     }
 
     def _total_score(self):
@@ -241,22 +330,22 @@ class ScoreContextDance(ScoreContextBase):
 
 class ScoreContextDanceRough(ScoreContextDance):
     SCORES_VALIDATORS = {
-        "fw_man": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "fw_woman": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "dance_figs": lambda x: x is None or type(x) is int and 0 <= x <= 10,
-        "composition": lambda x: x is None or type(x) is int and 0 <= x <= 10,
-        "small_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
-        "big_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+        "fw_man": validate_reduction,
+        "fw_woman": validate_reduction,
+        "dance_figs": make_validate_number(allow_none=True),
+        "composition": make_validate_number(allow_none=True),
+        "small_mistakes": make_validate_number(max_value=100),
+        "big_mistakes": make_validate_number(max_value=100),
     }
 
 
-class ScoreContextAmFinalDance(ScoreContextDance):
+class ScoreContextAmFinalDance(ScoreContextDanceExtended):
     CRITERIAS_MODIFIERS = {
         "fw_woman": make_apply_reduction("fw_woman", 5),
         "fw_man": make_apply_reduction("fw_man", 5),
         "dance_figs": make_multiply("dance_figs", frac(5, 4)),
         "composition": make_multiply("composition", frac(1)),
-        "mistakes": make_combine_mistakes(small_mistakes=-5, big_mistakes=-30),
+        "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-30),
     }
 
 class ScoreContextSolo(ScoreContextBase):
@@ -275,17 +364,17 @@ class ScoreContextSolo(ScoreContextBase):
         "big_mistakes": 0,
     }
     SCORES_VALIDATORS = {
-        "fw": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "dance_figs": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
-        "composition": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 10 and round(x * 100) % 50 == 0,
-        "small_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
-        "big_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+        "fw": validate_reduction,
+        "dance_figs": make_validate_number(allow_halves=True, allow_none=True),
+        "composition": make_validate_number(allow_halves=True, allow_none=True),
+        "small_mistakes": make_validate_number(max_value=100),
+        "big_mistakes": make_validate_number(max_value=100),
     }
     CRITERIAS_MODIFIERS = {
         "fw": make_apply_reduction("fw", max_value=20),
         "dance_figs": make_multiply("dance_figs", frac(5, 2)),
         "composition": make_multiply("composition", frac(2)),
-        "mistakes": make_combine_mistakes(small_mistakes=-5, big_mistakes=-30),
+        "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-30),
     }
 
     def _total_score(self):
@@ -299,11 +388,11 @@ class ScoreContextSolo(ScoreContextBase):
 
 class ScoreContextSoloRough(ScoreContextSolo):
     SCORES_VALIDATORS = {
-        "fw": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "dance_figs": lambda x: x is None or type(x) is int and 0 <= x <= 10,
-        "composition": lambda x: x is None or type(x) is int and 0 <= x <= 10,
-        "small_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
-        "big_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+        "fw": validate_reduction,
+        "dance_figs": make_validate_number(allow_none=True),
+        "composition": make_validate_number(allow_none=True),
+        "small_mistakes": make_validate_number(max_value=100),
+        "big_mistakes": make_validate_number(max_value=100),
     }
 
 
@@ -329,14 +418,14 @@ class ScoreContextAcro(ScoreContextBase):
         "a8": None,
     }
     SCORES_VALIDATORS = {
-        "a1": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "a2": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "a3": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "a4": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "a5": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "a6": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "a7": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "a8": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
+        "a1": validate_reduction,
+        "a2": validate_reduction,
+        "a3": validate_reduction,
+        "a4": validate_reduction,
+        "a5": validate_reduction,
+        "a6": validate_reduction,
+        "a7": validate_reduction,
+        "a8": validate_reduction,
     }
 
     criterias: Dict[str, frac]
@@ -382,25 +471,67 @@ class ScoreContextFormation(ScoreContextBase):
         "big_mistakes": 0,
     }
     SCORES_VALIDATORS = {
-        "fw": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
-        "df_accuracy": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 5 and round(x * 100) % 50 == 0,
-        "df_difficulty": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 4 and round(x * 100) % 50 == 0,
-        "df_art": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 1 and round(x * 100) % 50 == 0,
-        "c_ideas": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 5 and round(x * 100) % 50 == 0,
-        "c_structure": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 4 and round(x * 100) % 50 == 0,
-        "c_bonus": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 1 and round(x * 100) % 50 == 0,
-        "fig_execution": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 5 and round(x * 100) % 50 == 0,
-        "fig_patterns": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 4 and round(x * 100) % 50 == 0,
-        "fig_transitions": lambda x: x is None or type(x) in (float, int) and 0 <= x <= 1 and round(x * 100) % 50 == 0,
-        "small_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
-        "big_mistakes": lambda x: type(x) is int and 0 <= x <= 100,
+        "fw": validate_reduction,
+        "df_accuracy": make_validate_number(max_value=5, allow_halves=True, allow_none=True),
+        "df_difficulty": make_validate_number(max_value=4, allow_halves=True, allow_none=True),
+        "df_art": make_validate_number(max_value=1, allow_halves=True, allow_none=True),
+        "c_ideas": make_validate_number(max_value=5, allow_halves=True, allow_none=True),
+        "c_structure": make_validate_number(max_value=4, allow_halves=True, allow_none=True),
+        "c_bonus": make_validate_number(max_value=1, allow_halves=True, allow_none=True),
+        "fig_execution": make_validate_number(max_value=5, allow_halves=True, allow_none=True),
+        "fig_patterns": make_validate_number(max_value=4, allow_halves=True, allow_none=True),
+        "fig_transitions": make_validate_number(max_value=1, allow_halves=True, allow_none=True),
+        "small_mistakes": make_validate_number(max_value=100),
+        "big_mistakes": make_validate_number(max_value=100),
     }
     CRITERIAS_MODIFIERS = {
         "fw": make_apply_reduction("fw"),
-        "dance_figs": lambda x: float_to_frac(x["df_accuracy"] + x["df_difficulty"] + x["df_art"]) * frac(2),
-        "composition": lambda x: float_to_frac(x["c_ideas"] + x["c_structure"] + x["c_bonus"]) * frac(3, 2),
-        "figures": lambda x: float_to_frac(x["fig_execution"] + x["fig_patterns"] + x["fig_transitions"]) * frac(2),
-        "mistakes": make_combine_mistakes(small_mistakes=-2, big_mistakes=-10),
+        "dance_figs": make_combine_fields(df_accuracy=2, df_difficulty=2, df_art=2),
+        "composition": make_combine_fields(c_ideas=frac(3, 2), c_structure=frac(3, 2), c_bonus=frac(3, 2)),
+        "figures": make_combine_fields(fig_execution=2, fig_patterns=2, fig_transitions=2),
+        "mistakes": make_combine_fields(small_mistakes=-2, big_mistakes=-10),
+    }
+
+    def _total_score(self):
+        num_set = sum(self.user_data[key] is not None for key in self.INITIAL_SCORES.keys())
+        if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
+            return "–"
+        if num_set == len(self.DEFAULT_SCORES):
+            return "🗸"
+        return "..."
+
+
+class ScoreContextFormationSimplified(ScoreContextBase):
+    DEFAULT_SCORES = {
+        "fw": 100,
+        "dance_figs": 0,
+        "composition": 0,
+        "figures": 0,
+        "small_mistakes": 0,
+        "big_mistakes": 0,
+    }
+    INITIAL_SCORES = {
+        "fw": None,
+        "dance_figs": None,
+        "composition": None,
+        "figures": None,
+        "small_mistakes": 0,
+        "big_mistakes": 0,
+    }
+    SCORES_VALIDATORS = {
+        "fw": lambda x: x is None or type(x) is int and x in POSSIBLE_REDUCTIONS,
+        "dance_figs": make_validate_number(allow_halves=True, allow_none=True),
+        "composition": make_validate_number(allow_halves=True, allow_none=True),
+        "figures": make_validate_number(allow_halves=True, allow_none=True),
+        "small_mistakes": make_validate_number(max_value=100),
+        "big_mistakes": make_validate_number(max_value=100),
+    }
+    CRITERIAS_MODIFIERS = {
+        "fw": make_apply_reduction("fw"),
+        "dance_figs": make_multiply("dance_figs", frac(2)),
+        "composition": make_multiply("composition", frac(3, 2)),
+        "figures": make_multiply("figures", frac(2)),
+        "mistakes": make_combine_fields(small_mistakes=-2, big_mistakes=-10),
     }
 
     def _total_score(self):
@@ -426,9 +557,9 @@ class ScoreContextTechDance(ScoreContextBase):
         "card_reasons": {key: False for key in get_all_card_reasons("base")},
     }
     SCORES_VALIDATORS = {
-        "jump_steps": lambda x: type(x) is int and 0 <= x <= 100,
-        "time": lambda x: x is None or type(x) is int and 0 <= x <= 24 * 60 * 60,
-        "card": lambda x: x in ("OK", "YC", "RC",),
+        "jump_steps": make_validate_number(max_value=100),
+        "time": make_validate_number(max_value=24 * 60 * 60, allow_none=True),
+        "card": validate_card,
         "card_reasons": make_validate_card_reasons("base"),
     }
 
@@ -452,11 +583,11 @@ class ScoreContextTechAcro(ScoreContextBase):
         "fall_down": 0,
     }
     SCORES_VALIDATORS = {
-        "jump_steps": lambda x: type(x) is int and 0 <= x <= 100,
-        "time": lambda x: x is None or type(x) is int and 0 <= x <= 24 * 60 * 60,
-        "card": lambda x: x in ("OK", "YC", "RC",),
+        "jump_steps": make_validate_number(max_value=100),
+        "time": make_validate_number(max_value=24 * 60 * 60, allow_none=True),
+        "card": validate_card,
         "card_reasons": make_validate_card_reasons("base", "acro"),
-        "fall_down": lambda x: type(x) is int and 0 <= x <= 100,
+        "fall_down": make_validate_number(max_value=100),
     }
 
     def _total_score(self):
@@ -481,11 +612,11 @@ class ScoreContextTechFormation(ScoreContextBase):
         "undercount": 0,
     }
     SCORES_VALIDATORS = {
-        "jump_steps": lambda x: type(x) is int and 0 <= x <= 100,
-        "time": lambda x: x is None or type(x) is int and 0 <= x <= 24 * 60 * 60,
-        "card": lambda x: x in ("OK", "YC", "RC",),
+        "jump_steps": make_validate_number(max_value=100),
+        "time": make_validate_number(max_value=24 * 60 * 60, allow_none=True),
+        "card": validate_card,
         "card_reasons": make_validate_card_reasons("base", "formation"),
-        "undercount": lambda x: type(x) is int and 0 <= x <= 100,
+        "undercount": make_validate_number(max_value=100),
     }
 
     def _total_score(self):
@@ -512,12 +643,12 @@ class ScoreContextTechFormationAcro(ScoreContextBase):
         "fall_down": 0,
     }
     SCORES_VALIDATORS = {
-        "jump_steps": lambda x: type(x) is int and 0 <= x <= 100,
-        "time": lambda x: x is None or type(x) is int and 0 <= x <= 24 * 60 * 60,
-        "card": lambda x: x in ("OK", "YC", "RC",),
+        "jump_steps": make_validate_number(max_value=100),
+        "time": make_validate_number(max_value=24 * 60 * 60, allow_none=True),
+        "card": validate_card,
         "card_reasons": make_validate_card_reasons("base", "acro", "formation"),
-        "undercount": lambda x: type(x) is int and 0 <= x <= 100,
-        "fall_down": lambda x: type(x) is int and 0 <= x <= 100,
+        "undercount": make_validate_number(max_value=100),
+        "fall_down": make_validate_number(max_value=100),
     }
 
     def _total_score(self):

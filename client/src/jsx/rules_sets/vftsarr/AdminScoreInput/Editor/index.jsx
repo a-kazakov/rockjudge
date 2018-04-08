@@ -5,7 +5,9 @@ import getScoringType from "common/getScoringType";
 import ConfirmationButton from "./ConfirmationButton";
 import AcroScore from "./AcroScore";
 import DanceScore from "./DanceScore";
+import DanceExtendedScore from "./DanceExtendedScore";
 import FormationScore from "./FormationScore";
+import FormationSimplifiedScore from "./FormationSimplifiedScore";
 import SimplifiedScore from "./SimplifiedScore";
 import SoloScore from "./SoloScore";
 import HeadJudgeScore from "./HeadJudgeScore";
@@ -63,9 +65,17 @@ export default class Editor extends React.PureComponent {
             return (
                 <AcroScore { ...score_props } />
             );
+        case "dance_extended":
+            return (
+                <DanceExtendedScore { ...score_props } />
+            );
         case "dance":
             return (
                 <DanceScore { ...score_props } />
+            );
+        case "formation_simplified":
+            return (
+                <FormationSimplifiedScore { ...score_props } />
             );
         case "formation":
         case "formation_acro":

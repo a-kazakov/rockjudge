@@ -34,7 +34,7 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
 
     @staticmethod
     def get_class(scoring_system_name) -> Type["RunContextBase"]:
-        if scoring_system_name == "formation":
+        if scoring_system_name in ("formation", "formation_simplified", ):
             return RunContextFormation
         if scoring_system_name == "formation_acro":
             return RunContextFormationAcro
@@ -44,7 +44,7 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
             return RunContextAmFinalAcro
         if scoring_system_name == "am_qual":
             return RunContextAmQual
-        if scoring_system_name == "acro":
+        if scoring_system_name in ("acro", "acro_extended", ):
             return RunContextAcro
         if scoring_system_name == "simplified":
             return RunContextSimplified

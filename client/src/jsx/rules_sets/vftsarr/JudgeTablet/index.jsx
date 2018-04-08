@@ -4,7 +4,9 @@ import getScoringType from "common/getScoringType";
 
 import AcrobaticsLayout from "./AcrobaticsLayout";
 import DanceLayout from "./DanceLayout";
+import DanceExtendedLayout from "./DanceExtendedLayout";
 import FormationLayout from "./FormationLayout";
+import FormationSimplifiedLayout from "./FormationSimplifiedLayout";
 import SimplifiedLayout from "./SimplifiedLayout";
 import SoloLayout from "./SoloLayout";
 import HeadJudgeLayout from "./HeadJudgeLayout";
@@ -27,7 +29,9 @@ export default class JudgeTablet extends React.PureComponent {
     static LAYOUTS = {
         "acro": AcrobaticsLayout,
         "dance": DanceLayout,
+        "dance_extended": DanceExtendedLayout,
         "formation": FormationLayout,
+        "formation_simplified": FormationSimplifiedLayout,
         "simplified": SimplifiedLayout,
         "solo": SoloLayout,
         "head": HeadJudgeLayout,

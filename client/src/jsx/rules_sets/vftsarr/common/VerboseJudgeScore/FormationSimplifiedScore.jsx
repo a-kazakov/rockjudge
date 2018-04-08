@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import formatScore from "./formatScore";
 
-export default class FormationScore extends React.PureComponent {
+export default class FormationSimplifiedScore extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -41,15 +41,9 @@ export default class FormationScore extends React.PureComponent {
         return (
             <table className="score-breakdown"><tbody>
                 { this.renderRow("fw", "-$%") }
-                { this.renderRow("df_accuracy") }
-                { this.renderRow("df_difficulty") }
-                { this.renderRow("df_art") }
-                { this.renderRow("c_ideas") }
-                { this.renderRow("c_structure") }
-                { this.renderRow("c_bonus") }
-                { this.renderRow("fig_execution") }
-                { this.renderRow("fig_patterns") }
-                { this.renderRow("fig_transitions") }
+                { this.renderRow("dance_figs") }
+                { this.renderRow("composition") }
+                { this.renderRow("figures") }
                 { this.renderRow("small_mistakes", "$") }
                 { this.renderRow("big_mistakes", "$") }
             </tbody></table>
