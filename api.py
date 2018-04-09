@@ -197,13 +197,35 @@ class Api:
     def score_set(cls, request):
         score = cls.get_model(Score, "score_id", request)
         judge = score.discipline_judge.judge
-        access_levels = ("admin", "any_judge", "judge_*", )
+        access_levels = ("admin", "any_judge", f"judge_{judge.id}", )
         check_auth(
             competition_id=judge.competition_id,
             request=request,
             allowed_access_levels=access_levels,
         )
         score.update_model(request.body["data"], ws_message=request.ws_message)
+        return {}
+
+    @classmethod
+    def score_set_multiple(cls, request):
+        tour = cls.get_model(Tour, "tour_id", request)
+        access_levels = ("admin", "any_judge", f"judge_{judge.id}", )
+        check_auth(
+            competition_id=tour.discipline.competition_id,
+            request=request,
+            allowed_access_levels=access_levels,
+        )
+        mapping = {
+            int(key): value
+            for key, value in request.body["scores"]
+        }
+        scores = Score.filter(
+            Score.tour_id == tour.id &
+            Score.id << list(mapping.keys())
+        )
+        Score.smart_prefetch_multiple(scores, {})
+        for score in scores:
+            score.update_model(mapping[score.id], request.ws_message)
         return {}
 
     @classmethod
