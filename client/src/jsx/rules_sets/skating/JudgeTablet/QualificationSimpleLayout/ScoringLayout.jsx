@@ -10,7 +10,7 @@ export default class ScoringLayout extends React.PureComponent {
         return {
             readOnly: PT.bool.isRequired,
             scoreData: PT.shape({
-                cross: PT.boolean,
+                cross: PT.bool,
                 note_number: PT.number,
                 note_pics: PT.string.isRequired,
             }).isRequired,

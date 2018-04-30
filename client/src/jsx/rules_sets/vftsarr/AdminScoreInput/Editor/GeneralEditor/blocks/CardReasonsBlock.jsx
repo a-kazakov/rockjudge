@@ -1,7 +1,7 @@
 import _ from "l10n";
 
 import MultipleSelectorBlock from "./MultipleSelectorBlock";
-import getCardReasons from "../../../../common/getCardReasons";
+import getCardReasons from "common/getCardReasons";
 
 export default class CardReasonsBlock extends MultipleSelectorBlock {
     static get propTypes() {

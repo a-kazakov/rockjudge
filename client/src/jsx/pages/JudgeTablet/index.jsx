@@ -7,6 +7,7 @@ export default class JudgeTablet extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
+            judgeId: PT.number.isRequired,
             competitionId: PT.number.isRequired,
         };
     }
@@ -15,6 +16,7 @@ export default class JudgeTablet extends React.PureComponent {
         super(props);
         this.state = {
             activeTourId: null,
+            hasActiveTours: false,
         };
     }
 
@@ -30,22 +32,20 @@ export default class JudgeTablet extends React.PureComponent {
     }
 
     handleActiveToursUpdate = (active_tours) => {
-        const tour_info = active_tours[0] || null;
-        const tour_id = tour_info && tour_info.tour_id;
-        if (tour_id === this.state.activeTourId) {
-            return;
-        }
+        const tour_info = active_tours.find(ti => ti.judges.includes(this.props.judgeId)) || null;
+        const tour_id = tour_info?.tour_id || null;
         this.setState({
             activeTourId: tour_id,
+            hasActiveTours: active_tours.length > 0,
         });
-    }
+    };
     handleActiveToursUpdateMessage = (data) => {
         const { competition_id, active_tours } = data;
         if (competition_id !== this.props.competitionId) {
             return;
         }
         this.handleActiveToursUpdate(active_tours);
-    }
+    };
 
     // Rendering
 
@@ -53,6 +53,7 @@ export default class JudgeTablet extends React.PureComponent {
         return (
             <MainComponent
                 activeTourId={ this.state.activeTourId }
+                hasActiveTours={ this.state.hasActiveTours }
                 { ...this.props }
             />
         );

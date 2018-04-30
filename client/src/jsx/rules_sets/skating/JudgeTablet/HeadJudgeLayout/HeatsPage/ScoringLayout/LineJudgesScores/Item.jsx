@@ -24,7 +24,12 @@ export default class Item extends React.PureComponent {
         if (!this.props.showVerbose) {
             return null;
         }
-        if (["skating.qualification_simple"].includes(this.props.tour.scoring_system_name)) {
+        if (
+            [
+                "skating.qualification_simple",
+                "skating.final_simple",
+            ].includes(this.props.tour.scoring_system_name)
+        ) {
             return null;
         }
         return (

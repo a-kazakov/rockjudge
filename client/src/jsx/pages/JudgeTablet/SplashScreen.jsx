@@ -18,24 +18,17 @@ export default class SplashScreen extends React.PureComponent {
                     name: PT.string.isRequired,
                 }).isRequired,
             }),
+            hasActiveTours: PT.bool.isRequired,
         };
     }
 
     renderNotJudgingText() {
-        if (!this.props.tour) {
+        if (!this.props.hasActiveTours) {
             return null;
         }
         return (
-            <div>
-                <div className="not-judging-discipline">
-                    { this.props.tour.discipline.name }
-                </div>
-                <div className="not-judging-tour">
-                    { this.props.tour.name }
-                </div>
-                <div className="not-judging-message">
-                    { _("tablet.messages.not_judging_discipline") }
-                </div>
+            <div className="not-judging-message">
+                { _("tablet.messages.not_judging_discipline") }
             </div>
         );
     }

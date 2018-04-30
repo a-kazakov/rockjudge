@@ -47,19 +47,19 @@ export default class LineJudgeScore extends React.PureComponent {
         this.setState({
             verboseIdx: selected_idx,
         });
-    }
+    };
 
     handleHideVerboseScore = (event) => {
         event.preventDefault();
         this.setState({ verboseIdx: null });
-    }
+    };
 
     renderNumbers() {
         return this.scores.map(score => {
             const dj = this.line_judges_index.get(score.discipline_judge_id);
             return (
                 <td key={ score.id }>
-                    { `${dj.judge.number }${ dj.role === "acro_judge" ? " (A)" : "" }` }
+                    { dj.judge.number }
                 </td>
             );
         });

@@ -12,6 +12,7 @@ export default class JudgeTablet extends LoadingComponent {
         return {
             judgeId: PT.number.isRequired,
             activeTourId: PT.number,
+            hasActiveTours: PT.bool.isRequired,
         };
     }
 
@@ -79,6 +80,7 @@ export default class JudgeTablet extends LoadingComponent {
         if (this.state.tour === null || this.state.disciplineJudge === null) {
             return (
                 <SplashScreen
+                    hasActiveTours={ this.props.hasActiveTours }
                     judge={ this.state.judge }
                     tour={ this.state.tour }
                 />

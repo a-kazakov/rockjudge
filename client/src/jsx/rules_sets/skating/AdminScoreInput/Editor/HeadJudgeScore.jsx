@@ -1,5 +1,5 @@
 import GeneralEditor from "./GeneralEditor"
-import genScale from "./genScale";
+import NumberBlock from "./GeneralEditor/blocks/NumberBlock";
 
 export default class HeadJudgeScore extends React.PureComponent {
     static get propTypes() {
@@ -7,10 +7,11 @@ export default class HeadJudgeScore extends React.PureComponent {
         return {
             score: PT.shape({
                 data: PT.shape({
-                    raw_data: PT.shape({
-                        bonus: PT.number.isRequired,
-                    }).isRequired,
+                    raw_data: PT.object.isRequired,
                 }).isRequired,
+            }).isRequired,
+            tour: PT.shape({
+                scoring_system_name: PT.string.isRequired,
             }).isRequired,
             readOnly: PT.bool.isRequired,
             onDiscard: PT.func.isRequired,
@@ -18,32 +19,22 @@ export default class HeadJudgeScore extends React.PureComponent {
         };
     }
 
-    handleSubmission = (data) => {
-        this.props.onSubmit({
-            bonus: parseInt(data.bonus),
-        });
-    }
-
-    makeField(key, label, scale) {
-        const value = this.props.score.data.raw_data[key];
-        return {
-            key: key,
-            label: `${label}:`,
-            options: scale,
-            defaultValue: value === null ? "" : value.toString(),
-        }
-    }
-
     render() {
         return (
             <GeneralEditor
-                fields={ [
-                    this.makeField("bonus", "B", genScale("?numbers", {min: -10, max: 10})),
-                ] }
+                initialData={ this.props.score.data.raw_data }
                 readOnly={ this.props.readOnly }
                 onDiscard={ this.props.onDiscard }
-                onSubmit={ this.handleSubmission }
-            />
+                onSubmit={ this.props.onSubmit }
+            >
+                <NumberBlock
+                    nullable
+                    field="bonus"
+                    label="B"
+                    max={ 10 }
+                    min={ -10 }
+                />
+            </GeneralEditor>
         );
     }
 }

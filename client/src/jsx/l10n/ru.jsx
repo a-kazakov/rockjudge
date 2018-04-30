@@ -583,7 +583,7 @@ export default function translate(src, ...args) {
                 "select_page": "Страница",
             },
             "messages": {
-                "not_judging_discipline": "Вы не участвуете в судействе данной дисциплины",
+                "not_judging_discipline": "Вы сейчас не судите",
                 "not_judging_participant": "Вы не оцениваете этого участника",
                 "not_judging_tour": "Вы не оцениваете этот тур",
                 "not_performing": "Не выступает",

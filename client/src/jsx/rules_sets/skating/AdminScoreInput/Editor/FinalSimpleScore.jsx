@@ -1,8 +1,7 @@
 import GeneralEditor from "./GeneralEditor"
 import NumberBlock from "./GeneralEditor/blocks/NumberBlock";
-import SelectorBlock from "./GeneralEditor/blocks/SelectorBlock";
 
-export default class SimplifiedScore extends React.PureComponent {
+export default class FinalSimpleScore extends React.PureComponent {
     static get propTypes() {
         const PT = React.PropTypes;
         return {
@@ -28,20 +27,11 @@ export default class SimplifiedScore extends React.PureComponent {
                 onDiscard={ this.props.onDiscard }
                 onSubmit={ this.props.onSubmit }
             >
-                <SelectorBlock
-                    field="cross"
-                    label="X"
-                    options={ [
-                        [null, "..."],
-                        [true, "X"],
-                        [false, "–"],
-                    ] }
-                />
                 <NumberBlock
                     nullable
-                    field="note_number"
-                    label="N"
-                    max={ 5 }
+                    field="place"
+                    label="P"
+                    max={ 50 }
                     min={ 1 }
                 />
             </GeneralEditor>

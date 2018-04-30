@@ -5,6 +5,7 @@ import getScoringType from "common/getScoringType";
 import HeadJudgeScore from "./HeadJudgeScore";
 import QualificationSimpleScore from "./QualificationSimpleScore";
 import ConfirmationButton from "./ConfirmationButton";
+import FinalSimpleScore from "./FinalSimpleScore";
 
 export default class Editor extends React.PureComponent {
     static get propTypes() {
@@ -25,7 +26,7 @@ export default class Editor extends React.PureComponent {
     handleDiscardClick = (event) => {
         event.stopPropagation();
         this.props.onDiscard();
-    }
+    };
 
     renderWrongJudgeRoleMessage() {
         return (
@@ -56,6 +57,10 @@ export default class Editor extends React.PureComponent {
         case "qualification_simple":
             return (
                 <QualificationSimpleScore { ...score_props } />
+            );
+        case "final_simple":
+            return (
+                <FinalSimpleScore { ...score_props } />
             );
         case "head":
             return (

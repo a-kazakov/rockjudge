@@ -18,6 +18,7 @@ export default class ResultsPage extends React.PureComponent {
                 ).isRequired,
                 next_tour_id: PT.number,
                 num_advances: PT.number.isRequired,
+                scoring_system_name: PT.string.isRequired,
                 discipline: PT.shape({
                     discipline_judges: PT.arrayOf(
                         PT.shape({
@@ -83,7 +84,7 @@ export default class ResultsPage extends React.PureComponent {
         )
     }
     renderAdvancedInfo() {
-        if (this.props.tour.next_tour_id === null) {
+        if (this.props.tour.next_tour_id === null || this.props.tour.scoring_system_name.includes("final")) {
             return null;
         }
         return (
