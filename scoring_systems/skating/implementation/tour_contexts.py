@@ -26,7 +26,7 @@ class TourContextBase(CachedClass):
     ) -> Type["TourContextBase"]:
         if scoring_system_name == "qualification_simple":
             return TourContextQualification
-        if scoring_system_name == "final_simple":
+        if scoring_system_name in ("final_simple", "final_3d"):
             return TourContextFinal
         if scoring_system_name == "final_summary":
             return TourContextFinalSummary
@@ -117,7 +117,7 @@ class TourContextFinal(TourContextBase):
             }
             for run, sk_row, place in zip(self.runs, sst.skating_rows, sst.places)
         ]
-        return sorted(result, key=lambda x: (x["place"], x["run_id"]))
+        return sorted(result, key=lambda x: (x["place"] or 10**10, x["run_id"]))
 
 
 class TourContextFinalSummary(TourContextBase):

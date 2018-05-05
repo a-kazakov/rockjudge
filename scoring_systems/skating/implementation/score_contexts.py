@@ -58,6 +58,8 @@ class ScoreContextBase(CachedClass):
                 return ScoreContextDanceSimpleQualification
             if scoring_system_name == "final_simple":
                 return ScoreContextDanceSimpleFinal
+            if scoring_system_name == "final_3d":
+                return ScoreContextDance3dFinal
         if scoring_system_name == "final":
             return ScoreContextDanceSimpleQualification
         if judge_role == "head_judge":
@@ -84,6 +86,10 @@ class ScoreContextBase(CachedClass):
     @property
     def total_score(self) -> TotalScoreType:
         raise NotImplementedError
+
+    @property
+    def extra_data(self) -> Dict[str, Any]:
+        return {}
 
     @staticmethod
     def check_is_completed(user_data: ScoreRawData) -> bool:
@@ -187,6 +193,59 @@ class ScoreContextDanceSimpleFinal(ScoreContextBase):
     @staticmethod
     def check_is_completed(user_data: ScoreRawData) -> bool:
         return user_data["place"] is not None
+
+
+class ScoreContextDance3dFinal(ScoreContextBase):
+    DEFAULT_SCORES = {
+        "tech": 0,
+        "composition": 0,
+        "art": 0,
+        "place": 0,
+    }
+    INITIAL_SCORES = {
+        "tech": None,
+        "composition": None,
+        "art": None,
+        "place": None,
+    }
+    SCORES_VALIDATORS = {
+        "tech": lambda x: x is None or (isinstance(x, int) and 1 <= x <= 10),
+        "composition": lambda x: x is None or (isinstance(x, int) and 1 <= x <= 10),
+        "art": lambda x: x is None or (isinstance(x, int) and 1 <= x <= 10),
+        "place": lambda x: x is None or (isinstance(x, int) and 1 <= x <= 100),
+    }
+
+    @property
+    def place_suffix(self) -> str:
+        place = self.user_data["place"]
+        if place is None:
+            return ""
+        return f" ({place})"
+
+    @property
+    def scores_sum(self) -> int:
+        return (
+            self.counting_score["tech"] +
+            self.counting_score["composition"] +
+            self.counting_score["art"]
+        )
+
+    @property
+    def total_score(self) -> TotalScoreType:
+        return f"{self.scores_sum}{self.place_suffix}"
+
+    @property
+    def extra_data(self) -> Dict[str, Any]:
+        return {
+            "scores_sum": self.scores_sum,
+        }
+
+    @staticmethod
+    def check_is_completed(user_data: ScoreRawData) -> bool:
+        return all(
+            user_data[field] is not None
+            for field in ("tech", "composition", "art")
+        )
 
 
 class ScoreContextHeadQualification(ScoreContextBase):

@@ -69,6 +69,7 @@ class Endpoints:
             "total_score": (float(context.total_score)
                             if type(context.total_score) is frac
                             else context.total_score),
+            **context.extra_data,
         }
 
     def get_updated_score(self, score_id, score_data, judge_role, client_data):

@@ -1,9 +1,9 @@
 import copy
 import json
-import time
 import traceback
 
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
+from typing import List, Dict, Type, Tuple, Any, TYPE_CHECKING
 
 import tornado.ioloop
 import tornado.websocket
@@ -12,6 +12,13 @@ from db import (
     Database,
     StatsCounter,
 )
+
+
+if TYPE_CHECKING:
+    from models.base_model import BaseModel  # noqa
+
+
+SchemaType = Dict[str, Dict[str, Dict[str, Dict[str, Dict[str, Any]]]]]
 
 
 class WebSocketConnectionsManager:
@@ -314,14 +321,23 @@ class WsMessage:
             if key not in schemas:
                 schemas[key] = {}
             self.merge_schemas(schemas[key], x["schema"])
+        models_to_prefetch: Dict[Tuple[Type[BaseModel], str], List[int]] = defaultdict(list)
+        schemas_by_json: Dict[str, SchemaType] = {}
         for (model_type, model_id), schema in schemas.items():
             try:
-                model = model_type.get(model_type.id == model_id)
-                model.smart_prefetch(schema)
-                updates.append(model.serialize_as_child(schema))
+                schema_json = json.dumps(schema, sort_keys=False, check_circular=False)
+                key = (model_type, schema_json)
+                schemas_by_json[schema_json] = schema
+                models_to_prefetch[key].append(model_id)
             except model_type.DoesNotExist:
                 if self._recepient is not None:
                     messages.append(("error", "errors.model_does_not_exist.{}".format(model_type.__name__.lower()), ))
+        for (model_type, schema_json), model_ids in models_to_prefetch.items():
+            models: List[BaseModel] = list(model_type.filter(model_type.id << model_ids))
+            schema = schemas_by_json[schema_json]
+            model_type.smart_prefetch_multiple(models, schema)
+            for model in models:
+                updates.append(model.serialize_as_child(schema))
         # Active tours
         for competition_id in self._active_tours_updates:
             active_tours = Competition.get(id=competition_id).get_active_tours()

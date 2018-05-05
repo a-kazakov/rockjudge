@@ -332,12 +332,17 @@ class Tour(BaseModel):
         if self.active:
             return
         competition_id = self.discipline.competition_id
-        active_tours = list(self.__class__.select().join(Discipline).where(
+        active_tours = list(self.select().join(Discipline).where(
             (Tour.active == True) &  # NOQA
             (Discipline.competition == competition_id)
         ))
+        next_discipline_judges = self.discipline.discipline_judges
+        next_judge_ids = {dj.judge_id for dj in next_discipline_judges}
         for tour in active_tours:
-            tour.stop(ws_message=ws_message, broadcast=False)
+            active_discipline_judges = tour.discipline.discipline_judges
+            active_judge_ids = {dj.judge_id for dj in active_discipline_judges}
+            if active_judge_ids.intersection(next_judge_ids):
+                tour.stop(ws_message=ws_message, broadcast=False)
         self.active = True
         self.save()
         ws_message.add_model_update(

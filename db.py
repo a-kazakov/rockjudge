@@ -1,4 +1,7 @@
 import asyncio
+import re
+import traceback
+
 import peewee_asyncext
 import logging
 import time
@@ -34,18 +37,21 @@ class Database:
 
 
 class SqlLoggingHandler(logging.StreamHandler):
+    LOG_QUERIES = True
+    LOG_STACKTRACES = False
+
     def __init__(self):
         super().__init__()
         self.cnt = 0
 
     def emit(self, record):
-        # import re
-        # import traceback
-        # record = record.msg[0]
-        # record = re.sub(r'SELECT.+?FROM', 'SELECT * FROM', record)
-        # record = re.sub(r'(%s, )+%s', '...', record)
-        # print(record)
-        # print(traceback.print_stack())
+        if self.LOG_QUERIES:
+            record = record.msg[0]
+            record = re.sub(r'SELECT.+?FROM', 'SELECT * FROM', record)
+            record = re.sub(r'(%s, )+%s', '...', record)
+            print(record)
+        if self.LOG_STACKTRACES:
+            print(traceback.print_stack())
         self.cnt += 1
 
 

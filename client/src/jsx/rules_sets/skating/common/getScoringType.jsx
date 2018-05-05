@@ -6,6 +6,8 @@ export default function getScoringType(discipline_judge, scoring_system_name) {
             return "qualification_simple";
         case "skating.final_simple":
             return "final_simple";
+        case "skating.final_3d":
+            return "final_3d";
         default:
             return null;
         }

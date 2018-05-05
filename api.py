@@ -4,6 +4,7 @@ import os
 import random
 import traceback
 from datetime import datetime
+from typing import List
 
 import settings
 from db import Database
@@ -209,7 +210,7 @@ class Api:
     @classmethod
     def score_set_multiple(cls, request):
         tour = cls.get_model(Tour, "tour_id", request)
-        access_levels = ("admin", "any_judge", f"judge_{judge.id}", )
+        access_levels = ("admin", "any_judge", "judge_*", )
         check_auth(
             competition_id=tour.discipline.competition_id,
             request=request,
@@ -217,12 +218,12 @@ class Api:
         )
         mapping = {
             int(key): value
-            for key, value in request.body["scores"]
+            for key, value in request.body["scores"].items()
         }
-        scores = Score.filter(
-            Score.tour_id == tour.id &
-            Score.id << list(mapping.keys())
-        )
+        scores: List[Score] = list(Score.select().join(Run).filter(
+            (Run.tour_id == tour.id) &
+            (Score.id << list(mapping.keys()))
+        ))
         Score.smart_prefetch_multiple(scores, {})
         for score in scores:
             score.update_model(mapping[score.id], request.ws_message)

@@ -161,6 +161,7 @@ export default class GeneralLayout extends React.PureComponent {
                 <ConfirmationClass
                     disciplineJudge={ this.props.disciplineJudge }
                     tour={ this.props.tour }
+                    onScoreUpdate={ this.props.onScoreUpdate }
                 />
             );
         }

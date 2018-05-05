@@ -64,6 +64,7 @@ export default function translate(src, ...args) {
                 "stop_tour_and_start_next": "Завершить тур и перейти к следующему туру",
                 "submit_time": "Сохранить",
                 "to_start_page": "На главную",
+                "auto_assign_places": "Присвоить места автоматически",
             },
             "confirms": {
                 "finalize_tour": "Вы действительно хотите финализировать этот тур?",
@@ -76,9 +77,14 @@ export default function translate(src, ...args) {
                 crosses_status: (c, t) => `Поставлен${chooseEnding(c, "", "о", "о")} ${c} крест${chooseEnding(c, "", "а", "ов")} из ${t}`,
                 heat: (n) => `Заход ${n}`,
                 "notes": "Заметки",
+                "tech": "Техника",
+                "composition": "Композиция",
+                "art": "Артистизм",
                 "confirmation_page": "Подтверждение оценок",
                 "participant": "Участник",
                 "multiple_participants": "Несколько участников",
+                "participant_number": "№",
+                "score": "Балл",
             },
             "global": {
                 "confirm_score": "Зафиксировать",
@@ -101,6 +107,9 @@ export default function translate(src, ...args) {
                 "advances_actual": (n) => `Прошедшие участники: ${n}`,
                 "num_advances_selector_not_avaliable": "После закрытия всех оценок линейными судьями можно будет установить новую квоту вывода",
                 "set_num_advances": "Изменить квоту вывода",
+            },
+            "messages": {
+                "confirm_auto_assign": ["Проставить места автоматически?", "Это действие очистит текущие места"],
             },
             "pages": {
                 "heats": "Заходы",
@@ -206,6 +215,7 @@ export default function translate(src, ...args) {
                 "base_name": "Скейтинг система",
                 "qualification_simple": "Отборочные туры, только кресты",
                 "final_simple": "Финал, упрощенная система",
+                "final_3d": "Финал, система 3D",
                 "final_summary": "Сводка нескольких финалов",
             },
         },

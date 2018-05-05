@@ -2,7 +2,7 @@ import _ from "l10n";
 
 import SelectorInput from "tablet_ui/SelectorInput";
 import NumberSelectorInput from "tablet_ui/NumberSelectorInput";
-import MultipleOptionsInput from "../../../../lib/tablet_ui/MultipleOptionsInput";
+import MultipleOptionsInput from "tablet_ui/MultipleOptionsInput";
 
 export default class ScoringLayout extends React.PureComponent {
     static get propTypes() {

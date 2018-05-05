@@ -60,34 +60,6 @@ class Score(BaseModel):
             client_data=new_data["score_data"],
         )
         self.save()
-        # postprocessor = getattr(
-        #     self.run.tour.scoring_system,
-        #     "postprocess_judge_scores",
-        #     None,
-        # )
-        # if postprocessor is not None:
-        #     other_scores = Score.select().where(
-        #         Score.discipline_judge == self.discipline_judge
-        #     )
-        #     changes = postprocessor(
-        #         base_score_id=self.id,
-        #         scores_data={
-        #             score.id: score.score_data
-        #             for score in other_scores
-        #         },
-        #         judge_role=self.discipline_judge.role,
-        #     )
-        #     for score_id, score_data in changes:
-        #         Score.update({
-        #             Score.score_data: score_data,
-        #         }).where(Score.id == score_id).execute()
-        #         ws_message.add_model_update(
-        #             model_type=self.__class__,
-        #             model_id=score_id,
-        #             schema={
-        #                 "run": {},
-        #             },
-        #         )
         ws_message.add_model_update(
             model_type=self.__class__,
             model_id=self.id,

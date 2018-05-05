@@ -21,4 +21,5 @@ SCORING_SYSTEMS = {
     "qualification_simple": Endpoints("qualification_simple"),
     "final_simple": Endpoints("final_simple"),
     "final_summary": Endpoints("final_summary"),
+    "final_3d": Endpoints("final_3d"),
 }

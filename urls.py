@@ -3,7 +3,6 @@ import os.path
 from tornado.web import StaticFileHandler
 
 from webserver.handlers import (
-    ApiHandler,
     AdminHandler,
     AutoPrinterHandler,
     CompetitionsHandler,
@@ -32,6 +31,5 @@ handlers = [
     (r"/screen_operator/(\d+)", ScreenOperatorHandler),
     (r"/static/(.*)", StaticFileHandlerNoCache, {"path": STATIC_PATH}),
     (r"/judge/(\d+)$", JudgeHandler),
-    (r"/api", ApiHandler),
     (r"/ws", WebSocketHandler),
 ]

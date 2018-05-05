@@ -6,6 +6,7 @@ const meta = {
     "scoring_systems": [
         "skating.qualification_simple",
         "skating.final_simple",
+        "skating.final_3d",
         "skating.final_summary",
     ],
     "suggested_programs": [

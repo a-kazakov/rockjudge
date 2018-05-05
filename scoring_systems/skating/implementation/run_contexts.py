@@ -43,7 +43,7 @@ class RunContextBase(CachedClass):
     ) -> Type["RunContextBase"]:
         if scoring_system_name == "qualification_simple":
             return RunContextQualification
-        if scoring_system_name == "final_simple":
+        if scoring_system_name in ("final_simple", "final_3d"):
             return RunContextFinal
         if scoring_system_name == "final_summary":
             return RunContextFinalSummary
@@ -159,7 +159,7 @@ class RunContextFinal(RunContextBase):
     @property
     def raw_places(self) -> List[int]:
         return [
-            s.counting_score["place"]
+            s.counting_score["place"] if self.status == "OK" else 0
             for s in self.scores_by_role["dance_judge"]
         ]
 

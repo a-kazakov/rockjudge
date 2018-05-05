@@ -54,6 +54,13 @@
                 margin-top: 30px;
             }
         }
+        .auto-assign-button {
+            .button-tablet-primary();
+            margin: 0 10px;
+            padding: 0 10px;
+            float: left;
+            height: 37px;
+        }
         .layout-participant {
             .total-score {
                 font-weight: bold;
@@ -153,32 +160,55 @@
         }
         .places-table {
             table-layout: fixed;
-            border-collapse: separate;
-            border-spacing: 2px;
             box-sizing: border-box;
-            width: ~"calc(100% - 10px)";
+            width: ~"calc(100% - 20px)";
             margin: 10px;
             color: @color-dark;
+            td, th {
+                padding: 1px;
+            }
             td.btn {
                 .button-tablet-primary();
+                border: 1px solid white;
                 text-align: center;
+                &.read-only:not(.active):not(.disabled) {
+                    color: #fff !important;
+                    background-color: #777 !important;
+                }
+                &.disabled {
+                    color: transparent !important;
+                    background-color: transparent !important;
+                }
                 &.in-active-col {
-                    background-color: @color-medium;
-                    border-color: @color-medium;
+                    background-color: lighten(@color-medium, 10%);
+                }
+                &.in-active-col.active {
+                    background-color: lighten(@color-contrast, 15%);
                 }
                 &.active {
                     background-color: @color-contrast;
-                    border-color: @color-contrast;
                 }
             }
             .participant {
                 text-align: left;
                 width: 40%;
                 padding-left: 15px;
-                .multiple-participants {
+                &.multiple {
                     font-weight: bold;
                     color: @color-red;
                 }
+            }
+            .score {
+                font-weight: normal;
+            }
+            .score-right {
+                text-align: right;
+            }
+            .number-right {
+                text-align: right;
+            }
+            td.number-right, td.score-right, td.participant {
+                border-top: 1px solid #999;
             }
         }
         .multiple-rows {
