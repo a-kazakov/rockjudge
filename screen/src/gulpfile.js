@@ -43,7 +43,7 @@ const js_task = makeTask((debug) => {
         .pipe(buffer())
         .pipe(debug ? gutil.noop() : uglify())
         .pipe(gulp.dest("../static/"));
-}, gutil.env.type !== "production");
+}, gutil.env.gtype !== "production");
 
 
 const css_task = makeTask(() => {

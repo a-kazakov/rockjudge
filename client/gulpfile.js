@@ -7,7 +7,7 @@ const gulp = require("gulp");
 const gutil = require("gulp-util");
 const makeItFaster = require("spawn-task-experiment").spawn;
 
-const OUT_DIR = gutil.env.dest || "../static/";
+const OUT_DIR = gutil.env.gdest || "../static/";
 
 function makeTask(func, args) {
     const params = Array.from(args);
@@ -103,7 +103,7 @@ function addPrimaryLessTask(module_name) {
 }
 
 function addPrimaryJsxTask(module_name) {
-    const debug = gutil.env.type !== "production";
+    const debug = gutil.env.gtype !== "production";
     const task_name = `js_${module_name}`;
     const task_func = makeGeneralJsxTask(
         task_name,
@@ -139,7 +139,7 @@ function addRulesSetLessTask(rules_set_name) {
 }
 
 function addRulesSetJsxTask(rules_set_name) {
-    const debug = gutil.env.type !== "production";
+    const debug = gutil.env.gtype !== "production";
     const task_name = `js_rs_${rules_set_name}`;
     const task_func = makeGeneralJsxTask(
         task_name,

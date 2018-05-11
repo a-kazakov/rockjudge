@@ -1,7 +1,5 @@
 @echo off
 
 pushd "%~dp0\.."
-python control\internal\build.py %*
+start cmd /C "venv\Scripts\activate.bat & python control\internal\build.py %* & pause"
 popd
-
-pause

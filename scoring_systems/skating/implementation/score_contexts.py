@@ -220,7 +220,7 @@ class ScoreContextDance3dFinal(ScoreContextBase):
         place = self.user_data["place"]
         if place is None:
             return ""
-        return f" ({place})"
+        return str(f" ({place})")
 
     @property
     def scores_sum(self) -> int:

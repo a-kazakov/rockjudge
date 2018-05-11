@@ -257,7 +257,7 @@ class Api:
         check_auth(
             competition_id=tour.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", "any_judge", ),
+            allowed_access_levels=("admin", "any_judge", "judge_*",),
         )
         tour.update_model(request.body["data"], ws_message=request.ws_message)
         return {}

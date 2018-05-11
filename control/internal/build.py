@@ -81,8 +81,8 @@ def copy_python_module(module):
 def task_prepare_python_sources():
     os.makedirs(SERVER_SRC_PATH, exist_ok=True)
     copyfiles(jp(HOME, "*.py"), SERVER_SRC_PATH)
-    if os.path.exists(jp("src", "settings_prod.py")):
-        os.unlink(jp("src", "settings_prod.py"))
+    if os.path.exists(jp(SERVER_SRC_PATH, "settings_prod.py")):
+        os.unlink(jp(SERVER_SRC_PATH, "settings_prod.py"))
     run("robocopy", jp(HOME, "scoring_systems"), jp(SERVER_SRC_PATH, "scoring_systems"), "*.py", "/s", success_code=1)
     copy_python_module("service")
     copy_python_module("protection")
@@ -128,7 +128,7 @@ def task_build_server():
 def task_build_js_css():
     output_dir = jp(os.getcwd(), "dist", "data", "static")
     with pushd("client"):
-        run("call", "gulp", "all", "--type", "production", "--dest", output_dir)
+        run("call", "gulp", "all", "--gtype", "production", "--gdest", output_dir)
 
 
 @task("Copying screen")

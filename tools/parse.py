@@ -194,6 +194,8 @@ class Couple:
             "acrobatics": acrobatics,
         }]
         self.external_id = md5((
+            str(self.number) + "|" +
+            str(self.discipline) + "|" +
             self.club + "|" +
             "|".join([s["first_name"] + "$" + s["last_name"] for s in self.sportsmen])
         ).encode("utf-8")).hexdigest()
@@ -220,7 +222,7 @@ class Formation:
         form_data = rows[0][:5]
         self.number = form_data[0]
         self.discipline = str(form_data[1])
-        self.formation_name = str(form_data[2])
+        self.formation_name = str(form_data[2] or "")
         self.club = Club.storage[form_data[3]].external_id
         self.coaches = str(form_data[4])
         self.sportsmen = [
@@ -234,7 +236,7 @@ class Formation:
         ]
         self.acrobatics = []
         self.external_id = md5((
-            self.club + "|" + self.formation_name
+            self.club + "|" + self.formation_name + "|" + str(self.number) + "|" + self.discipline
         ).encode("utf-8")).hexdigest()
         self.storage.append(self)
 
@@ -359,10 +361,10 @@ if __name__ == "__main__":
                 break
 
     with step("Parsing formations"):
-        formation_names = grid_forms.getCol(2, 1000)
+        formation_numbers = grid_forms.getCol(1, 1000)
         latest_row = None
         for idx in range(1000):
-            if formation_names[idx] is None:
+            if formation_numbers[idx] is None:
                 continue
             if latest_row is not None:
                 Formation(grid_forms, latest_row, idx - latest_row)

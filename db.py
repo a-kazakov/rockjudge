@@ -37,7 +37,7 @@ class Database:
 
 
 class SqlLoggingHandler(logging.StreamHandler):
-    LOG_QUERIES = True
+    LOG_QUERIES = False
     LOG_STACKTRACES = False
 
     def __init__(self):
