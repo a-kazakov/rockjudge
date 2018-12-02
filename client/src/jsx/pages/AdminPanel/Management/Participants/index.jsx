@@ -1,48 +1,73 @@
-import _ from "l10n";
-import LoadingComponent from "common/server/LoadingComponent";
+import React from "react";
+
 import Loader from "common/components/Loader";
-
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import UniversalTable from "pages/AdminPanel/Management/UniversalTable";
+import FieldTypes from "pages/AdminPanel/Management/UniversalTable/FieldTypes";
+import PT from "prop-types";
+import CreationButton from "./CreationButton";
+import EditorRow from "./EditorRow";
 import Row from "./Row";
-import CreationRow from "./CreationRow";
 
-export default class Participants extends LoadingComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
+export default class Participants extends UniversalTable {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        disciplineId: PT.number.isRequired,
+    };
+
+    static DISPLAY_COMPONENT = Row;
+    static EDITOR_COMPONENT = EditorRow;
+    static CREATION_BUTTON_COMPONENT = CreationButton;
+    static MODEL_NAME = "Participant";
+    static FIELDS = [
+        FieldTypes.makeIntegerField("number", "errors.participant.invalid_number", [0, null]),
+        {
+            name: "club_id",
+            defaultValueGetter: (context) => context.competition.clubs[0]?.id || 0,
+            toFormValue: (value) => value.toString(),
+            fromFormValue: (value) => parseInt(value),
+        },
+        FieldTypes.makeTextField("coaches"),
+        FieldTypes.makeTextField("formation_name"),
+        {
+            name: "sportsmen",
+            defaultValue: [],
+            toFormValue: (value) => {
+                return value.map(sportsman => {
+                    let {year_of_birth, ...other} = sportsman;
+                    year_of_birth = year_of_birth.toString();
+                    return {year_of_birth, ...other};
+                });
+            },
+            fromFormValue: (value) => {
+                return value.map(sportsman => {
+                    let {year_of_birth, ...other} = sportsman;
+                    year_of_birth = parseInt(year_of_birth) || 0;
+                    return {year_of_birth, ...other};
+                });
+            },
+        },
+    ];
+
+    getEntries() {
+        const discipline = this.discipline;
+        if (discipline == null) {
+            return [];
+        }
+        return discipline.participants;
+    }
+    getCreateParams() {
         return {
-            competition: PT.object.isRequired,
-            disciplineId: PT.number.isRequired,
+            discipline_id: this.props.disciplineId,
         };
     }
 
-    CLASS_ID = "participants";
-    API_MODELS = {
-        discipline: {
-            model_type: "Discipline",
-            model_id_getter: props => props.disciplineId,
-            schema: {
-                participants: {
-                    club: {},
-                    programs: {},
-                },
-            },
-        },
-    };
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            discipline: null,
-        };
+    get discipline() {
+        return this.props.competition.subscription_storage.get("Discipline", this.props.disciplineId) || null;
     }
 
     renderTable() {
-        let rows = this.state.discipline.participants.map((participant) =>
-            <Row
-                competition={ this.props.competition }
-                key={ participant.id }
-                participant={ participant }
-            />
-        );
         return (
             <table>
                 <tbody>
@@ -61,26 +86,24 @@ export default class Participants extends LoadingComponent {
                         </th>
                         <th className="delete" />
                     </tr>
-                    { rows }
-                    <CreationRow
-                        competition={ this.props.competition }
-                        discipline={ this.state.discipline }
-                    />
+                    { this.renderRows() }
+                    { this.renderCreationButton() }
                 </tbody>
             </table>
         );
     }
     render() {
-        if (this.state.discipline === null) {
+        const discipline = this.discipline;
+        if (discipline == null) {
             return (
-                <Loader />
+                <Loader />  // TODO: replace with error message
             );
         }
         return (
             <div className="Participants">
                 <header>
                     <h1>
-                        { this.state.discipline.name }
+                        { discipline.name }
                     </h1>
                     <h2>
                         { _("admin.headers.participants_management") }
@@ -89,12 +112,10 @@ export default class Participants extends LoadingComponent {
                 <div className="body">
                     { this.renderTable() }
                     <div className="total-participants">
-                        { _("admin.phrases.total_n_participants", this.state.discipline.participants.length) }
+                        { _("admin.phrases.total_n_participants", discipline.participants.length) }
                     </div>
                 </div>
             </div>
         );
     }
 }
-
-Participants.displayName = "AdminPanel_Management_Participants";

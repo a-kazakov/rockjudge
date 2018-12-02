@@ -1,52 +1,17 @@
-import _ from "l10n";
+import {React} from "HostModules";
 
+import _ from "l10n";
+import PT from "prop-types";
 import makeDisciplineResultsTable from "common/makeDisciplineResultsTable";
 
-export default class DisciplineResultsTable extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            forCompetitionReport: PT.bool.isRequired,
-            discipline: PT.shape({
-                results: PT.arrayOf(
-                    PT.shape({
-                        run_id: PT.number.isRequired,
-                        place: PT.isRequired,
-                    }).isRequired,
-                ).isRequired,
-                tours: PT.arrayOf(
-                    PT.shape({
-                        name: PT.string.isRequired,
-                        runs: PT.arrayOf(
-                            PT.shape({
-                                participant: PT.shape({
-                                    number: PT.number.isRequired,
-                                    coaches: PT.string.isRequired,
-                                    sportsmen: PT.arrayOf(
-                                        PT.shape({
-                                            last_name: PT.string.isRequired,
-                                            first_name: PT.string.isRequired,
-                                            year_of_birth: PT.number.isRequired,
-                                            substitute: PT.bool.isRequired,
-                                        })
-                                    ),
-                                    club: PT.shape({
-                                        city: PT.string.isRequired,
-                                        name: PT.string.isRequired,
-                                    }).isRequired,
-                                }).isRequired,
-                            }).isRequired,
-                        ).isRequired,
-                    }).isRequired,
-                ).isRequired,
-            }).isRequired,
-        }
-    }
-    static get defaultProps() {
-        return {
-            forCompetitionReport: false,
-        };
-    }
+export default class DisciplineResultsTable extends React.Component {
+    static propTypes = {
+        discipline: PT.object.isRequired,
+        forCompetitionReport: PT.bool.isRequired,
+    };
+    static defaultProps = {
+        forCompetitionReport: false,
+    };
 
     static transformDocx(docx) {
         docx
@@ -59,20 +24,17 @@ export default class DisciplineResultsTable extends React.PureComponent {
     }
 
     renderRowHeader(prev_row, next_row) {
-        if (this.props.forCompetitionReport) {
+        if (this.props.forCompetitionReport || !prev_row) {
             return null;
         }
-        const need_render =
-            typeof prev_row === "undefined" ||
-            prev_row.tour.id !== next_row.tour.id;
-        if (!need_render) {
+        if (prev_row.run.tour_id === next_row.run.tour_id) {
             return null;
         }
         return (
             <tr key={ `H${next_row.run.id}` }>
                 <th className="tour-name" colSpan="6">
                     <p className="text-left">
-                        { next_row.tour.name }
+                        { next_row.run.tour.name }
                     </p>
                 </th>
             </tr>
@@ -87,9 +49,9 @@ export default class DisciplineResultsTable extends React.PureComponent {
                     style={ { borderRight: "1pt solid black" } }
                 >
                     <p className="text-center">
-                        { row.run.disqualified
+                        { row.run.status === "DQ"
                             ? _("results.labels.dq")
-                            : (row.place === null ? "" : row.place) }
+                            : (row.place == null ? "" : row.place) }
                     </p>
                 </td>
                 <td className="w-8 number">
@@ -108,7 +70,7 @@ export default class DisciplineResultsTable extends React.PureComponent {
                         { p.formation_name ? (
                             <tr>
                                 <td colSpan="2">
-                                    <p className="text-left" style={{ fontWeight: "bold" }}>
+                                    <p className="text-left" style={ { fontWeight: "bold" } }>
                                         { p.formation_name }
                                     </p>
                                 </td>
@@ -149,7 +111,7 @@ export default class DisciplineResultsTable extends React.PureComponent {
         const table = makeDisciplineResultsTable(this.props.discipline);
         for (let i = 0; i < table.length; ++i) {
             const header = this.renderRowHeader(table[i - 1], table[i]);
-            if (header !== null) {
+            if (header != null) {
                 result.push(header);
             }
             result.push(this.renderRow(table[i]));

@@ -1,17 +1,15 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import GeneralLayout from "JudgeTablet/GeneralLayout";
 import ScoringLayoutDance from "./ScoringLayoutDance";
 import TechAcroLayout from "./TechAcroLayout";
 import checkSS from "common/checkSS";
 
-export default class TechLayout extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            tour: PT.shape({
-                scoring_system_name: PT.string.isRequired,
-            }).isRequired,
-        };
-    }
+export default class TechLayout extends React.Component {
+    static propTypes = {
+        tour: PT.object.isRequired,
+    };
 
     renderAcroLayout() {
         return (

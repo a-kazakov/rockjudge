@@ -1,78 +1,40 @@
+import React from "react";
+
 import _ from "l10n";
-import Api from "common/server/Api";
 import showConfirm from "common/dialogs/showConfirm";
-import closeDialog from "common/dialogs/closeDialog";
+import PT from "prop-types";
+import Model from "common/server/Storage/models/Model";
 
-import EditorRow from "./EditorRow";
+export default class Row extends React.Component {
+    static propTypes = {
+        entry: PT.instanceOf(Model).isRequired,
+        loading: PT.bool.isRequired,
+        onDelete: PT.func.isRequired,
+        onStartEditing: PT.func.isRequired,
+    };
 
-export default class Row extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            judge: PT.shape({
-                id: PT.number.isRequired,
-                name: PT.string.isRequired,
-                number: PT.string.isRequired,
-                category: PT.string.isRequired,
-                role_description: PT.string.isRequired,
-            }).isRequired,
-        };
-    }
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            editing: false,
-        }
-    }
-
-    handleStartEditing = () => this.setState({ editing: true });
-    handleStopEditing = () => this.setState({ editing: false });
-
-    handleSubmission = (data) => {
-        Api("judge.set", {
-            judge_id: this.props.judge.id,
-            data: data,
-        })
-            .onSuccess(this.handleStopEditing)
-            .send();
-    }
     handleDeletion = (event) => {
         event.stopPropagation();
         showConfirm(
             _("admin.confirms.delete_judge"),
-            () => {
-                Api("judge.delete", {
-                    judge_id: this.props.judge.id,
-                })
-                    .onSuccess(closeDialog)
-                    .send();
-        });
-    }
-
-    renderEditor() {
-        return (
-            <EditorRow
-                onStopEditing={ this.handleStopEditing }
-                onSubmit={ this.handleSubmission }
-                { ...this.props }
-            />
+            this.props.onDelete,
         );
-    }
-    renderViewer() {
+    };
+
+    render() {
         return (
             <tr
                 className="viewer"
-                onClick={ this.handleStartEditing }
+                onClick={ this.props.onStartEditing }
             >
                 <td className="role-description">
-                    { this.props.judge.role_description || _("global.phrases.judge_n", this.props.judge.number) }
+                    { this.props.entry.role_description || _("global.phrases.judge_n", this.props.entry.number) }
                 </td>
                 <td className="name">
-                    { this.props.judge.name }
+                    { this.props.entry.name }
                 </td>
                 <td className="category">
-                    { this.props.judge.category }
+                    { this.props.entry.category }
                 </td>
                 <td className="delete">
                     <button onClick={ this.handleDeletion }>
@@ -82,13 +44,5 @@ export default class Row extends React.PureComponent {
             </tr>
         );
     }
-    render() {
-        if (this.state.editing) {
-            return this.renderEditor();
-        } else {
-            return this.renderViewer();
-        }
-    }
 }
 
-Row.displayName = "AdminPanel_Management_Judges_Row";

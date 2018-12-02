@@ -1,18 +1,18 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
 const OPTIONS_2 = ["left", "right"].map(x => _(`tablet.tech_judge.judging_positions.${x}`));
 const OPTIONS_3 = ["left", "central", "right"].map(x => _(`tablet.tech_judge.judging_positions.${x}`));
 
-export default class Button extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            numOptions: PT.number.isRequired,
-            position: PT.number.isRequired,
-            onSelected: PT.func.isRequired,
-        };
-    }
+export default class Button extends React.Component {
+    static propTypes = {
+        numOptions: PT.number.isRequired,
+        position: PT.number.isRequired,
+        onSelected: PT.func.isRequired,
+    };
 
     handleClick = () => {
         this.props.onSelected(this.props.position);

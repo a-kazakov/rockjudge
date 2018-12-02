@@ -1,178 +1,287 @@
 import json
-import peewee
+from typing import Any, Dict, Iterable, List, NamedTuple, TYPE_CHECKING, Tuple, Union, Optional
 
-from playhouse import postgres_ext
+from sqlalchemy import Column, ForeignKey, Integer, JSON, String, UniqueConstraint
+from sqlalchemy.orm import Session, relationship
 
+from db import ModelBase
+from enums import AccessLevel
 from exceptions import ApiError
 from models.base_model import BaseModel
+from models.client_auth import ClientAuth
 from models.club import Club
-from models.proxies import discipline_proxy
+from models.discipline import Discipline
+from models.tour import Tour
 
 
-def serialize_participant_sportsmen(raw_data):
-    return json.dumps(sorted(
-        [
-            {
-                "first_name": str(sp["first_name"]),
-                "last_name": str(sp["last_name"]),
-                "year_of_birth": int(sp["year_of_birth"]),
-                "gender": "M" if sp["gender"] == "M" else "F",
-                "substitute": bool(False if "substitute" not in sp else sp["substitute"]),
-            } for sp in raw_data
-        ], key=lambda x: (x["substitute"], x["gender"] == "M", x["last_name"], x["first_name"])
-    ), check_circular=False)
+if TYPE_CHECKING:
+    from api import ApiRequest
+    from models.run import Run
+    from models.program import Program
+    from mutations import MutationsKeeper
 
 
-class Participant(BaseModel):
-    class Meta:
-        indexes = (
-            (("discipline", "external_id"), True),
+class Sportsman(NamedTuple):
+    first_name: str
+    last_name: str
+    year_of_birth: int
+    gender: str
+    substitute: bool = False
+
+    @classmethod
+    def create(cls, **kwargs: Any) -> "Sportsman":
+        result = cls(**kwargs)
+        result.validate()
+        return result
+
+    @classmethod
+    def from_dict(cls, src: Dict[str, Any]) -> "Sportsman":
+        return cls.create(**src)
+
+    @property
+    def sorting_key(self) -> Tuple[Union[int, str], ...]:
+        return (
+            self.substitute,
+            self.gender,
+            self.last_name,
+            self.first_name,
+            self.year_of_birth,
         )
-        order_by = ["number", "formation_name", "external_id"]
 
-    discipline = peewee.ForeignKeyField(discipline_proxy, related_name="participants", on_delete="RESTRICT")
-    formation_name = peewee.CharField(default="")
-    coaches = peewee.CharField()
-    number = peewee.IntegerField(default=0)
-    club = peewee.ForeignKeyField(Club, related_name="participants", on_delete="RESTRICT")
-    external_id = peewee.CharField(null=True, default=None)
-    sportsmen = postgres_ext.BinaryJSONField(default=[], dumps=serialize_participant_sportsmen)
+    def validate(self) -> None:
+        for key, type_ in self._field_types.items():
+            if not isinstance(getattr(self, key), type_):
+                src_type = type(getattr(self, key))
+                raise TypeError(f"Sportsman.{key} has invalid type {src_type}. Expected {type_}.")
+        if self.first_name == "":
+            raise ValueError("First name can't be empty")
+        if self.last_name == "":
+            raise ValueError("Last name can't be empty")
+        if self.year_of_birth < 0:
+            raise ValueError("Year of birth can't be negative")
+        if self.gender not in ("M", "F",):
+            raise ValueError("Gender value should be either M or F")
 
-    RW_PROPS = ["formation_name", "coaches", "number", "external_id", "sportsmen"]
+    def to_dict(self) -> Dict[str, Any]:
+        return self._asdict()
 
-    PF_CHILDREN = {
-        "club": None,
-        "programs": None,
-    }
 
-    def get_name(self):
-        if self.is_couple():
+class Participant(ModelBase, BaseModel):
+    # DB schema
+
+    __tablename__ = "participants"
+
+    __table_args__ = (
+        UniqueConstraint("discipline_id", "external_id", name="discipline_external_id_idx"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    discipline_id = Column(Integer, ForeignKey("disciplines.id", ondelete="RESTRICT"), nullable=False)
+    formation_name = Column(String, default="", nullable=False)
+    coaches = Column(String(5000))
+    number = Column(Integer, default=0, nullable=False)
+    club_id = Column(Integer, ForeignKey("clubs.id", ondelete="RESTRICT"), nullable=False)
+    external_id = Column(String, nullable=True)
+    sportsmen_json = Column(JSON, default=[], nullable=False)
+
+    discipline = relationship(Discipline, backref="participants")
+    club = relationship(Club, backref="participants")
+
+    programs: Iterable["Program"]
+    runs: Iterable["Run"]
+
+    HIDDEN_FIELDS = {"sportsmen_json"}
+
+    # Virtual fields
+
+    @property
+    def competition_id(self) -> int:
+        return self.discipline.competition_id
+
+    @property
+    def sportsmen(self) -> List[Sportsman]:
+        try:
+            return self.__sportsmen
+        except AttributeError:
+            raw_data = self.sportsmen_json
+            if not isinstance(raw_data, list):
+                raw_data = []
+            result = sorted(
+                [Sportsman.from_dict(raw_sportsman) for raw_sportsman in raw_data],
+                key=lambda s: s.sorting_key
+            )
+            self.__sportsmen = result
+            return result
+
+    @sportsmen.setter
+    def sportsmen(self, value: List[Sportsman]) -> None:
+        self.sportsmen_json = [s.to_dict() for s in value]
+        try:
+            del self.__sportsmen
+        except AttributeError:
+            pass
+
+    @property
+    def name(self):
+        if not self.formation_name:
             sportsmen = sorted(
                 self.sportsmen,
-                key=lambda s: (s["gender"], s["last_name"]))
-            return " – ".join(["{last_name} {first_name}".format(**s) for s in sportsmen])
-        if self.is_solo():
-            return "{last_name} {first_name}".format(**self.sportsmen[0])
+                key=lambda s: (s.gender, s.last_name),
+            )
+            return " – ".join([f"{s.last_name} {s.first_name}" for s in sportsmen])
         return self.formation_name
 
-    def is_couple(self):
-        return len(self.sportsmen) == 2
+    # Custom model consts/vars
 
-    def is_solo(self):
-        return len(self.sportsmen) == 1
+    # Base properties
 
-    def get_default_program(self, program_key):
+    @property
+    def sorting_key(self) -> Tuple[Union[int, str], ...]:
+        return (
+            self.number,
+            self.formation_name,
+            self.external_id,
+        )
+
+    def validate(self) -> None:
+        if self.club.competition_id != self.discipline.competition_id:
+            raise ValueError("Discipline and club must belong to the same competition")
+
+    # Permissions
+
+    @classmethod
+    def check_create_permission(cls, session: Session, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+        competition_id = session.query(Discipline).get(data["discipline_id"]).competition_id
+        auth = ClientAuth.get_for_competition(session, request.client, competition_id)
+        return auth.access_level == AccessLevel.ADMIN
+
+    def check_read_permission(self, request: "ApiRequest") -> bool:
+        return self.get_auth(request.client).access_level != AccessLevel.NONE
+
+    def check_update_permission(self, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+        return self.get_auth(request.client).access_level == AccessLevel.ADMIN
+
+    def check_delete_permission(self, request: "ApiRequest") -> bool:
+        return self.get_auth(request.client).access_level == AccessLevel.ADMIN
+
+    # Create logic
+
+    @classmethod
+    def before_create(cls, session: Session, data: Dict[str, Any], *, unsafe: bool) -> Dict[str, Any]:
+        return {
+            "discipline": session.query(Discipline).get(data["discipline_id"]),
+            "club": session.query(Club).get(data["club_id"]),
+            "sportsmen": [Sportsman.from_dict(sp) for sp in data.pop("sportsmen")]
+        }
+
+    # Update logic
+
+    def before_update(self, data: Dict[str, Any], *, unsafe: bool) -> Dict[str, Any]:
+        extra = {}
+        if "sportsmen" in data:
+            extra["sportsmen"] = [Sportsman.from_dict(sp) for sp in data.pop("sportsmen")]
+        if "club_id" in data:
+            extra["club_id"] = self.session.query(Club).get(data["club_id"]).id,
+        return extra
+
+    # Delete logic
+
+    def before_delete(self) -> None:
+        from models.run import Run
+        finalized_count = (
+            self.session
+                .query(Run).filter_by(participant=self)
+                .join(Tour).filter_by(finalized=True)
+                .count()
+        )
+        if finalized_count > 0:
+            raise ApiError("errors.participant.delete_with_finalized_tours")
+
+    # Serialization logic
+
+    def serialize_extra(self) -> Dict[str, Any]:
+        return {
+            "name": self.name,
+            "sportsmen": [s.to_dict() for s in self.sportsmen],
+        }
+
+    # Custom model logic
+
+    # DB operations
+
+    # Fields custom logic
+
+    def is_couple(self) -> bool:
+        return len(self.sportsmen_json) == 2
+
+    def is_solo(self) -> bool:
+        return len(self.sportsmen_json) == 1
+
+    def get_default_program(self, program_key: str) -> Optional["Program"]:
         for program in self.programs:
             if program.default_for is not None and program_key in program.default_for.split(","):
                 return program
         return None
 
     @classmethod
-    def load_models(cls, discipline, objects):
-        from models import Program
-        if len(objects) == 0:
-            return
-        clubs_ids = [obj["club"] for obj in objects]
-        clubs = {
+    def load_models(
+        cls,
+        discipline: Discipline,
+        objects: List[Dict[str, Any]],
+        mk: "MutationsKeeper",
+    ) -> None:
+        from models.program import Program
+
+        clubs: Dict[str, Club] = {
             club.external_id: club
-            for club in Club.select().where(
-                (Club.external_id << clubs_ids) &
-                (Club.competition == discipline.competition_id)
-            )
+            for club in discipline.competition.clubs
+            if club.external_id is not None
         }
         prepared = [
-            cls.gen_model_kwargs(
+            cls.get_import_params(
                 obj,
-                discipline=discipline,
-                club=clubs[obj["club"]]
+                discipline_id=discipline.id,
+                club_id=clubs[obj["club"]].id,
             ) for obj in objects
         ]
-        for model, created, raw_data in cls.load_models_base(objects, prepared=prepared, discipline=discipline):
-            Program.load_models(model, raw_data["programs"])
+        for model, created, raw_data in cls.load_models_base(
+            objects,
+            discipline.session,
+            mk,
+            prepared=prepared,
+            discipline_id=discipline.id,
+        ):
+            Program.load_models(model, raw_data["programs"], mk)
 
-    @classmethod
-    def create_model(cls, discipline, data, ws_message):
-        club = Club.get((Club.id == data["club_id"]) & (Club.competition == discipline.competition_id))
-        create_kwargs = cls.gen_model_kwargs(
-            data,
-            discipline=discipline,
-            club=club)
-        model = cls.create(**create_kwargs)
-        ws_message.add_model_update(
-            model_type=discipline_proxy,
-            model_id=discipline.id,
-            schema={
-                "participants": {}
-            }
-        )
-        ws_message.add_model_update(
-            model_type=cls,
-            model_id=model.id,
-            schema={
-                "club": {},
-                "programs": {},
-            }
-        )
+    # def delete_model(self, ws_message):
+    #     from models import Tour
+    #     discipline_id = self.discipline_id
+    #     if self.run_set.join(Tour).where(Tour.finalized == True).count() > 0:  # NOQA
+    #         raise ApiError("errors.participant.delete_with_finalized_tours")
+    #     self.delete_instance(recursive=True)
+    #     ws_message.add_model_update(
+    #         model_type=discipline_proxy,
+    #         model_id=discipline_id,
+    #         schema={
+    #             "participants": {},
+    #             "tours": {
+    #                 "runs": {},
+    #             },
+    #         }
+    #     )
+    #
+    # def serialize(self, children={}):
+    #     result = self.serialize_props()
+    #     result["name"] = self.get_name()
+    #     result = self.serialize_upper_child(result, "club", children)
+    #     result = self.serialize_lower_child(result, "programs", children)
+    #     return result
 
-    def update_model(self, new_data, ws_message):
-        number_changed = "number" in new_data and new_data["number"] != self.number
-        if "club_id" in new_data:
-            club = Club.get((Club.id == new_data["club_id"]) & (Club.competition == self.discipline.competition_id))
-            self.club = club
-        self.update_model_base(new_data)
-        if number_changed:
-            ws_message.add_model_update(
-                model_type=discipline_proxy,
-                model_id=self.discipline_id,
-                schema={
-                    "participants": {}
-                }
-            )
-            ws_message.add_model_update(
-                model_type=Club,
-                model_id=self.club_id,
-                schema={
-                    "participants": {}
-                }
-            )
-        ws_message.add_model_update(
-            model_type=self.__class__,
-            model_id=self.id,
-            schema={
-                "club": {},
-                "programs": {},
-            }
-        )
-
-    def delete_model(self, ws_message):
-        from models import Tour
-        discipline_id = self.discipline_id
-        if self.run_set.join(Tour).where(Tour.finalized == True).count() > 0:  # NOQA
-            raise ApiError("errors.participant.delete_with_finalized_tours")
-        self.delete_instance(recursive=True)
-        ws_message.add_model_update(
-            model_type=discipline_proxy,
-            model_id=discipline_id,
-            schema={
-                "participants": {},
-                "tours": {
-                    "runs": {},
-                },
-            }
-        )
-
-    def serialize(self, children={}):
-        result = self.serialize_props()
-        result["name"] = self.get_name()
-        result = self.serialize_upper_child(result, "club", children)
-        result = self.serialize_lower_child(result, "programs", children)
-        return result
-
-    def export(self):
-        result = self.serialize_props()
-        result.update({
-            "id": self.id,
-            "club_id": self.club_id,
-            "programs": [program.export() for program in self.programs],
-        })
-        return result
+    # def export(self):
+    #     result = self.serialize_props()
+    #     result.update({
+    #         "id": self.id,
+    #         "club_id": self.club_id,
+    #         "programs": [program.export() for program in self.programs],
+    #     })
+    #     return result

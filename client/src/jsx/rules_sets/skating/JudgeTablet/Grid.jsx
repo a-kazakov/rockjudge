@@ -1,10 +1,11 @@
-export default class Grid extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            children: PT.node.isRequired,
-        };
-    }
+import {React} from "HostModules";
+
+import PT from "prop-types";
+
+export default class Grid extends React.Component {
+    static propTypes = {
+        children: PT.node.isRequired,
+    };
 
     setupCache() {
         this.children = Array.isArray(this.props.children)
@@ -18,7 +19,7 @@ export default class Grid extends React.PureComponent {
     }
 
     renderRow(elements) {
-        if (elements === null) {
+        if (elements == null) {
             return null;
         }
         const row_width = `${(elements.length * this.width_value).toFixed(5)}%`;

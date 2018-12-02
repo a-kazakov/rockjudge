@@ -1,31 +1,19 @@
-import _ from "l10n";
+import {React} from "HostModules";
+
+import PT from "prop-types";
 
 import GeneralLayout from "JudgeTablet/GeneralLayout";
 import PlacesPage from "./PlacesPage";
 import ScoringLayout from "./ScoringLayout";
 
-export default class Final3dLayout extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudge: PT.shape({
-                id: PT.number.isRequired,
-            }).isRequired,
-            tour: PT.shape({
-                id: PT.number.isRequired,
-                num_advances: PT.number.isRequired,
-                runs: PT.arrayOf(
-                    PT.shape({
-                        status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                        scores: PT.arrayOf(
-                            PT.shape({
-                                discipline_judge_id: PT.number.isRequired,
-                            }).isRequired,
-                        ).isRequired,
-                    }).isRequired,
-                ).isRequired,
-            }).isRequired,
-        };
+export default class Final3dLayout extends React.Component {
+    static propTypes = {
+        disciplineJudge: PT.object.isRequired,
+        tour: PT.object.isRequired,
+    };
+
+    static checkScoreCompletion(score) {
+        return score.data.tech != null && score.data.composition != null && score.data.art != null;
     }
 
     render() {
@@ -33,6 +21,7 @@ export default class Final3dLayout extends React.PureComponent {
             <GeneralLayout
                 confirmationClass={ PlacesPage }
                 layoutClass={ ScoringLayout }
+                scoreCompletionChecker={ this.constructor.checkScoreCompletion }
                 { ...this.props }
             />
         );

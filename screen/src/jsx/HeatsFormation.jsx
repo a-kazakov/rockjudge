@@ -1,3 +1,5 @@
+import {React} from "HostModules";
+
 import HeatsOneParticipant from "./HeatsOneParticipant";
 
 export default function HeatsFormation(props) {

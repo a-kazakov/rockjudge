@@ -1,8 +1,20 @@
-from fractions import Fraction as frac
-from typing import Any, Callable, Dict, List, Optional, Type
+from __future__ import annotations
 
+from fractions import Fraction as frac
+from typing import Any, Callable, Dict, Optional, Type, TYPE_CHECKING
+
+from enums import RunStatus
+from scoring_systems.base import (
+    JudgeRole,
+    ScoreInfo,
+    ScoreRawData,
+    ScoreResult,
+    ScoringSystemName,
+)
 from .common import CachedClass
-from ..types import AcroScore, JudgeRole, ScoreId, ScoreRawData, ScoringSystemName, TotalScoreType
+
+if TYPE_CHECKING:
+    from scoring_systems.skating import TourContextBase
 
 
 def float_to_frac(value: float) -> frac:
@@ -36,17 +48,15 @@ class ScoreContextBase(CachedClass):
 
     def __init__(
         self,
-        score_id: ScoreId,
-        raw_data: ScoreRawData,
+        db_data: Dict[str, Any],
         judge_role: JudgeRole,
-        acro_scores: Optional[List[AcroScore]],
         scoring_system_name: ScoringSystemName,
     ) -> None:
-        self.score_id = score_id
-        self.db_data = raw_data
+        self.db_data = db_data
         self.judge_role = judge_role
-        self.acro_scores = acro_scores
         self.scoring_system_name = scoring_system_name
+        self.score_info: Optional[ScoreInfo] = None
+        self.tour_context: Optional[TourContextBase] = None
 
     @staticmethod
     def get_class(
@@ -60,85 +70,73 @@ class ScoreContextBase(CachedClass):
                 return ScoreContextDanceSimpleFinal
             if scoring_system_name == "final_3d":
                 return ScoreContextDance3dFinal
-        if scoring_system_name == "final":
-            return ScoreContextDanceSimpleQualification
         if judge_role == "head_judge":
             return ScoreContextHeadQualification
         return ScoreContextNull
 
     @classmethod
-    def make(
+    def make_from_data(
         cls,
-        score_id: ScoreId,
-        raw_data: ScoreRawData,
+        db_data: Dict[str, Any],
         judge_role: JudgeRole,
-        acro_scores: Optional[List[AcroScore]],
         scoring_system_name: ScoringSystemName,
     ) -> "ScoreContextBase":
-        return cls.get_class(judge_role, scoring_system_name)(
-            score_id,
-            raw_data,
-            judge_role,
-            acro_scores,
-            scoring_system_name,
-        )
+        final_cls = cls.get_class(judge_role, scoring_system_name)
+        return final_cls(db_data, judge_role, scoring_system_name)
+
+    @classmethod
+    def make_from_request(
+        cls,
+        score_info: ScoreInfo,
+        tour_context: TourContextBase,
+        scoring_system_name: ScoringSystemName,
+    ) -> "ScoreContextBase":
+        db_data = score_info.data
+        judge_role = tour_context.tour_request.judge_roles[score_info.judge_id]
+        result = cls.make_from_data(db_data, judge_role, scoring_system_name)
+        result.score_info = score_info
+        result.tour_context = tour_context
+        return result
 
     @property
-    def total_score(self) -> TotalScoreType:
+    def total_score(self) -> str:
         raise NotImplementedError
 
     @property
     def extra_data(self) -> Dict[str, Any]:
-        return {}
+        return {
+            "parts": self.user_data,
+        }
 
-    @staticmethod
-    def check_is_completed(user_data: ScoreRawData) -> bool:
-        raise NotImplementedError
-
+    @property
+    def is_valid(self) -> bool:
+        return True
 
     @property
     def user_data(self) -> ScoreRawData:
-        result = ScoreRawData({
+        return ScoreRawData({
             **self.INITIAL_SCORES,
             **{
                 key: self.db_data[key]
                 for key in self.INITIAL_SCORES
-                if key in self.db_data
+                if key in self.db_data and self.SCORES_VALIDATORS[key](self.db_data[key])
             },
         })
-        result["completed"] = self.check_is_completed(result)
-        return result
 
     @property
     def counting_score(self) -> ScoreRawData:
-        return {
+        return ScoreRawData({
             key: (value if value is not None else self.DEFAULT_SCORES[key])
             for key, value in self.user_data.items()
-        }
+        })
 
-    def update(self, client_data: ScoreRawData) -> None:
-        cleared_data = {
-            key: (
-                self.counting_score[key] + client_data[key]["delta"]
-                if (
-                    isinstance(client_data[key], dict) and
-                    "delta" in client_data[key]
-                ) else value
-            )
-            for key, value in client_data.items()
-        }
-        upd = {
-            key: value
-            for key, value in cleared_data.items()
-            if self.SCORES_VALIDATORS.get(key, ret_false)(value)
-        }
-        self.db_data = {
-            **self.db_data,
-            **upd,
-        }
-        for attr in ("total_score", "user_data", "counting_score", ):
-            if attr in self.__dict__:
-                delattr(self, attr)
+    @property
+    def result(self) -> ScoreResult:
+        return ScoreResult(
+            is_valid=self.is_valid,
+            total_score_str=self.total_score,
+            extra_data=self.extra_data,
+        )
 
 
 class ScoreContextDanceSimpleQualification(ScoreContextBase):
@@ -148,29 +146,23 @@ class ScoreContextDanceSimpleQualification(ScoreContextBase):
         "note_pics": "",
     }
     INITIAL_SCORES = {
-        "cross": None,
+        "cross": False,
         "note_number": None,
         "note_pics": "",
     }
     SCORES_VALIDATORS = {
-        "cross": lambda x: x is None or isinstance(x, bool),
+        "cross": lambda x: isinstance(x, bool),
         "note_number": lambda x: x is None or (isinstance(x, int) and 1 <= x <= 5),
         "note_pics": lambda x: isinstance(x, str) and len(x) <= 4,
     }
 
     @property
-    def total_score(self) -> TotalScoreType:
-        if self.user_data["cross"] is None:
-            return ""
+    def total_score(self) -> str:
         return (
             "X"
             if self.user_data["cross"]
-            else "-"
+            else ""
         )
-
-    @staticmethod
-    def check_is_completed(user_data: ScoreRawData) -> bool:
-        return user_data["cross"] is not None
 
 
 class ScoreContextDanceSimpleFinal(ScoreContextBase):
@@ -185,14 +177,21 @@ class ScoreContextDanceSimpleFinal(ScoreContextBase):
     }
 
     @property
-    def total_score(self) -> TotalScoreType:
+    def total_score(self) -> str:
         if self.user_data["place"] is None:
             return ""
         return str(self.user_data["place"])
 
-    @staticmethod
-    def check_is_completed(user_data: ScoreRawData) -> bool:
-        return user_data["place"] is not None
+    @property
+    def is_valid(self) -> bool:
+        if self.tour_context is None or self.score_info is None:
+            return True
+        runs = self.tour_context.runs
+        places_count = sum(run.run_info.status == RunStatus.OK for run in runs)
+        user_place = self.user_data["place"]
+        if user_place is None:
+            return True
+        return 1 <= user_place <= places_count
 
 
 class ScoreContextDance3dFinal(ScoreContextBase):
@@ -216,11 +215,11 @@ class ScoreContextDance3dFinal(ScoreContextBase):
     }
 
     @property
-    def place_suffix(self) -> str:
+    def place_prefix(self) -> str:
         place = self.user_data["place"]
         if place is None:
             return ""
-        return str(f" ({place})")
+        return str(f"{place} ")
 
     @property
     def scores_sum(self) -> int:
@@ -231,21 +230,26 @@ class ScoreContextDance3dFinal(ScoreContextBase):
         )
 
     @property
-    def total_score(self) -> TotalScoreType:
-        return f"{self.scores_sum}{self.place_suffix}"
+    def total_score(self) -> str:
+        return f"{self.place_prefix}({self.scores_sum})"
 
     @property
     def extra_data(self) -> Dict[str, Any]:
         return {
+            **super().extra_data,
             "scores_sum": self.scores_sum,
         }
 
-    @staticmethod
-    def check_is_completed(user_data: ScoreRawData) -> bool:
-        return all(
-            user_data[field] is not None
-            for field in ("tech", "composition", "art")
-        )
+    @property
+    def is_valid(self) -> bool:
+        if self.tour_context is None or self.score_info is None:
+            return True
+        runs = self.tour_context.runs
+        places_count = sum(run.run_info.status == RunStatus.OK for run in runs)
+        user_place = self.user_data["place"]
+        if user_place is None:
+            return True
+        return 1 <= user_place <= places_count
 
 
 class ScoreContextHeadQualification(ScoreContextBase):
@@ -260,12 +264,8 @@ class ScoreContextHeadQualification(ScoreContextBase):
     }
 
     @property
-    def total_score(self) -> TotalScoreType:
-        return self.counting_score["bonus"]
-
-    @staticmethod
-    def check_is_completed(user_data: ScoreRawData) -> bool:
-        return True
+    def total_score(self) -> str:
+        return str(self.counting_score["bonus"])
 
 
 class ScoreContextNull(ScoreContextBase):
@@ -276,7 +276,3 @@ class ScoreContextNull(ScoreContextBase):
     @property
     def total_score(self):
         return ""
-
-    @staticmethod
-    def check_is_completed(user_data: ScoreRawData) -> bool:
-        return True

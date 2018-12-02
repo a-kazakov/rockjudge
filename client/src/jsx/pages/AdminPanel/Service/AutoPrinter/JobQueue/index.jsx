@@ -1,8 +1,11 @@
+import React from "react";
+
+import makeRandomString from "common/tools/makeRandomString";
 import _ from "l10n";
 
 import ActiveJob from "./ActiveJob";
 
-export default class JobQueue extends React.PureComponent {
+export default class JobQueue extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -18,7 +21,7 @@ export default class JobQueue extends React.PureComponent {
             type: job_type,
             tour: tour,
             copies: copies,
-            id: Math.random(),
+            id: makeRandomString(),
         });
         if (submit) {
             this.submitJobs();
@@ -121,4 +124,3 @@ export default class JobQueue extends React.PureComponent {
     }
 }
 
-JobQueue.displayName = "AdminPanel_Service_AutoPrinter_JobQueue";

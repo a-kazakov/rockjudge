@@ -1,21 +1,22 @@
-export default class Cell extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
+import React from "react";
+
+import PT from "prop-types";
+
+export default class Cell extends React.Component {
+    static propTypes = {
+        action: PT.string.isRequired,
+        activeCell: PT.shape({
             action: PT.string.isRequired,
-            activeCell: PT.shape({
-                action: PT.string.isRequired,
-                token: PT.string.isRequired,
-                tour_id: PT.number.isRequired,
-            }),
-            tour: PT.shape({
-                id: PT.number.isRequired,
-            }).isRequired,
-            value: PT.oneOfType([PT.number.isRequired, PT.string.isRequired]),
-            onChange: PT.func.isRequired,
-            onMove: PT.func.isRequired,
-        };
-    }
+            token: PT.string.isRequired,
+            tour_id: PT.number.isRequired,
+        }),
+        tour: PT.shape({
+            id: PT.number.isRequired,
+        }).isRequired,
+        value: PT.oneOfType([PT.number.isRequired, PT.string.isRequired]),
+        onChange: PT.func.isRequired,
+        onMove: PT.func.isRequired,
+    };
 
     componentDidUpdate(prev_props) {
         if (!this.props.activeCell) {
@@ -67,5 +68,3 @@ export default class Cell extends React.PureComponent {
         );
     }
 }
-
-Cell.displayName = "AdminPanel_Service_AutoPrinter_Table_Cell";

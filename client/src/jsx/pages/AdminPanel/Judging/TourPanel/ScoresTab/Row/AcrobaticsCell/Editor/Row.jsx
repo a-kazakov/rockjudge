@@ -1,23 +1,16 @@
+import React from "react";
+
+import Model from "common/server/Storage/models/Model";
 import _ from "l10n";
 import Api from "common/server/Api";
+import PT from "prop-types";
 
-export default class Row extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            element: PT.shape({
-                description: PT.string.isRequired,
-                has_override: PT.bool.isRequired,
-                original_score: PT.number.isRequired,
-                score: PT.number.isRequired,
-            }).isRequired,
-            idx: PT.number.isRequired,
-            readOnly: PT.bool.isRequired,
-            run: PT.shape({
-                id: PT.number.isRequired,
-            }).isRequired,
-        };
-    }
+export default class Row extends React.Component {
+    static propTypes = {
+        element: PT.instanceOf(Model).isRequired,
+        readOnly: PT.bool.isRequired,
+        run: PT.instanceOf(Model).isRequired,
+    };
     constructor(props) {
         super(props);
         this.state = {
@@ -25,26 +18,30 @@ export default class Row extends React.PureComponent {
         };
     }
 
+    get has_override() {
+        return Math.abs(this.props.element.score - this.props.element.initial_score) > 1e-3;
+    }
+
     makeInputRef = (ref) => {
         if (ref && !this._input) {
             ref.select();
         }
         this._input = ref;
-    }
+    };
 
     handleReset = () => {
-        Api("acrobatic_override.set", {
-            run_id: this.props.run.id,
-            acrobatic_idx: this.props.idx,
-            score: null,
+        Api("model/update", {
+            model_name: "RunAcrobatic",
+            model_id: this.props.element.id,
+            data: {score: this.props.element.initial_score},
         })
             .send();
-    }
+    };
     handleStartEditing = () => {
         this.setState({
             editing: true,
         })
-    }
+    };
     handleInputKeyUp = (event) => {
         const code = event.keyCode || event.which;
         if (code === 13) { // Enter
@@ -52,7 +49,7 @@ export default class Row extends React.PureComponent {
         } else if (code === 27) { // Esc
             this.stopEditing();
         }
-    }
+    };
 
     submit() {
         let value = parseFloat(this._input.value.replace(",", "."));
@@ -60,10 +57,10 @@ export default class Row extends React.PureComponent {
             return;
         }
         value = Math.round(value * 100) / 100;
-        Api("acrobatic_override.set", {
-            run_id: this.props.run.id,
-            acrobatic_idx: this.props.idx,
-            score: value,
+        Api("model/update", {
+            model_name: "RunAcrobatic",
+            model_id: this.props.element.id,
+            data: {score: value},
         })
             .onSuccess(this.stopEditing)
             .send();
@@ -72,7 +69,7 @@ export default class Row extends React.PureComponent {
         this.setState({
             editing: false,
         });
-    }
+    };
 
     renderControls() {
         if (this.props.readOnly) {
@@ -93,7 +90,7 @@ export default class Row extends React.PureComponent {
         }
         return (
             <td className="controls">
-                { this.props.element.has_override ? (
+                { this.has_override ? (
                     <button
                         className="reset-button"
                         onClick={ this.handleReset }
@@ -117,10 +114,10 @@ export default class Row extends React.PureComponent {
                     { this.props.element.description }
                 </td>
                 <td className="old-score">
-                    { this.props.element.original_score.toFixed(1) }
+                    { this.props.element.initial_score.toFixed(1) }
                 </td>
                 <td className="new-score">
-                    { this.props.element.has_override
+                    { this.has_override
                         ? this.props.element.score.toFixed(1)
                         : null }
                 </td>
@@ -131,4 +128,3 @@ export default class Row extends React.PureComponent {
 }
 
 
-Row.displayName = "AdminPanel_Judging_TourPanel_ScoresTab_Row_AcrobaticsCell_Editor_Row";

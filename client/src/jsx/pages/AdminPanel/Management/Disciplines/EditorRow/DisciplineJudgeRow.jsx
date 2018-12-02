@@ -1,66 +1,84 @@
+import React from "react";
+
+import Model from "common/server/Storage/models/Model";
+import PT from "prop-types";
 import rules_set from "rules_sets/loader";
 
-export default class DisciplineJudgeRow extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudge: PT.shape({
-                judge_id: PT.number.isRequired,
-                role: PT.oneOf(rules_set.meta.judge_roles),
-            }).isRequired,
-            idx: PT.number.isRequired,
-            judges: PT.arrayOf(
-                PT.shape({
-                    id: PT.number.isRequired,
-                    name: PT.string.isRequired,
-                }).isRequired
-            ).isRequired,
-            onChange: PT.func.isRequired,
-            onDelete: PT.func.isRequired,
-        };
-    }
+export default class DisciplineJudgeRow extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        disabled: PT.bool.isRequired,
+        idx: PT.number.isRequired,
+        value: PT.shape({
+            judge_id: PT.number.isRequired,
+            role: PT.string.isRequired,
+        }).isRequired,
+        onChange: PT.func.isRequired,
+        onDelete: PT.func.isRequired,
+    };
+
     handleChange = (field, value) => {
-        let new_value = Object.assign({}, this.props.disciplineJudge);
-        new_value[field] = value;
-        this.props.onChange(this.props.idx, new_value);
-    }
+        this.props.onChange(
+            this.props.idx,
+            Object.assign(
+                {},
+                this.props.value,
+                {[field]: value},
+            ),
+        );
+    };
     handleJudgeIdChange = (event) => {
         this.handleChange("judge_id", Number(event.target.value));
-    }
+    };
     handleRoleChange = (event) => {
         this.handleChange("role", event.target.value);
-    }
+    };
     handleDeletion = () => {
         this.props.onDelete(this.props.idx);
-    }
+    };
 
+    renderJudgeOption = (judge) => {
+        return (
+            <option
+                key={ judge.id }
+                value={ judge.id }
+            >
+                { judge.name }
+            </option>
+        );
+    };
+    renderRoleOption = (role) => {
+        return (
+            <option
+                key={ role }
+                value={ role }
+            >
+                { rules_set.translate(`judge_roles.${role}`) }
+            </option>
+        );
+    };
     render() {
         return (
             <div>
                 <select
                     className="judge"
-                    value={ this.props.disciplineJudge.judge_id }
+                    disabled={ this.props.disabled }
+                    value={ this.props.value.judge_id }
                     onChange={ this.handleJudgeIdChange }
                 >
-                    { this.props.judges.map(j =>
-                        <option key={ j.id } value={ j.id } >
-                            { j.name }
-                        </option>
-                    ) }
+                    { this.props.competition.judges.map(this.renderJudgeOption) }
                 </select>
                 <select
                     className="judge-role"
-                    value={ this.props.disciplineJudge.role }
+                    disabled={ this.props.disabled }
+                    value={ this.props.value.role }
                     onChange={ this.handleRoleChange }
                 >
-                    { rules_set.meta.judge_roles.map(jr =>
-                        <option key={ jr } value={ jr }>
-                            { rules_set.translate(`judge_roles.${jr}`) }
-                        </option>
-                    ) }
+                    { rules_set.meta.judge_roles.map(this.renderRoleOption) }
                 </select>
                 <button
                     className="delete"
+                    disabled={ this.props.disabled }
                     type="button"
                     onClick={ this.handleDeletion }
                 >
@@ -71,4 +89,3 @@ export default class DisciplineJudgeRow extends React.PureComponent {
     }
 }
 
-DisciplineJudgeRow.displayName = "AdminPanel_Management_Disciplines_EditorRow_DisciplineJudgeRow";

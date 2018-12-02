@@ -1,3 +1,6 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import getCardReasons from "common/getCardReasons";
@@ -5,21 +8,12 @@ import getCardReasons from "common/getCardReasons";
 import Item from "./Item";
 import SelectorInput from "tablet_ui/SelectorInput";
 
-export default class CardInput extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            readOnly: PT.bool.isRequired,
-            scoreData: PT.shape({
-                card: PT.oneOf(["OK", "YC", "RC"]),
-                card_reasons: PT.object,
-            }).isRequired,
-            tour: PT.shape({
-                scoring_system_name: PT.string.isRequired,
-            }).isRequired,
-            onChange: PT.func.isRequired,
-        };
-    }
+export default class CardInput extends React.Component {
+    static propTypes = {
+        readOnly: PT.bool.isRequired,
+        score: PT.object.isRequired,
+        onChange: PT.func.isRequired,
+    };
 
     static checkReasons(reasons) {
         return Object.keys(reasons)
@@ -38,16 +32,16 @@ export default class CardInput extends React.PureComponent {
     }
 
     get card_reasons() {
-        return getCardReasons(this.props.tour.scoring_system_name);
+        return getCardReasons(this.props.score.run.tour.scoring_system_name);
     }
 
     handleReasonsChange = (reason, value) => {
         const card_reasons = Object.assign(
             {},
-            this.props.scoreData.card_reasons,
+            this.props.score.data.card_reasons,
             {[reason]: value},
         );
-        const card = this.constructor.getUpdatedCard(this.props.scoreData.card, card_reasons);
+        const card = this.constructor.getUpdatedCard(this.props.score.data.card, card_reasons);
         this.props.onChange({card, card_reasons});
     };
     handleCardChange = (card) => {
@@ -64,7 +58,7 @@ export default class CardInput extends React.PureComponent {
                         key={ reason }
                         readOnly={ this.props.readOnly }
                         reason={ reason }
-                        selected={ this.props.scoreData.card_reasons[reason] }
+                        selected={ this.props.score.data.card_reasons[reason] }
                         onChange={ this.handleReasonsChange }
                     />
                 ) ) }
@@ -72,7 +66,7 @@ export default class CardInput extends React.PureComponent {
         );
     }
     renderCardType() {
-        const has_reasons = this.constructor.checkReasons(this.props.scoreData.card_reasons);
+        const has_reasons = this.constructor.checkReasons(this.props.score.data.card_reasons);
         if (!has_reasons) {
             return null;
         }
@@ -88,7 +82,7 @@ export default class CardInput extends React.PureComponent {
                         ["RC", _("tablet.tech_judge.red_card"), "active-red"],
                     ] }
                     readOnly={ this.props.readOnly }
-                    value={ this.props.scoreData.card }
+                    value={ this.props.score.data.card }
                     onChange={ this.handleCardChange }
                 />
             </div>

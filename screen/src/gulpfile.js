@@ -27,15 +27,16 @@ const js_task = makeTask((debug) => {
     return browserify({
         entries: "./jsx/root.jsx",
         extensions: [".jsx"],
-        paths: ["./jsx/"],
+        paths: ["./jsx/", "../../client/src/jsx/lib"],
         debug: debug,
     })
         .transform(babelify, {
-            presets: ["es2015", "react"],
+            presets: ["@babel/env", "@babel/react"],
             plugins: [
-                "transform-class-properties",
-                "transform-object-rest-spread",
-                "syntax-trailing-function-commas",
+                "@babel/plugin-proposal-class-properties",
+                "@babel/plugin-proposal-object-rest-spread",
+                "@babel/plugin-proposal-optional-chaining",
+                "@babel/plugin-proposal-nullish-coalescing-operator",
             ],
         })
         .bundle()

@@ -1,15 +1,15 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import Item from "./Item";
 
-export default class LeftBar extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            page: PT.oneOf(["info", "plan", "heats", "results"]).isRequired,
-            onPageChange: PT.func.isRequired,
-        };
-    }
+export default class LeftBar extends React.Component {
+    static propTypes = {
+        page: PT.oneOf(["info", "plan", "heats", "results"]).isRequired,
+        onPageChange: PT.func.isRequired,
+    };
 
     renderItem(page) {
         return (
@@ -32,5 +32,3 @@ export default class LeftBar extends React.PureComponent {
         );
     }
 }
-
-LeftBar.displayName = "PresenterTablet_LeftBar";

@@ -1,29 +1,24 @@
+import React from "react";
+
+import Model from "common/server/Storage/models/Model";
+import PT from "prop-types";
 import _ from "l10n";
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
 import makeClassName from "common/makeClassName";
 
-export default class RendererRow extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            participant: PT.shape({
-                number: PT.number.isRequired,
-                name: PT.string.isRequired,
-                club: PT.shape({
-                    name: PT.string.isRequired,
-                }).isRequired,
-            }).isRequired,
-            place: PT.number,
-            position: PT.number.isRequired,
-            selected: PT.bool.isRequired,
-            onPositionSelect: PT.func.isRequired,
-        };
-    }
+export default class RendererRow extends React.Component {
+    static propTypes = {
+        participant: PT.instanceOf(Model).isRequired,
+        place: PT.number,
+        position: PT.number.isRequired,
+        selected: PT.bool.isRequired,
+        onPositionSelect: PT.func.isRequired,
+    };
 
     handleClick = () => {
         this.props.onPositionSelect(this.props.position);
-    }
+    };
 
     getClassName() {
         return makeClassName({
@@ -32,7 +27,7 @@ export default class RendererRow extends React.PureComponent {
         });
     }
     renderPlace() {
-        if (this.props.place === null) {
+        if (this.props.place == null) {
             return null;
         }
         return (
@@ -72,5 +67,3 @@ export default class RendererRow extends React.PureComponent {
         )
     }
 }
-
-RendererRow.displayName = "ScreenOperator_DisciplinePlaceControls_DisciplineSelector_RendererRow";

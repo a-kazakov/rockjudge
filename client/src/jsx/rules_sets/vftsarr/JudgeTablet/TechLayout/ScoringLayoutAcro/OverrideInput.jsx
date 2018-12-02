@@ -1,27 +1,26 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import onTouchOrClick from "tablet_ui/onTouchOrClick";
 
-export default class OverrideInput extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            originalValue: PT.number.isRequired,
-            readOnly: PT.bool.isRequired,
-            value: PT.number.isRequired,
-            onChange: PT.func.isRequired,
-        };
-    }
+export default class OverrideInput extends React.Component {
+    static propTypes = {
+        acrobatic: PT.object.isRequired,
+        readOnly: PT.bool.isRequired,
+        onChange: PT.func.isRequired,
+    };
 
     handleMinus = () => {
         if (this.props.readOnly) {
             return;
         }
-        this.props.onChange(Math.max(this.props.value - 0.5, 0));
+        this.props.onChange(Math.max(this.props.acrobatic.score - 0.5, 0));
     };
     handlePlus = () => {
         if (this.props.readOnly) {
             return;
         }
-        this.props.onChange(Math.min(this.props.value + 0.5, this.props.originalValue));
+        this.props.onChange(Math.min(this.props.acrobatic.score + 0.5, this.props.acrobatic.initial_score));
     };
     handleZero = () => {
         if (this.props.readOnly) {
@@ -33,17 +32,17 @@ export default class OverrideInput extends React.PureComponent {
         if (this.props.readOnly) {
             return;
         }
-        this.props.onChange(this.props.originalValue);
+        this.props.onChange(this.props.acrobatic.initial_score);
     };
 
     render() {
-        const value_changed = Math.abs(this.props.value - this.props.originalValue);
+        const value_changed = Math.abs(this.props.acrobatic.score - this.props.acrobatic.initial_score);
         return (
             <div className="tablet-acro-override-input">
                 <div className="buttons">
                     <button
                         className="btn-zero"
-                        disabled={ this.props.value < 0.05 || this.props.readOnly }
+                        disabled={ this.props.acrobatic.score < 0.05 || this.props.readOnly }
                         { ...onTouchOrClick(this.handleZero) }
                     >
                         ↓0
@@ -57,14 +56,14 @@ export default class OverrideInput extends React.PureComponent {
                     </button>
                     <button
                         className="btn-minus"
-                        disabled={ this.props.value < 0.05 || this.props.readOnly }
+                        disabled={ this.props.acrobatic.score < 0.05 || this.props.readOnly }
                         { ...onTouchOrClick(this.handleMinus) }
                     >
                         &minus;
                     </button>
                     <button
                         className="btn-plus"
-                        disabled={ this.props.originalValue < this.props.value + 0.05 || this.props.readOnly }
+                        disabled={ this.props.acrobatic.initial_score < this.props.acrobatic.score + 0.05 || this.props.readOnly }
                         { ...onTouchOrClick(this.handlePlus) }
                     >
                         +
@@ -72,11 +71,10 @@ export default class OverrideInput extends React.PureComponent {
                 </div>
                 <div className="value">
                     { value_changed
-                        ? `${this.props.originalValue.toFixed(1)} → ${this.props.value.toFixed(1)}`
-                        : this.props.value.toFixed(1) }
+                        ? `${this.props.acrobatic.initial_score.toFixed(1)} → ${this.props.acrobatic.score.toFixed(1)}`
+                        : this.props.acrobatic.score.toFixed(1) }
                 </div>
             </div>
         )
     }
 }
-

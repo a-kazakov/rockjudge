@@ -1,18 +1,18 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import Button from "./Button";
 
-export default class Buttons extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            tour: PT.shape({
-                active: PT.bool.isRequired,
-                finalized: PT.bool.isRequired,
-            }).isRequired,
-            onSignal: PT.func.isRequired,
-        };
-    }
+export default class Buttons extends React.Component {
+    static propTypes = {
+        tour: PT.shape({
+            active: PT.bool.isRequired,
+            finalized: PT.bool.isRequired,
+        }).isRequired,
+        onSignal: PT.func.isRequired,
+    };
     render() {
         if (this.props.tour.finalized) {
             return <div />
@@ -56,5 +56,3 @@ export default class Buttons extends React.PureComponent {
         )
     }
 }
-
-Buttons.displayName = "AdminPanel_Judging_TourPanel_ScoresTab_Buttons";

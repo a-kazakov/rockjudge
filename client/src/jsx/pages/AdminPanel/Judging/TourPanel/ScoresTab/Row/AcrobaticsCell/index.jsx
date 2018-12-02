@@ -1,38 +1,32 @@
+import React from "react";
+
+import Model from "common/server/Storage/models/Model";
+import PT from "prop-types";
 import Editor from "./Editor";
 
-export default class AcrobaticsCell extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            editing: PT.bool.isRequired,
-            readOnly: PT.bool.isRequired,
-            run: PT.shape({
-                id: PT.number.isRequired,
-                program_name: PT.string,
-                acrobatics: PT.arrayOf(
-                    PT.shape({
-                        score: PT.number.isRequired,
-                        original_score: PT.number.isRequired,
-                    }).isRequired
-                ),
-            }).isRequired,
-            onEditRequest: PT.func.isRequired,
-            onStopEditing: PT.func.isRequired,
-        };
-    }
+export default class AcrobaticsCell extends React.Component {
+    static propTypes = {
+        editing: PT.bool.isRequired,
+        participant: PT.instanceOf(Model).isRequired,
+        readOnly: PT.bool.isRequired,
+        run: PT.instanceOf(Model).isRequired,
+        onEditRequest: PT.func.isRequired,
+        onStopEditing: PT.func.isRequired,
+    };
 
     handleStartEditing = () => {
         this.props.onEditRequest({
             type: "acrobatics",
             run_id: this.props.run.id,
         });
-    }
+    };
 
     render() {
         if (this.props.editing) {
             return (
                 <td className="acrobatics editing">
                     <Editor
+                        participant={ this.props.participant }
                         readOnly={ this.props.readOnly }
                         run={ this.props.run }
                         onStopEditing={ this.props.onStopEditing }
@@ -40,7 +34,7 @@ export default class AcrobaticsCell extends React.PureComponent {
                 </td>
             );
         }
-        if (this.props.run.program_name === null) {
+        if (this.props.run.program_name == null) {
             return (
                 <td
                     className="acrobatics"
@@ -51,12 +45,12 @@ export default class AcrobaticsCell extends React.PureComponent {
             );
         }
         let has_overrides = false;
-        let original_score = 0;
+        let initial_score = 0;
         let score = 0;
         for (const acro of this.props.run.acrobatics) {
-            original_score += acro.original_score;
+            initial_score += acro.initial_score;
             score += acro.score;
-            has_overrides = has_overrides || acro.score !== acro.original_score;
+            has_overrides = has_overrides || acro.score !== acro.initial_score;
         }
         return (
             <td
@@ -64,11 +58,10 @@ export default class AcrobaticsCell extends React.PureComponent {
                 onClick={ this.handleStartEditing }
             >
                 { has_overrides
-                    ? `${original_score.toFixed(1)} → ${score.toFixed(1)}`
+                    ? `${initial_score.toFixed(1)} → ${score.toFixed(1)}`
                     : score.toFixed(1) }
             </td>
         );
     }
 }
 
-AcrobaticsCell.displayName = "AdminPanel_Judging_TourPanel_ScoresTab_Row_AcrobaticsCell";

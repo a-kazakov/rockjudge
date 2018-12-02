@@ -1,72 +1,60 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import InfoItem from "./InfoItem";
 
-export default class Info extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            baseTabIndex: PT.number.isRequired,
-            defaultValue: PT.arrayOf(
-                PT.arrayOf(
-                    PT.string.isRequired,
-                ).isRequired,
+export default class Info extends React.Component {
+    static propTypes = {
+        value: PT.arrayOf(
+            PT.arrayOf(
+                PT.string.isRequired,
             ).isRequired,
-        };
-    }
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            value: this.props.defaultValue,
-        };
-    }
-
-    get value() {
-        return this.state.value;
-    }
+        ).isRequired,
+        onChange: PT.func.isRequired,
+    };
 
     handleAddition = () => {
-        let value = this.state.value.slice();
+        let value = this.props.value.slice();
         value.push(["", ""]);
-        this.setState({ value });
+        this.props.onChange(value);
     };
 
     handleChange = (idx, new_item) => {
-        let value = this.state.value.slice();
+        let value = this.props.value.slice();
         value[idx] = new_item;
-        this.setState({ value });
+        this.props.onChange(value);
     };
 
     handleMoveUp = (idx) => {
-        let value = this.state.value.slice();
+        let value = this.props.value.slice();
         const [row] = value.splice(idx, 1);
         value.splice(idx - 1, 0, row);
-        this.setState({ value });
+        this.props.onChange(value);
     };
 
     handleMoveDown = (idx) => {
-        let value = this.state.value.slice();
+        let value = this.props.value.slice();
         const [row] = value.splice(idx, 1);
         value.splice(idx + 1, 0, row);
-        this.setState({ value });
+        this.props.onChange(value);
     };
 
     handleDeletion = (idx) => {
-        let value = this.state.value.slice();
+        let value = this.props.value.slice();
         value.splice(idx, 1);
-        this.setState({ value });
+        this.props.onChange(value);
     };
 
     render() {
         return (
             <div className="info">
-                { this.state.value.map((item, idx) =>
+                { this.props.value.map((item, idx) =>
                     <InfoItem
-                        baseTabIndex={ this.props.baseTabIndex + 5 * idx }
                         idx={ idx }
                         item={ item }
-                        itemsCount={ this.state.value.length }
+                        itemsCount={ this.props.value.length }
                         key={ idx }
                         onChange={ this.handleChange }
                         onDelete={ this.handleDeletion }
@@ -76,7 +64,6 @@ export default class Info extends React.PureComponent {
                 ) }
                 <button
                     className="add-button"
-                    tabIndex={ this.props.baseTabIndex + 949 }
                     type="button"
                     onClick={ this.handleAddition }
                 >
@@ -86,5 +73,3 @@ export default class Info extends React.PureComponent {
         );
     }
 }
-
-Info.displayName = "CompetitionsManager_EditorRow_Info";

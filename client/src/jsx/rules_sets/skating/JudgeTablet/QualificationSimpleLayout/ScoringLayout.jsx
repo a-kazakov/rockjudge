@@ -1,25 +1,21 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import SelectorInput from "tablet_ui/SelectorInput";
 import NumberSelectorInput from "tablet_ui/NumberSelectorInput";
 import MultipleOptionsInput from "tablet_ui/MultipleOptionsInput";
 
-export default class ScoringLayout extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            readOnly: PT.bool.isRequired,
-            scoreData: PT.shape({
-                cross: PT.bool,
-                note_number: PT.number,
-                note_pics: PT.string.isRequired,
-            }).isRequired,
-            onScoreUpdate: PT.func.isRequired,
-        };
-    }
+export default class ScoringLayout extends React.Component {
+    static propTypes = {
+        readOnly: PT.bool.isRequired,
+        score: PT.object.isRequired,
+        onScoreUpdate: PT.func.isRequired,
+    };
 
-    handleCrossChange = (value) => {
-        this.props.onScoreUpdate("cross", value);
+    handleCrossChange = () => {
+        this.props.onScoreUpdate("cross", !this.props.score.data.cross);
     };
     handleNumberChange = (value) => {
         this.props.onScoreUpdate("note_number", value);
@@ -34,12 +30,11 @@ export default class ScoringLayout extends React.PureComponent {
                 <SelectorInput
                     jumbo
                     choices={ [
-                        [false, "-", "active-red"],
                         [true, "X", "active-green"],
                     ] }
                     readOnly={ this.props.readOnly }
                     style="one-line"
-                    value={ this.props.scoreData.cross }
+                    value={ this.props.score.data.cross }
                     onChange={ this.handleCrossChange }
                 />
                 <h3>{ _("tablet.dance_judge.notes") }</h3>
@@ -49,7 +44,7 @@ export default class ScoringLayout extends React.PureComponent {
                     min={ 1 }
                     readOnly={ this.props.readOnly }
                     style="one-line"
-                    value={ this.props.scoreData.note_number }
+                    value={ this.props.score.data.note_number }
                     onChange={ this.handleNumberChange }
                 />
                 <MultipleOptionsInput
@@ -62,7 +57,7 @@ export default class ScoringLayout extends React.PureComponent {
                     ] }
                     readOnly={ this.props.readOnly }
                     style="one-line"
-                    value={ this.props.scoreData.note_pics }
+                    value={ this.props.score.data.note_pics }
                     onChange={ this.handlePicsChange }
                 />
             </div>

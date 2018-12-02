@@ -1,19 +1,16 @@
-import _ from "l10n";
+import React from "react";
 
-export default class Info extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                name: PT.string.isRequired,
-                date: PT.string.isRequired,
-                info: PT.arrayOf(PT.arrayOf(PT.string.isRequired).isRequired).isRequired,
-            }).isRequired,
-            config: PT.shape({
-                include_extended_info: PT.bool.isRequired,
-            }).isRequired,
-        };
-    }
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import PT from "prop-types";
+
+export default class Info extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        config: PT.shape({
+            include_extended_info: PT.bool.isRequired,
+        }).isRequired,
+    };
     renderExtendedInfo() {
         if (!this.props.config.include_extended_info) {
             return null;
@@ -71,4 +68,3 @@ export default class Info extends React.PureComponent {
     }
 }
 
-Info.displayName = "AdminPanel_Management_CompetitionReport_Info";

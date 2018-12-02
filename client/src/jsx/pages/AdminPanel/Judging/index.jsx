@@ -1,32 +1,16 @@
+import React from "react";
+
+import Model from "common/server/Storage/models/Model";
+import PT from "prop-types";
 import SideMenu from "./SideMenu";
 import TourPanel from "./TourPanel";
 
-export default class Judging extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                disciplines: PT.arrayOf(
-                    PT.shape({
-                        tours: PT.arrayOf(
-                            PT.shape({
-                                id: PT.number.isRequired,
-                            }).isRequired
-                        ).isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
-        };
-    }
+export default class Judging extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+    };
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            activeTourId: this.getTourIdFromHash(),
-        };
-    }
-
-    getTourIdFromHash() {
+    static getTourIdFromHash() {
         let chunks = window.location.hash.substr(1).split("/");
         if (chunks[1] && /^\d+$/.test(chunks[1])) {
             return Number(chunks[1]);
@@ -34,36 +18,33 @@ export default class Judging extends React.PureComponent {
         return null;
     }
 
-    getActiveTourAndDiscipline() {
-        for (const discipline of this.props.competition.disciplines) {
-            for (const tour of discipline.tours) {
-                if (tour.id === this.state.activeTourId) {
-                    return { tour, discipline };
-                }
-            }
-        }
-        return {
-            tour: null,
-            discipline: null,
+    constructor(props) {
+        super(props);
+        this.state = {
+            activeTourId: this.constructor.getTourIdFromHash(),
         };
+    }
+
+    getActiveTour() {
+        if (this.state.activeTourId == null) {
+            return null;
+        }
+        return this.props.competition.subscription_storage.get("Tour", this.state.activeTourId);
     }
 
     handleActiveTourChange = (activeTourId) => {
         this.setState({ activeTourId });
         window.location.hash = `#judging/${activeTourId}`;
-    }
+    };
 
     renderTourPanel() {
-        if (this.state.activeTourId === null) {
-            return null;
-        }
-        const { tour, discipline } = this.getActiveTourAndDiscipline();
-        if (this.state.tour === null) {
+        const tour = this.getActiveTour();
+        if (!tour) {
             return null;
         }
         return (
             <TourPanel
-                discipline={ discipline }
+                key={ tour.id }
                 tour={ tour }
             />
         );
@@ -82,4 +63,3 @@ export default class Judging extends React.PureComponent {
     }
 }
 
-Judging.displayName = "AdminPanel_Judging";

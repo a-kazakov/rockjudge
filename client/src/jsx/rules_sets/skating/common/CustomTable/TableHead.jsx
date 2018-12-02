@@ -1,11 +1,12 @@
-export default class TableHead extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            cols: PT.array.isRequired,
-            widths: PT.object.isRequired,
-        };
-    }
+import {React} from "HostModules";
+
+import PT from "prop-types";
+
+export default class TableHead extends React.Component {
+    static propTypes = {
+        cols: PT.array.isRequired,
+        widths: PT.object.isRequired,
+    };
 
     renderCell = (col) => {
         return (

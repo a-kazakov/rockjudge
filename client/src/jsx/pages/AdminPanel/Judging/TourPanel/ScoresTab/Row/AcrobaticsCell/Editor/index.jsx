@@ -1,21 +1,18 @@
-import _ from "l10n";
+import React from "react";
 
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import PT from "prop-types";
 import Loader from "./Loader";
 import Row from "./Row";
 
-export default class Editor extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            readOnly: PT.bool.isRequired,
-            run: PT.shape({
-                id: PT.number.isRequired,
-                program_name: PT.string,
-                acrobatics: PT.arrayOf(PT.object.isRequired),
-            }).isRequired,
-            onStopEditing: PT.func.isRequired,
-        };
-    }
+export default class Editor extends React.Component {
+    static propTypes = {
+        participant: PT.instanceOf(Model).isRequired,
+        readOnly: PT.bool.isRequired,
+        run: PT.instanceOf(Model).isRequired,
+        onStopEditing: PT.func.isRequired,
+    };
 
     renderBody() {
         return (
@@ -63,13 +60,16 @@ export default class Editor extends React.PureComponent {
             return null;
         }
         return (
-            <Loader run={ this.props.run } />
+            <Loader
+                participant={ this.props.participant }
+                run={ this.props.run }
+            />
         );
     }
     render() {
         return (
             <div className="acrobatics-editor">
-                { this.props.run.program_name === null
+                { this.props.run.program_name == null
                     ? this.renderMock()
                     : this.renderBody() }
                 { this.renderLoader() }
@@ -86,4 +86,3 @@ export default class Editor extends React.PureComponent {
     }
 }
 
-Editor.displayName = "AdminPanel_Judging_TourPanel_ScoresTab_Row_AcrobaticsCell_Editor";

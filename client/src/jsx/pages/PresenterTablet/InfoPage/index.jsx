@@ -1,16 +1,16 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import CompetitionInfo from "./CompetitionInfo";
 import Judges from "./Judges";
 import Clubs from "./Clubs";
 
-export default class InfoPage extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.object.isRequired,
-        };
-    }
+export default class InfoPage extends React.Component {
+    static propTypes = {
+        competition: PT.object.isRequired,
+    };
 
     render() {
         return (
@@ -37,5 +37,3 @@ export default class InfoPage extends React.PureComponent {
         );
     }
 }
-
-InfoPage.displayName = "PresenterTablet_InfoPage";

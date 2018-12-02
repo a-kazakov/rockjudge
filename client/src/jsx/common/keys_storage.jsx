@@ -46,7 +46,7 @@ class KeysStorage {
         }
 
         // Diffie-hellman
-        Api("auth.register", {})
+        Api("auth/start_registration", {})
             .disableSignature()
             .onSuccess(response => {
                 const client_id = response.client_id;
@@ -57,7 +57,7 @@ class KeysStorage {
                 // My data
                 const dh_b  = makeRandomBN();
                 // Reductions
-                const red_ctx = BN.mont(dh_p)
+                const red_ctx = BN.mont(dh_p);
                 const dh_g_red = dh_g.toRed(red_ctx);
                 const dh_ga_red = dh_ga.toRed(red_ctx);
                 // Calculations
@@ -65,7 +65,7 @@ class KeysStorage {
                 const dh_gab_red = dh_ga_red.redPow(dh_b);
                 const secret = dh_gab_red.fromRed().toString(16);
                 // Making new request
-                Api("auth.exchange_keys", {
+                Api("auth/complete_registration", {
                     client_id: client_id,
                     data: {
                         dh_gb: dh_gb_red.fromRed().toString(10),
@@ -77,7 +77,7 @@ class KeysStorage {
                             console.error("Key exchange failed");
                             return;
                         }
-                        this.updateKeys(client_id, secret)
+                        this.updateKeys(client_id, secret);
                         onDone();
                     })
                     .send();

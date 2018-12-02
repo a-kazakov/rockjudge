@@ -1,3 +1,6 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import Header from "JudgeTablet/components/Header";
@@ -8,24 +11,12 @@ import HeatsPage from "./HeatsPage";
 import ResultsPage from "./ResultsPage";
 import ActionsPage from "./ActionsPage";
 
-export default class HeadJudgeLayout extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudge: PT.shape({
-                judge: PT.object.isRequired,
-            }).isRequired,
-            tour: PT.shape({
-                id: PT.number.isRequired,
-                runs: PT.arrayOf(
-                    PT.shape({
-                        heat: PT.number.isRequired,
-                    }),
-                ).isRequired,
-            }).isRequired,
-            onScoreUpdate: PT.func.isRequired,
-        };
-    }
+export default class HeadJudgeLayout extends React.Component {
+    static propTypes = {
+        disciplineJudge: PT.object.isRequired,
+        tour: PT.object.isRequired,
+        onScoreUpdate: PT.func.isRequired,
+    };
 
     constructor(props) {
         super(props);
@@ -35,7 +26,7 @@ export default class HeadJudgeLayout extends React.PureComponent {
         };
     }
 
-    componentWillReceiveProps(next_props) {
+    UNSAFE_componentWIllReceiveProps(next_props) {
         if (next_props.tour.id !== this.props.tour.id) {
             this.setState({
                 heat: 1,
@@ -75,6 +66,7 @@ export default class HeadJudgeLayout extends React.PureComponent {
     renderActions() {
         return (
             <ActionsPage
+                disciplineJudge={ this.props.disciplineJudge }
                 tour={ this.props.tour }
             />
         );

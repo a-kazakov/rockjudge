@@ -1,29 +1,24 @@
-import _ from "l10n";
-import Api from "common/server/Api";
-import showConfirm from "common/dialogs/showConfirm";
-import closeDialog from "common/dialogs/closeDialog";
+import React from "react";
 
+import closeDialog from "common/dialogs/closeDialog";
+import showConfirm from "common/dialogs/showConfirm";
+import Api from "common/server/Api";
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import PT from "prop-types";
 import AutoPrinterStatus from "./AutoPrinterStatus";
 import BulkTourInit from "./BulkTourInit";
 import ClientsAuth from "./ClientsAuth";
 import Unfinalize from "./Unfinalize";
 
-export default class Service extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.object.isRequired,
-        };
-    }
+export default class Service extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+    };
 
-    handleClientsReload = () => {
-        showConfirm(_("admin.confirms.reload_clients"), () => {
-            Api("service.reload_clients", {}).onSuccess(closeDialog).send();
-        });
-    }
     handleClientsRefresh() {
         showConfirm(_("admin.confirms.refresh_clients"), () => {
-            Api("service.refresh_clients", {}).onSuccess(closeDialog).send();
+            Api("service/refresh_clients", {}).onSuccess(closeDialog).send();
         });
     }
 
@@ -42,9 +37,6 @@ export default class Service extends React.PureComponent {
                     <ClientsAuth
                         competition={ this.props.competition }
                     />
-                    <button className="action-button" onClick={ this.handleClientsReload }>
-                        { _("admin.buttons.reload_clients") }
-                    </button>
                     <button className="action-button" onClick={ this.handleClientsRefresh }>
                         { _("admin.buttons.refresh_clients") }
                     </button>
@@ -69,11 +61,10 @@ export default class Service extends React.PureComponent {
                     <h3>
                         { _("admin.headers.about") }
                     </h3>
-                    { _("admin.alerts.about", "v1.5", "14.05.2018") }
+                    { _("admin.alerts.about", "v1.6 prerelease", "14.05.2018") }
                 </div>
             </div>
         );
     }
 }
 
-Service.displayName = "AdminPanel_Service";

@@ -1,35 +1,24 @@
+import {React} from "HostModules";
+
 import getScoringType from "common/getScoringType";
-
+import PT from "prop-types";
 import AcroScore from "./AcroScore";
-import DanceScore from "./DanceScore";
-import SoloScore from "./SoloScore";
-import FormationScore from "./FormationScore";
-import TechScore from "./TechScore";
-import FormationSimplifiedScore from "./FormationSimplifiedScore";
 import DanceExtendedScore from "./DanceExtendedScore";
+import DanceScore from "./DanceScore";
+import FormationScore from "./FormationScore";
+import FormationSimplifiedScore from "./FormationSimplifiedScore";
+import SoloScore from "./SoloScore";
+import TechScore from "./TechScore";
 
 
-export default class VerboseJudgeScore extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            additionalData: PT.object,
-            disciplineJudge: PT.object.isRequired,
-            showScore: PT.bool.isRequired,
-            score: PT.shape({
-                data: PT.shape({
-                    total_score: PT.oneOfType([
-                        PT.number.isRequired,
-                        PT.string.isRequired,
-                    ]).isRequired,
-                }).isRequired,
-            }).isRequired,
-            run: PT.object.isRequired,
-            tour: PT.shape({
-                scoring_system_name: PT.string.isRequired,
-            }).isRequired,
-        };
-    }
+export default class VerboseJudgeScore extends React.Component {
+    static propTypes = {
+        disciplineJudge: PT.object.isRequired,
+        score: PT.object.isRequired,
+        scoreResult: PT.object.isRequired,
+        showScore: PT.bool,
+    };
+
     static get defaultProps() {
         return {
             showScore: true,
@@ -44,8 +33,9 @@ export default class VerboseJudgeScore extends React.PureComponent {
                 </p>
             );
         }
+        const tour = this.props.score.run.tour;
         let ScoreComponent = null;
-        const scoring_type = getScoringType(this.props.disciplineJudge, this.props.tour.scoring_system_name);
+        const scoring_type = getScoringType(this.props.disciplineJudge.role, tour.results.scoring_system_name);
         switch (scoring_type) {
         case "dance":
             ScoreComponent = DanceScore;
@@ -71,20 +61,17 @@ export default class VerboseJudgeScore extends React.PureComponent {
         default:
             return (
                 <p className="text-center">
-                    { this.props.score.data.total_score }
+                    { this.props.scoreResult.total_score_str }
                 </p>
             );
         }
         const props = {
-            run: this.props.run,
             score: this.props.score,
-            additionalData: this.props.additionalData,
-            scoringType: scoring_type,
-            tour: this.props.tour,
+            scoreResult: this.props.scoreResult,
+            tour: tour,
         };
         return (
             <ScoreComponent { ...props } />
         );
     }
 }
-

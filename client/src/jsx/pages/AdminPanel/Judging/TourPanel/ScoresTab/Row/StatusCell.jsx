@@ -1,26 +1,29 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import Api from "common/server/Api";
 
-export default class StatusCell extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            readOnly: PT.bool.isRequired,
-            run: PT.shape({
-                id: PT.number.isRequired,
-                status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-            }).isRequired,
-        };
-    }
+export default class StatusCell extends React.Component {
+    static propTypes = {
+        readOnly: PT.bool.isRequired,
+        run: PT.shape({
+            id: PT.number.isRequired,
+            status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
+        }).isRequired,
+    };
 
     changeStatus(new_status) {
         if (this.props.readOnly) {
             return;
         }
-        Api("run.set_status", {
-            run_id: this.props.run.id,
-            status: new_status,
+        Api("model/update", {
+            model_name: "Run",
+            model_id: this.props.run.id,
+            data: {
+                status: new_status,
+            },
         }).send();
     }
 
@@ -58,5 +61,3 @@ export default class StatusCell extends React.PureComponent {
         );
     }
 }
-
-StatusCell.displayName = "AdminPanel_Judging_TourPanel_ScoresTab_Row_StatusCell";

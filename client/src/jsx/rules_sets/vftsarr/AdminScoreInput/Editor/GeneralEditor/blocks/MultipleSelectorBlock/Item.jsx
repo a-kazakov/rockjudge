@@ -1,13 +1,14 @@
-export default class Item extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            label: PT.string.isRequired,
-            selected: PT.bool.isRequired,
-            value: PT.string.isRequired,
-            onChange: PT.func.isRequired,
-        };
-    }
+import {React} from "HostModules";
+
+import PT from "prop-types";
+
+export default class Item extends React.Component {
+    static propTypes = {
+        label: PT.string.isRequired,
+        selected: PT.bool.isRequired,
+        value: PT.string.isRequired,
+        onChange: PT.func.isRequired,
+    };
 
     handleChange = (event) => {
         this.props.onChange(this.props.value, event.target.checked);

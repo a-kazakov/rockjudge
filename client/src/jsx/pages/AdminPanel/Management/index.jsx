@@ -1,3 +1,7 @@
+import React from "react";
+
+import Model from "common/server/Storage/models/Model";
+import PT from "prop-types";
 import Clubs from "./clubs";
 import CompetitionPlan from "./CompetitionPlan";
 import CompetitionReport from "./CompetitionReport";
@@ -5,18 +9,14 @@ import Disciplines from "./Disciplines";
 import ImportExport from "./ImportExport";
 import Judges from "./Judges";
 import Participants from "./Participants";
+import SideMenu from "./SideMenu";
 import StartList from "./StartList";
 import Tours from "./Tours";
 
-import SideMenu from "./SideMenu";
-
-export default class Management extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.object.isRequired,
-        };
-    }
+export default class Management extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+    };
 
     constructor(props) {
         super(props);
@@ -115,4 +115,3 @@ export default class Management extends React.PureComponent {
     }
 }
 
-Management.displayName = "AdminPanel_Management";

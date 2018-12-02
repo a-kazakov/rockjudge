@@ -1,3 +1,5 @@
+import React from "react";
+
 /* eslint-disable react/display-name */
 /* eslint-disable react/no-multi-comp */
 
@@ -227,6 +229,7 @@ export default function translate(src, ...args) {
             },
             "club": {
                 "delete_with_participants": "Невозможно удалить клуб, к которому привязаны участники",
+                "empty_name": "Название клуба не может быть пустым",
             },
             "competition": {
                 "delete_non_empty": "Невозможно удалить соревнование, содержащее дисциплины, клубы или судей",
@@ -245,6 +248,7 @@ export default function translate(src, ...args) {
                 "change_judges_with_finalized_tour": "Невозможно изменить состав судей для дисциплины, содержащей финализированные туры",
                 "delete_with_participants": "Невозможно удалить дисциплину, содержащую участников",
                 "delete_with_tours": "Невозможно удалить дисциплину, содержащую туры",
+                "empty_name": "Название дисциплины не может быть пустым",
             },
             "discipline_judge": {
                 "delete_with_finalized": "Невозможно удалить судью, у корого есть финализированне туры",
@@ -252,14 +256,21 @@ export default function translate(src, ...args) {
                 "repeating_judge": (name) => `${name} встречается в списке судей более одного раза`,
             },
             "global": {
-                "internal_server_error": ["Ошибка на сервере", "проверьте логи для информации"],
+                "internal_server_error": (m) => ["Ошибка на сервере", m],
+                "invalid_sp": "Неверно указан приоритет при сортировке",
                 "no_connection": ["Отсутствует соединение с сервером", "проверьте своё подключение"],
             },
             "judge": {
                 "delete_with_disciplines": "Невозможно удалить судью, входящего в судейскую бригаду хотя бы одной дисциплины",
+                "empty_name": "Имя судьи не может быть пустым",
             },
             "participant": {
                 "delete_with_finalized_tours": "Невозможно удалить участника, принявшего участие хотя бы в одном финализированном туре",
+                "invalid_sp": "Неверно указан номер участника",
+            },
+            "program": {
+                "empty_name": "Название программы не может быть пустым",
+                "wrong_participant": "Нельзя загрузить программу другого участника",
             },
             "run": {
                 "bad_status": "Некорректный статус",
@@ -274,13 +285,16 @@ export default function translate(src, ...args) {
                 "add_before_finalized": "Невозможно добавить новый тур перед финализированным",
                 "delete_finalized": "Невозможно удалить финализированный тур",
                 "delete_in_competition_plan": "Невозможно удалить тур, присутствующий в программе соревнований",
+                "empty_name": "Название тура не может быть пустым",
                 "init_finailzed": "Невозможно пересоздать финализированный тур",
                 "invalid_add_after_id": "Попытка добаить тур в несуществующее место",
                 "invalid_scoring_system": "Выбрана недопустимая система судейства",
+                "invalid_num_advances": "Некорректное значение квоты вывода",
                 "load_to_non_empty": (d) => ["Невозможно загрузить туры для дисциплины", `Дисциплина ${d} уже содержит туры`],
                 "next_is_finailzed": "Следующий тур не должен быть финализирован",
                 "no_next_tour": "Данный тур последний в программе соревнований",
                 "not_in_competition_plan": "Данный тур не содержится в программе соревнований",
+                "participants_per_heat": "Некорректное занчение количества участников в заходе",
                 "prev_not_finailzed": "Предыдущий тур должен быть финализирован",
                 "start_finalized": "Невозможно запустить финализированный тур",
                 "update_finalized": "Для финализированного тура не допускается изменение квоты вывода, типа тура или системы судейства",
@@ -506,6 +520,8 @@ export default function translate(src, ...args) {
             },
             "labels": {
                 "discipline": "Дисциплина",
+                "disqualified": "Дискв.",
+                "enable_auto_heat": "Переключать заходы автоматически",
                 "estimated_beginning": "Начало",
                 "estimated_duration": "Длит.",
                 "no_active_tour": "Нет активного тура",
@@ -560,9 +576,10 @@ export default function translate(src, ...args) {
                 "finalize_tour": "Финализировать тур",
                 "finalize_tour_and_start_next": "Финализировать тур и перейти к следующему",
                 "next_heat": "След. заход",
+                "next_heat_short": ">>",
                 "not_performed": "Невыход на площадку",
                 "performed": "Отмена невыхода на площадку",
-                "prev_heat": "Пред. заход",
+                "prev_heat_short": "<<",
                 "reset_stopwatch": "Сброс",
                 "start_stopwatch": "Старт",
                 "stop_stopwatch": "Стоп",

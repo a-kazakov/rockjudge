@@ -1,58 +1,28 @@
-import LoadingComponent from "common/server/LoadingComponent";
+import React from "react";
+
 import Loader from "common/components/Loader";
-
 import makeDisciplineResultsTable from "common/makeDisciplineResultsTable";
-
+import Model from "common/server/Storage/models/Model";
+import PT from "prop-types";
 import RendererRow from "./RendererRow";
 
-export default class Renderer extends LoadingComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineId: PT.number.isRequired,
-            value: PT.number,
-            onPositionSelect: PT.func.isRequired,
-        };
-    }
-
-    CLASS_ID = "screen_operator_place_selector";
-    API_MODELS = {
-        discipline: {
-            model_type: "Discipline",
-            model_id_getter: props => props.disciplineId,
-            schema: {
-                results: {},
-                discipline_judges: {
-                    judge: {},
-                },
-                tours: {
-                    runs: {
-                        participant: {
-                            club: {},
-                        },
-                    },
-                },
-            },
-        },
+export default class Renderer extends React.Component {
+    static propTypes = {
+        discipline: PT.instanceOf(Model),
+        value: PT.number,
+        onPositionSelect: PT.func.isRequired,
     };
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            discipline: null,
-        };
-    }
 
     renderRowHeader(prev_row, next_row) {
         if (
             typeof prev_row !== "undefined" &&
-            prev_row.tour.id === next_row.tour.id
+            prev_row.run.tour.id === next_row.run.tour.id
         ) {
             return null;
         }
         return (
             <div className="tour-name" key={ `H${next_row.run.id}` }>
-                { next_row.tour.name }
+                { next_row.run.tour.name }
             </div>
         );
     }
@@ -63,14 +33,14 @@ export default class Renderer extends LoadingComponent {
                 participant={ row.run.participant }
                 place={ row.place }
                 position={ position }
-                selected={ this.props.value !== null && position >= this.props.value }
+                selected={ this.props.value != null && position >= this.props.value }
                 onPositionSelect={ this.props.onPositionSelect }
             />
         );
     }
     renderRows() {
         let result = [];
-        const table = makeDisciplineResultsTable(this.state.discipline);
+        const table = makeDisciplineResultsTable(this.props.discipline);
         for (let i = table.length - 1; i >= 0; --i) {
             const header = this.renderRowHeader(table[i + 1], table[i]);
             if (header) {
@@ -81,7 +51,7 @@ export default class Renderer extends LoadingComponent {
         return result;
     }
     render() {
-        if (this.state.discipline === null) {
+        if (this.props.discipline == null) {
             return (
                 <Loader />
             );
@@ -93,5 +63,3 @@ export default class Renderer extends LoadingComponent {
         );
     }
 }
-
-Renderer.displayName = "ScreenOperator_DisciplinePlaceControls_DisciplineSelector_Renderer";

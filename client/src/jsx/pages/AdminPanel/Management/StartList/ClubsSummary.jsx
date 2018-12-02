@@ -1,24 +1,35 @@
+import React from "react";
+
+import PT from "prop-types";
 import DisciplinesShown from "./DisciplinesShown";
 import StatInfo from "./StatInfo";
-import groupParticipants from "./groupParticipants";
+import Model from "common/server/Storage/models/Model";
 
-export default class ClubsSummary extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                clubs: PT.arrayOf(PT.object.isRequired).isRequired,
-                disciplines: PT.arrayOf(PT.object.isRequired).isRequired,
-            }).isRequired,
-            config: PT.shape({
-                clubs: PT.object.isRequired,
-                disciplines: PT.object.isRequired,
-                group_by_clubs: PT.bool.isRequired,
-            }).isRequired,
-        };
-    }
+export default class ClubsSummary extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        config: PT.shape({
+            clubs: PT.object.isRequired,
+            disciplines: PT.object.isRequired,
+            group_by_clubs: PT.bool.isRequired,
+        }).isRequired,
+    };
+
+    filterParticipant = (participant) => this.props.config.disciplines[participant.discipline.id];
+    filterClub = (club) => this.props.config.clubs[club.id];
+
+    renderClub = (club) => {
+        return (
+            <StatInfo
+                tableRow
+                key={ club.id }
+                label={ `${club.name}, ${club.city}` }
+                participants={ club.participants.filter(this.filterParticipant) }
+            />
+        );
+    };
     render() {
-        const clubs = groupParticipants(this.props.competition, this.props.config);
+        const clubs = this.props.competition.clubs.filter(this.filterClub);
         const all_participants = [].concat.apply([], clubs.map(c => c.participants));
         return (
             <div className="summary">
@@ -27,14 +38,7 @@ export default class ClubsSummary extends React.PureComponent {
                     <tr>
                         <th colSpan={ 4 }>&nbsp;</th>
                     </tr>
-                    { clubs.map(club =>
-                        <StatInfo
-                            tableRow
-                            key={ club.id }
-                            label={ `${club.name}, ${club.city}` }
-                            participants={ club.participants }
-                        />
-                    ) }
+                    { clubs.map(this.renderClub) }
                 </tbody></table>
                 <p>&nbsp;</p>
                 <StatInfo participants={ all_participants } />
@@ -42,5 +46,3 @@ export default class ClubsSummary extends React.PureComponent {
         );
     }
 }
-
-ClubsSummary.displayName = "AdminPanel_Management_StartList_ClubsSummary";

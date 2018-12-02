@@ -2,15 +2,12 @@ import waiting_api_requests from "common/server/waiting_api_requests";
 
 import connection_status from "common/connection_status";
 
-import storage from "common/server/storage";
-
 class WebSocketHandler {
     constructor() {
         this.closed = false;
         this.opened = false;
-        this.listeners = {};
-        this.listeners_cnt = 0;
         this.send_queue = [];
+        this.storage = null;
         this.connect();
     }
     connect = () => {
@@ -18,22 +15,17 @@ class WebSocketHandler {
         this.ws = new WebSocket(`ws://${window.location.host}/ws`);
         this.ws.onopen = () => {
             this.opened = true;
+            if (this.closed) {
+                // eslint-disable-next-line no-unused-expressions
+                this.storage?.resubscribeAll();
+                this.closed = false;
+            }
             connection_status.setOk();
             console.log("Connected to websocket.");
             for (const message of this.send_queue) {
                 this.ws.send(message);
             }
             this.send_queue = [];
-            if (this.closed) {
-                this.handleMessage({
-                    raw_data: {
-                        messages: [["reload_data", null]],
-                        model_updates: [],
-                        api_responses: {},
-                    },
-                })
-            }
-            this.closed = false;
         };
         this.ws.onclose = () => {
             connection_status.setFail();
@@ -56,41 +48,35 @@ class WebSocketHandler {
         if (!data) {
             data = JSON.parse(message.data);
         }
-        for (const data_message of data.messages) {
-            const [msg_type, msg_data] = data_message;
-            const listeners = this.listeners[msg_type] || {};
-            if (msg_type === "force_refresh") {
-                window.location.reload(true);
+        const {message_type, body, ...extra} = data;
+        switch (message_type) {
+            case "api_response": {
+                const {response_key} = extra;
+                waiting_api_requests.push_response(response_key, body);
+                break;
             }
-            for (const key of Object.keys(this.listeners[msg_type] || {})) {
-                listeners[key](msg_data);
+            case "mutations_push": {
+                const {is_initial, subscription_id} = extra;
+                // eslint-disable-next-line no-unused-expressions
+                this.storage?.handleMutations(
+                    body,
+                    is_initial,
+                    subscription_id,
+                );
+                break;
+            }
+            case "broadcast": {
+                switch (body) {
+                    case "refresh": {
+                       window.location.reload(true);
+                       break;
+                    }
+                }
             }
         }
-        for (const model_info of data.model_updates) {
-            storage.updateModel(model_info.model, model_info.id, model_info.data);
-        }
-        for (const api_response_key of Object.keys(data.api_responses)) {
-            const api_response_body = data.api_responses[api_response_key];
-            waiting_api_requests.push_response(api_response_key, api_response_body);
-        }
-    }
-    getListenerId() {
-        return this.listeners_cnt++;
-    }
-    addListener(msg_types, callback) {
-        let id = this.getListenerId();
-        for (const msg_type of msg_types.split(" ")) {
-            if (!this.listeners[msg_type]) {
-                this.listeners[msg_type] = {};
-            }
-            this.listeners[msg_type][id] = callback;
-        }
-        return id;
-    }
-    removeListener(listener_id) {
-        for (const key of Object.keys(this.listeners)) {
-            delete this.listeners[key][listener_id];
-        }
+    };
+    setStorage(storage) {
+        this.storage = storage;
     }
 }
 

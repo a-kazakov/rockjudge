@@ -1,22 +1,12 @@
-export default class Acrobatics extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            participant: PT.shape({
-                programs: PT.arrayOf(
-                    PT.shape({
-                        name: PT.string.isRequired,
-                        acrobatics: PT.arrayOf(
-                            PT.shape({
-                                description: PT.string.isRequired,
-                                score: PT.number.isRequired,
-                            }).isRequired
-                        ),
-                    }).isRequired
-                ),
-            }).isRequired,
-        };
-    }
+import React from "react";
+
+import PT from "prop-types";
+import Model from "common/server/Storage/models/Model";
+
+export default class Acrobatics extends React.Component {
+    static propTypes = {
+        participant: PT.instanceOf(Model).isRequired,
+    };
     formatDescriptionChunk = (text, idx) => {
         if (text === "") {
             return null;
@@ -56,7 +46,7 @@ export default class Acrobatics extends React.PureComponent {
                                     </th>
                                 </tr>,
                             ].concat(
-                                pr.acrobatics.map((a, a_idx) =>
+                                pr.elements.map((a, a_idx) =>
                                     <tr key={ `A_${pr_idx}_${a_idx}` }>
                                         <td className="w-3">
                                             <p className="text-left">
@@ -83,5 +73,3 @@ export default class Acrobatics extends React.PureComponent {
         );
     }
 }
-
-Acrobatics.displayName = "AdminPanel_Management_StartList_Acrobatics";

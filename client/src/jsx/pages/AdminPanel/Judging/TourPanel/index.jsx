@@ -1,76 +1,54 @@
-import _ from "l10n";
-import LoadingComponent from "common/server/LoadingComponent";
+import React from "react";
+
 import Loader from "common/components/Loader";
-
-import NavButton from "./NavButton";
-
-import ScoresTab from "./ScoresTab";
-import HeatsTab from "./HeatsTab";
-import TourResultsTab from "./TourResultsTab";
+import Model from "common/server/Storage/models/Model";
+import TourSubscription from "common/server/Storage/subscriptions/TourSubscription";
+import _ from "l10n";
+import PT from "prop-types";
 import DisciplineResultsTab from "./DisciplineResultsTab";
-
-import ScoresTabButtons from "./ScoresTab/Buttons";
-import HeatsTabButtons from "./HeatsTab/Buttons";
-import TourResultsTabButtons from "./TourResultsTab/Buttons";
 import DisciplineResultsTabButtons from "./DisciplineResultsTab/Buttons";
+import HeatsTab from "./HeatsTab";
+import HeatsTabButtons from "./HeatsTab/Buttons";
+import NavButton from "./NavButton";
+import ScoresTab from "./ScoresTab";
+import ScoresTabButtons from "./ScoresTab/Buttons";
+import TourResultsTab from "./TourResultsTab";
+import TourResultsTabButtons from "./TourResultsTab/Buttons";
 
-export default class TourPanel extends LoadingComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            discipline: PT.shape({
-                name: PT.string.isRequired,
-            }).isRequired,
-            tour: PT.shape({
-                id: PT.number.isRequired,
-                name: PT.string.isRequired,
-            }).isRequired,
-        };
-    }
-
-    CLASS_ID = "tour_panel";
-    API_MODELS = {
-        tour: {
-            model_type: "Tour",
-            model_id_getter: props => props.tour.id,
-            schema: {
-                discipline: {
-                    competition: {},
-                    discipline_judges: {
-                        judge: {},
-                    },
-                },
-                results: {},
-                runs: {
-                    acrobatics: {},
-                    scores: {},
-                    participant: {
-                        programs: {},
-                        club: {},
-                    },
-                },
-            },
-        },
+export default class TourPanel extends React.Component {
+    static propTypes = {
+        tour: PT.instanceOf(Model).isRequired,
     };
-
-    // Initialization
 
     constructor(props) {
         super(props);
         this.state = {
-            tour: null,
+            tourStorage: null,
             page: this.getPageFromHash(),
         };
     }
 
-    onIdChanged(model_type, new_value, next_props) {
-        this.setState({
-            page: this.getDefaultPage(next_props.tour),
-        });
+    componentDidMount() {
+        this.subscribe();
+    }
+    componentWillUnmount() {
+        this.unsubscribe();
     }
 
-    getDefaultPage(tour) {
-        return tour?.finalized
+    subscribe = () => {
+        this._subscription = new TourSubscription(this.props.tour.id);
+        this.props.tour.global_storage.subscribe(this._subscription).then(this.updateTourStorage);
+    };
+    unsubscribe() {
+        this.props.tour.global_storage.unsubscribe(this._subscription);
+    }
+
+    updateTourStorage = (tourStorage) => {
+        this.setState({tourStorage});
+    };
+
+    getDefaultPage() {
+        return this.props.tour.finalized
             ? "results-1"
             : "tour-admin";
     }
@@ -79,12 +57,13 @@ export default class TourPanel extends LoadingComponent {
         if (chunks[2]) {
             return chunks[2];
         }
-        return this.getDefaultPage(this.props.tour);
+        return this.getDefaultPage();
     }
 
     handlePageSwitch = (page) => {
         this.setState({ page });
-    }
+        window.location.hash = `#judging/${this.props.tour.id}/${page}`;
+    };
 
     makeBodyRef = (ref) => this._body = ref;
 
@@ -92,7 +71,7 @@ export default class TourPanel extends LoadingComponent {
         if (this._body) {
             this._body.handleSignal(message);
         }
-    }
+    };
 
     renderNavButton(code) {
         return (
@@ -117,7 +96,7 @@ export default class TourPanel extends LoadingComponent {
         case "heats":
             return (
                 <HeatsTabButtons { ...props } />
-            )
+            );
         case "results-1":
         case "results-2":
         case "results-3":
@@ -139,7 +118,7 @@ export default class TourPanel extends LoadingComponent {
                     { this.renderButtons(this.props.tour) }
                 </div>
                 <h1>
-                    { this.props.discipline.name }
+                    { this.props.tour.discipline.name }
                 </h1>
                 <h2>
                     { this.props.tour.name }
@@ -157,27 +136,37 @@ export default class TourPanel extends LoadingComponent {
             </header>
         );
     }
-    renderBody() {
+    renderBody(tour) {
         const props = {
-            tour: this.state.tour,
+            tour: tour,
             ref: this.makeBodyRef,
             onPageSwitch: this.handlePageSwitch,
         };
         switch (this.state.page) {
         case "tour-admin":
-            return <ScoresTab { ...props } />
+            return (
+                <ScoresTab { ...props } />
+            );
         case "heats":
-            return <HeatsTab { ...props } />
+            return (
+                <HeatsTab { ...props } />
+            );
         case "results-1":
-            return <TourResultsTab verbosity={ 1 } { ...props } />
+            return (
+                <TourResultsTab verbosity={ 1 } { ...props } />
+            );
         case "results-2":
-            return <TourResultsTab verbosity={ 2 } { ...props } />
+            return (
+                <TourResultsTab verbosity={ 2 } { ...props } />
+            );
         case "results-3":
-            return <TourResultsTab verbosity={ 3 } { ...props } />
+            return (
+                <TourResultsTab verbosity={ 3 } { ...props } />
+            );
         case "discipline-results":
             return (
                 <DisciplineResultsTab
-                    discipline={ this.props.discipline }
+                    discipline={ this.props.tour.discipline }
                     ref={ this.makeBodyRef }
                 />
             );
@@ -186,7 +175,13 @@ export default class TourPanel extends LoadingComponent {
         }
     }
     render() {
-        if (this.state.tour === null) {
+        if (!this.state.tourStorage) {
+            return (
+                <Loader />
+            );
+        }
+        const tour = this.state.tourStorage.getSame(this.props.tour);
+        if (!tour) {
             return (
                 <Loader />
             );
@@ -195,11 +190,9 @@ export default class TourPanel extends LoadingComponent {
             <div className="TourPanel">
                 { this.renderHeader() }
                 <div className="body">
-                    { this.renderBody() }
+                    { this.renderBody(tour) }
                 </div>
             </div>
         );
     }
 }
-
-TourPanel.displayName = "AdminPanel_Judging_TourPanel";

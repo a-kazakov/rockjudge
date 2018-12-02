@@ -1,26 +1,39 @@
+import React from "react";
+
+import Model from "common/server/Storage/models/Model";
 import _ from "l10n";
-
+import UniversalTable from "pages/AdminPanel/Management/UniversalTable";
+import FieldTypes from "pages/AdminPanel/Management/UniversalTable/FieldTypes";
+import PT from "prop-types";
+import CreationButton from "./CreationButton";
+import EditorRow from "./EditorRow";
 import Row from "./Row";
-import CreationRow from "./CreationRow";
 
-export default class Clubs extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
+export default class Clubs extends UniversalTable {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+    };
+
+    static DISPLAY_COMPONENT = Row;
+    static EDITOR_COMPONENT = EditorRow;
+    static CREATION_BUTTON_COMPONENT = CreationButton;
+    static MODEL_NAME = "Club";
+    static FIELDS = [
+        FieldTypes.makeNonEmptyTextField("name", "errors.tour.empty_name"),
+        FieldTypes.makeTextField("city"),
+        FieldTypes.makeExternalIdField(),
+    ];
+
+    getEntries() {
+        return this.props.competition.clubs;
+    }
+    getCreateParams() {
         return {
-            competition: PT.shape({
-                clubs: PT.arrayOf(PT.object.isRequired).isRequired,
-            }).isRequired,
+            competition_id: this.props.competition.id,
         };
     }
+
     renderTable() {
-        const rows = this.props.competition.clubs.map(club => {
-            return (
-                <Row
-                    club={ club }
-                    key={ club.id }
-                />
-            );
-        });
         return (
             <table>
                 <tbody>
@@ -36,10 +49,8 @@ export default class Clubs extends React.PureComponent {
                         </th>
                         <th className="delete" />
                     </tr>
-                    { rows }
-                    <CreationRow
-                        competition={ this.props.competition }
-                    />
+                    { this.renderRows() }
+                    { this.renderCreationButton() }
                 </tbody>
             </table>
         );
@@ -60,4 +71,3 @@ export default class Clubs extends React.PureComponent {
     }
 }
 
-Clubs.displayName = "AdminPanel_Management_Clubs";

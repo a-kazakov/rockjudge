@@ -1,14 +1,14 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import makeClassName from "../../../../lib/common/makeClassName";
 
-export default class Grid extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            children: PT.node.isRequired,
-            noMaxWidth: PT.bool,
-            smallBlocks: PT.bool,
-        };
-    }
+export default class Grid extends React.Component {
+    static propTypes = {
+        children: PT.node.isRequired,
+        noMaxWidth: PT.bool,
+        smallBlocks: PT.bool,
+    };
     static get defaultProps() {
         return {
             noMaxWidth: false,
@@ -40,7 +40,7 @@ export default class Grid extends React.PureComponent {
     }
 
     renderRow(elements, is_second_row, is_compact) {
-        if (elements === null) {
+        if (elements == null) {
             return null;
         }
         const row_width = `${(elements.length * this.width_value).toFixed(5)}%`;

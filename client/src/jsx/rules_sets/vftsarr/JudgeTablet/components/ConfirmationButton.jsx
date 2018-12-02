@@ -1,17 +1,17 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 import makeClassName from "common/makeClassName";
 
 import Slider from "tablet_ui/Slider";
 
-export default class ConfirmationButton extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            canConfirm: PT.bool.isRequired,
-            confirmed: PT.bool.isRequired,
-            onConfirm: PT.func.isRequired,
-        };
-    }
+export default class ConfirmationButton extends React.Component {
+    static propTypes = {
+        canConfirm: PT.bool.isRequired,
+        confirmed: PT.bool.isRequired,
+        onConfirm: PT.func.isRequired,
+    };
 
     static get defaultProps() {
         return {

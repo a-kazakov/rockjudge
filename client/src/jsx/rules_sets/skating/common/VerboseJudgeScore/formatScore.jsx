@@ -1,5 +1,5 @@
 export default function formatScore(score, template="$") {
-    if (score === null) {
+    if (score == null) {
         return "—";
     }
     return template

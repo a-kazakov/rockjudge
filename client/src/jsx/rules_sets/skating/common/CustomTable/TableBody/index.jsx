@@ -1,18 +1,18 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import Row from "./Row";
 
-export default class TableBody extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            cols: PT.array.isRequired,
-            rows: PT.array.isRequired,
-            rowKey: PT.string,
-            widths: PT.object.isRequired,
-        };
-    }
+export default class TableBody extends React.Component {
+    static propTypes = {
+        cols: PT.array.isRequired,
+        rowKey: PT.string,
+        rows: PT.array.isRequired,
+        widths: PT.object.isRequired,
+    };
 
     renderRow = (row, idx) => {
-        const key = this.props.rowKey !== null ? (row[this.props.rowKey] || `nokey_${idx}`) : idx;
+        const key = this.props.rowKey != null ? (row[this.props.rowKey] || `nokey_${idx}`) : idx;
         return (
             <Row
                 cols={ this.props.cols }

@@ -1,86 +1,76 @@
-import rules_set from "rules_sets/loader";
+import React from "react";
 
-import AddButton from "./AddButton";
-import Creator from "./Creator";
+import Loader from "common/components/Loader";
+import Model from "common/server/Storage/models/Model";
+import UniversalTable from "pages/AdminPanel/Management/UniversalTable";
+import FieldTypes from "pages/AdminPanel/Management/UniversalTable/FieldTypes";
+import PT from "prop-types";
+import rules_set from "rules_sets/loader";
+import CreationButton from "./CreationButton";
+import EditorRow from "./EditorRow";
 import Row from "./Row";
 
-export default class Tours extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
+export default class Tours extends UniversalTable {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        disciplineId: PT.number.isRequired,
+    };
+
+    static DISPLAY_COMPONENT = Row;
+    static EDITOR_COMPONENT = EditorRow;
+    static CREATION_BUTTON_COMPONENT = CreationButton;
+    static MODEL_NAME = "Tour";
+    static FIELDS = [
+        FieldTypes.makeNonEmptyTextField("name", "errors.tour.empty_name"),
+        FieldTypes.makeIntegerField("num_advances", "errors.tour.invalid_num_advances", [0, null]),
+        FieldTypes.makeIntegerField("participants_per_heat", "errors.tour.participants_per_heat", [1, null]),
+        {name: "hope_tour", defaultValue: false},
+        {name: "scoring_system_name", defaultValueGetter: () => rules_set.meta.scoring_systems[0]},
+        FieldTypes.makeTextField("default_program"),
+    ];
+
+    getEntries() {
+        const discipline = this.discipline;
+        if (discipline == null) {
+            return [];
+        }
+        return discipline.tours;
+    }
+    getCreateParams(context) {
         return {
-            competition: PT.object.isRequired,
-            disciplineId: PT.number.isRequired,
+            discipline_id: this.props.disciplineId,
+            add_after: context.afterId,
         };
     }
+    getContext(context_params) {
+        return context_params;
+    }
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            newTourAfterId: -1,
+    get discipline() {
+        return this.props.competition.subscription_storage.get("Discipline", this.props.disciplineId) || null;
+    }
+
+    renderRows(discipline) {
+        let result = [];
+        const tours = discipline.tours;
+        for (let idx = 0; idx < tours.length; ++idx) {
+            const this_tour = tours[idx];
+            const next_tour = tours[idx + 1] || null;
+            result.push(this.renderEntry(this_tour));
+            result.push(this.renderCreationButton({
+                afterId: this_tour.id,
+                nextTour: next_tour,
+            }, `button_${this_tour.id}`))
         }
-        this._discipline = null;
-    }
-
-    componentWillReceiveProps(next_props) {
-        if (next_props.disciplineId !== this.props.disciplineId) {
-            this.setState({
-                newTourAfterId: -1,
-            });
-        }
-        this._discipline = null; // flush cache
-    }
-
-    // Handlers
-
-    handleAddButtonClick = (after_id) => {
-        this.setState({
-            newTourAfterId: after_id,
-        });
-    }
-
-    handleStopTourCreating = () => {
-        this.setState({
-            newTourAfterId: -1,
-        });
-    }
-
-    // Renderers
-
-    renderTourCreation(after_id, next_tour) {
-        if (next_tour && next_tour.finalized) {
-            return null;
-        }
-        if (after_id === this.state.newTourAfterId) {
-            return (
-                <Creator
-                    afterId={ after_id }
-                    disciplineId={ this.props.disciplineId }
-                    key="tour-creating"
-                    onStopEditing={ this.handleStopTourCreating }
-                />
-            );
-        } else {
-            return (
-                <AddButton
-                    afterId={ after_id }
-                    onClick={ this.handleAddButtonClick }
-                />
-            );
-        }
-    }
-    renderTours(discipline) {
-        return discipline.tours.map((tour, idx, tours) => {
-            return [
-                <Row
-                    key={ tour.id }
-                    tour={ tour }
-                />,
-                this.renderTourCreation(tour.id, tours[idx + 1] || null),
-            ];
-        });
+        return result;
     }
     render() {
-        const discipline = this.props.competition.disciplines.find(d => d.id === this.props.disciplineId);
+        const discipline = this.discipline;
+        if (discipline == null) {
+            return (
+                <Loader />  // TODO: replace with error message
+            );
+        }
         return (
             <div className="Tours">
                 <header>
@@ -89,8 +79,11 @@ export default class Tours extends React.PureComponent {
                     </h1>
                 </header>
                 <div className="body">
-                    { this.renderTourCreation(null, discipline.tours[0]) }
-                    { this.renderTours(discipline) }
+                    { this.renderCreationButton({
+                        afterId: null,
+                        nextTour: discipline.tours[0] || null,
+                    }, "button") }
+                    { this.renderRows(discipline) }
                 </div>
                 <datalist id="dl_tours">
                     { rules_set.translate.tour_name_suggestions.map((n, idx) =>
@@ -107,4 +100,3 @@ export default class Tours extends React.PureComponent {
     }
 }
 
-Tours.displayName = "AdminPanel_Management_Tours";

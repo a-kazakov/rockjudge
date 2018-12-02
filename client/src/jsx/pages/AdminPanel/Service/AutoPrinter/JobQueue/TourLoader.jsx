@@ -1,57 +1,48 @@
-import LoadingComponent from "common/server/LoadingComponent";
+import React from "react";
+
+import TourSubscription from "common/server/Storage/subscriptions/TourSubscription";
+import PT from "prop-types";
 
 
-export default class TourLoader extends LoadingComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            tourId: PT.number.isRequired,
-            renderer: PT.func.isRequired,
-        };
-    }
-
-    CLASS_ID = "auto_printer_tour_loader";
-    API_MODELS = {
-        tour: {
-            model_type: "Tour",
-            model_id_getter: props => props.tourId,
-            schema: {
-                results: {},
-                discipline: {
-                    competition: {},
-                    discipline_judges: {
-                        judge: {},
-                    },
-                },
-                runs: {
-                    participant: {
-                        club: {},
-                    },
-                    scores: {},
-                    acrobatics: {},
-                },
-            },
-        },
+export default class TourLoader extends React.Component {
+    static propTypes = {
+        renderer: PT.func.isRequired,
+        tour: PT.object.isRequired,
     };
 
     constructor(props) {
         super(props);
         this.state = {
-            tour: null,
+            tourStorage: null,
         };
     }
 
+    componentDidMount() {
+        this.subscribe();
+    }
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
+
+    subscribe = () => {
+        this._subscription = new TourSubscription(this.props.tour.id);
+        this.props.tour.global_storage.subscribe(this._subscription).then(this.updateTourStorage);
+    };
+    unsubscribe() {
+        this.props.tour.global_storage.unsubscribe(this._subscription);
+    }
+
+    updateTourStorage = (tourStorage) => {
+        this.setState({tourStorage});
+    };
+
     render() {
-        if (this.state.tour === null) {
+        if (this.state.tourStorage == null) {
             return null;
         }
-        // eslint-disable-next-line no-unused-vars
-        const { tourId, renderer: RenderingComponent, ...props } = this.props;
+        const { renderer: RenderingComponent, ...props } = this.props;
         return (
-            <RenderingComponent
-                tour={ this.state.tour }
-                { ...props }
-            />
+            <RenderingComponent { ...props } />
         );
     }
 }

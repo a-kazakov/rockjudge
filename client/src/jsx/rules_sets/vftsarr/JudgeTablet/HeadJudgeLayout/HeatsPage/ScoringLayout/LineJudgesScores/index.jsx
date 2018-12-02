@@ -1,6 +1,9 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 
-import { CRITERIAS_ORDER } from "common/constants";
+import {CRITERIAS_ORDER} from "common/constants";
 
 import Row from "./Row";
 
@@ -12,28 +15,14 @@ const COMPLEX_CRITERIAS = new Map([
 ]);
 
 
-export default class LineJudgeScore extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudges: PT.arrayOf(
-                PT.shape({
-                    role: PT.string.isRequired,
-                }).isRequired,
-            ).isRequired,
-            run: PT.shape({
-                scores: PT.arrayOf(
-                    PT.shape({
-                        discipline_judge_id: PT.number.isRequired,
-                    }).isRequired,
-                ).isRequired,
-                verbose_total_score: PT.shape({
-                    criterias_scores: PT.object.isRequired,
-                }),
-            }).isRequired,
-            tour: PT.object.isRequired,
-        };
-    }
+export default class LineJudgesScores extends React.Component {
+    static propTypes = {
+        disciplineJudges: PT.arrayOf(
+            PT.object.isRequired,
+        ).isRequired,
+        run: PT.object.isRequired,
+        tourResults: PT.object.isRequired,
+    };
 
     static names_cache = new Map();
     static convertName(name) {
@@ -99,10 +88,14 @@ export default class LineJudgeScore extends React.PureComponent {
     getTable(context) {
         let result = new Map();
         for (const score of this.getValue("scores", context)) {
+            const criterias_values = (
+                context.props.tourResults.scores_results[score.id]
+                    ?.extra_data.criterias
+            ) || {};
             const dj_id = score.discipline_judge_id;
-            for (const criteria of Object.keys(score.data.criterias_values)) {
+            for (const criteria of Object.keys(criterias_values)) {
                 const key = `${dj_id}/${criteria}`;
-                const score_data = score.data.raw_data;
+                const score_data = score.data;
                 const components = [criteria]
                     .concat(COMPLEX_CRITERIAS.get(criteria) || [])
                     .filter(c => typeof score_data[c] !== "undefined");
@@ -112,8 +105,8 @@ export default class LineJudgeScore extends React.PureComponent {
                 for (const c of components) {
                     cell_data.components.push([c, score_data[c]]);
                 }
-                cell_data.all_set = components.every(comp => score_data[comp] !== null);
-                cell_data.criteria_value = score.data.criterias_values[criteria];
+                cell_data.all_set = components.every(comp => score_data[comp] != null);
+                cell_data.criteria_value = criterias_values[criteria];
                 result.set(key, cell_data);
             }
         }
@@ -121,11 +114,12 @@ export default class LineJudgeScore extends React.PureComponent {
     }
 
     getAllCriterias(context) {
-        let cr_found = [];
-        for (const score of this.getValue("scores", context).values()) {
-            cr_found = cr_found.concat(Object.keys(score.data.criterias_values));
-        }
-        return new Set(cr_found);
+        // let cr_found = new Set;
+        const criterias_values = (
+            context.props.tourResults.runs_results[context.props.run.id]
+                ?.extra_data.criterias_scores
+        ) || {};
+        return new Set(Object.keys(criterias_values));
     }
 
     getMedians(context) {
@@ -168,6 +162,10 @@ export default class LineJudgeScore extends React.PureComponent {
 
     handleShowVerboseScore = (event) => {
         event.preventDefault();
+        this.handleShowVerboseScoreNoPrevent(event);
+    };
+
+    handleShowVerboseScoreNoPrevent = (event) => {
         const position_obj = event.touches ? event.touches[0] : event;
         const target = this._table;
         const rect = target.getBoundingClientRect();
@@ -208,7 +206,11 @@ export default class LineJudgeScore extends React.PureComponent {
         });
     }
     renderRows() {
-        const criterias = Object.keys(this.props.run.verbose_total_score.criterias_scores)
+        const criterias_scores = this.props.tourResults.runs_results[this.props.run.id]?.extra_data.criterias_scores;
+        if (!criterias_scores) {
+            return null;
+        }
+        const criterias = Object.keys(criterias_scores)
             .sort((a, b) => (CRITERIAS_ORDER.get(a) || 1000) - (CRITERIAS_ORDER.get(b) || 1000));
         return criterias.map(criteria =>
             <Row
@@ -216,7 +218,6 @@ export default class LineJudgeScore extends React.PureComponent {
                 key={ criteria }
                 lineJudgesIndex={ this.line_judges_index }
                 medians={ this.medians }
-                run={ this.props.run }
                 scores={ this.scores }
                 table={ this.table }
             />
@@ -235,7 +236,7 @@ export default class LineJudgeScore extends React.PureComponent {
                     onMouseUp={ this.handleHideVerboseScore }
                     onTouchCancel={ this.handleHideVerboseScore }
                     onTouchEnd={ this.handleHideVerboseScore }
-                    onTouchMove={ this.handleShowVerboseScore }
+                    onTouchMove={ this.handleShowVerboseScoreNoPrevent }
                     onTouchStart={ this.handleShowVerboseScore }
                 >
                     <tbody>

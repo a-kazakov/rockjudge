@@ -1,24 +1,25 @@
+import React from "react";
+
+import Model from "common/server/Storage/models/Model";
+import PT from "prop-types";
 import _ from "l10n";
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
 import Renderer from "./Renderer";
 
-export default class PlaceSelector extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineId: PT.number.isRequired,
-            value: PT.number,
-            onChange: PT.func.isRequired,
-        };
-    }
+export default class PlaceSelector extends React.Component {
+    static propTypes = {
+        discipline: PT.instanceOf(Model),
+        value: PT.number,
+        onChange: PT.func.isRequired,
+    };
 
     handlePlaceReset = () => {
         this.props.onChange(null);
-    }
+    };
 
     render() {
-        if (this.props.disciplineId === null) {
+        if (this.props.disciplineId == null) {
             return null;
         }
         return (
@@ -31,7 +32,7 @@ export default class PlaceSelector extends React.PureComponent {
                     { _("screen_operator.buttons.reset_place") }
                 </button>
                 <Renderer
-                    disciplineId={ this.props.disciplineId }
+                    discipline={ this.props.discipline }
                     key={ this.props.disciplineId }
                     value={ this.props.value }
                     onPositionSelect={ this.props.onChange }
@@ -40,5 +41,3 @@ export default class PlaceSelector extends React.PureComponent {
         );
     }
 }
-
-PlaceSelector.displayName = "ScreenOperator_DisciplinePlaceControls_PlaceSelector";

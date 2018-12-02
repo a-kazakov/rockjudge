@@ -1,15 +1,15 @@
+import React from "react";
+
+import PT from "prop-types";
 import onTouchOrClick from "tablet_ui/onTouchOrClick";
 
-export default class Item extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            active: PT.bool.isRequired,
-            page: PT.oneOf(["info", "plan", "heats", "results"]).isRequired,
-            title: PT.string.isRequired,
-            onPageChange: PT.func.isRequired,
-        };
-    }
+export default class Item extends React.Component {
+    static propTypes = {
+        active: PT.bool.isRequired,
+        page: PT.oneOf(["info", "plan", "heats", "results"]).isRequired,
+        title: PT.string.isRequired,
+        onPageChange: PT.func.isRequired,
+    };
 
     handleClick = () => {
         this.props.onPageChange(this.props.page);
@@ -33,5 +33,3 @@ export default class Item extends React.PureComponent {
         );
     }
 }
-
-Item.displayName = "PresenterTablet_LeftBar_Item";

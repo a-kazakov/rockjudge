@@ -1,50 +1,25 @@
-import _ from "l10n";
+import {Api, React} from "HostModules";
 
-import { Api } from "HostModules";
+import PT from "prop-types";
+import _ from "l10n";
 
 import Element from "./Element";
 import IntegerInput from "tablet_ui/IntegerInput";
 
-export default class ScoringLayoutAcro extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudge: PT.shape({
-                id: PT.number.isRequired,
-            }).isRequired,
-            readOnly: PT.bool.isRequired,
-            run: PT.shape({
-                id: PT.number.isRequired,
-                status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                acrobatics: PT.arrayOf(
-                    PT.object.isRequired,
-                ).isRequired,
-                participant: PT.shape({
-                    number: PT.number.isRequired,
-                    name: PT.string.isRequired,
-                    sportsmen: PT.array.isRequired,
-                }).isRequired,
-            }).isRequired,
-            score: PT.shape({
-                confirmed: PT.bool.isRequired,
-                id: PT.number.isRequired,
-                data: PT.object.isRequired,
-            }).isRequired,
-            scoreData: PT.shape({
-                fall_down: PT.number.isRequired,
-            }).isRequired,
-            onScoreUpdate: PT.func.isRequired,
-        };
-    }
+export default class ScoringLayoutAcro extends React.Component {
+    static propTypes = {
+        score: PT.object.isRequired,
+        onScoreUpdate: PT.func.isRequired,
+    };
 
-    handleAcroOverride = (acro_idx, value) => {
+    handleAcroOverride = (acrobatic, value) => {
         if (this.props.score.confirmed) {
             return;
         }
-        Api("acrobatic_override.set", {
-            run_id: this.props.run.id,
-            acrobatic_idx: acro_idx,
-            score: value,
+        Api("model/update", {
+            model_name: "RunAcrobatic",
+            model_id: acrobatic.id,
+            data: { score: value },
         }).send();
     };
     handleFallDownChange = (value) => {
@@ -54,12 +29,11 @@ export default class ScoringLayoutAcro extends React.PureComponent {
     renderScoringLayout() {
         return (
             <div>
-                { this.props.run.acrobatics.map((acro, idx) =>
+                { this.props.score.run.acrobatics.map(acro =>
                     <Element
-                        acro={ acro }
-                        idx={ idx }
-                        key={ idx }
-                        readOnly={ this.props.readOnly }
+                        acrobatic={ acro }
+                        key={ acro.id }
+                        readOnly={ this.props.score.confirmed }
                         onAcroOverride={ this.handleAcroOverride }
                     />
                 ) }
@@ -67,15 +41,11 @@ export default class ScoringLayoutAcro extends React.PureComponent {
         )
     }
     render() {
-        if (this.props.score === null) {
-            return (
-                <div />
-            );
-        }
+        const participant = this.props.score.run.participant;
         const header = _("global.phrases.participant_n",
-            this.props.run.participant.number,
-            this.props.run.participant.name,
-            this.props.run.participant.sportsmen.length);
+            participant.number,
+            participant.name,
+            participant.sportsmen.length);
         return (
             <div className="layout-participant">
                 <h2>
@@ -89,8 +59,8 @@ export default class ScoringLayoutAcro extends React.PureComponent {
                     <IntegerInput
                         jumbo
                         sendDeltas
-                        readOnly={ this.props.readOnly }
-                        value={ this.props.scoreData.fall_down }
+                        readOnly={ this.props.score.confirmed }
+                        value={ this.props.score.data.fall_down }
                         onChange={ this.handleFallDownChange }
                     />
                 </div>

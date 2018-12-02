@@ -1,39 +1,21 @@
-import Header from "JudgeTablet/components/Header";
+import {React} from "HostModules";
+
+import ConfirmationButton from "JudgeTablet/components/ConfirmationButton";
 import Grid from "JudgeTablet/components/Grid";
+import Header from "JudgeTablet/components/Header";
+import PT from "prop-types";
+import LastPage from "../components/LastPage";
 import Participant from "./Participant";
 
-import ResultsTable2 from "ResultsTable2";
-import ConfirmationButton from "JudgeTablet/components/ConfirmationButton";
-import LastPage from "../components/LastPage";
-
-export default class GeneralLayout extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudge: PT.shape({
-                id: PT.number.isRequired,
-                judge: PT.object.isRequired,
-            }).isRequired,
-            layoutClass: PT.func.isRequired,
-            smallBlocks: PT.bool,
-            tour: PT.shape({
-                id: PT.number.isRequired,
-                runs: PT.arrayOf(
-                    PT.shape({
-                        heat: PT.number.isRequired,
-                        status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                        scores: PT.arrayOf(
-                            PT.shape({
-                                discipline_judge_id: PT.number.isRequired,
-                            }).isRequired,
-                        ).isRequired,
-                    }).isRequired,
-                ).isRequired,
-            }).isRequired,
-            onHeatConfirm: PT.func.isRequired,
-            onScoreUpdate: PT.func.isRequired,
-        };
-    }
+export default class GeneralLayout extends React.Component {
+    static propTypes = {
+        disciplineJudge: PT.object.isRequired,
+        layoutClass: PT.func.isRequired,
+        smallBlocks: PT.bool,
+        tour: PT.object.isRequired,
+        onHeatConfirm: PT.func.isRequired,
+        onScoreUpdate: PT.func.isRequired,
+    };
     static get defaultProps() {
         return {
             smallBlocks: false,
@@ -49,7 +31,7 @@ export default class GeneralLayout extends React.PureComponent {
         this.setupCache();
     }
 
-    componentWillReceiveProps(next_props) {
+    UNSAFE_componentWIllReceiveProps(next_props) {
         if (next_props.tour.id !== this.props.tour.id) {
             const prev_props = this.props;
             this.props = next_props;
@@ -74,7 +56,7 @@ export default class GeneralLayout extends React.PureComponent {
             if (!score) {
                 return false;
             }
-            const score_data = score.data.raw_data;
+            const score_data = score.data;
             if (score.confirmed) {
                 continue;
             }
@@ -88,7 +70,7 @@ export default class GeneralLayout extends React.PureComponent {
             } else {
                 for (const key of Object.keys(score_data)) {
                     const value = score_data[key];
-                    if (value === null) {
+                    if (value == null) {
                         return false;
                     }
                 }
@@ -136,7 +118,7 @@ export default class GeneralLayout extends React.PureComponent {
         return result;
     }
     checkCanFinish(props=null) {
-        if (props === null) {
+        if (props == null) {
             props = this.props;
         }
         if (this.state.heat !== this.heats_count) {

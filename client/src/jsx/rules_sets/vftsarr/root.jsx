@@ -8,9 +8,9 @@ import AdminScoreInput from "AdminScoreInput";
 import getJudgeTableMark from "getJudgeTableMark";
 import meta from "meta";
 
-import { setup } from "HostModules";
+import {setup} from "HostModules";
 
-const response = window.registerRulesSet("RosFARR", {
+const response = window.registerRulesSet("VFTSARR", {
     meta: meta,
     translate: _,
     tour_results_table_1: ResultsTable1,

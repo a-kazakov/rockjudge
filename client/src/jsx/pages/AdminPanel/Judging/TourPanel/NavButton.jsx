@@ -1,13 +1,14 @@
-export default class NavButton extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            active: PT.bool.isRequired,
-            label: PT.string.isRequired,
-            mkey: PT.string.isRequired,
-            onPageSwitch: PT.func.isRequired,
-        };
-    }
+import React from "react";
+
+import PT from "prop-types";
+
+export default class NavButton extends React.Component {
+    static propTypes = {
+        active: PT.bool.isRequired,
+        label: PT.string.isRequired,
+        mkey: PT.string.isRequired,
+        onPageSwitch: PT.func.isRequired,
+    };
 
     handleClick = (event) => {
         event.preventDefault();
@@ -31,5 +32,3 @@ export default class NavButton extends React.PureComponent {
         );
     }
 }
-
-NavButton.displayName = "AdminPanel_Judging_TourPanel_NavButton";

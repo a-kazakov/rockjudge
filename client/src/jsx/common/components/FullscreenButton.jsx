@@ -1,6 +1,8 @@
+import React from "react";
+
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
-export default class FullscreenButton extends React.PureComponent {
+export default class FullscreenButton extends React.Component {
     constructor(props) {
         super(props);
         this._top_node = window.document.documentElement;
@@ -54,4 +56,3 @@ export default class FullscreenButton extends React.PureComponent {
     }
 }
 
-FullscreenButton.displayName = "common_components_FullscreenButton";

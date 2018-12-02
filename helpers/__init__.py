@@ -13,7 +13,7 @@ def profile(sort='cumulative', lines=50, strip_dirs=False):
             prof = cProfile.Profile()
             try:
                 ret = prof.runcall(fun, *args, **kwargs)
-            except:
+            except Exception:
                 file.close()
                 raise
 

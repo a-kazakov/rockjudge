@@ -1,29 +1,37 @@
-import _ from "l10n";
-import Docx from "common/Docx";
+import React from "react";
 
+import Docx from "common/Docx";
+import makeTourResultsTable from "common/makeTourResultsTable";
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import Paper from "pages/AdminPanel/common/Paper";
+import PT from "prop-types";
 import rules_set from "rules_sets/loader";
 
-import Paper from "pages/AdminPanel/common/Paper";
-
-export default class Renderer extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            autoDocx: PT.shape({
-                filename: PT.string.isRequired,
-                onDone: PT.func.isRequired,
-            }),
-            tour: PT.object.isRequired,
-            verbosity: PT.number.isRequired,
-        };
-    }
+export default class Renderer extends React.Component {
+    static propTypes = {
+        autoDocx: PT.shape({
+            filename: PT.string.isRequired,
+            onDone: PT.func.isRequired,
+        }),
+        tour: PT.instanceOf(Model).isRequired,
+        verbosity: PT.number.isRequired,
+    };
 
     componentDidMount() {
         if (this.props.autoDocx) {
-            this.createDocx(this.props.autoDocx.filename);
-            this.props.autoDocx.onDone(this.props.autoDocx.filename);
+            this.tryAutoDocx();
         }
     }
+
+    tryAutoDocx = () => {
+        if (this.props.tour.finalized !== this.props.tour.results.finalized) {
+            setTimeout(this.tryAutoDocx, 500);
+            return;
+        }
+        this.createDocx(this.props.autoDocx.filename);
+        this.props.autoDocx.onDone(this.props.autoDocx.filename);
+    };
 
     makePrintableRef = (ref) => this._printable = ref;
 
@@ -56,15 +64,14 @@ export default class Renderer extends React.PureComponent {
     }
     renderBody() {
         const RenderingComponent = this.getRenderingComponent();
+        const computedTour = makeTourResultsTable(this.props.tour);
         return (
-            <RenderingComponent { ...this.props } />
+            <RenderingComponent computedTour={ computedTour } />
         );
     }
     render() { // eslint-disable-line react/sort-comp
         const Component = this.getRenderingComponent();
-        const orientation = Component.getPaperOrientation
-            ? Component.getPaperOrientation(this.props.tour)
-            : "portrait";
+        const orientation = Component.getPaperOrientation?.(this.props.tour) ?? "portrait";
         return (
             <Paper
                 header={ `${this.props.tour.discipline.competition.name}, ${this.props.tour.discipline.competition.date}` }

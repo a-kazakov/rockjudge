@@ -1,4 +1,4 @@
-import { saveAs } from "file-saver";
+import {saveAs} from "file-saver";
 
 class DocxImpl {
     constructor(filename) {
@@ -168,7 +168,6 @@ class DocxImpl {
     save() {
         let html = this.renderHTML();
         let margins = this.margins || (this.orientation === "portrait" ? [10, 15, 10, 15] : [10, 10, 10, 10]);
-        console.log(this.orientation);
         let converted = htmlDocx.asBlob(html, {
             orientation: this.orientation,
             margins: {

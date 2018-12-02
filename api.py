@@ -1,948 +1,513 @@
-import base64
-import json
-import os
-import random
-import traceback
-from datetime import datetime
-from typing import List
+import time
+from enum import Enum
+from traceback import print_exc
+from typing import Any, Dict, NamedTuple, Optional, Tuple, Type, TypeVar, List
 
-import settings
-from db import Database
-from exceptions import ApiError
-from auth import check_auth
-from models import (
-    Client,
-    ClientAuth,
-    Club,
-    Competition,
-    CompetitionPlanItem,
-    Discipline,
-    DisciplineJudge,
-    Judge,
-    Participant,
-    Program,
-    Run,
-    Score,
-    Tour,
+from sqlalchemy.orm import Session
+
+from db import db
+from enums import AccessLevel
+from exceptions import ApiError, InternalError
+from models.base_model import BaseModel
+from models.client import Client
+from models.competition import Competition
+from models.competition_plan_item import CompetitionPlanItem
+from models.discipline import Discipline
+from models.discipline_judge import DisciplineJudge
+from models.program import Program
+from models.run import Run
+from models.score import Score
+from models.tour import Tour
+from mutations import (
+    FinalizedMutations,
+    MutationsKeeper,
 )
+from prefetching import ModelTreeNode, RecursiveDict
+from subscriptions import (
+    SubscriptionAllCompetitions,
+    SubscriptionBase,
+    SubscriptionClient,
+    SubscriptionCompetition,
+    SubscriptionTour,
+)
+from utils import raise_if_none, DbQueriesLogger
+
+TBaseModel = TypeVar("TBaseModel", bound=BaseModel)
 
 
-class ApiRequest:
-    def __init__(self, **kwargs):
-        self.__dict__.update(kwargs)
+class ApiMethod(Enum):
+    # Model methods
+    MODEL_GET = "model/get"  # For debugging only
+    MODEL_SUBSCRIBE = "model/subscribe"
+    MODEL_UNSUBSCRIBE = "model/unsubscribe"
+    MODEL_SUBSCRIBE_ALL_COMPETITIONS = "model/subscribe_all_competitions"
+    MODEL_CREATE = "model/create"
+    MODEL_UPDATE = "model/update"
+    MODEL_BATCH_UPDATE = "model/batch_update"
+    MODEL_DELETE = "model/delete"
+    # Competition methods
+    COMPETITION_LOAD = "competition/load"
+    COMPETITION_EXPORT = "competition/export"
+    # Discipline methods
+    DISCIPLINE_CREATE_WITH_JUDGES = "discipline/create_with_judges"
+    DISCIPLINE_UPDATE_WITH_JUDGES = "discipline/update_with_judges"
+    # Tour methods
+    TOUR_INIT = "tour/init"
+    TOUR_FINALIZE = "tour/finalize"
+    TOUR_UNFINALIZE = "tour/unfinalize"
+    TOUR_START = "tour/start"
+    TOUR_START_NEXT = "tour/start_next"
+    TOUR_STOP = "tour/stop"
+    TOUR_SHUFFLE_HEATS = "tour/shuffle_heats"
+    TOUR_CONFIRM_HEAT = "tour/confirm_heat"
+    TOUR_CONFIRM_JUDGE = "tour/confirm_judge"
+    TOUR_UNCONFIRM_JUDGE = "tour/unconfirm_judge"
+    TOUR_RESET_JUDGE = "tour/reset_judge"
+    TOUR_PERMUTE_HEAT = "tour/permute_heat"
+    # Run methods
+    RUN_LOAD_PROGRAM = "run/load_program"
+    RUN_RESET = "run/reset"
+    # Service methods
+    SERIVCE_GET_DB_SCHEMA = "service/get_db_schema"
+    SERVICE_REFRESH_CLIENTS = "service/refresh_clients"
+    SERVICE_REPORT_JS_ERROR = "service/report_js_error"
+    SERVICE_DUMMY = "service/dummy"
+    # Auth methods
+    AUTH_START_REGISTRATION = "auth/start_registration"
+    AUTH_COMPLETE_REGISTRATION = "auth/complete_registration"
 
 
-class IdTransformer:
-    @classmethod
-    def execute(cls, request, wanted_id_type):
-        for current_id_type in [k for k in request.keys() if k.endswith("_id")]:
-            id_value = request.body[current_id_type]
-            path = cls.path(current_id_type, wanted_id_type)
-            if path is None:
-                continue
-            for id_type in path:
-                id_value = cls.TRANSFORMATIONS[current_id_type][id_type](id_value)
-                current_id_type = id_type
-            return id_value
-        raise ApiError("errors.api.unable_to_get", wanted_id_type)
+class ApiRequest(NamedTuple):
+    opt_client: Optional[Client]
+    remote_ip: str
+    host: str
+    method: ApiMethod
+    params: Dict[str, Any]
+    response_key: Optional[str]
+
+    @property
+    def client(self) -> Client:
+        return raise_if_none(self.opt_client)
+
+    def is_superuser(self) -> bool:
+        return self.remote_ip == self.host == "127.0.0.1"
+
+    def with_client(self, client: Client) -> "ApiRequest":
+        params = {
+            **self._asdict(),
+            "opt_client": client,
+        }
+        return ApiRequest(**params)
+
+
+class ApiResponse(NamedTuple):
+    request: ApiRequest
+    response: Any = None
+    mutations: Optional[FinalizedMutations] = None
+    error_code: Optional[str] = None
+    error_args: Optional[Tuple[str, ...]] = None
+    new_subscription: Optional[SubscriptionBase] = None
+    remove_subscription: Optional[str] = None
+    broadcast_message: Optional[str] = None
+
+    @property
+    def success(self) -> bool:
+        return self.error_code is None
+
+    def serialize(self) -> Dict[str, Any]:
+        if self.success:
+            return {
+                "success": True,
+                "response": self.response,
+            }
+        else:
+            return {
+                "success": False,
+                "error_code": self.error_code,
+                "error_args": self.error_args,
+            }
 
 
 class Api:
-    @staticmethod
-    def get_model(model_type, id_name, request, pf_children=None):
-        model_id = request.body[id_name]
+    def __init__(self, request: ApiRequest, session: Session) -> None:
+        self.session = session
+        self.request = request
+        self.next_session: Optional[Session] = None
+        self._db_logger = DbQueriesLogger(self.session.connection(), f"Api call ({request.method.value})")
+
+    def execute(self) -> ApiResponse:  # async
+        start_time = time.monotonic()
+        session_closed: bool = False
         try:
-            model = model_type.get(model_type.id == model_id)
-        except model_type.DoesNotExist:
-            raise ApiError("errors.model_does_not_exist.{}".format(model_type.__name__.lower()))
-        if pf_children is None:
-            if "children" in request.body:
-                model.smart_prefetch(request.body["children"])
-        else:
-            model.smart_prefetch(pf_children)
+            result = self._execute()  # await from pool
+            self.session.commit()
+            self.next_session = db.make_session()
+            self.next_session.connection()  # Start transaction
+            return result
+        except ApiError as ex:
+            self.session.rollback()
+            session_closed = True
+            return ApiResponse(
+                request=self.request,
+                error_code=ex.code,
+                error_args=ex.args,
+            )
+        except Exception as ex:
+            print_exc()
+            self.session.rollback()
+            session_closed = True
+            return ApiResponse(
+                request=self.request,
+                error_code="errors.global.internal_server_error",
+                error_args=(),
+            )
+        finally:
+            client_id = (
+                self.request.opt_client.id
+                if self.request.opt_client is not None
+                else "NEW"
+            )
+            total_time = time.monotonic() - start_time
+            self._db_logger.finalize()
+            print(
+                f"Api call:      {self.request.method.value:<35s} "
+                f"Client ID: {client_id:<3} "
+                f"Time: {total_time:<.3f}s "
+                f"DB queries: {self._db_logger.queries_count:<4}"
+            )
+            if not session_closed:
+                db.close_session(self.session)
+
+    def _execute(self) -> ApiResponse:
+        # This will go to thread pool later
+        func_name = "api_" + self.request.method.value.replace("/", "_")
+        func = getattr(self, func_name, None)
+        if func is None:
+            raise NotImplementedError(f"Method {self.request.method.value} is not implemented yet")
+        # Call API
+        self.mk = MutationsKeeper()
+        self.new_subscription: Optional[SubscriptionBase] = None
+        self.remove_subscription: Optional[str] = None
+        self.broadcast_message: Optional[str] = None
+        response = func(**self.request.params)
+        return ApiResponse(
+            request=self.request,
+            response=response,
+            mutations=self.mk.finalize(),
+            new_subscription=self.new_subscription,
+            remove_subscription=self.remove_subscription,
+            broadcast_message=self.broadcast_message,
+        )
+
+    # Helpers
+
+    def __get_model_for_update(
+        self,
+        model_type: Type[TBaseModel],
+        model_id: int,
+        prefetch_schema: Optional[RecursiveDict] = None,
+    ) -> TBaseModel:
+        model = model_type.get(self.session, model_id, prefetch_schema)
+        if not self.request.is_superuser():
+            can_update = model.check_update_permission(self.request, {})
+            if not can_update:
+                raise ApiError("errors.auth.not_authenticated")
         return model
 
-    # Single models getters
+    # Model methods
 
-    @classmethod
-    def judge_get(cls, request):
-        judge = cls.get_model(Judge, "judge_id", request)
-        check_auth(
-            competition_id=judge.competition_id,
-            request=request,
-            allowed_access_levels=("judge_{}".format(judge.id), "any_judge", "admin", ),
-        )
-        return judge.serialize(children=request.body["children"])
+    def api_model_get(self, model_name: str, model_id: int) -> Dict[str, Any]:
+        model_type = BaseModel.get_child(model_name)
+        model = model_type.get(self.session, model_id)
+        if not self.request.is_superuser():
+            can_read = model.check_read_permission(self.request)
+            if not can_read:
+                raise ApiError("errors.auth.not_authenticated")
+        return model.serialize()
 
-    @classmethod
-    def competition_get(cls, request):
-        competition = cls.get_model(Competition, "competition_id", request)
-        check_auth(
-            competition_id=competition.id,
-            request=request,
-            allowed_access_levels="*",
-        )
-        return competition.serialize(children=request.body["children"])
-
-    @classmethod
-    def competition_get_all(cls, request):
-        if request.remote_ip != "127.0.0.1":
-            raise ApiError("errors.auth.localhost_only")
-        competitions = Competition.select().where(Competition.deleted == False)  # NOQA
-        return [{
-            "id": c.id,
-            "data": c.serialize(children=request.body["children"]),
-            "name": c.serialize(children=request.body["children"]),
-        } for c in competitions]
-
-    @classmethod
-    def competition_get_active_names(cls, request):
-        competitions = Competition.select().where(
-            (Competition.active == True) &  # NOQA
-            (Competition.deleted == False)  # NOQA
-        )
-        # No auth check
-        return [{
-            "id": c.id,
-            "name": c.name
-        } for c in competitions]
-
-    @classmethod
-    def discipline_get(cls, request):
-        discipline = cls.get_model(Discipline, "discipline_id", request)
-        check_auth(
-            competition_id=discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", "presenter", "any_judge", ),
-        )
-        return discipline.serialize(children=request.body["children"])
-
-    @classmethod
-    def tour_get(cls, request):
-        tour = cls.get_model(Tour, "tour_id", request)
-        check_auth(
-            competition_id=tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", "presenter", "any_judge", "judge_*", ),
-        )
-        return tour.serialize(children=request.body["children"])
-
-    @classmethod
-    def program_get(cls, request):
-        program = cls.get_model(Program, "program_id", request)
-        check_auth(
-            competition_id=program.participant.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        return program.serialize(children=request.body["children"])
-
-    # Requests
-
-    @classmethod
-    def judge_request(cls, request):
-        judge = cls.get_model(Judge, "judge_id", {})
-        check_auth(
-            competition_id=judge.competition_id,
-            request=request,
-            allowed_access_levels=("judge_{}".format(judge.id), "any_judge", "admin", ),
-        )
-
-
-    # Setters
-
-    @classmethod
-    def client_auth_set(cls, request):
-        client_auth = cls.get_model(ClientAuth, "client_auth_id", request)
-        check_auth(
-            competition_id=client_auth.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        client_auth.update_model(request.body["data"], ws_message=request.ws_message)
-
-    @classmethod
-    def club_set(cls, request):
-        club = cls.get_model(Club, "club_id", request)
-        check_auth(
-            competition_id=club.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        club.update_model(request.body["data"], ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def judge_set(cls, request):
-        judge = cls.get_model(Judge, "judge_id", request)
-        check_auth(
-            competition_id=judge.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        judge.update_model(request.body["data"], ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def discipline_judge_set(cls, request):
-        discipline_judge = cls.get_model(DisciplineJudge, "discipline_judge_id", request)
-        check_auth(
-            competition_id=discipline_judge.judge.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        discipline_judge.update_model(request.body["data"], ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def score_set(cls, request):
-        score = cls.get_model(Score, "score_id", request)
-        judge = score.discipline_judge.judge
-        access_levels = ("admin", "any_judge", f"judge_{judge.id}", )
-        check_auth(
-            competition_id=judge.competition_id,
-            request=request,
-            allowed_access_levels=access_levels,
-        )
-        score.update_model(request.body["data"], ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def score_set_multiple(cls, request):
-        tour = cls.get_model(Tour, "tour_id", request)
-        access_levels = ("admin", "any_judge", "judge_*", )
-        check_auth(
-            competition_id=tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels=access_levels,
-        )
-        mapping = {
-            int(key): value
-            for key, value in request.body["scores"].items()
-        }
-        scores: List[Score] = list(Score.select().join(Run).filter(
-            (Run.tour_id == tour.id) &
-            (Score.id << list(mapping.keys()))
-        ))
-        Score.smart_prefetch_multiple(scores, {})
-        for score in scores:
-            score.update_model(mapping[score.id], request.ws_message)
-        return {}
-
-    @classmethod
-    def run_set(cls, request):
-        run = cls.get_model(Run, "run_id", request)
-        check_auth(
-            competition_id=run.tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        run.update_model(request.body["data"], ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def program_set(cls, request):
-        program = cls.get_model(Program, "program_id", request)
-        check_auth(
-            competition_id=program.participant.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        program.update_model(request.body["data"], ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def tour_set(cls, request):
-        tour = cls.get_model(Tour, "tour_id", request)
-        check_auth(
-            competition_id=tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", "any_judge", "judge_*",),
-        )
-        tour.update_model(request.body["data"], ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def discipline_set(cls, request):
-        discipline = cls.get_model(Discipline, "discipline_id", request)
-        check_auth(
-            competition_id=discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        discipline.update_model(request.body["data"], ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def competition_set(cls, request):
-        competition = cls.get_model(Competition, "competition_id", request)
-        check_auth(
-            competition_id=competition.id,
-            request=request,
-            allowed_access_levels=("admin", "presenter", "any_judge", ),
-        )
-        competition.update_model(request.body["data"], ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def competition_plan_item_set(cls, request):
-        item = cls.get_model(CompetitionPlanItem, "competition_plan_item_id", request)
-        item.update_model(request.body["data"], ws_message=request.ws_message)
-        check_auth(
-            competition_id=item.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        return {}
-
-    @classmethod
-    def participant_set(cls, request):
-        participant = cls.get_model(Participant, "participant_id", request)
-        check_auth(
-            competition_id=participant.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        participant.update_model(request.body["data"], ws_message=request.ws_message)
-        return {}
-
-    # Creaters
-
-    @classmethod
-    def client_auth_create(cls, request):
-        competition = Competition.get(id=request.body["competition_id"])
-        ClientAuth.create_model(
-            client=request.client,
-            competition=competition,
-            ws_message=request.ws_message,
-        )
-
-    @classmethod
-    def competition_create(cls, request):
-        if request.remote_ip != "127.0.0.1":
-            raise ApiError("errors.auth.localhost_only")
-        Competition.create_model(data=request.body["data"], ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def discipline_create(cls, request):
-        competition = cls.get_model(Competition, "competition_id", request)
-        check_auth(
-            competition_id=competition.id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        Discipline.create_model(competition=competition, data=request.body["data"], ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def tour_create(cls, request):
-        discipline = cls.get_model(Discipline, "discipline_id", request)
-        check_auth(
-            competition_id=discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        Tour.create_model(
-            discipline=discipline,
-            add_after=request.body["add_after"],
-            data=request.body["data"],
-            ws_message=request.ws_message,
-        )
-        return {}
-
-    @classmethod
-    def program_create(cls, request):
-        participant = cls.get_model(Participant, "participant_id", request)
-        check_auth(
-            competition_id=participant.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        Program.create_model(
-            participant=participant,
-            data=request.body["data"],
-            ws_message=request.ws_message,
-        )
-        return {}
-
-    @classmethod
-    def club_create(cls, request):
-        competition = cls.get_model(Competition, "competition_id", request)
-        check_auth(
-            competition_id=competition.id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        Club.create_model(
-            competition=competition,
-            data=request.body["data"],
-            ws_message=request.ws_message,
-        )
-        return {}
-
-    @classmethod
-    def judge_create(cls, request):
-        competition = cls.get_model(Competition, "competition_id", request)
-        check_auth(
-            competition_id=competition.id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        Judge.create_model(
-            competition=competition,
-            data=request.body["data"],
-            ws_message=request.ws_message,
-        )
-        return {}
-
-    def discipline_judge_create(cls, request):
-        discipline = cls.get_model(Discipline, "discipline_id", request)
-        judge = cls.get_model(Judge, "judge_id", request)
-        check_auth(
-            competition_id=judge.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        DisciplineJudge.create_model(
-            discipline=discipline,
-            judge=judge,
-            data=request.body["data"],
-            ws_message=request.ws_message,
-        )
-        return {}
-
-    @classmethod
-    def competition_plan_item_create(cls, request):
-        competition = cls.get_model(Competition, "competition_id", request)
-        check_auth(
-            competition_id=competition.id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        CompetitionPlanItem.create_model(
-            competition=competition,
-            data=request.body["data"],
-            ws_message=request.ws_message,
-        )
-        return {}
-
-    @classmethod
-    def participant_create(cls, request):
-        discipline = cls.get_model(Discipline, "discipline_id", request)
-        check_auth(
-            competition_id=discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        Participant.create_model(
-            discipline=discipline,
-            data=request.body["data"],
-            ws_message=request.ws_message,
-        )
-        return {}
-
-    # Deleters
-
-    @classmethod
-    def client_auth_delete(cls, request):
-        client_auth = cls.get_model(ClientAuth, "client_auth_id", request)
-        check_auth(
-            competition_id=client_auth.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        client_auth.delete_model(ws_message=request.ws_message)
-
-    @classmethod
-    def competition_delete(cls, request):
-        if request.remote_ip != "127.0.0.1":
-            raise ApiError("errors.auth.localhost_only")
-        competition = cls.get_model(Competition, "competition_id", request)
-        competition.delete_model(ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def tour_delete(cls, request):
-        tour = cls.get_model(Tour, "tour_id", request)
-        check_auth(
-            competition_id=tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        tour.delete_model(ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def program_delete(cls, request):
-        program = cls.get_model(Program, "program_id", request)
-        check_auth(
-            competition_id=program.participant.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        program.delete_model(ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def discipline_delete(cls, request):
-        discipline = cls.get_model(Discipline, "discipline_id", request)
-        check_auth(
-            competition_id=discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        discipline.delete_model(ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def club_delete(cls, request):
-        club = cls.get_model(Club, "club_id", request)
-        check_auth(
-            competition_id=club.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        club.delete_model(ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def judge_delete(cls, request):
-        judge = cls.get_model(Judge, "judge_id", request)
-        check_auth(
-            competition_id=judge.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        judge.delete_model(ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def discipline_judge_delete(cls, request):
-        discipline_judge = cls.get_model(DisciplineJudge, "discipline_judge_id", request)
-        check_auth(
-            competition_id=discipline_judge.judge.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        discipline_judge.delete_model(ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def participant_delete(cls, request):
-        participant = cls.get_model(Participant, "participant_id", request)
-        check_auth(
-            competition_id=participant.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        participant.delete_model(ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def competition_plan_item_delete(cls, request):
-        item = cls.get_model(CompetitionPlanItem, "competition_plan_item_id", request)
-        check_auth(
-            competition_id=item.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        item.delete_model(ws_message=request.ws_message)
-        return {}
-
-    # Custom actions
-
-    @classmethod
-    def score_confirm(cls, request):
-        score = cls.get_model(Score, "score_id", request)
-        judge = score.discipline_judge.judge
-        check_auth(
-            competition_id=judge.competition_id,
-            request=request,
-            allowed_access_levels=("admin", "any_judge", "judge_{}".format(judge.id), ),
-        )
-        score.confirm(ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def score_unconfirm(cls, request):
-        score = cls.get_model(Score, "score_id", request)
-        judge = score.discipline_judge.judge
-        check_auth(
-            competition_id=judge.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        score.unconfirm(ws_message=request.ws_message)
-        return {}
-
-
-    @classmethod
-    def tour_confirm_heat(cls, request):
-        discipline_judge = cls.get_model(DisciplineJudge, "discipline_judge_id", request)
-        tour = cls.get_model(Tour, "tour_id", request)
-        check_auth(
-            competition_id=discipline_judge.judge.competition_id,
-            request=request,
-            allowed_access_levels=("admin", "any_judge", "judge_{}".format(discipline_judge.judge_id), ),
-        )
-        tour.confirm_heat(discipline_judge, request.body["heat"], ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def tour_confirm_all(cls, request):
-        discipline_judge = cls.get_model(DisciplineJudge, "discipline_judge_id", request)
-        tour = cls.get_model(Tour, "tour_id", request)
-        check_auth(
-            competition_id=discipline_judge.judge.competition_id,
-            request=request,
-            allowed_access_levels=("admin", "any_judge", "judge_{}".format(discipline_judge.judge_id), ),
-        )
-        tour.confirm_all(discipline_judge, ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def tour_unconfirm_all(cls, request):
-        discipline_judge = cls.get_model(DisciplineJudge, "discipline_judge_id", request)
-        tour = cls.get_model(Tour, "tour_id", request)
-        check_auth(
-            competition_id=discipline_judge.judge.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        tour.unconfirm_all(discipline_judge, ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def tour_reset_judge_scores(cls, request):
-        discipline_judge = cls.get_model(DisciplineJudge, "discipline_judge_id", request)
-        tour = cls.get_model(Tour, "tour_id", request)
-        check_auth(
-            competition_id=discipline_judge.judge.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        tour.reset_judge_scores(discipline_judge, ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def acrobatic_override_set(cls, request):
-        run = cls.get_model(Run, "run_id", request)
-        check_auth(
-            competition_id=run.tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", "judge_*", "any_judge", ),
-        )
-        run.set_acrobatic_override(request.body["acrobatic_idx"], request.body["score"], ws_message=request.ws_message)
-        return {}
-
-    @classmethod
-    def run_load_program(cls, request):
-        run = cls.get_model(Run, "run_id", request)
-        check_auth(
-            competition_id=run.tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        if request.body["program_id"] is None:
-            run.load_acrobatics(None, request.ws_message)
+    def api_model_subscribe(self, model_name: str, model_id: int, subscription_id: str) -> None:
+        model_type = BaseModel.get_child(model_name)
+        if model_type not in {Competition, Tour, Client}:
+            raise InternalError(f"Subscription for model {model_name} is not supported")
+        model: BaseModel = self.session.query(model_type).get(model_id)
+        if not self.request.is_superuser():
+            can_read = model.check_read_permission(self.request)
+            if not can_read:
+                raise ApiError("errors.auth.not_authenticated")
+        if model_type is Competition:
+            subscription = SubscriptionCompetition(model_id, subscription_id)
+        elif model_type is Tour:
+            subscription = SubscriptionTour(model_id, subscription_id)
+        elif model_type is Client:
+            subscription = SubscriptionClient(model_id, subscription_id)
         else:
-            program = cls.get_model(Program, "program_id", request)
-            run.load_acrobatics(program, request.ws_message)
-        return {}
+            raise AssertionError
+        self.new_subscription = subscription
 
-    @classmethod
-    def run_set_status(cls, request):
-        run = cls.get_model(Run, "run_id", request)
-        check_auth(
-            competition_id=run.tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", "judge_*", "any_judge", ),
+    def api_model_subscribe_all_competitions(self, subscription_id: str) -> None:
+        subscription = SubscriptionAllCompetitions(subscription_id)
+        self.new_subscription = subscription
+
+    def api_model_unsubscribe(self, subscription_id: str) -> None:
+        self.remove_subscription = subscription_id
+
+    def api_model_create(self, model_name: str, data: Dict[str, Any]) -> None:
+        model_type = BaseModel.get_child(model_name)
+        if not self.request.is_superuser():
+            can_create = model_type.check_create_permission(self.session, self.request, data)
+            if not can_create:
+                raise ApiError("errors.auth.not_authenticated")
+        model_type.create(self.session, data, self.mk)
+
+    def api_model_update(self, model_name: str, model_id: int, data: Dict[str, Any]) -> None:
+        model_type = BaseModel.get_child(model_name)
+        if model_type == Score:
+            pf_schema = {"parts": {}, "run": {"tour": {"discipline": {"competition": {}}}}}
+        elif model_type == Tour and "scoring_system_name" in data:
+            pf_schema = {"runs": {"scores": {}}}
+        else:
+            pf_schema = None
+        model: BaseModel = model_type.get(self.session, model_id, pf_schema)
+        if not self.request.is_superuser():
+            can_update = model.check_update_permission(self.request, data)
+            if not can_update:
+                raise ApiError("errors.auth.not_authenticated")
+        model.update(data, self.mk)
+
+    def api_model_batch_update(self, model_name: str, data: Dict[str, Dict[str, Any]]) -> None:
+        model_type = BaseModel.get_child(model_name)
+        if model_type == Score:
+            pf_schema = {"parts": {}, "run": {"tour": {"discipline": {"competition": {}}}}}
+        elif model_type == Tour and "scoring_system_name" in data:
+            pf_schema = {"runs": {"scores": {}}}
+        else:
+            pf_schema = None
+        models: List[BaseModel] = model_type.get_multiple(self.session, map(int, data.keys()), pf_schema)
+        if not self.request.is_superuser():
+            can_update = all(
+                model.check_update_permission(self.request, data[str(model.id)])
+                for model in models
+            )
+            if not can_update:
+                raise ApiError("errors.auth.not_authenticated")
+        for model in models:
+            model.update(data[str(model.id)], self.mk)
+
+    def api_model_delete(self, model_name: str, model_id: int) -> None:
+        model_type = BaseModel.get_child(model_name)
+        model: BaseModel = self.session.query(model_type).get(model_id)
+        if not self.request.is_superuser():
+            can_delete = model.check_delete_permission(self.request)
+            if not can_delete:
+                raise ApiError("errors.auth.not_authenticated")
+        model.delete(self.mk)
+
+    def api_competition_load(
+        self,
+        competition_id: int,
+        items: Dict[str, Any],
+        data: str,
+    ) -> None:
+        competition = Competition.get(self.session, competition_id)
+        if not self.request.is_superuser():
+            can_load = competition.get_auth(self.request.client).access_level == AccessLevel.ADMIN
+            if not can_load:
+                raise ApiError("errors.auth.not_authenticated")
+        competition.load(data, items, self.mk)
+
+    def api_discipline_create_with_judges(self, data: Dict[str, Any]) -> None:
+        if not self.request.is_superuser():
+            can_create = Discipline.check_create_permission(self.session, self.request, data)
+            if not can_create:
+                raise ApiError("errors.auth.not_authenticated")
+        discipline = Discipline.create(self.session, data, self.mk)
+        discipline.set_judges(data["discipline_judges"], self.mk)
+
+    def api_discipline_update_with_judges(self, discipline_id: int, data: Dict[str, Any]) -> None:
+        model_tree = ModelTreeNode.from_dict(Discipline, {
+            "discipline_judges": {},
+            "competition": {
+                "judges": {},
+            },
+        })
+        discipline: Discipline = (
+            self.session
+                .query(Discipline)
+                .options(*model_tree.build_prefetcher())
+                .get(discipline_id)
         )
-        run.set_status(request.body["status"], request.ws_message)
+        model_tree.save_to_session(self.session, discipline)
+        if not self.request.is_superuser():
+            can_update = discipline.check_update_permission(self.request, data)
+            if not can_update:
+                raise ApiError("errors.auth.not_authenticated")
+        discipline.update(data, self.mk)
+        added = discipline.set_judges(data["discipline_judges"], self.mk)
+        if added:
+            for tour in discipline.tours:
+                if tour.active:
+                    tour.stop(self.mk)
 
-    @classmethod
-    def run_reset(cls, request):
-        run = cls.get_model(Run, "run_id", request)
-        check_auth(
-            competition_id=run.tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        run.reset(request.ws_message)
-
-    @classmethod
-    def tour_find_active(cls, request):
-        tour = Tour.get_active()
-        return {
-            "tour_id": None if tour is None else tour.id,
-        }
-
-    @classmethod
-    def competition_get_active_tours(cls, request):
-        competition = cls.get_model(Competition, "competition_id", request, pf_children={})
-        check_auth(
-            competition_id=competition.id,
-            request=request,
-            allowed_access_levels=("admin", "presenter", "any_judge", "judge_*",),
-        )
-        active_tours = competition.get_active_tours()
-        for tour in active_tours:
-            tour.smart_prefetch({
-                "discipline": {
-                    "discipline_judges": {},
+    def api_tour_init(self, tour_id: int) -> Any:
+        tour = self.__get_model_for_update(Tour, tour_id, {
+            "discipline": {
+                "discipline_judges": {
+                    "judge": {},
                 },
-            })
-        return [{
-            "tour_id": tour.id,
-            "judges": [dj.judge_id for dj in tour.discipline_judges],
-        } for tour in active_tours]
+                "participants": {
+                    "programs": {},
+                },
+                "tours": {
+                    "runs": {
+                        "acrobatics": {},
+                        "scores": {
+                            "parts": {},
+                        },
+                    },
+                },
+            },
+        })
+        tour.init(self.mk)
 
-    @classmethod
-    def tour_permute_within_heat(cls, request):
-        tour = cls.get_model(Tour, "tour_id", request)
-        check_auth(
-            competition_id=tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        tour.permute_within_heat(request.body["run_ids"], ws_message=request.ws_message)
-        return {}
+    def api_tour_finalize(self, tour_id: int) -> Any:
+        # TODO: set semaphore on this method before enabling async processing
+        tour = self.__get_model_for_update(Tour, tour_id, {
+            "discipline": {
+                "discipline_judges": {
+                    "judge": {},
+                },
+                "tours": {
+                    "runs": {
+                        "acrobatics": {},
+                        "scores": {
+                            "parts": {},
+                        },
+                    },
+                },
+            },
+        })
+        tour.finalize(self.mk)
 
-    @classmethod
-    def tour_start(cls, request):
-        tour = cls.get_model(Tour, "tour_id", request)
-        check_auth(
-            competition_id=tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", "judge_*", "any_judge", ),
-        )
-        tour.start(ws_message=request.ws_message)
-        return {}
+    def api_tour_unfinalize(self, tour_id: int) -> Any:
+        tour = Tour.get(self.session, tour_id)
+        if not self.request.is_superuser():
+            can_unfinalize = tour.get_auth(self.request.client).access_level == AccessLevel.ADMIN
+            if not can_unfinalize:
+                raise ApiError("errors.auth.not_authenticated")
+        tour.unfinalize(self.mk)
 
-    @classmethod
-    def tour_start_next_after(cls, request):
-        tour_id = request.body["tour_id"]
-        tour = Tour.get(id=tour_id)
-        check_auth(
-            competition_id=tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", "judge_*", "any_judge", ),
-        )
-        try:
-            current_competition_plan_item = \
-                (CompetitionPlanItem.select()
-                    .where(CompetitionPlanItem.tour == tour)
-                    .get())
-        except CompetitionPlanItem.DoesNotExist:
+    def api_tour_start(self, tour_id: int) -> Any:
+        self.__get_model_for_update(Tour, tour_id).start(self.mk)
+
+    def api_tour_start_next(self, tour_id: int) -> Any:
+        tour = self.__get_model_for_update(Tour, tour_id, {"plan_items": {}})
+        if not tour.plan_items:
             raise ApiError("errors.tour.not_in_competition_plan")
-        try:
-            next_competition_plan_item = \
-                (CompetitionPlanItem.select()
-                    .where(
-                        (CompetitionPlanItem.sp > current_competition_plan_item.sp) &
-                        (CompetitionPlanItem.competition == tour.discipline.competition_id) &
-                        (~(CompetitionPlanItem.tour >> None)))
-                    .order_by(CompetitionPlanItem.sp.asc())
-                    .get())
-        except CompetitionPlanItem.DoesNotExist:
+        plan_item = tour.plan_items[0]
+        next_plan_item = self.session.query(CompetitionPlanItem).filter(
+            (CompetitionPlanItem.sp > plan_item.sp)
+            & (CompetitionPlanItem.competition_id == tour.discipline.competition_id)
+            & (CompetitionPlanItem.tour_id != None)
+        ).order_by(CompetitionPlanItem.sp.asc()).first()
+        if next_plan_item is None:
             raise ApiError("errors.tour.no_next_tour")
-        next_competition_plan_item.tour.start(ws_message=request.ws_message)
-        return {}
+        next_plan_item.tour.start(self.mk)
 
-    @classmethod
-    def tour_stop(cls, request):
-        tour = cls.get_model(Tour, "tour_id", request)
-        check_auth(
-            competition_id=tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", "judge_*", "any_judge", ),
-        )
-        tour.stop(ws_message=request.ws_message)
-        return {}
+    def api_tour_permute_heat(self, tour_id: int, run_ids: List[int]) -> Any:
+        tour = self.__get_model_for_update(Tour, tour_id)
+        tour.permute_within_heat(run_ids, self.mk)
 
-    @classmethod
-    def tour_init(cls, request):
-        tour = cls.get_model(Tour, "tour_id", request)
-        check_auth(
-            competition_id=tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        tour.init(ws_message=request.ws_message)
-        return {}
+    def api_tour_stop(self, tour_id: int) -> Any:
+        self.__get_model_for_update(Tour, tour_id).stop(self.mk)
 
-    @classmethod
-    def tour_finalize(cls, request):
-        tour = cls.get_model(Tour, "tour_id", request)
-        tour.smart_prefetch({
-            "discipline": {},
-            "results": {},
+    def api_tour_shuffle_heats(self, tour_id: int) -> Any:
+        tour = self.__get_model_for_update(Tour, tour_id, {
+            "runs": {
+                "participant": {},
+            },
         })
-        check_auth(
-            competition_id=tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", "judge_*", "any_judge", ),
-        )
-        tour.finalize(ws_message=request.ws_message)
-        return {}
+        tour.shuffle_heats(self.mk, preserve_existing=False)
 
-    @classmethod
-    def tour_unfinalize(cls, request):
-        tour = cls.get_model(Tour, "tour_id", request)
-        check_auth(
-            competition_id=tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        tour.unfinalize(ws_message=request.ws_message)
-        return {}
+    def api_tour_confirm_heat(self, discipline_judge_id: int, tour_id: int, heat: int) -> Any:
+        tour = Tour.get(self.session, tour_id)
+        discipline_judge = DisciplineJudge.get(self.session, discipline_judge_id)
+        if tour.competition_id != discipline_judge.competition_id:
+            raise ApiError("errors.auth.not_authenticated")
+        if not self.request.is_superuser():
+            auth = discipline_judge.get_auth(self.request.client)
+            if auth.access_level in (AccessLevel.NONE, AccessLevel.PRESENTER):
+                raise ApiError("errors.auth.not_authenticated")
+            if auth.access_level == AccessLevel.JUDGE and auth.judge_id != discipline_judge.judge_id:
+                raise ApiError("errors.auth.not_authenticated")
+        tour.confirm_heat(discipline_judge, heat, self.mk)
 
-    @classmethod
-    def tour_shuffle_heats(cls, request):
-        tour = cls.get_model(Tour, "tour_id", request)
-        check_auth(
-            competition_id=tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        tour.shuffle_heats(ws_message=request.ws_message)
-        return {}
+    def api_tour_confirm_judge(self, discipline_judge_id: int, tour_id: int) -> Any:
+        tour = Tour.get(self.session, tour_id)
+        discipline_judge = DisciplineJudge.get(self.session, discipline_judge_id)
+        if tour.competition_id != discipline_judge.competition_id:
+            raise ApiError("errors.auth.not_authenticated")
+        if not self.request.is_superuser():
+            auth = discipline_judge.get_auth(self.request.client)
+            if auth.access_level in (AccessLevel.NONE, AccessLevel.PRESENTER):
+                raise ApiError("errors.auth.not_authenticated")
+            if auth.access_level == AccessLevel.JUDGE and auth.judge_id != discipline_judge.judge_id:
+                raise ApiError("errors.auth.not_authenticated")
+        tour.set_judge_scores_confirmation(discipline_judge, True, self.mk)
 
-    @classmethod
-    def tour_get_results(cls, request):
-        tour = cls.get_model(Tour, "tour_id", request)
-        check_auth(
-            competition_id=tour.discipline.competition_id,
-            request=request,
-            allowed_access_levels="*",
-        )
-        tour.full_prefetch()
-        return tour.get_serialized_results()
+    def api_tour_unconfirm_judge(self, discipline_judge_id: int, tour_id: int) -> Any:
+        tour = Tour.get(self.session, tour_id)
+        discipline_judge = DisciplineJudge.get(self.session, discipline_judge_id)
+        if tour.competition_id != discipline_judge.competition_id:
+            raise ApiError("errors.auth.not_authenticated")
+        if not self.request.is_superuser():
+            auth = discipline_judge.get_auth(self.request.client)
+            if auth.access_level != AccessLevel.ADMIN:
+                raise ApiError("errors.auth.not_authenticated")
+        tour.set_judge_scores_confirmation(discipline_judge, False, self.mk)
 
-    @classmethod
-    def discipline_get_results(cls, request):
-        discipline = cls.get_model(Discipline, "discipline_id", request, pf_children={
-            # "competition": {
-            #     "judges": {},
-            # },
-            # "tours": {
-            #     "runs": {
-            #         # "scores": {},
-            #         # "acrobatics": {},
-            #         # "participant": {
-            #         #     "club": {},
-            #         # },
-            #     },
-            # }
-        })
-        check_auth(
-            competition_id=discipline.competition_id,
-            request=request,
-            allowed_access_levels="*",
-        )
-        discipline.prefetch_for_results()
-        return discipline.results
+    def api_tour_reset_judge(self, discipline_judge_id: int, tour_id: int) -> Any:
+        tour = Tour.get(self.session, tour_id)
+        discipline_judge = DisciplineJudge.get(self.session, discipline_judge_id)
+        if tour.competition_id != discipline_judge.competition_id:
+            raise ApiError("errors.auth.not_authenticated")
+        if not self.request.is_superuser():
+            auth = discipline_judge.get_auth(self.request.client)
+            if auth.access_level != AccessLevel.ADMIN:
+                raise ApiError("errors.auth.not_authenticated")
+        tour.reset_judge_scores(discipline_judge, self.mk)
 
-    @classmethod
-    def competition_load(cls, request):
-        competition = cls.get_model(Competition, "competition_id", request)
-        check_auth(
-            competition_id=competition.id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        competition.load(request.body["data"], request.body["items"], ws_message=request.ws_message)
-        return {}
+    def api_run_load_program(self, run_id: int, program_id: Optional[int]) -> Any:
+        run = self.__get_model_for_update(Run, run_id)
+        if program_id is not None:
+            program: Optional[Program] = Program.get(self.session, program_id)
+            if run.participant_id != program.participant_id:
+                raise ApiError("errors.program.wrong_participant")
+        else:
+            program = None
+        run.load_acrobatics(program, self.mk)
 
-    @classmethod
-    def competition_export(cls, request):
-        competition = cls.get_model(Competition, "competition_id", request)
-        check_auth(
-            competition_id=competition.id,
-            request=request,
-            allowed_access_levels=("admin", ),
-        )
-        return competition.export()
+    def api_run_reset(self, run_id: int) -> Any:
+        self.__get_model_for_update(Run, run_id).reset(self.mk)
 
-    @classmethod
-    def service_reload_clients(cls, request):
-        if request.remote_ip != "127.0.0.1":
-            raise ApiError("errors.auth.localhost_only")
-        request.ws_message.add_message("reload_data")
-        return {}
+    def api_service_get_db_schema(self) -> Any:
+        return [
+            model_type.get_model_descriptor()
+            for model_type in db.import_all_models()
+        ]
 
-    @classmethod
-    def service_refresh_clients(cls, request):
-        if request.remote_ip != "127.0.0.1":
-            raise ApiError("errors.auth.localhost_only")
-        request.ws_message.add_message("force_refresh")
-        return {}
+    def api_service_refresh_clients(self) -> Any:
+        self.broadcast_message = "refresh"
 
-    @classmethod
-    def service_report_js_error(cls, request):
-        filename = "error_js_{:%Y-%m-%d.%H-%M-%S.%f}_{:09d}.json".format(datetime.now(), random.randint(0, 10**9 - 1))
-        if not settings.DEBUG:
-            filename = os.path.join("..", filename)
-        json.dump(
-            request.body,
-            open(filename, "wt", encoding="utf-8"),
-            ensure_ascii=False,
-            sort_keys=True,
-            indent=4,
-        )
+    def api_auth_start_registration(self) -> Any:
+        client = Client.create(self.session, {}, self.mk)
+        return client.dh_bundle.serialize()
 
-    @classmethod
-    def auth_register(cls, request):
-        return Client.create_model()
-
-    @classmethod
-    def auth_exchange_keys(cls, request):
-        client = Client.get(id=int(request.body["client_id"]))
-        return client.finilaze_model(request.body["data"])
-
-    @classmethod
-    def auth_get_access_levels(cls, request):
+    def api_auth_complete_registration(self, client_id: int, data: Dict[str, str]) -> Any:
+        client = Client.get(self.session, client_id)
+        client.finalize_model(data)
         return {
-            str(auth.competition_id): auth.access_level
-            for auth in request.client.authentications
+            "verification_string": client.verification_string,
         }
 
-    # Service
-
-    @classmethod
-    def call_nocatch(cls, request):
-        response = None
-        parts = request.method.split(".")
-        if len(parts) != 2:
-            raise ApiError("errors.global.invalid_method_name")
-        else:
-            internal_name = "_".join(parts)
-            with Database.instance().db.transaction():
-                return getattr(cls, internal_name)(request)
-
-    @classmethod
-    def call(cls, request):
-        ex_str = None
-        try:
-            result = cls.call_nocatch(request)
-            response = {
-                "success": True,
-                "response": result
-            }
-        except ApiError as ex:
-            response = {
-                "success": False,
-                "code": ex.code,
-                "args": ex.args,
-            }
-        except Exception as ex:
-            ex_str = traceback.format_exc()
-            print(ex_str)
-            response = {
-                "success": False,
-                "code": "errors.global.internal_server_error",
-                "args": [],
-            }
-        finally:
-            return response
+    def api_service_report_js_error(self, *args: Any, **kwargs: Any) -> Any:
+        pass  # TODO

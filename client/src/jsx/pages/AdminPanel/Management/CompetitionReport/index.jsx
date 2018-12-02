@@ -1,61 +1,26 @@
-import _ from "l10n";
-import LoadingComponent from "common/server/LoadingComponent";
-import Loader from "common/components/Loader";
-import Docx from "common/Docx";
+import React from "react";
 
+import Docx from "common/Docx";
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
 import ConfigPanel from "pages/AdminPanel/common/ConfigPanel";
 import Paper from "pages/AdminPanel/common/Paper";
-
+import PT from "prop-types";
 import rules_set from "rules_sets/loader";
-
-import Info from "./Info";
 import Clubs from "./Clubs";
-import Judges from "./Judges";
 import DisciplineJudges from "./DisciplineJudges";
+import Info from "./Info";
+import Judges from "./Judges";
 import Results from "./Results";
 
-export default class CompetitionReport extends LoadingComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                id: PT.number.isRequired,
-            }).isRequired,
-        };
-    }
-
-    CLASS_ID = "competition_report";
-    API_MODELS = {
-        competition: {
-            model_type: "Competition",
-            model_id_getter: props => props.competition.id,
-            schema: {
-                disciplines: {
-                    discipline_judges: {
-                        judge: {},
-                    },
-                    results: {},
-                    tours: {
-                        runs: {
-                            participant: {
-                                club: {},
-                            },
-                        },
-                    },
-                },
-                judges: {},
-                clubs: {
-                    participants: {},
-                },
-            },
-        },
+export default class CompetitionReport extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
     };
-
 
     constructor(props) {
         super(props);
         this.state = {
-            competition: null,
             config: {
                 include_extended_info: true,
                 include_clubs: true,
@@ -66,19 +31,18 @@ export default class CompetitionReport extends LoadingComponent {
         };
     }
 
-    getAdditionalStateUpdate(nextState) {
-        if (nextState.competition === null) {
-            return {};
-        }
-        let config = Object.assign({}, nextState.config); // clone
-        let new_disciplines = {};
-        for (const discipline of nextState.competition.disciplines)  {
-            new_disciplines[discipline.id] = (discipline.id in config.disciplines)
+    getConfig() {
+        const config = this.state.config;
+        let new_disciplines_config = {};
+        for (const discipline of this.props.competition.disciplines) {
+            new_disciplines_config[discipline.id] = (discipline.id in config.disciplines)
                 ? config.disciplines[discipline.id]
                 : true;
         }
-        config.disciplines = new_disciplines;
-        return { config };
+        return Object.assign(
+            config,
+            { disciplines: new_disciplines_config },
+        );
     }
 
     makePrintableRef = (ref) => this._printable = ref;
@@ -87,21 +51,16 @@ export default class CompetitionReport extends LoadingComponent {
 
     handleDocxCreation = () => this.createDocx();
 
-    getTitle() {
-        const n_disciplines = Object.keys(this.state.config.disciplines)
-                                    .filter(key => this.state.config.disciplines[key]).length;
-        const title = n_disciplines > 0
+    getTitle(config) {
+        const n_disciplines = Object.keys(config.disciplines)
+                                    .filter(key => config.disciplines[key]).length;
+        return n_disciplines > 0
             ? _("admin.headers.competition_report")
             : _("admin.headers.competition_info");
-        return title;
     }
     render() {  // eslint-disable-line react/sort-comp
-        if (this.state.competition === null) {
-            return (
-                <Loader />
-            );
-        }
-        const title = this.getTitle();
+        const config = this.getConfig();
+        const title = this.getTitle(config);
         return (
             <div className="CompetitionReport">
                 <header className="app-header">
@@ -117,14 +76,14 @@ export default class CompetitionReport extends LoadingComponent {
                 </header>
                 <div className="body">
                     <ConfigPanel
-                        config={ this.state.config }
+                        config={ config }
                         customControls={ [
                             {key: "include_extended_info",      label: _("admin.labels.include_extended_info")},
                             {key: "include_clubs",              label: _("admin.labels.include_clubs")},
                             {key: "include_judges",             label: _("admin.labels.include_judges")},
                             {key: "include_discipline_judges",  label: _("admin.labels.include_discipline_judges")},
                         ] }
-                        disciplines={ this.state.competition.disciplines }
+                        disciplines={ this.props.competition.disciplines }
                         onChange={ this.handleConfigChange }
                     />
                     <Paper
@@ -133,11 +92,26 @@ export default class CompetitionReport extends LoadingComponent {
                         title2={ title }
                     >
                         <div>
-                            <Info { ...this.state } />
-                            <Clubs { ...this.state } />
-                            <Judges { ...this.state } />
-                            <DisciplineJudges { ...this.state } />
-                            <Results { ...this.state } />
+                            <Info
+                                competition={ this.props.competition }
+                                config={ config }
+                            />
+                            <Clubs
+                                competition={ this.props.competition }
+                                config={ config }
+                            />
+                            <Judges
+                                competition={ this.props.competition }
+                                config={ config }
+                            />
+                            <DisciplineJudges
+                                competition={ this.props.competition }
+                                config={ config }
+                            />
+                            <Results
+                                competition={ this.props.competition }
+                                config={ config }
+                            />
                         </div>
                     </Paper>
                 </div>
@@ -159,4 +133,3 @@ export default class CompetitionReport extends LoadingComponent {
     }
 }
 
-CompetitionReport.displayName = "AdminPanel_Management_CompetitionReport";

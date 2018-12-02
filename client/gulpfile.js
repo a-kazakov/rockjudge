@@ -17,7 +17,7 @@ function makeTask(func, args) {
     return makeItFaster(str_wrapper);
 }
 
-let task_groups = {}
+let task_groups = {};
 
 function addTaskToGroup(task, group) {
     if (!task_groups[group]) {
@@ -75,6 +75,7 @@ function makeGeneralJsxTask() {
                     "@babel/plugin-proposal-class-properties",
                     "@babel/plugin-proposal-object-rest-spread",
                     "@babel/plugin-proposal-optional-chaining",
+                    "@babel/plugin-proposal-nullish-coalescing-operator",
                 ],
             })
             .bundle()
@@ -175,9 +176,6 @@ addPrimaryJsxTask('judge');
 addPrimaryJsxTask('presenter');
 addPrimaryJsxTask('screen');
 addPrimaryJsxTask('screen_operator');
-
-addRulesSetLessTask('rosfarr');
-addRulesSetJsxTask('rosfarr');
 
 addRulesSetLessTask('skating');
 addRulesSetJsxTask('skating');

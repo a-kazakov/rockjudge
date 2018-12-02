@@ -1,8 +1,21 @@
 from fractions import Fraction as frac
-from typing import Any, Callable, Dict, Generic, List, Optional, Tuple, TypeVar, Iterable, Generator, Union, NewType
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    List,
+    Optional,
+    Tuple,
+    TypeVar,
+    Iterable,
+    Generator,
+    Union,
+    NewType,
+    cast,
+)
 
-from ..types import JudgeRole
-
+from scoring_systems.base import JudgeRole
 
 T = TypeVar("T")
 TF = TypeVar("TF", int, frac)
@@ -33,12 +46,6 @@ class CachedClass:
 
     def __setattr__(self, key: str, value: Any) -> None:
         object.__getattribute__(self, "_CachedClass__cache")[key] = value
-
-
-JUDGE_ROLES: Tuple[JudgeRole, ...] = (
-    JudgeRole("dance_judge"),
-    JudgeRole("head_judge"),
-)
 
 
 class Matrix(Generic[T]):
@@ -162,8 +169,8 @@ class SkatingSystemTour(CachedClass):
         return 0 if self.n_runs == 0 else len(self.places_by_run[0])
 
     @property
-    def places(self) -> List[frac]:
-        result: List[frac] = [frac(0)] * self.n_runs
+    def all_places_types(self) -> Tuple[List[frac], List[int]]:
+        result: List[Tuple[frac, int]] = [(frac(0), 0)] * self.n_runs
         quorum = self.n_judges // 2 + 1
         runs_with_keys: List[Tuple[int, List[int]]] = []
         # Find soring keys
@@ -186,17 +193,32 @@ class SkatingSystemTour(CachedClass):
         for run, key in runs_with_keys:
             if key != prev_key and len(places_group) > 0:
                 place = frac(places_given + 1) + frac(len(places_group) - 1, 2)
+                int_place = places_given + 1
                 for pg_run in places_group:
-                    result[pg_run] = place
+                    result[pg_run] = (place, int_place)
                 places_given += len(places_group)
                 places_group.clear()
             places_group.append(run)
             prev_key = key
         # Flush remaining
         place = frac(places_given + 1) + frac(len(places_group) - 1, 2)
+        int_place = places_given + 1
         for run in places_group:
-            result[run] = place
-        return result
+            result[run] = (place, int_place)
+        if len(result) == 0:
+            return ([], [])
+        return cast(
+            Tuple[List[frac], List[int]],
+            tuple(map(list, zip(*result)))
+        )
+
+    @property
+    def places(self) -> List[frac]:
+        return self.all_places_types[0]
+
+    @property
+    def int_places(self) -> List[int]:
+        return self.all_places_types[1]
 
     @property
     def places_matrix(self) -> Matrix[frac]:
@@ -365,7 +387,7 @@ class SkatingSystemDiscipline(CachedClass):
         ]
 
     @property
-    def ec_skating_rows(self) -> List[List[Tuple[int, int]]]:
+    def ec_skating_rows(self) -> List[List[Tuple[frac, frac]]]:
         return [
             [
                 (

@@ -1,16 +1,16 @@
+import React from "react";
+
+import PT from "prop-types";
 import makeClassName from "common/makeClassName";
 
-export default class Item extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            active: PT.bool.isRequired,
-            level: PT.number,
-            mkey: PT.any.isRequired,
-            title: PT.string.isRequired,
-            onClick: PT.func.isRequired,
-        };
-    }
+export default class Item extends React.Component {
+    static propTypes = {
+        active: PT.bool.isRequired,
+        level: PT.number,
+        mkey: PT.any.isRequired,
+        title: PT.string.isRequired,
+        onClick: PT.func.isRequired,
+    };
     static get defaultProps() {
         return {
             level: 1,
@@ -49,5 +49,3 @@ export default class Item extends React.PureComponent {
 
     }
 }
-
-Item.displayName = "AdminPanel_Management_SideMenu_Item";

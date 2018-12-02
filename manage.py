@@ -3,13 +3,12 @@
 import asyncio
 import json
 import unittest
-
 from sys import argv
 
 import tornado.gen
 import tornado.ioloop
-
 from tornado.platform.asyncio import AsyncIOMainLoop
+
 
 # This should happen before any app imports
 AsyncIOMainLoop().install()
@@ -38,17 +37,21 @@ class Commands:
 
     @staticmethod
     def reset(password=""):
-        from app import ModelManager
+        from db import db, ModelBase
         if password != "yes-i-am-sure":
             print("Are you sure want to reset everything? Type 'Yes, I'm sure!' to continue.")
             if input() == "Yes, I'm sure!":
                 print("Resetting ...")
-                ModelManager.instance().reset()
+                db.import_all_models()
+                ModelBase.metadata.drop_all(bind=db.engine)
+                ModelBase.metadata.create_all(bind=db.engine)
                 print("Done")
             else:
                 print("Wrong password")
         else:
-            ModelManager.instance().reset()
+            db.import_all_models()
+            ModelBase.metadata.drop_all(bind=db.engine)
+            ModelBase.metadata.create_all(bind=db.engine)
 
     @staticmethod
     def test():

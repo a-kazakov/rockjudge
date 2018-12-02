@@ -1,3 +1,6 @@
+import React from "react";
+import ReactDOM from "react-dom";
+
 import "@babel/polyfill";
 import "common/error_handler";
 

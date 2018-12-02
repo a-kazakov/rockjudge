@@ -1,18 +1,8 @@
 export default function makeDisciplineResultsTable(discipline) {
     // Build runs index
-    let tours_index = new Map();
-    let runs_index = new Map();
-    for (const tour of discipline.tours) {
-        for (const run of tour.runs) {
-            tours_index.set(run.id, tour)
-            runs_index.set(run.id, run);
-        }
-    }
-    // Merge results
-    const result = discipline.results.map(row => ({
+    const global_storage = discipline.global_storage;
+    return discipline.results.rows.map(row => ({
+        run: global_storage.get("Run", row.run_id),
         place: row.place,
-        tour: tours_index.get(row.run_id),
-        run: runs_index.get(row.run_id),
     }));
-    return result;
 }

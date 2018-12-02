@@ -1,12 +1,10 @@
+import {React} from "HostModules";
+import PT from "prop-types";
+
 export default class SplashScreen extends React.Component {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                name: PT.string.isRequired,
-            }).isRequired,
-        };
-    }
+    static propTypes = {
+        competition: PT.object.isRequired,
+    };
     render() {
         return (
             <div className="SplashScreen">

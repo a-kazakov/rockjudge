@@ -1,37 +1,17 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import LineJudgesScores from "./LineJudgesScores";
 import StatusSwitch from "./StatusSwitch";
 
-export default class ScoringLayout extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudge: PT.shape({
-                id: PT.number.isRequired,
-            }).isRequired,
-            run: PT.shape({
-                status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                participant: PT.shape({
-                    number: PT.number.isRequired,
-                    name: PT.string.isRequired,
-                    sportsmen: PT.array.isRequired,
-                }).isRequired,
-                scores: PT.arrayOf(
-                    PT.shape({
-                        discipline_judge_id: PT.number.isRequired,
-                    }).isRequired,
-                ).isRequired,
-            }).isRequired,
-            tour: PT.shape({
-                scoring_system_name: PT.string.isRequired,
-                discipline: PT.shape({
-                    discipline_judges: PT.array.isRequired,
-                }).isRequired,
-            }).isRequired,
-            onScoreUpdate: PT.func.isRequired,
-        };
-    }
+export default class ScoringLayout extends React.Component {
+    static propTypes = {
+        disciplineJudge: PT.object.isRequired,
+        run: PT.object.isRequired,
+        onScoreUpdate: PT.func.isRequired,
+    };
 
     getScore() {
         for (const score of this.props.run.scores) {
@@ -43,12 +23,6 @@ export default class ScoringLayout extends React.PureComponent {
     }
     setupCache() {
         this.score = this.getScore();
-    }
-
-    handleScoreUpdate = (key, value) => {
-        let score_data = {};
-        score_data[key] = value;
-        this.props.onScoreUpdate(this.score.id, score_data);
     }
 
     render() {
@@ -69,7 +43,7 @@ export default class ScoringLayout extends React.PureComponent {
                 </div>
             )
         }
-        if (this.score === null) {
+        if (this.score == null) {
             return (
                 <div className="layout-participant">
                     <h2>
@@ -88,9 +62,8 @@ export default class ScoringLayout extends React.PureComponent {
                 </h2>
                 <div className="spacer" />
                 <LineJudgesScores
-                    disciplineJudges={ this.props.tour.discipline.discipline_judges }
+                    disciplineJudges={ this.props.run.tour.discipline.discipline_judges }
                     run={ this.props.run }
-                    tour={ this.props.tour }
                 />
                 <StatusSwitch
                     run={ this.props.run }

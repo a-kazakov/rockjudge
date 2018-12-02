@@ -1,14 +1,13 @@
-import _ from "l10n";
+import React from "react";
 
-export default class Presenter extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                id: PT.number.isRequired,
-            }).isRequired,
-        };
-    }
+import PT from "prop-types";
+import _ from "l10n";
+import Model from "common/server/Storage/models/Model";
+
+export default class Presenter extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+    };
 
     get presenter_href() {
         return `/presenter/${this.props.competition.id}`;
@@ -45,5 +44,3 @@ export default class Presenter extends React.PureComponent {
         );
     }
 }
-
-Presenter.displayName = "StartPage_RoleSelector_Presenter";

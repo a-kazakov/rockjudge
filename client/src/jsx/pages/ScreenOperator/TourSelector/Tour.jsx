@@ -1,21 +1,16 @@
-import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
+import React from "react";
 
+import Model from "common/server/Storage/models/Model";
+import PT from "prop-types";
+import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 import makeClassName from "common/makeClassName";
 
-export default class Tour extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            selected: PT.bool.isRequired,
-            tour: PT.shape({
-                id: PT.number.isRequired,
-                active: PT.bool.isRequired,
-                finalized: PT.bool.isRequired,
-                name: PT.string.isRequired,
-            }).isRequired,
-            onTourSelect: PT.func.isRequired,
-        };
-    }
+export default class Tour extends React.Component {
+    static propTypes = {
+        selected: PT.bool.isRequired,
+        tour: PT.instanceOf(Model).isRequired,
+        onTourSelect: PT.func.isRequired,
+    };
 
     handleClick = () => {
         this.props.onTourSelect(this.props.tour.id);
@@ -40,5 +35,3 @@ export default class Tour extends React.PureComponent {
         );
     }
 }
-
-Tour.displayName = "ScreenOperator_TourSelector_Tour";

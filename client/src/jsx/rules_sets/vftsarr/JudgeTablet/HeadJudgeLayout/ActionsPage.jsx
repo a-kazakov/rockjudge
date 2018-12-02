@@ -1,92 +1,65 @@
+import {Api, React} from "HostModules";
+import lastOf from "common/tools/lastOf";
+import PT from "prop-types";
 import _ from "l10n";
 
 import onTouchOrClick from "tablet_ui/onTouchOrClick";
 import showConfirm from "common/dialogs/showConfirm";
 import closeDialog from "common/dialogs/closeDialog";
 
-import { Api } from "HostModules";
+export default class ActionsPage extends React.Component {
+    static propTypes = {
+        tour: PT.object.isRequired,
+    };
 
-export default class ActionsPage extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            tour: PT.shape({
-                id: PT.number.isRequired,
-                runs: PT.arrayOf(
-                    PT.shape({
-                        heat: PT.number.isRequired,
-                        scores: PT.arrayOf(
-                            PT.shape({
-                                discipline_judge_id: PT.number.isRequired,
-                                confirmed: PT.bool.isRequired,
-                            }).isRequired,
-                        ).isRequired,
-                    }).isRequired,
-                ).isRequired,
-            }),
-        };
-    }
+    _doApiAction = (action) => {
+        return new Promise((resolve, reject) => {
+            Api(`tour/${action}`, {
+                tour_id: this.props.tour.id,
+            })
+                .onError(reject)
+                .onSuccess(resolve)
+                .send();
+        });
+    };
 
     stopTour = () => {
         showConfirm(_("tablet.confirms.stop_tour"), () => {
-            if (this.props.tour) {
-                Api("tour.stop", {
-                    tour_id: this.props.tour.id,
-                })
-                    .onSuccess(closeDialog)
-                    .send();
-            }
+            this._doApiAction("stop")
+                .then(closeDialog)
+                .catch(Api.defaultErrorAction);
         });
-    }
+    };
     finalizeTour = () => {
         showConfirm(_("tablet.confirms.finalize_tour"), () => {
-            if (this.props.tour) {
-                Api("tour.finalize", {
-                    tour_id: this.props.tour.id,
-                })
-                    .onSuccess(closeDialog)
-                    .send();
-            }
+            this._doApiAction("finalize")
+                .then(closeDialog)
+                .catch(Api.defaultErrorAction);
         });
-    }
+    };
     stopTourAndStartNext = () => {
         showConfirm(_("tablet.confirms.stop_tour_and_start_next"), () => {
-            if (this.props.tour) {
-                let tour_id = this.props.tour.id;
-                Api("tour.stop", { tour_id }).onSuccess(() => {
-                    Api("tour.start_next_after", {
-                        tour_id: tour_id,
-                    })
-                        .onSuccess(closeDialog)
-                        .send();
-                }).send();
-            }
+            this._doApiAction("stop")
+                .then(() => this._doApiAction("start_next"))
+                .then(closeDialog)
+                .catch(Api.defaultErrorAction);
         });
-    }
+    };
     finalizeTourAndStartNext = () => {
-        showConfirm(_("tablet.confirms.finalize_tour_and_start_next"), () => {
-            if (this.props.tour) {
-                let tour_id = this.props.tour.id;
-                Api("tour.finalize", {
-                    tour_id: tour_id,
-                })
-                    .onSuccess(() => {
-                        Api("tour.start_next_after", {
-                            tour_id: tour_id,
-                        })
-                            .onSuccess(closeDialog)
-                            .send();
-                    }).send();
-            }
+        showConfirm(_("tablet.confirms.stop_tour_and_start_next"), () => {
+            this._doApiAction("finalize")
+                .then(this._doApiAction("start_next"))
+                .then(closeDialog)
+                .catch(Api.defaultErrorAction);
         });
-    }
+    };
 
     hasUnconfirmedScores() {
         const runs = this.props.tour.runs;
         if (runs.length === 0) {
             return false;
         }
-        const latest_heat = runs[runs.length - 1].heat;
+        const latest_heat = lastOf(runs).heat;
         if (latest_heat === runs[0].heat) {
             return false;
         }

@@ -1,5 +1,5 @@
-export default function getScoringType(discipline_judge, scoring_system_name) {
-    switch (discipline_judge.role) {
+export default function getScoringType(discipline_judge_role, scoring_system_name) {
+    switch (discipline_judge_role) {
     case "dance_judge":
         switch (scoring_system_name) {
         case "skating.qualification_simple":

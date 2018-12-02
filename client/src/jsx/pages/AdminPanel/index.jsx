@@ -1,38 +1,18 @@
-import _ from "l10n";
-import LoadingComponent from "common/server/LoadingComponent";
-import Loader from "common/components/Loader";
+import React from "react";
 
-import NavigationButton from "./NavigationButton";
-import Management from "./Management";
+import Loader from "common/components/Loader";
+import Storage from "common/server/Storage";
+import CompetitionSubscription from "common/server/Storage/subscriptions/CompetitionSubscription";
+import _ from "l10n";
+import PT from "prop-types";
 import Judging from "./Judging";
+import Management from "./Management";
+import NavigationButton from "./NavigationButton";
 import Service from "./Service";
 
-export default class AdminPanel extends LoadingComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competitionId: PT.number.isRequired,
-        };
-    }
-
-    CLASS_ID = "admin_panel";
-    API_MODELS = {
-        competition: {
-            model_type: "Competition",
-            model_id_getter: props => props.competitionId,
-            schema: {
-                clients: {},
-                clubs: {},
-                judges: {},
-                plan: {},
-                disciplines: {
-                    discipline_judges: {
-                        judge: {},
-                    },
-                    tours: {},
-                },
-            },
-        },
+export default class AdminPanel extends React.Component {
+    static propTypes = {
+        competitionId: PT.number.isRequired,
     };
 
     // Intialization
@@ -41,9 +21,26 @@ export default class AdminPanel extends LoadingComponent {
         super(props);
         this.state = {
             activeApp: this.getActiveAppFromHash(),
-            competition: null,
+            competitionStorage: null,
         };
     }
+
+    componentDidMount() {
+        this._storage = new Storage();
+        this._storage.init(this.reload).then(this.subscribe).catch(console.error.bind(console));
+    }
+
+    subscribe = () => {
+        this._competition_subscription = new CompetitionSubscription(this.props.competitionId);
+        this._storage.subscribe(this._competition_subscription)
+            .then(this.updateCompetitionStorage)
+            .catch(console.error.bind(console));
+    };
+
+    updateCompetitionStorage = (competitionStorage) => {
+        this.setState({competitionStorage});
+    };
+    reload = () => this.forceUpdate();
 
     // Navigation
 
@@ -62,23 +59,23 @@ export default class AdminPanel extends LoadingComponent {
             activeApp: app,
         });
         window.location.hash = `#${app}`;
-    }
+    };
 
     // Rendering
 
-    renderActiveApp() {
+    renderActiveApp(competition) {
         switch (this.state.activeApp) {
         case "management":
             return (
-                <Management competition={ this.state.competition } />
+                <Management competition={ competition } />
             );
         case "judging":
             return (
-                <Judging competition={ this.state.competition } />
+                <Judging competition={ competition } />
             );
         case "service":
             return (
-                <Service competition={ this.state.competition } />
+                <Service competition={ competition } />
             );
         }
     }
@@ -93,7 +90,8 @@ export default class AdminPanel extends LoadingComponent {
         );
     }
     render() {
-        if (this.state.competition === null) {
+        const competition = this.state.competitionStorage?.get("Competition", this.props.competitionId);
+        if (!competition) {
             return (
                 <Loader />
             );
@@ -102,7 +100,7 @@ export default class AdminPanel extends LoadingComponent {
             <div className="AdminPanel">
                 <div className="header">
                     <div className="caption">
-                        { `${this.state.competition.name} (${this.state.competition.date})` }
+                        { `${competition.name} (${competition.date})` }
                     </div>
                 </div>
                 <div className="body">
@@ -117,11 +115,9 @@ export default class AdminPanel extends LoadingComponent {
                             </a>
                         </div>
                     </div>
-                    { this.renderActiveApp() }
+                    { this.renderActiveApp(competition) }
                 </div>
             </div>
         );
     }
 }
-
-AdminPanel.displayName = "AdminPanel";

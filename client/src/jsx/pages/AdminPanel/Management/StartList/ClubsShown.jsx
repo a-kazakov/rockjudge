@@ -1,22 +1,22 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 
-export default class ClubsShown extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                clubs: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                        name: PT.string.isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
-            config: PT.shape({
-                clubs: PT.object.isRequired,
-            }).isRequired,
-        };
-    }
+export default class ClubsShown extends React.Component {
+    static propTypes = {
+        competition: PT.shape({
+            clubs: PT.arrayOf(
+                PT.shape({
+                    id: PT.number.isRequired,
+                    name: PT.string.isRequired,
+                }).isRequired
+            ).isRequired,
+        }).isRequired,
+        config: PT.shape({
+            clubs: PT.object.isRequired,
+        }).isRequired,
+    };
     hasDisabledClubs() {
         return this.props.competition.clubs.findIndex(
             d => !this.props.config.clubs[d.id]
@@ -52,5 +52,3 @@ export default class ClubsShown extends React.PureComponent {
         )
     }
 }
-
-ClubsShown.displayName = "AdminPanel_Management_StartList_ClubsShown";

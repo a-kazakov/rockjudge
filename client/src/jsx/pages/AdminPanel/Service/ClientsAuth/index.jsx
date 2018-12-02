@@ -1,18 +1,13 @@
-import Row from "./Row";
+import React from "react";
 
-export default class ClientsAuth extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                clients: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
-        };
-    }
+import Model from "common/server/Storage/models/Model";
+import Row from "./Row";
+import PT from "prop-types";
+
+export default class ClientsAuth extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+    };
     render() {
         return (
             <table className="clients-auth"><tbody>
@@ -28,4 +23,3 @@ export default class ClientsAuth extends React.PureComponent {
     }
 }
 
-ClientsAuth.displayName = "AdminPanel_Service_ClientsAuth";

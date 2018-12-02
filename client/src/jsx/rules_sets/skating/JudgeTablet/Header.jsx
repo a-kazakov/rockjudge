@@ -1,34 +1,34 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
-export default class Header extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            canFinish: PT.bool,
-            canReturn: PT.bool,
-            heat: PT.number.isRequired,
-            heatsCount: PT.number.isRequired,
-            hideHeatsButtons: PT.bool,
-            judge: PT.shape({
+export default class Header extends React.Component {
+    static propTypes = {
+        canFinish: PT.bool,
+        canReturn: PT.bool,
+        heat: PT.number.isRequired,
+        heatsCount: PT.number.isRequired,
+        hideHeatsButtons: PT.bool,
+        judge: PT.shape({
+            name: PT.string.isRequired,
+            role_description: PT.string,
+            number: PT.string.isRequired,
+        }).isRequired,
+        maxHeat: PT.number.isRequired,
+        tour: PT.shape({
+            name: PT.string.isRequired,
+            discipline: PT.shape({
                 name: PT.string.isRequired,
-                role_description: PT.string,
-                number: PT.string.isRequired,
             }).isRequired,
-            maxHeat: PT.number.isRequired,
-            tour: PT.shape({
-                name: PT.string.isRequired,
-                discipline: PT.shape({
-                    name: PT.string.isRequired,
-                }).isRequired,
-            }).isRequired,
-            onFinishClick: PT.func,
-            onReturnClick: PT.func,
-            onNextHeatClick: PT.func.isRequired,
-            onPrevHeatClick: PT.func.isRequired,
-        };
-    }
+        }).isRequired,
+        onFinishClick: PT.func,
+        onNextHeatClick: PT.func.isRequired,
+        onPrevHeatClick: PT.func.isRequired,
+        onReturnClick: PT.func,
+    };
 
     static get defaultProps() {
         return {

@@ -1,4 +1,7 @@
-import { saveAs } from "file-saver";
+import React from "react";
+
+import PT from "prop-types";
+import {saveAs} from "file-saver";
 
 import _ from "l10n";
 import Api from "common/server/Api";
@@ -6,15 +9,12 @@ import showSuccess from "common/dialogs/showSuccess";
 
 import ImportItemsSelector from "./ImportItemsSelector";
 
-export default class ImportExport extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                id: PT.number.isRequired,
-            }).isRequired,
-        };
-    }
+export default class ImportExport extends React.Component {
+    static propTypes = {
+        competition: PT.shape({
+            id: PT.number.isRequired,
+        }).isRequired,
+    };
     constructor(props) {
         super(props);
         this.state = {
@@ -28,7 +28,7 @@ export default class ImportExport extends React.PureComponent {
             submitting: true,
         });
         reader.onload = (f) => {
-            Api("competition.load", {
+            Api("competition/load", {
                 competition_id: this.props.competition.id,
                 data: f.target.result,
                 items: this._selector.getValue(),
@@ -39,17 +39,17 @@ export default class ImportExport extends React.PureComponent {
                     submitting: false,
                 });
             }).send();
-        }
+        };
         reader.readAsText(this.state.import_files[0]);
     }
     export() {
-        Api("competition.export", { competition_id: this.props.competition.id })
+        Api("competition/export", { competition_id: this.props.competition.id })
             .onSuccess(r => saveAs(new Blob([JSON.stringify(r)], {type : 'application/json'}), "rockjudge.export.json"))
             .send();
     }
     makeSelectorRef = (e) => {
         this._selector = e;
-    }
+    };
     canImport() {
         return this.state.import_files.length === 1 && !this.state.submitting;
     }
@@ -117,5 +117,3 @@ export default class ImportExport extends React.PureComponent {
         );
     }
 }
-
-ImportExport.displayName = "AdminPanel_Management_ImportExport";

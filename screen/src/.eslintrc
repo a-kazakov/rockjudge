@@ -19,7 +19,7 @@
     "es6": true
   },
   "rules": {
-    "eqeqeq": 1,
+    "eqeqeq": [1, "always", {"null": "never"}],
     "no-undef": 1,
     "no-var": 1,
     "no-cond-assign": 1,
@@ -81,7 +81,7 @@
     "require-yield": 1,
     "comma-dangle": [1, "always-multiline"],
     "react/display-name": 1,
-    "react/forbid-prop-types": 1,
+    "react/forbid-prop-types": 0,
     "react/jsx-boolean-value": 1,
     "react/jsx-closing-bracket-location": 1,
     "react/jsx-curly-spacing": [1, "always"],

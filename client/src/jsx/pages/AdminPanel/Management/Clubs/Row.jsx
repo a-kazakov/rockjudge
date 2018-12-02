@@ -1,69 +1,31 @@
-import _ from "l10n";
-import Api from "common/server/Api";
+import React from "react";
+
 import showConfirm from "common/dialogs/showConfirm";
-import closeDialog from "common/dialogs/closeDialog";
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import PT from "prop-types";
 
-import EditorRow from "./EditorRow";
+export default class Row extends React.Component {
+    static propTypes = {
+        entry: PT.instanceOf(Model).isRequired,
+        loading: PT.bool.isRequired,
+        onDelete: PT.func.isRequired,
+        onStartEditing: PT.func.isRequired,
+    };
 
-export default class Row extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            club: PT.shape({
-                id: PT.number.isRequired,
-                name: PT.string.isRequired,
-                city: PT.string.isRequired,
-                external_id: PT.string.isRequired,
-            }).isRequired,
-        };
-    }
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            editing: false,
-        }
-    }
-
-    handleStartEditing = () => this.setState({ editing: true });
-    handleStopEditing = () => this.setState({ editing: false });
-
-    handleSubmission = (data) => {
-        Api("club.set", {
-            club_id: this.props.club.id,
-            data: data,
-        })
-            .onSuccess(this.handleStopEditing)
-            .send();
-    }
     handleDeletion = (event) => {
         event.stopPropagation();
         showConfirm(
             _("admin.confirms.delete_club"),
-            () => {
-                Api("club.delete", {
-                    club_id: this.props.club.id,
-                })
-                    .onSuccess(closeDialog)
-                    .send();
-        });
-    }
-
-    renderEditor() {
-        return (
-            <EditorRow
-                onStopEditing={ this.handleStopEditing }
-                onSubmit={ this.handleSubmission }
-                { ...this.props }
-            />
+            this.props.onDelete,
         );
-    }
-    renderViewer() {
-        let c = this.props.club;
+    };
+    render() {
+        let c = this.props.entry;
         return (
             <tr
                 className="viewer"
-                onClick={ this.handleStartEditing }
+                onClick={ this.props.onStartEditing }
             >
                 <td className="name">
                     { c.name }
@@ -85,13 +47,5 @@ export default class Row extends React.PureComponent {
             </tr>
         );
     }
-    render() {
-        if (this.state.editing) {
-            return this.renderEditor();
-        } else {
-            return this.renderViewer();
-        }
-    }
 }
 
-Row.displayName = "AdminPanel_Management_Clubs_Row";

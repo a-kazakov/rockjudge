@@ -1,25 +1,43 @@
+import React from "react";
+
+import Model from "common/server/Storage/models/Model";
 import _ from "l10n";
-
+import CreationButton from "pages/AdminPanel/Management/Judges/CreationButton";
+import UniversalTable from "pages/AdminPanel/Management/UniversalTable";
+import FieldTypes from "pages/AdminPanel/Management/UniversalTable/FieldTypes";
+import PT from "prop-types";
+import EditorRow from "./EditorRow";
 import Row from "./Row";
-import CreationRow from "./CreationRow";
 
-export default class Judges extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
+
+export default class Judges extends UniversalTable {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+    };
+
+    static DISPLAY_COMPONENT = Row;
+    static EDITOR_COMPONENT = EditorRow;
+    static CREATION_BUTTON_COMPONENT = CreationButton;
+    static MODEL_NAME = "Judge";
+    static FIELDS = [
+        FieldTypes.makeTextField("number"),
+        FieldTypes.makeTextField("category"),
+        FieldTypes.makeNonEmptyTextField("name", "errors.judge.empty_name"),
+        FieldTypes.makeTextField("role_description"),
+        FieldTypes.makeExternalIdField(),
+        FieldTypes.makeSpField(),
+    ];
+
+    getEntries() {
+        return this.props.competition.judges;
+    }
+    getCreateParams() {
         return {
-            competition: PT.shape({
-                id: PT.number.isRequired,
-                judges: PT.arrayOf(PT.object.isRequired).isRequired,
-            }).isRequired,
+            competition_id: this.props.competition.id,
         };
     }
+
     renderTable() {
-        const rows = this.props.competition.judges.map(judge =>
-            <Row
-                judge={ judge }
-                key={ judge.id }
-            />
-        );
         return (
             <table>
                 <tbody>
@@ -35,10 +53,8 @@ export default class Judges extends React.PureComponent {
                         </th>
                         <th className="delete" />
                     </tr>
-                    { rows }
-                    <CreationRow
-                        competition={ this.props.competition }
-                    />
+                    { this.renderRows() }
+                    { this.renderCreationButton() }
                 </tbody>
             </table>
         );
@@ -58,5 +74,3 @@ export default class Judges extends React.PureComponent {
         );
     }
 }
-
-Judges.displayName = "AdminPanel_Management_Judges";

@@ -1,16 +1,16 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 
-export default class TotalScore extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            score: PT.shape({
-                data: PT.shape({
-                    total_score: PT.number.isRequired,
-                }).isRequired,
+export default class TotalScore extends React.Component {
+    static propTypes = {
+        score: PT.shape({
+            data: PT.shape({
+                total_score: PT.number.isRequired,
             }).isRequired,
-        };
-    }
+        }).isRequired,
+    };
 
     render() {
         return (
@@ -20,5 +20,4 @@ export default class TotalScore extends React.PureComponent {
         );
     }
 }
-
 

@@ -1,6 +1,7 @@
-import _ from "l10n";
+import {Api, React} from "HostModules";
 
-import { Api } from "HostModules";
+import PT from "prop-types";
+import _ from "l10n";
 
 import PlaceButton from "./PlaceButton";
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
@@ -8,36 +9,15 @@ import showConfirm from "common/dialogs/showConfirm";
 import ConfirmationButton from "../../ConfirmationButton";
 
 
-export default class PlacesPage extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudge: PT.shape({
-                id: PT.number.isRequired,
-                judge: PT.object.isRequired,
-            }).isRequired,
-            tour: PT.shape({
-                id: PT.number.isRequired,
-                runs: PT.arrayOf(
-                    PT.shape({
-                        heat: PT.number.isRequired,
-                        status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                        scores: PT.arrayOf(
-                            PT.shape({
-                                data: PT.shape({
-                                    scores_sum: PT.number,
-                                }),
-                            }).isRequired,
-                        ).isRequired,
-                    }).isRequired,
-                ).isRequired,
-            }).isRequired,
-            onScoreUpdate: PT.func.isRequired,
-        };
-    }
+export default class PlacesPage extends React.Component {
+    static propTypes = {
+        disciplineJudge: PT.object.isRequired,
+        tour: PT.object.isRequired,
+        onScoreUpdate: PT.func.isRequired,
+    };
 
     handleConfirm = () => {
-        Api("tour.confirm_all", {
+        Api("tour/confirm_judge", {
             discipline_judge_id: this.props.disciplineJudge.id,
             tour_id: this.props.tour.id,
         })
@@ -53,19 +33,25 @@ export default class PlacesPage extends React.PureComponent {
         );
     };
 
+    getRunScoresSum(run) {
+        const score = this.scores.get(run.id);
+        const score_data = this.props.tour.results.scores_results[score.id];
+        return score_data?.extra_data?.scores_sum ?? '-';
+    }
+
     autoAssignPlaces = () => {
         let scores = {};
         for (const [run_id, place] of this.auto_places.entries()) {
             const score_id = this.scores.get(run_id)?.id;
-            if (!score_id) {
+            if (score_id == null) {
                 continue;
             }
-            scores[score_id] = {score_data: {place}};
+            scores[score_id] = {data: {place}};
         }
         if (Object.keys(scores).length > 0) {
-            Api("score.set_multiple", {
-                tour_id: this.props.tour.id,
-                scores: scores,
+            Api("model/batch_update", {
+                model_name: "Score",
+                data: scores,
             }).send();
         }
     };
@@ -74,7 +60,7 @@ export default class PlacesPage extends React.PureComponent {
         this.expected_places = new Map();
         this.auto_places = new Map();
         const sorted_runs = this.props.tour.runs.slice().sort(
-            (a, b) => this.scores.get(b.id)?.data?.scores_sum - this.scores.get(a.id)?.data?.scores_sum
+            (a, b) => (this.getRunScoresSum(b) ?? 0) - (this.getRunScoresSum(a) ?? 0)
         );
         let latest_sum = null;
         let current_place = 1;
@@ -84,7 +70,8 @@ export default class PlacesPage extends React.PureComponent {
             if (run.status !== "OK") {
                 continue;
             }
-            if (this.scores.get(run.id)?.data?.scores_sum !== latest_sum) {
+            const scores_sum = this.getRunScoresSum(run);
+            if (scores_sum !== latest_sum) {
                 for (const run_id of runs_buf) {
                     this.expected_places.set(run_id, new Set(places_buf));
                     this.auto_places.set(run_id, places_buf[0]);
@@ -94,7 +81,7 @@ export default class PlacesPage extends React.PureComponent {
             }
             places_buf.push(current_place);
             runs_buf.push(run.id);
-            latest_sum = this.scores.get(run.id)?.data?.scores_sum;
+            latest_sum = scores_sum;
             current_place += 1;
         }
         for (const run_id of runs_buf) {
@@ -115,16 +102,16 @@ export default class PlacesPage extends React.PureComponent {
             }
             for (const score of run.scores) {
                 if (score.discipline_judge_id === this.props.disciplineJudge.id) {
-                    if (!score.data.raw_data.place || score.data.raw_data.place > this.places_count) {
+                    if (!score.data.place || score.data.place > this.places_count) {
                         this.can_confirm = false;
                     }
-                    this.places.set(run.id, score.data.raw_data.place);
+                    this.places.set(run.id, score.data.place);
                     this.scores.set(run.id, score);
                     this.score_ids.set(run.id, score.id);
-                    if (!this.place_to_runs.has(score.data.raw_data.place)) {
-                        this.place_to_runs.set(score.data.raw_data.place, [run]);
+                    if (!this.place_to_runs.has(score.data.place)) {
+                        this.place_to_runs.set(score.data.place, [run]);
                     } else {
-                        this.place_to_runs.get(score.data.raw_data.place).push(run);
+                        this.place_to_runs.get(score.data.place).push(run);
                         this.can_confirm = false;
                     }
                 }
@@ -136,6 +123,7 @@ export default class PlacesPage extends React.PureComponent {
     renderTableHeader() {
         let cells = [];
         for (const run of this.props.tour.runs) {
+            const scores_sum = this.getRunScoresSum(run);
             cells.push(
                 <th key={ run.id }>
                     <div className="number">
@@ -143,7 +131,7 @@ export default class PlacesPage extends React.PureComponent {
                     </div>
                     <div className="score">
                         { run.status === "OK"
-                            ? `(${this.scores.get(run.id)?.data?.scores_sum})`
+                            ? `(${scores_sum})`
                             : <span>&nbsp;</span>
                         }
                     </div>
@@ -169,20 +157,20 @@ export default class PlacesPage extends React.PureComponent {
     renderParticipant(place) {
         if (!this.place_to_runs.has(place)) {
             return (
-                <td className="participant" colSpan={3} />
+                <td className="participant" colSpan={ 3 } />
             );
         }
         const runs = this.place_to_runs.get(place);
         if (runs.length > 1) {
             const numbers = runs.map(r => `№${r.participant.number}`).join(", ");
             return (
-                <td colSpan={ 3 } className="multiple participant">
+                <td className="multiple participant" colSpan={ 3 }>
                     { `${_("tablet.dance_judge.multiple_participants")} (${numbers})` }
                 </td>
             )
         }
         const run = runs[0];
-        const score = this.scores.get(run.id)?.data?.scores_sum || 0;
+        const scores_sum = this.getRunScoresSum(run) ?? 0;
         return [
             (
                 <td
@@ -203,7 +191,7 @@ export default class PlacesPage extends React.PureComponent {
                     className="score-right"
                     key="score"
                 >
-                    { score }
+                    { scores_sum }
                 </td>
             ),
         ];

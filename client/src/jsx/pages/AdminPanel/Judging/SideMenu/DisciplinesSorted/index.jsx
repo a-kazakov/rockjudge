@@ -1,20 +1,20 @@
+import React from "react";
+
+import PT from "prop-types";
 import Section from "./Section";
 
-export default class DisciplinesSorted extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            activeTourId: PT.number,
-            competition: PT.shape({
-                disciplines: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
-            onActiveTourChange: PT.func.isRequired,
-        };
-    }
+export default class DisciplinesSorted extends React.Component {
+    static propTypes = {
+        activeTourId: PT.number,
+        competition: PT.shape({
+            disciplines: PT.arrayOf(
+                PT.shape({
+                    id: PT.number.isRequired,
+                }).isRequired
+            ).isRequired,
+        }).isRequired,
+        onActiveTourChange: PT.func.isRequired,
+    };
 
     render() {
         return (
@@ -31,5 +31,3 @@ export default class DisciplinesSorted extends React.PureComponent {
         );
     }
 }
-
-DisciplinesSorted.displayName = "AdminPanel_Judging_SideMenu_DisciplinesSorted";

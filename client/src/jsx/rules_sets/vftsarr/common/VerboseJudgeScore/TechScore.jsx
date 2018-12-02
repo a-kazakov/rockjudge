@@ -1,41 +1,24 @@
-import _ from "l10n";
+import {React} from "HostModules";
 
+import _ from "l10n";
+import PT from "prop-types";
 import formatScore from "./formatScore";
 import getCardReasons from "common/getCardReasons";
 import checkSS from "common/checkSS";
 
-export default class TechScore extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            score: PT.shape({
-                id: PT.number.isRequired,
-                confirmed: PT.bool.isRequired,
-                data: PT.shape({
-                    total_score: PT.string.isRequired,
-                    raw_data: PT.shape({
-                        jump_steps: PT.number,
-                        card: PT.string,
-                        time: PT.number,
-                        mistakes: PT.number,
-                        undercount: PT.number,
-                        card_reasons: PT.object.isRequired,
-                    }).isRequired,
-                }).isRequired,
-            }).isRequired,
-            tour: PT.shape({
-                scoring_system_name: PT.string.isRequired,
-            }).isRequired,
-        };
-    }
+export default class TechScore extends React.Component {
+    static propTypes = {
+        scoreResult: PT.object.isRequired,
+        tour: PT.object.isRequired,
+    };
 
     static pad(num, size) {
         const s = `0000${num}`;
         return s.substr(s.length - size);
     }
     getTime() {
-        let val = this.props.score.data.raw_data.time;
-        if (val === null) {
+        let val = this.props.scoreResult.extra_data.parts.time;
+        if (val == null) {
             return "—"
         }
         let m = 0, s = 0;
@@ -55,7 +38,7 @@ export default class TechScore extends React.PureComponent {
                     <p>{ _("score_parts.components.short.fall_down") }:</p>
                 </th>
                 <td>
-                    <p>{ formatScore(this.props.score.data.raw_data.fall_down, "$") }</p>
+                    <p>{ formatScore(this.props.scoreResult.extra_data.parts.fall_down, "$") }</p>
                 </td>
             </tr>
         );
@@ -70,14 +53,14 @@ export default class TechScore extends React.PureComponent {
                     <p>{ _("score_parts.components.short.undercount") }:</p>
                 </th>
                 <td>
-                    <p>{ formatScore(this.props.score.data.raw_data.undercount, "$") }</p>
+                    <p>{ formatScore(this.props.scoreResult.extra_data.parts.undercount, "$") }</p>
                 </td>
             </tr>
         );
     }
     renderCardsReasons() {
         const texts = getCardReasons(this.props.tour.scoring_system_name)
-            .filter(cr => this.props.score.data.raw_data.card_reasons[cr])
+            .filter(cr => this.props.scoreResult.extra_data.parts.card_reasons[cr])
             .map(cr => _(`card_reasons.short.${cr.toLowerCase()}`));
         if (texts.length === 0) {
             return null;
@@ -105,7 +88,7 @@ export default class TechScore extends React.PureComponent {
                         <p>{ _("results.breakdown.js") }:</p>
                     </th>
                     <td>
-                        <p>{ formatScore(this.props.score.data.raw_data.jump_steps, "$") }</p>
+                        <p>{ formatScore(this.props.scoreResult.extra_data.parts.jump_steps, "$") }</p>
                     </td>
                 </tr>
                 <tr>
@@ -123,7 +106,7 @@ export default class TechScore extends React.PureComponent {
                         <p>{ _("score_parts.components.short.card") }:</p>
                     </th>
                     <td>
-                        <p>{ _(`cards.short.${this.props.score.data.raw_data.card}`) }</p>
+                        <p>{ _(`cards.short.${this.props.scoreResult.extra_data.parts.card}`) }</p>
                     </td>
                 </tr>
                 { this.renderCardsReasons() }

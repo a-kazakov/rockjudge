@@ -1,50 +1,40 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import Editor from "./Editor";
 
-export default class AdminScoreInput extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudge: PT.shape({
-                role: PT.string.isRequired,
+export default class AdminScoreInput extends React.Component {
+    static propTypes = {
+        confirmed: PT.bool.isRequired,
+        disciplineJudgeRole: PT.string.isRequired,
+        editing: PT.bool.isRequired,
+        readOnly: PT.bool.isRequired,
+        scoreComputedData: PT.shape({
+            is_valid: PT.bool.isRequired,
+            total_score_str: PT.string.isRequired,
+            extra_data: PT.shape({
+                parts: PT.object.isRequired,
             }).isRequired,
-            editing: PT.bool.isRequired,
-            readOnly: PT.bool.isRequired,
-            score: PT.shape({
-                data: PT.shape({
-                    raw_data: PT.object.isRequired,
-                    total_score: PT.oneOfType([
-                        PT.number.isRequired,
-                        PT.string.isRequired,
-                    ]).isRequired,
-                }).isRequired,
-            }).isRequired,
-            tour: PT.object.isRequired,
-            onConfirmationToggle: PT.func.isRequired,
-            onDiscard: PT.func.isRequired,
-            onSubmit: PT.func.isRequired,
-        };
-    }
+        }).isRequired,
+        scoreData: PT.object.isRequired,
+        scoringSystemName: PT.string.isRequired,
+        onConfirmationToggle: PT.func.isRequired,
+        onDiscard: PT.func.isRequired,
+        onSubmit: PT.func.isRequired,
+    };
     render() {
-        if (!this.props.editing) {
+        const {editing, scoreComputedData, ...other_props} = this.props;
+        if (!editing) {
             return (
                 <span>
-                    { this.props.score.data.total_score }
+                    { scoreComputedData.total_score_str }
                 </span>
             );
         } else {
             return (
-                <Editor
-                    disciplineJudge={ this.props.disciplineJudge }
-                    readOnly={ this.props.readOnly }
-                    score={ this.props.score }
-                    tour={ this.props.tour }
-                    onConfirmationToggle={ this.props.onConfirmationToggle }
-                    onDiscard={ this.props.onDiscard }
-                    onSubmit={ this.props.onSubmit }
-                />
+                <Editor { ...other_props } />
             );
         }
     }
 }
-
 

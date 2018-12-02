@@ -1,25 +1,25 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import OneCheckbox from "./OneCheckbox";
 
-export default class CheckboxesSet extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            items: PT.arrayOf(
-                PT.shape({
-                    id: PT.oneOfType([
-                        PT.string.isRequired,
-                        PT.number.isRequired,
-                    ]).isRequired,
-                    name: PT.string.isRequired,
-                }).isRequired
-            ).isRequired,
-            mkey: PT.string.isRequired,
-            values: PT.object.isRequired,
-            onChange: PT.func.isRequired,
-        };
-    }
+export default class CheckboxesSet extends React.Component {
+    static propTypes = {
+        items: PT.arrayOf(
+            PT.shape({
+                id: PT.oneOfType([
+                    PT.string.isRequired,
+                    PT.number.isRequired,
+                ]).isRequired,
+                name: PT.string.isRequired,
+            }).isRequired
+        ).isRequired,
+        mkey: PT.string.isRequired,
+        values: PT.object.isRequired,
+        onChange: PT.func.isRequired,
+    };
     setAll(value) {
         let new_values = Object.assign({}, this.props.values);
         for (const key of Object.keys(new_values)) {
@@ -64,5 +64,3 @@ export default class CheckboxesSet extends React.PureComponent {
         );
     }
 }
-
-CheckboxesSet.displayName = "AdminPanel_components_ConfigPanel_CheckboxesSet";

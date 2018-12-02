@@ -1,39 +1,24 @@
+import {React} from "HostModules";
+
+import lastOf from "common/tools/lastOf";
 import _ from "l10n";
-
+import PT from "prop-types";
 import Row from "./Row";
-import makeTourResultsTable from "common/makeTourResultsTable";
 
-export default class ResultsTable2 extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            tour: PT.shape({
-                scoring_system_name: PT.string.isRequired,
-                next_tour_id: PT.number,
-                results: PT.arrayOf(
-                    PT.shape({
-                        place: PT.number,
-                        advances: PT.bool.isRequired,
-                        run_id: PT.number.isRequired,
-                        additional_data: PT.object.isRequired,
-                    }).isRequired,
-                ).isRequired,
-                runs: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                        status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                    }).isRequired,
-                ).isRequired,
-                discipline: PT.shape({
-                    discipline_judges: PT.arrayOf(
-                        PT.shape({
-                            role: PT.string.isRequired,
-                        }).isRequired
-                    ).isRequired,
+export default class ResultsTable2 extends React.Component {
+    static propTypes = {
+        computedTour: PT.shape({
+            tour: PT.object.isRequired,
+            tour_result: PT.object.isRequired,
+            rows: PT.arrayOf(
+                PT.shape({
+                    run: PT.object.isRequired,
+                    run_result: PT.object.isRequired,
+                    scores: PT.object.isRequired,
                 }).isRequired,
-            }).isRequired,
-        };
-    }
+            ).isRequired,
+        }).isRequired,
+    };
 
     static transformDocx(docx) {
         docx
@@ -44,21 +29,21 @@ export default class ResultsTable2 extends React.PureComponent {
             .addStyle("td", "border-bottom", "0.5pt solid #aaa");
     }
 
-    getRowStatus(row) {
-        if (!row) {
-            return "none";
-        }
-        if (row.run.status !== "OK") {
-            return row.run.status;
-        }
-        return row.advances ? "advanced" : "not_advanced";
-    }
     getStatusHeader(row_status) {
         return _(`results.headers.participants_${row_status}`);
     }
-    renderAdvancesHeader(prev_row, next_row, has_next_tour, n_cols) {
+    getRowStatus(row) {
+        if (row == null) {
+            return "none";
+        }
+        if (row.run_result.extra_data.status !== "OK") {
+            return row.run_result.extra_data.status;
+        }
+        return row.run_result.advanced ? "advanced" : "not_advanced";
+    }
+    renderAdvancesHeader(prev_row, row, has_next_tour, n_cols) {
         const prev_status = this.getRowStatus(prev_row);
-        const next_status = this.getRowStatus(next_row);
+        const next_status = this.getRowStatus(row);
         if (prev_status === next_status) {
             return null;
         }
@@ -66,7 +51,7 @@ export default class ResultsTable2 extends React.PureComponent {
             return null;
         }
         return (
-            <tr key={ `AH${next_row.run.id}` }>
+            <tr key={ `AH${row.run.id}` }>
                 <th className="advances-header" colSpan={ n_cols }>
                     <p className="text-left">
                         { this.getStatusHeader(next_status) }
@@ -75,26 +60,31 @@ export default class ResultsTable2 extends React.PureComponent {
             </tr>
         )
     }
-
-    render() {
-        const has_next_tour = this.props.tour.next_tour_id !== null;
-        const table = makeTourResultsTable(this.props.tour);
-        let rows = [];
-        for (let idx = 0; idx < table.length; ++idx) {
-            rows.push(this.renderAdvancesHeader(
-                table[idx - 1],
-                table[idx],
+    renderRows() {
+        const {tour, rows} = this.props.computedTour;
+        const all_tours = tour.discipline.tours;
+        const has_next_tour = lastOf(all_tours).id !== tour.id;
+        let result = [];
+        let prev_row = null;
+        for (const row of rows) {
+            result.push(this.renderAdvancesHeader(
+                prev_row,
+                row,
                 has_next_tour,
                 6,
             ));
-            rows.push(
+            result.push(
                 <Row
-                    key={ table[idx].run.id }
-                    row={ table[idx] }
-                    tour={ this.props.tour }
+                    key={ row.run.id }
+                    row={ row }
                 />
             );
+            prev_row = row;
         }
+        return result;
+    }
+
+    render() {
         return (
             <div className="ResultsTable2">
                 <table>
@@ -133,7 +123,7 @@ export default class ResultsTable2 extends React.PureComponent {
                         </tr>
                     </thead>
                     <tbody>
-                        { rows }
+                        { this.renderRows() }
                     </tbody>
                 </table>
             </div>

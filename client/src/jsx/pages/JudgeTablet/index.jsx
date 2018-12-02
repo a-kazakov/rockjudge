@@ -1,63 +1,103 @@
-import Api from "common/server/Api";
-import websocket from "common/server/websocket";
+import React from "react";
 
-import MainComponent from "./MainComponent";
+import FullscreenButton from "common/components/FullscreenButton";
+import Loader from "common/components/Loader";
+import Storage from "common/server/Storage";
+import CompetitionSubscription from "common/server/Storage/subscriptions/CompetitionSubscription";
+import SplashScreen from "pages/JudgeTablet/SplashScreen";
+import TourLoader from "pages/JudgeTablet/TourLoader";
+import PT from "prop-types";
 
-export default class JudgeTablet extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            judgeId: PT.number.isRequired,
-            competitionId: PT.number.isRequired,
-        };
+export default class JudgeTablet extends React.Component {
+    static propTypes = {
+        competitionId: PT.number.isRequired,
+        judgeId: PT.number.isRequired,
+    };
+
+    // Helpers
+
+    static findJudgeActiveTour(judge) {
+        for (const dj of judge.discipline_judges) {
+            for (const tour of dj.discipline.tours) {
+                if (tour.active) {
+                    return [tour, dj];
+                }
+            }
+        }
+        return [null, null];
+    }
+
+    static checkHasActiveTour(competition) {
+        for (const discipline of competition.disciplines) {
+            for (const tour of discipline.tours) {
+                if (tour.active) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     constructor(props) {
         super(props);
         this.state = {
-            activeTourId: null,
-            hasActiveTours: false,
+            competitionStorage: null,
         };
     }
 
     componentDidMount() {
-        this.active_tours_update_listener = websocket.addListener("active_tours_update", this.handleActiveToursUpdateMessage);
-        Api("competition.get_active_tours", { competition_id: this.props.competitionId })
-            .onSuccess(this.handleActiveToursUpdate)
-            .send();
+        this._storage = new Storage();
+        this._storage.init(this.reload).then(this.subscribe).catch(console.error.bind(console));
     }
 
-    componentWillUnmount() {
-        websocket.removeListener(this.active_tours_update_listener);
-    }
+    subscribe = () => {
+        this._competition_subscription = new CompetitionSubscription(this.props.competitionId);
+        this._storage.subscribe(this._competition_subscription)
+            .then(this.updateCompetitionStorage)
+            .catch(console.error.bind(console));
+    };
 
-    handleActiveToursUpdate = (active_tours) => {
-        const tour_info = active_tours.find(ti => ti.judges.includes(this.props.judgeId)) || null;
-        const tour_id = tour_info?.tour_id || null;
-        this.setState({
-            activeTourId: tour_id,
-            hasActiveTours: active_tours.length > 0,
-        });
+    updateCompetitionStorage = (competitionStorage) => {
+        this.setState({competitionStorage});
     };
-    handleActiveToursUpdateMessage = (data) => {
-        const { competition_id, active_tours } = data;
-        if (competition_id !== this.props.competitionId) {
-            return;
-        }
-        this.handleActiveToursUpdate(active_tours);
-    };
+    reload = () => this.forceUpdate();
+
 
     // Rendering
 
-    render() {
+    renderBody() {
+        const judge = this.state.competitionStorage?.get("Judge", this.props.judgeId);
+        if (!judge) {
+            return (
+                <Loader />
+            );
+        }
+        const [tour, discipline_judge] = this.constructor.findJudgeActiveTour(judge);
+        const has_active_tours = this.constructor.checkHasActiveTour(judge.competition);
+        if (tour == null) {
+            return (
+                <SplashScreen
+                    hasActiveTours={ has_active_tours }
+                    judge={ judge }
+                    tour={ tour }
+                />
+            );
+        }
         return (
-            <MainComponent
-                activeTourId={ this.state.activeTourId }
-                hasActiveTours={ this.state.hasActiveTours }
-                { ...this.props }
+            <TourLoader
+                disciplineJudge={ discipline_judge }
+                key={ tour.id }
+                tour={ tour }
             />
         );
     }
-}
 
-JudgeTablet.displayName = "JudgeTablet";
+    render() {
+        return (
+            <div className="JudgeTablet rules-set" key="outer">
+                { this.renderBody() }
+                <FullscreenButton />
+            </div>
+        );
+    }
+}

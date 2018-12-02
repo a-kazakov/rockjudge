@@ -1,3 +1,6 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import makeClassName from "common/makeClassName";
@@ -5,16 +8,13 @@ import onTouchOrClick from "tablet_ui/onTouchOrClick";
 
 let stopwatches = {};
 
-export default class StopWatch extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            readOnly: PT.bool,
-            stopwatchId: PT.number.isRequired,
-            value: PT.number,
-            onChange: PT.func.isRequired,
-        };
-    }
+export default class StopWatch extends React.Component {
+    static propTypes = {
+        readOnly: PT.bool,
+        stopwatchId: PT.number.isRequired,
+        value: PT.number,
+        onChange: PT.func.isRequired,
+    };
     static get defaultProps() {
         return {
             readOnly: false,
@@ -29,7 +29,7 @@ export default class StopWatch extends React.PureComponent {
         super(props);
         let state = stopwatches[this.props.stopwatchId] || {
             active: false,
-            value: props.value !== null ? props.value * 1000 : 0,
+            value: props.value != null ? props.value * 1000 : 0,
             interval: null,
         };
         if (state.active) {
@@ -38,18 +38,17 @@ export default class StopWatch extends React.PureComponent {
         this.state = state;
     }
 
-    componentWillReceiveProps(nextProps) {
+    componentWillUnmount() {
+        clearInterval(this.state.interval);
+        stopwatches[this.props.stopwatchId] = this.state;
+    }
+    UNSAFE_componentWIllReceiveProps(nextProps) {
         if (this.state.active && nextProps.readOnly) {
             this.stop(true);
         }
         if (!this.state.active && nextProps.value !== this.flooredStateValue()) {
             this.setState({ value: nextProps.value * 1000 });
         }
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.state.interval);
-        stopwatches[this.props.stopwatchId] = this.state;
     }
 
     isSynchronized() {
@@ -134,7 +133,7 @@ export default class StopWatch extends React.PureComponent {
         return s.substr(s.length - size);
     }
     getStrValue(val=null) {
-        val = val === null ? this.value() : val;
+        val = val == null ? this.value() : val;
         let m = 0, s = 0;
         m = Math.floor(val / (60 * 1000));
         val %= 60 * 1000;

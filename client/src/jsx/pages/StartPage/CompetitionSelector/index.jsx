@@ -1,19 +1,18 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import Button from "./Button";
+import Model from "common/server/Storage/models/Model";
 
-export default class CompetitionSelector extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competitionsNames: PT.arrayOf(
-                PT.shape({
-                    id: PT.number.isRequired,
-                }).isRequired
-            ).isRequired,
-            onSelect: PT.func.isRequired,
-        };
-    }
+export default class CompetitionSelector extends React.Component {
+    static propTypes = {
+        competitions: PT.arrayOf(
+            PT.instanceOf(Model).isRequired
+        ).isRequired,
+        onSelect: PT.func.isRequired,
+    };
 
     renderNoCompetitions() {
         let link = null;
@@ -34,7 +33,7 @@ export default class CompetitionSelector extends React.PureComponent {
         );
     }
     render() {
-        if (this.props.competitionsNames.length === 0) {
+        if (this.props.competitions.length === 0) {
             return this.renderNoCompetitions();
         }
         return (
@@ -43,10 +42,10 @@ export default class CompetitionSelector extends React.PureComponent {
                     { _("start_page.headers.select_competition") }
                 </h3>
                 <div className="list">
-                    { this.props.competitionsNames.map(comp_info =>
+                    { this.props.competitions.map(comp =>
                         <Button
-                            competitionInfo={ comp_info }
-                            key={ comp_info.id }
+                            competition={ comp }
+                            key={ comp.id }
                             onSelect={ this.props.onSelect }
                         />
                     ) }
@@ -55,5 +54,3 @@ export default class CompetitionSelector extends React.PureComponent {
         );
     }
 }
-
-CompetitionSelector.displayName = "StartPage_CompetitionSelector";

@@ -1,56 +1,57 @@
+import React from "react";
+
+import makeClassName from "common/makeClassName";
 import _ from "l10n";
+import PT from "prop-types";
 
-export default class EditorRow extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            club: PT.shape({
-                name: PT.string.isRequired,
-                city: PT.string.isRequired,
-                external_id: PT.string,
-            }).isRequired,
-            newClub: PT.bool,
-            onStopEditing: PT.func.isRequired,
-            onSubmit: PT.func.isRequired,
-        };
-    }
-    static get defaultProps() {
-        return {
-            newClub: false,
-        }
-    }
+export default class EditorRow extends React.Component {
+    static propTypes = {
+        creating: PT.bool.isRequired,
+        formData: PT.shape({
+            name: PT.string.isRequired,
+            city: PT.string.isRequired,
+            external_id: PT.string.isRequired,
+        }).isRequired,
+        loading: PT.bool.isRequired,
+        onDiscard: PT.func.isRequired,
+        onFieldChange: PT.func.isRequired,
+        onSubmit: PT.func.isRequired,
+    };
 
-    makeCityRef       = (ref) => this._city = ref;
-    makeExternalIdRef = (ref) => this._external_id = ref;
-
-    makeNameRef = (ref) => {
-        if (ref && !this._name) {
-            ref.select();
-        }
-        this._name = ref;
-    }
-
+    handleNameChange = (event) => this.props.onFieldChange("name", event.target.value);
+    handleCityChange = (event) => this.props.onFieldChange("city", event.target.value);
+    handleExternalIdChange = (event) => this.props.onFieldChange("external_id", event.target.value);
     handleSubmission = (event) => {
         event.preventDefault();
-        this.props.onSubmit(this.serialize());
-    }
-
-    serialize() {
-        return {
-            name: this._name.value,
-            city: this._city.value,
-            external_id: this._external_id.value !== ""
-                ? this._external_id.value
-                : null,
-        }
-    }
+        this.props.onSubmit();
+    };
 
     getClassName() {
-        let result = "editor";
-        if (this.props.newClub) {
-            result += " create";
-        }
-        return result;
+        return makeClassName({
+            "editor": true,
+            "create": this.props.creating,
+        });
+    }
+    renderButtons() {
+        return (
+            <div className="buttons">
+                <div className="buttons horizontal">
+                    <button
+                        disabled={ this.props.loading }
+                        type="submit"
+                    >
+                        { _("global.buttons.submit") }
+                    </button>
+                    <button
+                        disabled={ this.props.loading }
+                        type="button"
+                        onClick={ this.props.onDiscard }
+                    >
+                        { _("global.buttons.discard") }
+                    </button>
+                </div>
+            </div>
+        );
     }
     render() {
         return (
@@ -61,8 +62,9 @@ export default class EditorRow extends React.PureComponent {
                             <label>
                                 { _("models.club.name") }
                                 <input
-                                    defaultValue={ this.props.club.name }
-                                    ref={ this.makeNameRef }
+                                    disabled={ this.props.loading }
+                                    value={ this.props.formData.name }
+                                    onChange={ this.handleNameChange }
                                 />
                             </label>
                         </div>
@@ -70,9 +72,9 @@ export default class EditorRow extends React.PureComponent {
                             <label>
                                 { _("models.club.city") }
                                 <input
-
-                                    defaultValue={ this.props.club.city }
-                                    ref={ this.makeCityRef }
+                                    disabled={ this.props.loading }
+                                    value={ this.props.formData.city }
+                                    onChange={ this.handleCityChange }
                                 />
                             </label>
                         </div>
@@ -80,25 +82,14 @@ export default class EditorRow extends React.PureComponent {
                             <label>
                                 { _("models.club.external_id") }<br />
                                 <input
-                                    defaultValue={ this.props.club.external_id || "" }
-                                    ref={ this.makeExternalIdRef }
+                                    disabled={ this.props.loading }
+                                    value={ this.props.formData.external_id }
+                                    onChange={ this.handleExternalIdChange }
                                 />
                             </label>
                         </div>
                         <div className="col-6">
-                            <div className="buttons">
-                                <div className="buttons horizontal">
-                                    <button type="submit">
-                                        { _("global.buttons.submit") }
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={ this.props.onStopEditing }
-                                    >
-                                        { _("global.buttons.discard") }
-                                    </button>
-                                </div>
-                            </div>
+                            { this.renderButtons() }
                         </div>
                     </form>
                 </td>
@@ -107,4 +98,3 @@ export default class EditorRow extends React.PureComponent {
     }
 }
 
-EditorRow.displayName = "AdminPanel_Management_Clubs_EditorRow";

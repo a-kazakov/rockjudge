@@ -1,22 +1,16 @@
-import _ from "l10n";
+import React from "react";
 
-export default class DisciplinesShown extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                disciplines: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                        name: PT.string.isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
-            config: PT.shape({
-                disciplines: PT.object.isRequired,
-            }).isRequired,
-        };
-    }
+import PT from "prop-types";
+import _ from "l10n";
+import Model from "common/server/Storage/models/Model";
+
+export default class DisciplinesShown extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        config: PT.shape({
+            disciplines: PT.object.isRequired,
+        }).isRequired,
+    };
 
     hasDisabledDisciplines() {
         return this.props.competition.disciplines.findIndex(
@@ -55,5 +49,3 @@ export default class DisciplinesShown extends React.PureComponent {
         )
     }
 }
-
-DisciplinesShown.displayName = "AdminPanel_Management_StartList_DisciplinesShown";

@@ -1,11 +1,4 @@
-import Api from "common/server/Api";
-import storage from "common/server/storage";
-import websocket from "common/server/websocket";
-
-import makeTourResultsTable from "common/makeTourResultsTable";
-import makeDisciplineResultsTable from "common/makeDisciplineResultsTable";
-
-class RulesSetLoader {
+class ScreenLoader {
     constructor() {
         this._loaded = false;
     }
@@ -32,17 +25,10 @@ class RulesSetLoader {
     }
 }
 
-const loader = new RulesSetLoader();
+const loader = new ScreenLoader();
 
 window.registerScreen = function(...args) {
     loader.load(...args);
-    return {
-        Api,
-        storage: storage.getDomain("screen"),
-        websocket,
-        makeTourResultsTable,
-        makeDisciplineResultsTable,
-    };
-}
+};
 
 export default loader;

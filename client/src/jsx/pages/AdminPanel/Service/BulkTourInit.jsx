@@ -1,27 +1,27 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 import Api from "common/server/Api";
 import showConfirm from "common/dialogs/showConfirm";
 import showSuccess from "common/dialogs/showSuccess";
 
-export default class BulkTourInit extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                disciplines: PT.arrayOf(
-                    PT.shape({
-                        tours: PT.arrayOf(
-                            PT.shape({
-                                id: PT.number.isRequired,
-                                active: PT.bool.isRequired,
-                                finalized: PT.bool.isRequired,
-                            }),
-                        ),
-                    }).isRequired,
-                ),
-            }).isRequired,
-        };
-    }
+export default class BulkTourInit extends React.Component {
+    static propTypes = {
+        competition: PT.shape({
+            disciplines: PT.arrayOf(
+                PT.shape({
+                    tours: PT.arrayOf(
+                        PT.shape({
+                            id: PT.number.isRequired,
+                            active: PT.bool.isRequired,
+                            finalized: PT.bool.isRequired,
+                        }),
+                    ),
+                }).isRequired,
+            ),
+        }).isRequired,
+    };
     constructor(props) {
         super(props);
         this.state ={
@@ -41,7 +41,7 @@ export default class BulkTourInit extends React.PureComponent {
             showSuccess(_("global.messages.success"));
             return;
         }
-        Api("tour.init", {
+        Api("tour/init", {
             tour_id: this.state.tourIds[idx],
         })
             .onError(() => {
@@ -52,7 +52,7 @@ export default class BulkTourInit extends React.PureComponent {
             .onDone(() => {
                 this.setState({
                     currentIdx: this.state.currentIdx + 1,
-                })
+                });
                 this.initNextTour(idx + 1);
             })
             .send();
@@ -70,11 +70,11 @@ export default class BulkTourInit extends React.PureComponent {
         }, () => {
             this.initNextTour(0);
         });
-    }
+    };
 
     handleClick = () => {
         showConfirm(_("admin.confirms.bulk_tour_init"), this.run);
-    }
+    };
 
     renderStatus() {
         return (
@@ -95,7 +95,7 @@ export default class BulkTourInit extends React.PureComponent {
         );
     }
     renderBody() {
-        if (this.state.tourIds === null) {
+        if (this.state.tourIds == null) {
             return this.renderButton();
         } else {
             return this.renderStatus();
@@ -109,5 +109,3 @@ export default class BulkTourInit extends React.PureComponent {
         );
     }
 }
-
-BulkTourInit.displayName = "pages_AdminPanel_Service_BulkTourInit";

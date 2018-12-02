@@ -1,8 +1,10 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import BaseBlock from "./BaseBlock";
 
 export default class SelectorBlock extends BaseBlock {
     static get propTypes() {
-        const PT = React.PropTypes;
         const prev = super.constructor.propTypes || {};
         return Object.assign({}, prev, {
             label: PT.string,

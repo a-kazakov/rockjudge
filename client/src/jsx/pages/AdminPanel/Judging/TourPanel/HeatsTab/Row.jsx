@@ -1,20 +1,16 @@
-export default class Row extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            headerCells: PT.number.isRequired,
-            isFirstCell: PT.bool.isRequired,
-            isLastCell: PT.bool.isRequired,
-            heat: PT.number.isRequired,
-            participant: PT.shape({
-                number: PT.number.isRequired,
-                name: PT.string.isRequired,
-                club: PT.shape({
-                    name: PT.string.isRequired,
-                }).isRequired,
-            }).isRequired,
-        };
-    }
+import React from "react";
+
+import Model from "common/server/Storage/models/Model";
+import PT from "prop-types";
+
+export default class Row extends React.Component {
+    static propTypes= {
+        headerCells: PT.number.isRequired,
+        heat: PT.number.isRequired,
+        isFirstCell: PT.bool.isRequired,
+        isLastCell: PT.bool.isRequired,
+        participant: PT.instanceOf(Model).isRequired,
+    };
 
     getCellStyle() {
         let result = {

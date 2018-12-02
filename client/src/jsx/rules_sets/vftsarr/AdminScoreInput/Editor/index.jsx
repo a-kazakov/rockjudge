@@ -1,33 +1,30 @@
-import _ from "l10n";
+import {React} from "HostModules";
 
 import getScoringType from "common/getScoringType";
-
-import ConfirmationButton from "./ConfirmationButton";
+import _ from "l10n";
+import PT from "prop-types";
 import AcroScore from "./AcroScore";
-import DanceScore from "./DanceScore";
+import ConfirmationButton from "./ConfirmationButton";
 import DanceExtendedScore from "./DanceExtendedScore";
+import DanceScore from "./DanceScore";
 import FormationScore from "./FormationScore";
 import FormationSimplifiedScore from "./FormationSimplifiedScore";
+import HeadJudgeScore from "./HeadJudgeScore";
 import SimplifiedScore from "./SimplifiedScore";
 import SoloScore from "./SoloScore";
-import HeadJudgeScore from "./HeadJudgeScore";
 import TechJudgeScore from "./TechJudgeScore";
 
-export default class Editor extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudge: PT.object.isRequired,
-            readOnly: PT.bool.isRequired,
-            score: PT.object.isRequired,
-            tour: PT.shape({
-                scoring_system_name: PT.string.isRequired,
-            }).isRequired,
-            onConfirmationToggle: PT.func.isRequired,
-            onDiscard: PT.func.isRequired,
-            onSubmit: PT.func.isRequired,
-        };
-    }
+export default class Editor extends React.Component {
+    static propTypes = {
+        confirmed: PT.bool.isRequired,
+        disciplineJudgeRole: PT.string.isRequired,
+        readOnly: PT.bool.isRequired,
+        scoreData: PT.object.isRequired,
+        scoringSystemName: PT.string.isRequired,
+        onConfirmationToggle: PT.func.isRequired,
+        onDiscard: PT.func.isRequired,
+        onSubmit: PT.func.isRequired,
+    };
 
     handleDiscardClick = (event) => {
         event.stopPropagation();
@@ -54,9 +51,9 @@ export default class Editor extends React.PureComponent {
     }
     renderBody(scoring_type) {
         const score_props = {
-            score:     this.props.score,
-            tour:      this.props.tour,
-            readOnly:  this.props.readOnly,
+            readOnly: this.props.readOnly,
+            scoreData: this.props.scoreData,
+            scoringSystemName: this.props.scoringSystemName,
             onSubmit:  this.props.onSubmit,
             onDiscard: this.props.onDiscard,
         };
@@ -110,13 +107,16 @@ export default class Editor extends React.PureComponent {
         }
         return (
             <ConfirmationButton
-                confirmed={ this.props.score.confirmed }
+                confirmed={ this.props.confirmed }
                 onConfirmationToggle={ this.props.onConfirmationToggle }
             />
         )
     }
     render() {
-        const scoring_type = getScoringType(this.props.disciplineJudge, this.props.tour.scoring_system_name);
+        const scoring_type = getScoringType(
+            this.props.disciplineJudgeRole,
+            this.props.scoringSystemName,
+        );
         return (
             <div className="AdminScoreInput">
                 { this.renderBody(scoring_type) }

@@ -1,26 +1,14 @@
-import _ from "l10n";
+import React from "react";
 
-export default class SplashScreen extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            judge: PT.shape({
-                name: PT.string.isRequired,
-                number: PT.string.isRequired,
-                role_description: PT.string.isRequired,
-                competition: PT.shape({
-                    name: PT.string.isRequired,
-                }).isRequired,
-            }).isRequired,
-            tour: PT.shape({
-                name: PT.string.isRequired,
-                discipline: PT.shape({
-                    name: PT.string.isRequired,
-                }).isRequired,
-            }),
-            hasActiveTours: PT.bool.isRequired,
-        };
-    }
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import PT from "prop-types";
+
+export default class SplashScreen extends React.Component {
+    static propTypes = {
+        hasActiveTours: PT.bool.isRequired,
+        judge: PT.instanceOf(Model).isRequired,
+    };
 
     renderNotJudgingText() {
         if (!this.props.hasActiveTours) {
@@ -62,5 +50,3 @@ export default class SplashScreen extends React.PureComponent {
         );
     }
 }
-
-SplashScreen.displayName = "JudgeTablet_SplashScreen";

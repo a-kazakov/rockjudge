@@ -1,48 +1,22 @@
-import _ from "l10n";
+import {Api, React} from "HostModules";
 
-import { Api } from "HostModules";
+import PT from "prop-types";
+import _ from "l10n";
 
 import ResultsTable2 from "ResultsTable2";
 import SelectorInput from "tablet_ui/SelectorInput";
+import makeTourResultsTable from "common/makeTourResultsTable";
+import lastOf from "common/tools/lastOf";
 
-export default class ResultsPage extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            tour: PT.shape({
-                id: PT.number.isRequired,
-                results: PT.arrayOf(
-                    PT.shape({
-                        place: PT.number,
-                    }).isRequired,
-                ).isRequired,
-                next_tour_id: PT.number,
-                num_advances: PT.number.isRequired,
-                scoring_system_name: PT.string.isRequired,
-                discipline: PT.shape({
-                    discipline_judges: PT.arrayOf(
-                        PT.shape({
-                            id: PT.number.isRequired,
-                            role: PT.string.isRequired,
-                        }).isRequired,
-                    ).isRequired,
-                }).isRequired,
-                runs: PT.arrayOf(
-                    PT.shape({
-                        scores: PT.arrayOf(
-                            PT.shape({
-                                confirmed: PT.bool.isRequired,
-                            }),
-                        ),
-                    }),
-                ).isRequired,
-            }).isRequired,
-        };
-    }
+export default class ResultsPage extends React.Component {
+    static propTypes = {
+        tour: PT.object.isRequired,
+    };
 
     handleNumAdvancesChange = (num_advances) => {
-        Api("tour.set", {
-            tour_id: this.props.tour.id,
+        Api("model/update", {
+            model_name: "Tour",
+            model_id: this.props.tour.id,
             data: { num_advances },
         })
             .send();
@@ -61,13 +35,12 @@ export default class ResultsPage extends React.PureComponent {
                 }
             }
         }
-        let possible_advances_values = new Set(this.props.tour.results
+        let possible_advances_values = new Set(Object.values(this.props.tour.results.runs_results)
             .map(r => r.place)
             .filter(p => p)
             .map(p => p - 1)
         );
-        possible_advances_values = Array.from(possible_advances_values)
-        possible_advances_values.sort((a, b) => a - b);
+        possible_advances_values = Array.from(possible_advances_values).sort((a, b) => a - b);
         return (
             <div>
                 <h3>
@@ -84,17 +57,21 @@ export default class ResultsPage extends React.PureComponent {
         )
     }
     renderAdvancedInfo() {
-        if (this.props.tour.next_tour_id === null || this.props.tour.scoring_system_name.includes("final")) {
+        const {tour} = this.props;
+        if (lastOf(tour.discipline.tours).id === tour.id || tour.scoring_system_name.includes("final")) {
             return null;
         }
         return (
             <div className="advances-info">
                 <div className="info">
                     <div>
-                        { _("tablet.head_judge.advances_quota", this.props.tour.num_advances) }
+                        { _("tablet.head_judge.advances_quota", tour.num_advances) }
                     </div>
                     <div>
-                        { _("tablet.head_judge.advances_actual", this.props.tour.results.filter(r => r.advances).length) }
+                        { _(
+                            "tablet.head_judge.advances_actual",
+                            Object.values(tour.results.runs_results).filter(r => r.advances).length,
+                        ) }
                     </div>
                 </div>
                 <div className="controls">
@@ -109,7 +86,7 @@ export default class ResultsPage extends React.PureComponent {
             <div className="body results">
                 { this.renderAdvancedInfo() }
                 <ResultsTable2
-                    tour={ this.props.tour }
+                    computedTour={ makeTourResultsTable(this.props.tour) }
                 />
             </div>
         )

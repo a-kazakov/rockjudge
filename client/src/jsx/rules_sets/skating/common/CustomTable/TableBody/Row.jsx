@@ -1,18 +1,19 @@
-export default class Row extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            cols: PT.array.isRequired,
-            row: PT.object.isRequired,
-            widths: PT.object.isRequired,
-        };
-    }
+import {React} from "HostModules";
+
+import PT from "prop-types";
+
+export default class Row extends React.Component {
+    static propTypes = {
+        cols: PT.array.isRequired,
+        row: PT.object.isRequired,
+        widths: PT.object.isRequired,
+    };
 
     static renderCellContent(content) {
         if (["string", "number"].includes(typeof content)) {
             content = {"text": content.toString()}
         }
-        if (content === null || typeof content !== "object") {
+        if (content == null || typeof content !== "object") {
             return null;
         }
         if (content.raw) {

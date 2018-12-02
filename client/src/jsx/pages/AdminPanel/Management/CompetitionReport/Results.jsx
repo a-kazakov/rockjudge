@@ -1,24 +1,18 @@
-import _ from "l10n";
+import React from "react";
 
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import PT from "prop-types";
 import rules_set from "rules_sets/loader";
 
-export default class Results extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                disciplines: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                        name: PT.string.isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
-            config: PT.shape({
-                disciplines: PT.object.isRequired,
-            }).isRequired,
-        };
-    }
+export default class Results extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        config: PT.shape({
+            disciplines: PT.object.isRequired,
+        }).isRequired,
+    };
+
     renderDiscipline = (discipline) => {
         if (!this.props.config.disciplines[discipline.id]) {
             return null;
@@ -34,6 +28,7 @@ export default class Results extends React.PureComponent {
             </div>
         )
     };
+
     render() {
         let has_disciplines = false;
         for (let i = 0; i < this.props.competition.disciplines.length; ++i) {
@@ -60,4 +55,3 @@ export default class Results extends React.PureComponent {
 }
 
 
-Results.displayName = "AdminPanel_Management_CompetitionReport_Results";

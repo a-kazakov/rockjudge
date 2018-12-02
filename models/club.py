@@ -1,75 +1,108 @@
-import peewee
+from typing import Any, Dict, Iterable, TYPE_CHECKING, Tuple, Union, List
 
+from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy.orm import Session, relationship
+
+from db import ModelBase
+from enums import AccessLevel
 from exceptions import ApiError
 from models.base_model import BaseModel
-from models.proxies import competition_proxy
+from models.client_auth import ClientAuth
+from models.competition import Competition
 
 
-class Club(BaseModel):
-    class Meta:
-        indexes = (
-            (("competition", "external_id"), True),
-        )
-        order_by = ["city", "name"]
+if TYPE_CHECKING:
+    from api import ApiRequest
+    from models.participant import Participant
+    from mutations import MutationsKeeper
 
-    competition = peewee.ForeignKeyField(competition_proxy, related_name="clubs", on_delete="RESTRICT")
-    name = peewee.CharField()
-    city = peewee.CharField()
-    external_id = peewee.CharField(null=True, default=None)
 
-    RW_PROPS = ["name", "city", "external_id"]
+class Club(ModelBase, BaseModel):
+    # DB schema
 
-    PF_CHILDREN = {
-        "participants": None,
-    }
+    __tablename__ = "clubs"
+
+    __table_args__ = (
+        UniqueConstraint("competition_id", "external_id", name="competition_external_id_idx"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    competition_id = Column(Integer, ForeignKey("competitions.id", ondelete="RESTRICT"), nullable=False)
+    name = Column(String, nullable=False)
+    city = Column(String, nullable=False)
+    external_id = Column(String, nullable=True)
+
+    competition = relationship(Competition, backref="clubs")
+
+    participants: Iterable["Participant"]
+
+    # Base properties
+
+    @property
+    def sorting_key(self) -> Tuple[Union[int, str], ...]:
+        return (self.name, self.city)
+
+    def validate(self) -> None:
+        if self.name == "":
+            raise ValueError("Club name shouldn't be empty")
+
+    # Permissions
 
     @classmethod
-    def load_models(cls, competition, objects):
-        list(cls.load_models_base(objects, competition=competition))
+    def check_create_permission(cls, session: Session, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+        auth = ClientAuth.get_for_competition(session, request.client, int(data["competition_id"]))
+        return auth.access_level == AccessLevel.ADMIN
+
+    def check_read_permission(self, request: "ApiRequest") -> bool:
+        return self.get_auth(request.client).access_level != AccessLevel.NONE
+
+    def check_update_permission(self, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+        return self.get_auth(request.client).access_level == AccessLevel.ADMIN
+
+    def check_delete_permission(self, request: "ApiRequest") -> bool:
+        return self.get_auth(request.client).access_level == AccessLevel.ADMIN
+
+    # Create logic
 
     @classmethod
-    def create_model(cls, competition, data, ws_message):
-        create_kwargs = cls.gen_model_kwargs(data, competition=competition)
-        cls.create(**create_kwargs)
-        ws_message.add_model_update(
-            model_type=competition_proxy,
-            model_id=competition.id,
-            schema={
-                "clubs": {},
-            }
-        )
+    def before_create(cls, session: Session, data: Dict[str, Any], *, unsafe: bool) -> Dict[str, Any]:
+        return {
+            "competition": session.query(Competition).get(data["competition_id"])
+        }
 
-    def update_model(self, new_data, ws_message):
-        self.update_model_base(new_data)
-        ws_message.add_model_update(
-            model_type=competition_proxy,
-            model_id=self.competition_id,
-            schema={
-                "clubs": {}
-            }
-        )
+    # Update logic
+    # (default)
 
-    def delete_model(self, ws_message):
-        if self.participants.count() > 0:
+    # Delete logic
+
+    def before_delete(self) -> None:
+        from models.participant import Participant
+        if self.session.query(Participant).filter_by(club=self).count() > 0:
             raise ApiError("errors.club.delete_with_participants")
-        competition_id = self.competition_id
-        self.delete_instance()
-        ws_message.add_model_update(
-            model_type=competition_proxy,
-            model_id=competition_id,
-            schema={
-                "clubs": {},
-            }
-        )
 
-    def serialize(self, children={}):
-        result = self.serialize_props()
-        result = self.serialize_lower_child(result, "participants", children)
-        return result
+    # Serialization logic
+    # (default)
 
-    def export(self):
-        result = self.serialize_props()
-        result.update({
-            "id": self.id,
-        })
-        return result
+    @classmethod
+    def load_models(
+        cls,
+        competition: Competition,
+        objects: List[Dict[str, Any]],
+        mk: "MutationsKeeper",
+    ) -> None:
+        for _ in cls.load_models_base(
+            objects,
+            competition.session,
+            mk,
+            competition_id=competition.id,
+        ):
+            pass
+
+
+    #
+    # def export(self):
+    #     result = self.serialize_props()
+    #     result.update({
+    #         "id": self.id,
+    #     })
+    #     return result

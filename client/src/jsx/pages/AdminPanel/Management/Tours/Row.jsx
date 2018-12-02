@@ -1,71 +1,32 @@
-import _ from "l10n";
-import Api from "common/server/Api";
-import rules_set from "rules_sets/loader";
+import React from "react";
+
 import showConfirm from "common/dialogs/showConfirm";
-import closeDialog from "common/dialogs/closeDialog";
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import PT from "prop-types";
+import rules_set from "rules_sets/loader";
 
-import InputForm from "./InputForm";
+export default class Row extends React.Component {
+    static propTypes = {
+        entry: PT.instanceOf(Model).isRequired,
+        loading: PT.bool.isRequired,
+        onDelete: PT.func.isRequired,
+        onStartEditing: PT.func.isRequired,
+    };
 
-export default class Row extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            tour: PT.object.isRequired,
-        };
-    }
-    constructor(props) {
-        super(props);
-        this.state = {
-            editing: false,
-        }
-    }
-
-    // Handlers
-
-    handleStartEditing = () => {
-        this.setState({
-            editing: true,
-        });
-    }
-    handleStopEditing = () => {
-        this.setState({
-            editing: false,
-        });
-    }
-    handleSubmission = (data) => {
-        Api("tour.set", {
-            tour_id: this.props.tour.id,
-            data: data,
-        })
-            .onSuccess(this.handleStopEditing)
-            .send();
-    }
     handleTourDeletion = () => {
         showConfirm(
             _("admin.confirms.delete_tour"),
-            () => {
-                Api("tour.delete", { tour_id: this.props.tour.id })
-                    .onSuccess(closeDialog)
-                    .send();
-            }
+            this.props.onDelete,
         );
-    }
-    // Render
+    };
 
-    renderEditor() {
-        return (
-            <InputForm
-                tour={ this.props.tour }
-                onStopEditing={ this.handleStopEditing }
-                onSubmit={ this.handleSubmission }
-            />
-        )
-    }
-    renderViewer() {
+    render() {
+        const tour = this.props.entry;
         return (
             <div className="tour viewer">
                 <h3>
-                    { this.props.tour.name }
+                    { tour.name }
                 </h3>
                 <div className="tour-content">
                     <div className="info">
@@ -74,19 +35,19 @@ export default class Row extends React.PureComponent {
                                 <strong>
                                     { `${_("models.tour.num_advances")}: ` }
                                 </strong>
-                                { this.props.tour.num_advances }
+                                { tour.num_advances }
                             </p>
                             <p>
                                 <strong>
                                     { `${_("models.tour.participants_per_heat")}: ` }
                                 </strong>
-                                { this.props.tour.participants_per_heat }
+                                { tour.participants_per_heat }
                             </p>
                             <p>
                                 <strong>
                                     { `${_("models.tour.is_hope_tour")}: ` }
                                 </strong>
-                                { this.props.tour.hope_tour
+                                { tour.hope_tour
                                     ? _("global.labels.yes")
                                     : _("global.labels.no")
                                 }
@@ -97,20 +58,20 @@ export default class Row extends React.PureComponent {
                                 <strong>
                                     { `${_("models.tour.scoring_system_name")}: ` }
                                 </strong>
-                                { rules_set.translate(`scoring_systems_names.${this.props.tour.scoring_system_name}`) }
+                                { rules_set.translate(`scoring_systems_names.${tour.scoring_system_name}`) }
                             </p>
                             <p>
                                 <strong>
                                     { `${_("models.tour.default_program")}: ` }
                                 </strong>
-                                { this.props.tour.default_program }
+                                { tour.default_program }
                             </p>
                         </div>
                     </div>
                     <div className="buttons">
                         <button
                             className="edit-button"
-                            onClick={ this.handleStartEditing }
+                            onClick={ this.props.onStartEditing }
                         >
                             { _("global.buttons.edit") }
                         </button>
@@ -126,9 +87,5 @@ export default class Row extends React.PureComponent {
             </div>
         );
     }
-    render() {
-        return this.state.editing ? this.renderEditor() : this.renderViewer();
-    }
 }
 
-Row.displayName = "AdminPanel_Management_Tours_Row";

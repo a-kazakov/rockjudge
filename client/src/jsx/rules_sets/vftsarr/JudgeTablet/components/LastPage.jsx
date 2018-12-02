@@ -1,6 +1,8 @@
+import {React} from "HostModules";
+
 import _ from "l10n";
 
-export default class LastPage extends React.PureComponent {
+export default class LastPage extends React.Component {
     handleReturnToMainPage = () => {
         window.location.href = "/";
     };

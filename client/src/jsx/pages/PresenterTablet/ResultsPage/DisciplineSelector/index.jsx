@@ -1,23 +1,19 @@
+import React from "react";
+
+import PT from "prop-types";
 import Item from "./Item";
 
-export default class DisciplineSelector extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplines: PT.arrayOf(
-                PT.shape({
-                    id: PT.number.isRequired,
-                }).isRequired
-            ).isRequired,
-            value: PT.number,
-            onDisciplineChange: PT.func.isRequired,
-        };
-    }
+export default class DisciplineSelector extends React.Component {
+    static propTypes = {
+        competition: PT.object.isRequired,
+        value: PT.number,
+        onDisciplineChange: PT.func.isRequired,
+    };
 
     render() {
         return (
             <div className="disciplines">
-                { this.props.disciplines.map(discipline =>
+                { this.props.competition.disciplines.map(discipline =>
                     <Item
                         active={ discipline.id === this.props.value }
                         discipline={ discipline }
@@ -29,5 +25,3 @@ export default class DisciplineSelector extends React.PureComponent {
         );
     }
 }
-
-DisciplineSelector.displayName = "PresenterTablet_ResultsPage_DisciplineSelector";

@@ -1,14 +1,15 @@
-export default class ImportItemsCheckbox extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disabled: PT.bool.isRequired,
-            label: PT.string.isRequired,
-            type: PT.string.isRequired,
-            value: PT.bool.isRequired,
-            onChange: PT.func.isRequired,
-        };
-    }
+import React from "react";
+
+import PT from "prop-types";
+
+export default class ImportItemsCheckbox extends React.Component {
+    static propTypes = {
+        disabled: PT.bool.isRequired,
+        label: PT.string.isRequired,
+        type: PT.string.isRequired,
+        value: PT.bool.isRequired,
+        onChange: PT.func.isRequired,
+    };
 
     handleChange = (e) => {
         this.props.onChange(this.props.type, e.target.checked);
@@ -30,5 +31,3 @@ export default class ImportItemsCheckbox extends React.PureComponent {
         );
     }
 }
-
-ImportItemsCheckbox.displayName = "AdminPanel_Management_ImportExport_ImportItemsCheckbox";

@@ -1,3 +1,6 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import PlaceButton from "./PlaceButton";
@@ -6,27 +9,13 @@ import PlaceButton from "./PlaceButton";
 const MULTIPLE_RUNS = Symbol();
 
 
-export default class FinalSimpleLayout extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudge: PT.shape({
-                id: PT.number.isRequired,
-                judge: PT.object.isRequired,
-            }).isRequired,
-            tour: PT.shape({
-                id: PT.number.isRequired,
-                runs: PT.arrayOf(
-                    PT.shape({
-                        heat: PT.number.isRequired,
-                        status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                    }).isRequired,
-                ).isRequired,
-            }).isRequired,
-            onHeatConfirm: PT.func.isRequired,
-            onScoreUpdate: PT.func.isRequired,
-        };
-    }
+export default class FinalSimpleLayout extends React.Component {
+    static propTypes = {
+        disciplineJudge: PT.object.isRequired,
+        tour: PT.object.isRequired,
+        onHeatConfirm: PT.func.isRequired,
+        onScoreUpdate: PT.func.isRequired,
+    };
 
     handlePlaceSelect = (run_id, place) => {
         this.props.onScoreUpdate(this.score_ids.get(run_id), {place});
@@ -97,7 +86,7 @@ export default class FinalSimpleLayout extends React.PureComponent {
                         key={ run.id }
                         place={ place }
                         run={ run }
-                        runHasSelected={ this.places.get(run.id) !== null }
+                        runHasSelected={ this.places.get(run.id) != null }
                         selected={ this.places.get(run.id) === place }
                         onSelect={ this.handlePlaceSelect }
                     />

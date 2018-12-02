@@ -1,30 +1,27 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import GeneralScale from "JudgeTablet/components/GeneralScale";
 
-export default class ScoringLayout extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            readOnly: PT.bool.isRequired,
-            scoreData: PT.shape({
-                points: PT.number,
-            }).isRequired,
-            onScoreUpdate: PT.func.isRequired,
-        };
-    }
+export default class ScoringLayout extends React.Component {
+    static propTypes = {
+        score: PT.object.isRequired,
+        onScoreUpdate: PT.func.isRequired,
+    };
 
     handleChange = (value) => {
         this.props.onScoreUpdate("points", value);
-    }
+    };
 
     render() {
         return (
             <GeneralScale
                 max={ 40 }
                 min={ 1 }
-                readOnly={ this.props.readOnly }
+                readOnly={ this.props.score.confirmed }
                 rowSize={ 10 }
                 scale="grid"
-                value={ this.props.scoreData.points }
+                value={ this.props.score.data.points }
                 onChange={ this.handleChange }
             />
         );

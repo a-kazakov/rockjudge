@@ -133,7 +133,7 @@ export default function translate(src, ...args) {
                 "reset_to_n": (n) => `Сброс на ${n}`,
                 "timing": "Длительность",
                 "red_card": "Красная",
-                "server_time": (t) => t !== null ? `Сохраненное время: ${t}` : "Нет сохраненного времени",
+                "server_time": (t) => t != null ? `Сохраненное время: ${t}` : "Нет сохраненного времени",
                 "stopwatch": "Секундомер",
                 "yellow_card": "Желтая",
                 "violations": "Нарушения",

@@ -1,12 +1,13 @@
-export default class SubMenu extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            children: PT.node.isRequired,
-            id: PT.string.isRequired,
-            title: PT.string.isRequired,
-        };
-    }
+import React from "react";
+
+import PT from "prop-types";
+
+export default class SubMenu extends React.Component {
+    static propTypes = {
+        children: PT.node.isRequired,
+        id: PT.string.isRequired,
+        title: PT.string.isRequired,
+    };
     isOpen() {
         return !!Number(sessionStorage.getItem(this.props.id));
     }
@@ -33,5 +34,3 @@ export default class SubMenu extends React.PureComponent {
         );
     }
 }
-
-SubMenu.displayName = "AdminPanel_Management_SideMenu_SubMenu";

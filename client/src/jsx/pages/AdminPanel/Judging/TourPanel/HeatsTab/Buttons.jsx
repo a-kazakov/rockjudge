@@ -1,10 +1,11 @@
-export default class Buttons extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            onSignal: PT.func.isRequired,
-        };
-    }
+import React from "react";
+
+import PT from "prop-types";
+
+export default class Buttons extends React.Component {
+    static propTypes = {
+        onSignal: PT.func.isRequired,
+    };
 
     handleDocxClick = () => {
         return this.props.onSignal("docx");
@@ -24,4 +25,3 @@ export default class Buttons extends React.PureComponent {
     }
 }
 
-Buttons.displayName = "AdminPanel_Judging_TourPanel_HeatsTab_Buttons";

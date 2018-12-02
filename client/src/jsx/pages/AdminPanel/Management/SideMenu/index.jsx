@@ -1,18 +1,18 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import Item from "./Item";
 import SubMenu from "./SubMenu";
 
-export default class SideMenu extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            activePage: PT.string,
-            activePageProps: PT.object.isRequired,
-            competition: PT.object.isRequired,
-            onNavigate: PT.func.isRequired,
-        };
-    }
+export default class SideMenu extends React.Component {
+    static propTypes = {
+        activePage: PT.string,
+        activePageProps: PT.object.isRequired,
+        competition: PT.object.isRequired,
+        onNavigate: PT.func.isRequired,
+    };
     static get defaultProps() {
         return {
             activePage: null,
@@ -70,5 +70,3 @@ export default class SideMenu extends React.PureComponent {
         );
     }
 }
-
-SideMenu.displayName = "AdminPanel_Management_SideMenu";

@@ -1,8 +1,9 @@
 import itertools
 from abc import ABCMeta, abstractmethod
 from fractions import Fraction as frac
-from typing import Any, Callable, Dict, Set, Union
+from typing import Any, Callable, Dict, Set, Union, List, Type, Optional
 
+from scoring_systems.base import ScoreInfo, RunInfo, TourComputationRequest, ScoreResult
 from .common import CachedClass, float_to_frac
 
 
@@ -101,15 +102,24 @@ def validate_card(value: Any) -> bool:
 class ScoreContextBase(CachedClass, metaclass=ABCMeta):
     CRITERIAS_MODIFIERS: Dict[str, Callable[[Dict[str, Any]], frac]] = {}
 
-    def __init__(self, score_id, raw_data, judge_role, acro_scores, scoring_system_name):
-        self.score_id = score_id
-        self.db_data = raw_data
+    def __init__(
+        self,
+        db_data: Dict[str, Any],
+        judge_role: str,
+        scoring_system_name: str,
+        acro_scores: List[float],
+    ) -> None:
+        self.db_data = db_data
         self.judge_role = judge_role
-        self.acro_scores = acro_scores
         self.scoring_system_name = scoring_system_name
+        self.acro_scores = acro_scores
+        self.score_info: Optional[ScoreInfo] = None
 
     @staticmethod
-    def get_class(judge_role, scoring_system_name):
+    def get_class(
+        judge_role: str,
+        scoring_system_name: str,
+    ) -> Type["ScoreContextBase"]:
         if judge_role == "dance_judge":
             if scoring_system_name in ("formation", "formation_acro", ):
                 return ScoreContextFormation
@@ -158,16 +168,38 @@ class ScoreContextBase(CachedClass, metaclass=ABCMeta):
         return ScoreContextNull
 
     @classmethod
-    def make(cls, **kwargs):
-        return cls.get_class(kwargs["judge_role"], kwargs["scoring_system_name"])(**kwargs)
+    def make_from_data(
+        cls,
+        db_data: Dict[str, Any],
+        judge_role: str,
+        scoring_system_name: str,
+        acro_scores: List[float],
+    ) -> "ScoreContextBase":
+        final_cls = cls.get_class(judge_role, scoring_system_name)
+        return final_cls(db_data, judge_role, scoring_system_name, acro_scores)
 
-    total_score: Union[str, float, int, frac]
+    @classmethod
+    def make_from_request(
+        cls,
+        score_info: ScoreInfo,
+        run_info: RunInfo,
+        tour_request: TourComputationRequest,
+        scoring_system_name: str,
+    ) -> "ScoreContextBase":
+        db_data = score_info.data
+        judge_role = tour_request.judge_roles[score_info.judge_id]
+        acro_scores = run_info.acro_scores
+        result = cls.make_from_data(db_data, judge_role, scoring_system_name, acro_scores)
+        result.score_info = score_info
+        return result
+
+    @property
     @abstractmethod
-    def _total_score(self) -> Union[str, float, int, frac]:
+    def total_score(self) -> str:
         pass
 
-    user_data: Dict[str, Any]
-    def _user_data(self) -> Dict[str, Any]:
+    @property
+    def user_data(self) -> Dict[str, Any]:
         return {
             **self.INITIAL_SCORES,
             **{
@@ -177,41 +209,30 @@ class ScoreContextBase(CachedClass, metaclass=ABCMeta):
             },
         }
 
-    counting_score: Dict[str, Any]
-    def _counting_score(self) -> Dict[str, Any]:
+    @property
+    def counting_score(self) -> Dict[str, Any]:
         return {
             key: (value if value is not None else self.DEFAULT_SCORES[key])
             for key, value in self.user_data.items()
         }
 
-    criterias: Dict[str, frac]
-    def _criterias(self) -> Dict[str, frac]:
+    @property
+    def criterias(self) -> Dict[str, frac]:
         return {
             key: modifier(self.counting_score)
             for key, modifier in self.CRITERIAS_MODIFIERS.items()
         }
 
-    def update(self, client_data: Dict[str, Any]) -> None:
-        cleared_data = {
-            key: (
-                self.counting_score[key] + client_data[key]["delta"]
-                if type(client_data[key]) is dict and "delta" in client_data[key]
-                else value
-            )
-            for key, value in client_data.items()
-        }
-        upd = {
-            key: value
-            for key, value in cleared_data.items()
-            if self.SCORES_VALIDATORS.get(key, ret_false)(value)
-        }
-        self.db_data = {
-            **self.db_data,
-            **upd,
-        }
-        for attr in ("total_score", "user_data", "counting_score", ):
-            if attr in self.__dict__:
-                delattr(self, attr)
+    @property
+    def result(self) -> ScoreResult:
+        return ScoreResult(
+            is_valid=True,
+            total_score_str=self.total_score,
+            extra_data={
+                "parts": self.user_data,
+                "criterias": {k: float(v) for k, v, in self.criterias.items()},
+            },
+        )
 
 
 class ScoreContextSimplified(ScoreContextBase):
@@ -228,7 +249,8 @@ class ScoreContextSimplified(ScoreContextBase):
         "points": lambda x: frac(x["points"]),
     }
 
-    def _total_score(self) -> Union[str, float, int, frac]:
+    @property
+    def total_score(self) -> Union[str, float, int, frac]:
         return str(int(self.counting_score["points"]))
 
 
@@ -277,7 +299,8 @@ class ScoreContextDanceExtended(ScoreContextBase):
         "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-30),
     }
 
-    def _total_score(self):
+    @property
+    def total_score(self) -> str:
         num_set = sum(self.user_data[key] is not None for key in self.INITIAL_SCORES.keys())
         if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
             return "–"
@@ -319,7 +342,8 @@ class ScoreContextDance(ScoreContextBase):
         "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-30),
     }
 
-    def _total_score(self):
+    @property
+    def total_score(self) -> str:
         num_set = sum(self.user_data[key] is not None for key in self.INITIAL_SCORES.keys())
         if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
             return "–"
@@ -343,8 +367,8 @@ class ScoreContextAmFinalDance(ScoreContextDanceExtended):
     CRITERIAS_MODIFIERS = {
         "fw_woman": make_apply_reduction("fw_woman", 5),
         "fw_man": make_apply_reduction("fw_man", 5),
-        "dance_figs": make_multiply("dance_figs", frac(5, 4)),
-        "composition": make_multiply("composition", frac(1)),
+        "dance_figs": make_combine_fields(df_accuracy=frac(5, 4), df_complexity=frac(5, 4), df_art=frac(5, 4)),
+        "composition": make_combine_fields(c_idea=1, c_performance=1, c_bonus=1),
         "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-30),
     }
 
@@ -377,7 +401,8 @@ class ScoreContextSolo(ScoreContextBase):
         "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-30),
     }
 
-    def _total_score(self):
+    @property
+    def total_score(self) -> str:
         num_set = sum(self.user_data[key] is not None for key in self.INITIAL_SCORES.keys())
         if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
             return "–"
@@ -428,14 +453,15 @@ class ScoreContextAcro(ScoreContextBase):
         "a8": validate_reduction,
     }
 
-    criterias: Dict[str, frac]
-    def _criterias(self) -> Dict[str, frac]:
+    @property
+    def criterias(self) -> Dict[str, frac]:
         return {
             f"a{idx}": (100 - float_to_frac(self.counting_score[f"a{idx}"])) * float_to_frac(base_score) * frac(1, 100)
             for idx, base_score in enumerate(self.acro_scores, start=1)
         }
 
-    def _total_score(self):
+    @property
+    def total_score(self) -> str:
         num_acros = len(self.acro_scores)
         num_set = sum(self.user_data[f"a{x}"] is not None for x in range(1, num_acros + 1))
         return f"{num_set} / {num_acros}"
@@ -492,7 +518,8 @@ class ScoreContextFormation(ScoreContextBase):
         "mistakes": make_combine_fields(small_mistakes=-2, big_mistakes=-10),
     }
 
-    def _total_score(self):
+    @property
+    def total_score(self) -> str:
         num_set = sum(self.user_data[key] is not None for key in self.INITIAL_SCORES.keys())
         if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
             return "–"
@@ -534,7 +561,8 @@ class ScoreContextFormationSimplified(ScoreContextBase):
         "mistakes": make_combine_fields(small_mistakes=-2, big_mistakes=-10),
     }
 
-    def _total_score(self):
+    @property
+    def total_score(self) -> str:
         num_set = sum(self.user_data[key] is not None for key in self.INITIAL_SCORES.keys())
         if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
             return "–"
@@ -563,7 +591,8 @@ class ScoreContextTechDance(ScoreContextBase):
         "card_reasons": make_validate_card_reasons("base"),
     }
 
-    def _total_score(self):
+    @property
+    def total_score(self) -> str:
         return self.user_data["card"] or "—"
 
 
@@ -590,7 +619,8 @@ class ScoreContextTechAcro(ScoreContextBase):
         "fall_down": make_validate_number(max_value=100),
     }
 
-    def _total_score(self):
+    @property
+    def total_score(self) -> str:
         card = self.user_data["card"] or "—"
         fall_down = self.user_data["fall_down"]
         return f"{card}, {fall_down}"
@@ -619,7 +649,8 @@ class ScoreContextTechFormation(ScoreContextBase):
         "undercount": make_validate_number(max_value=100),
     }
 
-    def _total_score(self):
+    @property
+    def total_score(self) -> str:
         card = self.user_data["card"] or "—"
         missing = self.user_data["undercount"]
         return f"{card}, {missing}"
@@ -651,7 +682,8 @@ class ScoreContextTechFormationAcro(ScoreContextBase):
         "fall_down": make_validate_number(max_value=100),
     }
 
-    def _total_score(self):
+    @property
+    def total_score(self) -> str:
         card = self.user_data["card"] or "—"
         missing = self.user_data["undercount"]
         fall_down = self.user_data["fall_down"]
@@ -675,7 +707,8 @@ class ScoreContextHead(ScoreContextBase):
         "card_reasons": make_validate_card_reasons("base", "acro", "formation"),
     }
 
-    def _total_score(self):
+    @property
+    def total_score(self) -> str:
         result = self.counting_score["card"]
         bonus = self.counting_score["bonus"]
         if bonus != 0:
@@ -691,5 +724,6 @@ class ScoreContextNull(ScoreContextBase):
     INITIAL_SCORES = {}
     SCORES_VALIDATORS = {}
 
-    def _total_score(self):
+    @property
+    def total_score(self) -> str:
         return "–"

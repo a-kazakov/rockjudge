@@ -1,92 +1,79 @@
-import LoadingComponent from "common/server/LoadingComponent";
-import Loader from "common/components/Loader";
+import React from "react";
 
-import CurrentHeat from "./CurrentHeat";
-import Header from "./Header";
+import _ from "l10n";
+import TourHeats from "pages/PresenterTablet/HeatsPage/TourHeats";
+import PT from "prop-types";
 import NoTourScreen from "./NoTourScreen";
 
-export default class HeatsPage extends LoadingComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            activeTourId: PT.number,
-            heat: PT.number.isRequired,
-            onHeatChange: PT.func.isRequired,
-        };
-    }
-
-    CLASS_ID = "presenter_tablet_heats";
-    API_MODELS = {
-        tour: {
-            model_type: "Tour",
-            model_id_getter: props => props.activeTourId,
-            schema: {
-                discipline: {},
-                runs: {
-                    participant: {
-                        "club": {},
-                        "sportsmen": {},
-                    },
-                },
-            },
-        },
+export default class HeatsPage extends React.Component {
+    static propTypes = {
+        competition: PT.object.isRequired,
     };
 
     constructor(props) {
         super(props);
         this.state = {
-            tour: null,
+            autoHeat: true,
         };
     }
 
-    onIdChanged = () => {
-        this.setState({
-            heat: 1,
-        });
-    }
+    handleAutoHeatCheckboxChange = (event) => this.setState({ autoHeat: event.target.checked });
 
-    handlePrevHeatClick = () => {
-        this.props.onHeatChange(this.props.heat - 1);
+    getActiveTours() {
+        let result = [];
+        for (const discipline of this.props.competition.disciplines) {
+            for (const tour of discipline.tours) {
+                if (tour.active) {
+                    result.push(tour);
+                    if (result.length >= 4) {
+                        return result;
+                    }
+                }
+            }
+        }
+        return result;
     }
-    handleNextHeatClick = () => {
-        this.props.onHeatChange(this.props.heat + 1);
+    renderTour(tour, layout) {
+        return (
+            <TourHeats
+                autoHeat={ this.state.autoHeat }
+                key={ tour.id }
+                layout={ layout }
+                tour={ tour }
+            />
+        );
     }
-
-    getHeatsCount() {
-        return Math.max(1, ...this.state.tour.runs.map(run => run.heat));
+    renderTours(tours) {
+        let layout = "small";
+        switch (tours.length) {
+            case 1: layout = "large"; break;
+            case 2: layout = "medium"; break;
+        }
+        return tours.map(tour => this.renderTour(tour, layout));
     }
-
     render() {
-        if (this.props.activeTourId === null) {
+        const tours = this.getActiveTours();
+        if (tours.length === 0) {
             return (
                 <NoTourScreen />
             );
         }
-        if (this.state.tour === null) {
-            return (
-                <div className="heats">
-                    <Loader />
-                </div>
-            );
-        }
-        const heats_count = this.getHeatsCount();
         return (
-            <div className="heats">
-                <Header
-                    heat={ this.props.heat }
-                    maxHeat={ heats_count }
-                    tour={ this.state.tour }
-                    onNextHeatClick={ this.handleNextHeatClick }
-                    onPrevHeatClick={ this.handlePrevHeatClick }
-                />
-                <CurrentHeat
-                    heat={ this.props.heat }
-                    maxHeat={ heats_count }
-                    runs={ this.state.tour.runs.filter(run => run.heat === this.props.heat) }
-                />
+            <div className="heats-page">
+                <div className="tours">
+                    { this.renderTours(tours) }
+                </div>
+                <div className="autoheat-switch">
+                    <label>
+                        <input
+                            checked={ this.state.autoHeat }
+                            type="checkbox"
+                            onChange={ this.handleAutoHeatCheckboxChange }
+                        />
+                        { _("presenter.labels.enable_auto_heat") }
+                    </label>
+                </div>
             </div>
         );
     }
 }
-
-HeatsPage.displayName = "PresenterTablet_HeatsPage";

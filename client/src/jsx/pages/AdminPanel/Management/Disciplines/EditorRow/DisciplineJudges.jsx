@@ -1,79 +1,62 @@
-import _ from "l10n";
-import rules_set from "rules_sets/loader";
+import React from "react";
 
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import PT from "prop-types";
+import rules_set from "rules_sets/loader";
 import DisciplineJudgeRow from "./DisciplineJudgeRow";
 
-export default class DisciplineJudges extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            defaultValue: PT.arrayOf(PT.object.isRequired).isRequired,
-            judges: PT.arrayOf(
-                PT.shape({
-                    id: PT.number.isRequired,
-                }).isRequired
-            ).isRequired,
+export default class DisciplineJudges extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        disabled: PT.bool.isRequired,
+        value: PT.arrayOf(
+            PT.shape({
+                judge_id: PT.number.isRequired,
+                role: PT.string.isRequired,
+            }).isRequired,
+        ).isRequired,
+        onChange: PT.func.isRequired,
+    };
+
+    handleAdd = () => {
+        const new_item = {
+            judge_id: this.props.competition.judges[0]?.id,
+            role: rules_set.meta.judge_roles[0],
         };
-    }
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            disciplineJudges: this.props.defaultValue.map(dj => ({
-                judge_id: dj.judge.id,
-                role: dj.role,
-            })),
-        };
-    }
-
-    get value() {
-        return this.state.disciplineJudges;
-    }
-
-    modifyValue(func) {
-        let djs = this.state.disciplineJudges.slice();
-        func(djs);
-        this.setState({
-            disciplineJudges: djs,
-        });
-    }
-
-    handleAddition = () => {
-        this.modifyValue(discipline_judges => {
-            discipline_judges.push({
-                judge_id: this.props.judges[0] && this.props.judges[0].id,
-                role: rules_set.meta.judge_roles[0],
-            });
-        });
-    }
+        const next_value = [].concat(this.props.value, [new_item]);
+        this.props.onChange(next_value);
+    };
     handleChange = (idx, value) => {
-        this.modifyValue(discipline_judges => {
-            discipline_judges[idx] = value;
-        });
-    }
-    handleDeletion = (idx) => {
-        this.modifyValue(discipline_judges => {
-            discipline_judges.splice(idx, 1);
-        });
-    }
+        let next_value = this.props.value.slice();
+        next_value[idx] = value;
+        this.props.onChange(next_value);
+    };
+    handleDelete = (idx) => {
+        let next_value = this.props.value.slice();
+        next_value.splice(idx, 1);
+        this.props.onChange(next_value);
+    };
 
     render() {
         return (
             <div className="discipline-judges">
-                { this.state.disciplineJudges.map((dj, idx) =>
+                { this.props.value.map((dj, idx) =>
                     <DisciplineJudgeRow
-                        disciplineJudge={ dj }
+                        competition={ this.props.competition }
+                        disabled={ this.props.disabled }
                         idx={ idx }
-                        judges={ this.props.judges }
                         key={ idx }
+                        value={ dj }
                         onChange={ this.handleChange }
-                        onDelete={ this.handleDeletion }
+                        onDelete={ this.handleDelete }
                     />
                 ) }
                 <button
                     className="add"
+                    disabled={ this.props.disabled }
                     type="button"
-                    onClick={ this.handleAddition }
+                    onClick={ this.handleAdd }
                 >
                     { _("global.buttons.add") }
                 </button>
@@ -82,4 +65,3 @@ export default class DisciplineJudges extends React.PureComponent {
     }
 }
 
-DisciplineJudges.displayName = "AdminPanel_Management_Disciplines_EditorRow_DisciplineJudges";

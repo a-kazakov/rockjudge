@@ -1,21 +1,21 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 
-export default class Row extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            idx: PT.number.isRequired,
-            sportsman: PT.shape({
-                last_name: PT.string.isRequired,
-                first_name: PT.string.isRequired,
-                year_of_birth: PT.string.isRequired,
-                gender: PT.oneOf(["M", "F"]).isRequired,
-                substitute: PT.bool.isRequired,
-            }).isRequired,
-            onChange: PT.func.isRequired,
-            onDelete: PT.func.isRequired,
-        };
-    }
+export default class Row extends React.Component {
+    static propTypes = {
+        idx: PT.number.isRequired,
+        sportsman: PT.shape({
+            last_name: PT.string.isRequired,
+            first_name: PT.string.isRequired,
+            year_of_birth: PT.string.isRequired,
+            gender: PT.oneOf(["M", "F"]).isRequired,
+            substitute: PT.bool.isRequired,
+        }).isRequired,
+        onChange: PT.func.isRequired,
+        onDelete: PT.func.isRequired,
+    };
     handleChange(field, value) {
         let new_sportsman = Object.assign({}, this.props.sportsman); // clone
         new_sportsman[field] = value;
@@ -91,5 +91,3 @@ export default class Row extends React.PureComponent {
         );
     }
 }
-
-Row.displayName = "AdminPanel_Management_Participants_EditorRow_SportsmenList_Row";

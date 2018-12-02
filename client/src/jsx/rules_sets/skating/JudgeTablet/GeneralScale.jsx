@@ -1,16 +1,16 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import NumberSelectorInput from "tablet_ui/NumberSelectorInput";
 import SelectorInput from "tablet_ui/SelectorInput";
 
-export default class GeneralScale extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            code: PT.any,
-            header: PT.string,
-            scale: PT.oneOf(["point5", "integer", "grid", "reduction"]).isRequired,
-            onChange: PT.func.isRequired,
-        };
-    }
+export default class GeneralScale extends React.Component {
+    static propTypes = {
+        code: PT.any,
+        header: PT.string,
+        scale: PT.oneOf(["point5", "integer", "grid", "reduction"]).isRequired,
+        onChange: PT.func.isRequired,
+    };
 
     static get defaultProps() {
         return {
@@ -32,7 +32,7 @@ export default class GeneralScale extends React.PureComponent {
     }
 
     handleChange = (value) => {
-        if (this.props.code !== null) {
+        if (this.props.code != null) {
             this.props.onChange(this.props.code, value);
         } else {
             this.props.onChange(value);
@@ -40,7 +40,7 @@ export default class GeneralScale extends React.PureComponent {
     };
 
     renderHeader() {
-        if (this.props.header === null) {
+        if (this.props.header == null) {
             return null;
         }
         return (

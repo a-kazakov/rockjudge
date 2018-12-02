@@ -1,231 +1,241 @@
-from fractions import Fraction as frac
+import random
+from typing import Any, Dict, Iterable, List, Optional, Set, TYPE_CHECKING, Tuple, Union
 
-import peewee
+from sqlalchemy import Column, Enum as EnumColumn, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy.orm import Session, relationship, backref
 
-from playhouse import postgres_ext
-
+from db import ModelBase
+from enums import AccessLevel, RunStatus
 from exceptions import ApiError
 from models.base_model import BaseModel
 from models.participant import Participant
+from models.program import Program
 from models.tour import Tour
+from scoring_systems.base import AcroScore, ParticipantId, RunId, RunInfo
 
 
-class Run(BaseModel):
-    class Meta:
-        indexes = (
-            (("participant", "tour"), True),
-            (("heat", "heat_secondary", "participant"), False),
-        )
-        order_by = ["heat", "heat_secondary", "participant"]
+if TYPE_CHECKING:
+    from api import ApiRequest
+    from models.run_acrobatic import RunAcrobatic
+    from models.score import Score
+    from mutations import MutationsKeeper
 
-    participant = peewee.ForeignKeyField(Participant, on_delete="RESTRICT")
-    tour = peewee.ForeignKeyField(Tour, related_name="runs", on_delete="CASCADE")
-    heat = peewee.IntegerField()
-    heat_secondary = peewee.IntegerField()
-    status = peewee.CharField(max_length=2, default="OK")  # OK, NP, DQ
-    program_name = peewee.CharField(null=True)
-    acrobatics = postgres_ext.BinaryJSONField(default={})
-    inherited_data = postgres_ext.BinaryJSONField(default={})
 
-    RO_PROPS = ["program_name", "status", "performed", "disqualified", "inherited_data"]
-    RW_PROPS = ["heat"]
+class Run(ModelBase, BaseModel):
+    # DB schema
 
-    PF_SCHEMA = {
-        "scores": {},
-        "acrobatic_overrides": {},
-        "tour": {
-            "discipline": {
-                "discipline_judges": {},
-            }
-        }
-    }
-    PF_CHILDREN = {
-        "acrobatics": {
-            "acrobatic_overrides": {},
-        },
-        "participant": None,
-        "scores": None,
-        "tour": None,
-    }
+    __tablename__ = "runs"
 
-    def get_data_to_inherit(self):
-        ordered_djs = list(self.tour.discipline_judges)
-        scores_index = {s.discipline_judge_id: s for s in self.scores}
-        ordered_scores = [scores_index.get(dj.id, None) for dj in ordered_djs]
-        return self.tour.scoring_system.get_run_data_to_inherit(
-            run_id=self.id,
-            scores_ids=[(s.id if s is not None else None) for s in ordered_scores],
-            scores=[(s.score_data if s is not None else {}) for s in ordered_scores],
-            judges_roles=[dj.role for dj in ordered_djs],
-            inherited_data=self.inherited_data,
-            acro_scores=self.get_acro_scores(),
-            status=self.status,
-            tour_name=self.tour.name,
-        )
+    __table_args__ = (
+        UniqueConstraint("participant_id", "tour_id", name="participant_tour_idx"),
+    )
 
-    def load_acrobatics(self, program, ws_message):
-        if program is None:
-            self.program_name = None
-            self.acrobatics = []
-        else:
-            self.program_name = program.name
-            self.acrobatics = program.acrobatics
-        self.save()
-        ws_message.add_model_update(
-            model_type=self.__class__,
-            model_id=self.id,
-            schema={
-                "acrobatics": {},
-                "scores": {},
-            },
-        )
+    id = Column(Integer, primary_key=True)
+    participant_id = Column(Integer, ForeignKey("participants.id", ondelete="CASCADE"), nullable=False)
+    tour_id = Column(Integer, ForeignKey("tours.id", ondelete="CASCADE"), nullable=False)
+    heat = Column(Integer, default=0, nullable=False)
+    heat_secondary = Column(Integer, nullable=False)
+    status = Column(EnumColumn(RunStatus), default=RunStatus.OK, nullable=False)
+    program_name = Column(String, nullable=True)
+    # inherited_data = Column(JSON, default={}, nullable=False)
 
-    def get_acrobatic_override(self, acrobatic_idx):
-        for override in self.acrobatic_overrides:
-            if override.acrobatic_idx == acrobatic_idx:
-                return override
-        return None
+    participant = relationship(Participant, backref=backref("runs", cascade="delete"))
+    tour = relationship(Tour, backref=backref("runs", cascade="delete"))
 
-    def set_acrobatic_override(self, acrobatic_idx, score, ws_message):
-        from models import AcrobaticOverride
-        override = self.get_acrobatic_override(acrobatic_idx)
-        if score is not None:
-            score = max(0, score)
-        if override is None:
-            if score is not None:
-                AcrobaticOverride.create(
-                    run=self,
-                    acrobatic_idx=acrobatic_idx,
-                    score=score,
-                )
-        else:
-            if score is not None:
-                override.score = score
-                override.save()
-            else:
-                override.delete_instance()
-        ws_message.add_model_update(
-            model_type=self.__class__,
-            model_id=self.id,
-            schema={
-                "acrobatics": {},
-                "scores": {},
-            },
-        )
-        ws_message.add_tour_results_update(self.tour_id)
+    acrobatics: Iterable["RunAcrobatic"]
+    scores: Iterable["Score"]
 
-    def set_status(self, new_value, ws_message):
-        if new_value == self.status:
-            return
-        if self.tour.finalized:
-            raise ApiError("errors.run.set_status_on_finalized")
-        if new_value not in ["OK", "NP", "DQ"]:
-            raise ApiError("errors.run.bad_status")
-        self.status = new_value
-        self.save()
-        ws_message.add_model_update(
-            model_type=self.__class__,
-            model_id=self.id,
-            schema={}
-        )
-        ws_message.add_tour_results_update(self.tour_id)
+    # Virtual fields
 
     @property
-    def performed(self):
-        return self.status == "OK"
+    def competition_id(self) -> int:
+        return self.tour.competition_id
+
+    # Custom model consts/vars
+
+    # Base properties
+
+    @property
+    def sorting_key(self) -> Tuple[Union[int, str], ...]:
+        return (self.heat, self.heat_secondary, self.id)
+
+    def validate(self) -> None:
+        if self.participant.competition_id != self.tour.competition_id:
+            raise ValueError("Tour and participant must belong to the same competition")
+
+    # Permissions
+
+    def check_read_permission(self, request: "ApiRequest") -> bool:
+        return self.get_auth(request.client).access_level != AccessLevel.NONE
+
+    def check_update_permission(self, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+        from models.discipline_judge import DisciplineJudge
+        auth = self.get_auth(request.client)
+        if auth.access_level == AccessLevel.ADMIN:
+            return True
+        if auth.access_level == AccessLevel.ANY_JUDGE:
+            return self.tour.scoring_system.get_judge_role_permissions(None).can_update_run_status
+        if auth.access_level == AccessLevel.JUDGE:
+            if set(data.keys()) == {"status"}:
+                dj = self.session.query(DisciplineJudge).filter_by(
+                    judge_id=auth.judge_id,
+                    discipline_id=self.tour.discipline_id,
+                ).first()
+                return self.tour.scoring_system.get_judge_role_permissions(dj.role).can_update_run_status
+            return False
+        return False
+
+    # Create logic
+
+    @classmethod
+    def before_create(cls, session: Session, data: Dict[str, Any], *, unsafe: bool) -> Dict[str, Any]:
+        return {
+            "heat_secondary": random.randint(0, 10**9),
+        }
+
+    def after_create(self, mk: "MutationsKeeper") -> None:
+        self.create_scores(mk, check_existing=False)
+
+    def submit_create_mutations(self, mk: "MutationsKeeper") -> None:
+        mk.submit_model_created(self)
+        mk.submit_tour_results_update(self.tour)
+
+    # Update logic
+
+    def before_update(self, data: Dict[str, Any], *, unsafe: bool) -> Dict[str, Any]:
+        if self.tour.finalized:
+            raise ApiError("errors.run.update_finalized")
+        data.pop("program_name", None)
+        if "status" in data:
+            data["status"] = RunStatus(data["status"])
+        return {}
+
+    def submit_update_mutations(self, mk: "MutationsKeeper", data: Dict[str, Any]) -> None:
+        mk.submit_model_updated(self)
+        if "status" in data:
+            mk.submit_tour_results_update(self.tour)
+
+    # Delete logic
+
+    def submit_delete_mutations(self, mk: "MutationsKeeper") -> None:
+        mk.submit_model_deleted(self)
+        mk.submit_tour_results_update(self.tour)
+
+    # Serialization logic
+
+    def serialize_extra(self) -> Dict[str, Any]:
+        return {
+            "status": self.status.value,
+        }
+
+    # Custom model logic
+
+    @property
+    def acrobatics_sorted(self) -> List["RunAcrobatic"]:
+        return sorted(self.acrobatics, key=lambda a: a.sorting_key)
+
+    @property
+    def scores_sorted(self) -> List["Score"]:
+        return sorted(self.scores, key=lambda s: s.sorting_key)
+
+    def make_scoring_system_request(self) -> RunInfo:
+        return RunInfo(
+            run_id=RunId(self.id),
+            participant_id=ParticipantId(self.participant_id),
+            status=self.status,
+            acro_scores=[AcroScore(acro.score) for acro in self.acrobatics_sorted],
+            scores=[score.make_scoring_system_request() for score in self.scores_sorted]
+        )
+
+    def create_scores(self, mk: "MutationsKeeper", *, check_existing: bool = True) -> None:
+        from models.score import Score
+        if check_existing:
+            existing_ids: Set[int] = {
+                score.discipline_judge.id
+                for score in self.scores
+            }
+        else:
+            existing_ids = set()
+        for discipline_judge in self.tour.discipline.discipline_judges:
+            if discipline_judge.id not in existing_ids:
+                Score.create(
+                    self.session,
+                    {
+                        "run": self,
+                        "discipline_judge": discipline_judge,
+                    },
+                    mk,
+                    unsafe=True,
+                )
+
+    def load_acrobatics(self, program: Optional[Program], mk: "MutationsKeeper") -> None:
+        from models.run_acrobatic import RunAcrobatic
+        deleted = False
+        for acro in self.acrobatics:
+            acro.delete(mk)
+            deleted = True
+        if deleted:
+            self.session.flush()
+        if program is None:
+            self.program_name = None
+            mk.submit_model_updated(self)
+            return
+        self.program_name = program.name
+        mk.submit_model_updated(self)
+        for idx, acro in enumerate(program.elements, start=1):
+            RunAcrobatic.create(
+                self.session,
+                {
+                    "run": self,
+                    "idx": idx,
+                    "description": acro.description,
+                    "initial_score": acro.score,
+                    "score": acro.score,
+                },
+                mk,
+                unsafe=True,
+            )
+        mk.submit_tour_results_update(self.tour)
+
+    def load_default_acrobatics(self, mk: "MutationsKeeper") -> None:
+        if self.program_name is not None:
+            return
+        if not self.tour.default_program:
+            return
+        program = self.participant.get_default_program(self.tour.default_program)
+        if program is None:
+            return
+        self.load_acrobatics(program, mk)
 
     @property
     def disqualified(self):
-        return self.status == "DQ"
+        return self.status == RunStatus.DQ
 
-    def update_model(self, new_data, ws_message):
-        if self.tour.finalized:
-            raise ApiError("errors.run.modify_finalized")
-        self.update_model_base(new_data)
-        ws_message.add_model_update(
-            model_type=Tour,
-            model_id=self.tour_id,
-            schema={
-                "runs": {},
-            }
-        )
-
-    def reset(self, ws_message):
+    def reset(self, mk: "MutationsKeeper", synchronize_session: Union[bool, str] = False) -> None:
+        from models.run_acrobatic import RunAcrobatic
         from models.score import Score
-        from models.acrobatic_override import AcrobaticOverride
+        from models.score_part import ScorePart
+
         if self.tour.finalized:
             raise ApiError("errors.run.modify_finalized")
-        Score.update(score_data={}, confirmed=False).where(Score.run == self).execute()
-        AcrobaticOverride.delete().where(AcrobaticOverride.run == self).execute()
-        ws_message.add_model_update(
-            model_type=self.__class__,
-            model_id=self.id,
-            schema={
-                "scores": {},
-                "acrobatics": {},
-            }
+
+        score_ids: List[int] = []
+        for score in self.session.query(Score).filter_by(run=self).all():
+            score.update(
+                { "confirmed": False },
+                mk,
+            )
+            score_ids.append(score.id)
+        (
+            self.session.query(ScorePart)
+                .filter(ScorePart.score_id.in_(score_ids))
+                .delete(synchronize_session=synchronize_session)
         )
-        ws_message.add_tour_results_update(self.tour_id)
-
-    def get_acro_scores(self):
-        acro_list = [acro["score"] for acro in self.acrobatics]
-        for override in self.acrobatic_overrides:
-            acro_list[override.acrobatic_idx] = override.score
-        return acro_list
-
-    def serialize_acrobatics(self, children=None):
-        acro_list = []
-        for idx, acro in enumerate(self.acrobatics):
-            acro["original_score"] = acro["score"]
-            override = self.get_acrobatic_override(idx)
-            if override is not None:
-                acro["score"] = override.score
-            acro["has_override"] = (override is not None)
-            acro_list.append(acro)
-        return acro_list
-
-    def serialize(self, children={}, discipline_judges=None):
-        ordered_djs = list(self.tour.discipline_judges)
-        scores_index = {s.discipline_judge_id: s for s in self.scores}
-        ordered_scores = [scores_index.get(dj.id, None) for dj in ordered_djs]
-        scores_obj = self.tour.scoring_system.get_run_scores(
-            run_id=self.id,
-            scores_ids=[(s.id if s is not None else None) for s in ordered_scores],
-            scores=[(s.score_data if s is not None else {}) for s in ordered_scores],
-            judges_ids=[j.id for j in ordered_djs],
-            judges_roles=[j.role for j in ordered_djs],
-            inherited_data=self.inherited_data,
-            acro_scores=self.get_acro_scores(),
-            status=self.status,
-            tour_name=self.tour.name,
+        for acro in self.session.query(RunAcrobatic).filter_by(run=self).all():
+            mk.submit_model_updated(acro)
+            self.session.query(RunAcrobatic).filter_by(run=self).update(
+            {"score": RunAcrobatic.initial_score},
+            synchronize_session=synchronize_session,
         )
-        result = self.serialize_props()
-        result["total_score"] = scores_obj["total_run_score"]
-        result["verbose_total_score"] = scores_obj["verbose_run_score"]
-        result = self.serialize_upper_child(result, "tour", children)
-        result = self.serialize_upper_child(result, "participant", children)
-        if discipline_judges is not None:
-            rev_discipline_judges = {
-                discipline_judge.id: discipline_judge
-                for discipline_judge in discipline_judges
-            }
-        result = self.serialize_lower_child(
-            result, "scores", children,
-            lambda x, c: x.serialize(
-                discipline_judge=(rev_discipline_judges[x.discipline_judge_id]
-                                  if discipline_judges is not None
-                                  else None),
-                children=c))
-        if "acrobatics" in children:
-            result["acrobatics"] = self.serialize_acrobatics(children=children["acrobatics"])
-        return result
-
-    def export(self):
-        result = self.serialize_props()
-        result.update({
-            "id": self.id,
-            "participant_id": self.participant_id,
-            "acrobatics": self.serialize_acrobatics(),
-            "scores": [score.export() for score in self.scores]
-        })
-        return result
+        mk.submit_tour_results_update(self.tour)
+        self.update({ "status": RunStatus.OK }, mk)

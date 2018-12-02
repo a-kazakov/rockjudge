@@ -1,16 +1,16 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 
-export default class GeneralEditor extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            children: PT.arrayOf(PT.node).isRequired,
-            initialData: PT.object.isRequired,
-            readOnly: PT.bool.isRequired,
-            onDiscard: PT.func.isRequired,
-            onSubmit: PT.func.isRequired,
-        };
-    }
+export default class GeneralEditor extends React.Component {
+    static propTypes = {
+        children: PT.arrayOf(PT.node).isRequired,
+        initialData: PT.object.isRequired,
+        readOnly: PT.bool.isRequired,
+        onDiscard: PT.func.isRequired,
+        onSubmit: PT.func.isRequired,
+    };
 
     constructor(props) {
         super(props);
@@ -100,4 +100,3 @@ export default class GeneralEditor extends React.PureComponent {
         );
     }
 }
-

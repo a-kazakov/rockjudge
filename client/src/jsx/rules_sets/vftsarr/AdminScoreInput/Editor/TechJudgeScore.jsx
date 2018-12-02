@@ -1,30 +1,24 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
+import checkSS from "../../common/checkSS";
 import GeneralEditor from "./GeneralEditor"
+import CardReasonsBlock from "./GeneralEditor/blocks/CardReasonsBlock";
 import NumberBlock from "./GeneralEditor/blocks/NumberBlock";
 import SelectorBlock from "./GeneralEditor/blocks/SelectorBlock";
-import CardReasonsBlock from "./GeneralEditor/blocks/CardReasonsBlock";
 import TimeBlock from "./GeneralEditor/blocks/TimeBlock";
-import checkSS from "../../common/checkSS";
 
-export default class TechJudgeScore extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            score: PT.shape({
-                data: PT.shape({
-                    raw_data: PT.object.isRequired,
-                }).isRequired,
-            }).isRequired,
-            tour: PT.shape({
-                scoring_system_name: PT.string.isRequired,
-            }).isRequired,
-            readOnly: PT.bool.isRequired,
-            onDiscard: PT.func.isRequired,
-            onSubmit: PT.func.isRequired,
-        };
-    }
+export default class TechJudgeScore extends React.Component {
+    static propTypes = {
+        readOnly: PT.bool.isRequired,
+        scoreData: PT.object.isRequired,
+        scoringSystemName: PT.string.isRequired,
+        onDiscard: PT.func.isRequired,
+        onSubmit: PT.func.isRequired,
+    };
 
     renderFallDown() {
-        if (!checkSS(this.props.tour.scoring_system_name, "acro")) {
+        if (!checkSS(this.props.scoringSystemName, "acro")) {
             return null;
         }
         return (
@@ -36,7 +30,7 @@ export default class TechJudgeScore extends React.PureComponent {
         );
     }
     renderUndercount() {
-        if (!checkSS(this.props.tour.scoring_system_name, "formation")) {
+        if (!checkSS(this.props.scoringSystemName, "formation")) {
             return null;
         }
         return (
@@ -50,7 +44,7 @@ export default class TechJudgeScore extends React.PureComponent {
     render() {
         return (
             <GeneralEditor
-                initialData={ this.props.score.data.raw_data }
+                initialData={ this.props.scoreData }
                 readOnly={ this.props.readOnly }
                 onDiscard={ this.props.onDiscard }
                 onSubmit={ this.props.onSubmit }
@@ -80,7 +74,7 @@ export default class TechJudgeScore extends React.PureComponent {
                 <CardReasonsBlock
                     field="card_reasons"
                     label="Card reasons"
-                    scoringSystemName={ this.props.tour.scoring_system_name }
+                    scoringSystemName={ this.props.scoringSystemName }
                 />
             </GeneralEditor>
         );

@@ -1,25 +1,25 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 
-export default class StatInfo extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            label: PT.string,
-            participants: PT.arrayOf(
-                PT.shape({
-                    sportsmen: PT.arrayOf(
-                        PT.shape({
-                            last_name: PT.string.isRequired,
-                            first_name: PT.string.isRequired,
-                            year_of_birth: PT.number.isRequired,
-                            gender: PT.oneOf(["M", "F"]).isRequired,
-                        }).isRequired
-                    ).isRequired,
-                }).isRequired
-            ).isRequired,
-            tableRow: PT.bool,
-        };
-    }
+export default class StatInfo extends React.Component {
+    static propTypes = {
+        label: PT.string,
+        participants: PT.arrayOf(
+            PT.shape({
+                sportsmen: PT.arrayOf(
+                    PT.shape({
+                        last_name: PT.string.isRequired,
+                        first_name: PT.string.isRequired,
+                        year_of_birth: PT.number.isRequired,
+                        gender: PT.oneOf(["M", "F"]).isRequired,
+                    }).isRequired
+                ).isRequired,
+            }).isRequired
+        ).isRequired,
+        tableRow: PT.bool,
+    };
     static get defaultProps() {
         return {
             tableRow: false,
@@ -66,7 +66,7 @@ export default class StatInfo extends React.PureComponent {
                 <tr>
                     <td
                         className="w-45"
-                        style={ { borderRight: "1pt solid black", fontWeight: "bold", } }
+                        style={ { borderRight: "1pt solid black", fontWeight: "bold" } }
                     >
                         <p className="text-left">
                             { this.props.label }
@@ -102,5 +102,3 @@ export default class StatInfo extends React.PureComponent {
         );
     }
 }
-
-StatInfo.displayName = "AdminPanel_Management_StartList_StatInfo";

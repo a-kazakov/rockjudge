@@ -1,13 +1,14 @@
-export default class Button extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            className: PT.string,
-            label: PT.string.isRequired,
-            signalMessage: PT.any.isRequired,
-            onSignal: PT.func.isRequired,
-        };
-    }
+import React from "react";
+
+import PT from "prop-types";
+
+export default class Button extends React.Component {
+    static propTypes = {
+        className: PT.string,
+        label: PT.string.isRequired,
+        signalMessage: PT.any.isRequired,
+        onSignal: PT.func.isRequired,
+    };
     static get defaultProps() {
         return {
             className: "",
@@ -29,5 +30,3 @@ export default class Button extends React.PureComponent {
         );
     }
 }
-
-Button.displayName = "AdminPanel_Judging_TourPanel_ScoresTab_Buttons_Button";

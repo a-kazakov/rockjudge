@@ -1,6 +1,8 @@
-import json
-import rsa
 import base64
+import json
+from typing import Any
+
+import rsa
 
 
 KEYS = {
@@ -17,15 +19,15 @@ def verify(struct):
         return False
 
 
-def decode(encoded):
+def decode(encoded: str) -> Any:
     try:
         tmp = encoded.replace("\n", "").replace("\r", "")
-        tmp = tmp.encode()
+        tmp = tmp.encode("utf-8")
         tmp = base64.b64decode(tmp)
         tmp = bytes(x ^ (idx ** 97 % 255) for idx, x in enumerate(tmp, start=1))
         struct = json.loads(tmp.decode("utf-8"))
         if not verify(struct):
             return None
         return struct
-    except:
+    except Exception:
         return None

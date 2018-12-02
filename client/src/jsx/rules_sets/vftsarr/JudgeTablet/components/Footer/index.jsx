@@ -1,14 +1,14 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import Button from "./Button";
 
-export default class Footer extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            children: PT.node.isRequired,
-            value: PT.any.isRequired,
-            onChange: PT.func.isRequired,
-        };
-    }
+export default class Footer extends React.Component {
+    static propTypes = {
+        children: PT.node.isRequired,
+        value: PT.any.isRequired,
+        onChange: PT.func.isRequired,
+    };
 
     render() {
         return (
@@ -25,4 +25,3 @@ export default class Footer extends React.PureComponent {
         )
     }
 }
-

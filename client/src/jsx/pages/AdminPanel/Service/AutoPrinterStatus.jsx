@@ -1,17 +1,17 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 import Loader from "common/components/Loader";
 
 let auto_printer = null;
 
-export default class AutoPrinterStatus extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                id: PT.number.isRequired,
-            }).isRequired,
-        };
-    }
+export default class AutoPrinterStatus extends React.Component {
+    static propTypes = {
+        competition: PT.shape({
+            id: PT.number.isRequired,
+        }).isRequired,
+    };
 
     constructor(props) {
         super(props);
@@ -41,7 +41,7 @@ export default class AutoPrinterStatus extends React.PureComponent {
     }
 
     render() {
-        if (this.state.available === null) {
+        if (this.state.available == null) {
             return <Loader />
         }
         if (!this.state.available) {
@@ -68,5 +68,3 @@ export default class AutoPrinterStatus extends React.PureComponent {
         )
     }
 }
-
-AutoPrinterStatus.displayName = "AdminPanel_Service_AutoPrinterStatus";

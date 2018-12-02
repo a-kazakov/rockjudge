@@ -1,19 +1,19 @@
+import React from "react";
+
+import PT from "prop-types";
 import Api from "common/server/Api";
 
-export default class HeatCell extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            editing: PT.bool.isRequired,
-            readOnly: PT.bool.isRequired,
-            run: PT.shape({
-                id: PT.number.isRequired,
-                heat: PT.number.isRequired,
-            }).isRequired,
-            onEditRequest: PT.func.isRequired,
-            onStopEditing: PT.func.isRequired,
-        };
-    }
+export default class HeatCell extends React.Component {
+    static propTypes = {
+        editing: PT.bool.isRequired,
+        readOnly: PT.bool.isRequired,
+        run: PT.shape({
+            id: PT.number.isRequired,
+            heat: PT.number.isRequired,
+        }).isRequired,
+        onEditRequest: PT.func.isRequired,
+        onStopEditing: PT.func.isRequired,
+    };
 
     constructor(props) {
         super(props);
@@ -21,7 +21,7 @@ export default class HeatCell extends React.PureComponent {
             inputValue: this.props.run.heat.toString(),
         }
     }
-    componentWillReceiveProps(next_props) {
+    UNSAFE_componentWIllReceiveProps(next_props) {
         if (!this.props.editing && next_props.editing) {
             this.setState({
                 inputValue: next_props.run.heat.toString(),
@@ -47,7 +47,7 @@ export default class HeatCell extends React.PureComponent {
         } else if (event.keyCode === 27) { // Esc
             this.props.onStopEditing();
         }
-    }
+    };
     handleStartEditing = () => {
         if (this.props.readOnly) {
             return;
@@ -56,15 +56,16 @@ export default class HeatCell extends React.PureComponent {
             type: "heat",
             run_id: this.props.run.id,
         });
-    }
+    };
 
     submit() {
         let value = parseInt(this._input.value, 10);
         if (isNaN(value)) {
             value = 0;
         }
-        Api("run.set", {
-            run_id: this.props.run.id,
+        Api("model/update", {
+            model_name: "Run",
+            model_id: this.props.run.id,
             data: {
                 heat: value,
             },
@@ -98,5 +99,3 @@ export default class HeatCell extends React.PureComponent {
         }
     }
 }
-
-HeatCell.displayName = "AdminPanel_Judging_TourPanel_ScoresTab_Row_HeatCell";

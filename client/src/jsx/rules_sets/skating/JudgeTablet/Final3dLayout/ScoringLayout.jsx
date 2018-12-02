@@ -1,19 +1,19 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 import NumberSelectorInput from "tablet_ui/NumberSelectorInput";
 
-export default class ScoringLayout extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            readOnly: PT.bool.isRequired,
-            scoreData: PT.shape({
-                tech: PT.number,
-                composition: PT.number,
-                art: PT.number,
-            }).isRequired,
-            onScoreUpdate: PT.func.isRequired,
-        };
-    }
+export default class ScoringLayout extends React.Component {
+    static propTypes = {
+        readOnly: PT.bool.isRequired,
+        scoreData: PT.shape({
+            tech: PT.number,
+            composition: PT.number,
+            art: PT.number,
+        }).isRequired,
+        onScoreUpdate: PT.func.isRequired,
+    };
 
     handleTechChange = (value) => {
         this.props.onScoreUpdate("tech", value);

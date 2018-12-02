@@ -1,35 +1,39 @@
-import _ from "l10n";
+import React from "react";
 
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import PT from "prop-types";
 import TourSelector from "../TourSelector";
 import HeatSelector from "./HeatSelector";
 
-export default class TourHeatControls extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.object.isRequired,
-            controlsState: PT.shape({
-                tour_id: PT.number,
-                heat: PT.number,
-            }).isRequired,
-            onChange: PT.func.isRequired,
-        };
-    }
+export default class TourHeatControls extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        controlsState: PT.shape({
+            tour_id: PT.number,
+            heat: PT.number,
+        }).isRequired,
+        onChange: PT.func.isRequired,
+    };
 
     handleTourChange = (new_value) => {
         let new_state = Object.assign({}, this.props.controlsState);
         new_state.tour_id = new_value;
         new_state.heat = null;
         this.props.onChange(new_state);
-    }
+    };
     handleHeatChange = (new_value) => {
         let new_state = Object.assign({}, this.props.controlsState);
         new_state.heat = new_value;
         this.props.onChange(new_state);
-    }
+    };
 
     renderHeatSelector() {
-        if (this.props.controlsState.tour_id === null) {
+        if (this.props.controlsState.tour_id == null) {
+            return null;
+        }
+        const tour = this.props.competition.global_storage.get("Tour", this.props.controlsState.tour_id);
+        if (!tour) {
             return null;
         }
         return (
@@ -38,7 +42,7 @@ export default class TourHeatControls extends React.PureComponent {
                     { _("screen_operator.headers.heat") }
                 </h3>
                 <HeatSelector
-                    tourId={ this.props.controlsState.tour_id }
+                    tour={ tour }
                     value={ this.props.controlsState.heat }
                     onHeatSelect={ this.handleHeatChange }
                 />
@@ -61,5 +65,3 @@ export default class TourHeatControls extends React.PureComponent {
         );
     }
 }
-
-TourHeatControls.displayName = "ScreenOperator_TourHeatControls";

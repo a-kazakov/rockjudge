@@ -1,53 +1,22 @@
-import _ from "l10n";
+import {React} from "HostModules";
 
-import getParticipantDisplay from "common/getParticipantDisplay";
 import {CRITERIAS_ORDER} from "common/constants";
 import getCard from "common/getCard";
-import checkSS from "common/checkSS";
+import getParticipantDisplay from "common/getParticipantDisplay";
+import _ from "l10n";
+import PT from "prop-types";
 
-export default class Row extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            row: PT.shape({
-                place: PT.number,
-                run: PT.shape({
-                    status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                    participant: PT.shape({
-                        number: PT.number.isRequired,
-                        name: PT.string.isRequired,
-                        sportsmen: PT.array.isRequired,
-                    }).isRequired,
-                    scores: PT.arrayOf(
-                        PT.shape({
-                            discipline_judge_id: PT.number.isRequired,
-                        }).isRequired
-                    ).isRequired,
-                    verbose_total_score: PT.shape({
-                        card: PT.oneOf(["OK", "YC", "RC"]),
-                        criterias_scores: PT.object,
-                        score_value: PT.number,
-                        acro_score: PT.number,
-                        fw_score: PT.number,
-                        undercount: PT.number,
-                        fall_down: PT.number,
-                    }),
-                }).isRequired,
-            }).isRequired,
-            tour: PT.shape({
-                scoring_system_name: PT.string.isRequired,
-            }).isRequired,
-        };
-    }
+export default class Row extends React.Component {
+    static propTypes = {
+        row: PT.shape({
+            run: PT.object.isRequired,
+            run_result: PT.object.isRequired,
+            scores: PT.object.isRequired,
+        }).isRequired,
+    };
 
-    getPlace() {
-        return this.props.row.run.status === "DQ"
-            ? null
-            : this.props.row.place;
-    }
     renderTotalScoreCell() {
-        const total_score = this.props.row.run.verbose_total_score;
-        if (this.props.row.run.status !== "OK") {
+        if (this.props.row.run_result.extra_data.status !== "OK") {
             return (
                 <td className="total-score">
                     <p className="text-center">
@@ -56,9 +25,9 @@ export default class Row extends React.PureComponent {
                 </td>
             );
         }
-        if (this.props.tour.scoring_system_name === "vftsarr.am_final_acro") {
-            const fw_score = total_score.fw_score.toFixed(3);
-            const acro_score = total_score.acro_score.toFixed(3);
+        if (this.props.row.run.tour.scoring_system_name === "vftsarr.am_final_acro") {
+            const fw_score = this.props.row.run_result.extra_data.fw_score?.toFixed(3) || "—";
+            const acro_score = this.props.row.run_result.extra_data.acro_score?.toFixed(3) || "—";
             return (
                 <td className="total-score">
                     <p className="text-center">
@@ -71,7 +40,7 @@ export default class Row extends React.PureComponent {
                         </em>
                         <br />
                         <strong>
-                            { `${_("results.labels.total_score") }: ${total_score.score_value.toFixed(3)}` }
+                            { `${_("results.labels.total_score") }: ${this.props.row.run_result.total_score_str}` }
                         </strong>
                     </p>
                 </td>
@@ -81,13 +50,13 @@ export default class Row extends React.PureComponent {
             <td className="total-score">
                 <p className="text-center">
                     <strong>
-                        { total_score.score_value.toFixed(3) }
+                        { this.props.row.run_result.total_score_str }
                     </strong>
                 </p>
             </td>
         );
     }
-    renderCriterias(criterias, table_key) {
+    renderCriteriasImpl(criterias, values, table_key) {
         const ROW_SIZE = 5;
         let row_buffer = [];
         let rows = [];
@@ -95,7 +64,7 @@ export default class Row extends React.PureComponent {
         const cell_style = { "border": "none", "width": `${cell_width}%` };
         for (let idx = 0; idx < criterias.length; ++idx) {
             const cr_name = criterias[idx];
-            const cr_value = this.props.row.run.verbose_total_score.criterias_scores[cr_name];
+            const cr_value = values[cr_name];
             const cr_name_loc = _(`score_parts.components.short.${cr_name}`);
             row_buffer.push(
                 <td
@@ -151,8 +120,8 @@ export default class Row extends React.PureComponent {
             </table>
         );
     }
-    renderJudgesScores() {
-        const criterias = this.props.row.run.verbose_total_score.criterias_scores;
+    renderCriterias() {
+        const criterias = this.props.row.run_result.extra_data.criterias_scores;
         if (!criterias) {
             return (
                 <span>&mdash;</span>
@@ -165,17 +134,15 @@ export default class Row extends React.PureComponent {
             .filter(c => !/^a\d$/.test(c))
             .sort((a, b) => CRITERIAS_ORDER.get(a) - CRITERIAS_ORDER.get(b));
         const result = [];
-        result.push(this.renderCriterias(dance_criterias, "dance"));
+        result.push(this.renderCriteriasImpl(dance_criterias, criterias, "dance"));
         if (acro_criterias.length > 0) {
-            result.push(this.renderCriterias(acro_criterias, "acro"));
+            result.push(this.renderCriteriasImpl(acro_criterias, criterias, "acro"));
         }
         return result;
     }
     renderAdditionalData() {
-        const need_undercount = checkSS(this.props.tour.scoring_system_name, "formation") &&
-            this.props.row.run.verbose_total_score.undercount > 0;
-        const need_fall_down = checkSS(this.props.tour.scoring_system_name, "acro") &&
-            this.props.row.run.verbose_total_score.fall_down > 0;
+        const need_undercount = (this.props.row.run_result.extra_data.undercount || 0) > 0;
+        const need_fall_down = (this.props.row.run_result.extra_data.fall_down || 0) > 0;
         if (!need_undercount && !need_fall_down) {
             return null;
         }
@@ -189,7 +156,7 @@ export default class Row extends React.PureComponent {
                                     <strong>
                                         { `${_("score_parts.tech.long.undercount")}: ` }
                                     </strong>
-                                    { this.props.row.run.verbose_total_score.undercount}
+                                    { this.props.row.run_result.extra_data.undercount }
                                 </p>
                             </td>
                         ) : null }
@@ -199,7 +166,7 @@ export default class Row extends React.PureComponent {
                                     <strong>
                                         { `${_("score_parts.tech.long.fall_down")}: ` }
                                     </strong>
-                                    { this.props.row.run.verbose_total_score.fall_down}
+                                    { this.props.row.run_result.extra_data.fall_down}
                                 </p>
                             </td>
                         ) : null }
@@ -216,7 +183,7 @@ export default class Row extends React.PureComponent {
                     style={ { borderRight: "1pt solid black" } }
                 >
                     <p className="text-center">
-                        { this.getPlace() }
+                        { this.props.row.run_result.place }
                     </p>
                 </td>
                 <td
@@ -231,14 +198,14 @@ export default class Row extends React.PureComponent {
                     { getParticipantDisplay(this.props.row.run.participant) }
                 </td>
                 <td className="text-center">
-                    { this.renderJudgesScores() }
+                    { this.renderCriterias() }
                     { this.renderAdditionalData() }
                 </td>
                 { this.renderTotalScoreCell() }
                 <td>
                     { getCard(
-                        this.props.row.run,
-                        this.props.tour,
+                        this.props.row.run_result,
+                        this.props.row.run.tour,
                         {reasons_style: {fontSize: "8pt"}, p_class: "text-center"})
                     }
                 </td>

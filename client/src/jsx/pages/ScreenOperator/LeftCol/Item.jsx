@@ -1,23 +1,23 @@
+import React from "react";
+
+import PT from "prop-types";
 import makeClassName from "common/makeClassName";
 
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
-export default class Item extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            active: PT.bool.isRequired,
-            screenData: PT.shape({
-                id: PT.string.isRequired,
-                name: PT.string.isRequired,
-            }).isRequired,
-            onScreenChange: PT.func.isRequired,
-        };
-    }
+export default class Item extends React.Component {
+    static propTypes = {
+        active: PT.bool.isRequired,
+        screenData: PT.shape({
+            id: PT.string.isRequired,
+            name: PT.string.isRequired,
+        }).isRequired,
+        onScreenChange: PT.func.isRequired,
+    };
 
     handleClick = () => {
         this.props.onScreenChange(this.props.screenData.id);
-    }
+    };
 
     getClassName() {
         return makeClassName({
@@ -36,5 +36,3 @@ export default class Item extends React.PureComponent {
         );
     }
 }
-
-Item.displayName = "ScreenOperator_LeftCol_Item";

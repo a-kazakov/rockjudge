@@ -1,3 +1,7 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
+
 const SCALE_SIZES = {
     "dance_figs": 25,
     "composition": 20,
@@ -6,35 +10,17 @@ const SCALE_SIZES = {
     "points": 40,
 };
 
-export default class Cell extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            criteria: PT.string.isRequired,
-            disciplineJudge: PT.shape({
-                id: PT.number.isRequired,
-            }).isRequired,
-            medians: PT.instanceOf(Map).isRequired,
-            run: PT.shape({
-                acrobatics: PT.arrayOf(
-                    PT.shape({
-                        score: PT.number.isRequired,
-                    }).isRequired,
-                ).isRequired,
-            }).isRequired,
-            score: PT.shape({
-                confirmed: PT.bool.isRequired,
-                data: PT.shape({
-                    raw_data: PT.object.isRequired,
-                    criterias_values: PT.object.isRequired,
-                }).isRequired,
-            }).isRequired,
-            table: PT.instanceOf(Map).isRequired,
-        };
-    }
+export default class Cell extends React.Component {
+    static propTypes = {
+        criteria: PT.string.isRequired,
+        disciplineJudge: PT.object.isRequired,
+        medians: PT.instanceOf(Map).isRequired,
+        score: PT.object.isRequired,
+        table: PT.instanceOf(Map).isRequired,
+    };
 
     static formatNumber(number) {
-        if (number === null) {
+        if (number == null) {
             return "—";
         }
         return number.toFixed(5).replace(/0+$/, "").replace(/\.$/, "");
@@ -48,7 +34,7 @@ export default class Cell extends React.PureComponent {
         let scale_size = SCALE_SIZES[this.props.criteria] || 10;
         if (this.props.criteria.length === 2 && this.props.criteria[0] === "a") {
             const acro_idx = parseInt(this.props.criteria.slice(1)) - 1;
-            const acro_score = this.props.run.acrobatics[acro_idx].score;
+            const acro_score = this.props.score.run.acrobatics[acro_idx].score;
             scale_size = Math.max(0.5, acro_score)
         }
         const diff = Math.abs(median - cell_data.criteria_value) / scale_size - 1e-5;

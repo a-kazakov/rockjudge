@@ -105,7 +105,7 @@
                 }
             }
         }
-        .heats {
+        .heats-page {
             .flex-item-stretch();
             .flex-col();
             .splash-screen {
@@ -116,64 +116,121 @@
                     height: 50px;
                 }
             }
-            header {
+            .tours {
+                .flex-item-stretch();
                 .flex-row();
-                background-color: @color-medium;
-                color: white;
-                padding: 10px;
-                .button-container {
-                    .flex-item();
-                    .flex-centered();
-                    width: 120px;
-                    &.left {
-                        text-align: left;
+                align-items: stretch;
+                justify-content: space-evenly;
+                flex-wrap: wrap;
+                .heats {
+                    .flex-col();
+                    flex-grow: 0;
+                    flex-shrink: 0;
+                    &.large {
+                        width: 100%;
                     }
-                    &.right {
-                        text-align: right;
+                    &.medium {
+                        width: 48%;
+                        border: 2px solid @color-medium;
+                        margin: 2vh 0;
                     }
-                    button {
-                        .button-primary();
+                    &.small {
+                        width: 48%;
+                        border: 2px solid @color-medium;
+                        margin: 1vh 0;
                     }
-                }
-                .data {
-                    .flex-item-stretch();
-                    .flex-centered();
-                    text-align: center;
-                    h1 {
-                        font-size: 15px;
+                    header {
+                        .flex-row();
+                        background-color: @color-medium;
+                        color: white;
+                        padding: 10px;
+                        .button-container {
+                            .flex-item();
+                            .flex-centered();
+                            width: 60px;
+                            &.left {
+                                text-align: left;
+                            }
+                            &.right {
+                                text-align: right;
+                            }
+                            button {
+                                .button-primary();
+                            }
+                        }
+                        .data {
+                            .flex-item-stretch();
+                            .flex-centered();
+                            text-align: center;
+                            h1 {
+                                font-size: 15px;
+                            }
+                            h2 {
+                                font-size: 14px;
+                            }
+                            h1, h2 {
+                                margin: 0;
+                                font-weight: normal;
+                            }
+                        }
                     }
-                    h2 {
-                        font-size: 14px;
-                    }
-                    h1, h2 {
-                        margin: 0;
-                        font-weight: normal;
+                    .content {
+                        .tablet-scrollable();
+                        .flex-col();
+                        .flex-centered();
+                        table {
+                            &.small {
+                                margin: 0 auto;
+                                td {
+                                    padding: 3px;
+                                    &.number {
+                                        font-weight: bold;
+                                        font-size: 14px;
+                                    }
+                                    &.name {
+                                        font-size: 14px;
+                                        font-weight: normal;
+                                    }
+                                }
+                            }
+                            width: 95%;
+                            max-width: 600px;
+                            margin: 10px auto;
+                            td {
+                                padding: 5px;
+                                &.number {
+                                    width: 70px;
+                                    text-align: center;
+                                    font-weight: bold;
+                                    font-size: 20px;
+                                    background-color: @color-light;
+                                }
+                                &.name {
+                                    font-weight: bold;
+                                    padding-left: 10px;
+                                }
+                                &.club {
+                                     padding-left: 10px;
+                                }
+                           }
+                        }
+                        .spacer {
+                            height: 100px;
+                        }
                     }
                 }
             }
-            .heat {
-                .flex-item-stretch();
-                .tablet-scrollable();
-                .flex-centered();
-                table {
-                    width: 80%;
-                    margin: 10px auto;
-                    td {
-                        border: 2px solid black;
-                        padding: 5px;
-                        &.number {
-                            width: 70px;
-                            text-align: center;
-                            font-weight: bold;
-                            font-size: 20px;
-                        }
-                        &.name {
-                            font-weight: bold;
-                        }
-                    }
-                }
-                .spacer {
-                    height: 100px;
+            .autoheat-switch {
+                font-weight: bold;
+                text-align: center;
+                background-color: @color-dark;
+                color: white;
+                height: 30px;
+                line-height: 30px;
+                input {
+                    margin-right: 10px;
+                    border: none;
+                    background-color: white;
                 }
             }
         }

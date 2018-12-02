@@ -1,52 +1,44 @@
-import LoadingComponent from "LoadingComponent";
+import {React} from "HostModules";
 
-export default class HeatsMultipleParticipants extends LoadingComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
+import PT from "prop-types";
+
+export default class HeatsMultipleParticipants extends React.Component {
+    static propTypes = {
+        activeTour: PT.object,
+        competition: PT.object.isRequired,
+        showScore: PT.bool,
+        onActiveTourIdChange: PT.func.isRequired,
+    };
+    static get defaultProps() {
         return {
-            competition: PT.shape({
-                screen_data: PT.shape({
-                    controls_state: PT.shape({
-                        tour_id: PT.number.isRequired,
-                        heat: PT.number,
-                    }).isRequired,
-                }).isRequired,
-            }).isRequired,
+            showScore: true,
         };
     }
 
-    CLASS_ID = "screen_heat_mult_participants";
-    API_MODELS = {
-        tour: {
-            model_type: "Tour",
-            model_id_getter: props => props.competition.screen_data.controls_state.tour_id,
-            schema: {
-                discipline: {
-                    discipline_judges: {},
-                },
-                runs: {
-                    participant: {},
-                    scores: {},
-                },
-            },
-        },
-    };
+    componentDidMount() {
+        this.ensureCorrectTour();
+    }
+    componentDidUpdate() {
+        this.ensureCorrectTour();
+    }
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            tour: null,
-        };
+    ensureCorrectTour() {
+        if (!this.is_tour_loaded) {
+            setTimeout(() => this.props.onActiveTourIdChange(this.controls.tour_id || null));
+        }
     }
 
     get controls() {
         return this.props.competition.screen_data.controls_state;
     }
+    get is_tour_loaded() {
+        return (this.props.activeTour?.id || null) === (this.controls.tour_id || null);
+    }
 
     canShowScores(run) {
         const scores_map = new Map(run.scores.map(s => [s.discipline_judge_id, s]));
-        for (const dj of this.state.tour.discipline.discipline_judges) {
-            if (["dance_judge", "acro_judge"].indexOf(dj.role) >= 0 && !scores_map.get(dj.id).confirmed) {
+        for (const dj of this.props.activeTour.discipline.discipline_judges) {
+            if (["dance_judge", "acro_judge"].includes(dj.role) && !scores_map.get(dj.id).confirmed) {
                 return false;
             }
         }
@@ -58,10 +50,11 @@ export default class HeatsMultipleParticipants extends LoadingComponent {
         );
     }
     renderResult(run) {
+        if (!this.props.showScore) {
+            return null;
+        }
         const score_class = this.canShowScores(run) ? "score" : "score hidden";
-        const score = typeof run.verbose_total_score.primary_score !== "undefined"
-            ? run.verbose_total_score.primary_score.toFixed(2)
-            : "";
+        const score = run.tour.results.runs_results[run.id]?.total_score_str ?? "";
         return (
             <div className={ score_class }>
                 { `Результат: ${score}` }
@@ -70,7 +63,7 @@ export default class HeatsMultipleParticipants extends LoadingComponent {
     }
 
     renderRun(run) {
-        const class_name = run.performed ? "run" : "run hidden";
+        const class_name = run.status === "OK" ? "run" : "run hidden";
         const name = run.participant.formation_name === ""
             ? run.participant.sportsmen.map(s => `${s.last_name} ${s.first_name}`).join("\n")
             : run.participant.formation_name;
@@ -87,11 +80,11 @@ export default class HeatsMultipleParticipants extends LoadingComponent {
         );
     }
     renderRuns() {
-        if (this.controls.heat === null) {
+        if (this.controls.heat == null) {
             return null;
         }
-        const runs = this.state.tour.runs.filter(r => r.heat === this.controls.heat);
-        const two_rows = runs.length > 4;
+        const runs = this.props.activeTour.runs.filter(r => r.heat === this.controls.heat);
+        const two_rows = runs.length >= 4;
         const class_name = two_rows ? "runs two-rows" : "runs";
         return (
             <div className={ class_name }>
@@ -100,10 +93,10 @@ export default class HeatsMultipleParticipants extends LoadingComponent {
         );
     }
     renderHeat() {
-        if (this.controls.heat === null) {
+        if (this.controls.heat == null) {
             return null;
         }
-        const num_heats = Math.max(...this.state.tour.runs.map(r => r.heat));
+        const num_heats = Math.max(0, ...this.props.activeTour.runs.map(r => r.heat));
         return (
             <div className="heat">
                 { `Заход ${this.controls.heat}/${num_heats}` }
@@ -111,16 +104,16 @@ export default class HeatsMultipleParticipants extends LoadingComponent {
         );
     }
     render() {
-        if (this.state.tour === null) {
+        if (!this.is_tour_loaded || this.props.activeTour == null) {
             return this.renderEmpty();
         }
         return (
             <div className="HeatsMultipleParticipants">
                 <div className="discipline-name">
-                    { this.state.tour.discipline.name }
+                    { this.props.activeTour.discipline.name }
                 </div>
                 <div className="tour-name">
-                    { this.state.tour.name }
+                    { this.props.activeTour.name }
                 </div>
                 { this.renderHeat() }
                 { this.renderRuns() }
@@ -128,5 +121,3 @@ export default class HeatsMultipleParticipants extends LoadingComponent {
         );
     }
 }
-
-HeatsMultipleParticipants.displayName = "HeatsMultipleParticipants";

@@ -1,6 +1,8 @@
+import React from "react";
+
 import _ from "l10n";
 
-export default class NoTourScreen extends React.PureComponent {
+export default class NoTourScreen extends React.Component {
     render() {
         return (
             <div className="heats">
@@ -15,4 +17,3 @@ export default class NoTourScreen extends React.PureComponent {
     }
 }
 
-NoTourScreen.displayName = "PresenterTablet_HeatsPage_NoTourScreen";

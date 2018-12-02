@@ -1,54 +1,65 @@
-import _ from "l10n";
-import Api from "common/server/Api";
-import websocket from "common/server/websocket";
-import storage from "common/server/storage";
+import React from "react";
 
 import Loader from "common/components/Loader";
-
+import _ from "l10n";
+import PT from "prop-types";
 import Row from "./Row";
-import CreationRow from "./CreationRow";
+import Storage from "common/server/Storage";
+import AllCompetitionsSubscription from "common/server/Storage/subscriptions/AllCompetitionsSubscription";
+import UniversalTable from "pages/AdminPanel/Management/UniversalTable";
+import EditorRow from "./EditorRow";
+import CreationButton from "./CreationButton";
+import FieldTypes from "pages/AdminPanel/Management/UniversalTable/FieldTypes";
 
-export default class CompetitionsManager extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            rulesSets: PT.arrayOf(
-                PT.arrayOf(
-                    PT.string.isRequired,
-                ).isRequired,
+export default class CompetitionsManager extends UniversalTable {
+    static propTypes = {
+        rulesSets: PT.arrayOf(
+            PT.arrayOf(
+                PT.string.isRequired,
             ).isRequired,
-        };
+        ).isRequired,
+    };
+
+    static DISPLAY_COMPONENT = Row;
+    static EDITOR_COMPONENT = EditorRow;
+    static CREATION_BUTTON_COMPONENT = CreationButton;
+    static MODEL_NAME = "Competition";
+    static FIELDS = [
+        FieldTypes.makeTextField("name"),
+        FieldTypes.makeTextField("date"),
+        {name: "active", defaultValue: true},
+        {
+            name: "rules_set",
+            defaultValueGetter: (context) => context.rulesSets[0]?.[0] || '',
+        },
+        {name: "info", defaultValueGetter: () => []},
+    ];
+
+    state = {
+        competitionsStorage: null,
+    };
+
+    componentDidMount() {
+        this._storage = new Storage();
+        this._storage.init(this.reload).then(this.subscribe).catch(console.error.bind(console));
     }
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            competitions: null,
-        };
-        websocket.addListener("db_update", this.reloadFromStorage);
-        websocket.addListener("competition_list_update", this.loadData);
-        websocket.addListener("reload_data", this.loadData);
-        this.loadData();
+    subscribe = () => {
+        this._competitions_subscription = new AllCompetitionsSubscription();
+        this._storage.subscribe(this._competitions_subscription)
+            .then(this.updateCompetitionsStorage)
+            .catch(console.error.bind(console));
+    };
+
+    updateCompetitionsStorage = (competitionsStorage) => {
+        this.setState({competitionsStorage});
+    };
+
+    reload = () => this.forceUpdate();
+
+    getEntries() {
+        return this.state.competitionsStorage.getType("Competition");
     }
-    reloadFromStorage = () => {
-        const serialized = storage.get("Competition").all().map(c => c.serialize({}));
-        this.setState({
-            competitions: serialized,
-        });
-    };
-    loadData = () => {
-        Api("competition.get_all", {
-            children: {},
-        })
-            .onSuccess(response => {
-                storage.del("Competition");
-                for (const competition of response) {
-                    storage.addModel("Competition", competition.id, competition.data, {});
-                }
-                this.reloadFromStorage();
-            })
-            .send();
-    };
 
     renderTable() {
         return (
@@ -66,23 +77,14 @@ export default class CompetitionsManager extends React.PureComponent {
                         </th>
                         <th className="delete" />
                     </tr>
-                    { this.state.competitions.map((competition, idx) =>
-                        <Row
-                            competition={ competition }
-                            idx={ idx }
-                            key={ competition.id }
-                            rulesSets={ this.props.rulesSets }
-                        />
-                    ) }
-                    <CreationRow
-                        rulesSets={ this.props.rulesSets }
-                    />
+                    { this.renderRows() }
+                    { this.renderCreationButton() }
                 </tbody>
             </table>
         );
     }
     render() {
-        if (this.state.competitions === null) {
+        if (this.state.competitionsStorage == null)  {
             return (
                 <Loader />
             );
@@ -101,5 +103,3 @@ export default class CompetitionsManager extends React.PureComponent {
         );
     }
 }
-
-CompetitionsManager.displayName = "CompetitionsManager";

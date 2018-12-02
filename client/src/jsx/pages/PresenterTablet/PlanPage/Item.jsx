@@ -1,16 +1,17 @@
-export default class Item extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            item: PT.shape({
-                estimated_beginning: PT.string.isRequired,
-                estimated_duration: PT.string.isRequired,
-                tour_id: PT.number,
-                verbose_name: PT.string.isRequired,
-            }).isRequired,
-            tours: PT.object.isRequired,
-        };
-    }
+import React from "react";
+
+import PT from "prop-types";
+
+export default class Item extends React.Component {
+    static propTypes = {
+        item: PT.shape({
+            estimated_beginning: PT.string.isRequired,
+            estimated_duration: PT.string.isRequired,
+            tour_id: PT.number,
+            verbose_name: PT.string.isRequired,
+        }).isRequired,
+        tours: PT.object.isRequired,
+    };
 
     makeRowRef = (ref) => {
         if (this._scrolled || !ref) {
@@ -39,7 +40,7 @@ export default class Item extends React.PureComponent {
         );
     }
     renderNormal() {
-        if (this.props.item.tour_id === null) {
+        if (this.props.item.tour_id == null) {
             return this.renderVerbose();
         }
         const { tour, discipline } = this.props.tours.get(this.props.item.tour_id);
@@ -69,5 +70,3 @@ export default class Item extends React.PureComponent {
             : this.renderNormal();
     }
 }
-
-Item.displayName = "PresenterTablet_PlanPage_Item";

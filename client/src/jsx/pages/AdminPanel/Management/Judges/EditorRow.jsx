@@ -1,65 +1,61 @@
+import React from "react";
+
 import _ from "l10n";
+import PT from "prop-types";
+import makeClassName from "common/makeClassName";
 
-export default class EditorRow extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            judge: PT.shape({
-                number: PT.string.isRequired,
-                category: PT.string.isRequired,
-                name: PT.string.isRequired,
-                role_description: PT.string.isRequired,
-                external_id: PT.string,
-                sp: PT.number.isRequired,
-            }).isRequired,
-            newJudge: PT.bool,
-            onStopEditing: PT.func.isRequired,
-            onSubmit: PT.func.isRequired,
-        };
-    }
-    static get defaultProps() {
-        return {
-            newJudge: false,
-        }
-    }
+export default class EditorRow extends React.Component {
+    static propTypes = {
+        creating: PT.bool.isRequired,
+        formData: PT.shape({
+            number: PT.string.isRequired,
+            category: PT.string.isRequired,
+            name: PT.string.isRequired,
+            role_description: PT.string.isRequired,
+            external_id: PT.string.isRequired,
+            sp: PT.string.isRequired,
+        }).isRequired,
+        loading: PT.bool.isRequired,
+        onDiscard: PT.func.isRequired,
+        onFieldChange: PT.func.isRequired,
+        onSubmit: PT.func.isRequired,
+    };
 
-    makeCategoryRef        = (ref) => this._category = ref;
-    makeNameRef            = (ref) => this._name = ref;
-    makeRoleDescriptionRef = (ref) => this._role_description = ref;
-    makeExternalIdRef      = (ref) => this._external_id = ref;
-    makeSpRef              = (ref) => this._sp = ref;
-
-    makeNumberRef = (ref) => {
-        if (ref && !this._number) {
-            ref.select();
-        }
-        this._number = ref;
-    }
-
+    handleNumberChange = (event) => this.props.onFieldChange("number", event.target.value);
+    handleCategoryChange = (event) => this.props.onFieldChange("category", event.target.value);
+    handleNameChange = (event) => this.props.onFieldChange("name", event.target.value);
+    handleRoleDescriptionChange = (event) => this.props.onFieldChange("role_description", event.target.value);
+    handleExternalIdChange = (event) => this.props.onFieldChange("external_id", event.target.value);
+    handleSpChange = (event) => this.props.onFieldChange("sp", event.target.value);
     handleSubmission = (event) => {
         event.preventDefault();
-        this.props.onSubmit(this.serialize());
-    }
-
-    serialize() {
-        return {
-            name: this._name.value,
-            number: this._number.value,
-            category: this._category.value,
-            role_description: this._role_description.value,
-            sp: parseInt(this._sp.value, 10),
-            external_id: this._external_id.value !== ""
-                ? this._external_id.value
-                : null,
-        }
-    }
+        this.props.onSubmit();
+    };
 
     getClassName() {
-        let result = "editor";
-        if (this.props.newJudge) {
-            result += " create";
-        }
-        return result;
+        return makeClassName({
+            "editor": true,
+            "create": this.props.creating,
+        });
+    }
+    renderButtons() {
+        return (
+            <div className="buttons vertical">
+                <button
+                    disabled={ this.props.loading }
+                    type="submit"
+                >
+                    { _("global.buttons.submit") }
+                </button>
+                <button
+                    disabled={ this.props.loading }
+                    type="button"
+                    onClick={ this.props.onDiscard }
+                >
+                    { _("global.buttons.discard") }
+                </button>
+            </div>
+        );
     }
     render() {
         return (
@@ -70,8 +66,9 @@ export default class EditorRow extends React.PureComponent {
                             <label className="full-width">
                                 { _("models.judge.number") }
                                 <input
-                                    defaultValue={ this.props.judge.number }
-                                    ref={ this.makeNumberRef }
+                                    disabled={ this.props.loading }
+                                    value={ this.props.formData.number }
+                                    onChange={ this.handleNumberChange }
                                 />
                             </label>
                         </div>
@@ -79,8 +76,9 @@ export default class EditorRow extends React.PureComponent {
                             <label className="full-width">
                                 { _("models.judge.category") }
                                 <input
-                                    defaultValue={ this.props.judge.category }
-                                    ref={ this.makeCategoryRef }
+                                    disabled={ this.props.loading }
+                                    value={ this.props.formData.category }
+                                    onChange={ this.handleCategoryChange }
                                 />
                             </label>
                         </div>
@@ -88,8 +86,9 @@ export default class EditorRow extends React.PureComponent {
                             <label className="full-width">
                                 { _("models.judge.name") }
                                 <input
-                                    defaultValue={ this.props.judge.name }
-                                    ref={ this.makeNameRef }
+                                    disabled={ this.props.loading }
+                                    value={ this.props.formData.name }
+                                    onChange={ this.handleNameChange }
                                 />
                             </label>
                         </div>
@@ -97,8 +96,9 @@ export default class EditorRow extends React.PureComponent {
                             <label className="full-width">
                                 { _("models.judge.role_description") }
                                 <input
-                                    defaultValue={ this.props.judge.role_description }
-                                    ref={ this.makeRoleDescriptionRef }
+                                    disabled={ this.props.loading }
+                                    value={ this.props.formData.role_description }
+                                    onChange={ this.handleRoleDescriptionChange }
                                 />
                             </label>
                         </div>
@@ -106,8 +106,9 @@ export default class EditorRow extends React.PureComponent {
                             <label className="full-width">
                                 { _("models.judge.external_id") }
                                 <input
-                                    defaultValue={ this.props.judge.external_id || "" }
-                                    ref={ this.makeExternalIdRef }
+                                    disabled={ this.props.loading }
+                                    value={ this.props.formData.external_id }
+                                    onChange={ this.handleExternalIdChange }
                                 />
                             </label>
                         </div>
@@ -115,24 +116,14 @@ export default class EditorRow extends React.PureComponent {
                             <label className="full-width">
                                 { _("models.judge.sp") }
                                 <input
-                                    className="full-width"
-                                    defaultValue={ this.props.judge.sp }
-                                    ref={ this.makeSpRef }
+                                    disabled={ this.props.loading }
+                                    value={ this.props.formData.sp }
+                                    onChange={ this.handleSpChange }
                                 />
                             </label>
                         </div>
                         <div className="col-3">
-                            <div className="buttons vertical">
-                                <button type="submit">
-                                    { _("global.buttons.submit") }
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={ this.props.onStopEditing }
-                                >
-                                    { _("global.buttons.discard") }
-                                </button>
-                            </div>
+                            { this.renderButtons() }
                         </div>
                     </form>
                 </td>
@@ -141,4 +132,3 @@ export default class EditorRow extends React.PureComponent {
     }
 }
 
-EditorRow.displayName = "AdminPanel_Management_Judges_EditorRow";

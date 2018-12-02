@@ -1,16 +1,16 @@
+import React from "react";
+
+import PT from "prop-types";
 import makeClassName from "common/makeClassName";
 import onTouchEndOrClick from "./onTouchEndOrClick";
 
-export default class CheckboxInput extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            label: PT.string.isRequired,
-            readOnly: PT.bool,
-            value: PT.bool.isRequired,
-            onChange: PT.func.isRequired,
-        };
-    }
+export default class CheckboxInput extends React.Component {
+    static propTypes = {
+        label: PT.string.isRequired,
+        readOnly: PT.bool,
+        value: PT.bool.isRequired,
+        onChange: PT.func.isRequired,
+    };
     static get defaultProps() {
         return {
             readOnly: false,

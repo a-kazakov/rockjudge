@@ -1,20 +1,20 @@
+import React from "react";
+
+import PT from "prop-types";
 import Item from "./Item";
 
-export default class LeftCol extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            activeScreenId: PT.string,
-            manifest: PT.shape({
-                raw_data: PT.shape({
-                    screens: PT.arrayOf(
-                        PT.shape({}).isRequired,
-                    ).isRequired,
-                }).isRequired,
+export default class LeftCol extends React.Component {
+    static propTypes = {
+        activeScreenId: PT.string,
+        manifest: PT.shape({
+            raw_data: PT.shape({
+                screens: PT.arrayOf(
+                    PT.shape({}).isRequired,
+                ).isRequired,
             }).isRequired,
-            onScreenChange: PT.func.isRequired,
-        };
-    }
+        }).isRequired,
+        onScreenChange: PT.func.isRequired,
+    };
 
     render() {
         return (
@@ -31,5 +31,3 @@ export default class LeftCol extends React.PureComponent {
         );
     }
 }
-
-LeftCol.displayName = "ScreenOperator_LeftCol";

@@ -1,28 +1,25 @@
+import React from "react";
+
+import makeClassName from "common/makeClassName";
+import PT from "prop-types";
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
-export default class Item extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            active: PT.bool.isRequired,
-            discipline: PT.shape({
-                id: PT.number.isRequired,
-                name: PT.string.isRequired,
-            }).isRequired,
-            onDisciplineChange: PT.func.isRequired,
-        };
-    }
+export default class Item extends React.Component {
+    static propTypes = {
+        active: PT.bool.isRequired,
+        discipline: PT.object.isRequired,
+        onDisciplineChange: PT.func.isRequired,
+    };
 
     handleClick = () => {
-        this.props.onDisciplineChange(this.props.discipline.id);
-    }
+        this.props.onDisciplineChange(this.props.discipline);
+    };
 
     getClassName() {
-        let result = "item";
-        if (this.props.active) {
-            result += " active";
-        }
-        return result;
+        return makeClassName({
+            "item": true,
+            "active": this.props.active,
+        });
     }
     render() {
         return (
@@ -35,5 +32,3 @@ export default class Item extends React.PureComponent {
         );
     }
 }
-
-Item.displayName = "PresenterTablet_ResultsPage_DisciplineSelector_Item";

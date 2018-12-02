@@ -1,77 +1,45 @@
-import _ from "l10n";
-import showError from "common/dialogs/showError";
+import React from "react";
 
+import makeClassName from "common/makeClassName";
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import PT from "prop-types";
 import DisciplineJudges from "./DisciplineJudges";
 
-export default class EditorRow extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            discipline: PT.shape({
-                name: PT.string.isRequired,
-                sp: PT.number.isRequired,
-                external_id: PT.string.isRequired,
-                discipline_judges: PT.arrayOf(PT.object.isRequired).isRequired,
-            }).isRequired,
-            judges: PT.arrayOf(PT.object.isRequired).isRequired,
-            newDiscipline: PT.bool,
-            onStopEditing: PT.func.isRequired,
-            onSubmit: PT.func.isRequired,
-        };
-    }
-    static get defaultProps() {
-        return {
-            newDiscipline: false,
-        };
-    }
-
-    makeNameRef = (ref) => {
-        if (!this._name && ref) {
-            ref.select();
-        }
-        this._name = ref;
+export default class EditorRow extends React.Component {
+    static propTypes = {
+        context: PT.shape({
+            competition: PT.instanceOf(Model).isRequired,
+        }),
+        creating: PT.bool.isRequired,
+        formData: PT.shape({
+            name: PT.string.isRequired,
+            sp: PT.string.isRequired,
+            external_id: PT.string.isRequired,
+            discipline_judges: PT.arrayOf(
+                PT.object.isRequired,
+            ).isRequired,
+        }).isRequired,
+        loading: PT.bool.isRequired,
+        onDiscard: PT.func.isRequired,
+        onFieldChange: PT.func.isRequired,
+        onSubmit: PT.func.isRequired,
     };
-    makeSpRef               = (ref) => this._sp = ref;
-    makeExternalIdRef       = (ref) => this._external_id = ref;
-    makeDisciplineJudgesRef = (ref) => this._discipline_judges = ref;
 
-    validate() {
-        let used_judges = new Set();
-        for (const dj of this._discipline_judges.value) {
-            if (used_judges.has(dj.judge_id)) {
-                const judge = this.props.judges.find(j => j.id === dj.judge_id);
-                throw _("errors.discipline_judge.repeating_judge", judge.name);
-            }
-            used_judges.add(dj.judge_id);
-        }
-    }
-    serialize() {
-        return {
-            name: this._name.value,
-            sp: parseInt(this._sp.value, 10),
-            discipline_judges: this._discipline_judges.value,
-            external_id: this._external_id.value !== ""
-                ? this._external_id.value
-                : null,
-            }
-    }
-
+    handleNameChange = (event) => this.props.onFieldChange("name", event.target.value);
+    handleSpChange = (event) => this.props.onFieldChange("sp", event.target.value);
+    handleExternalIdChange = (event) => this.props.onFieldChange("external_id", event.target.value);
+    handleDisciplineJudgesChange = (value) => this.props.onFieldChange("discipline_judges", value);
     handleSubmission = (event) => {
         event.preventDefault();
-        try {
-            this.validate();
-            this.props.onSubmit(this.serialize());
-        } catch (ex) {
-            showError(ex);
-        }
-    }
+        this.props.onSubmit();
+    };
 
     getClassName() {
-        let value = "editor";
-        if (this.props.newDiscipline) {
-            value += " create";
-        }
-        return value;
+        return makeClassName({
+            "editor": true,
+            "create": this.props.creating,
+        });
     }
     render() {
         return (
@@ -82,22 +50,25 @@ export default class EditorRow extends React.PureComponent {
                             <label className="full-width">
                                 { _("models.discipline.name") }
                                 <input
-                                    defaultValue={ this.props.discipline.name }
-                                    ref={ this.makeNameRef }
+                                    disabled={ this.props.loading }
+                                    value={ this.props.formData.name }
+                                    onChange={ this.handleNameChange }
                                 />
                             </label>
                             <label className="full-width">
                                 { _("models.discipline.sp") }
                                 <input
-                                    defaultValue={ this.props.discipline.sp }
-                                    ref={ this.makeSpRef }
+                                    disabled={ this.props.loading }
+                                    value={ this.props.formData.sp }
+                                    onChange={ this.handleSpChange }
                                 />
                             </label>
                             <label className="full-width">
                                 { _("models.discipline.external_id") }<br />
                                 <input
-                                    defaultValue={ this.props.discipline.external_id || "" }
-                                    ref={ this.makeExternalIdRef }
+                                    disabled={ this.props.loading }
+                                    value={ this.props.formData.external_id }
+                                    onChange={ this.handleExternalIdChange }
                                 />
                             </label>
                         </div>
@@ -106,20 +77,25 @@ export default class EditorRow extends React.PureComponent {
                                 { _("models.discipline.discipline_judges") }
                             </label>
                             <DisciplineJudges
-                                defaultValue={ this.props.discipline.discipline_judges }
-                                judges={ this.props.judges }
-                                ref={ this.makeDisciplineJudgesRef }
+                                competition={ this.props.context.competition }
+                                disabled={ this.props.loading }
+                                value={ this.props.formData.discipline_judges }
+                                onChange={ this.handleDisciplineJudgesChange }
                             />
                         </div>
                         <div className="col-4">
                             <label>&nbsp;</label>
                             <div className="buttons vertical">
-                                <button type="submit">
+                                <button
+                                    disabled={ this.props.loading }
+                                    type="submit"
+                                >
                                     { _("global.buttons.submit") }
                                 </button>
                                 <button
+                                    disabled={ this.props.loading }
                                     type="button"
-                                    onClick={ this.props.onStopEditing }
+                                    onClick={ this.props.onDiscard }
                                 >
                                     { _("global.buttons.discard") }
                                 </button>
@@ -132,4 +108,3 @@ export default class EditorRow extends React.PureComponent {
     }
 }
 
-EditorRow.displayName = "AdminPanel_Management_Disciplines_EditorRow";

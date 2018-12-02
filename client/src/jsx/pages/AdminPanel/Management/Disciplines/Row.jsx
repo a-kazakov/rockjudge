@@ -1,78 +1,41 @@
-import _ from "l10n";
-import Api from "common/server/Api";
+import React from "react";
+
 import showConfirm from "common/dialogs/showConfirm";
-import closeDialog from "common/dialogs/closeDialog";
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import PT from "prop-types";
 
-import EditorRow from "./EditorRow";
+export default class Row extends React.Component {
+    static propTypes = {
+        entry: PT.instanceOf(Model).isRequired,
+        loading: PT.bool.isRequired,
+        onDelete: PT.func.isRequired,
+        onStartEditing: PT.func.isRequired,
+    };
 
-export default class Row extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            discipline: PT.shape({
-                id: PT.number.isRequired,
-                name: PT.string.isRequired,
-                sp: PT.number.isRequired,
-                external_id: PT.string.isRequired,
-            }).isRequired,
-            judges: PT.arrayOf(PT.object.isRequired).isRequired,
-        };
-    }
-    constructor(props) {
-        super(props);
-        this.state = {
-            editing: false,
-        }
-    }
-
-    handleStartEditing = () => this.setState({ editing: true });
-    handleStopEditing = () => this.setState({ editing: false });
-
-    handleSubmission = (data) => {
-        Api("discipline.set", {
-            discipline_id: this.props.discipline.id,
-            data: data,
-        })
-            .onSuccess(this.handleStopEditing)
-            .send();
-    }
     handleDeletion = (event) => {
         event.stopPropagation();
         showConfirm(
             _("admin.confirms.delete_discipline"),
-            () => {
-                Api("discipline.delete", {
-                    discipline_id: this.props.discipline.id,
-                })
-                    .onSuccess(closeDialog)
-                    .send()
-            }
+            this.props.onDelete,
         );
-    }
+    };
 
-    renderEditor() {
-        return (
-            <EditorRow
-                onStopEditing={ this.handleStopEditing }
-                onSubmit={ this.handleSubmission }
-                { ...this.props }
-            />
-        );
-    }
-    renderViewer() {
+    render() {
+        const discipline = this.props.entry;
         return (
             <tr
                 className="viewer"
-                onClick={ this.handleStartEditing }
+                onClick={ this.props.onStartEditing }
             >
                 <td className="name">
-                    { this.props.discipline.name }
+                    { discipline.name }
                 </td>
                 <td className="sp">
-                    { this.props.discipline.sp }
+                    { discipline.sp }
                 </td>
                 <td className="external-id">
-                    { this.props.discipline.external_id }
+                    { discipline.external_id }
                 </td>
                 <td className="delete">
                     <button
@@ -85,13 +48,5 @@ export default class Row extends React.PureComponent {
             </tr>
         );
     }
-    render() {
-        if (this.state.editing) {
-            return this.renderEditor();
-        } else {
-            return this.renderViewer();
-        }
-    }
 }
 
-Row.displayName = "AdminPanel_Management_Disciplines_Row";

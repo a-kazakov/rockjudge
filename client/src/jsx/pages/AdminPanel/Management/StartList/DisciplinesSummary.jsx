@@ -1,26 +1,36 @@
+import React from "react";
+
+import PT from "prop-types";
 import ClubsShown from "./ClubsShown";
 import StatInfo from "./StatInfo";
-import groupParticipants from "./groupParticipants";
+import Model from "common/server/Storage/models/Model";
 
-export default class DisciplinesSummary extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                clubs: PT.arrayOf(PT.object.isRequired).isRequired,
-                disciplines: PT.arrayOf(PT.object.isRequired).isRequired,
-            }).isRequired,
-            config: PT.shape({
-                clubs: PT.object.isRequired,
-                disciplines: PT.object.isRequired,
-                group_by_clubs: PT.bool.isRequired,
-            }).isRequired,
-        };
-    }
+export default class DisciplinesSummary extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        config: PT.shape({
+            clubs: PT.object.isRequired,
+            disciplines: PT.object.isRequired,
+            group_by_clubs: PT.bool.isRequired,
+        }).isRequired,
+    };
 
+    filterParticipant = (participant) => this.props.config.clubs[participant.club.id];
+    filterDiscipline = (discipline) => this.props.config.disciplines[discipline.id];
+
+    renderDiscipline = (discipline) => {
+        return (
+            <StatInfo
+                tableRow
+                key={ discipline.id }
+                label={ `${discipline.name}, ${discipline.city}` }
+                participants={ discipline.participants.filter(this.filterParticipant) }
+            />
+        );
+    };
     render() {
-        const disciplines = groupParticipants(this.props.competition, this.props.config);
-        const all_participants = [].concat.apply([], disciplines.map(d => d.participants)); // Join lists
+        const disciplines = this.props.competition.disciplines.filter(this.filterDiscipline);
+        const all_participants = [].concat.apply([], disciplines.map(d => d.participants));
         return (
             <div className="summary">
                 <ClubsShown { ...this.props } />
@@ -28,14 +38,7 @@ export default class DisciplinesSummary extends React.PureComponent {
                     <tr>
                         <th colSpan={ 4 }>&nbsp;</th>
                     </tr>
-                    { disciplines.map(discipline =>
-                        <StatInfo
-                            tableRow
-                            key={ discipline.id }
-                            label={ discipline.name }
-                            participants={ discipline.participants }
-                        />
-                    ) }
+                    { disciplines.map(this.renderDiscipline) }
                 </tbody></table>
                 <p>&nbsp;</p>
                 <StatInfo participants={ all_participants } />
@@ -43,5 +46,3 @@ export default class DisciplinesSummary extends React.PureComponent {
         );
     }
 }
-
-DisciplinesSummary.displayName = "AdminPanel_Management_StartList_DisciplinesSummary";

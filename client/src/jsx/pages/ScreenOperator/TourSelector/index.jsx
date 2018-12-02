@@ -1,26 +1,15 @@
+import React from "react";
+
+import Model from "common/server/Storage/models/Model";
+import PT from "prop-types";
 import Tour from "./Tour";
 
-export default class TourSelector extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                disciplines: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                        name: PT.string.isRequired,
-                        tours: PT.arrayOf(
-                            PT.shape({
-                                id: PT.number.isRequired,
-                            }).isRequired,
-                        ),
-                    }).isRequired,
-                ),
-            }).isRequired,
-            value: PT.number,
-            onChange: PT.func.isRequired,
-        };
-    }
+export default class TourSelector extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        value: PT.number,
+        onChange: PT.func.isRequired,
+    };
 
     renderDiscipline(discipline) {
         return (
@@ -53,5 +42,3 @@ export default class TourSelector extends React.PureComponent {
         );
     }
 }
-
-TourSelector.displayName = "ScreenOperator_TourSelector";

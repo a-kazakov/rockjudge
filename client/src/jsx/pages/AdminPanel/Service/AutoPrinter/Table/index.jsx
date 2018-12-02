@@ -1,21 +1,20 @@
+import React from "react";
+
+import Model from "common/server/Storage/models/Model";
+import PT from "prop-types";
 import _ from "l10n";
 
 import Row from "./Row";
 
-export default class Table extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            actions: PT.object.isRequired,
-            possibleActions: PT.arrayOf(PT.string.isRequired).isRequired,
-            tours: PT.arrayOf(
-                PT.shape({
-                    id: PT.number.isRequired,
-                }).isRequired
-            ).isRequired,
-            onChange: PT.func.isRequired,
-        };
-    }
+export default class Table extends React.Component {
+    static propTypes = {
+        actions: PT.object.isRequired,
+        possibleActions: PT.arrayOf(PT.string.isRequired).isRequired,
+        tours: PT.arrayOf(
+            PT.instanceOf(Model).isRequired
+        ).isRequired,
+        onChange: PT.func.isRequired,
+    };
 
     constructor(props) {
         super(props);
@@ -91,5 +90,3 @@ export default class Table extends React.PureComponent {
         );
     }
 }
-
-Table.displayName = "AdminPanel_Service_AutoPrinter_Table";

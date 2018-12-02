@@ -1,18 +1,19 @@
+import React from "react";
+
+import Model from "common/server/Storage/models/Model";
+import PT from "prop-types";
 import _ from "l10n";
 
 import TourSelector from "./TourSelector";
 
-export default class TourControls extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.object.isRequired,
-            controlsState: PT.shape({
-                tour_id: PT.number,
-            }).isRequired,
-            onChange: PT.func.isRequired,
-        };
-    }
+export default class TourControls extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        controlsState: PT.shape({
+            tour_id: PT.number,
+        }).isRequired,
+        onChange: PT.func.isRequired,
+    };
 
     handleTourChange = (new_value) => {
         const new_state = Object.assign({}, this.props.controlsState);
@@ -35,5 +36,3 @@ export default class TourControls extends React.PureComponent {
         );
     }
 }
-
-TourControls.displayName = "ScreenOperator_TourControls";

@@ -1,21 +1,16 @@
-import _ from "l10n";
+import React from "react";
 
-export default class Clubs extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                clubs: PT.arrayOf(
-                    PT.shape({
-                        participants: PT.arrayOf(PT.object.isRequired).isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
-            config: PT.shape({
-                include_clubs: PT.bool.isRequired,
-            }).isRequired,
-        };
-    }
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import PT from "prop-types";
+
+export default class Clubs extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        config: PT.shape({
+            include_clubs: PT.bool.isRequired,
+        }).isRequired,
+    };
 
     render() {
         if (!this.props.config.include_clubs) {
@@ -35,7 +30,7 @@ export default class Clubs extends React.PureComponent {
             city_clubs.sort();
         }
         let cities = Array.from(clubs_dict.keys());
-        cities.sort()
+        cities.sort();
         return (
             <div>
                 <h4>
@@ -64,4 +59,3 @@ export default class Clubs extends React.PureComponent {
     }
 }
 
-Clubs.displayName = "AdminPanel_Management_CompetitionReport_Clubs";

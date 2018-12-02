@@ -1,19 +1,14 @@
-export default class DisciplineSelector extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                disciplines: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                        name: PT.string.isRequired,
-                    }).isRequired,
-                ).isRequired,
-            }).isRequired,
-            value: PT.number,
-            onChange: PT.func.isRequired,
-        };
-    }
+import React from "react";
+
+import Model from "common/server/Storage/models/Model";
+import PT from "prop-types";
+
+export default class DisciplineSelector extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        value: PT.number,
+        onChange: PT.func.isRequired,
+    };
 
     handleChange = (event) => {
         this.props.onChange(event.target.value === "" ? null : Number(event.target.value));
@@ -36,5 +31,3 @@ export default class DisciplineSelector extends React.PureComponent {
         );
     }
 }
-
-DisciplineSelector.displayName = "ScreenOperator_DisciplinePlaceControls_DisciplineSelector";

@@ -1,16 +1,17 @@
-export default class OneCheckbox extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            label: PT.string.isRequired,
-            mkey: PT.oneOfType([
-                PT.string.isRequired,
-                PT.number.isRequired,
-            ]).isRequired,
-            value: PT.bool.isRequired,
-            onChange: PT.func.isRequired,
-        };
-    }
+import React from "react";
+
+import PT from "prop-types";
+
+export default class OneCheckbox extends React.Component {
+    static propTypes = {
+        label: PT.string.isRequired,
+        mkey: PT.oneOfType([
+            PT.string.isRequired,
+            PT.number.isRequired,
+        ]).isRequired,
+        value: PT.bool.isRequired,
+        onChange: PT.func.isRequired,
+    };
 
     handleChange = (event) => {
         this.props.onChange(this.props.mkey, event.target.checked);
@@ -32,5 +33,3 @@ export default class OneCheckbox extends React.PureComponent {
     }
 }
 
-
-OneCheckbox.displayName = "AdminPanel_components_ConfigPanel_OneCheckbox";

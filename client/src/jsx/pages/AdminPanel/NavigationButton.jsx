@@ -1,12 +1,13 @@
-export default class NavigationButton extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            active: PT.bool.isRequired,
-            mkey: PT.string.isRequired,
-            title: PT.string.isRequired,
-            onClick: PT.func.isRequired,
-        }
+import React from "react";
+
+import PT from "prop-types";
+
+export default class NavigationButton extends React.Component {
+    static propTypes = {
+        active: PT.bool.isRequired,
+        mkey: PT.string.isRequired,
+        title: PT.string.isRequired,
+        onClick: PT.func.isRequired,
     }
     getClassName() {
         let result = "button";
@@ -34,5 +35,3 @@ export default class NavigationButton extends React.PureComponent {
         );
     }
 }
-
-NavigationButton.displayName = "AdminPanel_NavigationButton";

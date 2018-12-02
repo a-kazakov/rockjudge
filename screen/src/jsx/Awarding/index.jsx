@@ -1,30 +1,24 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import Renderer from "./Renderer";
 
 export default class Awarding extends React.Component {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                screen_data: PT.shape({
-                    controls_state: PT.shape({
-                        discipline_id: PT.number.isRequired,
-                        position: PT.number,
-                    }).isRequired,
-                }).isRequired,
-            }).isRequired,
-        };
-    }
+    static propTypes = {
+        competition: PT.object.isRequired,
+    };
 
     get controls() {
         return this.props.competition.screen_data.controls_state;
     }
 
     render() {
+        const {position, discipline_id} = this.controls;
         return (
             <div className="discipline-results">
                 <Renderer
-                    disciplineId={ this.controls.discipline_id }
-                    position={ this.controls.position }
+                    discipline={ this.props.competition.subscription_storage.get("Discipline", discipline_id) }
+                    position={ position }
                 />
             </div>
         );

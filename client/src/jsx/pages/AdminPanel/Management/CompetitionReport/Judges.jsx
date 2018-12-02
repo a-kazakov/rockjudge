@@ -1,26 +1,17 @@
-import _ from "l10n";
+import React from "react";
 
-export default class Judges extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                judges: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                        role_description: PT.string.isRequired,
-                        number: PT.string.isRequired,
-                        name: PT.string.isRequired,
-                        category: PT.string.isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
-            config: PT.shape({
-                include_judges: PT.shape.isRequired,
-                include_discipline_judges: PT.bool.isRequired,
-            }).isRequired,
-        };
-    }
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import PT from "prop-types";
+
+export default class Judges extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        config: PT.shape({
+            include_judges: PT.shape.isRequired,
+            include_discipline_judges: PT.bool.isRequired,
+        }).isRequired,
+    };
 
     static genJudgesNumbers(competition) {
         let result = [];
@@ -84,4 +75,3 @@ export default class Judges extends React.PureComponent {
     }
 }
 
-Judges.displayName = "AdminPanel_Management_CompetitionReport_Judges";

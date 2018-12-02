@@ -1,24 +1,12 @@
-import hashlib
 import json
-import logging
-import time
 
-import tornado.gen
 import tornado.web
 
 import scoring_systems
 import settings
-from api import (
-    Api,
-    ApiRequest,
-)
-from log import log_api
-from models import (
-    Client,
-    Competition,
-    Judge,
-)
-from webserver.websocket import WsMessage
+from db import db
+from models.competition import Competition
+from models.judge import Judge
 
 
 class StaticFileHandlerNoCache(tornado.web.StaticFileHandler):
@@ -28,24 +16,32 @@ class StaticFileHandlerNoCache(tornado.web.StaticFileHandler):
 
 class AdminHandler(tornado.web.RequestHandler):
     def get(self, competition_id):
-        competition = Competition.get(Competition.id == competition_id)
-        self.render(
-            "admin.html",
-            competition_id=competition_id,
-            rules_set=competition.rules_set,
-            settings=settings,
-        )
+        session = db.make_session()
+        try:
+            competition = Competition.get(session, competition_id)
+            self.render(
+                "admin.html",
+                competition_id=competition_id,
+                rules_set=competition.rules_set,
+                settings=settings,
+            )
+        finally:
+            db.close_session(session)
 
 
 class AutoPrinterHandler(tornado.web.RequestHandler):
     def get(self, competition_id):
-        competition = Competition.get(Competition.id == competition_id)
-        return self.render(
-            "auto_printer.html",
-            competition_id=competition_id,
-            rules_set=competition.rules_set,
-            settings=settings,
-        )
+        session = db.make_session()
+        try:
+            competition = Competition.get(session, competition_id)
+            return self.render(
+                "auto_printer.html",
+                competition_id=competition_id,
+                rules_set=competition.rules_set,
+                settings=settings,
+            )
+        finally:
+            db.close_session(session)
 
 
 class CompetitionsHandler(tornado.web.RequestHandler):
@@ -57,24 +53,20 @@ class CompetitionsHandler(tornado.web.RequestHandler):
         )
 
 
-# class ConnectionTesterHandler(tornado.web.RequestHandler):
-#     def get(self):
-#         self.render(
-#             "connection_tester.html",
-#             settings=settings,
-#         )
-
-
 class JudgeHandler(tornado.web.RequestHandler):
-    def get(self, judge_id):
-        judge = Judge.select().where(Judge.id == judge_id).get()
-        return self.render(
-            "judge.html",
-            judge_id=judge_id,
-            competition_id=judge.competition_id,
-            rules_set=judge.competition.rules_set,
-            settings=settings,
-        )
+    def get(self, judge_id: int):
+        session = db.make_session()
+        try:
+            judge = Judge.get(session, judge_id, {})
+            return self.render(
+                "judge.html",
+                judge_id=judge.id,
+                competition_id=judge.competition_id,
+                rules_set=judge.competition.rules_set,
+                settings=settings,
+            )
+        finally:
+            db.close_session(session)
 
 
 class PresenterHandler(tornado.web.RequestHandler):

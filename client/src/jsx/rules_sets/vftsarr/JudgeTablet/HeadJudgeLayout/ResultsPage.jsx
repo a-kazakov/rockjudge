@@ -1,15 +1,16 @@
+import {React} from "HostModules";
+
+import makeTourResultsTable from "common/makeTourResultsTable";
+import PT from "prop-types";
 import ResultsTable2 from "ResultsTable2";
 
-export default class ResultsPage extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            tour: PT.shape({
-                id: PT.number.isRequired,
-                results: PT.array.isRequired,
-            }).isRequired,
-        };
-    }
+export default class ResultsPage extends React.Component {
+    static propTypes = {
+        tour: PT.shape({
+            id: PT.number.isRequired,
+            results: PT.array.isRequired,
+        }).isRequired,
+    };
 
     // Initialization
 
@@ -17,7 +18,7 @@ export default class ResultsPage extends React.PureComponent {
         return (
             <div className="body results">
                 <ResultsTable2
-                    tour={ this.props.tour }
+                    computedTour={ makeTourResultsTable(this.props.tour) }
                 />
             </div>
         )

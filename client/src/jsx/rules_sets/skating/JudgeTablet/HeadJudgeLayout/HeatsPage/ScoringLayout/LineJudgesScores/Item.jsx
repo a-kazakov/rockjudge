@@ -1,24 +1,19 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import VerboseJudgeScore from "common/VerboseJudgeScore";
 
-export default class Item extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudge: PT.object.isRequired,
-            judge: PT.shape({
-                name: PT.string.isRequired,
-            }).isRequired,
-            run: PT.object.isRequired,
-            score: PT.shape({
-                confirmed: PT.bool.isRequired,
-                data: PT.shape({
-                    total_score: PT.string.isRequired,
-                }).isRequired,
-            }).isRequired,
-            showVerbose: PT.bool.isRequired,
-            tour: PT.object.isRequired,
-        };
-    }
+export default class Item extends React.Component {
+    static propTypes = {
+        disciplineJudge: PT.object.isRequired,
+        score: PT.object.isRequired,
+        scoreData: PT.shape({
+            is_valid: PT.bool.isRequired,
+            total_score_str: PT.string.isRequired,
+            extra_data: PT.object.isRequired,
+        }).isRequired,
+        showVerbose: PT.bool.isRequired,
+    };
 
     renderVerboseScore() {
         if (!this.props.showVerbose) {
@@ -28,20 +23,19 @@ export default class Item extends React.PureComponent {
             [
                 "skating.qualification_simple",
                 "skating.final_simple",
-            ].includes(this.props.tour.scoring_system_name)
+            ].includes(this.props.score.run.tour.scoring_system_name)
         ) {
             return null;
         }
         return (
             <div className="verbose-score">
                 <div className="judge-name">
-                    { this.props.judge.name }
+                    { this.props.disciplineJudge.judge.name }
                 </div>
                 <VerboseJudgeScore
                     disciplineJudge={ this.props.disciplineJudge }
-                    run={ this.props.run }
                     score={ this.props.score }
-                    tour={ this.props.tour }
+                    scoreData={ this.props.scoreData }
                 />
                 <div className="triangle" />
             </div>
@@ -52,7 +46,7 @@ export default class Item extends React.PureComponent {
         return (
             <td className={ confirmed ? "confirmed" : "" }>
                 { this.props.score
-                    ? this.props.score.data.total_score
+                    ? this.props.scoreData.total_score_str
                     : "—" }
                 { this.renderVerboseScore() }
             </td>

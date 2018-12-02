@@ -1,36 +1,17 @@
-import _ from "l10n";
+import React from "react";
 
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import PT from "prop-types";
 import Judges from "./Judges";
 
-export default class DisciplineJudges extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                disciplines: PT.arrayOf(
-                    PT.shape({
-                        discipline_judges: PT.arrayOf(
-                            PT.shape({
-                                role: PT.string.isRequired,
-                                judge: PT.shape({
-                                    id: PT.number.isRequired,
-                                }).isRequired,
-                            }).isRequired
-                        ).isRequired,
-                    }).isRequired
-                ).isRequired,
-                judges: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                        number: PT.string.isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
-            config: PT.shape({
-                include_discipline_judges: PT.bool.isRequired,
-            }).isRequired,
-        };
-    }
+export default class DisciplineJudges extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        config: PT.shape({
+            include_discipline_judges: PT.bool.isRequired,
+        }).isRequired,
+    };
 
     getJudgesDisciplines() {
         let judges_used = new Set();
@@ -113,4 +94,3 @@ export default class DisciplineJudges extends React.PureComponent {
     }
 }
 
-DisciplineJudges.displayName = "AdminPanel_Management_CompetitionReport_DisciplineJudges";

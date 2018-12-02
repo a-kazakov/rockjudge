@@ -1,9 +1,11 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import SelectorBlock from "../SelectorBlock";
 import Item from "./Item";
 
 export default class MultipleSelectorBlock extends SelectorBlock {
     static get propTypes() {
-        const PT = React.PropTypes;
         const prev = super.constructor.propTypes || {};
         return Object.assign({}, prev, {
             value: PT.object.isRequired,

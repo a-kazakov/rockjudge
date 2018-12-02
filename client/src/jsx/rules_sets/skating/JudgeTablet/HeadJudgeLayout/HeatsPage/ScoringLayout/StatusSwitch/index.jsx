@@ -1,25 +1,23 @@
+import {Api, React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
-import { Api } from "HostModules";
+export default class StatusSwitch extends React.Component {
+    static propTypes = {
+        run: PT.shape({
+            id: PT.number.isRequired,
+            status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
+        }).isRequired,
+    };
 
-export default class StatusSwitch extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            run: PT.shape({
-                id: PT.number.isRequired,
-                status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                disqualified: PT.bool.isRequired,
-            }).isRequired,
-        };
-    }
-
-    changeStatus(new_status) {
-        Api("run.set_status", {
-            run_id: this.props.run.id,
-            status: new_status,
+    changeStatus(status) {
+        Api("model/update", {
+            model_name: "Run",
+            model_id: this.props.run.id,
+            data: {status},
         }).send();
     }
 

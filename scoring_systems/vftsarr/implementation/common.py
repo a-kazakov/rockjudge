@@ -1,14 +1,30 @@
 from fractions import Fraction as frac
-from typing import List, Union, Iterable
+from typing import List, Union, Iterable, Dict, Any
 
 
 class CachedClass:
-    def __getattr__(self, key):
-        if key[0] == "_":
-            raise RuntimeError("{} is not defined".format(key[1:]))
-        value = getattr(self, "_" + key)()
-        setattr(self, key, value)
+    @property
+    def __cache(self) -> Dict[str, Any]:
+        try:
+            cache: Dict[str, Any] = object.__getattribute__(self, "__cache_data")
+        except AttributeError:
+            cache = {}
+            object.__setattr__(self, "__cache_data", cache)
+        return cache
+
+    def __getattribute__(self, key: str) -> Any:
+        cache = object.__getattribute__(self, "_CachedClass__cache")
+        if key in cache:
+            return cache[key]
+        value = object.__getattribute__(self, key)
+        if callable(value):
+            return value
+        cache[key] = value
         return value
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        object.__getattribute__(self, "_CachedClass__cache")[key] = value
+
 
 
 def get_median(scores: List[frac]) -> frac:

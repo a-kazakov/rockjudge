@@ -1,16 +1,17 @@
-export default class Paper extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            children: PT.node.isRequired,
-            header: PT.string,
-            margins: PT.arrayOf(PT.number.isRequired),
-            title1: PT.string,
-            title2: PT.string,
-            title3: PT.string,
-            orientation: PT.oneOf(["portrait", "landscape"]),
-        };
-    }
+import React from "react";
+
+import PT from "prop-types";
+
+export default class Paper extends React.Component {
+    static propTypes = {
+        children: PT.node.isRequired,
+        header: PT.string,
+        margins: PT.arrayOf(PT.number.isRequired),
+        orientation: PT.oneOf(["portrait", "landscape"]),
+        title1: PT.string,
+        title2: PT.string,
+        title3: PT.string,
+    };
     static get defaultProps() {
         return {
             header: null,

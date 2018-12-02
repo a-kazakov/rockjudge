@@ -1,20 +1,25 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 import Api from "common/server/Api";
+import keys_storage from "common/keys_storage";
 
-export default class AccessRequest extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competitionId: PT.number.isRequired,
-        };
-    }
+export default class AccessRequest extends React.Component {
+    static propTypes = {
+        competitionId: PT.number.isRequired,
+    };
 
     handleButtonClick = () => {
-        Api("client_auth.create", {
-            competition_id: this.props.competitionId,
+        Api("model/create", {
+            model_name: "ClientAuth",
+            data: {
+                client_id: keys_storage.client_id,
+                competition_id: this.props.competitionId,
+            },
         })
             .send();
-    }
+    };
 
     render() {
         return (
@@ -32,5 +37,3 @@ export default class AccessRequest extends React.PureComponent {
         );
     }
 }
-
-AccessRequest.displayName = "StartPage_RoleSelector_AccessRequest";

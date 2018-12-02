@@ -1,37 +1,37 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import makeClassName from "common/makeClassName";
 
-export default class HeatsTableItem extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudge: PT.shape({
+export default class HeatsTableItem extends React.Component {
+    static propTypes = {
+        disciplineJudge: PT.shape({
+            id: PT.number.isRequired,
+        }).isRequired,
+        heatRuns: PT.arrayOf(
+            PT.shape({
                 id: PT.number.isRequired,
-            }).isRequired,
-            heatRuns: PT.arrayOf(
-                PT.shape({
-                    id: PT.number.isRequired,
-                    heat: PT.number.isRequired,
-                    status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                    participant: PT.shape({
-                        number: PT.number.isRequired,
-                    }).isRequired,
-                    scores: PT.arrayOf(
-                        PT.shape({
-                            discipline_judge_id: PT.number.isRequired,
-                            data: PT.object.isRequired,
-                        }).isRequired,
-                    ).isRequired,
+                heat: PT.number.isRequired,
+                status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
+                participant: PT.shape({
+                    number: PT.number.isRequired,
                 }).isRequired,
-            ).isRequired,
-        };
-    }
+                scores: PT.arrayOf(
+                    PT.shape({
+                        discipline_judge_id: PT.number.isRequired,
+                        data: PT.object.isRequired,
+                    }).isRequired,
+                ).isRequired,
+            }).isRequired,
+        ).isRequired,
+    };
 
     getScoreClassName(value, cross) {
         return makeClassName({
             "score-value": true,
-            "no-score": value === null,
+            "no-score": value == null,
             "cross": cross,
             "no-cross": cross === false,
         });
@@ -66,7 +66,7 @@ export default class HeatsTableItem extends React.PureComponent {
                     if (typeof score === "undefined") {
                         return this.renderScore(null, null);
                     }
-                    return this.renderScore(score.data.total_score, score.data.raw_data.cross);
+                    return this.renderScore(score.data.cross ? "X" : "", score.data.cross);
                 } ) }
             </tr>
         );
@@ -89,14 +89,14 @@ export default class HeatsTableItem extends React.PureComponent {
                     if (typeof score === "undefined") {
                         return this.renderNoteNumber(null);
                     }
-                    return this.renderNoteNumber(score.data.raw_data.note_number);
+                    return this.renderNoteNumber(score.data.note_number);
                 } ) }
             </tr>
         );
     }
     renderNotePic(pics) {
         let result = [];
-        if (pics !== null) {
+        if (pics != null) {
             const opts = [
                 ["S", "♠", "pic color-green"],
                 ["H", "♥", "pic color-red"],
@@ -133,7 +133,7 @@ export default class HeatsTableItem extends React.PureComponent {
                     if (typeof score === "undefined") {
                         return this.renderNotePic(null);
                     }
-                    return this.renderNotePic(score.data.raw_data.note_pics);
+                    return this.renderNotePic(score.data.note_pics);
                 } ) }
             </tr>
         );

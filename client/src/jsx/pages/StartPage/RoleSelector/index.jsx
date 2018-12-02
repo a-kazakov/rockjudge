@@ -1,7 +1,9 @@
-import Api from "common/server/Api";
-import Loader from "common/components/Loader";
-import LoadingComponent from "common/server/LoadingComponent";
+import React from "react";
 
+import Loader from "common/components/Loader";
+import Model from "common/server/Storage/models/Model";
+import CompetitionSubscription from "common/server/Storage/subscriptions/CompetitionSubscription";
+import PT from "prop-types";
 import AccessRequest from "./AccessRequest";
 import NoAccess from "./NoAccess";
 import Presenter from "./Presenter";
@@ -9,115 +11,93 @@ import SingleJudge from "./SingleJudge";
 import UniversalSelector from "./UniversalSelector";
 
 
-export default class RoleSelector extends LoadingComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            accessLevel: PT.string,
-            competition: PT.shape({
-                id: PT.number.isRequired,
-                name: PT.string.isRequired,
-            }).isRequired,
-        };
-    }
-
-    CLASS_ID = "start_page_role_selector";
-    API_MODELS = {
-        competition: {
-            model_type: "Competition",
-            model_id_getter: props => props.competition.id,
-            schema: {
-                judges: {
-                    discipline_judges: {},
-                },
-            },
-        },
+export default class RoleSelector extends React.Component {
+    static propTypes = {
+        auth: PT.instanceOf(Model),
+        competition: PT.instanceOf(Model).isRequired,
     };
 
     constructor(props) {
         super(props);
         this.state = {
-            competition: null,
+            competitionStorage: null,
         };
     }
 
     componentDidMount() {
         if (this.has_access) {
-            this._initLoader();
+            this.subscribe();
         }
     }
     componentDidUpdate() {
-        if (!this._loader_inited && this.has_access) {
-            this._initLoader();
+        if (!this._subscription && this.has_access) {
+            this.subscribe();
         }
     }
+
+    subscribe = () => {
+        this._subscription = new CompetitionSubscription(this.props.competition.id);
+        this.props.competition.global_storage.subscribe(this._subscription).then(this.updateCompetitionStorage);
+    };
+
+    updateCompetitionStorage = (competitionStorage) => {
+        this.setState({competitionStorage});
+    };
 
     get has_access() {
         if (window.location.hostname === "127.0.0.1") {
             return true;
         }
-        return this.props.accessLevel && this.props.accessLevel !== "none";
+        return this.props.auth && this.props.auth.access_level !== "none";
     }
-
-    reloadFromStorage = () => {
-        if (!this.has_access) {
-            return
-        }
-        const serialized = this.storage.get("Competition")
-            .by_id(this.props.competition.id)
-            .serialize(this.SCHEMA);
-        this.setState({
-            competition: serialized,
-        });
-    };
 
     renderBody() {
         if (window.location.hostname !== "127.0.0.1") {
-            if (!this.props.accessLevel) {
+            if (!this.props.auth) {
                 return (
                     <AccessRequest
                         competitionId={ this.props.competition.id }
                     />
                 );
             }
-            if (this.props.accessLevel === "none") {
+            if (this.props.auth.access_level === "none") {
                 return (
                     <NoAccess />
                 );
             }
         }
-        if (this.state.competition === null) {
+        if (this.state.competitionStorage == null) {
             return (
                 <Loader />
             );
         }
-        if (window.location.hostname === "127.0.0.1" || this.props.accessLevel === "admin") {
+        const competition = this.state.competitionStorage.get("Competition", this.props.competition.id);
+        if (window.location.hostname === "127.0.0.1" || this.props.auth.access_level === "admin") {
             return (
                 <UniversalSelector
                     showAdmin
-                    competition={ this.state.competition }
+                    competition={ competition }
                 />
             );
         }
-        if (this.props.accessLevel === "any_judge") {
+        if (this.props.auth.access_level === "any_judge") {
             return (
                 <UniversalSelector
-                    competition={ this.state.competition }
+                    competition={ competition }
                 />
             );
         }
-        if (this.props.accessLevel.startsWith("judge_")) {
+        if (this.props.auth.access_level === "judge") {
             return (
                 <SingleJudge
-                    accessLevel={ this.props.accessLevel }
-                    competition={ this.state.competition }
+                    judge={ competition.global_storage.get("Judge", this.props.auth.judge_id) }
                 />
             );
         }
-        if (this.props.accessLevel === "presenter") {
+        if (this.props.auth.access_level === "presenter") {
             return (
                 <Presenter
-                    competition={ this.state.competition }
+                    competition={ competition }
                 />
             );
         }
@@ -140,5 +120,3 @@ export default class RoleSelector extends LoadingComponent {
         );
     }
 }
-
-RoleSelector.displayName = "StartPage_RoleSelector";

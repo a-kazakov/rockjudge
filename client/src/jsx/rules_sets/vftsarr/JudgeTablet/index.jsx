@@ -1,30 +1,23 @@
-import _ from "l10n";
+import {Api, React} from "HostModules";
 
 import getScoringType from "common/getScoringType";
-
+import _ from "l10n";
+import PT from "prop-types";
 import AcrobaticsLayout from "./AcrobaticsLayout";
-import DanceLayout from "./DanceLayout";
 import DanceExtendedLayout from "./DanceExtendedLayout";
+import DanceLayout from "./DanceLayout";
 import FormationLayout from "./FormationLayout";
 import FormationSimplifiedLayout from "./FormationSimplifiedLayout";
+import HeadJudgeLayout from "./HeadJudgeLayout";
 import SimplifiedLayout from "./SimplifiedLayout";
 import SoloLayout from "./SoloLayout";
-import HeadJudgeLayout from "./HeadJudgeLayout";
 import TechLayout from "./TechLayout";
 
-import { Api } from "HostModules";
-
-export default class JudgeTablet extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudge: PT.object.isRequired,
-            tour: PT.shape({
-                id: PT.number.isRequired,
-                scoring_system_name: PT.string.isRequired,
-            }).isRequired,
-        };
-    }
+export default class JudgeTablet extends React.Component {
+    static propTypes = {
+        disciplineJudge: PT.object.isRequired,
+        tour: PT.object.isRequired,
+    };
 
     static LAYOUTS = {
         "acro": AcrobaticsLayout,
@@ -38,26 +31,40 @@ export default class JudgeTablet extends React.PureComponent {
         "tech": TechLayout,
     };
 
-    handleScoreUpdate = (score_id, score_data, force=false) => {
-        const data = {score_data, force};
-        Api("score.set", {score_id, data}).send();
+    handleScoreUpdate = (score_id, score_data) => {
+        const data = {
+            model_id: score_id,
+            data: score_data,
+        };
+        Api("model/update", {
+            model_name: "Score",
+            data: data,
+        }).send();
     };
     handleHeatConfirm = (heat) => {
-        Api("tour.confirm_heat", {
+        Api("tour/confirm_heat", {
             tour_id: this.props.tour.id,
             discipline_judge_id: this.props.disciplineJudge.id,
             heat: heat,
         }).send();
     };
     handleScoreConfirm = (score_id) => {
-        Api("score.confirm", {
-            score_id: score_id,
+        const data = {
+            confirmed: true,
+        };
+        Api("model/update", {
+            model_name: "Score",
+            model_id: score_id,
+            data: data,
         }).send();
     };
 
     render() {
-        const scoring_type = getScoringType(this.props.disciplineJudge, this.props.tour.scoring_system_name);
-        if (scoring_type === null) {
+        const scoring_type = getScoringType(
+            this.props.disciplineJudge.role,
+            this.props.tour.scoring_system_name,
+        );
+        if (scoring_type == null) {
             return (
                 <div className="vftsarr-JudgeTablet">
                     <div className="error-message">

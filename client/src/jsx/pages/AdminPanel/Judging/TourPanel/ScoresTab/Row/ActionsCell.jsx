@@ -1,3 +1,6 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 import Api from "common/server/Api";
 
@@ -8,25 +11,22 @@ import showConfirm from "common/dialogs/showConfirm";
 import ActionButton from "../ActionButton"
 
 
-export default class ActionsCell extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            heatPosition: PT.number.isRequired,
-            heatSize: PT.number.isRequired,
-            opened: PT.bool.isRequired,
-            run: PT.shape({
-                id: PT.number.isRequired,
-                heat: PT.number.isRequired,
-                participant: PT.shape({
-                    name: PT.string.isRequired,
-                }).isRequired,
+export default class ActionsCell extends React.Component {
+    static propTypes = {
+        heatPosition: PT.number.isRequired,
+        heatSize: PT.number.isRequired,
+        opened: PT.bool.isRequired,
+        run: PT.shape({
+            id: PT.number.isRequired,
+            heat: PT.number.isRequired,
+            participant: PT.shape({
+                name: PT.string.isRequired,
             }).isRequired,
-            onEditRequest: PT.func.isRequired,
-            onPositionMove: PT.func.isRequired,
-            onStopEditing: PT.func.isRequired,
-        };
-    }
+        }).isRequired,
+        onEditRequest: PT.func.isRequired,
+        onPositionMove: PT.func.isRequired,
+        onStopEditing: PT.func.isRequired,
+    };
 
     handleToggleMenu = () => {
         if (this.props.opened) {
@@ -46,7 +46,7 @@ export default class ActionsCell extends React.PureComponent {
         showConfirm(
             [_("judging.confirms.reset_score"), this.props.run.participant.name],
             () => {
-                Api("run.reset", {
+                Api("run/reset", {
                     run_id: this.props.run.id,
                 })
                     .send();

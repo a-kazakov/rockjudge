@@ -1,29 +1,75 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 import CmpChain from "common/tools/CmpChain";
 
 import StatInfo from "./StatInfo";
+import Model from "common/server/Storage/models/Model";
 
-export default class SportsmenList extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            participants: PT.arrayOf(
-                PT.shape({
-                    sportsmen: PT.arrayOf(
-                        PT.shape({
-                            last_name: PT.string.isRequired,
-                            first_name: PT.string.isRequired,
-                            year_of_birth: PT.number.isRequired,
-                            gender: PT.oneOf(["M", "F"]).isRequired,
-                        }).isRequired
-                    ).isRequired,
-                }).isRequired
-            ).isRequired,
-        };
-    }
+export default class SportsmenList extends React.Component {
+    static propTypes = {
+        config: PT.shape({
+            clubs: PT.object.isRequired,
+            disciplines: PT.object.isRequired,
+        }).isRequired,
+        participants: PT.arrayOf(
+            PT.instanceOf(Model).isRequired
+        ).isRequired,
+    };
+
+    filterParticipant = (participant) => {
+        return (
+            this.props.config.disciplines[participant.discipline.id]
+            && this.props.config.clubs[participant.club.id]
+        );
+    };
+
+    renderSportsman = (sportsman, idx) => {
+        return (
+            <tr key={ idx }>
+                <td
+                    className="w-5"
+                    style={ { borderRight: "1pt solid black" } }
+                >
+                    <p className="text-right">
+                        { idx + 1 }
+                    </p>
+                </td>
+                <td className="w-35">
+                    <p className="text-left">
+                        { `${sportsman.last_name} ${sportsman.first_name}` }
+                    </p>
+                </td>
+                <td className="w-15">
+                    <p className="text-center">
+                        { sportsman.year_of_birth }
+                    </p>
+                </td>
+                <td className="w-15">
+                    <p className="text-center">
+                        { sportsman.gender === "F"
+                            ? _("models.participant.gender_f")
+                            : _("models.participant.gender_m")
+                        }
+                    </p>
+                </td>
+                <td className="w-15">
+                    <p className="text-center">
+                        { sportsman.p_count }
+                    </p>
+                </td>
+                <td className="w-15">
+                    <p className="text-center">
+                        { sportsman.s_count }
+                    </p>
+                </td>
+            </tr>
+        );
+    };
 
     render() {
-        let sportsmen = StatInfo.getUniqueSportsmen(this.props.participants);
+        let sportsmen = StatInfo.getUniqueSportsmen(this.props.participants.filter(this.filterParticipant));
         sportsmen.sort((a, b) => CmpChain()
             .cmp(a.last_name, b.last_name)
             .cmp(a.first_name, b.first_name)
@@ -68,50 +114,9 @@ export default class SportsmenList extends React.PureComponent {
                     </tr>
                 </thead>
                 <tbody>
-                    { sportsmen.map((s, idx) =>
-                        <tr key={ idx }>
-                            <td
-                                className="w-5"
-                                style={ { borderRight: "1pt solid black" } }
-                            >
-                                <p className="text-right">
-                                    { idx + 1 }
-                                </p>
-                            </td>
-                            <td className="w-35">
-                                <p className="text-left">
-                                    { `${s.last_name} ${s.first_name}` }
-                                </p>
-                            </td>
-                            <td className="w-15">
-                                <p className="text-center">
-                                    { s.year_of_birth }
-                                </p>
-                            </td>
-                            <td className="w-15">
-                                <p className="text-center">
-                                    { s.gender === "F"
-                                        ? _("models.participant.gender_f")
-                                        : _("models.participant.gender_m")
-                                    }
-                                </p>
-                            </td>
-                            <td className="w-15">
-                                <p className="text-center">
-                                    { s.p_count }
-                                </p>
-                            </td>
-                            <td className="w-15">
-                                <p className="text-center">
-                                    { s.s_count }
-                                </p>
-                            </td>
-                        </tr>
-                    ) }
+                    { sportsmen.map(this.renderSportsman) }
                 </tbody>
             </table>
         );
     }
 }
-
-SportsmenList.displayName = "AdminPanel_Management_StartList_SportsmenList";

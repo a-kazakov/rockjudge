@@ -49,6 +49,10 @@
         }
         > tr.viewer {
             cursor: pointer;
+            &.error {
+                background-color: @color-light-red;
+                color: @color-dark-red;
+            }
             .delete {
                 width: 50px;
                 text-align: right;

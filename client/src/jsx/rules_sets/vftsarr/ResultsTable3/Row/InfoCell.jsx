@@ -1,69 +1,22 @@
-import _ from "l10n";
+import {React} from "HostModules";
 
+import lastOf from "common/tools/lastOf";
+import _ from "l10n";
+import PT from "prop-types";
 import getParticipantDisplay from "common/getParticipantDisplay";
 import getCardReasons from "common/getCardReasons";
 import checkSS from "common/checkSS";
 import floatToFixed from "../../../../lib/common/floatToFixed";
 
-export default class InfoCell extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudgesMap: PT.instanceOf(Map).isRequired,
-            row: PT.shape({
-                additional_data: PT.object.isRequired,
-                advances: PT.bool.isRequired,
-                place: PT.number,
-                run: PT.shape({
-                    status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                    total_score: PT.string.isRequired,
-                    acrobatics: PT.arrayOf(
-                        PT.shape({
-                            original_score: PT.number.isRequired,
-                            score: PT.number.isRequired,
-                        }).isRequired
-                    ).isRequired,
-                    participant: PT.shape({
-                        number: PT.number.isRequired,
-                        formation_name: PT.string.isRequired,
-                        sportsmen: PT.arrayOf(
-                            PT.shape({
-                                first_name: PT.string.isRequired,
-                                last_name: PT.string.isRequired,
-                            }).isRequired
-                        ).isRequired,
-                        club: PT.shape({
-                            name: PT.string.isRequired,
-                        }).isRequired,
-                    }).isRequired,
-                    scores: PT.arrayOf(
-                        PT.shape({
-                            discipline_judge_id: PT.number.isRequired,
-                            data: PT.shape({
-                                total_score: PT.oneOfType([
-                                    PT.number.isRequired,
-                                    PT.string.isRequired,
-                                ]).isRequired,
-                            }),
-                        }).isRequired
-                    ).isRequired,
-                    verbose_total_score: PT.shape({
-                        card: PT.oneOf(["OK", "YC", "RC"]),
-                        criterias_scores: PT.object,
-                        score_value: PT.number,
-                        acro_score: PT.number,
-                        fw_score: PT.number,
-                        undercount: PT.number,
-                        fall_down: PT.number,
-                    }),
-                }).isRequired,
-            }).isRequired,
-            tour: PT.shape({
-                scoring_system_name: PT.string.isRequired,
-                next_tour_id: PT.number,
-            }).isRequired,
-        };
-    }
+export default class InfoCell extends React.Component {
+    static propTypes = {
+        row: PT.shape({
+            run: PT.object.isRequired,
+            run_result: PT.object.isRequired,
+            scores: PT.object.isRequired,
+        }).isRequired,
+        tour: PT.object.isRequired,
+    };
 
     renderParticipantInfo() {
         return (
@@ -82,12 +35,12 @@ export default class InfoCell extends React.PureComponent {
         );
     }
     renderCard() {
-        if (this.props.row.run.status !== "OK") {
+        if (this.props.row.run_result.extra_data.status !== "OK") {
             return null;
         }
-        const card = this.props.row.run.verbose_total_score.card;
+        const card = this.props.row.run_result.extra_data.card;
         const texts = getCardReasons(this.props.tour.scoring_system_name)
-            .filter(cr => this.props.row.run.verbose_total_score.card_reasons[cr])
+            .filter(cr => this.props.row.run_result.extra_data.card_reasons[cr])
             .map(cr => _(`card_reasons.long.${cr.toLowerCase()}`));
         let result = [];
         if (card === "OK") {
@@ -111,7 +64,7 @@ export default class InfoCell extends React.PureComponent {
         return result;
     }
     renderAcroTable() {
-        if (this.props.row.run.status !== "OK") {
+        if (this.props.row.run_result.extra_data.status !== "OK") {
             return null;
         }
         if (!checkSS(this.props.tour.scoring_system_name, "acro")) {
@@ -121,7 +74,7 @@ export default class InfoCell extends React.PureComponent {
             return null;
         }
         const has_acro_overrides = this.props.row.run.acrobatics.some(
-            element => element.score !== element.original_score
+            element => element.score !== element.initial_score
         );
         const acro_cell_width = `${(100 / this.props.row.run.acrobatics.length)}%`;
         const table_layout = this.props.row.run.acrobatics.length > 6 ? "auto" : "fixed";
@@ -144,7 +97,7 @@ export default class InfoCell extends React.PureComponent {
                             { this.props.row.run.acrobatics.map((acro, idx) => (
                                 <td key={ idx } style={ { width: acro_cell_width } }>
                                     <p className="text-center">
-                                        { floatToFixed(acro.original_score, 1) }
+                                        { floatToFixed(acro.initial_score, 1) }
                                     </p>
                                 </td>
                             )) }
@@ -169,10 +122,10 @@ export default class InfoCell extends React.PureComponent {
         if (this.props.tour.scoring_system_name !== "vftsarr.am_final_acro") {
             return null;
         }
-        if (this.props.row.run.status === "DQ") {
+        if (this.props.row.run_result.extra_data.status === "DQ") {
             return null;
         }
-        const score = this.props.row.run.verbose_total_score.fw_score.toFixed(3);
+        const score = this.props.row.run_result.extra_data.fw_score?.toFixed(3) || "—";
         return (
             <p>
                 <strong>
@@ -183,13 +136,13 @@ export default class InfoCell extends React.PureComponent {
         );
     }
     renderAmClassAcroScore() {
-        if (this.props.row.run.status !== "OK") {
+        if (this.props.row.run_result.extra_data.status !== "OK") {
             return null;
         }
         if (this.props.tour.scoring_system_name !== "vftsarr.am_final_acro") {
             return null;
         }
-        const score = this.props.row.run.verbose_total_score.acro_score.toFixed(3);
+        const score = this.props.row.run_result.extra_data.acro_score?.toFixed(3) || "—";
         return (
             <p>
                 <strong>
@@ -200,19 +153,19 @@ export default class InfoCell extends React.PureComponent {
         );
     }
     renderTotalScore() {
-        if (this.props.row.run.status !== "OK") {
+        if (this.props.row.run_result.extra_data.status !== "OK") {
             return null;
         }
         return (
             <p>
                 <strong>
-                    { `${_("results.labels.total_score")}: ${this.props.row.run.total_score}` }
+                    { `${_("results.labels.total_score")}: ${this.props.row.run_result.total_score_str}` }
                 </strong>
             </p>
         );
     }
     renderNotPerformedLabel() {
-        if (this.props.row.run.status !== "NP") {
+        if (this.props.row.run_result.extra_data.status !== "NP") {
             return null;
         }
         return (
@@ -224,7 +177,7 @@ export default class InfoCell extends React.PureComponent {
         )
     }
     renderDisqualifiedLabel() {
-        if (this.props.row.run.status !== "DQ") {
+        if (this.props.row.run_result.extra_data.status !== "DQ") {
             return null;
         }
         return (
@@ -237,7 +190,7 @@ export default class InfoCell extends React.PureComponent {
     }
     renderUndercount() {
         const need_fall_down = checkSS(this.props.tour.scoring_system_name, "formation") &&
-            this.props.row.run.verbose_total_score.undercount > 0;
+            this.props.row.run_result.extra_data.undercount > 0;
         if (!need_fall_down) {
             return null;
         }
@@ -246,13 +199,13 @@ export default class InfoCell extends React.PureComponent {
                 <strong>
                     { `${_("score_parts.tech.long.undercount")}: ` }
                 </strong>
-                { this.props.row.run.verbose_total_score.undercount}
+                { this.props.row.run_result.extra_data.undercount}
             </p>
         );
     }
     renderFallDown() {
         const need_fall_down = checkSS(this.props.tour.scoring_system_name, "acro") &&
-            this.props.row.run.verbose_total_score.fall_down > 0;
+            this.props.row.run_result.extra_data.fall_down > 0;
         if (!need_fall_down) {
             return null;
         }
@@ -261,13 +214,15 @@ export default class InfoCell extends React.PureComponent {
                 <strong>
                     { `${_("score_parts.tech.long.fall_down")}: ` }
                 </strong>
-                { this.props.row.run.verbose_total_score.fall_down}
+                { this.props.row.run_result.extra_data.fall_down}
             </p>
         );
     }
 
     renderNextTourLabel() {
-        if (this.props.tour.next_tour_id === null) {
+        const all_tours = this.props.row.run.tour.discipline.tours;
+        const has_next_tour = lastOf(all_tours).id !== this.props.row.run.tour_id;
+        if (!has_next_tour) {
             return null;
         }
         return (
@@ -275,7 +230,7 @@ export default class InfoCell extends React.PureComponent {
                 <strong>
                     { `${_("results.labels.next_tour")}: ` }
                 </strong>
-                { this.props.row.advances
+                { this.props.row.run_result.advanced
                     ? _("global.labels.yes")
                     : _("global.labels.no")
                 }
@@ -300,4 +255,3 @@ export default class InfoCell extends React.PureComponent {
         );
     }
 }
-

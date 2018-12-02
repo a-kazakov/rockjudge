@@ -1,51 +1,18 @@
-import LoadingComponent from "common/server/LoadingComponent";
-
-import Loader from "common/components/Loader";
+import React from "react";
 
 import makeDisciplineResultsTable from "common/makeDisciplineResultsTable";
-
+import PT from "prop-types";
 import Row from "./Row";
 
-export default class ResultsRenderer extends LoadingComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineId: PT.number.isRequired,
-        };
-    }
-
-    CLASS_ID = "presenter_tablet_results";
-    API_MODELS = {
-        discipline: {
-            model_type: "Discipline",
-            model_id_getter: props => props.disciplineId,
-            schema: {
-                results: {},
-                discipline_judges: {
-                    judge: {},
-                },
-                tours: {
-                    runs: {
-                        participant: {
-                            club: {},
-                        },
-                    },
-                },
-            },
-        },
+export default class ResultsRenderer extends React.Component {
+    static propTypes = {
+        discipline: PT.object.isRequired,
     };
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            discipline: null,
-        };
-    }
 
     renderRowHeader(prev_row, next_row) {
         if (
             typeof prev_row !== "undefined" &&
-            prev_row.tour.id === next_row.tour.id
+            prev_row.run.tour_id === next_row.run.tour_id
         ) {
             return null;
         }
@@ -54,7 +21,7 @@ export default class ResultsRenderer extends LoadingComponent {
                 className="tour-name"
                 key={ `H${next_row.run.id}` }
             >
-                { next_row.tour.name }
+                { next_row.run.tour.name }
             </div>
         );
     }
@@ -62,13 +29,13 @@ export default class ResultsRenderer extends LoadingComponent {
         return (
             <Row
                 key={ `R${row.run.id}` }
-                participant={ row.run.participant }
                 place={ row.place }
+                run={ row.run }
             />
         );
     }
     renderRows() {
-        const table = makeDisciplineResultsTable(this.state.discipline);
+        const table = makeDisciplineResultsTable(this.props.discipline);
         let result = [];
         for (let i = table.length - 1; i >= 0; --i) {
             const header = this.renderRowHeader(table[i + 1], table[i]);
@@ -80,11 +47,6 @@ export default class ResultsRenderer extends LoadingComponent {
         return result;
     }
     render() {
-        if (this.state.discipline === null) {
-            return (
-                <Loader />
-            );
-        }
         return (
             <div className="discipline-results">
                 { this.renderRows() }
@@ -92,5 +54,3 @@ export default class ResultsRenderer extends LoadingComponent {
         );
     }
 }
-
-ResultsRenderer.displayName = "PresenterTablet_ResultsPage_ResultsRenderer";

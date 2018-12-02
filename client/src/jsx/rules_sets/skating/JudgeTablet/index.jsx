@@ -1,5 +1,7 @@
+import {Api, React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
-import { Api } from "HostModules";
 
 import getScoringType from "common/getScoringType";
 
@@ -8,17 +10,11 @@ import HeadJudgeLayout from "./HeadJudgeLayout";
 import QualificationSimpleLayout from "./QualificationSimpleLayout";
 import Final3dLayout from "./Final3dLayout";
 
-export default class JudgeTablet extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudge: PT.object.isRequired,
-            tour: PT.shape({
-                id: PT.number.isRequired,
-                scoring_system_name: PT.string.isRequired,
-            }).isRequired,
-        };
-    }
+export default class JudgeTablet extends React.Component {
+    static propTypes = {
+        disciplineJudge: PT.object.isRequired,
+        tour: PT.object.isRequired,
+    };
 
     static LAYOUTS = {
         "qualification_simple": QualificationSimpleLayout,
@@ -27,15 +23,18 @@ export default class JudgeTablet extends React.PureComponent {
         "head": HeadJudgeLayout,
     };
 
-    handleScoreUpdate = (score_id, new_score) => {
-        const request = {
-            score_data: new_score,
-            force: false,
+    handleScoreUpdate = (score_id, score_data) => {
+        const data = {
+            data: score_data,
         };
-        Api("score.set", { score_id: score_id, data: request }).send();
+        Api("model/update", {
+            model_name: "Score",
+            model_id: score_id,
+            data: data,
+        }).send();
     };
     handleHeatConfirm = (heat) => {
-        Api("tour.confirm_heat", {
+        Api("tour/confirm_heat", {
             tour_id: this.props.tour.id,
             discipline_judge_id: this.props.disciplineJudge.id,
             heat: heat,
@@ -43,8 +42,11 @@ export default class JudgeTablet extends React.PureComponent {
     };
 
     render() {
-        const scoring_type = getScoringType(this.props.disciplineJudge, this.props.tour.scoring_system_name);
-        if (scoring_type === null) {
+        const scoring_type = getScoringType(
+            this.props.disciplineJudge.role,
+            this.props.tour.scoring_system_name,
+        );
+        if (scoring_type == null) {
             return (
                 <div className="skating-JudgeTablet">
                     <div className="error-message">

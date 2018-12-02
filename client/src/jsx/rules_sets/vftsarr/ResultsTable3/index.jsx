@@ -1,42 +1,25 @@
-import _ from "l10n";
-
-import Row from "./Row";
-import ColumnsWidths from "./ColumnsWidths";
+import {React} from "HostModules";
 
 import getJudgeTableMark from "getJudgeTableMark";
-import makeTourResultsTable from "common/makeTourResultsTable";
+import _ from "l10n";
+import PT from "prop-types";
+import ColumnsWidths from "./ColumnsWidths";
+import Row from "./Row";
 
-export default class ResultsTable3 extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            tour: PT.shape({
-                scoring_system_name: PT.string.isRequired,
-                next_tour_id: PT.number,
-                results: PT.arrayOf(
-                    PT.shape({
-                        place: PT.number,
-                        advances: PT.bool.isRequired,
-                        run_id: PT.number.isRequired,
-                        additional_data: PT.object.isRequired,
-                    }).isRequired,
-                ).isRequired,
-                runs: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                        status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                    }).isRequired,
-                ).isRequired,
-                discipline: PT.shape({
-                    discipline_judges: PT.arrayOf(
-                        PT.shape({
-                            role: PT.string.isRequired,
-                        }).isRequired
-                    ).isRequired,
+export default class ResultsTable3 extends React.Component {
+    static propTypes = {
+        computedTour: PT.shape({
+            tour: PT.object.isRequired,
+            tour_result: PT.object.isRequired,
+            rows: PT.arrayOf(
+                PT.shape({
+                    run: PT.object.isRequired,
+                    run_result: PT.object.isRequired,
+                    scores: PT.object.isRequired,
                 }).isRequired,
-            }).isRequired,
-         };
-    }
+            ).isRequired,
+        }).isRequired,
+    };
 
     static transformDocx(docx) {
         docx
@@ -59,11 +42,9 @@ export default class ResultsTable3 extends React.PureComponent {
     }
 
     render() {
-        const line_judges = this.props.tour.discipline.discipline_judges.filter(
+        const line_judges = this.props.computedTour.tour.discipline.discipline_judges.filter(
             dj => ["acro_judge", "dance_judge"].includes(dj.role));
         const widths = new ColumnsWidths(line_judges.length);
-        const djs_map = new Map(this.props.tour.discipline.discipline_judges.map(dj => [dj.id, dj]));
-        const table = makeTourResultsTable(this.props.tour);
         return (
             <div className="ResultsTable3">
                 <table className="results-table">
@@ -89,13 +70,12 @@ export default class ResultsTable3 extends React.PureComponent {
                         </tr>
                     </thead>
                     <tbody>
-                        { table.map(row =>
+                        { this.props.computedTour.rows.map(row =>
                             <Row
-                                disciplineJudgesMap={ djs_map }
                                 key={ row.run.id }
                                 lineDisciplineJudges={ line_judges }
                                 row={ row }
-                                tour={ this.props.tour }
+                                tour={ this.props.computedTour.tour }
                             />
                         ) }
                     </tbody>

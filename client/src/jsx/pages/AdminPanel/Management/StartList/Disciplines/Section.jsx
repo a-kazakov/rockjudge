@@ -1,33 +1,30 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import Row from "./Row";
 import Acrobatics from "../Acrobatics";
 import SportsmenList from "../SportsmenList";
 import StatInfo from "../StatInfo";
+import Model from "common/server/Storage/models/Model";
 
-export default class Section extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            config: PT.shape({
-                include_acrobatics: PT.bool.isRequired,
-                show_sportsmen_only: PT.bool.isRequired,
-                disciplines: PT.object.isRequired,
-            }).isRequired,
-            discipline: PT.shape({
-                id: PT.number.isRequired,
-                name: PT.string.isRequired,
-                participants: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
-        };
-    }
-    renderRows() {
+export default class Section extends React.Component {
+    static propTypes = {
+        config: PT.shape({
+            include_acrobatics: PT.bool.isRequired,
+            show_sportsmen_only: PT.bool.isRequired,
+            disciplines: PT.object.isRequired,
+            clubs: PT.object.isRequired,
+        }).isRequired,
+        discipline: PT.instanceOf(Model).isRequired,
+    };
+
+    filterParticipant = (participant) => this.props.config.clubs[participant.club.id];
+
+    renderRows(participants) {
         let result = [];
-        for (const participant of this.props.discipline.participants) {
+        for (const participant of participants) {
             const include_acrobatics =
                 this.props.config.include_acrobatics &&
                 participant.programs.length !== 0;
@@ -51,12 +48,12 @@ export default class Section extends React.PureComponent {
         }
         return result;
     }
-    renderBody() {
+    renderBody(participants) {
         if (this.props.config.show_sportsmen_only) {
             return (
                 <SportsmenList
                     config={ this.props.config }
-                    participants={ this.props.discipline.participants }
+                    participants={ participants }
                 />
             );
         }
@@ -90,14 +87,12 @@ export default class Section extends React.PureComponent {
                     </th>
                 </tr>
             </thead><tbody>
-                { this.renderRows() }
+                { this.renderRows(participants) }
             </tbody></table>
         );
     }
     render() {
-        if (!this.props.config.disciplines[this.props.discipline.id]) {
-            return null;
-        }
+        const participants = this.props.discipline.participants.filter(this.filterParticipant);
         return (
             <div>
                 <h5>
@@ -106,14 +101,12 @@ export default class Section extends React.PureComponent {
                     </p>
                 </h5>
                 <div className="discipline">
-                    { this.renderBody() }
+                    { this.renderBody(participants) }
                     <StatInfo
-                        participants={ this.props.discipline.participants }
+                        participants={ participants }
                     />
                 </div>
             </div>
         );
     }
 }
-
-Section.displayName = "AdminPanel_Management_StartList_Disciplines_Section";

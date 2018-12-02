@@ -1,17 +1,17 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import DisciplinesSorted from "./DisciplinesSorted";
 import PlanSorted from "./PlanSorted";
 
-export default class SideMenu extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            activeTourId: PT.number,
-            competition: PT.object.isRequired,
-            onActiveTourChange: PT.func.isRequired,
-        };
-    }
+export default class SideMenu extends React.Component {
+    static propTypes = {
+        activeTourId: PT.number,
+        competition: PT.object.isRequired,
+        onActiveTourChange: PT.func.isRequired,
+    };
 
     constructor(props) {
         super(props);
@@ -84,5 +84,3 @@ export default class SideMenu extends React.PureComponent {
         );
     }
 }
-
-SideMenu.displayName = "AdminPanel_Judging_SideMenu";

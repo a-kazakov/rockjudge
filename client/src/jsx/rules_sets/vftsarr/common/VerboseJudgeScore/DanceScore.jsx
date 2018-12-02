@@ -1,27 +1,13 @@
-import _ from "l10n";
+import {React} from "HostModules";
 
+import _ from "l10n";
+import PT from "prop-types";
 import formatScore from "./formatScore";
 
-export default class DanceScore extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            score: PT.shape({
-                id: PT.number.isRequired,
-                data: PT.shape({
-                    raw_data: PT.shape({
-                        fw_woman: PT.number,
-                        fw_man: PT.number,
-                        dance_figs: PT.number,
-                        composition: PT.number,
-                        small_mistakes: PT.number,
-                        big_mistakes: PT.number,
-                    }).isRequired,
-                }).isRequired,
-            }).isRequired,
-            scoringType: PT.string.isRequired,
-        };
-    }
+export default class DanceScore extends React.Component {
+    static propTypes = {
+        scoreResult: PT.object.isRequired,
+    };
 
     renderRow(component, fmt="@") {
         return (
@@ -30,7 +16,7 @@ export default class DanceScore extends React.PureComponent {
                     <p>{ _(`score_parts.components.short.${component}`) }:</p>
                 </th>
                 <td>
-                    <p>{ formatScore(this.props.score.data.raw_data[component], fmt) }</p>
+                    <p>{ formatScore(this.props.scoreResult.extra_data.parts[component], fmt) }</p>
                 </td>
             </tr>
         )

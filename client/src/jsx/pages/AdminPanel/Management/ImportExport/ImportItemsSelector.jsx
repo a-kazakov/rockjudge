@@ -1,11 +1,11 @@
+import React from "react";
 import _ from "l10n";
 
 import ImportItemsCheckbox from "./ImportItemsCheckbox";
 
-export default class ImportItemsSelector extends React.PureComponent {
-    static get propTypes() {
-        return {};
-    }
+export default class ImportItemsSelector extends React.Component {
+    static propTypes = {};
+
     constructor(props) {
         super(props);
         this.state = {
@@ -66,5 +66,3 @@ export default class ImportItemsSelector extends React.PureComponent {
         );
     }
 }
-
-ImportItemsSelector.displayName = "AdminPanel_Management_ImportExport_ImportItemsSelector";

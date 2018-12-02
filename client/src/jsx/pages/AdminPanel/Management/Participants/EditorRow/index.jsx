@@ -1,92 +1,45 @@
+import React from "react";
+
+import makeClassName from "common/makeClassName";
+import Model from "common/server/Storage/models/Model";
 import _ from "l10n";
+import PT from "prop-types";
 
 import GeneralInfo from "./GeneralInfo";
-import SportsmenList from "./SportsmenList";
 import Programs from "./Programs";
+import SportsmenList from "./SportsmenList";
 
-export default class EditorRow extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                clubs: PT.arrayOf(PT.object.isRequired).isRequired,
-            }).isRequired,
-            newParticipant: PT.bool,
-            participant: PT.shape({
-                number: PT.oneOfType([
-                    PT.number.isRequired,
-                    PT.string.isRequired,
-                ]).isRequired,
-                club: PT.shape({
-                    id: PT.number.isRequired,
-                }).isRequired,
-                coaches: PT.string.isRequired,
-                formation_name: PT.string.isRequired,
-                sportsmen: PT.arrayOf(PT.object.isRequired).isRequired,
-                programs: PT.arrayOf(PT.object.isRequired).isRequired,
-            }).isRequired,
-            onStopEditing: PT.func.isRequired,
-            onSubmit: PT.func.isRequired,
-        };
-    }
-    static get defaultProps() {
-        return {
-            newParticipant: false,
-        };
-    }
-    constructor(props) {
-        super(props);
-        const participant_data = {
-            number:         this.props.participant.number.toString(),
-            club_id:        this.props.participant.club.id,
-            coaches:        this.props.participant.coaches,
-            formation_name: this.props.participant.formation_name,
-            sportsmen:      this.props.participant.sportsmen.map(sp => {
-                let { year_of_birth, ...result } = sp;
-                Object.assign(result, {
-                    year_of_birth: year_of_birth.toString(),
-                });
-                return result;
-            }),
-        };
-        this.state = {
-            participantData: participant_data,
-        };
-    }
+export default class EditorRow extends React.Component {
+    static propTypes = {
+        context: PT.shape({
+            competition: PT.instanceOf(Model).isRequired,
+        }).isRequired,
+        creating: PT.bool.isRequired,
+        entry: PT.instanceOf(Model),
+        formData: PT.shape({
+            number: PT.string.isRequired,
+            club_id: PT.string.isRequired,
+            coaches: PT.string.isRequired,
+            formation_name: PT.string.isRequired,
+            sportsmen: PT.arrayOf(PT.object.isRequired).isRequired,
+        }).isRequired,
+        loading: PT.bool.isRequired,
+        onDiscard: PT.func.isRequired,
+        onFieldChange: PT.func.isRequired,
+        onSubmit: PT.func.isRequired,
+    };
 
-    handleChange = (field, value) => {
-        let participant = Object.assign({}, this.state.participantData); // clone
-        participant[field] = value;
-        this.setState({
-            participantData: participant,
-        });
-    }
+    handleSportsmenChange = (value) => this.props.onFieldChange("sportsmen", value);
     handleSubmission = (event) => {
         event.preventDefault();
-        this.props.onSubmit(this.serialize());
-    }
-
-    serialize() {
-        let { number, sportsmen, ...result } = this.state.participantData;
-        Object.assign(result, {
-            number: parseInt(number, 10) || 0,
-            sportsmen: sportsmen.map(sp => {
-                let { year_of_birth, ...inner_result } = sp;
-                Object.assign(inner_result, {
-                    year_of_birth: parseInt(year_of_birth, 10) || 0,
-                });
-                return inner_result;
-            }),
-        });
-        return result;
-    }
+        this.props.onSubmit();
+    };
 
     getClassName() {
-        let result = "editor";
-        if (this.props.newParticipant) {
-            result += " create";
-        }
-        return result;
+        return makeClassName({
+            "editor": true,
+            "create": this.props.creating,
+        });
     }
     render() {
         return (
@@ -96,9 +49,10 @@ export default class EditorRow extends React.PureComponent {
                         <form onSubmit={ this.handleSubmission }>
                             <div className="col-10">
                                 <GeneralInfo
-                                    competition={ this.props.competition }
-                                    participantData={ this.state.participantData }
-                                    onChange={ this.handleChange }
+                                    competition={ this.props.context.competition }
+                                    formData={ this.props.formData }
+                                    loading={ this.props.loading }
+                                    onFieldChange={ this.props.onFieldChange }
                                 />
                                 <div className="buttons horizontal">
                                     <button type="submit">
@@ -106,7 +60,7 @@ export default class EditorRow extends React.PureComponent {
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={ this.props.onStopEditing }
+                                        onClick={ this.props.onDiscard }
                                     >
                                         { _("global.buttons.discard") }
                                     </button>
@@ -114,24 +68,17 @@ export default class EditorRow extends React.PureComponent {
                             </div>
                             <div className="col-14">
                                 <SportsmenList
-                                    sportsmen={ this.state.participantData.sportsmen }
-                                    onChange={ this.handleChange }
+                                    sportsmen={ this.props.formData.sportsmen }
+                                    onChange={ this.handleSportsmenChange }
                                 />
                             </div>
                         </form>
                     </div>
                     <div className="col-9">
-                        <Programs
-                            newParticipant={ this.props.newParticipant }
-                            participant={ this.props.participant }
-                            programs={ this.props.participant.programs }
-                            onChange={ this.handleChange }
-                        />
+                        <Programs participant={ this.props.entry } />
                     </div>
                 </td>
             </tr>
         );
     }
 }
-
-EditorRow.displayName = "AdminPanel_Management_Participants_EditorRow";

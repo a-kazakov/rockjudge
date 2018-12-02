@@ -1,88 +1,53 @@
-import Api from "common/server/Api";
-import websocket from "common/server/websocket";
+import React from "react";
 
-import LoadingComponent from "common/server/LoadingComponent";
 import FullscreenButton from "common/components/FullscreenButton"
 import Loader from "common/components/Loader";
-
+import Storage from "common/server/Storage";
+import CompetitionSubscription from "common/server/Storage/subscriptions/CompetitionSubscription";
+import PT from "prop-types";
 import HeatsPage from "./HeatsPage";
 import InfoPage from "./InfoPage";
 import LeftBar from "./LeftBar";
 import PlanPage from "./PlanPage";
 import ResultsPage from "./ResultsPage";
 
-export default class PresenterTablet extends LoadingComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competitionId: PT.number.isRequired,
-        };
-    }
-
-    CLASS_ID = "presenter_tablet";
-    API_MODELS = {
-        competition: {
-            model_type: "Competition",
-            model_id_getter: props => props.competitionId,
-            schema: {
-                clubs: {},
-                disciplines: {
-                    tours: {},
-                },
-                judges: {},
-                plan: {},
-            },
-        },
+export default class PresenterTablet extends React.Component {
+    static propTypes = {
+        competitionId: PT.number.isRequired,
     };
 
+    // Intialization
 
     constructor(props) {
         super(props);
         this.state = {
+            competitionStorage: null,
             page: "info",
-            heat: 1,
-            competition: null,
-            activeTourId: null,
         };
     }
 
     componentDidMount() {
-        super.componentDidMount();
-        this.active_tours_update_listener = websocket.addListener("active_tours_update", this.handleActiveToursUpdateMessage);
-        Api("competition.get_active_tours", { competition_id: this.props.competitionId })
-            .onSuccess(this.handleActiveToursUpdate)
-            .send();
+        this._storage = new Storage();
+        this._storage.init(this.reload).then(this.subscribe).catch(console.error.bind(console));
     }
 
-    componentWillUnmount() {
-        super.componentWillUnmount();
-        websocket.removeListener(this.active_tours_update_listener);
-    }
+    subscribe = () => {
+        this._competition_subscription = new CompetitionSubscription(this.props.competitionId);
+        this._storage.subscribe(this._competition_subscription)
+            .then(this.updateCompetitionStorage)
+            .catch(console.error.bind(console));
+    };
 
-    handleActiveToursUpdate = (active_tours) => {
-        const tour_info = active_tours[0] || null;
-        const tour_id = tour_info && tour_info.tour_id;
-        if (tour_id === this.state.activeTourId) {
-            return;
-        }
-        this.setState({
-            activeTourId: tour_id,
-            heat: 1,
-        });
-    }
-    handleActiveToursUpdateMessage = (data) => {
-        const { competition_id, active_tours } = data;
-        if (competition_id !== this.props.competitionId) {
-            return;
-        }
-        this.handleActiveToursUpdate(active_tours);
-    }
+    updateCompetitionStorage = (competitionStorage) => {
+        this.setState({competitionStorage});
+    };
+    reload = () => this.forceUpdate();
 
-    handleHeatChange = (heat) => this.setState({ heat });
-    handlePageChange = (page) => this.setState({ page });
+    handlePageChange = (page) => this.setState({page});
 
     renderBody() {
-        if (this.state.competition === null) {
+        const competition = this.state.competitionStorage?.get("Competition", this.props.competitionId);
+        if (!competition) {
             return (
                 <Loader />
             );
@@ -91,27 +56,26 @@ export default class PresenterTablet extends LoadingComponent {
         case "info":
             return (
                 <InfoPage
-                    competition={ this.state.competition }
+                    competition={ competition }
                 />
             );
         case "heats":
             return (
                 <HeatsPage
-                    activeTourId={ this.state.activeTourId }
-                    heat={ this.state.heat }
+                    competition={ competition }
                     onHeatChange={ this.handleHeatChange }
                 />
             );
         case "plan":
             return (
                 <PlanPage
-                    competition={ this.state.competition }
+                    competition={ competition }
                 />
             );
         case "results":
             return (
                 <ResultsPage
-                    competition={ this.state.competition }
+                    competition={ competition }
                 />
             );
         }
@@ -132,5 +96,3 @@ export default class PresenterTablet extends LoadingComponent {
         );
     }
 }
-
-PresenterTablet.displayName = "PresenterTablet";

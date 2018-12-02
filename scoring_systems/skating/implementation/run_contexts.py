@@ -1,40 +1,25 @@
-from typing import Any, List, Tuple, Type, Optional, Dict
+from __future__ import annotations
 
-from .common import CachedClass, JUDGE_ROLES
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Tuple, Type
+
+from enums import RunStatus
+from scoring_systems.base import RunInfo, RunResult, ScoringSystemName, TourComputationRequest
+from .common import CachedClass
 from .score_contexts import ScoreContextBase
-from ..types import (
-    AcroScore,
-    JudgeRole,
-    RunId,
-    RunStatus,
-    ScoreId,
-    ScoreRawData,
-    ScoringSystemName,
-    TourName,
-)
+
+if TYPE_CHECKING:
+    from scoring_systems.skating import TourContextBase
 
 
 class RunContextBase(CachedClass):
     def __init__(
         self,
-        run_id: RunId,
-        scores_ids: List[ScoreId],
-        raw_scores: List[ScoreRawData],
-        judges_roles: List[JudgeRole],
-        acro_scores: List[AcroScore],
-        inherited_data: Any,
-        status: RunStatus,
-        tour_name: TourName,
+        run_info: RunInfo,
+        tour_context: TourContextBase,
         scoring_system_name: ScoringSystemName,
     ) -> None:
-        self.run_id = run_id
-        self.scores_ids = scores_ids
-        self.raw_scores = raw_scores
-        self.judges_roles = judges_roles
-        self.acro_scores = acro_scores
-        self.inherited_data = inherited_data
-        self.status = status
-        self.tour_name = tour_name
+        self.run_info = run_info
+        self.tour_context = tour_context
         self.scoring_system_name = scoring_system_name
 
     @staticmethod
@@ -51,54 +36,49 @@ class RunContextBase(CachedClass):
     @classmethod
     def make(
         cls,
-        run_id: RunId,
-        scores_ids: List[ScoreId],
-        raw_scores: List[ScoreRawData],
-        judges_roles: List[JudgeRole],
-        acro_scores: List[AcroScore],
-        inherited_data: Any,
-        status: RunStatus,
-        tour_name: TourName,
+        run_info: RunInfo,
+        tour_context: TourContextBase,
         scoring_system_name: ScoringSystemName,
     ) -> "RunContextBase":
         return cls.get_class(scoring_system_name)(
-            run_id,
-            scores_ids,
-            raw_scores,
-            judges_roles,
-            acro_scores,
-            inherited_data,
-            status,
-            tour_name,
+            run_info,
+            tour_context,
             scoring_system_name,
+        )
+
+    @property
+    def tour_request(self) -> TourComputationRequest:
+        return self.tour_context.tour_request
+
+    @property
+    def inherited_data(self) -> Dict[str, Any]:
+        inherited_dict = self.tour_request.inherited_data or {}
+        return (
+            inherited_dict
+                .get("by_participant", {})
+                .get(self.run_info.participant_id, {})
         )
 
     @property
     def scores(self) -> List[ScoreContextBase]:
         return [
-            ScoreContextBase.make(
-                score_id=score_id,
-                raw_data=raw_score,
-                judge_role=jr,
-                acro_scores=self.acro_scores,
-                scoring_system_name=self.scoring_system_name
+            ScoreContextBase.make_from_request(
+                score_info,
+                self.tour_context,
+                self.scoring_system_name
             )
-            for score_id, raw_score, jr in zip(
-                self.scores_ids,
-                self.raw_scores,
-                self.judges_roles,
-            )
+            for score_info in self.run_info.scores
         ]
 
     @property
-    def scores_by_role(self):
+    def scores_by_role(self) -> Dict[str, List[ScoreContextBase]]:
         return {
             role: [
                 score
-                for score, jr in zip(self.scores, self.judges_roles)
-                if jr == role
+                for score in self.scores
+                if score.judge_role == role
             ]
-            for role in JUDGE_ROLES
+            for role in ("dance_judge", "head_judge", )
         }
 
     @property
@@ -111,6 +91,30 @@ class RunContextBase(CachedClass):
     @property
     def data_to_inherit(self) -> Any:
         return {}
+
+    @property
+    def extra_data(self) -> Dict[str, Any]:
+        return {}
+
+    def make_result(
+        self,
+        place: int,
+        advanced: bool,
+        extra_data: Optional[Dict[str, Any]] = None,
+    ) -> RunResult:
+        if self.run_info.status != RunStatus.DQ :
+            display_score: str = self.display_score
+        else:
+            display_score = "—"
+        return RunResult(
+            total_score_str=display_score,
+            extra_data={
+                **self.extra_data,
+                **(extra_data or {}),
+            },
+            place=(None if self.run_info.status == RunStatus.DQ else place),
+            advanced=advanced,
+        )
 
 
 class RunContextQualification(RunContextBase):
@@ -127,11 +131,11 @@ class RunContextQualification(RunContextBase):
 
     @property
     def sorting_score(self) -> Tuple[int, ...]:
-        if self.status != "OK":
+        if self.run_info.status != RunStatus.OK:
             return (
                 1,
-                int(self.status == "DQ"),
-                int(self.status == "NP"),
+                int(self.run_info.status == RunStatus.DQ),
+                int(self.run_info.status == RunStatus.NP),
             )
         return (
             0,
@@ -148,18 +152,24 @@ class RunContextQualification(RunContextBase):
             result = f"{result} [{self.bonus}]"
         return result
 
+    @property
+    def extra_data(self) -> Dict[str, Any]:
+        return {
+            "user_score": str(self.crosses_count)
+        }
+
 
 class RunContextFinal(RunContextBase):
     @staticmethod
     def transform_place(place: int, n_runs: int) -> int:
-        if place <= 0 or place > n_runs:
+        if not 1 <= place <= n_runs:
             return n_runs
         return place
 
     @property
     def raw_places(self) -> List[int]:
         return [
-            s.counting_score["place"] if self.status == "OK" else 0
+            s.counting_score["place"] if self.run_info.status == RunStatus.OK else 0
             for s in self.scores_by_role["dance_judge"]
         ]
 

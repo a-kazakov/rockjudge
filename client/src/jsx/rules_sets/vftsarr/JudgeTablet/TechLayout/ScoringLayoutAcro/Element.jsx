@@ -1,22 +1,17 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import OverrideInput from "./OverrideInput";
 
-export default class Element extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            acro: PT.shape({
-                score: PT.number.isRequired,
-                original_score: PT.number.isRequired,
-                description: PT.string.isRequired,
-            }).isRequired,
-            idx: PT.number.isRequired,
-            readOnly: PT.bool.isRequired,
-            onAcroOverride: PT.func.isRequired,
-        };
-    }
+export default class Element extends React.Component {
+    static propTypes = {
+        acrobatic: PT.object.isRequired,
+        readOnly: PT.bool.isRequired,
+        onAcroOverride: PT.func.isRequired,
+    };
 
     handleChange = (value) => {
-        this.props.onAcroOverride(this.props.idx, value);
+        this.props.onAcroOverride(this.props.acrobatic, value);
     };
 
     formatDescriptionChunk = (text, idx) => {
@@ -30,9 +25,9 @@ export default class Element extends React.PureComponent {
         );
     };
     renderDescription() {
-        const chunks = this.props.acro.description.split("_");
+        const chunks = this.props.acrobatic.description.split("_");
         if (chunks.length % 2 === 0) {
-            return this.props.acro.description;
+            return this.props.acrobatic.description;
         }
         return chunks.map(this.formatDescriptionChunk)
     }
@@ -41,9 +36,8 @@ export default class Element extends React.PureComponent {
             <div className="tech-judge-acro">
                 <div className="controls">
                     <OverrideInput
-                        originalValue={ this.props.acro.original_score }
+                        acrobatic={ this.props.acrobatic }
                         readOnly={ this.props.readOnly }
-                        value={ this.props.acro.score }
                         onChange={ this.handleChange }
                     />
                 </div>

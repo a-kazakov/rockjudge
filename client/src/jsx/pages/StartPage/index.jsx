@@ -1,77 +1,86 @@
-import _ from "l10n";
+import React from "react";
 
-import Api from "common/server/Api";
 import Loader from "common/components/Loader";
-import websocket from "common/server/websocket";
-
 import keys_storage from "common/keys_storage";
-
+import Storage from "common/server/Storage";
+import AllCompetitionsSubscription from "common/server/Storage/subscriptions/AllCompetitionsSubscription";
+import ClientSubscription from "common/server/Storage/subscriptions/ClientSubscription";
+import _ from "l10n";
 import CompetitionSelector from "./CompetitionSelector";
 import RoleSelector from "./RoleSelector";
 
-export default class StartPage extends React.PureComponent {
+export default class StartPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            competitionAccesses: null,
             activeCompetitionId: null,
-            competitionsNames: null,
+            competitionsStorage: null,
+            clientStorage: null,
         };
-        websocket.addListener("db_update", this.reloadFromStorage);
-        websocket.addListener("reload_data", this.loadData);
-        websocket.addListener("access_levels_changed", this.handleAccessLevelsChange);
-        websocket.addListener("competition_list_update", this.loadCompetitionsNames);
-        this.loadData();
     }
 
-    loadAccessLevels = () => {
-        Api("auth.get_access_levels", {})
-            .onSuccess(competitionAccesses => this.setState({ competitionAccesses }))
-            .send();
+    componentDidMount() {
+        this._storage = new Storage();
+        this._storage.init(this.reload).then(this.subscribe).catch(console.error.bind(console));
+    }
+
+    subscribe = () => {
+        this._competitions_subscription = new AllCompetitionsSubscription();
+        this._storage.subscribe(this._competitions_subscription)
+            .then(this.updateCompetitionsStorage)
+            .catch(console.error.bind(console));
+        this.trySubscribeClient();
     };
-    loadCompetitionsNames = () => {
-        Api("competition.get_active_names", {})
-            .onSuccess(competitionsNames => this.setState({ competitionsNames }))
-            .send();
-    };
-    loadData = () => {
-        this.loadAccessLevels();
-        this.loadCompetitionsNames();
+    trySubscribeClient = () => {
+        const client_id = keys_storage.client_id;
+        if (client_id == null) {
+            setTimeout(this.trySubscribeClient, 100);
+            return;
+        }
+        this._client_subscription = new ClientSubscription(client_id);
+        this._storage.subscribe(this._client_subscription).then(this.updateClientStorage);
     };
 
-    handleAccessLevelsChange = (data) => {
-        if (data.client_id === keys_storage.client_id) {
-            this.loadAccessLevels();
-        }
+    updateCompetitionsStorage = (competitionsStorage) => {
+        this.setState({competitionsStorage});
     };
+    updateClientStorage = (clientStorage) => {
+        this.setState({clientStorage});
+    };
+    reload = () => this.forceUpdate();
 
     handleCompetitionSelect = (activeCompetitionId) => this.setState({ activeCompetitionId });
 
     renderBody() {
-        if (this.state.competitionsNames === null || this.state.competitionAccesses === null)  {
+        if (this.state.competitionsStorage == null || this.state.clientStorage == null)  {
             return (
                 <Loader />
             );
         }
-        const active_comeptition = (
+        const competitions = this.state.competitionsStorage.getType("Competition").filter(c => c.active);
+        const active_competition = (
             this.state.activeCompetitionId
-                ? this.state.competitionsNames.find(c => c.id === this.state.activeCompetitionId)
-                : this.state.competitionsNames.length === 1
-                    ? this.state.competitionsNames[0]
+                ? this.state.competitionsStorage.get("Competition", this.state.activeCompetitionId)
+                : competitions.length === 1
+                    ? competitions[0]
                     : null
         );
-        if (active_comeptition === null) {
+        if (active_competition == null) {
             return (
                 <CompetitionSelector
-                    competitionsNames={ this.state.competitionsNames }
+                    clientStorage={ this.state.clientStorage }
+                    competitions={ competitions }
                     onSelect={ this.handleCompetitionSelect }
                 />
             )
         }
+        const auth= this.state.clientStorage
+            .getType("ClientAuth")
+            .find(a => a.competition_id === active_competition.id);
         return (
             <RoleSelector
-                accessLevel={ this.state.competitionAccesses[active_comeptition.id] }
-                competition={ active_comeptition }
+                auth={ auth }
+                competition={ active_competition }
             />
         );
     }
@@ -86,5 +95,3 @@ export default class StartPage extends React.PureComponent {
         );
     }
 }
-
-StartPage.displayName = "StartPage";

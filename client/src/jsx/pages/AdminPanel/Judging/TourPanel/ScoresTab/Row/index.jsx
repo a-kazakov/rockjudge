@@ -1,56 +1,30 @@
-import makeClassName from "common/makeClassName";
+import React from "react";
 
+import makeClassName from "common/makeClassName";
+import Model from "common/server/Storage/models/Model";
+import PT from "prop-types";
 import AcrobaticsCell from "./AcrobaticsCell";
 import ActionsCell from "./ActionsCell";
 import HeatCell from "./HeatCell";
-import StatusCell from "./StatusCell";
 import ScoreCell from "./ScoreCell";
+import StatusCell from "./StatusCell";
 
 
-export default class Row extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            heatPosition: PT.number.isRequired,
-            heatSize: PT.number.isRequired,
-            readOnly: PT.bool.isRequired,
-            nowEditing: PT.shape({
-                type: PT.string,
-                score_id: PT.number,
-                run_id: PT.number,
-            }).isRequired,
-            run: PT.shape({
-                id: PT.number.isRequired,
-                heat: PT.number.isRequired,
-                status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                disqualified: PT.bool.isRequired,
-                total_score: PT.string.isRequired,
-                participant: PT.shape({
-                    number: PT.number.isRequired,
-                    name: PT.shape.isRequired,
-                }).isRequired,
-                scores: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                        confirmed: PT.bool.isRequired,
-                        discipline_judge_id: PT.number.isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
-            tour: PT.shape({
-                discipline: PT.shape({
-                    discipline_judges: PT.arrayOf(
-                        PT.shape({
-                            id: PT.number.isRequired,
-                        }).isRequired
-                    ).isRequired,
-                }).isRequired,
-            }).isRequired,
-            onEditRequest: PT.func.isRequired,
-            onPositionMove: PT.func.isRequired,
-            onStopEditing: PT.func.isRequired,
-        };
-    }
+export default class Row extends React.Component {
+    static propTypes= {
+        heatPosition: PT.number.isRequired,
+        heatSize: PT.number.isRequired,
+        nowEditing: PT.shape({
+            type: PT.string,
+            score_id: PT.number,
+            run_id: PT.number,
+        }).isRequired,
+        readOnly: PT.bool.isRequired,
+        run: PT.instanceOf(Model).isRequired,
+        onEditRequest: PT.func.isRequired,
+        onPositionMove: PT.func.isRequired,
+        onStopEditing: PT.func.isRequired,
+    };
 
     getClassName() {
         return makeClassName({
@@ -79,28 +53,28 @@ export default class Row extends React.PureComponent {
             />
         );
     }
-    render() {
+    renderScores() {
         let scores_map = new Map();
         for (const score of this.props.run.scores) {
-            scores_map.set(score.discipline_judge_id, score)
+            scores_map.set(score.discipline_judge_id, score);
         }
-        const scores = this.props.tour.discipline.discipline_judges.map((discipline_judge, idx) => {
+        return this.props.run.tour.discipline.discipline_judges.map((discipline_judge, idx) => {
             const score = scores_map.get(discipline_judge.id);
             return (
                 <ScoreCell
-                    confirmed={ score?.confirmed || false }
                     disciplineJudge={ discipline_judge }
                     editing={ this.props.nowEditing.type === "score" &&
                               this.props.nowEditing.score_id === score?.id }
                     key={ score?.id ||  `I${idx}` }
                     readOnly={ this.props.readOnly }
                     score={ score }
-                    tour={ this.props.tour }
                     onEditRequest={ this.props.onEditRequest }
                     onStopEditing={ this.props.onStopEditing }
                 />
             );
         });
+    }
+    render() {
         return (
             <tr className={ this.getClassName() }>
                 <HeatCell
@@ -120,6 +94,7 @@ export default class Row extends React.PureComponent {
                 <AcrobaticsCell
                     editing={ this.props.nowEditing.type === "acrobatics" &&
                               this.props.nowEditing.run_id === this.props.run.id }
+                    participant={ this.props.run.participant }
                     readOnly={ this.props.readOnly }
                     run={ this.props.run }
                     onEditRequest={ this.props.onEditRequest }
@@ -130,13 +105,12 @@ export default class Row extends React.PureComponent {
                     run={ this.props.run }
                 />
                 <td className="total">
-                    { this.props.run.total_score }
+                    { this.props.run.tour.results.runs_results[this.props.run.id]?.total_score_str || "..." }
                 </td>
-                { scores }
+                { this.renderScores() }
                 { this.renderActionsCell() }
             </tr>
         );
     }
 }
 
-Row.displayName = "AdminPanel_Judging_TourPanel_ScoresTab_Row";

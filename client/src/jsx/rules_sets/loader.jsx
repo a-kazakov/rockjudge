@@ -1,5 +1,4 @@
 import Api from "common/server/Api";
-import storage from "common/server/storage";
 import websocket from "common/server/websocket";
 
 class RulesSetLoader {
@@ -94,7 +93,7 @@ const loader = new RulesSetLoader();
 
 window.registerRulesSet = function(...args) {
     loader.load(...args);
-    return { Api, storage, websocket };
-}
+    return { Api, websocket };
+};
 
 export default loader;

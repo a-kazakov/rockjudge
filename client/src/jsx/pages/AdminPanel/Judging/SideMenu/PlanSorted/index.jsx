@@ -1,29 +1,29 @@
+import React from "react";
+
+import PT from "prop-types";
 import Item from "./Item";
 
-export default class PlanSorted extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            activeTourId: PT.number,
-            competition: PT.shape({
-                plan: PT.arrayOf(
-                    PT.shape({
-                        tour_id: PT.number,
-                    }).isRequired
-                ).isRequired,
-                disciplines: PT.arrayOf(
-                    PT.shape({
-                        tours: PT.arrayOf(
-                            PT.shape({
-                                id: PT.number.isRequired,
-                            })
-                        ).isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
-            onActiveTourChange: PT.func.isRequired,
-        };
-    }
+export default class PlanSorted extends React.Component {
+    static propTypes = {
+        activeTourId: PT.number,
+        competition: PT.shape({
+            plan: PT.arrayOf(
+                PT.shape({
+                    tour_id: PT.number,
+                }).isRequired
+            ).isRequired,
+            disciplines: PT.arrayOf(
+                PT.shape({
+                    tours: PT.arrayOf(
+                        PT.shape({
+                            id: PT.number.isRequired,
+                        })
+                    ).isRequired,
+                }).isRequired
+            ).isRequired,
+        }).isRequired,
+        onActiveTourChange: PT.func.isRequired,
+    };
 
     render() {
         let tours = new Map();
@@ -35,7 +35,7 @@ export default class PlanSorted extends React.PureComponent {
                 });
             }
         }
-        const plan = this.props.competition.plan.filter(item => item.tour_id !== null);
+        const plan = this.props.competition.plan.filter(item => item.tour_id != null);
         return (
             <div>
                 { plan.map(item => {
@@ -54,5 +54,3 @@ export default class PlanSorted extends React.PureComponent {
         );
     }
 }
-
-PlanSorted.displayName = "AdminPanel_Judging_SideMenu_PlanSorted";

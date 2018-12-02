@@ -1,18 +1,18 @@
+import React from "react";
+
+import PT from "prop-types";
 import makeClassName from "common/makeClassName";
 
-export default class Item extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            active: PT.bool.isRequired,
-            tour: PT.shape({
-                finalized: PT.bool.isRequired,
-                id: PT.number.isRequired,
-                name: PT.string.isRequired,
-            }).isRequired,
-            onActiveTourChange: PT.func.isRequired,
-        };
-    }
+export default class Item extends React.Component {
+    static propTypes = {
+        active: PT.bool.isRequired,
+        tour: PT.shape({
+            finalized: PT.bool.isRequired,
+            id: PT.number.isRequired,
+            name: PT.string.isRequired,
+        }).isRequired,
+        onActiveTourChange: PT.func.isRequired,
+    };
 
     handleClick = () => {
         this.props.onActiveTourChange(this.props.tour.id);
@@ -36,5 +36,3 @@ export default class Item extends React.PureComponent {
         );
     }
 }
-
-Item.displayName = "AdminPanel_Judging_SideMenu_DisciplinesSorted_Item";

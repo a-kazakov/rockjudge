@@ -1,8 +1,10 @@
+import {React} from "HostModules";
+
 import _ from "l10n";
 
 import getCardReasons from "./getCardReasons";
 
-export default function getCard(run, tour, params={}) {
+export default function getCard(run_result, tour, params={}) {
     const {
         verbose,
         reasons_style,
@@ -12,7 +14,7 @@ export default function getCard(run, tour, params={}) {
         reasons_style: {},
         p_class: "",
     }, params);
-    if (run.status !== "OK") {
+    if (run_result.extra_data.status !== "OK") {
         return (
             <p className="p-class">
                 —
@@ -20,9 +22,9 @@ export default function getCard(run, tour, params={}) {
         );
     }
     const loc_prefix = verbose ? "long" : "short";
-    const card = run.verbose_total_score.card;
+    const card = run_result.extra_data.card;
     const texts = getCardReasons(tour.scoring_system_name)
-        .filter(cr => run.verbose_total_score.card_reasons[cr])
+        .filter(cr => run_result.extra_data.card_reasons[cr])
         .map(cr => _(`card_reasons.${loc_prefix}.${cr.toLowerCase()}`));
     let result = [];
     if (card === "OK") {

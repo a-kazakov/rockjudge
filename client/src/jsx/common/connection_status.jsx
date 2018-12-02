@@ -1,3 +1,6 @@
+import React from "react";
+import ReactDOM from "react-dom";
+
 import _ from "l10n";
 
 import makeClassName from "common/makeClassName";
@@ -7,7 +10,7 @@ class ConnectionStatusMock {
     setFail() {}
 }
 
-class ConnectionStatus extends React.PureComponent {
+class ConnectionStatus extends React.Component {
     static init() {
         let element = window.document.getElementById("connection_status");
         if (element && !element.hasChildNodes()) {
@@ -70,7 +73,7 @@ class ConnectionStatus extends React.PureComponent {
                 <div className="connection-status ok" />
             );
         }
-        if (this.state.connected === null) {
+        if (this.state.connected == null) {
             return (
                 <div className="connection-status waiting">
                     { _("global.labels.connecting") }

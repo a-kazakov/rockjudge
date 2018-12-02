@@ -1,49 +1,25 @@
-import _ from "l10n";
-import LoadingComponent from "common/server/LoadingComponent";
-import Loader from "common/components/Loader";
-import Docx from "common/Docx";
+import React from "react";
 
+import PT from "prop-types";
+import _ from "l10n";
+import Docx from "common/Docx";
 import ConfigPanel from "pages/AdminPanel/common/ConfigPanel";
 import Paper from "pages/AdminPanel/common/Paper";
-
 import Clubs from "./Clubs";
 import ClubsSummary from "./ClubsSummary";
 import Disciplines from "./Disciplines";
 import DisciplinesSummary from "./DisciplinesSummary";
 import Numbers from "./Numbers";
-import groupParticipants from "./groupParticipants";
+import Model from "common/server/Storage/models/Model";
 
-export default class StartList extends LoadingComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                id: PT.number.isRequired,
-            }).isRequired,
-        };
-    }
-
-    CLASS_ID = "start_list";
-    API_MODELS = {
-        competition: {
-            model_type: "Competition",
-            model_id_getter: props => props.competition.id,
-            schema: {
-                disciplines: {
-                    participants: {
-                        club: {},
-                        programs: {},
-                    },
-                },
-                clubs: {},
-            },
-        },
+export default class StartList extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
     };
 
     constructor(props) {
         super(props);
         this.state = {
-            competition: null,
             config: {
                 include_formation_sportsmen: false,
                 include_acrobatics: false,
@@ -56,26 +32,27 @@ export default class StartList extends LoadingComponent {
         }
     }
 
-    getAdditionalStateUpdate(nextState) {
-        if (nextState.competition === null) {
-            return {};
-        }
-        let config = Object.assign({}, nextState.config); // clone
+    getConfig() {
+        const config = this.state.config;
         let new_disciplines_config = {};
         let new_clubs_config = {};
-        for (const discipline of nextState.competition.disciplines) {
+        for (const discipline of this.props.competition.disciplines) {
             new_disciplines_config[discipline.id] = (discipline.id in config.disciplines)
                 ? config.disciplines[discipline.id]
                 : true;
         }
-        for (const club of nextState.competition.clubs) {
+        for (const club of this.props.competition.clubs) {
             new_clubs_config[club.id] = (club.id in config.clubs)
                 ? config.clubs[club.id]
                 : true;
         }
-        config.disciplines = new_disciplines_config;
-        config.clubs = new_clubs_config;
-        return { config };
+        return Object.assign(
+            config,
+            {
+                disciplines: new_disciplines_config,
+                clubs: new_clubs_config,
+            },
+        );
     }
 
     makeNumbersRef = (ref) => this._numbers = ref;
@@ -86,25 +63,25 @@ export default class StartList extends LoadingComponent {
     handleDocxCreation = () => this.createDocx();
     handleNumbersDocxCreation = () => this._numbers.createDocx();
 
-    getTitle() {
-        if (this.state.config.show_summary) {
-            if (this.state.config.group_by_clubs) {
+    getTitle(config) {
+        if (config.show_summary) {
+            if (config.group_by_clubs) {
                 return _("admin.headers.clubs_summary");
             }
             return _("admin.headers.disciplines_summary");
         }
-        if (this.state.config.show_sportsmen_only) {
+        if (config.show_sportsmen_only) {
             return _("admin.headers.sportsmen_list")
         }
         return _("admin.headers.start_list");
     }
-    renderBody() {
+    renderBody(config) {
         const props = {
-            competition: this.state.competition,
-            config: this.state.config,
-        }
-        if (this.state.config.show_summary) {
-            if (this.state.config.group_by_clubs) {
+            competition: this.props.competition,
+            config: config,
+        };
+        if (config.show_summary) {
+            if (config.group_by_clubs) {
                 return (
                     <ClubsSummary { ...props } />
                 );
@@ -113,7 +90,7 @@ export default class StartList extends LoadingComponent {
                 <DisciplinesSummary { ...props } />
             );
         }
-        if (this.state.config.group_by_clubs) {
+        if (config.group_by_clubs) {
             return (
                 <Clubs { ...props } />
             );
@@ -122,22 +99,17 @@ export default class StartList extends LoadingComponent {
             <Disciplines { ...props } />
         );
     }
-    renderNumbers() {
-        const participants_groups = groupParticipants(this.state.competition, this.state.config);
+    renderNumbers(config) {
         return (
             <Numbers
-                competition={ this.state.competition }
-                participantsGroups={ participants_groups }
+                competition={ this.props.competition }
+                config={ config }
                 ref={ this.makeNumbersRef }
             />
         )
     }
     render() {  // eslint-disable-line react/sort-comp
-        if (this.state.competition === null) {
-            return (
-                <Loader />
-            );
-        }
+        const config = this.getConfig();
         return (
             <div className="StartList">
                 <header>
@@ -155,8 +127,8 @@ export default class StartList extends LoadingComponent {
                 </header>
                 <div className="body">
                     <ConfigPanel
-                        clubs={ this.state.competition.clubs }
-                        config={ this.state.config }
+                        clubs={ this.props.competition.clubs }
+                        config={ config }
                         customControls={ [
                             {key: "include_acrobatics",            label: _("admin.labels.include_acrobatics")},
                             {key: "include_formation_sportsmen",   label: _("admin.labels.include_formation_sportsmen")},
@@ -164,28 +136,29 @@ export default class StartList extends LoadingComponent {
                             {key: "show_sportsmen_only",           label: _("admin.labels.show_sportsmen_only")},
                             {key: "show_summary",                  label: _("admin.labels.show_summary")},
                         ] }
-                        disciplines={ this.state.competition.disciplines }
+                        disciplines={ this.props.competition.disciplines }
                         onChange={ this.handleConfigChange }
                     />
                     <Paper
-                        header={ `${this.state.competition.name}, ${this.state.competition.date}` }
+                        header={ `${this.props.competition.name}, ${this.props.competition.date}` }
                         margins={ [10, 15, 10, 25] }
                         ref={ this.makePrintableRef }
-                        title2={ this.getTitle() }
+                        title2={ this.getTitle(config) }
                     >
-                        { this.renderBody() }
+                        { this.renderBody(config) }
                     </Paper>
-                    { this.renderNumbers() }
+                    { this.renderNumbers(config) }
                 </div>
             </div>
         );
     }
 
     createDocx(filename="start-list.docx") {
+        const config = this.getConfig();
         Docx(filename)
             .setMargins([10, 15, 10, 25])
-            .setHeader(`${this.state.competition.name}, ${this.state.competition.date}`)
-            .setTitle2(this.getTitle())
+            .setHeader(`${this.props.competition.name}, ${this.props.competition.date}`)
+            .setTitle2(this.getTitle(config))
             .setBody(this._printable.getPrintableHTML())
             .addStyle("table.outer .inner td, table.outer .inner th", "border", "none")
             .addStyle("table.outer .inner td, table.outer .inner th", "padding", "0")
@@ -199,5 +172,3 @@ export default class StartList extends LoadingComponent {
             .save();
     }
 }
-
-StartList.displayName = "AdminPanel_Management_StartList";

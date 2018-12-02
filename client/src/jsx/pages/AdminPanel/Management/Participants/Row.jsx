@@ -1,83 +1,42 @@
-import _ from "l10n";
-import Api from "common/server/Api";
+import React from "react";
+
 import showConfirm from "common/dialogs/showConfirm";
-import closeDialog from "common/dialogs/closeDialog";
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import PT from "prop-types";
 
-import EditorRow from "./EditorRow";
+export default class Row extends React.Component {
+    static propTypes = {
+        entry: PT.instanceOf(Model).isRequired,
+        loading: PT.bool.isRequired,
+        onDelete: PT.func.isRequired,
+        onStartEditing: PT.func.isRequired,
+    };
 
-export default class Row extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.object.isRequired,
-            participant: PT.shape({
-                id: PT.number.isRequired,
-                number: PT.number.isRequired,
-                name: PT.string.isRequired,
-                club: PT.shape({
-                    name: PT.string.isRequired,
-                    city: PT.string.isRequired,
-                }).isRequired,
-            }).isRequired,
-        };
-    }
-    constructor(props) {
-        super(props);
-        this.state = {
-            editing: false,
-        }
-    }
-
-    handleStartEditing = () => this.setState({ editing: true });
-    handleStopEditing = () => this.setState({ editing: false });
-
-    handleSubmission = (data) => {
-        Api("participant.set", {
-            participant_id: this.props.participant.id,
-            data: data,
-        })
-            .onSuccess(this.handleStopEditing)
-            .send();
-    }
-    handleDeletion = (event) => {
-        event.stopPropagation();
+    handleDeletion = () => {
         showConfirm(
             _("admin.confirms.delete_participant"),
-            () => {
-                Api("participant.delete", {
-                    participant_id: this.props.participant.id,
-                })
-                    .onSuccess(closeDialog)
-                    .send();
-        });
-    }
-
-    renderEditor() {
-        return (
-            <EditorRow
-                onStopEditing={ this.handleStopEditing }
-                onSubmit={ this.handleSubmission }
-                { ...this.props }
-            />
+            this.props.onDelete,
         );
-    }
-    renderViewer() {
+    };
+    render() {
+        const participant = this.props.entry;
         return (
             <tr
                 className="viewer"
-                onClick={ this.handleStartEditing }
+                onClick={ this.props.onStartEditing }
             >
                 <td className="number">
-                    { this.props.participant.number }
+                    { participant.number }
                 </td>
                 <td className="name">
-                    { this.props.participant.name }
+                    { participant.name }
                 </td>
                 <td className="club-name">
-                    { this.props.participant.club.name }
+                    { participant.club.name }
                 </td>
                 <td className="club-city">
-                    { this.props.participant.club.city }
+                    { participant.club.city }
                 </td>
                 <td className="delete">
                     <button
@@ -91,13 +50,4 @@ export default class Row extends React.PureComponent {
             </tr>
         );
     }
-    render() {
-        if (this.state.editing) {
-            return this.renderEditor();
-        } else {
-            return this.renderViewer();
-        }
-    }
 }
-
-Row.displayName = "AdminPanel_Management_Participants_Row";

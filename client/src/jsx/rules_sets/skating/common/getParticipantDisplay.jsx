@@ -1,3 +1,5 @@
+import {React} from "HostModules";
+
 export default function getParticipantDisplay(participant) { // eslint-disable-line react/display-name
     if (participant.formation_name !== "") {
         return (

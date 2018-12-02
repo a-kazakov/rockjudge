@@ -1,29 +1,29 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import Item from "./Item";
 
-export default class PlanPage extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                disciplines: PT.arrayOf(
-                    PT.shape({
-                        tours: PT.arrayOf(
-                            PT.shape({
-                                id: PT.number.isRequired,
-                            }).isRequired
-                        ).isRequired,
-                    }).isRequired
-                ).isRequired,
-                plan: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
-        };
-    }
+export default class PlanPage extends React.Component {
+    static propTypes = {
+        competition: PT.shape({
+            disciplines: PT.arrayOf(
+                PT.shape({
+                    tours: PT.arrayOf(
+                        PT.shape({
+                            id: PT.number.isRequired,
+                        }).isRequired
+                    ).isRequired,
+                }).isRequired
+            ).isRequired,
+            plan: PT.arrayOf(
+                PT.shape({
+                    id: PT.number.isRequired,
+                }).isRequired
+            ).isRequired,
+        }).isRequired,
+    };
 
     getTours() {
         let result = new Map();
@@ -72,5 +72,3 @@ export default class PlanPage extends React.PureComponent {
         );
     }
 }
-
-PlanPage.displayName = "PresenterTablet_PlanPage";

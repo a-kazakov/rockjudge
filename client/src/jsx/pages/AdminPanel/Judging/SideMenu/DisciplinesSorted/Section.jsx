@@ -1,22 +1,22 @@
+import React from "react";
+
+import PT from "prop-types";
 import Item from "./Item";
 
-export default class Section extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            activeTourId: PT.number,
-            discipline: PT.shape({
-                id: PT.number.isRequired,
-                name: PT.string.isRequired,
-                tours: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
-            onActiveTourChange: PT.func.isRequired,
-        };
-    }
+export default class Section extends React.Component {
+    static propTypes = {
+        activeTourId: PT.number,
+        discipline: PT.shape({
+            id: PT.number.isRequired,
+            name: PT.string.isRequired,
+            tours: PT.arrayOf(
+                PT.shape({
+                    id: PT.number.isRequired,
+                }).isRequired
+            ).isRequired,
+        }).isRequired,
+        onActiveTourChange: PT.func.isRequired,
+    };
 
     handleOpenClose = (event) => {
         sessionStorage.setItem(`D_J_${this.props.discipline.id}`, event.target.parentNode.open ? 0 : 1);
@@ -49,5 +49,3 @@ export default class Section extends React.PureComponent {
         );
     }
 }
-
-Section.displayName = "AdminPanel_Judging_SideMenu_DisciplinesSorted_Section";

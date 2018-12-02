@@ -1,23 +1,14 @@
-import _ from "l10n";
+import React from "react";
 
-export default class UniversalSelector extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                id: PT.number.isRequired,
-                judges: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                        number: PT.string.isRequired,
-                        name: PT.string.isRequired,
-                        role_description: PT.string.isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
-            showAdmin: PT.bool,
-        };
-    }
+import PT from "prop-types";
+import _ from "l10n";
+import Model from "common/server/Storage/models/Model";
+
+export default class UniversalSelector extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        showAdmin: PT.bool,
+    };
     static get defaultProps() {
         return {
             showAdmin: false,
@@ -128,5 +119,3 @@ export default class UniversalSelector extends React.PureComponent {
         );
     }
 }
-
-UniversalSelector.displayName = "StartPage_RoleSelector_UniversalSelector";

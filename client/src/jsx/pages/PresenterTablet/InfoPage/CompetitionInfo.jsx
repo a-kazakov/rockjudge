@@ -1,14 +1,15 @@
-export default class CompetitionInfo extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                info: PT.arrayOf(
-                    PT.arrayOf(PT.string.isRequired).isRequired
-                ).isRequired,
-            }).isRequired,
-        };
-    }
+import React from "react";
+
+import PT from "prop-types";
+
+export default class CompetitionInfo extends React.Component {
+    static propTypes = {
+        competition: PT.shape({
+            info: PT.arrayOf(
+                PT.arrayOf(PT.string.isRequired).isRequired
+            ).isRequired,
+        }).isRequired,
+    };
 
     renderRow = (row, idx) => {
         const [label, value] = row;
@@ -27,5 +28,3 @@ export default class CompetitionInfo extends React.PureComponent {
         );
     }
 }
-
-CompetitionInfo.displayName = "PresenterTablet_InfoPage_CompetitionInfo";

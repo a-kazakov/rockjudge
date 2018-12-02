@@ -1,60 +1,39 @@
+import React from "react";
+
+import PT from "prop-types";
 import Docx from "common/Docx";
 
 import OneNumber from "./OneNumber";
+import Model from "common/server/Storage/models/Model";
 
-export default class Numbers extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.object.isRequired,
-            participantsGroups: PT.arrayOf(
-                PT.oneOfType([
-                    PT.shape({
-                        participants: PT.arrayOf(
-                            PT.shape({
-                                id: PT.number.isRequired,
-                                name: PT.string.isRequired,
-                                club: PT.object.isRequired,
-                            }).isRequired
-                        ).isRequired,
-                        name: PT.string.isRequired,
-                    }).isRequired,
-                    PT.shape({
-                        participants: PT.arrayOf(
-                            PT.shape({
-                                id: PT.number.isRequired,
-                                name: PT.string.isRequired,
-                                discipline: PT.shape({
-                                    name: PT.string.isRequired,
-                                }).isRequired,
-                            }).isRequired
-                        ).isRequired,
-                        club: PT.object.isRequired,
-                    }).isRequired,
-                ]).isRequired
-            ).isRequired,
-        };
-    }
+export default class Numbers extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        config: PT.shape({
+            clubs: PT.object.isRequired,
+            disciplines: PT.object.isRequired,
+            group_by_clubs: PT.bool.isRequired,
+        }).isRequired,
+    };
+
+    static getParticipants = (group) => group.participants;
 
     makeRef = (ref) => this._body = ref;
 
     makeParticipantsList() {
-        let res = [];
-        for (const group of this.props.participantsGroups) {
-            res = res.concat(group.participants.map(participant => ({
-                id: participant.id,
-                number: participant.number,
-                name: participant.name,
-                club: participant.club
-                    ? participant.club
-                    : group.club,
-                discipline_name: participant.discipline
-                    ? participant.discipline.name
-                    : group.name,
-            })))
-        }
-        return res;
+        const groups = this.props.config.group_by_clubs
+            ? this.props.competition.clubs
+            : this.props.competition.disciplines;
+        return [].concat.apply([], groups.map(this.constructor.getParticipants))
+            .filter(this.filterParticipant);
     }
+
+    filterParticipant = (participant) => {
+        return (
+            this.props.config.disciplines[participant.discipline.id]
+            && this.props.config.clubs[participant.club.id]
+        );
+    };
 
     render() {  // eslint-disable-line react/sort-comp
         return (
@@ -102,5 +81,3 @@ export default class Numbers extends React.PureComponent {
             .save();
     }
 }
-
-Numbers.displayName = "AdminPanel_Management_StartList_Numbers";

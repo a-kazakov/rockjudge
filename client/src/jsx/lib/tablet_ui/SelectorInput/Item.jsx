@@ -1,23 +1,23 @@
+import React from "react";
+
+import PT from "prop-types";
 import onTouchOrClick from "../onTouchOrClick";
 
 import makeClassName from "common/makeClassName";
 
-export default class Item extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            active: PT.bool.isRequired,
-            readOnly: PT.bool.isRequired,
-            text: PT.string.isRequired,
-            value: PT.oneOfType([
-                PT.string.isRequired,
-                PT.number.isRequired,
-                PT.bool.isRequired,
-            ]),
-            style: PT.oneOf(["active-green", "active-red", "active-yellow", "active-white"]),
-            onClick: PT.func.isRequired,
-        };
-    }
+export default class Item extends React.Component {
+    static propTypes = {
+        active: PT.bool.isRequired,
+        readOnly: PT.bool.isRequired,
+        style: PT.oneOf(["active-green", "active-red", "active-yellow", "active-white"]),
+        text: PT.string.isRequired,
+        value: PT.oneOfType([
+            PT.string.isRequired,
+            PT.number.isRequired,
+            PT.bool.isRequired,
+        ]),
+        onClick: PT.func.isRequired,
+    };
 
     handleClick = () => {
         if (this.props.readOnly) {

@@ -1,15 +1,15 @@
+import React from "react";
+
+import PT from "prop-types";
 import SelectorInput from "./SelectorInput";
 
-export default class NumberSelectorInput extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            max: PT.number.isRequired,
-            min: PT.number.isRequired,
-            step: PT.number,
-            decimalSize: PT.number,
-        };
-    }
+export default class NumberSelectorInput extends React.Component {
+    static propTypes = {
+        decimalSize: PT.number,
+        max: PT.number.isRequired,
+        min: PT.number.isRequired,
+        step: PT.number,
+    };
     static get defaultProps() {
         return {
             step: 1,
@@ -40,5 +40,3 @@ export default class NumberSelectorInput extends React.PureComponent {
         )
     }
 }
-
-NumberSelectorInput.displayName = "tablet_ui_NumberSelectorInput";

@@ -1,18 +1,18 @@
+import React from "react";
+
+import PT from "prop-types";
 import makeClassName from "common/makeClassName";
 
 import onTouchOrClick from "./onTouchOrClick";
 
-export default class IntegerInput extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            jumbo: PT.bool,
-            readOnly: PT.bool,
-            sendDeltas: PT.bool,
-            value: PT.number.isRequired,
-            onChange: PT.func.isRequired,
-        };
-    }
+export default class IntegerInput extends React.Component {
+    static propTypes = {
+        jumbo: PT.bool,
+        readOnly: PT.bool,
+        sendDeltas: PT.bool,
+        value: PT.number.isRequired,
+        onChange: PT.func.isRequired,
+    };
     static get defaultProps() {
         return {
             jumbo: false,
@@ -72,5 +72,3 @@ export default class IntegerInput extends React.PureComponent {
         )
     }
 }
-
-IntegerInput.displayName = "tablet_ui_IntegerInput";

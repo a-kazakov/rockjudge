@@ -1,16 +1,15 @@
-import Renderer from "./Renderer";
+import React from "react";
 
-export default class TourResultsTab extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            autoDocx: PT.object,
-            tour: PT.shape({
-                id: PT.number.isRequired,
-            }).isRequired,
-            verbosity: PT.number.isRequired,
-        };
-    }
+import Model from "common/server/Storage/models/Model";
+import Renderer from "./Renderer";
+import PT from "prop-types";
+
+export default class TourResultsTab extends React.Component {
+    static propTypes = {
+        autoDocx: PT.object,
+        tour: PT.instanceOf(Model).isRequired,
+        verbosity: PT.number.isRequired,
+    };
 
     makeResultsRef = (ref) => this._results = ref;
 
@@ -20,12 +19,9 @@ export default class TourResultsTab extends React.PureComponent {
 
     // Rendering
 
-    getClassName() {
-        return `TourResultsTab rules-set`;
-    }
     render() {
         return (
-            <div className={ this.getClassName() }>
+            <div className="TourResultsTab rules-set">
                 <Renderer
                     autoDocx={ this.props.autoDocx }
                     ref={ this.makeResultsRef }

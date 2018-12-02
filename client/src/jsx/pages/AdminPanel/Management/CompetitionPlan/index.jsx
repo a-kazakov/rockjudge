@@ -1,106 +1,105 @@
-import _ from "l10n";
-import Docx from "common/Docx";
+import React from "react";
+import ReactDOM from "react-dom";
 
-import CreationRow from "./CreationRow";
+import Docx from "common/Docx";
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import UniversalTable from "pages/AdminPanel/Management/UniversalTable";
+import FieldTypes from "pages/AdminPanel/Management/UniversalTable/FieldTypes";
+import PT from "prop-types";
+import CreationButton from "./CreationButton";
+import EditorRow from "./EditorRow";
 import PrintablePlan from "./PrintablePlan";
 import Row from "./Row";
 
-export default class CompetitionPlan extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
+export default class CompetitionPlan extends UniversalTable {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+    };
+
+    static DISPLAY_COMPONENT = Row;
+    static EDITOR_COMPONENT = EditorRow;
+    static CREATION_BUTTON_COMPONENT = CreationButton;
+    static MODEL_NAME = "CompetitionPlanItem";
+    static FIELDS = [
+        FieldTypes.makeSpField(),
+        FieldTypes.makeTextField("verbose_name"),
+        {
+            name: "tour_id",
+            defaultValueGetter: () => "null",
+            toFormValue: (value) => value == null ? "null" : value.toString(),
+            fromFormValue: (value) => value === "null" ? null : parseInt(value),
+        },
+        FieldTypes.makeTextField("estimated_beginning"),
+        FieldTypes.makeTextField("estimated_duration"),
+    ];
+
+    getEntries() {
+        return this.props.competition.plan;
+    }
+    getCreateParams() {
         return {
-            competition: PT.shape({
-                name: PT.string.isRequired,
-                date: PT.string.isRequired,
-                plan: PT.arrayOf(
-                    PT.shape({
-                        tour_id: PT.number,
-                    }).isRequired
-                ).isRequired,
-                disciplines: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                        name: PT.string.isRequired,
-                        tours: PT.arrayOf(
-                            PT.shape({
-                                id: PT.number.isRequired,
-                                name: PT.string.isRequired,
-                            }).isRequired
-                        ).isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
+            competition_id: this.props.competition.id,
+        };
+    }
+    getContext() {
+        return {
+            tours: this.getAllTours(),
+            errors: this.getItemIdsWithErrors(),
         };
     }
 
+    static getTours = (entry) => entry.tours;
+    static getTourId = (entry) => entry.tour_id;
+    static filterValidId = (value) => typeof value === "number";
+
     makePrintableRef = (ref) => this._printable = ref;
 
-    handleDocxCreation = () => {
-        this.createDocx();
-    };
+    handleDocxCreation = () => this.createDocx();
 
-
-    genTours() {
-        let result = [];
+    getItemIdsWithErrors() {
+        let result = new Set();
+        const tour_to_idx = new Map();
         for (const discipline of this.props.competition.disciplines) {
+            let idx = 1;
             for (const tour of discipline.tours) {
-                result.push({
-                    id: tour.id,
-                    name: `${discipline.name} — ${tour.name}`,
-                    discipline_id: discipline.id,
-                    discipline_name: discipline.name,
-                    tour_name: tour.name,
-                });
+                tour_to_idx.set(tour.id, idx++);
             }
+        }
+        let latest_discipline_idx = new Map();
+        for (const plan_item of this.props.competition.plan) {
+            const tour = plan_item.tour;
+            if (!tour) {
+                continue;
+            }
+            const discipline = tour.discipline;
+            const prev_idx = latest_discipline_idx.get(discipline.id) || 0;
+            const current_idx = tour_to_idx.get(tour.id);
+            if (current_idx !== prev_idx + 1) {
+                result.add(plan_item.id);
+            }
+            latest_discipline_idx.set(discipline.id, current_idx);
         }
         return result;
     }
-
-    renderTable(tours) {
-        // Build tours index and count
-        let tours_count = new Map();
-        let tours_index = new Map();
-        let picked_tours_ids = new Set();
-        for (const tour of tours) {
-            tours_index.set(tour.id, tour);
-            tours_count.set(tour.id, (tours_count.get(tour.id) || 0) + 1)
+    getAllTours() {
+        const unflattened = this.props.competition.disciplines.map(this.constructor.getTours);
+        return [].concat(...unflattened);
+    }
+    getUnpickedTours() {
+        const picked_tours = new Set(
+            this.props.competition.plan
+                .map(this.constructor.getTourId)
+                .filter(this.constructor.filterValidId)
+        );
+        return this.getAllTours().filter(tour => !picked_tours.has(tour.id));
+    }
+    renderUnpickedTours() {
+        const unpicked_tours = this.getUnpickedTours();
+        if (unpicked_tours.length === 0) {
+            return null;
         }
-        // Build disciplines index and cursors
-        let disciplines_index = new Map();
-        let disciplines_cursors = new Map();
-        for (const discipline of this.props.competition.disciplines) {
-            disciplines_index.set(discipline.id, discipline);
-            disciplines_cursors.set(discipline.id, 0);
-        }
-
-        const rows = this.props.competition.plan.map(item => {
-            let error = tours_count.get(item.tour_id) > 2;
-            if (item.tour_id !== null) {
-                picked_tours_ids.add(item.tour_id);
-                const discipline_id = tours_index.get(item.tour_id).discipline_id;
-                let tour_idx = disciplines_cursors.get(discipline_id);
-                if (
-                    !disciplines_index.get(discipline_id).tours[tour_idx] ||
-                    item.tour_id !== disciplines_index.get(discipline_id).tours[tour_idx].id
-                ) {
-                    error = true;
-                    tour_idx = disciplines_index.get(discipline_id).tours.findIndex(
-                        tour => tour.id === item.tour_id
-                    );
-                }
-                disciplines_cursors.set(discipline_id, tour_idx + 1);
-            }
-            return (
-                <Row
-                    error={ error }
-                    item={ item }
-                    key={ item.id }
-                    tours={ tours }
-                />
-            );
-        });
-        const unpicked_tours = tours.filter((tour) => !picked_tours_ids.has(tour.id));
-        const unpicked_tours_html = unpicked_tours.length === 0 ? null : (
+        return (
             <div className="unpicked-tours">
                 <h4>
                     { _("admin.headers.unpicked_tours") }
@@ -108,15 +107,17 @@ export default class CompetitionPlan extends React.PureComponent {
                 <ul className="unpicked-tours">
                     { unpicked_tours.map((tour) =>
                         <li className="item" key={ tour.id }>
-                            { tour.name }
+                            { `${tour.discipline.name} — ${tour.name}` }
                         </li>
                     ) }
                 </ul>
             </div>
         );
+    }
+    renderTable() {
         return (
             <div className="wrapper">
-                { unpicked_tours_html }
+                { this.renderUnpickedTours() }
                 <table>
                     <tbody>
                         <tr>
@@ -137,18 +138,14 @@ export default class CompetitionPlan extends React.PureComponent {
                             </th>
                             <th className="delete" />
                         </tr>
-                        { rows }
-                        <CreationRow
-                            competition={ this.props.competition }
-                            tours={ tours }
-                        />
+                        { this.renderRows() }
+                        { this.renderCreationButton() }
                     </tbody>
                 </table>
             </div>
         );
     }
     render() {  // eslint-disable-line react/sort-comp
-        const tours = this.genTours();
         return (
             <div className="CompetitionPlan">
                 <header>
@@ -162,11 +159,10 @@ export default class CompetitionPlan extends React.PureComponent {
                     </h1>
                 </header>
                 <div className="body">
-                    { this.renderTable(tours) }
+                    { this.renderTable() }
                     <PrintablePlan
                         competition={ this.props.competition }
                         ref={ this.makePrintableRef }
-                        tours={ tours }
                     />
                 </div>
             </div>
@@ -184,5 +180,3 @@ export default class CompetitionPlan extends React.PureComponent {
             .save();
     }
 }
-
-CompetitionPlan.displayName = "AdminPanel_Management_CompetitionPlan";

@@ -1,13 +1,13 @@
+import React from "react";
+
+import PT from "prop-types";
 import SelectorInput from "./SelectorInput";
 
-export default class MultipleOptionsInput extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            value: PT.string,
-            onChange: PT.func.isRequired,
-        };
-    }
+export default class MultipleOptionsInput extends React.Component {
+    static propTypes = {
+        value: PT.string,
+        onChange: PT.func.isRequired,
+    };
 
     handleChange = (item) => {
         const new_value = this.props.value.includes(item)

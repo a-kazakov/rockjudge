@@ -1,10 +1,10 @@
+import PT from "prop-types";
 import range from "common/range";
 import SelectorBlock from "./SelectorBlock";
 import floatToFixed from "common/floatToFixed";
 
-export default class ReductionBlock extends SelectorBlock {
+export default class NumberBlock extends SelectorBlock {
     static get propTypes() {
-        const PT = React.PropTypes;
         const prev = super.constructor.propTypes || {};
         return Object.assign({}, prev, {
             min: PT.number,

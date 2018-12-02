@@ -1,24 +1,24 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 
-export default class ParticipantCell extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            config: PT.shape({
-                include_formation_sportsmen: PT.bool.isRequired,
-            }).isRequired,
-            participant: PT.shape({
-                formation_name: PT.string.isRequired,
-                sportsmen: PT.arrayOf(
-                    PT.shape({
-                        last_name: PT.string.isRequired,
-                        first_name: PT.string.isRequired,
-                        substitute: PT.bool.isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
-        };
-    }
+export default class ParticipantCell extends React.Component {
+    static propTypes = {
+        config: PT.shape({
+            include_formation_sportsmen: PT.bool.isRequired,
+        }).isRequired,
+        participant: PT.shape({
+            formation_name: PT.string.isRequired,
+            sportsmen: PT.arrayOf(
+                PT.shape({
+                    last_name: PT.string.isRequired,
+                    first_name: PT.string.isRequired,
+                    substitute: PT.bool.isRequired,
+                }).isRequired
+            ).isRequired,
+        }).isRequired,
+    };
     renderFormationName() {
         const formation_name = this.props.participant.formation_name;
         if (formation_name !== "") {
@@ -62,5 +62,3 @@ export default class ParticipantCell extends React.PureComponent {
         );
     }
 }
-
-ParticipantCell.displayName = "AdminPanel_Management_StartList_ParticipantCell";

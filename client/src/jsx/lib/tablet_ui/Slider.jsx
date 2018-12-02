@@ -1,15 +1,15 @@
+import React from "react";
+
+import PT from "prop-types";
 import makeClassName from "common/makeClassName";
 
-export default  class Slider extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            done: PT.bool.isRequired,
-            doneText: PT.string.isRequired,
-            slideText: PT.string.isRequired,
-            onActivate: PT.func.isRequired,
-        };
-    }
+export default  class Slider extends React.Component {
+    static propTypes = {
+        done: PT.bool.isRequired,
+        doneText: PT.string.isRequired,
+        slideText: PT.string.isRequired,
+        onActivate: PT.func.isRequired,
+    };
 
     constructor(props) {
         super(props);
@@ -21,7 +21,7 @@ export default  class Slider extends React.PureComponent {
         this.pin = null;
     }
 
-    componentWillUpdate(nextProps) {
+    UNSAFE_componentWillUpdate(nextProps) {
         if (!this.props.done && nextProps.done) {
             this.setState({
                 finished: false,
@@ -152,5 +152,3 @@ export default  class Slider extends React.PureComponent {
         );
     }
 }
-
-Slider.displayName = "tablet_ui_Slider";

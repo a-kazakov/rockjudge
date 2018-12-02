@@ -1,6 +1,8 @@
+import React from "react";
+
 import _ from "l10n";
 
-export default class NoAccess extends React.PureComponent {
+export default class NoAccess extends React.Component {
     render() {
         return (
             <div className="no-access">
@@ -12,4 +14,3 @@ export default class NoAccess extends React.PureComponent {
     }
 }
 
-NoAccess.displayName = "StartPage_RoleSelector_NoAccess";

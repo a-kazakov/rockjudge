@@ -1,34 +1,19 @@
-import _ from "l10n";
-import Api from "common/server/Api";
-import showConfirm from "common/dialogs/showConfirm";
+import React from "react";
+
 import closeDialog from "common/dialogs/closeDialog";
-
-import Row from "./Row";
+import showConfirm from "common/dialogs/showConfirm";
+import Api from "common/server/Api";
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
+import PT from "prop-types";
 import JudgeHeaderCell from "./JudgeHeaderCell";
+import Row from "./Row";
 
-export default class ScoresTab extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            tour: PT.shape({
-                id: PT.number.isRequired,
-                finalized: PT.bool.isRequired,
-                discipline: PT.shape({
-                    discipline_judges: PT.arrayOf(
-                        PT.shape({
-                            id: PT.number.isRequired,
-                        }).isRequired,
-                    ).isRequired,
-                }).isRequired,
-                runs: PT.arrayOf(
-                    PT.shape({
-                        heat: PT.number.isRequired,
-                    }).isRequired,
-                ).isRequired,
-            }).isRequired,
-            onPageSwitch: PT.func.isRequired,
-        };
-    }
+export default class ScoresTab extends React.Component {
+    static propTypes = {
+        tour: PT.instanceOf(Model).isRequired,
+        onPageSwitch: PT.func.isRequired,
+    };
 
     constructor(props) {
         super(props);
@@ -43,7 +28,7 @@ export default class ScoresTab extends React.PureComponent {
         showConfirm(
             _("judging.confirms.init_tour"),
             () => {
-                Api("tour.init", {
+                Api("tour/init", {
                     tour_id: this.props.tour.id,
                 })
                     .onSuccess(closeDialog)
@@ -55,7 +40,7 @@ export default class ScoresTab extends React.PureComponent {
         showConfirm(
             _("judging.confirms.finalize_tour"),
             () => {
-                Api("tour.finalize", {
+                Api("tour/finalize", {
                     tour_id: this.props.tour.id,
                 })
                     .onSuccess(() => {
@@ -70,7 +55,7 @@ export default class ScoresTab extends React.PureComponent {
         showConfirm(
             _("judging.confirms.shuffle_heats"),
             () => {
-                Api("tour.shuffle_heats", {
+                Api("tour/shuffle_heats", {
                     tour_id: this.props.tour.id,
                 })
                     .onSuccess(closeDialog)
@@ -79,13 +64,13 @@ export default class ScoresTab extends React.PureComponent {
         );
     }
     startTour() {
-        Api("tour.start", {
+        Api("tour/start", {
             tour_id: this.props.tour.id,
         })
             .send();
     }
     stopTour() {
-        Api("tour.stop", {
+        Api("tour/stop", {
             tour_id: this.props.tour.id,
         })
             .send();
@@ -128,7 +113,7 @@ export default class ScoresTab extends React.PureComponent {
                 old_ids.slice(new_pos, old_pos),
                 old_ids.slice(old_pos + 1)
             );
-        Api("tour.permute_within_heat", {
+        Api("tour/permute_heat", {
             "tour_id": this.props.tour.id,
             "run_ids": new_ids,
         })
@@ -168,7 +153,6 @@ export default class ScoresTab extends React.PureComponent {
                     nowEditing={ this.state.nowEditing }
                     readOnly={ this.props.tour.finalized }
                     run={ runs[i] }
-                    tour={ this.props.tour }
                     onEditRequest={ this.handleEditRequest }
                     onPositionMove={ this.handlePositionMove }
                     onStopEditing={ this.handleStopEditing }
@@ -215,4 +199,3 @@ export default class ScoresTab extends React.PureComponent {
     }
 }
 
-ScoresTab.displayName = "AdminPanel_Judging_TourPanel_ScoresTab";

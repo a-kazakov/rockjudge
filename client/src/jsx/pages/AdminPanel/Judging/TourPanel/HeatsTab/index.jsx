@@ -1,53 +1,27 @@
-import _ from "l10n";
+import React from "react";
+
 import Docx from "common/Docx";
-
+import Model from "common/server/Storage/models/Model";
+import _ from "l10n";
 import Paper from "pages/AdminPanel/common/Paper";
-
+import PT from "prop-types";
 import Row from "./Row";
 
-export default class HeatsTab extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            autoDocx: PT.shape({
-                filename: PT.string.isRequired,
-                onDone: PT.func.isRequired,
-            }),
-            tour: PT.shape({
-                id: PT.number.isRequired,
-                finalized: PT.bool.isRequired,
-                name: PT.string.isRequired,
-                discipline: PT.shape({
-                    name: PT.string.isRequired,
-                    competition: PT.shape({
-                        name: PT.string.isRequired,
-                        date: PT.string.isRequired,
-                    }).isRequired,
-                    discipline_judges: PT.arrayOf(
-                        PT.shape({
-                            id: PT.number.isRequired,
-                        }).isRequired,
-                    ).isRequired,
-                }).isRequired,
-                runs: PT.arrayOf(
-                    PT.shape({
-                        heat: PT.number.isRequired,
-                    }).isRequired,
-                ).isRequired,
-            }).isRequired,
-        };
-    }
+export default class HeatsTab extends React.Component {
+    static propTypes = {
+        autoDocx: PT.shape({
+            filename: PT.string.isRequired,
+            onDone: PT.func.isRequired,
+        }),
+        tour: PT.instanceOf(Model).isRequired,
+    };
 
     componentDidMount() {
         this.checkAutoDocx();
     }
-    componentDidUpdate() {
-        this.checkAutoDocx();
-    }
 
     checkAutoDocx() {
-        if (this.props.autoDocx && !this._docx_done && this.props.tour !== null) {
-            this._docx_done = true;
+        if (this.props.autoDocx) {
             this.createDocx(this.props.autoDocx.filename);
             this.props.autoDocx.onDone(this.props.autoDocx.filename);
         }

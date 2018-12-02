@@ -1,26 +1,13 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import HeatsTableItem from "./HeatsTableItem";
 
-export default class HeatsTables extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudge: PT.object.isRequired,
-            tour: PT.shape({
-                id: PT.number.isRequired,
-                num_advances: PT.number.isRequired,
-                runs: PT.arrayOf(
-                    PT.shape({
-                        status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                        scores: PT.arrayOf(
-                            PT.shape({
-                                discipline_judge_id: PT.number.isRequired,
-                            }).isRequired,
-                        ).isRequired,
-                    }).isRequired,
-                ).isRequired,
-            }).isRequired,
-        };
-    }
+export default class HeatsTables extends React.Component {
+    static propTypes = {
+        disciplineJudge: PT.object.isRequired,
+        tour: PT.object.isRequired,
+    };
 
     getHeats() {
         let buffer = [];

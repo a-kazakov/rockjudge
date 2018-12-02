@@ -1,59 +1,39 @@
+import React from "react";
+
+import Model from "common/server/Storage/models/Model";
+import lastOf from "common/tools/lastOf";
+import PT from "prop-types";
 import _ from "l10n";
 import Loader from "common/components/Loader";
-import LoadingComponent from "common/server/LoadingComponent";
-
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 
 import HeatSelectorRow from "./HeatSelectorRow";
 
-export default class HeatSelector extends LoadingComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            tourId: PT.number.isRequired,
-            value: PT.number,
-            onHeatSelect: PT.func.isRequired,
-        };
-    }
-
-    CLASS_ID = "screen_operator_heat_selector";
-    API_MODELS = {
-        tour: {
-            model_type: "Tour",
-            model_id_getter: props => props.tourId,
-            schema: {
-                runs: {
-                    participant: {},
-                },
-            },
-        },
+export default class HeatSelector extends React.Component {
+    static propTypes = {
+        tour: PT.instanceOf(Model).isRequired,
+        value: PT.number,
+        onHeatSelect: PT.func.isRequired,
     };
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            tour: null,
-        };
-    }
 
     handleHeatReset = () => {
         this.props.onHeatSelect(null);
-    }
+    };
 
     render() {
-        if (this.state.tour === null) {
+        if (this.props.tour == null) {
             return (
                 <Loader />
             );
         }
         let result = [];
-        const max_heat = Math.max(...this.state.tour.runs.map((run) => run.heat));
+        const max_heat = lastOf(this.props.tour.runs)?.heat || 1;
         for (let heat = 1; heat <= max_heat; ++heat) {
             result.push(
                 <HeatSelectorRow
                     heat={ heat }
                     key={ heat }
-                    runs={ this.state.tour.runs.filter((run) => run.heat === heat) }
+                    runs={ this.props.tour.runs.filter((run) => run.heat === heat) }
                     selected={ this.props.value === heat }
                     onHeatSelect={ this.props.onHeatSelect }
                 />
@@ -73,5 +53,3 @@ export default class HeatSelector extends LoadingComponent {
         );
     }
 }
-
-HeatSelector.displayName = "ScreenOperator_TourHeatControls_HeatSelector";

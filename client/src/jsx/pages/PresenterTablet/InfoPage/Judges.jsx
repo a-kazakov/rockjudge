@@ -1,22 +1,22 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 
-export default class Judges extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                judges: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                        category: PT.string.isRequired,
-                        name: PT.string.isRequired,
-                        number: PT.string.isRequired,
-                        role_description: PT.string.isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
-        };
-    }
+export default class Judges extends React.Component {
+    static propTypes = {
+        competition: PT.shape({
+            judges: PT.arrayOf(
+                PT.shape({
+                    id: PT.number.isRequired,
+                    category: PT.string.isRequired,
+                    name: PT.string.isRequired,
+                    number: PT.string.isRequired,
+                    role_description: PT.string.isRequired,
+                }).isRequired
+            ).isRequired,
+        }).isRequired,
+    };
 
     renderRow = (judge) => {
         return (
@@ -38,5 +38,3 @@ export default class Judges extends React.PureComponent {
         );
     }
 }
-
-Judges.displayName = "PresenterTablet_InfoPage_Judges";

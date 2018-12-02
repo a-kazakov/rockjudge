@@ -1,25 +1,17 @@
+import React from "react";
+
+import PT from "prop-types";
+import Model from "common/server/Storage/models/Model";
 import _ from "l10n";
 import Api from "common/server/Api";
 import showConfirm from "common/dialogs/showConfirm";
 import closeDialog from "common/dialogs/closeDialog";
 
-export default class Loader extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            run: PT.shape({
-                id: PT.number.isRequired,
-                participant: PT.shape({
-                    programs: PT.arrayOf(
-                        PT.shape({
-                            id: PT.number.isRequired,
-                            name: PT.string.isRequired,
-                        }).isRequired
-                    ).isRequired,
-                }).isRequired,
-            }).isRequired,
-        };
-    }
+export default class Loader extends React.Component {
+    static propTypes = {
+        participant: PT.instanceOf(Model).isRequired,
+        run: PT.instanceOf(Model).isRequired,
+    };
 
     makeSelectorRef = (ref) => this._selector = ref;
 
@@ -32,7 +24,7 @@ export default class Loader extends React.PureComponent {
         showConfirm(
             _("judging.confirms.load_program"),
             () => {
-                Api("run.load_program", {
+                Api("run/load_program", {
                     program_id: program_id,
                     run_id: this.props.run.id,
                 })
@@ -49,7 +41,7 @@ export default class Loader extends React.PureComponent {
                 ref={ this.makeSelectorRef }
             >
                 <option value="">&mdash;</option>
-                { this.props.run.participant.programs.map(program =>
+                { this.props.participant.programs.map(program =>
                     <option key={ program.id }  value={ program.id }>
                         { program.name }
                     </option>
@@ -74,5 +66,3 @@ export default class Loader extends React.PureComponent {
         );
     }
 }
-
-Loader.displayName = "AdminPanel_Judging_TourPanel_ScoresTab_Row_AcrobaticsCell_Editor_Loader";

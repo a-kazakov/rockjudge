@@ -1,20 +1,20 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import IntegerInput from "tablet_ui/IntegerInput";
 
-export default class Mistakes extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            formation: PT.bool.isRequired,
-            readOnly: PT.bool.isRequired,
-            scoreData: PT.shape({
-                small_mistakes: PT.number.isRequired,
-                big_mistakes: PT.number.isRequired,
-            }).isRequired,
-            onScoreUpdate: PT.func.isRequired,
-        };
-    }
+export default class Mistakes extends React.Component {
+    static propTypes = {
+        formation: PT.bool,
+        readOnly: PT.bool.isRequired,
+        scoreData: PT.shape({
+            small_mistakes: PT.number.isRequired,
+            big_mistakes: PT.number.isRequired,
+        }).isRequired,
+        onScoreUpdate: PT.func.isRequired,
+    };
     static get defaultProps() {
         return {
             formation: false,

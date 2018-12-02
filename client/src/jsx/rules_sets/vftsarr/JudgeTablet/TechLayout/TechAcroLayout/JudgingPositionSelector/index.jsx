@@ -1,15 +1,15 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import Button from "./Button";
 
-export default class JudgingPositionSelector extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            numOptions: PT.number.isRequired,
-            onSelected: PT.func.isRequired,
-        };
-    }
+export default class JudgingPositionSelector extends React.Component {
+    static propTypes = {
+        numOptions: PT.number.isRequired,
+        onSelected: PT.func.isRequired,
+    };
 
     renderButtons() {
         let result = [];

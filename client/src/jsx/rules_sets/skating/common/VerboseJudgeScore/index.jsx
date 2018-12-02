@@ -1,26 +1,19 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import getScoringType from "common/getScoringType";
 
-export default class VerboseJudgeScore extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            additionalData: PT.object,
-            disciplineJudge: PT.object.isRequired,
-            showScore: PT.bool.isRequired,
-            score: PT.shape({
-                data: PT.shape({
-                    total_score: PT.oneOfType([
-                        PT.number.isRequired,
-                        PT.string.isRequired,
-                    ]).isRequired,
-                }).isRequired,
-            }).isRequired,
-            run: PT.object.isRequired,
-            tour: PT.shape({
-                scoring_system_name: PT.string.isRequired,
-            }).isRequired,
-        };
-    }
+export default class VerboseJudgeScore extends React.Component {
+    static propTypes = {
+        disciplineJudge: PT.object.isRequired,
+        score: PT.object.isRequired,
+        scoreData: PT.shape({
+            is_valid: PT.bool.isRequired,
+            total_score_str: PT.string.isRequired,
+            extra_data: PT.object.isRequired,
+        }).isRequired,
+        showScore: PT.bool,
+    };
     static get defaultProps() {
         return {
             showScore: true,
@@ -36,12 +29,12 @@ export default class VerboseJudgeScore extends React.PureComponent {
             );
         }
         // let ScoreComponent = null;
-        const scoring_type = getScoringType(this.props.disciplineJudge, this.props.tour.scoring_system_name);
+        const scoring_type = getScoringType(this.props.disciplineJudge, this.props.score.run.tour.scoring_system_name);
         switch (scoring_type) {
         default:
             return (
                 <p className="text-center">
-                    { this.props.score.data.total_score }
+                    { this.props.scoreData.total_score_str }
                 </p>
             );
         }
@@ -56,5 +49,4 @@ export default class VerboseJudgeScore extends React.PureComponent {
         // );
     }
 }
-
 

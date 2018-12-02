@@ -1,22 +1,19 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 import Cell from "./Cell";
 
-export default class Row extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            criteria: PT.string.isRequired,
-            lineJudgesIndex: PT.instanceOf(Map).isRequired,
-            medians: PT.instanceOf(Map).isRequired,
-            run: PT.object.isRequired,
-            scores: PT.arrayOf(
-                PT.shape({
-                    discipline_judge_id: PT.number.isRequired,
-                }).isRequired,
-            ).isRequired,
-            table: PT.instanceOf(Map).isRequired,
-        };
-    }
+export default class Row extends React.Component {
+    static propTypes = {
+        criteria: PT.string.isRequired,
+        lineJudgesIndex: PT.instanceOf(Map).isRequired,
+        medians: PT.instanceOf(Map).isRequired,
+        scores: PT.arrayOf(
+            PT.object.isRequired,
+        ).isRequired,
+        table: PT.instanceOf(Map).isRequired,
+    };
 
     renderCells() {
         return this.props.scores.map(score => {
@@ -27,7 +24,6 @@ export default class Row extends React.PureComponent {
                     disciplineJudge={ dj }
                     key={ dj.id }
                     medians={ this.props.medians }
-                    run={ this.props.run }
                     score={ score }
                     table={ this.props.table }
                 />

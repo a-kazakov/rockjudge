@@ -1,77 +1,57 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 import makeClassName from "common/makeClassName";
 
 import Info from "./Info";
+import Model from "../../../common/server/Storage/models/Model";
 
-export default class EditorRow extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            baseTabIndex: PT.number.isRequired,
-            competition: PT.shape({
-                name: PT.string.isRequired,
-                date: PT.string.isRequired,
-                active: PT.bool.isRequired,
-                info: PT.array.isRequired,
-                rules_set: PT.string.isRequired,
-            }).isRequired,
-            newCompetition: PT.bool,
+export default class EditorRow extends React.Component {
+    static propTypes = {
+        context: PT.shape({
             rulesSets: PT.arrayOf(
+                PT.string.isRequired,
+            ).isRequired,
+        }).isRequired,
+        creating: PT.bool.isRequired,
+        entry: PT.instanceOf(Model),
+        formData: PT.shape({
+            name: PT.string.isRequired,
+            date: PT.string.isRequired,
+            rules_set: PT.string.isRequired,
+            active: PT.bool.isRequired,
+            info: PT.arrayOf(
                 PT.arrayOf(
                     PT.string.isRequired,
                 ).isRequired,
             ).isRequired,
-            onStopEditing: PT.func.isRequired,
-            onSubmit: PT.func.isRequired,
-        };
-    }
-    static get defaultProps() {
-        return {
-            newCompetition: false,
-        };
-    }
+        }).isRequired,
+        loading: PT.bool.isRequired,
+        onDiscard: PT.func.isRequired,
+        onFieldChange: PT.func.isRequired,
+        onSubmit: PT.func.isRequired,
+    };
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            competition: this.props.competition,
-        };
-    }
-
-    makeNameRef     = (ref) => this._name      = ref;
-    makeDateRef     = (ref) => this._date      = ref;
-    makeActiveRef   = (ref) => this._active    = ref;
-    makeInfoRef     = (ref) => this._info      = ref;
-    makeRulesSetRef = (ref) => this._rules_set = ref;
-
-    serialize() {
-        let result = {
-            name:   this._name.value,
-            date:   this._date.value,
-            active: this._active.checked,
-            info:   this._info.value,
-        };
-        if (this.props.newCompetition) {
-            Object.assign(result, {
-                rules_set: this._rules_set.value,
-            });
-        }
-        return result;
-    }
+    handleNameChange = (event) => this.props.onFieldChange("name", event.target.value);
+    handleDateChange = (event) => this.props.onFieldChange("date", event.target.value);
+    handleRulesSetChange = (event) => this.props.onFieldChange("rules_set", event.target.value);
+    handleActiveChange = (event) => this.props.onFieldChange("active", event.target.checked);
+    handleInfoChange = (value) => this.props.onFieldChange("info", value);
 
     handleSubmission = (event) => {
         event.preventDefault();
-        this.props.onSubmit(this.serialize());
-    }
+        this.props.onSubmit();
+    };
 
     getClassName() {
         return makeClassName({
             "editor": true,
-            "create": this.props.newCompetition,
+            "create": this.props.creating,
         });
     }
     renderRulesSet() {
-        if (!this.props.newCompetition) {
+        if (!this.props.creating) {
             return null;
         }
         return (
@@ -79,11 +59,11 @@ export default class EditorRow extends React.PureComponent {
                 { _("models.competition.rules_set") }
                 <select
                     className="full-width"
-                    defaultValue={ this.props.competition.rules_set }
-                    ref={ this.makeRulesSetRef }
-                    tabIndex={ this.props.baseTabIndex + 5 }
+                    disabled={ this.props.loading }
+                    value={ this.props.formData.rules_set }
+                    onChange={ this.handleRulesSetChange }
                 >
-                    { this.props.rulesSets.map(([ss, name]) =>
+                    { this.props.context.rulesSets.map(([ss, name]) =>
                         <option key={ ss } value={ ss }>
                             { name }
                         </option>
@@ -103,9 +83,9 @@ export default class EditorRow extends React.PureComponent {
                                 <input
                                     required
                                     className="full-width"
-                                    defaultValue={ this.props.competition.name }
-                                    ref={ this.makeNameRef }
-                                    tabIndex={ this.props.baseTabIndex + 1 }
+                                    disabled={ this.props.loading }
+                                    value={ this.props.formData.name }
+                                    onChange={ this.handleNameChange }
                                 />
                             </label>
                             <label className="full-width">
@@ -113,9 +93,9 @@ export default class EditorRow extends React.PureComponent {
                                 <input
                                     required
                                     className="full-width"
-                                    defaultValue={ this.props.competition.date }
-                                    ref={ this.makeDateRef }
-                                    tabIndex={ this.props.baseTabIndex + 2 }
+                                    disabled={ this.props.loading }
+                                    value={ this.props.formData.date }
+                                    onChange={ this.handleDateChange }
                                 />
                             </label>
                             { this.renderRulesSet() }
@@ -123,10 +103,9 @@ export default class EditorRow extends React.PureComponent {
                                 { _("models.competition.active") }
                                 <br />
                                 <input
-                                    defaultChecked={ this.props.competition.active }
-                                    ref={ this.makeActiveRef }
-                                    tabIndex={ this.props.baseTabIndex + 3 }
+                                    checked={ this.props.formData.active }
                                     type="checkbox"
+                                    onChange={ this.handleActiveChange }
                                 />
                             </label>
                         </div>
@@ -134,9 +113,8 @@ export default class EditorRow extends React.PureComponent {
                             <label>
                                 { _("models.competition.info") }
                                 <Info
-                                    baseTabIndex={ this.props.baseTabIndex + 10 }
-                                    defaultValue={ this.props.competition.info }
-                                    ref={ this.makeInfoRef }
+                                    value={ this.props.formData.info }
+                                    onChange={ this.handleInfoChange }
                                 />
                             </label>
                         </div>
@@ -144,16 +122,14 @@ export default class EditorRow extends React.PureComponent {
                             <div className="buttons horizontal">
                                 <button
                                     className="btn btn-primary"
-                                    tabIndex={ this.props.baseTabIndex + 998 }
                                     type="submit"
                                 >
                                     { _("global.buttons.submit") }
                                 </button>
                                 <button
                                     className="btn btn-danger"
-                                    tabIndex={ this.props.baseTabIndex + 999 }
                                     type="button"
-                                    onClick={ this.props.onStopEditing }
+                                    onClick={ this.props.onDiscard }
                                 >
                                     { _("global.buttons.discard") }
                                 </button>
@@ -165,5 +141,3 @@ export default class EditorRow extends React.PureComponent {
         );
     }
 }
-
-EditorRow.displayName = "CompetitionsManager_EditorRow";

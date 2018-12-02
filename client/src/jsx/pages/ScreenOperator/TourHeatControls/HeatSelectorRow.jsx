@@ -1,31 +1,24 @@
+import React from "react";
+
+import Model from "common/server/Storage/models/Model";
+import PT from "prop-types";
 import _ from "l10n";
-
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
-
 import makeClassName from "common/makeClassName";
 
-export default class HeatSelectorRow extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            heat: PT.number.isRequired,
-            runs: PT.arrayOf(
-                PT.shape({
-                    id: PT.number.isRequired,
-                    participant: PT.shape({
-                        number: PT.number.isRequired,
-                        name: PT.string.isRequired,
-                    }).isRequired,
-                }).isRequired,
-            ).isRequired,
-            selected: PT.bool.isRequired,
-            onHeatSelect: PT.func.isRequired,
-        };
-    }
+export default class HeatSelectorRow extends React.Component {
+    static propTypes = {
+        heat: PT.number.isRequired,
+        runs: PT.arrayOf(
+            PT.instanceOf(Model).isRequired,
+        ).isRequired,
+        selected: PT.bool.isRequired,
+        onHeatSelect: PT.func.isRequired,
+    };
 
     handleClick = () => {
         this.props.onHeatSelect(this.props.heat);
-    }
+    };
 
     getClassName() {
         return makeClassName({
@@ -33,6 +26,18 @@ export default class HeatSelectorRow extends React.PureComponent {
             selected: this.props.selected,
         });
     }
+    renderRun = (run) => {
+        return (
+            <div className="participant" key={ run.id }>
+                <div className="number">
+                    { run.participant.number }
+                </div>
+                <div className="name">
+                    { run.participant.name }
+                </div>
+            </div>
+        );
+    };
     render() {
         return (
             <table
@@ -50,16 +55,7 @@ export default class HeatSelectorRow extends React.PureComponent {
                             </div>
                         </td>
                         <td className="participants">
-                            { this.props.runs.map(run =>
-                                <div className="participant" key={ run.id }>
-                                    <div className="number">
-                                        { run.participant.number }
-                                    </div>
-                                    <div className="name">
-                                        { run.participant.name }
-                                    </div>
-                                </div>
-                            ) }
+                            { this.props.runs.map(this.renderRun) }
                         </td>
                     </tr>
                 </tbody>
@@ -67,5 +63,3 @@ export default class HeatSelectorRow extends React.PureComponent {
         );
     }
 }
-
-HeatSelectorRow.displayName = "ScreenOperator_TourHeatControls_HeatSelectorRow";

@@ -13,3 +13,5 @@ external-tools/**
 /static/css/**
 /.idea/**
 /venv/**
+/**/*.log
+/logs/**

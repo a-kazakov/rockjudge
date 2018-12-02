@@ -1,208 +1,453 @@
-import peewee
+import itertools
 import random
-
 from collections import defaultdict
+from typing import Any, Dict, Iterable, List, NamedTuple, Optional, Set, TYPE_CHECKING, Tuple, Union
 
-from playhouse import postgres_ext
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, UniqueConstraint, asc, desc
+from sqlalchemy.orm import Session, joinedload, relationship
 
+from db import ModelBase
+from enums import AccessLevel, RunStatus
 from exceptions import ApiError
 from models.base_model import BaseModel
+from models.client_auth import ClientAuth
 from models.discipline import Discipline
-from models.proxies import tour_proxy
-from models.proxies import competition_proxy
 from protection.features_restriction import check_permissions
 from scoring_systems import get_scoring_system
+from scoring_systems.base import (
+    BaseScoringSystem,
+    JudgeId,
+    JudgeResult,
+    JudgeRole,
+    RunId,
+    RunResult,
+    ScoreId,
+    ScoreResult,
+    TourComputationRequest,
+    TourComputationResult,
+    TourId,
+)
+from utils import raise_if_none
 
-from webserver.websocket import WsMessage
+
+if TYPE_CHECKING:
+    from api import ApiRequest
+    from models.competition_plan_item import CompetitionPlanItem
+    from models.run import Run
+    from models.discipline_judge import DisciplineJudge
+    from mutations import MutationsKeeper
 
 
-class Tour(BaseModel):
-    name = peewee.CharField()
-    next_tour = peewee.ForeignKeyField("self", null=True, default=None, related_name="prev_tour")
-    num_advances = peewee.IntegerField()
-    participants_per_heat = peewee.IntegerField()
-    default_program = peewee.CharField(default="")
-    finalized = peewee.BooleanField(default=False)
-    active = peewee.BooleanField(default=False)
-    hope_tour = peewee.BooleanField(default=False)
-    total_advanced = peewee.IntegerField(default=0)
-    discipline = peewee.ForeignKeyField(Discipline, related_name="raw_tours", on_delete="RESTRICT")
-    scoring_system_name = peewee.CharField()
-    cached_results = postgres_ext.BinaryJSONField(null=True, default=None)
+class SpCollisionError(Exception):
+    pass
 
-    RW_PROPS = ["name", "num_advances", "participants_per_heat", "hope_tour", "scoring_system_name", "default_program"]
-    RO_PROPS = ["finalized", "active"]
 
-    PF_CHILDREN = {
-        "discipline": None,
-        "runs": {
-            "runs": None,
-            "discipline": {
-                "discipline_judges": None,
-            },
-        },
-        "results": {
-            "runs": {
-                "scores": None,
-                "acrobatic_overrides": None,
-            },
-            "discipline": {
-                "discipline_judges": None,
-            },
-        },
-    }
+class ComputedTour(NamedTuple):
+    computation_result: TourComputationResult
+    finalized: bool
+    scoring_system_name: str
+    hope_tour: bool
 
-    def full_prefetch(self):
-        self.prefetch({
-            "runs": {
-                "scores": {},
-                "acrobatic_overrides": {},
-                "participant": {
-                    "club": {},
-                },
-            },
-            "discipline": {
-                "competition": {
-                    "judges": {},
-                },
-            }
-        })
+    @property
+    def extra_data(self) -> Dict[str, Any]:
+        return self.computation_result.extra_data
 
-    def estimate_participants(self):
+    @property
+    def inherited_data(self) -> Any:
+        return self.computation_result.inherited_data
+
+    @property
+    def results_order(self) -> List[RunId]:
+        return self.computation_result.results_order
+
+    @property
+    def runs_results(self) -> Dict[RunId, RunResult]:
+        return self.computation_result.runs_results
+
+    @property
+    def scores_results(self) -> Dict[ScoreId, ScoreResult]:
+        return self.computation_result.scores_results
+
+    @property
+    def judges_results(self) -> Dict[JudgeId, JudgeResult]:
+        return self.computation_result.judges_results
+
+
+    @classmethod
+    def create(cls, tour: "Tour", computation_result: TourComputationResult) -> "ComputedTour":
+        return cls(
+            computation_result,
+            tour.finalized,
+            tour.scoring_system_name,
+            tour.hope_tour,
+        )
+
+    def serialize(self) -> Dict[str, Any]:
+        return {
+            "finaized": self.finalized,
+            "scoring_system_name": self.scoring_system_name,
+            "hope_tour": self.hope_tour,
+            **self.computation_result.serialize(),
+        }
+
+
+class Tour(ModelBase, BaseModel):
+    # DB schema
+
+    __tablename__ = "tours"
+
+    __table_args__ = (
+        UniqueConstraint("discipline_id", "sp", name="discipline_sp_idx"),
+    )
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(1000), nullable=False)
+    discipline_id = Column(Integer, ForeignKey("disciplines.id", ondelete="RESTRICT"), nullable=False)
+    num_advances = Column(Integer, nullable=False)
+    participants_per_heat = Column(Integer, nullable=False)
+    default_program = Column(String, default="", nullable=False)
+    finalized = Column(Boolean, default=False, nullable=False)
+    active = Column(Boolean, default=False, nullable=False)
+    hope_tour = Column(Boolean, default=False, nullable=False)
+    scoring_system_name = Column(String(100), nullable=False)
+    sp = Column(Integer, nullable=False, index=True)
+
+    discipline = relationship(Discipline, backref="tours")
+
+    plan_items: Iterable["CompetitionPlanItem"]
+    runs: Iterable["Run"]
+
+    HIDDEN_FIELDS = {"sp"}
+
+    # Virtual fields
+
+    @property
+    def competition_id(self) -> int:
+        return self.discipline.competition_id
+
+    @property
+    def tour_id(self) -> int:
+        return self.id
+
+    # Custom model consts/vars
+
+    # Base properties
+
+    @property
+    def sorting_key(self) -> Tuple[Union[int, str], ...]:
+        return (self.sp, self.id)
+
+    def validate(self) -> None:
+        if self.participants_per_heat < 0:
+            raise ValueError("Participants per heat can't be negative")
+        if self.num_advances < 0:
+            raise ValueError("Num advances can't be negative")
+        # TODO: validate scoring system
+
+    # Permissions
+
+    @classmethod
+    def check_create_permission(cls, session: Session, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+        competition_id = session.query(Discipline).get(data["discipline_id"]).competition_id
+        auth = ClientAuth.get_for_competition(session, request.client, competition_id)
+        return auth.access_level == AccessLevel.ADMIN
+
+    def check_read_permission(self, request: "ApiRequest") -> bool:
+        return self.get_auth(request.client).access_level != AccessLevel.NONE
+
+    def check_update_permission(self, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+        auth = self.get_auth(request.client)
+        if auth.access_level in (AccessLevel.ADMIN, AccessLevel.ANY_JUDGE):
+            return True
+        if auth.access_level == AccessLevel.JUDGE:
+            dj = self.session.query(DisciplineJudge).fliter_by(
+                judge_id=auth.judge_id,
+                discipline_id=self.discipline_id,
+            )
+            return self.scoring_system.get_judge_role_permissions(dj.role).can_update_tour
+        return False
+
+    def check_delete_permission(self, request: "ApiRequest") -> bool:
+        return self.get_auth(request.client).access_level == AccessLevel.ADMIN
+
+    # Create logic
+
+    @classmethod
+    def before_create(cls, session: Session, data: Dict[str, Any], *, unsafe: bool) -> Dict[str, Any]:
+        data.pop("active", None)
+        if unsafe:
+            return {}
+        discipline: Discipline = session.query(Discipline).get(data.pop("discipline_id"))
+        next_tour_id = data.pop("add_after")
+        if next_tour_id is None:
+            prev_tour: Optional[Tour] = None
+            next_tour: Optional[Tour] = (
+                session.query(Tour).filter_by(discipline=discipline).order_by(asc(Tour.sp)).first()
+            )
+        else:
+            prev_tour = session.query(Tour).get(next_tour_id)
+            if prev_tour.discipline_id != discipline.id:
+                raise ApiError("errors.tour.invalid_add_after_id")
+            next_tour = (
+                session.query(Tour)
+                    .filter((Tour.sp > prev_tour.sp) & (Tour.discipline == discipline))
+                    .order_by(asc(Tour.sp)).first()
+            )
+        if next_tour is not None and next_tour.finalized:
+            raise ApiError("errors.tour.add_before_finalized")
+        if next_tour is None:
+            if prev_tour is None:
+                sp = 0
+            else:
+                sp = prev_tour.sp + 2**10
+        else:
+            if prev_tour is None:
+                sp = next_tour.sp - 2**10
+            else:
+                sp = (prev_tour.sp + next_tour.sp) // 2
+                if sp == prev_tour.sp:
+                    discipline.normalize_tours_sps()
+                    sp = (prev_tour.sp + next_tour.sp) // 2
+        return {
+            "discipline": discipline,
+            "sp": sp,
+        }
+
+    def submit_create_mutations(self, mk: "MutationsKeeper") -> None:
+        mk.submit_model_created(self)
+        for tour in self.discipline.tours:
+            if tour.id != self.id:
+                mk.submit_model_updated(tour)
+        mk.submit_discipline_results_update(self.discipline)
+
+    # Update logic
+
+    def before_update(self, data: Dict[str, Any], *, unsafe: bool) -> Dict[str, Any]:
+        if not unsafe:
+            data.pop("active", None)
+        if self.finalized:
+            data.pop("scoring_system_name", None)
+            data.pop("hope_tour", None)
+            data.pop("num_advances", None)
+        return {}
+
+    def submit_update_mutations(self, mk: "MutationsKeeper", data: Dict[str, Any]) -> None:
+        mk.submit_model_updated(self)
+        if {"scoring_system_name", "hope_tour", "num_advances"} & set(data.keys()):
+            mk.submit_tour_results_update(self)
+        if "scoring_system_name" in data:
+            for run in self.runs:
+                for score in run.scores:
+                    mk.submit_model_updated(score)
+
+    # Delete logic
+
+    def submit_delete_mutations(self, mk: "MutationsKeeper") -> None:
+        mk.submit_model_deleted(self)
+        for plan_item in self.plan_items:
+            mk.submit_model_deleted(plan_item)
+
+    # Serialization logic
+
+    # Custom model logic
+
+    @property
+    def runs_sorted(self) -> List["Run"]:
+        return sorted(self.runs, key=lambda r: r.sorting_key)
+
+    @property
+    def scoring_system(self) -> BaseScoringSystem:
         try:
-            prev_tour = self.get_prev_tour(throw=True)
-            prev_tour.full_prefetch()
-            if self.hope_tour:
-                run_by_id = {run.id: run for run in prev_tour.runs}
-                return [
-                    (run_by_id[row["run_id"]].participant, run_by_id[row["run_id"]].get_data_to_inherit())
-                    for row in prev_tour.results
-                    if not row["advances"] and not run_by_id[row["run_id"]].disqualified
-                ]
-            result = []
-            while True:
-                run_by_id = {run.id: run for run in prev_tour.runs}
-                result += [
-                    (run_by_id[row["run_id"]].participant, run_by_id[row["run_id"]].get_data_to_inherit())
-                    for row in prev_tour.results
-                    if row["advances"]
-                ]
-                if prev_tour.hope_tour:
-                    prev_tour = prev_tour.get_prev_tour(throw=True)
-                    prev_tour.full_prefetch()
-                else:
-                    break
-            return result
-        except self.DoesNotExist:
-            self.discipline.smart_prefetch({
-                "participants": {},
-            })
-            return [(p, {}) for p in self.discipline.participants]
+            return self.__scoring_system
+        except AttributeError:
+            self.__scoring_system = get_scoring_system(self.scoring_system_name)
+            return self.__scoring_system
 
-    def get_actual_num_advances(self):
-        base_value = self.num_advances
-        if not self.hope_tour:
-            return base_value
-        advanced_over_quote = 0
+    def make_scoring_system_request(self, inherited_data: Any) -> TourComputationRequest:
+        return TourComputationRequest(
+            tour_id=TourId(self.id),
+            judge_roles={JudgeId(dj.id): JudgeRole(dj.role) for dj in self.discipline.discipline_judges},
+            num_advances=self.num_advances,
+            hope_tour=self.hope_tour,
+            runs=[run.make_scoring_system_request() for run in self.runs_sorted],
+            inherited_data=inherited_data,
+        )
+
+    def compute_results(self, inherited_data: Any) -> ComputedTour:
+        request = self.make_scoring_system_request(inherited_data)
+        result = self.scoring_system.compute_tour(request)
+        return ComputedTour.create(self, result)
+
+    @property
+    def prev_tour(self) -> Optional["Tour"]:
         try:
-            tour = self
-            while True:
-                tour = tour.prev_tour.get()
-                advanced_over_quote += tour.total_advanced - tour.num_advances
+            return self.__prev_tour
+        except AttributeError:
+            self.__prev_tour = self.session.query(Tour).filter(
+                (Tour.discipline_id == self.discipline_id) &
+                (Tour.sp < self.sp)
+            ).order_by(desc(Tour.sp)).first()
+            if self.__prev_tour is not None:
+                self.__prev_tour.next_tour = self
+            return self.__prev_tour
+
+    @prev_tour.setter
+    def prev_tour(self, prev_tour: Optional["Tour"]) -> None:
+        self.__prev_tour = prev_tour
+
+    @property
+    def next_tour(self) -> Optional["Tour"]:
+        try:
+            return self.__next_tour
+        except AttributeError:
+            self.__next_tour = self.session.query(Tour).filter(
+                (Tour.discipline_id == self.discipline_id) &
+                (Tour.sp > self.sp)
+            ).order_by(asc(Tour.sp)).first()
+            if self.__next_tour is not None:
+                self.__next_tour.prev_tour = self
+            return self.__next_tour
+
+    @next_tour.setter
+    def next_tour(self, prev_tour: Optional["Tour"]) -> None:
+        self.__next_tour = prev_tour
+
+    def finalize(self, mk: "MutationsKeeper") -> None:
+        if self.prev_tour and not self.prev_tour.finalized:
+            raise ApiError("errors.tour.prev_not_finailzed")
+        self.finalized = True
+        self.active = False
+        if self.next_tour is not None:
+            self.next_tour.init(mk)
+        mk.submit_model_updated(self)
+        mk.submit_discipline_results_update(self.discipline)
+
+    def unfinalize(self, mk):
+        if self.next_tour is not None and self.next_tour.finalized:
+            raise ApiError("errors.tour.next_is_finailzed")
+        self.update({
+            "finalized": False,
+        }, mk, unsafe=True)
+        mk.submit_discipline_results_update(self.discipline)
+
+    def init(self, mk: "MutationsKeeper") -> None:
+        if self.finalized:
+            raise ApiError("error.tour.init_finalized")
+        if self.prev_tour is not None and not self.prev_tour.finalized:
+            if len(list(self.prev_tour.runs)) > self.prev_tour.num_advances:
+                raise ApiError("errors.tour.prev_not_finailzed")
+        self.create_runs(mk)
+        if self.__is_participants_same_as_prev():
+            self.clone_heats(mk)
+        else:
+            self.shuffle_heats(mk, preserve_existing=True)
+
+    def __is_participants_same_as_prev(self) -> bool:
+        if not self.prev_tour:
+            return False
+        prev_participants = {run.participant_id for run in self.prev_tour.runs}
+        current_participants = {run.participant_id for run in self.runs}
+        return prev_participants == current_participants
+
+    def get_partictpant_ids(self) -> List[int]:
+        from models.run import Run
+        computed_tours = self.discipline.compute_tours(end=self.id)
+        if not computed_tours:
+            return [
+                participant.id
+                for participant in self.discipline.participants
+            ]
+        if self.hope_tour:
+            pre_result = [
+                Run.get(self.session, run_id)
+                for run_id, run_result in computed_tours[-1].runs_results.items()
+                if not run_result.advanced
+            ]
+        else:
+            run_ids: List[int] = []
+            for tour, comp_tour in reversed(list(zip(self.discipline.tours_sorted, computed_tours))):
+                for run_id, run_result in comp_tour.runs_results.items():
+                    if run_result.advanced:
+                        run_ids.append(run_id)
                 if not tour.hope_tour:
                     break
-        except self.DoesNotExist:
-            pass
-        return max(0, base_value - advanced_over_quote)
-
-    def create_participant_runs(self):
-        from models import (
-            AcrobaticOverride,
-            Run,
-            Score,
-        )
-        self.smart_prefetch({
-            "runs": {},
-        })
-        # Make sets
-        estimated_participants = []
-        inherited_data = {}
-        for participant, data in self.estimate_participants():
-            estimated_participants.append(participant)
-            inherited_data[participant.id] = data
-        existing_participant_ids = {run.participant_id for run in self.runs}
-        new_participant_ids = {participant.id for participant in estimated_participants}
-        participant_ids_to_create = new_participant_ids - existing_participant_ids
-        participant_ids_to_delete = existing_participant_ids - new_participant_ids
-        # Delete runs
-        if len(participant_ids_to_delete) > 0:
-            runs_to_delete = Run.select().where(
-                (Run.tour == self) &
-                (Run.participant << list(participant_ids_to_delete))
-            )
-            runs_to_delete = list(runs_to_delete)
-            Score.delete().where(Score.run << runs_to_delete).execute()
-            AcrobaticOverride.delete().where(AcrobaticOverride.run << runs_to_delete).execute()
-            Run.delete().where(Run.id << runs_to_delete).execute()
-        # Create runs
-        runs_to_create = [
-            {
-                "participant": participant_id,
-                "heat": 0,
-                "heat_secondary": random.randint(0, 10**9),
-                "tour": self,
-            } for participant_id in participant_ids_to_create
-        ]
-        if len(runs_to_create) > 0:
-            Run.insert_many(runs_to_create).execute()
-        # Refetch all runs
-        self.smart_prefetch({
-            "runs": {
-                "discipline": {
-                    "discipline_judges": {},
-                },
-                "participant": {},
-                "scores": {},
-            },
-        })
-        # Load acrobatics (N queries)
-        if self.default_program != "":
-            for run in self.runs:
-                run.load_acrobatics(run.participant.get_default_program(self.default_program), WsMessage())
-        # Load inherited data (N queries)
-        for run in self.runs:
-            run.inherited_data = (
-                inherited_data[run.participant_id]
-                if run.participant_id in inherited_data
-                else {}
-            )
-            run.save()
-        # Create scores
-        scores_to_create = []
-        for run in self.runs:
-            scores_judge_ids = {score.discipline_judge_id for score in run.scores}
-            scores_to_create += [
-                {
-                    "run": run,
-                    "discipline_judge": discipline_judge,
-                }
-                for discipline_judge in self.discipline_judges
-                if discipline_judge.id not in scores_judge_ids
+            pre_result = [
+                Run.get(self.session, run_id)
+                for run_id in run_ids
             ]
-        if len(scores_to_create) > 0:
-            Score.insert_many(scores_to_create).execute()
-        # Permute heats
-        prev_tour = self.get_prev_tour(throw=False)
-        if prev_tour is None or prev_tour.finalized or prev_tour.hope_tour:
-            self.shuffle_heats(ws_message=None, broadcast=False, preserve_existing=True, prefetched=True)
+        return [run.participant_id for run in pre_result if run.status != RunStatus.DQ]
+
+    def create_runs(self, mk: "MutationsKeeper") -> None:
+        from models.run import Run
+        participants_ids = set(self.get_partictpant_ids())
+        for run in self.runs:
+            if run.participant_id not in participants_ids:
+                run.delete(mk)
+            participants_ids.discard(run.participant_id)
+            run.create_scores(mk)
+            run.load_default_acrobatics(mk)
+        for participant_id in participants_ids:
+            run = Run.create(
+                self.session,
+                {
+                    "participant_id": participant_id,
+                    "tour": self,
+                },
+                mk,
+                unsafe=True,
+            )
+            run.load_default_acrobatics(mk)
+        mk.submit_tour_results_update(self)
+
+    def clone_heats(self, mk: "MutationsKeeper") -> None:
+        runs_map = {
+            run.participant_id: (run.heat, run.heat_secondary)
+            for run in self.prev_tour.runs
+        }
+        for run in self.runs:
+            heat, heat2 = runs_map[run.participant_id]
+            run.update({
+                "heat": heat,
+                "heat_secondary": heat2,
+            }, mk, unsafe=True)
+
+    def normalize_heats(self, mk: "MutationsKeeper") -> None:
+        heats_found = sorted({run.heat for run in self.runs})
+        if not heats_found:
+            return
+        first_heat = min(heats_found[0], 1)
+        heats_next = list(range(first_heat, first_heat + len(heats_found)))
+        heats_map: Dict[int, int] = dict(zip(heats_found, heats_next))
+        for run in self.runs:
+            upd_heat = heats_map[run.heat]
+            if upd_heat == run.heat:
+                continue
+            run.update({"heat": upd_heat}, mk)
+
+    def shuffle_heats(self, mk: "MutationsKeeper", *, preserve_existing: bool) -> None:
+        if self.finalized:
+            raise ApiError("error.tour.shuffle_finalized")
+        if self.participants_per_heat <= 0:
+            return
+        if preserve_existing:
+            self.normalize_heats(mk)
+            first_heat = max(itertools.chain([0], (run.heat for run in self.runs))) + 1
+            runs = [run for run in self.runs if run.heat <= 0]
         else:
-            self.clone_heats(prev_tour, ws_message=None, broadcast=False, prefetched=True)
+            first_heat = 1
+            runs = self.runs
+        shuffled_runs = self.weighted_shuffle(runs, self.participants_per_heat)
+        for idx, run in enumerate(shuffled_runs, start=0):
+            run.update({
+                "heat": first_heat + idx // self.participants_per_heat,
+            }, mk, unsafe=True)
 
     @staticmethod
-    def weighted_shuffle(runs, participants_per_heat):
+    def weighted_shuffle(runs: List["Run"], participants_per_heat: int) -> List["Run"]:
+        # I have no idea how, but it works. Was drunk when writing this.
         # Prepare result
-        result = [None for _ in runs]
-        free_slots = set(x for x in range(len(result)))
+        result: List[Optional["Run"]] = [None for _ in runs]
+        free_slots: Set[int] = set(x for x in range(len(result)))
         # Make clubs list
         club_pools = defaultdict(list)
         for run in runs:
@@ -234,472 +479,155 @@ class Tour(BaseModel):
                 heats_used[heat] += 1
                 result[slot] = run
                 free_slots.remove(slot)
-        return result
+        return [raise_if_none(run) for run in result]
 
-    def shuffle_heats(self, ws_message, preserve_existing=False, broadcast=True, prefetched=False):
-        if not prefetched:
-            self.smart_prefetch({
-                "runs": {
-                    "participant": {}
-                },
-            })
-        heats = defaultdict(list)
-        # Assertions
-        if self.participants_per_heat <= 0:
-            return
-        # Adding fake runs to last but one heat
-        if (
-            self.participants_per_heat >= 3 and
-            len(self.runs) % self.participants_per_heat == 1 and
-                len(self.runs) > 1
-        ):
-            heats[len(self.runs) // self.participants_per_heat] = \
-                [None] * (self.participants_per_heat - (self.participants_per_heat + 1) // 2)
-        # Filling with existing heats (only if preserving evisting)
-        if preserve_existing:
-            for run in self.runs:
-                if run.heat > 0:
-                    heats[run.heat].append(run.id)
-        # Adding new runs to heats
-        new_runs = [run for run in self.runs if run.heat <= 0 or not preserve_existing]
-        new_runs = self.weighted_shuffle(new_runs, self.participants_per_heat)
-        current_filling_heat = 1
-        for run in new_runs:
-            while len(heats[current_filling_heat]) >= self.participants_per_heat:
-                current_filling_heat += 1
-            heats[current_filling_heat].append(run.id)
-        # Trimming empty heats
-        result_heats = []
-        current_heat = 1
-        while len(heats) > 0:
-            heat = [x for x in heats.pop(current_heat, []) if x is not None]
-            if len(heat) != 0:
-                result_heats.append(heat)
-            current_heat += 1
-        # Assigning heats
-        rev_runs = {run.id: run for run in self.runs}
-        for heat, run_ids in enumerate(result_heats, start=1):
-            for run_id in run_ids:
-                run = rev_runs[run_id]
-                if run.heat != heat:
-                    run.heat = heat
-                    if not preserve_existing:
-                        run.heat_secondary = random.randint(0, 10**9)
-                    run.save()
-        # Broadcasting
-        if broadcast:
-            ws_message.add_model_update(
-                model_type=self.__class__,
-                model_id=self.id,
-                schema={
-                    "runs": {},
-                },
-            )
-
-    def clone_heats(self, source, ws_message, broadcast=True, prefetched=False):
-        if not prefetched:
-            self.smart_prefetch({
-                "runs": {},
-            })
-        source.smart_prefetch({
-            "runs": {},
-        })
-        runs_map = {run.participant.id: run.heat for run in source.runs}
-        for run in self.runs:
-            run.heat = runs_map[run.participant_id]
-            run.save()
-        if broadcast:
-            ws_message.add_model_update(
-                model_type=self.__class__,
-                model_id=self.id,
-                schema={
-                    "runs": {},
-                },
-            )
-
-    @classmethod
-    def get_active(cls):
-        try:
-            active_tour = cls.get(cls.active == True)  # NOQA
-            return active_tour
-        except cls.DoesNotExist:
-            return None
-
-    def start(self, ws_message):
+    def start(self, mk: "MutationsKeeper") -> None:
         check_permissions("tour.start", {"tour": self})
         if self.finalized:
             raise ApiError("errors.tour.start_finalized")
         if self.active:
             return
-        competition_id = self.discipline.competition_id
-        active_tours = list(self.select().join(Discipline).where(
-            (Tour.active == True) &  # NOQA
-            (Discipline.competition == competition_id)
-        ))
+        active_tours: List[Tour] = (
+            self.session
+                .query(Tour).filter_by(active=True)
+                .join(Discipline).filter_by(competition_id=self.competition_id)
+                .options(joinedload(Tour.discipline).subqueryload(Discipline.discipline_judges))
+                .all()
+        )
         next_discipline_judges = self.discipline.discipline_judges
         next_judge_ids = {dj.judge_id for dj in next_discipline_judges}
         for tour in active_tours:
-            active_discipline_judges = tour.discipline.discipline_judges
-            active_judge_ids = {dj.judge_id for dj in active_discipline_judges}
+            active_judge_ids = {dj.judge_id for dj in tour.discipline.discipline_judges}
             if active_judge_ids.intersection(next_judge_ids):
-                tour.stop(ws_message=ws_message, broadcast=False)
-        self.active = True
-        self.save()
-        ws_message.add_model_update(
-            model_type=self.__class__,
-            model_id=self.id,
-        )
-        ws_message.add_active_tours_update(self.discipline.competition_id)
+                tour.stop(mk)
+        self.update({
+            "active": True,
+        }, mk, unsafe=True)
 
-    def stop(self, ws_message, broadcast=True):
-        self.active = False
-        self.save()
-        ws_message.add_model_update(
-            model_type=self.__class__,
-            model_id=self.id,
-        )
-        if broadcast:
-            ws_message.add_active_tours_update(self.discipline.competition_id)
+    def stop(self, mk: "MutationsKeeper") -> None:
+        self.update({
+            "active": False,
+        }, mk, unsafe=True)
 
-    @property
-    def discipline_judges(self):
-        return list(self.discipline.discipline_judges)
-
-    def discipline_judges_by_id(self):
-        return {dj.id: dj for dj in self.discipline_judges}
-
-    def get_prev_tour(self, throw=False):
-        prev_tours_list = list(self.prev_tour)
-        if prev_tours_list == []:
-            if throw:
-                raise self.DoesNotExist
-            return None
-        return prev_tours_list[0]
-
-    def check_prev_tour_finalized(self, strict=True):
-        prev_tour = self.get_prev_tour()
-        if prev_tour is None:
-            return
-        if not strict:
-            prev_tour_size = prev_tour.get_attr_count("runs")
-            if prev_tour_size <= prev_tour.num_advances:
-                return
-        if not prev_tour.finalized:
-            raise ApiError("errors.tour.prev_not_finailzed")
-
-    def check_next_tour_not_finalized(self):
-        if self.next_tour is None:
-            return
-        if self.next_tour.finalized:
-            raise ApiError("errors.tour.next_is_finailzed")
-
-    def init(self, ws_message):
-        if self.finalized:
-            raise ApiError("error.tour.init_finalized")
-        self.check_prev_tour_finalized(False)
-        self.create_participant_runs()
-        ws_message.add_model_update(
-            model_type=self.__class__,
-            model_id=self.id,
-            schema={
-                "runs": {
-                    "participant": {
-                        "programs": {},
-                        "club": {},
-                    },
-                    "acrobatics": {},
-                    "scores": {},
-                }
-            }
-        )
-        ws_message.add_tour_results_update(self.id)
-
-    def confirm_heat(self, discipline_judge, heat, ws_message):
+    def confirm_heat(self, discipline_judge: "DisciplineJudge", heat: int, mk: "MutationsKeeper") -> None:
+        from models.run import Run
+        from models.score import Score
         if self.finalized:
             raise ApiError("errors.score.update_on_finalized_tour")
-        from models.score import Score
-        from models.run import Run
-        scores = Score.select().join(Run).where(
-            (Score.discipline_judge == discipline_judge) &
-            (Score.confirmed == False) &  # NOQA
-            (Run.heat == heat)
-        ).execute()
-        ids = [score.id for score in scores]
-        Score.update(confirmed=True).where(Score.id << ids).execute()
+        scores = (
+            self.session
+                .query(Score).filter_by(discipline_judge=discipline_judge, confirmed=False)
+                .join(Run).filter_by(heat=heat, tour=self)
+                .all()
+        )
         for score in scores:
-            ws_message.add_model_update(
-                model_type=Score,
-                model_id=score.id,
-            )
+            score.update({"confirmed": True}, mk)
 
-    def confirm_all(self, discipline_judge, ws_message):
+    def set_judge_scores_confirmation(
+        self,
+        discipline_judge: "DisciplineJudge",
+        new_confirmed: bool,
+        mk: "MutationsKeeper",
+        synchronize_session: Union[bool, str] = False,
+    ):
+        from models.run import Run
+        from models.score import Score
         if self.finalized:
             raise ApiError("errors.score.update_on_finalized_tour")
-        from models.score import Score
-        from models.run import Run
-        scores = Score.select().join(Run).where(
-            (Score.discipline_judge == discipline_judge) &
-            (Score.confirmed == False)  # noqa
-        ).execute()
-        ids = [score.id for score in scores]
-        Score.update(confirmed=True).where(Score.id << ids).execute()
-        ws_message.add_model_update(
-            model_type=self.__class__,
-            model_id=self.id,
-            schema={
-                "runs": {
-                    "scores": {},
-                },
-            },
+        scores = (
+            self.session
+                .query(Score).filter_by(discipline_judge=discipline_judge, confirmed=not new_confirmed)
+                .join(Run).filter_by(tour=self)
+                .all()
+        )
+        scores_ids: List[int] = []
+        for score in scores:
+            mk.submit_model_updated(score)
+            scores_ids.append(score.id)
+        (
+            self.session
+                .query(Score)
+                .filter(Score.id.in_(scores_ids))
+                .update(
+                    {"confirmed": new_confirmed},
+                    synchronize_session=synchronize_session,
+                )
         )
 
-    def unconfirm_all(self, discipline_judge, ws_message):
-        if self.finalized:
-            raise ApiError("errors.score.update_on_finalized_tour")
-        from models.score import Score
+    def reset_judge_scores(
+        self,
+        discipline_judge: "DisciplineJudge",
+        mk: "MutationsKeeper",
+        synchronize_session: Union[bool, str] = False,
+    ) -> None:
         from models.run import Run
-        scores = Score.select().join(Run).where(
-            (Score.discipline_judge == discipline_judge) &
-            (Score.confirmed == True)  # noqa
-        ).execute()
-        ids = [score.id for score in scores]
-        Score.update(confirmed=False).where(Score.id << ids).execute()
-        ws_message.add_model_update(
-            model_type=self.__class__,
-            model_id=self.id,
-            schema={
-                "runs": {
-                    "scores": {},
-                },
-            },
-        )
-
-    def reset_judge_scores(self, discipline_judge, ws_message):
-        if self.finalized:
-            raise ApiError("errors.score.update_on_finalized_tour")
         from models.score import Score
-        from models.run import Run
-        scores = Score.select().join(Run).where(Score.discipline_judge == discipline_judge).execute()
-        ids = [score.id for score in scores]
-        Score.update(
-            score_data={},
-            confirmed=False,
-        ).where(Score.id << ids).execute()
-        ws_message.add_model_update(
-            model_type=self.__class__,
-            model_id=self.id,
-            schema={
-                "runs": {
-                    "scores": {},
-                },
-            },
-        )
-
-    def permute_within_heat(self, run_ids, ws_message):
+        from models.score_part import ScorePart
         if self.finalized:
             raise ApiError("errors.score.update_on_finalized_tour")
-        self.smart_prefetch({
-            "runs": {}
-        })
+        scores = (
+            self.session
+                .query(Score).filter_by(discipline_judge=discipline_judge)
+                .join(Run).filter_by(tour=self)
+                .all()
+        )
+        scores_ids: List[int] = []
+        for score in scores:
+            mk.submit_model_updated(score)
+            scores_ids.append(score.id)
+        (
+            self.session
+                .query(Score)
+                .filter(Score.id.in_(scores_ids))
+                .update(
+                    {"confirmed": False},
+                    synchronize_session=synchronize_session,
+                )
+        )
+        (
+            self.session
+                .query(ScorePart)
+                .filter(ScorePart.score_id.in_(scores_ids))
+                .delete(synchronize_session=synchronize_session)
+        )
+        mk.submit_tour_results_update(self)
+
+    def permute_within_heat(self, run_ids: List[int], mk: "MutationsKeeper") -> None:
+        if self.finalized:
+            raise ApiError("errors.score.update_on_finalized_tour")
         id_to_run = {run.id: run for run in self.runs}
         for idx, run_id in enumerate(run_ids):
             run = id_to_run.get(run_id, None)
             if run is None:
                 continue
-            run.heat_secondary = idx
-            run.save()
-        ws_message.add_model_update(
-            model_type=self.__class__,
-            model_id=self.id,
-            schema={
-                "runs": {},
-            }
-        )
-
-    def finalize(self, ws_message):
-        self.check_prev_tour_finalized()
-        if self.active:
-            self.stop(ws_message)
-        results = self.results
-        self.cached_results = results
-        self.finalized = True
-        self.total_advanced = len([
-            None
-            for row in results
-            if row["advances"]
-        ])
-        self.save()
-        if self.next_tour:
-            self.next_tour.init(ws_message)
-        ws_message.add_model_update(
-            model_type=self.__class__,
-            model_id=self.id,
-            schema={}
-        )
-        ws_message.add_tour_results_update(self.id)
-
-    def unfinalize(self, ws_message):
-        self.check_next_tour_not_finalized()
-        self.finalized = False
-        self.save()
-        ws_message.add_model_update(
-            model_type=self.__class__,
-            model_id=self.id,
-            schema={}
-        )
-        ws_message.add_tour_results_update(self.id)
-
-    @property
-    def scoring_system(self):
-        return get_scoring_system(self)
+            run.update({"heat_secondary": idx}, mk, unsafe=True)
 
     @classmethod
-    def load_models(cls, discipline, objects):
-        if discipline.first_tour is not None:
+    def load_models(
+        cls,
+        discipline: Discipline,
+        objects: List[Dict[str, Any]],
+        mk: "MutationsKeeper",
+    ) -> None:
+        if discipline.tours:
             return  # Skip import
-        add_after = None
-        for obj in objects:
-            model = cls.create_model(discipline, add_after, obj, WsMessage())
-            discipline.tours.append(model)
-            add_after = model.id
-
-    @classmethod
-    def create_model(cls, discipline, add_after, data, ws_message):
-        if "scoring_system_name" in data:
-            cls.validate_scoring_system_name(discipline, data["scoring_system_name"])
-        create_kwargs = cls.gen_model_kwargs(data, discipline=discipline)
-        tour = Tour.create(**create_kwargs)
-        if add_after is None:
-            if discipline.first_tour is not None and discipline.first_tour.finalized:
-                raise ApiError("errors.tour.add_before_finalized")
-            tour.next_tour = discipline.first_tour
-            discipline.first_tour = tour
-            discipline.save()
-            tour.save()
-        else:
-            for prev_tour in discipline.tours:
-                if prev_tour.id == add_after:
-                    if prev_tour.next_tour is not None and prev_tour.next_tour.finalized:
-                        raise ApiError("errors.tour.add_before_finalized")
-                    tour.next_tour = prev_tour.next_tour
-                    prev_tour.next_tour = tour
-                    prev_tour.save()
-                    tour.save()
-                    break
-            else:
-                raise ApiError("errors.tour.invalid_add_after_id")
-        ws_message.add_model_update(
-            model_type=Discipline,
-            model_id=discipline.id,
-            schema={
-                "tours": {},
-            }
-        )
-        return tour
-
-    @staticmethod
-    def validate_scoring_system_name(discipline, scoring_system_name):
-        parts = scoring_system_name.split(".")
-        if len(parts) != 2 or parts[0] != discipline.competition.rules_set:
-            raise ApiError("errors.tour.invalid_scoring_system")
-
-    def update_model(self, new_data, ws_message):
-        if self.finalized:
-            for key in ["num_advances", "hope_tour", "scoring_system_name"]:
-                if key in new_data:
-                    raise ApiError("errors.tour.update_finalized")
-        if "scoring_system_name" in new_data:
-            self.validate_scoring_system_name(self.discipline, new_data["scoring_system_name"])
-        self.update_model_base(new_data)
-        if "scoring_system_name" in new_data:
-            ws_message.add_model_update(
-                model_type=self.__class__,
-                model_id=self.id,
-                schema={
-                    "runs": {
-                        "scores": {},
-                    },
-                }
+        for idx, obj in enumerate(objects):
+            cls.create(
+                discipline.session,
+                {
+                    "discipline": discipline,
+                    "sp": idx * 2**10,
+                    **cls.filter_non_managable_fields(obj),
+                },
+                mk,
+                unsafe=True,
             )
-        else:
-            ws_message.add_model_update(
-                model_type=self.__class__,
-                model_id=self.id,
-            )
-        ws_message.add_tour_results_update(self.id, immediate=True)
 
-    def delete_model(self, ws_message):
-        if self.finalized:
-            raise ApiError("errors.tour.delete_finalized")
-        discipline = self.discipline
-        prev_tour = self.get_prev_tour()
-        if prev_tour is None:  # This is the first_tour
-            discipline.first_tour = self.next_tour
-            discipline.save()
-        else:
-            prev_tour.next_tour = self.next_tour
-            prev_tour.save()
-        self.delete_instance()
-        ws_message.add_model_update(
-            model_type=Discipline,
-            model_id=discipline.id,
-            schema={
-                "tours": {},
-            }
-        )
-        ws_message.add_model_update(
-            model_type=competition_proxy,
-            model_id=discipline.competition_id,
-            schema={
-                "plan": {},
-            }
-        )
-        if self.active:
-            ws_message.add_active_tours_update(discipline.competition_id)
-
-    @property
-    def results(self):
-        if self.finalized and self.cached_results is not None:
-            return self.cached_results
-        ordered_djs = list(self.discipline_judges)
-        ss_runs = []
-        for run in self.runs:
-            scores_index = {s.discipline_judge_id: s for s in run.scores}
-            ordered_scores = [scores_index.get(dj.id, None) for dj in ordered_djs]
-            ss_runs.append({
-                "run_id": run.id,
-                "scores": [(s.score_data if s is not None else {}) for s in ordered_scores],
-                "scores_ids": [(s.id if s is not None else None) for s in ordered_scores],
-                "acro_scores": run.get_acro_scores(),
-                "inherited_data": run.inherited_data,
-                "status": run.status,
-            })
-        return self.scoring_system.get_tour_results(
-            runs=ss_runs,
-            judges_roles=[dj.role for dj in self.discipline_judges],
-            num_advances=self.get_actual_num_advances(),
-            tour_name=self.name,
-        )
-
-    def serialize(self, children={}):
-        result = self.serialize_props()
-        result["next_tour_id"] = self.next_tour_id
-        result = self.serialize_upper_child(result, "discipline", children)
-        result = self.serialize_lower_child(
-            result, "runs", children,
-            lambda x, c: x.serialize(discipline_judges=list(self.discipline_judges), children=c))
-        if "results" in children:
-            result["results"] = self.results
-        return result
-
-    def export(self):
-        result = self.serialize_props()
-        result.update({
-            "id": self.id,
-            "results": self.results,
-            "runs": [run.export() for run in self.runs],
-        })
-        return result
-
-
-tour_proxy.initialize(Tour)
+    # def export(self):
+    #     result = self.serialize_props()
+    #     result.update({
+    #         "id": self.id,
+    #         "results": self.results,
+    #         "runs": [run.export() for run in self.runs],
+    #     })
+    #     return result

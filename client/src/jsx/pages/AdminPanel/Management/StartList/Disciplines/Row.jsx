@@ -1,20 +1,15 @@
-import ParticipantCell from "../ParticipantCell";
+import React from "react";
 
-export default class Row extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            acroIncluded: PT.bool.isRequired,
-            config: PT.object.isRequired,
-            participant: PT.shape({
-                coaches: PT.string.isRequired,
-                number: PT.number.isRequired,
-                club: PT.shape({
-                    name: PT.string.isRequired,
-                }).isRequired,
-            }).isRequired,
-        };
-    }
+import PT from "prop-types";
+import ParticipantCell from "../ParticipantCell";
+import Model from "common/server/Storage/models/Model";
+
+export default class Row extends React.Component {
+    static propTypes = {
+        acroIncluded: PT.bool.isRequired,
+        config: PT.object.isRequired,
+        participant: PT.instanceOf(Model).isRequired,
+    };
     render() {
         const class_name = this.props.acroIncluded ? "has-acro" : "";
         const coaches = this.props.participant.coaches.split(",").map(
@@ -50,5 +45,3 @@ export default class Row extends React.PureComponent {
         );
     }
 }
-
-Row.displayName = "AdminPanel_Management_StartList_Disciplines_Row";

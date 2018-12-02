@@ -1,16 +1,16 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import TableHead from "./TableHead";
 import TableBody from "./TableBody";
 
-export default class CustomTable extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            cols: PT.array.isRequired,
-            rows: PT.array.isRequired,
-            rowKey: PT.string,
-            fontSize: PT.string,
-        };
-    }
+export default class CustomTable extends React.Component {
+    static propTypes = {
+        cols: PT.array.isRequired,
+        fontSize: PT.string,
+        rowKey: PT.string,
+        rows: PT.array.isRequired,
+    };
 
     static get defaultProps() {
         return {
@@ -21,7 +21,7 @@ export default class CustomTable extends React.PureComponent {
 
     computeColumnWidths() {
         const raw_values = this.props.cols.map(col => col.width);
-        const eq_count = raw_values.filter(v => v === null || typeof v === "undefined").length;
+        const eq_count = raw_values.filter(v => v == null || typeof v === "undefined").length;
         const nums_sum = raw_values.filter(v => typeof v === "number").reduce((a, b) => a + b, 0);
         const new_values = raw_values.map(rv => {
             if (rv === "flex") {

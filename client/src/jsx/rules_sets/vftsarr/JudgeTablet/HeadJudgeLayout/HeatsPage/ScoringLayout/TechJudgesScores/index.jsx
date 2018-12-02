@@ -1,26 +1,18 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import Item from "./Item";
 
-export default class TechJudgeScore extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudges: PT.arrayOf(
-                PT.shape({
-                    role: PT.string.isRequired,
-                }).isRequired,
-            ).isRequired,
-            run: PT.shape({
-                scores: PT.arrayOf(
-                    PT.shape({
-                        discipline_judge_id: PT.number.isRequired,
-                    }).isRequired,
-                ).isRequired,
-            }).isRequired,
-            tour: PT.object.isRequired,
-        };
-    }
+export default class TechJudgeScore extends React.Component {
+    static propTypes = {
+        disciplineJudges: PT.arrayOf(
+            PT.object.isRequired,
+        ).isRequired,
+        run: PT.object.isRequired,
+        tourResults: PT.object.isRequired,
+    };
 
     constructor(props) {
         super(props);
@@ -75,12 +67,10 @@ export default class TechJudgeScore extends React.PureComponent {
             return (
                 <Item
                     disciplineJudge={ dj }
-                    judge={ dj.judge }
                     key={ dj.id }
-                    run={ this.props.run }
                     score={ score }
                     showVerbose={ this.state.verboseIdx === idx }
-                    tour={ this.props.tour }
+                    tourResults={ this.props.tourResults }
                 />
             );
         });

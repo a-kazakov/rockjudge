@@ -16,15 +16,16 @@ from webserver.handlers import (
 from webserver.websocket import WebSocketHandler
 
 
-STATIC_PATH = os.path.join(os.path.dirname(__file__), 'static')
-SCREEN_STATIC_PATH = os.path.join(os.path.join(os.path.dirname(__file__), 'screen'), 'static')
+BASE_PATH = os.path.dirname(__file__)
+STATIC_PATH = os.path.join(BASE_PATH, 'static')
+SCREEN_STATIC_PATH = os.path.join(BASE_PATH, 'screen', 'static')
 
 handlers = [
     (r"/$", StartPageHandler),
     (r"/admin/(\d+)$", AdminHandler),
     (r"/c$", CompetitionsHandler),
     # (r"/conn$", ConnectionTesterHandler),
-    (r"/media/screen/(.*)", StaticFileHandler, {"path": SCREEN_STATIC_PATH}),
+    (r"/media/screen/(.*)", StaticFileHandlerNoCache, {"path": SCREEN_STATIC_PATH}),
     (r"/presenter/(\d+)$", PresenterHandler),
     (r"/printer/(\d+)$", AutoPrinterHandler),
     (r"/screen/(\d+)", ScreenHandler),

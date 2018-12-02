@@ -1,3 +1,6 @@
+import React from "react";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import Api from "common/server/Api";
@@ -7,25 +10,22 @@ import makeClassName from "common/makeClassName";
 
 import ActionButton from "./ActionButton";
 
-export default class JudgeHeaderCell extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudge: PT.shape({
-                id: PT.number.isRequired,
-                judge: PT.shape({
-                    name: PT.string.isRequired,
-                    number: PT.string.isRequired,
-                }).isRequired,
+export default class JudgeHeaderCell extends React.Component {
+    static propTypes = {
+        disciplineJudge: PT.shape({
+            id: PT.number.isRequired,
+            judge: PT.shape({
+                name: PT.string.isRequired,
+                number: PT.string.isRequired,
             }).isRequired,
-            tour: PT.shape({
-                id: PT.number.isRequired,
-            }).isRequired,
-            opened: PT.bool.isRequired,
-            onEditRequest: PT.func.isRequired,
-            onStopEditing: PT.func.isRequired,
-        };
-    }
+        }).isRequired,
+        opened: PT.bool.isRequired,
+        tour: PT.shape({
+            id: PT.number.isRequired,
+        }).isRequired,
+        onEditRequest: PT.func.isRequired,
+        onStopEditing: PT.func.isRequired,
+    };
 
     handleToggleMenu = () => {
         if (this.props.opened) {
@@ -45,7 +45,7 @@ export default class JudgeHeaderCell extends React.PureComponent {
                 `${judge.role_description || _("global.phrases.judge_n", judge.number)}: ${judge.name}`,
             ],
             () => {
-                Api("tour.confirm_all", {
+                Api("tour/confirm_judge", {
                     tour_id: this.props.tour.id,
                     discipline_judge_id: this.props.disciplineJudge.id,
                 })
@@ -62,7 +62,7 @@ export default class JudgeHeaderCell extends React.PureComponent {
                 `${judge.role_description || _("global.phrases.judge_n", judge.number)}: ${judge.name}`,
             ],
             () => {
-                Api("tour.unconfirm_all", {
+                Api("tour/unconfirm_judge", {
                     tour_id: this.props.tour.id,
                     discipline_judge_id: this.props.disciplineJudge.id,
                 })
@@ -79,7 +79,7 @@ export default class JudgeHeaderCell extends React.PureComponent {
                 `${judge.role_description || _("global.phrases.judge_n", judge.number)}: ${judge.name}`,
             ],
             () => {
-                Api("tour.reset_judge_scores", {
+                Api("tour/reset_judge", {
                     tour_id: this.props.tour.id,
                     discipline_judge_id: this.props.disciplineJudge.id,
                 })

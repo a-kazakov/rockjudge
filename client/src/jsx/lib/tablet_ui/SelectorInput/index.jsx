@@ -1,35 +1,35 @@
+import React from "react";
+
+import PT from "prop-types";
 import makeClassName from "common/makeClassName";
 
 import Item from "./Item";
 
-export default class SelectorInput extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            choices: PT.arrayOf(
-                PT.arrayOf(
-                    PT.oneOfType([
-                        PT.string.isRequired,
-                        PT.number.isRequired,
-                        PT.bool.isRequired,
-                    ]),
-                ),
-            ).isRequired,
-            compact: PT.bool.isRequired,
-            highlightLower: PT.bool.isRequired,
-            jumbo: PT.bool,
-            multiple: PT.bool.isRequired,
-            readOnly: PT.bool,
-            rowSize: PT.number,
-            style: PT.oneOf(["grid", "one-line", "two-lines"]),
-            value: PT.oneOfType([
-                PT.string.isRequired,
-                PT.number.isRequired,
-                PT.bool.isRequired,
-            ]),
-            onChange: PT.func.isRequired,
-        };
-    }
+export default class SelectorInput extends React.Component {
+    static propTypes = {
+        choices: PT.arrayOf(
+            PT.arrayOf(
+                PT.oneOfType([
+                    PT.string.isRequired,
+                    PT.number.isRequired,
+                    PT.bool.isRequired,
+                ]),
+            ),
+        ).isRequired,
+        compact: PT.bool.isRequired,
+        highlightLower: PT.bool.isRequired,
+        jumbo: PT.bool,
+        multiple: PT.bool.isRequired,
+        readOnly: PT.bool,
+        rowSize: PT.number,
+        style: PT.oneOf(["grid", "one-line", "two-lines"]),
+        value: PT.oneOfType([
+            PT.string.isRequired,
+            PT.number.isRequired,
+            PT.bool.isRequired,
+        ]),
+        onChange: PT.func.isRequired,
+    };
     static get defaultProps() {
         return {
             compact: false,
@@ -45,7 +45,7 @@ export default class SelectorInput extends React.PureComponent {
     isSelected(val, idx, first_value_idx) {
         if (!this.props.multiple) {
             if (this.props.highlightLower) {
-                return first_value_idx !== null && idx <= first_value_idx;
+                return first_value_idx != null && idx <= first_value_idx;
             }
             return this.props.value === val;
         }
@@ -56,7 +56,7 @@ export default class SelectorInput extends React.PureComponent {
     }
     isValueEmpty() {
         if (!this.props.multiple) {
-            return this.props.value === null;
+            return this.props.value == null;
         }
         if (this.props.value instanceof Set) {
             return this.props.value.size === 0;
@@ -86,7 +86,8 @@ export default class SelectorInput extends React.PureComponent {
         let result = [];
         let first_value_idx = null;
         for (let idx = 0; idx < this.props.choices.length; ++idx) {
-            const [value, text, style] = this.props.choices[idx];
+            // eslint-disable-next-line no-unused-vars
+            const [value, _text, _style] = this.props.choices[idx];
             if (this.props.value === value) {
                 first_value_idx = idx;
                 break;

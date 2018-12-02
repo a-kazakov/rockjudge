@@ -1,27 +1,27 @@
+import React from "react";
+
+import PT from "prop-types";
 import Cell from "./Cell";
 
-export default class Row extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            activeCell: PT.shape({
-                action: PT.string.isRequired,
-                token: PT.string.isRequired,
-                tour_id: PT.number.isRequired,
-            }),
-            possibleActions: PT.arrayOf(PT.string.isRequired).isRequired,
-            row: PT.object.isRequired,
-            tour: PT.shape({
-                id: PT.number.isRequired,
+export default class Row extends React.Component {
+    static propTypes = {
+        activeCell: PT.shape({
+            action: PT.string.isRequired,
+            token: PT.string.isRequired,
+            tour_id: PT.number.isRequired,
+        }),
+        possibleActions: PT.arrayOf(PT.string.isRequired).isRequired,
+        row: PT.object.isRequired,
+        tour: PT.shape({
+            id: PT.number.isRequired,
+            name: PT.string.isRequired,
+            discipline: PT.shape({
                 name: PT.string.isRequired,
-                discipline: PT.shape({
-                    name: PT.string.isRequired,
-                }).isRequired,
             }).isRequired,
-            onChange: PT.func.isRequired,
-            onMove: PT.func.isRequired,
-        };
-    }
+        }).isRequired,
+        onChange: PT.func.isRequired,
+        onMove: PT.func.isRequired,
+    };
 
     handleChange = (action, new_value) => {
         let new_row = Object.assign({}, this.props.row);
@@ -50,5 +50,3 @@ export default class Row extends React.PureComponent {
         );
     }
 }
-
-Row.displayName = "AdminPanel_Service_AutoPrinter_Table_Row";

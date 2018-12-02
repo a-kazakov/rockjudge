@@ -1,32 +1,15 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 
-export default class Participant extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudge: PT.shape({
-                id: PT.number.isRequired,
-            }).isRequired,
-            layoutClass: PT.func.isRequired,
-            run: PT.shape({
-                status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                participant: PT.shape({
-                    number: PT.number.isRequired,
-                    name: PT.string.isRequired,
-                    sportsmen: PT.array.isRequired,
-                }).isRequired,
-            }).isRequired,
-            score: PT.shape({
-                id: PT.number.isRequired,
-                confirmed: PT.bool.isRequired,
-                data: PT.shape({
-                    raw_data: PT.object.isRequired,
-                }).isRequired,
-                discipline_judge_id: PT.number.isRequired,
-            }),
-            onScoreUpdate: PT.func.isRequired,
-        };
-    }
+export default class Participant extends React.Component {
+    static propTypes = {
+        layoutClass: PT.func.isRequired,
+        run: PT.object.isRequired,
+        score: PT.object.isRequired,
+        onScoreUpdate: PT.func.isRequired,
+    };
 
     handleScoreUpdate = (key, value) => {
         if (this.props.score.confirmed) {
@@ -35,25 +18,17 @@ export default class Participant extends React.PureComponent {
         let score_data = {};
         score_data[key] = value;
         this.props.onScoreUpdate(this.props.score.id, score_data);
-    }
-    handleAcroReductionUpdate = (acro_idx, value) => {
-        if (this.props.score.confirmed) {
-            return;
-        }
-        let reductions = this.props.score.data.raw_data.reductions.map(() => null);
-        reductions[acro_idx] = value;
-        this.onScoreUpdate("reductions", reductions);
-    }
+    };
 
     renderScoringLayout() {
-        if (this.props.score === null) {
+        if (this.props.score == null) {
             return (
                 <div className="not-performing">
                     { _("tablet.global.no_score") }
                 </div>
             );
         }
-        const score_data = this.props.score.data.raw_data;
+        const score_data = this.props.score.data;
         const ScoringComponent = this.props.layoutClass;
         return (
             <ScoringComponent

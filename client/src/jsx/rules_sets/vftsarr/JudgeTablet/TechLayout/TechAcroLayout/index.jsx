@@ -1,3 +1,7 @@
+import {React} from "HostModules";
+
+import lastOf from "common/tools/lastOf";
+import PT from "prop-types";
 import _ from "l10n";
 
 import Header from "JudgeTablet/components/Header";
@@ -7,33 +11,14 @@ import ScoringLayoutAcro from "../ScoringLayoutAcro";
 import ScoringLayoutDance from "../ScoringLayoutDance";
 import JudgingPositionSelector from "./JudgingPositionSelector";
 
-export default class TechAcroLayout extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            disciplineJudge: PT.shape({
-                id: PT.number.isRequired,
-                judge: PT.object.isRequired,
-            }).isRequired,
-            tour: PT.shape({
-                id: PT.number.isRequired,
-                runs: PT.arrayOf(
-                    PT.shape({
-                        heat: PT.number.isRequired,
-                        status: PT.oneOf(["OK", "NP", "DQ"]).isRequired,
-                        scores: PT.arrayOf(
-                            PT.shape({
-                                discipline_judge_id: PT.number.isRequired,
-                            }).isRequired,
-                        ).isRequired,
-                    }).isRequired,
-                ).isRequired,
-            }).isRequired,
-            onHeatConfirm: PT.func.isRequired,
-            onScoreConfirm: PT.func.isRequired,
-            onScoreUpdate: PT.func.isRequired,
-        };
-    }
+export default class TechAcroLayout extends React.Component {
+    static propTypes = {
+        disciplineJudge: PT.object.isRequired,
+        tour: PT.object.isRequired,
+        onHeatConfirm: PT.func.isRequired,
+        onScoreConfirm: PT.func.isRequired,
+        onScoreUpdate: PT.func.isRequired,
+    };
 
     static names_cache = new Map();
     static convertName(name) {
@@ -58,7 +43,7 @@ export default class TechAcroLayout extends React.PureComponent {
             judgingPosition: null,
         };
         pre_state.showLastPage = this.getValue("can_finish", true, pre_state, props);
-        if (this.getValue("judging_position", true, pre_state, props) === null) {
+        if (this.getValue("judging_position", true, pre_state, props) == null) {
             pre_state.heat = 1;
         } else {
             pre_state.heat = this.getValue("first_non_confirmed_heat", true, pre_state, props) ||
@@ -67,7 +52,7 @@ export default class TechAcroLayout extends React.PureComponent {
         this.state = pre_state;
     }
 
-    componentWillReceiveProps(next_props) {
+    UNSAFE_componentWIllReceiveProps(next_props) {
         this.resetCache();
         if (next_props.tour.id !== this.props.tour.id) {
             this.setState({
@@ -160,17 +145,13 @@ export default class TechAcroLayout extends React.PureComponent {
     }
 
     getHeatsCount(context) {
-        const last_run = context.props.tour.runs[context.props.tour.runs.length - 1];
-        if (typeof last_run === "undefined") {
-            return 1;
-        }
-        return last_run.heat;
+        return lastOf(context.props.tour.runs)?.heat || 1;
     }
 
     getFirstNonConfirmedHeat(context) {
         // Returns null if all runs are confirmed
         const position = this.getValue("judging_position", context);
-        if (position === null) {
+        if (position == null) {
             return 0;
         }
         const runs = this.getValue("interesting_runs", context);
@@ -180,7 +161,7 @@ export default class TechAcroLayout extends React.PureComponent {
                 continue;
             }
             const score = score_by_run_id.get(run.id);
-            if (score === null || !score.confirmed) {
+            if (score == null || !score.confirmed) {
                 return run.heat;
             }
         }
@@ -188,7 +169,7 @@ export default class TechAcroLayout extends React.PureComponent {
     }
 
     getCanFinish(context) {
-        return this.getValue("first_non_confirmed_heat", context) === null;
+        return this.getValue("first_non_confirmed_heat", context) == null;
     }
 
     getCurrentRun(context) {
@@ -197,7 +178,7 @@ export default class TechAcroLayout extends React.PureComponent {
 
     getCurrentScore(context) {
         const run = this.getValue("current_run", context)
-        if (run === null) {
+        if (run == null) {
             return null;
         }
         return this.getValue("score_by_run_id", context).get(run.id) || null;
@@ -217,7 +198,7 @@ export default class TechAcroLayout extends React.PureComponent {
         if (this.current_score.confirmed && !force) {
             return;
         }
-        const score_data = key === null
+        const score_data = key == null
             ? value
             : {[key]: value};
         this.props.onScoreUpdate(this.current_score.id, score_data, force);
@@ -234,7 +215,7 @@ export default class TechAcroLayout extends React.PureComponent {
     };
 
     renderBody() {
-        if (this.judging_position === null) {
+        if (this.judging_position == null) {
             return (
                 <JudgingPositionSelector
                     numOptions={ this.max_runs_per_heat }
@@ -249,7 +230,7 @@ export default class TechAcroLayout extends React.PureComponent {
                 />
             );
         }
-        if (this.current_run === null) {
+        if (this.current_run == null) {
             return (
                 <div className="body not-performing">
                     { _("tablet.tech_judge.nobody_in_position") }
@@ -276,7 +257,7 @@ export default class TechAcroLayout extends React.PureComponent {
                 </div>
             );
         }
-        if (this.current_score === null) {
+        if (this.current_score == null) {
             return (
                 <div className="body not-performing">
                     { _("tablet.global.no_score") }
@@ -292,7 +273,7 @@ export default class TechAcroLayout extends React.PureComponent {
                             readOnly={ this.current_score.confirmed }
                             run={ this.current_run }
                             score={ this.current_score }
-                            scoreData={ this.current_score.data.raw_data }
+                            scoreData={ this.current_score.data }
                             onScoreUpdate={ this.handleScoreUpdate }
                         />
                     </div>
@@ -301,7 +282,7 @@ export default class TechAcroLayout extends React.PureComponent {
                             readOnly={ this.current_score.confirmed }
                             run={ this.current_run }
                             score={ this.current_score }
-                            scoreData={ this.current_score.data.raw_data }
+                            scoreData={ this.current_score.data }
                             tour={ this.props.tour }
                             onScoreUpdate={ this.handleScoreUpdate }
                         />
@@ -328,7 +309,7 @@ export default class TechAcroLayout extends React.PureComponent {
                     heatsCount={ this.heats_count }
                     hideHeatsButtons={ this.state.showLastPage }
                     judge={ this.props.disciplineJudge.judge }
-                    maxHeat={ this.judging_position === null ? 1 : (this.first_non_confirmed_heat || this.heats_count) }
+                    maxHeat={ this.judging_position == null ? 1 : (this.first_non_confirmed_heat || this.heats_count) }
                     tour={ this.props.tour }
                     onFinishClick={ this.handleFinishClick }
                     onNextHeatClick={ this.handleNextHeatClick }

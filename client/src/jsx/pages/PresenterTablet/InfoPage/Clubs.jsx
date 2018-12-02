@@ -1,18 +1,19 @@
-export default class Clubs extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                clubs: PT.arrayOf(
-                    PT.shape({
-                        id: PT.number.isRequired,
-                        name: PT.string.isRequired,
-                        city: PT.string.isRequired,
-                    }).isRequired
-                ).isRequired,
-            }).isRequired,
-        };
-    }
+import React from "react";
+
+import PT from "prop-types";
+
+export default class Clubs extends React.Component {
+    static propTypes = {
+        competition: PT.shape({
+            clubs: PT.arrayOf(
+                PT.shape({
+                    id: PT.number.isRequired,
+                    name: PT.string.isRequired,
+                    city: PT.string.isRequired,
+                }).isRequired
+            ).isRequired,
+        }).isRequired,
+    };
 
     regroupClubs() {
         let cities = new Map();
@@ -51,5 +52,3 @@ export default class Clubs extends React.PureComponent {
         );
     }
 }
-
-Clubs.displayName = "PresenterTablet_InfoPage_Clubs";

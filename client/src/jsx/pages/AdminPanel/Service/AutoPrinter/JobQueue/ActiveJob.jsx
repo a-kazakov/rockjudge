@@ -1,23 +1,24 @@
+import React from "react";
+
+import makeRandomString from "common/tools/makeRandomString";
+import PT from "prop-types";
 import HeatsTab from "pages/AdminPanel/Judging/TourPanel/HeatsTab";
 import TourResultsTab from "pages/AdminPanel/Judging/TourPanel/TourResultsTab";
 import DisciplineResultsTab from "pages/AdminPanel/Judging/TourPanel/DisciplineResultsTab";
 import TestPage from "./TestPage";
 import TourLoader from "./TourLoader";
 
-export default class ActiveJob extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            queueItem: PT.shape({
-                type: PT.string.isRequired,
-                tour: PT.object.isRequired,
-            }).isRequired,
-            onDone: PT.func.isRequired,
-        };
-    }
+export default class ActiveJob extends React.Component {
+    static propTypes = {
+        queueItem: PT.shape({
+            type: PT.string.isRequired,
+            tour: PT.object.isRequired,
+        }).isRequired,
+        onDone: PT.func.isRequired,
+    };
 
     createFilename() {
-        return `autoprinter_${Math.random().toString().slice(2)}.tmp`;
+        return `autoprinter_${makeRandomString()}.tmp`;
     }
 
     render() {
@@ -28,10 +29,9 @@ export default class ActiveJob extends React.PureComponent {
         switch (this.props.queueItem.type) {
         case "heats":
             return (
-                <TourLoader
+                <HeatsTab
                     autoDocx={ docx_params }
-                    renderer={ HeatsTab }
-                    tourId={ this.props.queueItem.tour.id }
+                    tour={ this.props.queueItem.tour }
                 />
             );
         case "results_1":
@@ -39,7 +39,7 @@ export default class ActiveJob extends React.PureComponent {
                 <TourLoader
                     autoDocx={ docx_params }
                     renderer={ TourResultsTab }
-                    tourId={ this.props.queueItem.tour.id }
+                    tour={ this.props.queueItem.tour }
                     verbosity={ 1 }
                 />
             );
@@ -48,7 +48,7 @@ export default class ActiveJob extends React.PureComponent {
                 <TourLoader
                     autoDocx={ docx_params }
                     renderer={ TourResultsTab }
-                    tourId={ this.props.queueItem.tour.id }
+                    tour={ this.props.queueItem.tour }
                     verbosity={ 2 }
                 />
             );
@@ -57,7 +57,7 @@ export default class ActiveJob extends React.PureComponent {
                 <TourLoader
                     autoDocx={ docx_params }
                     renderer={ TourResultsTab }
-                    tourId={ this.props.queueItem.tour.id }
+                    tour={ this.props.queueItem.tour }
                     verbosity={ 3 }
                 />
             );
@@ -80,5 +80,3 @@ export default class ActiveJob extends React.PureComponent {
         return null;
     }
 }
-
-ActiveJob.displayName = "AdminPanel_Service_AutoPrinter_JobQueue_ActiveJob";

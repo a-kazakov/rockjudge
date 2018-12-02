@@ -1,25 +1,25 @@
+import React from "react";
+
+import PT from "prop-types";
 import CheckboxesSet from "./CheckboxesSet";
 import OneCheckbox from "./OneCheckbox";
 
-export default class ConfigPanel extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            clubs: PT.arrayOf(PT.object.isRequired),
-            config: PT.shape({
-                clubs: PT.object,
-                disciplines: PT.object,
-            }).isRequired,
-            customControls: PT.arrayOf(
-                PT.shape({
-                    key: PT.string.isRequired,
-                    label: PT.string.isRequired,
-                }).isRequired
-            ).isRequired,
-            disciplines: PT.arrayOf(PT.object.isRequired).isRequired,
-            onChange: PT.func.isRequired,
-        };
-    }
+export default class ConfigPanel extends React.Component {
+    static propTypes = {
+        clubs: PT.arrayOf(PT.object.isRequired),
+        config: PT.shape({
+            clubs: PT.object,
+            disciplines: PT.object,
+        }).isRequired,
+        customControls: PT.arrayOf(
+            PT.shape({
+                key: PT.string.isRequired,
+                label: PT.string.isRequired,
+            }).isRequired
+        ).isRequired,
+        disciplines: PT.arrayOf(PT.object.isRequired).isRequired,
+        onChange: PT.func.isRequired,
+    };
 
     handleChange = (field, value) => {
         let config = Object.assign({}, this.props.config);
@@ -78,5 +78,3 @@ export default class ConfigPanel extends React.PureComponent {
         );
     }
 }
-
-ConfigPanel.displayName = "AdminPanel_components_ConfigPanel";

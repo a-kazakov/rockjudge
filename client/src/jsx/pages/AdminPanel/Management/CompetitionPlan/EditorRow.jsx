@@ -1,68 +1,56 @@
+import React from "react";
+
+import makeClassName from "common/makeClassName";
+import Model from "common/server/Storage/models/Model";
 import _ from "l10n";
+import PT from "prop-types";
 
-export default class EditorRow extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            item: PT.shape({
-                sp: PT.oneOfType([
-                    PT.number.isRequired,
-                    PT.string.isRequired,
-                ]).isRequired,
-                estimated_beginning: PT.string.isRequired,
-                estimated_duration: PT.string.isRequired,
-                verbose_name: PT.string.isRequired,
-                tour_id: PT.number,
-            }).isRequired,
-            newItem: PT.bool,
+export default class EditorRow extends React.Component {
+    static propTypes = {
+        context: PT.shape({
             tours: PT.arrayOf(
-                PT.shape({
-                    id: PT.number.isRequired,
-                    name: PT.string.isRequired,
-                }).isRequired
+                PT.instanceOf(Model).isRequired,
             ).isRequired,
-            onStopEditing: PT.func.isRequired,
-            onSubmit: PT.func.isRequired,
-        };
-    }
-    static defaultProps() {
-        return {
-            newItem: false,
-        };
-    }
-
-    makeSpRef = (ref) => {
-        if (ref && !this._sp) {
-            ref.select();
-        }
-        this._sp = ref;
+        }).isRequired,
+        creating: PT.bool.isRequired,
+        entry: PT.instanceOf(Model),
+        formData: PT.shape({
+            sp: PT.string.isRequired,
+            verbose_name: PT.string.isRequired,
+            tour_id: PT.string.isRequired,
+            estimated_beginning: PT.string.isRequired,
+            estimated_duration: PT.string.isRequired,
+        }).isRequired,
+        loading: PT.bool.isRequired,
+        onDiscard: PT.func.isRequired,
+        onFieldChange: PT.func.isRequired,
+        onSubmit: PT.func.isRequired,
     };
-    makeTourIdRef             = (ref) => this._tour_id = ref;
-    makeVerboseNameRef        = (ref) => this._verbose_name = ref;
-    makeEstimatedBeginningRef = (ref) => this._estimated_beginning = ref;
-    makeEstimatedDurationRef  = (ref) => this._estimated_duration = ref;
 
-    serialize() {
-        return {
-            sp: parseInt(this._sp.value, 10) || 0,
-            tour_id: this._tour_id.value === "" ? null : Number(this._tour_id.value),
-            verbose_name: this._verbose_name.value,
-            estimated_beginning: this._estimated_beginning.value,
-            estimated_duration: this._estimated_duration.value,
-        }
-    }
+    handleSpChange = (event) => this.props.onFieldChange("sp", event.target.value);
+    handleVerboseNameChange = (event) => this.props.onFieldChange("verbose_name", event.target.value);
+    handleTourIdChange = (event) => this.props.onFieldChange("tour_id", event.target.value);
+    handleEstimatedBeginningChange = (event) => this.props.onFieldChange("estimated_beginning", event.target.value);
+    handleEstimatedDurationChange = (event) => this.props.onFieldChange("estimated_duration", event.target.value);
     handleSubmission = (event) => {
         event.preventDefault();
-        this.props.onSubmit(this.serialize());
-    }
+        this.props.onSubmit();
+    };
 
     getClassName() {
-        let result = "editor";
-        if (this.props.newItem) {
-            result += " create";
-        }
-        return result;
+        return makeClassName({
+            "editor": true,
+            "create": this.props.creating,
+        });
     }
+
+    renderTour = (tour) => {
+        return (
+            <option key={ tour.id } value={ tour.id }>
+                { `${tour.discipline.name} — ${tour.name}` }
+            </option>
+        );
+    };
     render() {
         return (
             <tr className={ this.getClassName() }>
@@ -72,8 +60,10 @@ export default class EditorRow extends React.PureComponent {
                             <label>
                                 { _("models.competition_plan_item.sp") }
                                 <input
-                                    defaultValue={ this.props.item.sp }
-                                    ref={ this.makeSpRef }
+                                    disabled={ this.props.loading }
+                                    type="number"
+                                    value={ this.props.formData.sp }
+                                    onChange={ this.handleSpChange }
                                 />
                             </label>
                         </div>
@@ -81,24 +71,22 @@ export default class EditorRow extends React.PureComponent {
                             <label>
                                 { _("models.competition_plan_item.verbose_name") }
                                 <input
-                                    defaultValue={ this.props.item.verbose_name }
-                                    ref={ this.makeVerboseNameRef }
+                                    disabled={ this.props.loading }
+                                    value={ this.props.formData.verbose_name }
+                                    onChange={ this.handleVerboseNameChange }
                                 />
                             </label>
                             <label>
                                 { _("models.competition_plan_item.tour") }
                                 <select
-                                    defaultValue={ this.props.item.tour_id || "" }
-                                    ref={ this.makeTourIdRef }
+                                    disabled={ this.props.loading }
+                                    value={ this.props.formData.tour_id }
+                                    onChange={ this.handleTourIdChange }
                                 >
-                                    <option value="">
+                                    <option value="null">
                                         ----------
                                     </option>
-                                    { this.props.tours.map(tour =>
-                                        <option key={ tour.id } value={ tour.id }>
-                                            { tour.name }
-                                        </option>
-                                    ) }
+                                    { this.props.context.tours.map(this.renderTour) }
                                 </select>
                             </label>
                         </div>
@@ -106,15 +94,17 @@ export default class EditorRow extends React.PureComponent {
                             <label>
                                 { _("models.competition_plan_item.estimated_beginning") }
                                 <input
-                                    defaultValue={ this.props.item.estimated_beginning }
-                                    ref={ this.makeEstimatedBeginningRef }
+                                    disabled={ this.props.loading }
+                                    value={ this.props.formData.estimated_beginning }
+                                    onChange={ this.handleEstimatedBeginningChange }
                                 />
                             </label>
                             <label>
                                 { _("models.competition_plan_item.estimated_duration") }
                                 <input
-                                    defaultValue={ this.props.item.estimated_duration }
-                                    ref={ this.makeEstimatedDurationRef }
+                                    disabled={ this.props.loading }
+                                    value={ this.props.formData.estimated_duration }
+                                    onChange={ this.handleEstimatedDurationChange }
                                 />
                             </label>
                         </div>
@@ -122,14 +112,16 @@ export default class EditorRow extends React.PureComponent {
                             <div className="buttons vertical">
                                 <button
                                     className="btn btn-primary"
+                                    disabled={ this.props.loading }
                                     type="submit"
                                 >
                                     { _("global.buttons.submit") }
                                 </button>
                                 <button
                                     className="btn btn-danger"
+                                    disabled={ this.props.loading }
                                     type="button"
-                                    onClick={ this.props.onStopEditing }
+                                    onClick={ this.props.onDiscard }
                                 >
                                     { _("global.buttons.discard") }
                                 </button>
@@ -142,4 +134,3 @@ export default class EditorRow extends React.PureComponent {
     }
 }
 
-EditorRow.displayName = "AdminPanel_Management_CompetitionPlan_EditorRow";

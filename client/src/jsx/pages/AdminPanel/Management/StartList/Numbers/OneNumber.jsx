@@ -1,21 +1,13 @@
-export default class OneNumber extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            competition: PT.shape({
-                name: PT.string.isRequired,
-            }).isRequired,
-            participant: PT.shape({
-                number: PT.number.isRequired,
-                name: PT.string.isRequired,
-                discipline_name: PT.string.isRequired,
-                club: PT.shape({
-                    name: PT.string.isRequired,
-                    city: PT.string.isRequired,
-                }).isRequired,
-            }).isRequired,
-        };
-    }
+import React from "react";
+
+import PT from "prop-types";
+import Model from "common/server/Storage/models/Model";
+
+export default class OneNumber extends React.Component {
+    static propTypes = {
+        competition: PT.instanceOf(Model).isRequired,
+        participant: PT.instanceOf(Model).isRequired,
+    };
 
     render() {
         return (
@@ -40,7 +32,7 @@ export default class OneNumber extends React.PureComponent {
                     &nbsp;
                 </p>
                 <p className="discipline">
-                    { this.props.participant.discipline_name }
+                    { this.props.participant.discipline.name }
                     &nbsp;
                 </p>
                 <p className="club">
@@ -51,5 +43,3 @@ export default class OneNumber extends React.PureComponent {
         );
     }
 }
-
-OneNumber.displayName = "AdminPanel_Management_StartList_Numbers_OneNumber";

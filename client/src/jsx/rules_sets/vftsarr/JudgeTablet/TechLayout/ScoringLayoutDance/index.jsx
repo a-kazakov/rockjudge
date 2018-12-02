@@ -1,3 +1,6 @@
+import {React} from "HostModules";
+
+import PT from "prop-types";
 import _ from "l10n";
 
 import IntegerInput from "tablet_ui/IntegerInput";
@@ -8,20 +11,11 @@ import CardInput from "JudgeTablet/components/CardInput";
 import PreviousCards from "JudgeTablet/components/PreviousCards";
 import checkSS from "common/checkSS";
 
-export default class ScoringLayoutDance extends React.PureComponent {
-    static get propTypes() {
-        const PT = React.PropTypes;
-        return {
-            readOnly: PT.bool.isRequired,
-            tour: PT.shape({
-                scoring_system_name: PT.string.isRequired,
-            }).isRequired,
-            run: PT.object.isRequired,
-            score: PT.object.isRequired,
-            scoreData: PT.object.isRequired,
-            onScoreUpdate: PT.func.isRequired,
-        };
-    }
+export default class ScoringLayoutDance extends React.Component {
+    static propTypes = {
+        score: PT.object.isRequired,
+        onScoreUpdate: PT.func.isRequired,
+    };
 
     static canConfirm() {
         return true;
@@ -41,7 +35,7 @@ export default class ScoringLayoutDance extends React.PureComponent {
     };
 
     renderFormationUndercountInput() {
-        if (!checkSS(this.props.tour.scoring_system_name, "formation")) {
+        if (!checkSS(this.props.score.run.tour.scoring_system_name, "formation")) {
             return null;
         }
         return (
@@ -51,7 +45,7 @@ export default class ScoringLayoutDance extends React.PureComponent {
                     jumbo
                     sendDeltas
                     readOnly={ this.props.score.confirmed }
-                    value={ this.props.scoreData.undercount }
+                    value={ this.props.score.data.undercount }
                     onChange={ this.handleUndercountChange }
                 />
             </div>
@@ -66,7 +60,7 @@ export default class ScoringLayoutDance extends React.PureComponent {
                         jumbo
                         sendDeltas
                         readOnly={ this.props.score.confirmed }
-                        value={ this.props.scoreData.jump_steps }
+                        value={ this.props.score.data.jump_steps }
                         onChange={ this.handleJumpStepsChange }
                     />
                 </div>
@@ -75,19 +69,19 @@ export default class ScoringLayoutDance extends React.PureComponent {
                         { _("tablet.tech_judge.stopwatch") }
                     </h3>
                     <StopWatch
-                        readOnly={ this.props.readOnly }
+                        readOnly={ this.props.score.confirmed }
                         stopwatchId={ this.props.score.id }
-                        value={ this.props.scoreData.time }
+                        value={ this.props.score.data.time }
                         onChange={ this.handleTimeChange }
                     />
                     { this.renderFormationUndercountInput() }
                     <PreviousCards
-                        run={ this.props.run }
+                        run={ this.props.score.run }
+                        tourResults={ this.props.score.run.tour.results }
                     />
                     <CardInput
-                        readOnly={ this.props.readOnly }
-                        scoreData={ this.props.scoreData }
-                        tour={ this.props.tour }
+                        readOnly={ this.props.score.confirmed }
+                        score={ this.props.score }
                         onChange={ this.handleCardChange }
                     />
                 </div>
