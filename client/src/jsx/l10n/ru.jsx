@@ -324,6 +324,8 @@ export default function translate(src, ...args) {
                 "browse": "Обзор...",
                 "connecting": "Подключение к сети",
                 "connection_problem": "Проблемы с сетью",
+                "connection_problem_data_pending": "Проблемы с сетью. Не обновляйте и не закрывайте страницу!",
+                "data_pending": "Данные отправляются. Не обновляйте и не закрывайте страницу!",
                 "yes": "Да",
                 "no": "Нет",
             },

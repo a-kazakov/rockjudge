@@ -3,6 +3,9 @@ import websocket from "common/server/websocket";
 
 import GlobalSchema from "./schema/GlobalSchema";
 import SubscriptionStorage from "./models/SubscriptionStorage";
+import DefaultMap from "common/DefaultMap";
+import ModelOverride from "common/server/Storage/models/ModelOverride";
+import connection_status from "common/connection_status";
 
 export default class Storage {
     constructor() {
@@ -10,6 +13,7 @@ export default class Storage {
         this.ready = false;
         this.postponed_subscriptions = new Map();
         this.subscription_storage_index = new Map();
+        this.overrides = new DefaultMap(() => new ModelOverride);
     }
     init(mutation_callback) {
         if (this.init_started) {
@@ -80,9 +84,8 @@ export default class Storage {
         subscription.unsubscribe();
     }
     resubscribeAll() {
-        for (const ms of this.subscription_storages.values()) {
-            ms.resubscribe();
-        }
+        const promises = Array.from(this.subscription_storages.values()).map(ms => ms.resubscribe());
+        return Promise.all(promises);
     }
     postponeSubscription(subscription) {
         return new Promise((resolve, reject) => this._postponeSubscription(subscription, resolve, reject));
@@ -114,5 +117,24 @@ export default class Storage {
         if (changed) {
             this.mutation_callback();
         }
+    }
+    addOverride(response_key, model_name, model_id, data) {
+        this.overrides.get(`${model_name}/${model_id}`).push(response_key, data);
+        this.mutation_callback();
+        connection_status.setPendingData();
+    }
+    removeOverride(response_key, model_name, model_id) {
+        const override = this.overrides.get(`${model_name}/${model_id}`);
+        override.pop(response_key);
+        if (override.isEmpty()) {
+            this.overrides.delete(`${model_name}/${model_id}`);
+        }
+        if (!this.hasOverrides()) {
+            connection_status.setNoPendingData();
+        }
+        this.mutation_callback();
+    }
+    hasOverrides() {
+        return this.overrides.size > 0;
     }
 }

@@ -32,21 +32,36 @@ export default class JudgeTablet extends React.Component {
     };
 
     handleScoreUpdate = (score_id, score_data) => {
-        const data = {
-            model_id: score_id,
-            data: score_data,
-        };
         Api("model/update", {
             model_name: "Score",
-            data: data,
-        }).send();
+            model_id: score_id,
+            data: {data: score_data},
+        })
+            .setPendingMutation(
+                this.props.tour.global_storage,
+                "Score",
+                score_id,
+                {data: score_data},
+            )
+            .send();
     };
     handleHeatConfirm = (heat) => {
-        Api("tour/confirm_heat", {
+        const api = Api("tour/confirm_heat", {
             tour_id: this.props.tour.id,
             discipline_judge_id: this.props.disciplineJudge.id,
             heat: heat,
-        }).send();
+        });
+        this.props.tour.runs
+            .filter(run => run.heat === heat)
+            .map(run => run.scores.find(score => score.discipline_judge_id === this.props.disciplineJudge.id))
+            .filter(score => score != null)
+            .forEach(score => api.setPendingMutation(
+                this.props.tour.global_storage,
+                "Score",
+                score.id,
+                {confirmed: true},
+            ));
+        api.send();
     };
     handleScoreConfirm = (score_id) => {
         const data = {
@@ -56,7 +71,14 @@ export default class JudgeTablet extends React.Component {
             model_name: "Score",
             model_id: score_id,
             data: data,
-        }).send();
+        })
+            .setPendingMutation(
+                this.props.tour.global_storage,
+                "Score",
+                score_id,
+                {confirmed: true},
+            )
+            .send();
     };
 
     render() {

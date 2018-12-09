@@ -17,8 +17,13 @@ class WebSocketHandler {
             this.opened = true;
             if (this.closed) {
                 // eslint-disable-next-line no-unused-expressions
-                this.storage?.resubscribeAll();
-                this.closed = false;
+                if (this.storage != null) {
+                    this.storage.resubscribeAll().then(() => {
+                        this.closed = false;
+                    });
+                } else {
+                    this.closed = false;
+                }
             }
             connection_status.setOk();
             console.log("Connected to websocket.");
@@ -30,6 +35,7 @@ class WebSocketHandler {
         this.ws.onclose = () => {
             connection_status.setFail();
             console.log("Connection to websocket closed.");
+            waiting_api_requests.rejectAll();
             this.closed = true;
             this.opened = false;
             setTimeout(this.connect, 500);
@@ -52,7 +58,7 @@ class WebSocketHandler {
         switch (message_type) {
             case "api_response": {
                 const {response_key} = extra;
-                waiting_api_requests.push_response(response_key, body);
+                waiting_api_requests.pushResponse(response_key, body);
                 break;
             }
             case "mutations_push": {
@@ -76,6 +82,9 @@ class WebSocketHandler {
         }
     };
     setStorage(storage) {
+        if (this.storage != null) {
+            throw new Error("Attempted to initialize multiple storages");
+        }
         this.storage = storage;
     }
 }

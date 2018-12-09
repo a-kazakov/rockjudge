@@ -15,6 +15,6 @@ export default class AllCompetitionsSubscription extends BaseSubscription {
         Api("model/subscribe_all_competitions", {subscription_id: this.subscription_id})
             .onSuccess(resolve)
             .onError(reject)
-            .send();
+            .send(true /* skip_queue */);
     }
 }

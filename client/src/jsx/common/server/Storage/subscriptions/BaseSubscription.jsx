@@ -22,7 +22,7 @@ export default class BaseSubscription {
         })
             .onSuccess(resolve)
             .onError(reject)
-            .send();
+            .send(true /* skip_queue */);
     };
     shouldApplyTourResultsMutation() {
         return false;

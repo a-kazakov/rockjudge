@@ -29,7 +29,7 @@ export default class TourSubscription extends BaseSubscription {
         })
             .onSuccess(resolve)
             .onError(reject)
-            .send();
+            .send(true /* skip_queue */);
     };
     shouldApplyTourResultsMutation(mutation) {
         return mutation.tour_id === this.tour_id;

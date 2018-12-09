@@ -37,7 +37,7 @@ export default class CompetitionSubscription extends BaseSubscription {
         })
             .onSuccess(resolve)
             .onError(reject)
-            .send();
+            .send(true /* skip_queue */);
     };
     shouldApplyDisciplineResultsMutation(mutation) {
         return mutation.competition_id === this.competition_id;

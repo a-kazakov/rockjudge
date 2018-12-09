@@ -32,7 +32,7 @@ export default class ModelSchema {
     getBackRef(key) {
         return this.backrefs.get(key) || null;
     }
-    getValue(key, model_data, subscription_storage) {
+    getValue(key, model_data, subscription_storage, overrides) {
         const ref = this.getRef(key);
         if (ref != null) {
             return ref.getForwardModel(model_data[ref.id_field_name], subscription_storage);
@@ -40,6 +40,9 @@ export default class ModelSchema {
         const backref = this.getBackRef(key);
         if (backref != null) {
             return backref.getBackwardModels(model_data.id, subscription_storage);
+        }
+        if (overrides != null) {
+            return overrides.applyTo(model_data[key], key);
         }
         return model_data[key];
     }

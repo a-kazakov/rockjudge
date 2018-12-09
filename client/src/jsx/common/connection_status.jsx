@@ -8,6 +8,8 @@ import makeClassName from "common/makeClassName";
 class ConnectionStatusMock {
     setOk() {}
     setFail() {}
+    setPendingData() {}
+    setNoPendingData() {}
 }
 
 class ConnectionStatus extends React.Component {
@@ -22,11 +24,19 @@ class ConnectionStatus extends React.Component {
         return new ConnectionStatusMock();
     }
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            "connected": null,
-        };
+    state = {
+        connected: null,
+        hasPendingData: false,
+        showPendingData: false,
+    };
+
+    componentDidMount() {
+        window.addEventListener("beforeunload", event => {
+            if (this.state.hasPendingData) {
+                event.preventDefault();
+                event.returnValue = '';
+            }
+        })
     }
 
     componentWillUnmount() {
@@ -59,6 +69,26 @@ class ConnectionStatus extends React.Component {
         this.startInterval();
         this.setState({ connected: false });
     }
+    setPendingData() {
+        if (this.state.hasPendingData) {
+            return;
+        }
+        this.setState({
+            hasPendingData: true,
+            showPendingData: false,
+        });
+        setTimeout(
+            () => this.setState(state => state.hasPendingData ? {showPendingData: true} : {}),
+            2000,
+        );
+    }
+
+    setNoPendingData() {
+        this.setState({
+            hasPendingData: false,
+            showPendingData: false,
+        });
+    }
 
     getClassName() {
         return makeClassName({
@@ -69,6 +99,13 @@ class ConnectionStatus extends React.Component {
     }
     render() {
         if (this.state.connected) {
+            if (this.state.showPendingData) {
+                return (
+                    <div className="connection-status warning">
+                        { _("global.labels.data_pending") }
+                    </div>
+                );
+            }
             return (
                 <div className="connection-status ok" />
             );
@@ -82,7 +119,9 @@ class ConnectionStatus extends React.Component {
         }
         return (
             <div className={ this.getClassName() }>
-                { _("global.labels.connection_problem") }
+                { this.state.hasPendingData
+                    ? _("global.labels.connection_problem_data_pending")
+                    : _("global.labels.connection_problem") }
             </div>
         )
     }

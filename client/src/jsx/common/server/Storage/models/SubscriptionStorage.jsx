@@ -173,6 +173,6 @@ export default class SubscriptionStorage {
     }
     resubscribe() {
         this.ready = false;
-        this.subscription.subscribe();
+        return this.subscription.subscribe();
     }
 }

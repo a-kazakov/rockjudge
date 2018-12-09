@@ -16,6 +16,7 @@ class KeysStorage {
         this.has_keys  = true;
         this.client_id = keys_obj.client_id;
         this.secret    = keys_obj.secret;
+        this._awaiting_resolvers = [];
     }
 
     get ls_key() {
@@ -36,7 +37,16 @@ class KeysStorage {
         localStorage.removeItem(this.ls_key);
     }
 
-    obtainKeys(onDone) {
+    obtainKeys() {
+        return new Promise((resolve) => {
+            this._awaiting_resolvers.push(resolve);
+            if (this._awaiting_resolvers.length === 1) {
+                this._obtainKeysImpl();
+            }
+        });
+    }
+
+    _obtainKeysImpl() {
         function makeRandomBN() {
             let result = "";
             for (let i = 0; i < 20; ++i) {
@@ -78,7 +88,7 @@ class KeysStorage {
                             return;
                         }
                         this.updateKeys(client_id, secret);
-                        onDone();
+                        this._awaiting_resolvers.forEach(resolve => resolve());
                     })
                     .send();
             })

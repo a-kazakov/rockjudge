@@ -27,6 +27,6 @@ export default class ClientSubscription extends BaseSubscription {
         })
             .onSuccess(resolve)
             .onError(reject)
-            .send();
+            .send(true /* skip_queue */);
     }
 }

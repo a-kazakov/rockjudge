@@ -43,7 +43,12 @@ export default class Model {
         return result;
     }
     getValue(key) {
-        return this.schema.getValue(key, this._raw_data, this.subscription_storage);
+        return this.schema.getValue(
+            key,
+            this._raw_data,
+            this.subscription_storage,
+            this.global_storage.overrides.getNoCreate(`${this.schema.model_name}/${this._raw_data.id}`),
+        );
     }
     _checkIndexUpdateNeeded(mutation) {
         for (const ref of this.schema.refs.values()) {

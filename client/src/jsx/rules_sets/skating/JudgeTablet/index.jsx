@@ -31,7 +31,14 @@ export default class JudgeTablet extends React.Component {
             model_name: "Score",
             model_id: score_id,
             data: data,
-        }).send();
+        })
+            .setPendingMutation(
+                this.props.tour.global_storage,
+                "Score",
+                score_id,
+                data,
+            )
+            .send();
     };
     handleHeatConfirm = (heat) => {
         Api("tour/confirm_heat", {

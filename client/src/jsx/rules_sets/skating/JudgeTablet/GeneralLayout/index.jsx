@@ -136,7 +136,7 @@ export default class GeneralLayout extends React.Component {
         return (
             <div className="skating-JudgeTablet GeneralLayout">
                 <Header
-                    canFinish={ !this.state.showResults }
+                    canFinish={ !this.state.showResults && !this.props.tour.global_storage.hasOverrides() }
                     canReturn={ this.state.showResults }
                     heat={ this.state.heat }
                     heatsCount={ this.heats_count }
