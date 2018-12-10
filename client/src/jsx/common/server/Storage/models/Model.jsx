@@ -22,25 +22,25 @@ export default class Model {
         return this.subscription_storage.global_storage;
     }
     get results() {
-        let result = null;
         const id = this.getValue("id");
-        switch (this.schema.model_name) {
-            case "Tour":
-                result = this.subscription_storage.tour_results.get(id) || null;
-                break;
-            case "Discipline":
-                result = this.subscription_storage.discipline_results.get(id) || null;
-                break;
-        }
-        if (result == null) {
-            const subscription_storage = this.global_storage.getSubscriptionStorage(this.schema.model_name);
-            if (subscription_storage === this.subscription_storage) {
-                console.error(`Unable to get results of ${this.schema.model_name} with ID = ${id}`);
-                return null;
+        const {model_name} = this.schema;
+        const subscription_storages = this.global_storage.getAllSubscriptionStorages(model_name);
+        for (const sub_storage of subscription_storages) {
+            let result = null;
+            switch (model_name) {
+                case "Tour":
+                    result = sub_storage.tour_results.get(id);
+                    break;
+                case "Discipline":
+                    result = sub_storage.discipline_results.get(id);
+                    break;
             }
-            return subscription_storage.get(this.schema.model_name, id).results;
+            if (result != null) {
+                return result;
+            }
         }
-        return result;
+        console.error(`Unable to get results of ${model_name} with ID = ${id}`);
+        return null;
     }
     getValue(key) {
         return this.schema.getValue(

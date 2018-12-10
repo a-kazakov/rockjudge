@@ -17,6 +17,9 @@ export default class TourHeats extends React.Component {
     };
 
     static checkRunJudged(run) {
+        if (run.status !== "OK") {
+            return true;
+        }
         let total_counts = new DefaultMap(() => 0);
         let conf_counts = new DefaultMap(() => 0);
         for (const score of run.scores) {
@@ -96,7 +99,9 @@ export default class TourHeats extends React.Component {
     render() {
         if (this.state.tourStorage == null) {
             return (
-                <Loader />
+                <div className={ this.getClassName() }>
+                    <Loader />
+                </div>
             );
         }
         const heat = this.props.autoHeat ? this.auto_heat_value : this.state.heat;

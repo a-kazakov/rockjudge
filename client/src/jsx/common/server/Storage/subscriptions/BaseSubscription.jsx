@@ -2,7 +2,7 @@ import Api from "common/server/Api";
 import makeRandomString from "common/tools/makeRandomString";
 
 export default class BaseSubscription {
-    static MODELS = new Map();
+    static MODELS = [];
 
     constructor() {
         this.subscription_id = makeRandomString();

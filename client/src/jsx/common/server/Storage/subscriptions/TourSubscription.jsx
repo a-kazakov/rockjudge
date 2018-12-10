@@ -2,12 +2,12 @@ import BaseSubscription from "./BaseSubscription";
 import Api from "common/server/Api";
 
 export default class TourSubscription extends BaseSubscription {
-    static MODELS = new Map([
-        ["Tour", 20],
-        ["Run", 20],
-        ["Score", 20],
-        ["RunAcrobatic", 20],
-    ]);
+    static MODELS = [
+        "Tour",
+        "Run",
+        "Score",
+        "RunAcrobatic",
+    ];
     constructor(tour_id) {
         super();
         this.tour_id = tour_id;
@@ -16,7 +16,7 @@ export default class TourSubscription extends BaseSubscription {
         if (this.tour_id !== mutation.tour_id) {
             return false;
         }
-        return this.constructor.MODELS.has(mutation.model_name);
+        return this.constructor.MODELS.includes(mutation.model_name);
     }
     subscribe() {
         return new Promise(this._subscribe)

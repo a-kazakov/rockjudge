@@ -12,7 +12,7 @@ export default class Storage {
         this.init_started = false;
         this.ready = false;
         this.postponed_subscriptions = new Map();
-        this.subscription_storage_index = new Map();
+        this.subscription_storage_index = new DefaultMap(() => []);
         this.overrides = new DefaultMap(() => new ModelOverride);
     }
     init(mutation_callback) {
@@ -37,28 +37,24 @@ export default class Storage {
         this.subscribePostponed();
     };
     rebuildSubscriptionStorageIndex() {
-        let current_prioritires = new Map();
         this.subscription_storage_index.clear();
         for (const sub_storage of this.subscription_storages.values()) {
-            for (const [model_name, next_priority] of sub_storage.subscription.constructor.MODELS.entries()) {
-                const current_priority = current_prioritires.get(model_name) || 0;
-                if (next_priority > current_priority) {
-                    current_prioritires.set(model_name, next_priority);
-                    this.subscription_storage_index.set(model_name, sub_storage);
-                }
+            for (const model_name of sub_storage.subscription.constructor.MODELS) {
+                this.subscription_storage_index.get(model_name).push(sub_storage);
             }
         }
     }
-    getSubscriptionStorage(model_name) {
-        return this.subscription_storage_index.get(model_name) || null;
+    getSubscriptionStorageByModel(for_model_name, existing_model_name, existing_model_id) {
+        const options = this.subscription_storage_index.get(for_model_name);
+        return options.find(sub_storage => sub_storage.has(existing_model_name, existing_model_id));
+    }
+    getAllSubscriptionStorages(model_name) {
+        return this.subscription_storage_index.get(model_name);
     }
     get(model_name, model_id) {
         for (const sub_storage of this.subscription_storages.values()) {
-            if (!sub_storage.subscription.constructor.MODELS.has(model_name)) {
-                continue;
-            }
             const model = sub_storage.get(model_name, model_id);
-            if (!model) {
+            if (model == null) {
                 continue;
             }
             return model;

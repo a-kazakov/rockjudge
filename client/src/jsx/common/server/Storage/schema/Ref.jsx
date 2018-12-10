@@ -12,15 +12,19 @@ export default class Ref {
         return `${this.base_model_name}_${this.ref_model_name}_${model_id}`;
     }
     getForwardModel(model_id, subscription_storage) {
-        if (!subscription_storage.subscription.constructor.MODELS.has(this.ref_model_name)) {
-            subscription_storage = this.storage.getSubscriptionStorage(this.ref_model_name);
-        }
+        subscription_storage = this.storage.getSubscriptionStorageByModel(
+            this.ref_model_name,
+            this.ref_model_name,
+            model_id,
+        );
         return subscription_storage?.get(this.ref_model_name, model_id) || null;
     }
     getBackwardModels(model_id, subscription_storage) {
-        if (!subscription_storage.subscription.constructor.MODELS.has(this.base_model_name)) {
-            subscription_storage = this.storage.getSubscriptionStorage(this.base_model_name);
-        }
-        return subscription_storage?.getIndexValue(this, model_id) || [];
+        subscription_storage = this.storage.getSubscriptionStorageByModel(
+            this.base_model_name,
+            this.ref_model_name,
+            model_id,
+        );
+        return subscription_storage?.getIndexValue(this, model_id) ?? [];
     }
 }

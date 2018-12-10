@@ -2,9 +2,9 @@ import BaseSubscription from "./BaseSubscription";
 import Api from "common/server/Api";
 
 export default class AllCompetitionsSubscription extends BaseSubscription {
-    static MODELS = new Map([
-        ["Competition", 10],
-    ]);
+    static MODELS = [
+        "Competition",
+    ];
     checkMutation(mutation) {
         return mutation.model_name === "Competition";
     }

@@ -1,12 +1,12 @@
 export default class DefaultMap extends Map {
     constructor(def_callable, ...args) {
         super(...args);
-        self._def_callable = def_callable;
+        this._def_callable = def_callable;
     }
 
     get(key) {
         if (!super.has(key)) {
-            super.set(key, self._def_callable(key));
+            super.set(key, this._def_callable(key));
         }
         return super.get(key);
     }

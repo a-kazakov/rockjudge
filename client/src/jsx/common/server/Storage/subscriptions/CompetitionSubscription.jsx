@@ -2,20 +2,20 @@ import BaseSubscription from "./BaseSubscription";
 import Api from "common/server/Api";
 
 export default class CompetitionSubscription extends BaseSubscription {
-    static MODELS = new Map([
-        ["Competition", 10],
-        ["Discipline", 10],
-        ["Tour", 10],
-        ["Run", 10],
-        ["Participant", 10],
-        ["Program", 10],
-        ["Discipline", 10],
-        ["Judge", 10],
-        ["DisciplineJudge", 10],
-        ["Club", 10],
-        ["CompetitionPlanItem", 10],
-        ["ClientAuth", 10],
-    ]);
+    static MODELS = [
+        "Competition",
+        "Discipline",
+        "Tour",
+        "Run",
+        "Participant",
+        "Program",
+        "Discipline",
+        "Judge",
+        "DisciplineJudge",
+        "Club",
+        "CompetitionPlanItem",
+        "ClientAuth",
+    ];
     constructor(competition_id) {
         super();
         this.competition_id = competition_id;
@@ -24,7 +24,7 @@ export default class CompetitionSubscription extends BaseSubscription {
         if (this.competition_id !== mutation.competition_id) {
             return false;
         }
-        return this.constructor.MODELS.has(mutation.model_name);
+        return this.constructor.MODELS.includes(mutation.model_name);
     }
     subscribe() {
         return new Promise(this._subscribe)

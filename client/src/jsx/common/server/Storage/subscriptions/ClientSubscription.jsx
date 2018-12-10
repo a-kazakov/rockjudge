@@ -2,10 +2,10 @@ import BaseSubscription from "./BaseSubscription";
 import Api from "common/server/Api";
 
 export default class ClientSubscription extends BaseSubscription {
-    static MODELS = new Map([
-        ["Client", 10],
-        ["ClientAuth", 10],
-    ]);
+    static MODELS = [
+        "Client",
+        "ClientAuth",
+    ];
     constructor(client_id) {
         super();
         this.client_id = client_id;
@@ -14,7 +14,7 @@ export default class ClientSubscription extends BaseSubscription {
         if (this.client_id !== mutation.client_id) {
             return false;
         }
-        return this.constructor.MODELS.has(mutation.model_name);
+        return this.constructor.MODELS.includes(mutation.model_name);
     }
     subscribe() {
         return new Promise(this._subscribe)

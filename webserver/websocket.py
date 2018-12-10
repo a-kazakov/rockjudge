@@ -218,7 +218,6 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 
     @catch_all_async
     async def on_message(self, msg: str) -> None:
-        await asyncio.sleep(1)
         signature, json_data = msg.split("|", 1)
         data = json.loads(json_data)
         method = ApiMethod(data["method"])

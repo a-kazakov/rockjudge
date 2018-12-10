@@ -119,7 +119,10 @@ export default class SubscriptionStorage {
         return models_changed || tours_changed || disciplines_changed;
     }
     get(model_name, model_id) {
-        return this.models.get(this.constructor.getKey(model_name, model_id)) || null;
+        return this.models.get(this.constructor.getKey(model_name, model_id)) ?? null;
+    }
+    has(model_name, model_id) {
+        return this.models.has(this.constructor.getKey(model_name, model_id));
     }
     getSame(model) {
         return this.get(model.schema.model_name, model.id);
