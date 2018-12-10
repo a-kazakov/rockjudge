@@ -58,7 +58,6 @@ export default class ScoringLayoutAcro extends React.Component {
                     </h3>
                     <IntegerInput
                         jumbo
-                        sendDeltas
                         readOnly={ this.props.score.confirmed }
                         value={ this.props.score.data.fall_down }
                         onChange={ this.handleFallDownChange }

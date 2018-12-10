@@ -1,3 +1,4 @@
+import asyncio
 import json
 import time
 from enum import Enum, auto
@@ -15,7 +16,7 @@ from models.client import Client
 from mutations import DisciplineResultsMutationRecord, FetchedMutations, FinalizedMutations, MutationsKeeper
 from postprocessor import BasePostProcessor, PrivatePostProcessor, PublicPostProcessor
 from subscriptions import SubscriptionBase
-from utils import catch_all, DbQueriesLogger
+from utils import DbQueriesLogger, catch_all_async
 from webserver.messages import (
     ApiResponseOutgoingMessage,
     BaseOutgoingMessage,
@@ -114,7 +115,7 @@ class DisciplineResultsPostponedUpdater:
         tornado.ioloop.IOLoop.instance().call_later(delay, self.flush)
         self.__status = DisciplineResultsPostponedUpdaterStatus.PENDING
 
-    def flush(self) -> None:  # async
+    async def flush(self) -> None:
         self.__status = DisciplineResultsPostponedUpdaterStatus.WORKING
         records = self.__mutation_records
         self.__mutation_records = []
@@ -124,12 +125,17 @@ class DisciplineResultsPostponedUpdater:
         try:
             mk = MutationsKeeper()
             mk.discipline_results_mutations = records
-            all_mutations = self._fetch_mutations(session, mk.finalize())  # await in thread pool
+            all_mutations = await asyncio.get_event_loop().run_in_executor(
+                None,
+                self._fetch_mutations,
+                session,
+                mk.finalize(),
+            )
             ws_manager = WebSocketConnectionsManager.instance()
             connections = ws_manager.get_all_connections()
             for conn in connections:
                 conn_mutations = all_mutations.filter_for_subscriptions(conn.subscriptions)
-                conn.send_message(MutationsPushOutgoingMessage(conn_mutations, is_initial=False))
+                await conn.send_message(MutationsPushOutgoingMessage(conn_mutations, is_initial=False))
         finally:
             db.close_session(session)
             total_time = time.monotonic() - start_time
@@ -186,15 +192,15 @@ class WebSocketConnectionsManager:
         for conn in self.__get_connections_for_postprocessor(pp):
             conn.pp_queue.register(pp)
 
-    def mark_postprocessor_ready(self, pp: BasePostProcessor) -> None:  # async
+    async def mark_postprocessor_ready(self, pp: BasePostProcessor) -> None:
         for conn in self.__get_connections_for_postprocessor(pp):
             conn.pp_queue.mark_ready(pp)
-            conn.send_pending_messages()
+            await conn.send_pending_messages()
 
-    def finalize_postprocessor(self, pp: BasePostProcessor) -> None:  # async
+    async def finalize_postprocessor(self, pp: BasePostProcessor) -> None:
         for conn in self.__get_connections_for_postprocessor(pp):
             conn.pp_queue.finalize(pp)
-            conn.send_pending_messages()
+            await conn.send_pending_messages()
 
     @staticmethod
     def encode_message(message_object):
@@ -210,8 +216,9 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         self.subscriptions: List[SubscriptionBase] = []
         self.pp_queue = PostProcessorQueue()
 
-    @catch_all()
-    def on_message(self, msg: str) -> None:
+    @catch_all_async
+    async def on_message(self, msg: str) -> None:
+        await asyncio.sleep(1)
         signature, json_data = msg.split("|", 1)
         data = json.loads(json_data)
         method = ApiMethod(data["method"])
@@ -224,7 +231,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
             response_key=data.get("response_key"),
         )
         try:
-            response = self.process_request(request, data, json_data, signature)
+            response = await self.process_request(request, data, json_data, signature)
         except ApiError as ex:
             response = ApiResponse(
                 request=request,
@@ -240,9 +247,9 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
             )
         if response.request.response_key:
             message = ApiResponseOutgoingMessage(response)
-            self.send_message(message)
+            await self.send_message(message)
 
-    def process_request(
+    async def process_request(
         self,
         request: ApiRequest,
         raw_data: Dict[str, Any],
@@ -262,14 +269,14 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
             )
             request = request.with_client(client)
         api_executor = Api(request, session)
-        response = api_executor.execute()  # await
+        response = await api_executor.execute()
 
         if response.success:
             try:
                 if response.broadcast_message is not None:
                     msg = BroadcastOutgoingMessage(response.broadcast_message)
                     for conn in manager.get_all_connections():
-                        conn.send_message(msg)
+                        await conn.send_message(msg)
                 if response.remove_subscription is not None:
                     self.subscriptions = [
                         s
@@ -293,29 +300,29 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 
                 try:
                     manager.register_postprocessor(postprocessor)
-                    postprocessor.prepare()  # await
+                    await postprocessor.prepare()
                     DisciplineResultsPostponedUpdater.instance().add(postprocessor.postponed_discipline_updates)
-                    manager.mark_postprocessor_ready(postprocessor)  # await
+                    await manager.mark_postprocessor_ready(postprocessor)
                 finally:
-                    manager.finalize_postprocessor(postprocessor)  # await
+                    await manager.finalize_postprocessor(postprocessor)
             finally:
                 if api_executor.next_session:
                     db.close_session(api_executor.next_session)
         return response
 
-    def send_pending_messages(self) -> None:  # async
+    async def send_pending_messages(self) -> None:
         postprocessors = self.pp_queue.flush()
         for pp in postprocessors:
             message = pp.get_clients_messages().get(self.client_id)
             if message is not None:
-                self.send_message(message)
+                await self.send_message(message)
 
-    def send_message(self, msg: BaseOutgoingMessage) -> None:
+    async def send_message(self, msg: BaseOutgoingMessage) -> None:
         serialized = msg.serialize()
         if serialized is None:
             return
         msg_str = json.dumps(serialized, ensure_ascii=False)
-        self.write_message(msg_str)
+        await self.write_message(msg_str)
 
     def open(self):
         manager = WebSocketConnectionsManager.instance()

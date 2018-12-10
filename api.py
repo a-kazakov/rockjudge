@@ -1,3 +1,4 @@
+import asyncio
 import time
 from enum import Enum
 from traceback import print_exc
@@ -135,11 +136,11 @@ class Api:
         self.next_session: Optional[Session] = None
         self._db_logger = DbQueriesLogger(self.session.connection(), f"Api call ({request.method.value})")
 
-    def execute(self) -> ApiResponse:  # async
+    async def execute(self) -> ApiResponse:
         start_time = time.monotonic()
         session_closed: bool = False
         try:
-            result = self._execute()  # await from pool
+            result = await asyncio.get_event_loop().run_in_executor(None, self._execute)
             self.session.commit()
             self.next_session = db.make_session()
             self.next_session.connection()  # Start transaction
@@ -179,7 +180,6 @@ class Api:
                 db.close_session(self.session)
 
     def _execute(self) -> ApiResponse:
-        # This will go to thread pool later
         func_name = "api_" + self.request.method.value.replace("/", "_")
         func = getattr(self, func_name, None)
         if func is None:

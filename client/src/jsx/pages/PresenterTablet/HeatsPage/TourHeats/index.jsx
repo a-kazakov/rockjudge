@@ -7,6 +7,7 @@ import lastOf from "common/tools/lastOf";
 import Header from "pages/PresenterTablet/HeatsPage/TourHeats/Header";
 import PT from "prop-types";
 import RunInfo from "./RunInfo";
+import DefaultMap from "common/DefaultMap";
 
 export default class TourHeats extends React.Component {
     static propTypes = {
@@ -16,13 +17,13 @@ export default class TourHeats extends React.Component {
     };
 
     static checkRunJudged(run) {
-        let conf_counts = new Map();
-        let total_counts = new Map();
+        let total_counts = new DefaultMap(() => 0);
+        let conf_counts = new DefaultMap(() => 0);
         for (const score of run.scores) {
-            const role = score.discipline_judge.role;
-            total_counts.set(role, total_counts.get(role) || 0);
+            const {role} = score.discipline_judge;
+            total_counts.set(role, total_counts.get(role) + 1);
             if (score.confirmed) {
-                conf_counts.set(role, conf_counts.get(role) || 0);
+                conf_counts.set(role, conf_counts.get(role) + 1);
             }
         }
         for (const [role, conf_value] of conf_counts.entries()) {
@@ -71,7 +72,7 @@ export default class TourHeats extends React.Component {
                 return run.heat;
             }
         }
-        return this.props.tour.runs.length - 1;
+        return Math.max(1, ...this.props.tour.runs.map(run => run.heat));
     }
 
     handleNextHeatClick = () => this.setState({ heat: this.state.heat + 1 });

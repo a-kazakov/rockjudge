@@ -7,7 +7,7 @@ from collections import defaultdict
 from contextlib import contextmanager
 from datetime import datetime
 from traceback import print_exc
-from typing import Any, DefaultDict, Dict, Generator, List, NamedTuple, Optional, Type, TypeVar, Union
+from typing import Any, DefaultDict, Dict, Generator, List, NamedTuple, Optional, Type, TypeVar, Union, Callable
 
 import sqlalchemy.event
 from sqlalchemy.engine import Connection
@@ -22,12 +22,13 @@ def raise_if_none(value: Optional[T], exception: Union[Exception, Type[Exception
     return value
 
 
-@contextmanager
-def catch_all() -> Generator[None, None, None]:
-    try:
-        yield
-    except Exception:
-        print_exc()
+def catch_all_async(func):
+    async def helper(*args, **kwargs):
+        try:
+            await func(*args, **kwargs)
+        except Exception:
+            print_exc()
+    return helper
 
 
 class DbQueryRecord(NamedTuple):

@@ -43,7 +43,6 @@ export default class ScoringLayoutDance extends React.Component {
                 <h3>{ _("tablet.tech_judge.undercount") }</h3>
                 <IntegerInput
                     jumbo
-                    sendDeltas
                     readOnly={ this.props.score.confirmed }
                     value={ this.props.score.data.undercount }
                     onChange={ this.handleUndercountChange }
@@ -58,7 +57,6 @@ export default class ScoringLayoutDance extends React.Component {
                     <h3>{ _("tablet.tech_judge.jump_steps") }</h3>
                     <IntegerInput
                         jumbo
-                        sendDeltas
                         readOnly={ this.props.score.confirmed }
                         value={ this.props.score.data.jump_steps }
                         onChange={ this.handleJumpStepsChange }

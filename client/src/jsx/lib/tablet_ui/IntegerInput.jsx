@@ -8,39 +8,34 @@ import onTouchOrClick from "./onTouchOrClick";
 export default class IntegerInput extends React.Component {
     static propTypes = {
         jumbo: PT.bool,
+        max: PT.number,
+        min: PT.number,
         readOnly: PT.bool,
-        sendDeltas: PT.bool,
         value: PT.number.isRequired,
         onChange: PT.func.isRequired,
     };
     static get defaultProps() {
         return {
             jumbo: false,
+            max: 100,
+            min: 0,
             readOnly: false,
-            sendDeltas: false,
         }
     }
 
-    handleMinus = () => {
+    handleUpdate(delta) {
+        const {min, max, value} = this.props;
+        const next_value = value + delta;
         if (this.props.readOnly) {
             return;
         }
-        if (this.props.sendDeltas) {
-            this.props.onChange({"delta": -1});
-        } else {
-            this.props.onChange(this.props.value - 1);
-        }
-    };
-    handlePlus = () => {
-        if (this.props.readOnly) {
+        if (!(min <= next_value && next_value <= max)) {
             return;
         }
-        if (this.props.sendDeltas) {
-            this.props.onChange({"delta": 1});
-        } else {
-            this.props.onChange(this.props.value + 1);
-        }
-    };
+        this.props.onChange(next_value);
+    }
+    handleMinus = () => this.handleUpdate(-1);
+    handlePlus = () => this.handleUpdate(1);
 
 
     getClassName() {

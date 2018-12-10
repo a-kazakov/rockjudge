@@ -3,6 +3,7 @@
 import asyncio
 import json
 import unittest
+from concurrent.futures.thread import ThreadPoolExecutor
 from sys import argv
 
 import tornado.gen

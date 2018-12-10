@@ -15,11 +15,6 @@ export default class CardInput extends React.Component {
         onChange: PT.func.isRequired,
     };
 
-    static checkReasons(reasons) {
-        return Object.keys(reasons)
-            .map(key => reasons[key])
-            .reduce(((a, b) => a || b), false);
-    }
     static getUpdatedCard(card, reasons) {
         const has_reasons = this.checkReasons(reasons);
         if (card === "OK" && has_reasons) {
@@ -29,6 +24,10 @@ export default class CardInput extends React.Component {
             return "OK";
         }
         // return undefined;
+    }
+
+    static checkReasons(reasons) {
+        return Object.values(reasons).some(x => x);
     }
 
     get card_reasons() {
@@ -42,7 +41,7 @@ export default class CardInput extends React.Component {
             {[reason]: value},
         );
         const card = this.constructor.getUpdatedCard(this.props.score.data.card, card_reasons);
-        this.props.onChange({card, card_reasons});
+        this.props.onChange(card == null ? {card_reasons} : {card, card_reasons});
     };
     handleCardChange = (card) => {
         this.props.onChange({card});

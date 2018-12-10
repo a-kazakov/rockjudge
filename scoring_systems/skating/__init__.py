@@ -38,8 +38,6 @@ class SkatingScoringSystem(BaseScoringSystem):
         self.scoring_system_name = ScoringSystemName(scoring_system_name)
 
     def filter_score_component(self, judge_role: str, key: str, value: Any, prev_value: Any) -> Any:
-        if isinstance(value, dict) and len(value) == 1 and "delta" in value:
-            value = prev_value + value["delta"]
         ctx = ScoreContextBase.make_from_data(
             {key: value},
             JudgeRole(judge_role),

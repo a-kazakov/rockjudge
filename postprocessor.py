@@ -1,3 +1,4 @@
+import asyncio
 import time
 from abc import ABCMeta, abstractmethod
 from typing import Any, Dict, List, TYPE_CHECKING
@@ -32,7 +33,7 @@ class BasePostProcessor(metaclass=ABCMeta):
         return []
 
     @abstractmethod
-    def prepare(self) -> None:  # async
+    async def prepare(self) -> None:
         pass
 
     @abstractmethod
@@ -77,9 +78,13 @@ class PublicPostProcessor(BasePostProcessor):
         if api_response.new_subscription is not None:
             raise InternalError("Public post processor can't process API response with new subscriptions")
 
-    def prepare(self) -> None:  # async
+    async def prepare(self) -> None:
         from webserver.websocket import WebSocketConnectionsManager
-        all_mutations = self._fetch_mutations(self.api_response.mutations)  # await in thread pool
+        all_mutations = await asyncio.get_event_loop().run_in_executor(
+            None,
+            self._fetch_mutations,
+            self.api_response.mutations,
+        )
         ws_manager = WebSocketConnectionsManager.instance()
         connections = ws_manager.get_all_connections()
         for conn in connections:
@@ -106,12 +111,13 @@ class PrivatePostProcessor(BasePostProcessor):
         if api_response.new_subscription is None:
             raise InternalError("Private post processor can't process API response without new subscriptions")
 
-    def prepare(self) -> None:  # async
+    async def prepare(self) -> None:
         mk = MutationsKeeper()
         self.api_response.new_subscription.add_initial_models_to_mk(self.session, mk)
-        # for key, obj in self.session.identity_map.items():
-        #     print(key, type(obj), obj.id)
-        mutations = self._fetch_mutations(mk.finalize(), skip_prefetch=True, fetch_results=True)  # await in thread pool # prefetched by add_initial_models_to_mk
+        mutations = await asyncio.get_event_loop().run_in_executor(
+            None,
+            lambda: self._fetch_mutations(mk.finalize(), skip_prefetch=True, fetch_results=True)
+        ) # prefetched by add_initial_models_to_mk
         self.__response = MutationsPushOutgoingMessage(
             mutations.filter_for_subscriptions([self.api_response.new_subscription]),
             is_initial=True,
