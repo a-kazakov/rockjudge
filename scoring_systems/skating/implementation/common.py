@@ -116,7 +116,7 @@ class Matrix(Generic[T]):
 
 
 class SkatingSystemTour(CachedClass):
-    BIG = 10**9
+    BIG = 10 ** 9
 
     @classmethod
     def filter_big(cls, value: int) -> Optional[int]:
@@ -131,7 +131,11 @@ class SkatingSystemTour(CachedClass):
         for run_idx in range(places.rows):
             for judge_idx in range(places.cols):
                 judge_place = places[run_idx, judge_idx]
-                start_place = int(judge_place + frac(9, 10)) if isinstance(judge_place, frac) else judge_place
+                start_place = (
+                    int(judge_place + frac(9, 10))
+                    if isinstance(judge_place, frac)
+                    else judge_place
+                )
                 for place_minus_one in range(start_place - 1, primary_res.cols):
                     primary_res[run_idx, place_minus_one] += 1
                     secondary_res[run_idx, place_minus_one] += judge_place
@@ -207,10 +211,7 @@ class SkatingSystemTour(CachedClass):
             result[run] = (place, int_place)
         if len(result) == 0:
             return ([], [])
-        return cast(
-            Tuple[List[frac], List[int]],
-            tuple(map(list, zip(*result)))
-        )
+        return cast(Tuple[List[frac], List[int]], tuple(map(list, zip(*result))))
 
     @property
     def places(self) -> List[frac]:
@@ -231,10 +232,7 @@ class SkatingSystemTour(CachedClass):
     def skating_rows(self) -> List[List[Tuple[int, int]]]:
         return [
             [
-                (
-                    self.skating_primary[row, col],
-                    self.skating_secondary[row, col],
-                )
+                (self.skating_primary[row, col], self.skating_secondary[row, col])
                 for col in range(self.n_runs)
             ]
             for row in range(self.n_runs)
@@ -264,28 +262,22 @@ class SkatingSystemDiscipline(CachedClass):
     @property
     def tours_places_sum(self) -> List[int]:
         # Value for rule 9
-        places = [
-            tour.places
-            for tour in self.tours
-        ]
+        places = [tour.places for tour in self.tours]
         runs_places = zip(*places)
         return list(sum(p, 0) for p in runs_places)
 
     @property
     def runs_idx_with_sums(self) -> List[Tuple[RunIdx, int]]:
         return sorted(
-            zip(
-                (RunIdx(x) for x in range(self.n_runs)),
-                self.tours_places_sum,
-            ),
+            zip((RunIdx(x) for x in range(self.n_runs)), self.tours_places_sum),
             key=lambda x: x[1],
         )
 
     @property
     def big_skating_table(self) -> Tuple[Matrix[int], Matrix[int]]:
-        all_scores_mat = Matrix.hstack([
-            tour.judges_places_table for tour in self.tours
-        ])
+        all_scores_mat = Matrix.hstack(
+            [tour.judges_places_table for tour in self.tours]
+        )
         return SkatingSystemTour.compute_skating_table(all_scores_mat)
 
     @property
@@ -298,9 +290,7 @@ class SkatingSystemDiscipline(CachedClass):
 
     @property
     def ec_skating_table(self) -> Tuple[Matrix[frac], Matrix[frac]]:
-        all_places_mat = Matrix.hstack([
-            tour.places_matrix for tour in self.tours
-        ])
+        all_places_mat = Matrix.hstack([tour.places_matrix for tour in self.tours])
         return SkatingSystemTour.compute_skating_table(all_places_mat)
 
     @property
@@ -327,7 +317,9 @@ class SkatingSystemDiscipline(CachedClass):
             result.append(buf)
         return result
 
-    def resolve_group(self, group: List[RunIdx], place: int) -> Generator[List[RunIdx], None, None]:
+    def resolve_group(
+        self, group: List[RunIdx], place: int
+    ) -> Generator[List[RunIdx], None, None]:
         # Applies rules 10 and 11 for a group of runs for the same place
         if len(group) == 1:
             yield group
@@ -337,7 +329,7 @@ class SkatingSystemDiscipline(CachedClass):
             key: List[Union[int, frac]] = []
             key += [
                 -self.ec_skating_primary[run_idx, place - 1],
-                self.ec_skating_secondary[run_idx, place - 1]
+                self.ec_skating_secondary[run_idx, place - 1],
             ]
             for place_minus_one in range(place - 1, self.n_runs):
                 key += [
@@ -348,10 +340,11 @@ class SkatingSystemDiscipline(CachedClass):
         runs_with_keys.sort(key=lambda x: x[1])
         for idx in range(1, len(runs_with_keys)):
             if runs_with_keys[idx - 1][1] != runs_with_keys[idx][1]:
-                yield sorted(run_idx for run_idx, _ in runs_with_keys[:idx])  # Return group of same place
+                yield sorted(
+                    run_idx for run_idx, _ in runs_with_keys[:idx]
+                )  # Return group of same place
                 yield from self.resolve_group(
-                    [run_idx for run_idx, _ in runs_with_keys[idx:]],
-                    place + idx,
+                    [run_idx for run_idx, _ in runs_with_keys[idx:]], place + idx
                 )  # Resolve the rest
                 break
         else:
@@ -390,10 +383,7 @@ class SkatingSystemDiscipline(CachedClass):
     def ec_skating_rows(self) -> List[List[Tuple[frac, frac]]]:
         return [
             [
-                (
-                    self.ec_skating_primary[row, col],
-                    self.ec_skating_secondary[row, col],
-                )
+                (self.ec_skating_primary[row, col], self.ec_skating_secondary[row, col])
                 for col in range(self.n_runs)
             ]
             for row in range(self.n_runs)

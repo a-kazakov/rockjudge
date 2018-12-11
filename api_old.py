@@ -53,7 +53,9 @@ class Api:
         try:
             model = model_type.get(model_type.id == model_id)
         except model_type.DoesNotExist:
-            raise ApiError("errors.model_does_not_exist.{}".format(model_type.__name__.lower()))
+            raise ApiError(
+                "errors.model_does_not_exist.{}".format(model_type.__name__.lower())
+            )
         if pf_children is None:
             if "children" in request.body:
                 model.smart_prefetch(request.body["children"])
@@ -69,7 +71,7 @@ class Api:
         check_auth(
             competition_id=judge.competition_id,
             request=request,
-            allowed_access_levels=("judge_{}".format(judge.id), "any_judge", "admin", ),
+            allowed_access_levels=("judge_{}".format(judge.id), "any_judge", "admin"),
         )
         return judge.serialize(children=request.body["children"])
 
@@ -77,9 +79,7 @@ class Api:
     def competition_get(cls, request):
         competition = cls.get_model(Competition, "competition_id", request)
         check_auth(
-            competition_id=competition.id,
-            request=request,
-            allowed_access_levels="*",
+            competition_id=competition.id, request=request, allowed_access_levels="*"
         )
         return competition.serialize(children=request.body["children"])
 
@@ -88,23 +88,23 @@ class Api:
         if request.remote_ip != "127.0.0.1":
             raise ApiError("errors.auth.localhost_only")
         competitions = Competition.select().where(Competition.deleted == False)  # NOQA
-        return [{
-            "id": c.id,
-            "data": c.serialize(children=request.body["children"]),
-            "name": c.serialize(children=request.body["children"]),
-        } for c in competitions]
+        return [
+            {
+                "id": c.id,
+                "data": c.serialize(children=request.body["children"]),
+                "name": c.serialize(children=request.body["children"]),
+            }
+            for c in competitions
+        ]
 
     @classmethod
     def competition_get_active_names(cls, request):
         competitions = Competition.select().where(
-            (Competition.active == True) &  # NOQA
-            (Competition.deleted == False)  # NOQA
+            (Competition.active == True)
+            & (Competition.deleted == False)  # NOQA  # NOQA
         )
         # No auth check
-        return [{
-            "id": c.id,
-            "name": c.name
-        } for c in competitions]
+        return [{"id": c.id, "name": c.name} for c in competitions]
 
     @classmethod
     def discipline_get(cls, request):
@@ -112,7 +112,7 @@ class Api:
         check_auth(
             competition_id=discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", "presenter", "any_judge", ),
+            allowed_access_levels=("admin", "presenter", "any_judge"),
         )
         return discipline.serialize(children=request.body["children"])
 
@@ -122,7 +122,7 @@ class Api:
         check_auth(
             competition_id=tour.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", "presenter", "any_judge", "judge_*", ),
+            allowed_access_levels=("admin", "presenter", "any_judge", "judge_*"),
         )
         return tour.serialize(children=request.body["children"])
 
@@ -132,7 +132,7 @@ class Api:
         check_auth(
             competition_id=program.participant.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         return program.serialize(children=request.body["children"])
 
@@ -144,9 +144,8 @@ class Api:
         check_auth(
             competition_id=judge.competition_id,
             request=request,
-            allowed_access_levels=("judge_{}".format(judge.id), "any_judge", "admin", ),
+            allowed_access_levels=("judge_{}".format(judge.id), "any_judge", "admin"),
         )
-
 
     # Setters
 
@@ -156,7 +155,7 @@ class Api:
         check_auth(
             competition_id=client_auth.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         client_auth.update_model(request.body["data"], ws_message=request.ws_message)
 
@@ -166,7 +165,7 @@ class Api:
         check_auth(
             competition_id=club.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         club.update_model(request.body["data"], ws_message=request.ws_message)
         return {}
@@ -177,27 +176,31 @@ class Api:
         check_auth(
             competition_id=judge.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         judge.update_model(request.body["data"], ws_message=request.ws_message)
         return {}
 
     @classmethod
     def discipline_judge_set(cls, request):
-        discipline_judge = cls.get_model(DisciplineJudge, "discipline_judge_id", request)
+        discipline_judge = cls.get_model(
+            DisciplineJudge, "discipline_judge_id", request
+        )
         check_auth(
             competition_id=discipline_judge.judge.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
-        discipline_judge.update_model(request.body["data"], ws_message=request.ws_message)
+        discipline_judge.update_model(
+            request.body["data"], ws_message=request.ws_message
+        )
         return {}
 
     @classmethod
     def score_set(cls, request):
         score = cls.get_model(Score, "score_id", request)
         judge = score.discipline_judge.judge
-        access_levels = ("admin", "any_judge", f"judge_{judge.id}", )
+        access_levels = ("admin", "any_judge", f"judge_{judge.id}")
         check_auth(
             competition_id=judge.competition_id,
             request=request,
@@ -209,20 +212,18 @@ class Api:
     @classmethod
     def score_set_multiple(cls, request):
         tour = cls.get_model(Tour, "tour_id", request)
-        access_levels = ("admin", "any_judge", "judge_*", )
+        access_levels = ("admin", "any_judge", "judge_*")
         check_auth(
             competition_id=tour.discipline.competition_id,
             request=request,
             allowed_access_levels=access_levels,
         )
-        mapping = {
-            int(key): value
-            for key, value in request.body["scores"].items()
-        }
-        scores: List[Score] = list(Score.select().join(Run).filter(
-            (Run.tour_id == tour.id) &
-            (Score.id << list(mapping.keys()))
-        ))
+        mapping = {int(key): value for key, value in request.body["scores"].items()}
+        scores: List[Score] = list(
+            Score.select()
+            .join(Run)
+            .filter((Run.tour_id == tour.id) & (Score.id << list(mapping.keys())))
+        )
         Score.smart_prefetch_multiple(scores, {})
         for score in scores:
             score.update_model(mapping[score.id], request.ws_message)
@@ -234,7 +235,7 @@ class Api:
         check_auth(
             competition_id=run.tour.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         run.update_model(request.body["data"], ws_message=request.ws_message)
         return {}
@@ -245,7 +246,7 @@ class Api:
         check_auth(
             competition_id=program.participant.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         program.update_model(request.body["data"], ws_message=request.ws_message)
         return {}
@@ -256,7 +257,7 @@ class Api:
         check_auth(
             competition_id=tour.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", "any_judge", "judge_*",),
+            allowed_access_levels=("admin", "any_judge", "judge_*"),
         )
         tour.update_model(request.body["data"], ws_message=request.ws_message)
         return {}
@@ -267,7 +268,7 @@ class Api:
         check_auth(
             competition_id=discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         discipline.update_model(request.body["data"], ws_message=request.ws_message)
         return {}
@@ -278,7 +279,7 @@ class Api:
         check_auth(
             competition_id=competition.id,
             request=request,
-            allowed_access_levels=("admin", "presenter", "any_judge", ),
+            allowed_access_levels=("admin", "presenter", "any_judge"),
         )
         competition.update_model(request.body["data"], ws_message=request.ws_message)
         return {}
@@ -290,7 +291,7 @@ class Api:
         check_auth(
             competition_id=item.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         return {}
 
@@ -300,7 +301,7 @@ class Api:
         check_auth(
             competition_id=participant.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         participant.update_model(request.body["data"], ws_message=request.ws_message)
         return {}
@@ -320,7 +321,9 @@ class Api:
     def competition_create(cls, request):
         if request.remote_ip != "127.0.0.1":
             raise ApiError("errors.auth.localhost_only")
-        Competition.create_model(data=request.body["data"], ws_message=request.ws_message)
+        Competition.create_model(
+            data=request.body["data"], ws_message=request.ws_message
+        )
         return {}
 
     @classmethod
@@ -329,9 +332,13 @@ class Api:
         check_auth(
             competition_id=competition.id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
-        Discipline.create_model(competition=competition, data=request.body["data"], ws_message=request.ws_message)
+        Discipline.create_model(
+            competition=competition,
+            data=request.body["data"],
+            ws_message=request.ws_message,
+        )
         return {}
 
     @classmethod
@@ -340,7 +347,7 @@ class Api:
         check_auth(
             competition_id=discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         Tour.create_model(
             discipline=discipline,
@@ -356,7 +363,7 @@ class Api:
         check_auth(
             competition_id=participant.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         Program.create_model(
             participant=participant,
@@ -371,7 +378,7 @@ class Api:
         check_auth(
             competition_id=competition.id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         Club.create_model(
             competition=competition,
@@ -386,7 +393,7 @@ class Api:
         check_auth(
             competition_id=competition.id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         Judge.create_model(
             competition=competition,
@@ -401,7 +408,7 @@ class Api:
         check_auth(
             competition_id=judge.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         DisciplineJudge.create_model(
             discipline=discipline,
@@ -417,7 +424,7 @@ class Api:
         check_auth(
             competition_id=competition.id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         CompetitionPlanItem.create_model(
             competition=competition,
@@ -432,7 +439,7 @@ class Api:
         check_auth(
             competition_id=discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         Participant.create_model(
             discipline=discipline,
@@ -449,7 +456,7 @@ class Api:
         check_auth(
             competition_id=client_auth.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         client_auth.delete_model(ws_message=request.ws_message)
 
@@ -467,7 +474,7 @@ class Api:
         check_auth(
             competition_id=tour.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         tour.delete_model(ws_message=request.ws_message)
         return {}
@@ -478,7 +485,7 @@ class Api:
         check_auth(
             competition_id=program.participant.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         program.delete_model(ws_message=request.ws_message)
         return {}
@@ -489,7 +496,7 @@ class Api:
         check_auth(
             competition_id=discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         discipline.delete_model(ws_message=request.ws_message)
         return {}
@@ -500,7 +507,7 @@ class Api:
         check_auth(
             competition_id=club.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         club.delete_model(ws_message=request.ws_message)
         return {}
@@ -511,18 +518,20 @@ class Api:
         check_auth(
             competition_id=judge.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         judge.delete_model(ws_message=request.ws_message)
         return {}
 
     @classmethod
     def discipline_judge_delete(cls, request):
-        discipline_judge = cls.get_model(DisciplineJudge, "discipline_judge_id", request)
+        discipline_judge = cls.get_model(
+            DisciplineJudge, "discipline_judge_id", request
+        )
         check_auth(
             competition_id=discipline_judge.judge.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         discipline_judge.delete_model(ws_message=request.ws_message)
         return {}
@@ -533,7 +542,7 @@ class Api:
         check_auth(
             competition_id=participant.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         participant.delete_model(ws_message=request.ws_message)
         return {}
@@ -544,7 +553,7 @@ class Api:
         check_auth(
             competition_id=item.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         item.delete_model(ws_message=request.ws_message)
         return {}
@@ -558,7 +567,7 @@ class Api:
         check_auth(
             competition_id=judge.competition_id,
             request=request,
-            allowed_access_levels=("admin", "any_judge", "judge_{}".format(judge.id), ),
+            allowed_access_levels=("admin", "any_judge", "judge_{}".format(judge.id)),
         )
         score.confirm(ws_message=request.ws_message)
         return {}
@@ -570,56 +579,73 @@ class Api:
         check_auth(
             competition_id=judge.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         score.unconfirm(ws_message=request.ws_message)
         return {}
 
-
     @classmethod
     def tour_confirm_heat(cls, request):
-        discipline_judge = cls.get_model(DisciplineJudge, "discipline_judge_id", request)
+        discipline_judge = cls.get_model(
+            DisciplineJudge, "discipline_judge_id", request
+        )
         tour = cls.get_model(Tour, "tour_id", request)
         check_auth(
             competition_id=discipline_judge.judge.competition_id,
             request=request,
-            allowed_access_levels=("admin", "any_judge", "judge_{}".format(discipline_judge.judge_id), ),
+            allowed_access_levels=(
+                "admin",
+                "any_judge",
+                "judge_{}".format(discipline_judge.judge_id),
+            ),
         )
-        tour.confirm_heat(discipline_judge, request.body["heat"], ws_message=request.ws_message)
+        tour.confirm_heat(
+            discipline_judge, request.body["heat"], ws_message=request.ws_message
+        )
         return {}
 
     @classmethod
     def tour_confirm_all(cls, request):
-        discipline_judge = cls.get_model(DisciplineJudge, "discipline_judge_id", request)
+        discipline_judge = cls.get_model(
+            DisciplineJudge, "discipline_judge_id", request
+        )
         tour = cls.get_model(Tour, "tour_id", request)
         check_auth(
             competition_id=discipline_judge.judge.competition_id,
             request=request,
-            allowed_access_levels=("admin", "any_judge", "judge_{}".format(discipline_judge.judge_id), ),
+            allowed_access_levels=(
+                "admin",
+                "any_judge",
+                "judge_{}".format(discipline_judge.judge_id),
+            ),
         )
         tour.confirm_judge(discipline_judge, ws_message=request.ws_message)
         return {}
 
     @classmethod
     def tour_unconfirm_all(cls, request):
-        discipline_judge = cls.get_model(DisciplineJudge, "discipline_judge_id", request)
+        discipline_judge = cls.get_model(
+            DisciplineJudge, "discipline_judge_id", request
+        )
         tour = cls.get_model(Tour, "tour_id", request)
         check_auth(
             competition_id=discipline_judge.judge.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         tour.unconfirm_judge(discipline_judge, ws_message=request.ws_message)
         return {}
 
     @classmethod
     def tour_reset_judge_scores(cls, request):
-        discipline_judge = cls.get_model(DisciplineJudge, "discipline_judge_id", request)
+        discipline_judge = cls.get_model(
+            DisciplineJudge, "discipline_judge_id", request
+        )
         tour = cls.get_model(Tour, "tour_id", request)
         check_auth(
             competition_id=discipline_judge.judge.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         tour.reset_judge_scores(discipline_judge, ws_message=request.ws_message)
         return {}
@@ -630,9 +656,13 @@ class Api:
         check_auth(
             competition_id=run.tour.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", "judge_*", "any_judge", ),
+            allowed_access_levels=("admin", "judge_*", "any_judge"),
         )
-        run.set_acrobatic_override(request.body["acrobatic_idx"], request.body["score"], ws_message=request.ws_message)
+        run.set_acrobatic_override(
+            request.body["acrobatic_idx"],
+            request.body["score"],
+            ws_message=request.ws_message,
+        )
         return {}
 
     @classmethod
@@ -641,7 +671,7 @@ class Api:
         check_auth(
             competition_id=run.tour.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         if request.body["program_id"] is None:
             run.load_acrobatics(None, request.ws_message)
@@ -656,7 +686,7 @@ class Api:
         check_auth(
             competition_id=run.tour.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", "judge_*", "any_judge", ),
+            allowed_access_levels=("admin", "judge_*", "any_judge"),
         )
         run.set_status(request.body["status"], request.ws_message)
 
@@ -666,36 +696,35 @@ class Api:
         check_auth(
             competition_id=run.tour.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         run.reset(request.ws_message)
 
     @classmethod
     def tour_find_active(cls, request):
         tour = Tour.get_active()
-        return {
-            "tour_id": None if tour is None else tour.id,
-        }
+        return {"tour_id": None if tour is None else tour.id}
 
     @classmethod
     def competition_get_active_tours(cls, request):
-        competition = cls.get_model(Competition, "competition_id", request, pf_children={})
+        competition = cls.get_model(
+            Competition, "competition_id", request, pf_children={}
+        )
         check_auth(
             competition_id=competition.id,
             request=request,
-            allowed_access_levels=("admin", "presenter", "any_judge", "judge_*",),
+            allowed_access_levels=("admin", "presenter", "any_judge", "judge_*"),
         )
         active_tours = competition.get_active_tours()
         for tour in active_tours:
-            tour.smart_prefetch({
-                "discipline": {
-                    "discipline_judges": {},
-                },
-            })
-        return [{
-            "tour_id": tour.id,
-            "judges": [dj.judge_id for dj in tour.discipline_judges],
-        } for tour in active_tours]
+            tour.smart_prefetch({"discipline": {"discipline_judges": {}}})
+        return [
+            {
+                "tour_id": tour.id,
+                "judges": [dj.judge_id for dj in tour.discipline_judges],
+            }
+            for tour in active_tours
+        ]
 
     @classmethod
     def tour_permute_within_heat(cls, request):
@@ -703,7 +732,7 @@ class Api:
         check_auth(
             competition_id=tour.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         tour.permute_within_heat(request.body["run_ids"], ws_message=request.ws_message)
         return {}
@@ -714,7 +743,7 @@ class Api:
         check_auth(
             competition_id=tour.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", "judge_*", "any_judge", ),
+            allowed_access_levels=("admin", "judge_*", "any_judge"),
         )
         tour.start(ws_message=request.ws_message)
         return {}
@@ -726,24 +755,30 @@ class Api:
         check_auth(
             competition_id=tour.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", "judge_*", "any_judge", ),
+            allowed_access_levels=("admin", "judge_*", "any_judge"),
         )
         try:
-            current_competition_plan_item = \
-                (CompetitionPlanItem.select()
-                    .where(CompetitionPlanItem.tour == tour)
-                    .get())
+            current_competition_plan_item = (
+                CompetitionPlanItem.select()
+                .where(CompetitionPlanItem.tour == tour)
+                .get()
+            )
         except CompetitionPlanItem.DoesNotExist:
             raise ApiError("errors.tour.not_in_competition_plan")
         try:
-            next_competition_plan_item = \
-                (CompetitionPlanItem.select()
-                    .where(
-                        (CompetitionPlanItem.sp > current_competition_plan_item.sp) &
-                        (CompetitionPlanItem.competition == tour.discipline.competition_id) &
-                        (~(CompetitionPlanItem.tour >> None)))
-                    .order_by(CompetitionPlanItem.sp.asc())
-                    .get())
+            next_competition_plan_item = (
+                CompetitionPlanItem.select()
+                .where(
+                    (CompetitionPlanItem.sp > current_competition_plan_item.sp)
+                    & (
+                        CompetitionPlanItem.competition
+                        == tour.discipline.competition_id
+                    )
+                    & (~(CompetitionPlanItem.tour >> None))
+                )
+                .order_by(CompetitionPlanItem.sp.asc())
+                .get()
+            )
         except CompetitionPlanItem.DoesNotExist:
             raise ApiError("errors.tour.no_next_tour")
         next_competition_plan_item.tour.start(ws_message=request.ws_message)
@@ -755,7 +790,7 @@ class Api:
         check_auth(
             competition_id=tour.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", "judge_*", "any_judge", ),
+            allowed_access_levels=("admin", "judge_*", "any_judge"),
         )
         tour.stop(ws_message=request.ws_message)
         return {}
@@ -766,7 +801,7 @@ class Api:
         check_auth(
             competition_id=tour.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         tour.init(ws_message=request.ws_message)
         return {}
@@ -774,14 +809,11 @@ class Api:
     @classmethod
     def tour_finalize(cls, request):
         tour = cls.get_model(Tour, "tour_id", request)
-        tour.smart_prefetch({
-            "discipline": {},
-            "results": {},
-        })
+        tour.smart_prefetch({"discipline": {}, "results": {}})
         check_auth(
             competition_id=tour.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", "judge_*", "any_judge", ),
+            allowed_access_levels=("admin", "judge_*", "any_judge"),
         )
         tour.finalize(ws_message=request.ws_message)
         return {}
@@ -792,7 +824,7 @@ class Api:
         check_auth(
             competition_id=tour.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         tour.unfinalize(ws_message=request.ws_message)
         return {}
@@ -803,7 +835,7 @@ class Api:
         check_auth(
             competition_id=tour.discipline.competition_id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         tour.shuffle_heats(ws_message=request.ws_message)
         return {}
@@ -821,20 +853,25 @@ class Api:
 
     @classmethod
     def discipline_get_results(cls, request):
-        discipline = cls.get_model(Discipline, "discipline_id", request, pf_children={
-            # "competition": {
-            #     "judges": {},
-            # },
-            # "tours": {
-            #     "runs": {
-            #         # "scores": {},
-            #         # "acrobatics": {},
-            #         # "participant": {
-            #         #     "club": {},
-            #         # },
-            #     },
-            # }
-        })
+        discipline = cls.get_model(
+            Discipline,
+            "discipline_id",
+            request,
+            pf_children={
+                # "competition": {
+                #     "judges": {},
+                # },
+                # "tours": {
+                #     "runs": {
+                #         # "scores": {},
+                #         # "acrobatics": {},
+                #         # "participant": {
+                #         #     "club": {},
+                #         # },
+                #     },
+                # }
+            },
+        )
         check_auth(
             competition_id=discipline.competition_id,
             request=request,
@@ -849,9 +886,11 @@ class Api:
         check_auth(
             competition_id=competition.id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
-        competition.load(request.body["data"], request.body["items"], ws_message=request.ws_message)
+        competition.load(
+            request.body["data"], request.body["items"], ws_message=request.ws_message
+        )
         return {}
 
     @classmethod
@@ -860,7 +899,7 @@ class Api:
         check_auth(
             competition_id=competition.id,
             request=request,
-            allowed_access_levels=("admin", ),
+            allowed_access_levels=("admin",),
         )
         return competition.export()
 
@@ -880,7 +919,9 @@ class Api:
 
     @classmethod
     def service_report_js_error(cls, request):
-        filename = "error_js_{:%Y-%m-%d.%H-%M-%S.%f}_{:09d}.json".format(datetime.now(), random.randint(0, 10**9 - 1))
+        filename = "error_js_{:%Y-%m-%d.%H-%M-%S.%f}_{:09d}.json".format(
+            datetime.now(), random.randint(0, 10 ** 9 - 1)
+        )
         if not settings.DEBUG:
             filename = os.path.join("..", filename)
         json.dump(
@@ -925,16 +966,9 @@ class Api:
         ex_str = None
         try:
             result = cls.call_nocatch(request)
-            response = {
-                "success": True,
-                "response": result
-            }
+            response = {"success": True, "response": result}
         except ApiError as ex:
-            response = {
-                "success": False,
-                "code": ex.code,
-                "args": ex.args,
-            }
+            response = {"success": False, "code": ex.code, "args": ex.args}
         except Exception as ex:
             ex_str = traceback.format_exc()
             print(ex_str)

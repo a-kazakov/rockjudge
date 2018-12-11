@@ -55,7 +55,4 @@ class BroadcastOutgoingMessage(BaseOutgoingMessage):
         self.message = message
 
     def serialize(self) -> Any:
-        return {
-            "message_type": "broadcast",
-            "body": self.message,
-        }
+        return {"message_type": "broadcast", "body": self.message}

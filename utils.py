@@ -7,7 +7,19 @@ from collections import defaultdict
 from contextlib import contextmanager
 from datetime import datetime
 from traceback import print_exc
-from typing import Any, DefaultDict, Dict, Generator, List, NamedTuple, Optional, Type, TypeVar, Union, Callable
+from typing import (
+    Any,
+    DefaultDict,
+    Dict,
+    Generator,
+    List,
+    NamedTuple,
+    Optional,
+    Type,
+    TypeVar,
+    Union,
+    Callable,
+)
 
 import sqlalchemy.event
 from sqlalchemy.engine import Connection
@@ -16,7 +28,9 @@ from sqlalchemy.engine import Connection
 T = TypeVar("T")
 
 
-def raise_if_none(value: Optional[T], exception: Union[Exception, Type[Exception]] = ValueError) -> T:
+def raise_if_none(
+    value: Optional[T], exception: Union[Exception, Type[Exception]] = ValueError
+) -> T:
     if value is None:
         raise exception
     return value
@@ -28,6 +42,7 @@ def catch_all_async(func):
             await func(*args, **kwargs)
         except Exception:
             print_exc()
+
     return helper
 
 
@@ -37,11 +52,7 @@ class DbQueryRecord(NamedTuple):
     backtrace: str
 
     def __str__(self) -> str:
-        return (
-            f"Query: {self.query}\n"
-            f"Backtrace:\n{self.backtrace}"
-            f"\n"
-        )
+        return f"Query: {self.query}\n" f"Backtrace:\n{self.backtrace}" f"\n"
 
 
 class DbQueriesLogger:
@@ -50,13 +61,19 @@ class DbQueriesLogger:
         self.queries: List[DbQueryRecord] = []
         sqlalchemy.event.listen(connection, "after_execute", self._log_query)
 
-    def _log_query(self, connection: Connection, query: Any, params: Any, _unk: Any, result: Any) -> None:
-        brief_query = re.sub(r"SELECT.+?FROM", "SELECT ... FROM", str(query).replace("\n", " "))
-        self.queries.append(DbQueryRecord(
-            query=str(query),
-            brief_query=brief_query,
-            backtrace="".join(traceback.format_stack())
-        ))
+    def _log_query(
+        self, connection: Connection, query: Any, params: Any, _unk: Any, result: Any
+    ) -> None:
+        brief_query = re.sub(
+            r"SELECT.+?FROM", "SELECT ... FROM", str(query).replace("\n", " ")
+        )
+        self.queries.append(
+            DbQueryRecord(
+                query=str(query),
+                brief_query=brief_query,
+                backtrace="".join(traceback.format_stack()),
+            )
+        )
 
     def _is_suspicious(self) -> bool:
         if self.brief_stats and max(self.brief_stats.values()) >= 3:

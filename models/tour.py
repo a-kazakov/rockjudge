@@ -1,9 +1,29 @@
 import itertools
 import random
 from collections import defaultdict
-from typing import Any, Dict, Iterable, List, NamedTuple, Optional, Set, TYPE_CHECKING, Tuple, Union
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    List,
+    NamedTuple,
+    Optional,
+    Set,
+    TYPE_CHECKING,
+    Tuple,
+    Union,
+)
 
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, UniqueConstraint, asc, desc
+from sqlalchemy import (
+    Boolean,
+    Column,
+    ForeignKey,
+    Integer,
+    String,
+    UniqueConstraint,
+    asc,
+    desc,
+)
 from sqlalchemy.orm import Session, joinedload, relationship
 
 from db import ModelBase
@@ -72,14 +92,12 @@ class ComputedTour(NamedTuple):
     def judges_results(self) -> Dict[JudgeId, JudgeResult]:
         return self.computation_result.judges_results
 
-
     @classmethod
-    def create(cls, tour: "Tour", computation_result: TourComputationResult) -> "ComputedTour":
+    def create(
+        cls, tour: "Tour", computation_result: TourComputationResult
+    ) -> "ComputedTour":
         return cls(
-            computation_result,
-            tour.finalized,
-            tour.scoring_system_name,
-            tour.hope_tour,
+            computation_result, tour.finalized, tour.scoring_system_name, tour.hope_tour
         )
 
     def serialize(self) -> Dict[str, Any]:
@@ -102,7 +120,9 @@ class Tour(ModelBase, BaseModel):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(1000), nullable=False)
-    discipline_id = Column(Integer, ForeignKey("disciplines.id", ondelete="RESTRICT"), nullable=False)
+    discipline_id = Column(
+        Integer, ForeignKey("disciplines.id", ondelete="RESTRICT"), nullable=False
+    )
     num_advances = Column(Integer, nullable=False)
     participants_per_heat = Column(Integer, nullable=False)
     default_program = Column(String, default="", nullable=False)
@@ -147,24 +167,31 @@ class Tour(ModelBase, BaseModel):
     # Permissions
 
     @classmethod
-    def check_create_permission(cls, session: Session, request: "ApiRequest", data: Dict[str, Any]) -> bool:
-        competition_id = session.query(Discipline).get(data["discipline_id"]).competition_id
+    def check_create_permission(
+        cls, session: Session, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
+        competition_id = (
+            session.query(Discipline).get(data["discipline_id"]).competition_id
+        )
         auth = ClientAuth.get_for_competition(session, request.client, competition_id)
         return auth.access_level == AccessLevel.ADMIN
 
     def check_read_permission(self, request: "ApiRequest") -> bool:
         return self.get_auth(request.client).access_level != AccessLevel.NONE
 
-    def check_update_permission(self, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+    def check_update_permission(
+        self, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
         auth = self.get_auth(request.client)
         if auth.access_level in (AccessLevel.ADMIN, AccessLevel.ANY_JUDGE):
             return True
         if auth.access_level == AccessLevel.JUDGE:
             dj = self.session.query(DisciplineJudge).fliter_by(
-                judge_id=auth.judge_id,
-                discipline_id=self.discipline_id,
+                judge_id=auth.judge_id, discipline_id=self.discipline_id
             )
-            return self.scoring_system.get_judge_role_permissions(dj.role).can_update_tour
+            return self.scoring_system.get_judge_role_permissions(
+                dj.role
+            ).can_update_tour
         return False
 
     def check_delete_permission(self, request: "ApiRequest") -> bool:
@@ -173,16 +200,23 @@ class Tour(ModelBase, BaseModel):
     # Create logic
 
     @classmethod
-    def before_create(cls, session: Session, data: Dict[str, Any], *, unsafe: bool) -> Dict[str, Any]:
+    def before_create(
+        cls, session: Session, data: Dict[str, Any], *, unsafe: bool
+    ) -> Dict[str, Any]:
         data.pop("active", None)
         if unsafe:
             return {}
-        discipline: Discipline = session.query(Discipline).get(data.pop("discipline_id"))
+        discipline: Discipline = session.query(Discipline).get(
+            data.pop("discipline_id")
+        )
         next_tour_id = data.pop("add_after")
         if next_tour_id is None:
             prev_tour: Optional[Tour] = None
             next_tour: Optional[Tour] = (
-                session.query(Tour).filter_by(discipline=discipline).order_by(asc(Tour.sp)).first()
+                session.query(Tour)
+                .filter_by(discipline=discipline)
+                .order_by(asc(Tour.sp))
+                .first()
             )
         else:
             prev_tour = session.query(Tour).get(next_tour_id)
@@ -190,8 +224,9 @@ class Tour(ModelBase, BaseModel):
                 raise ApiError("errors.tour.invalid_add_after_id")
             next_tour = (
                 session.query(Tour)
-                    .filter((Tour.sp > prev_tour.sp) & (Tour.discipline == discipline))
-                    .order_by(asc(Tour.sp)).first()
+                .filter((Tour.sp > prev_tour.sp) & (Tour.discipline == discipline))
+                .order_by(asc(Tour.sp))
+                .first()
             )
         if next_tour is not None and next_tour.finalized:
             raise ApiError("errors.tour.add_before_finalized")
@@ -199,19 +234,16 @@ class Tour(ModelBase, BaseModel):
             if prev_tour is None:
                 sp = 0
             else:
-                sp = prev_tour.sp + 2**10
+                sp = prev_tour.sp + 2 ** 10
         else:
             if prev_tour is None:
-                sp = next_tour.sp - 2**10
+                sp = next_tour.sp - 2 ** 10
             else:
                 sp = (prev_tour.sp + next_tour.sp) // 2
                 if sp == prev_tour.sp:
                     discipline.normalize_tours_sps()
                     sp = (prev_tour.sp + next_tour.sp) // 2
-        return {
-            "discipline": discipline,
-            "sp": sp,
-        }
+        return {"discipline": discipline, "sp": sp}
 
     def submit_create_mutations(self, mk: "MutationsKeeper") -> None:
         mk.submit_model_created(self)
@@ -231,7 +263,9 @@ class Tour(ModelBase, BaseModel):
             data.pop("num_advances", None)
         return {}
 
-    def submit_update_mutations(self, mk: "MutationsKeeper", data: Dict[str, Any]) -> None:
+    def submit_update_mutations(
+        self, mk: "MutationsKeeper", data: Dict[str, Any]
+    ) -> None:
         mk.submit_model_updated(self)
         if {"scoring_system_name", "hope_tour", "num_advances"} & set(data.keys()):
             mk.submit_tour_results_update(self)
@@ -263,10 +297,15 @@ class Tour(ModelBase, BaseModel):
             self.__scoring_system = get_scoring_system(self.scoring_system_name)
             return self.__scoring_system
 
-    def make_scoring_system_request(self, inherited_data: Any) -> TourComputationRequest:
+    def make_scoring_system_request(
+        self, inherited_data: Any
+    ) -> TourComputationRequest:
         return TourComputationRequest(
             tour_id=TourId(self.id),
-            judge_roles={JudgeId(dj.id): JudgeRole(dj.role) for dj in self.discipline.discipline_judges},
+            judge_roles={
+                JudgeId(dj.id): JudgeRole(dj.role)
+                for dj in self.discipline.discipline_judges
+            },
             num_advances=self.num_advances,
             hope_tour=self.hope_tour,
             runs=[run.make_scoring_system_request() for run in self.runs_sorted],
@@ -283,10 +322,14 @@ class Tour(ModelBase, BaseModel):
         try:
             return self.__prev_tour
         except AttributeError:
-            self.__prev_tour = self.session.query(Tour).filter(
-                (Tour.discipline_id == self.discipline_id) &
-                (Tour.sp < self.sp)
-            ).order_by(desc(Tour.sp)).first()
+            self.__prev_tour = (
+                self.session.query(Tour)
+                .filter(
+                    (Tour.discipline_id == self.discipline_id) & (Tour.sp < self.sp)
+                )
+                .order_by(desc(Tour.sp))
+                .first()
+            )
             if self.__prev_tour is not None:
                 self.__prev_tour.next_tour = self
             return self.__prev_tour
@@ -300,10 +343,14 @@ class Tour(ModelBase, BaseModel):
         try:
             return self.__next_tour
         except AttributeError:
-            self.__next_tour = self.session.query(Tour).filter(
-                (Tour.discipline_id == self.discipline_id) &
-                (Tour.sp > self.sp)
-            ).order_by(asc(Tour.sp)).first()
+            self.__next_tour = (
+                self.session.query(Tour)
+                .filter(
+                    (Tour.discipline_id == self.discipline_id) & (Tour.sp > self.sp)
+                )
+                .order_by(asc(Tour.sp))
+                .first()
+            )
             if self.__next_tour is not None:
                 self.__next_tour.prev_tour = self
             return self.__next_tour
@@ -325,9 +372,7 @@ class Tour(ModelBase, BaseModel):
     def unfinalize(self, mk):
         if self.next_tour is not None and self.next_tour.finalized:
             raise ApiError("errors.tour.next_is_finailzed")
-        self.update({
-            "finalized": False,
-        }, mk, unsafe=True)
+        self.update({"finalized": False}, mk, unsafe=True)
         mk.submit_discipline_results_update(self.discipline)
 
     def init(self, mk: "MutationsKeeper") -> None:
@@ -351,12 +396,10 @@ class Tour(ModelBase, BaseModel):
 
     def get_partictpant_ids(self) -> List[int]:
         from models.run import Run
+
         computed_tours = self.discipline.compute_tours(end=self.id)
         if not computed_tours:
-            return [
-                participant.id
-                for participant in self.discipline.participants
-            ]
+            return [participant.id for participant in self.discipline.participants]
         if self.hope_tour:
             pre_result = [
                 Run.get(self.session, run_id)
@@ -365,20 +408,20 @@ class Tour(ModelBase, BaseModel):
             ]
         else:
             run_ids: List[int] = []
-            for tour, comp_tour in reversed(list(zip(self.discipline.tours_sorted, computed_tours))):
+            for tour, comp_tour in reversed(
+                list(zip(self.discipline.tours_sorted, computed_tours))
+            ):
                 for run_id, run_result in comp_tour.runs_results.items():
                     if run_result.advanced:
                         run_ids.append(run_id)
                 if not tour.hope_tour:
                     break
-            pre_result = [
-                Run.get(self.session, run_id)
-                for run_id in run_ids
-            ]
+            pre_result = [Run.get(self.session, run_id) for run_id in run_ids]
         return [run.participant_id for run in pre_result if run.status != RunStatus.DQ]
 
     def create_runs(self, mk: "MutationsKeeper") -> None:
         from models.run import Run
+
         participants_ids = set(self.get_partictpant_ids())
         for run in self.runs:
             if run.participant_id not in participants_ids:
@@ -389,10 +432,7 @@ class Tour(ModelBase, BaseModel):
         for participant_id in participants_ids:
             run = Run.create(
                 self.session,
-                {
-                    "participant_id": participant_id,
-                    "tour": self,
-                },
+                {"participant_id": participant_id, "tour": self},
                 mk,
                 unsafe=True,
             )
@@ -406,10 +446,7 @@ class Tour(ModelBase, BaseModel):
         }
         for run in self.runs:
             heat, heat2 = runs_map[run.participant_id]
-            run.update({
-                "heat": heat,
-                "heat_secondary": heat2,
-            }, mk, unsafe=True)
+            run.update({"heat": heat, "heat_secondary": heat2}, mk, unsafe=True)
 
     def normalize_heats(self, mk: "MutationsKeeper") -> None:
         heats_found = sorted({run.heat for run in self.runs})
@@ -438,9 +475,11 @@ class Tour(ModelBase, BaseModel):
             runs = self.runs
         shuffled_runs = self.weighted_shuffle(runs, self.participants_per_heat)
         for idx, run in enumerate(shuffled_runs, start=0):
-            run.update({
-                "heat": first_heat + idx // self.participants_per_heat,
-            }, mk, unsafe=True)
+            run.update(
+                {"heat": first_heat + idx // self.participants_per_heat},
+                mk,
+                unsafe=True,
+            )
 
     @staticmethod
     def weighted_shuffle(runs: List["Run"], participants_per_heat: int) -> List["Run"]:
@@ -461,10 +500,12 @@ class Tour(ModelBase, BaseModel):
                     for idx in free_slots
                 }
                 total_weight = sum(slots_weights.values())
-                weights_rsq = list((key, value / total_weight) for key, value in slots_weights.items())
+                weights_rsq = list(
+                    (key, value / total_weight) for key, value in slots_weights.items()
+                )
                 s = 0
                 for idx, item in enumerate(weights_rsq):
-                    weights_rsq[idx] = (item[0], s,)
+                    weights_rsq[idx] = (item[0], s)
                     s += item[1]
                 rnd = random.random()
                 l, r = 0, len(weights_rsq)
@@ -488,11 +529,14 @@ class Tour(ModelBase, BaseModel):
         if self.active:
             return
         active_tours: List[Tour] = (
-            self.session
-                .query(Tour).filter_by(active=True)
-                .join(Discipline).filter_by(competition_id=self.competition_id)
-                .options(joinedload(Tour.discipline).subqueryload(Discipline.discipline_judges))
-                .all()
+            self.session.query(Tour)
+            .filter_by(active=True)
+            .join(Discipline)
+            .filter_by(competition_id=self.competition_id)
+            .options(
+                joinedload(Tour.discipline).subqueryload(Discipline.discipline_judges)
+            )
+            .all()
         )
         next_discipline_judges = self.discipline.discipline_judges
         next_judge_ids = {dj.judge_id for dj in next_discipline_judges}
@@ -500,25 +544,25 @@ class Tour(ModelBase, BaseModel):
             active_judge_ids = {dj.judge_id for dj in tour.discipline.discipline_judges}
             if active_judge_ids.intersection(next_judge_ids):
                 tour.stop(mk)
-        self.update({
-            "active": True,
-        }, mk, unsafe=True)
+        self.update({"active": True}, mk, unsafe=True)
 
     def stop(self, mk: "MutationsKeeper") -> None:
-        self.update({
-            "active": False,
-        }, mk, unsafe=True)
+        self.update({"active": False}, mk, unsafe=True)
 
-    def confirm_heat(self, discipline_judge: "DisciplineJudge", heat: int, mk: "MutationsKeeper") -> None:
+    def confirm_heat(
+        self, discipline_judge: "DisciplineJudge", heat: int, mk: "MutationsKeeper"
+    ) -> None:
         from models.run import Run
         from models.score import Score
+
         if self.finalized:
             raise ApiError("errors.score.update_on_finalized_tour")
         scores = (
-            self.session
-                .query(Score).filter_by(discipline_judge=discipline_judge, confirmed=False)
-                .join(Run).filter_by(heat=heat, tour=self)
-                .all()
+            self.session.query(Score)
+            .filter_by(discipline_judge=discipline_judge, confirmed=False)
+            .join(Run)
+            .filter_by(heat=heat, tour=self)
+            .all()
         )
         for score in scores:
             score.update({"confirmed": True}, mk)
@@ -532,26 +576,26 @@ class Tour(ModelBase, BaseModel):
     ):
         from models.run import Run
         from models.score import Score
+
         if self.finalized:
             raise ApiError("errors.score.update_on_finalized_tour")
         scores = (
-            self.session
-                .query(Score).filter_by(discipline_judge=discipline_judge, confirmed=not new_confirmed)
-                .join(Run).filter_by(tour=self)
-                .all()
+            self.session.query(Score)
+            .filter_by(discipline_judge=discipline_judge, confirmed=not new_confirmed)
+            .join(Run)
+            .filter_by(tour=self)
+            .all()
         )
         scores_ids: List[int] = []
         for score in scores:
             mk.submit_model_updated(score)
             scores_ids.append(score.id)
         (
-            self.session
-                .query(Score)
-                .filter(Score.id.in_(scores_ids))
-                .update(
-                    {"confirmed": new_confirmed},
-                    synchronize_session=synchronize_session,
-                )
+            self.session.query(Score)
+            .filter(Score.id.in_(scores_ids))
+            .update(
+                {"confirmed": new_confirmed}, synchronize_session=synchronize_session
+            )
         )
 
     def reset_judge_scores(
@@ -563,32 +607,29 @@ class Tour(ModelBase, BaseModel):
         from models.run import Run
         from models.score import Score
         from models.score_part import ScorePart
+
         if self.finalized:
             raise ApiError("errors.score.update_on_finalized_tour")
         scores = (
-            self.session
-                .query(Score).filter_by(discipline_judge=discipline_judge)
-                .join(Run).filter_by(tour=self)
-                .all()
+            self.session.query(Score)
+            .filter_by(discipline_judge=discipline_judge)
+            .join(Run)
+            .filter_by(tour=self)
+            .all()
         )
         scores_ids: List[int] = []
         for score in scores:
             mk.submit_model_updated(score)
             scores_ids.append(score.id)
         (
-            self.session
-                .query(Score)
-                .filter(Score.id.in_(scores_ids))
-                .update(
-                    {"confirmed": False},
-                    synchronize_session=synchronize_session,
-                )
+            self.session.query(Score)
+            .filter(Score.id.in_(scores_ids))
+            .update({"confirmed": False}, synchronize_session=synchronize_session)
         )
         (
-            self.session
-                .query(ScorePart)
-                .filter(ScorePart.score_id.in_(scores_ids))
-                .delete(synchronize_session=synchronize_session)
+            self.session.query(ScorePart)
+            .filter(ScorePart.score_id.in_(scores_ids))
+            .delete(synchronize_session=synchronize_session)
         )
         mk.submit_tour_results_update(self)
 
@@ -616,7 +657,7 @@ class Tour(ModelBase, BaseModel):
                 discipline.session,
                 {
                     "discipline": discipline,
-                    "sp": idx * 2**10,
+                    "sp": idx * 2 ** 10,
                     **cls.filter_non_managable_fields(obj),
                 },
                 mk,

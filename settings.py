@@ -17,6 +17,7 @@ SERVER_ID = "1234567890"
 
 try:
     from settings_prod import *  # NOQA
+
     print("Loaded production settings")
 except ImportError:
     print("Loaded develoment settings")

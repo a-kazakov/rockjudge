@@ -8,7 +8,12 @@ from sqlalchemy.orm import Session
 
 from api import ApiResponse
 from exceptions import InternalError
-from mutations import DisciplineResultsMutationRecord, FetchedMutations, FinalizedMutations, MutationsKeeper
+from mutations import (
+    DisciplineResultsMutationRecord,
+    FetchedMutations,
+    FinalizedMutations,
+    MutationsKeeper,
+)
 from utils import DbQueriesLogger, raise_if_none
 from webserver.messages import BaseOutgoingMessage, MutationsPushOutgoingMessage
 
@@ -24,7 +29,7 @@ class BasePostProcessor(metaclass=ABCMeta):
         self.uuid = uuid4().hex
         self._db_logger = DbQueriesLogger(
             self.session.connection(),
-            f"Postprocessor ({api_response.request.method.value})"
+            f"Postprocessor ({api_response.request.method.value})",
         )
         self._start_time = time.monotonic()
 
@@ -47,7 +52,9 @@ class BasePostProcessor(metaclass=ABCMeta):
         fetch_results: bool = False,
         skip_prefetch: bool = False,
     ) -> FetchedMutations:
-        return mutations.fetch(self.session, fetch_results=fetch_results, skip_prefetch=skip_prefetch)
+        return mutations.fetch(
+            self.session, fetch_results=fetch_results, skip_prefetch=skip_prefetch
+        )
 
     def _log_stats(self) -> None:
         if self._start_time is None:
@@ -55,11 +62,7 @@ class BasePostProcessor(metaclass=ABCMeta):
         else:
             total_time = time.monotonic() - self._start_time
         request = self.api_response.request
-        client_id = (
-            request.opt_client.id
-            if request.opt_client is not None
-            else "NEW"
-        )
+        client_id = request.opt_client.id if request.opt_client is not None else "NEW"
         self._db_logger.finalize()
         print(
             f"Postprocessor: {request.method.value:<35s} "
@@ -76,20 +79,23 @@ class PublicPostProcessor(BasePostProcessor):
         super().__init__(api_response, session)
         self.__clients_messages: Dict["WsClientId", MutationsPushOutgoingMessage] = {}
         if api_response.new_subscription is not None:
-            raise InternalError("Public post processor can't process API response with new subscriptions")
+            raise InternalError(
+                "Public post processor can't process API response with new subscriptions"
+            )
 
     async def prepare(self) -> None:
         from webserver.websocket import WebSocketConnectionsManager
+
         all_mutations = await asyncio.get_event_loop().run_in_executor(
-            None,
-            self._fetch_mutations,
-            self.api_response.mutations,
+            None, self._fetch_mutations, self.api_response.mutations
         )
         ws_manager = WebSocketConnectionsManager.instance()
         connections = ws_manager.get_all_connections()
         for conn in connections:
             conn_mutations = all_mutations.filter_for_subscriptions(conn.subscriptions)
-            self.__clients_messages[conn.client_id] = MutationsPushOutgoingMessage(conn_mutations, is_initial=False)
+            self.__clients_messages[conn.client_id] = MutationsPushOutgoingMessage(
+                conn_mutations, is_initial=False
+            )
         self._log_stats()
 
     @property
@@ -102,22 +108,30 @@ class PublicPostProcessor(BasePostProcessor):
 
 class PrivatePostProcessor(BasePostProcessor):
     # PostProcessor responsible for pushing initial models to one client
-    def __init__(self, api_response: ApiResponse, session: Session, ws_client_id: "WsClientId") -> None:
+    def __init__(
+        self, api_response: ApiResponse, session: Session, ws_client_id: "WsClientId"
+    ) -> None:
         super().__init__(api_response, session)
         self.ws_client_id = ws_client_id
         self.__response: Any = None
         if api_response.mutations:
-            raise InternalError("Private post processor can't process API response with DB mutations")
+            raise InternalError(
+                "Private post processor can't process API response with DB mutations"
+            )
         if api_response.new_subscription is None:
-            raise InternalError("Private post processor can't process API response without new subscriptions")
+            raise InternalError(
+                "Private post processor can't process API response without new subscriptions"
+            )
 
     async def prepare(self) -> None:
         mk = MutationsKeeper()
         self.api_response.new_subscription.add_initial_models_to_mk(self.session, mk)
         mutations = await asyncio.get_event_loop().run_in_executor(
             None,
-            lambda: self._fetch_mutations(mk.finalize(), skip_prefetch=True, fetch_results=True)
-        ) # prefetched by add_initial_models_to_mk
+            lambda: self._fetch_mutations(
+                mk.finalize(), skip_prefetch=True, fetch_results=True
+            ),
+        )  # prefetched by add_initial_models_to_mk
         self.__response = MutationsPushOutgoingMessage(
             mutations.filter_for_subscriptions([self.api_response.new_subscription]),
             is_initial=True,
@@ -126,6 +140,4 @@ class PrivatePostProcessor(BasePostProcessor):
         self._log_stats()
 
     def get_clients_messages(self) -> Dict["WsClientId", MutationsPushOutgoingMessage]:
-        return {
-            self.ws_client_id: self.__response,
-        }
+        return {self.ws_client_id: self.__response}

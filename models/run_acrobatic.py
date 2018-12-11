@@ -21,9 +21,7 @@ class RunAcrobatic(ModelBase, BaseModel):
 
     __tablename__ = "run_acrobatics"
 
-    __table_args__ = (
-        UniqueConstraint("run_id", "idx", name="run_acro_idx"),
-    )
+    __table_args__ = (UniqueConstraint("run_id", "idx", name="run_acro_idx"),)
 
     id = Column(Integer, primary_key=True)
     run_id = Column(Integer, ForeignKey("runs.id", ondelete="CASCADE"), nullable=False)
@@ -31,7 +29,9 @@ class RunAcrobatic(ModelBase, BaseModel):
     description = Column(String(2000), nullable=False)
     initial_score = Column(Float(precision=2, asdecimal=False), nullable=False)
     score = Column(Float(precision=2, asdecimal=False), nullable=False)
-    reviewed_by_id = Column(Integer, ForeignKey("discipline_judges.id", ondelete="SET NULL"), nullable=True)
+    reviewed_by_id = Column(
+        Integer, ForeignKey("discipline_judges.id", ondelete="SET NULL"), nullable=True
+    )
 
     run = relationship(Run, backref=backref("acrobatics", cascade="delete"))
     reviewed_by = relationship(DisciplineJudge, backref="acobatics_reviewed")
@@ -52,7 +52,7 @@ class RunAcrobatic(ModelBase, BaseModel):
 
     @property
     def sorting_key(self) -> Tuple[Union[int, str], ...]:
-        return (self.idx, )
+        return (self.idx,)
 
     def validate(self) -> None:
         if self.score < -1e-5:
@@ -63,7 +63,9 @@ class RunAcrobatic(ModelBase, BaseModel):
     def check_read_permission(self, request: "ApiRequest") -> bool:
         return self.get_auth(request.client).access_level != AccessLevel.NONE
 
-    def check_update_permission(self, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+    def check_update_permission(
+        self, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
         return self.get_auth(request.client).access_level == AccessLevel.ADMIN
 
     # Create logic
@@ -83,7 +85,9 @@ class RunAcrobatic(ModelBase, BaseModel):
         # TODO: support revieved_by
         return {}
 
-    def submit_update_mutations(self, mk: "MutationsKeeper", data: Dict[str, Any]) -> None:
+    def submit_update_mutations(
+        self, mk: "MutationsKeeper", data: Dict[str, Any]
+    ) -> None:
         mk.submit_model_updated(self)
         if "score" in data:
             mk.submit_tour_results_update(self.run.tour)

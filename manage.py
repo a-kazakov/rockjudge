@@ -21,6 +21,7 @@ class Commands:
     @staticmethod
     def start():
         from app import Application
+
         print("Starting RockJudge server...")
         app = Application.instance()
         app.listen(settings.LISTEN_PORT)
@@ -34,13 +35,17 @@ class Commands:
     @staticmethod
     def install():
         from service import db_setup
+
         db_setup.setup()
 
     @staticmethod
     def reset(password=""):
         from db import db, ModelBase
+
         if password != "yes-i-am-sure":
-            print("Are you sure want to reset everything? Type 'Yes, I'm sure!' to continue.")
+            print(
+                "Are you sure want to reset everything? Type 'Yes, I'm sure!' to continue."
+            )
             if input() == "Yes, I'm sure!":
                 print("Resetting ...")
                 db.import_all_models()
@@ -63,6 +68,7 @@ class Commands:
     @staticmethod
     def dump_log(filename):
         from models import ApiLogItem
+
         data = ApiLogItem.fetch_all()
         with open(filename, "wt", encoding="utf-8") as f:
             json.dump(data, f, indent=2, sort_keys=True, ensure_ascii=False)

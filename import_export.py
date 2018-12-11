@@ -1,6 +1,17 @@
 import json
 from collections import defaultdict
-from typing import List, NamedTuple, Optional, Union, Dict, Any, DefaultDict, Type, Tuple, TypeVar
+from typing import (
+    List,
+    NamedTuple,
+    Optional,
+    Union,
+    Dict,
+    Any,
+    DefaultDict,
+    Type,
+    Tuple,
+    TypeVar,
+)
 
 from sqlalchemy import UniqueConstraint
 from sqlalchemy.orm import Session
@@ -28,22 +39,10 @@ def general_import(
     external_id = raw_data["external_id"]
     model = mapping.get(model_type, external_id=external_id, **params)
     if model is None:
-        model = model_type.create(
-            session,
-            {
-                **params,
-                **raw_data,
-            },
-            mk,
-            unsafe=True,
-        )
+        model = model_type.create(session, {**params, **raw_data}, mk, unsafe=True)
         mapping.add(model)
     else:
-        model.update(
-            raw_data,
-            mk,
-            unsafe=True,
-        )
+        model.update(raw_data, mk, unsafe=True)
     return model
 
 
@@ -53,10 +52,7 @@ class ClubImportBundle(NamedTuple):
     name: str
 
     def import_to(
-        self,
-        competition: Competition,
-        mapping: "ExistingMapping",
-        mk: MutationsKeeper,
+        self, competition: Competition, mapping: "ExistingMapping", mk: MutationsKeeper
     ) -> None:
         general_import(
             Club,
@@ -121,18 +117,11 @@ class DisciplineImportBundle(NamedTuple):
     external_id: str
 
     def import_to(
-        self,
-        competition: Competition,
-        mapping: "ExistingMapping",
-        mk: MutationsKeeper,
+        self, competition: Competition, mapping: "ExistingMapping", mk: MutationsKeeper
     ) -> None:
         general_import(
             Discipline,
-            {
-                "name": self.name,
-                "sp": self.sp,
-                "external_id": self.external_id,
-            },
+            {"name": self.name, "sp": self.sp, "external_id": self.external_id},
             mapping,
             mk,
             competition.session,
@@ -150,10 +139,7 @@ class JudgeImportBundle(NamedTuple):
     sp: int
 
     def import_to(
-        self,
-        competition: Competition,
-        mapping: "ExistingMapping",
-        mk: MutationsKeeper,
+        self, competition: Competition, mapping: "ExistingMapping", mk: MutationsKeeper
     ) -> None:
         general_import(
             Judge,
@@ -173,10 +159,7 @@ class CompetitionPlanImportBundle(NamedTuple):
     verbose_name: str
 
     def import_to(
-        self,
-        competition: Competition,
-        mapping: "ExistingMapping",
-        mk: MutationsKeeper,
+        self, competition: Competition, mapping: "ExistingMapping", mk: MutationsKeeper
     ) -> None:
         general_import(
             Judge,
@@ -209,10 +192,11 @@ class CompetitionImportBundle(NamedTuple):
             club_bundle.import_to(competition, mapping, mk)
 
 
-
 class ExistingMapping:
     def __init__(self, competition: Competition) -> None:
-        self.mapping: DefaultDict[Type[BaseModel], Dict[str, BaseModel]] = defaultdict(dict)
+        self.mapping: DefaultDict[Type[BaseModel], Dict[str, BaseModel]] = defaultdict(
+            dict
+        )
         for club in competition.clubs:
             self.add(club)
         for discipline in competition.disciplines:
@@ -247,10 +231,7 @@ class ExistingMapping:
         cols = cls.__get_key_cols(type(model))
         if cols is None:
             return None
-        args = {
-            key: getattr(model, key)
-            for key in cols
-        }
+        args = {key: getattr(model, key) for key in cols}
         return cls.__get_dict_key(args)
 
     def add(self, model: BaseModel) -> None:

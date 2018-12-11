@@ -15,4 +15,8 @@ def replace(filename, regexp, repl):
 
 
 if __name__ == "__main__":
-    replace("lz4-asm\\lz4.js", r"(\w{1,3})=\"object\"===typeof process&&[^,;]+([,;])", r"\1=1\2")
+    replace(
+        "lz4-asm\\lz4.js",
+        r"(\w{1,3})=\"object\"===typeof process&&[^,;]+([,;])",
+        r"\1=1\2",
+    )

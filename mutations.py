@@ -61,7 +61,9 @@ class ModelMutationRecord(NamedTuple):
     client_id: Optional[int]
 
     @classmethod
-    def from_model(cls, model: BaseModel, action: ModelChangeAction) -> "ModelMutationRecord":
+    def from_model(
+        cls, model: BaseModel, action: ModelChangeAction
+    ) -> "ModelMutationRecord":
         return cls(
             action,
             type(model),
@@ -89,7 +91,9 @@ class ModelMutationRecord(NamedTuple):
         return ModelChangeAction.UPDATE
 
     @classmethod
-    def __combine_similar_records(cls, records: List["ModelMutationRecord"]) -> "ModelMutationRecord":
+    def __combine_similar_records(
+        cls, records: List["ModelMutationRecord"]
+    ) -> "ModelMutationRecord":
         first = records[0]
         all_actions: Set[ModelChangeAction] = set()
         competition_id: Optional[int] = None
@@ -97,7 +101,9 @@ class ModelMutationRecord(NamedTuple):
         client_id: Optional[int] = None
         for rec in records:
             all_actions.add(rec.action)
-            competition_id = cls.__set_optional_value(competition_id, rec.competition_id, "competition_id")
+            competition_id = cls.__set_optional_value(
+                competition_id, rec.competition_id, "competition_id"
+            )
             tour_id = cls.__set_optional_value(tour_id, rec.tour_id, "tour_id")
             client_id = cls.__set_optional_value(client_id, rec.client_id, "client_id")
         return cls(
@@ -110,8 +116,12 @@ class ModelMutationRecord(NamedTuple):
         )
 
     @classmethod
-    def combine_records(cls, records: Iterable["ModelMutationRecord"]) -> List["ModelMutationRecord"]:
-        sorted_records: DefaultDict[ModelDescriptorTuple, List[ModelMutationRecord]] = defaultdict(list)
+    def combine_records(
+        cls, records: Iterable["ModelMutationRecord"]
+    ) -> List["ModelMutationRecord"]:
+        sorted_records: DefaultDict[
+            ModelDescriptorTuple, List[ModelMutationRecord]
+        ] = defaultdict(list)
         for record in records:
             key = (record.model_type, record.model_id)
             sorted_records[key].append(record)
@@ -142,17 +152,17 @@ class DisciplineResultsMutationRecord(NamedTuple):
 
     @classmethod
     def combine_records(
-        cls,
-        records: Iterable["DisciplineResultsMutationRecord"]
+        cls, records: Iterable["DisciplineResultsMutationRecord"]
     ) -> List["DisciplineResultsMutationRecord"]:
         discipline_id_to_competition_id: Dict[int, int] = {
-            record.discipline_id: record.competition_id
-            for record in records
+            record.discipline_id: record.competition_id for record in records
         }
-        return list(map(
-            lambda p: DisciplineResultsMutationRecord(*p),
-            discipline_id_to_competition_id.items(),
-        ))
+        return list(
+            map(
+                lambda p: DisciplineResultsMutationRecord(*p),
+                discipline_id_to_competition_id.items(),
+            )
+        )
 
 
 class FetchedModelMutation(NamedTuple):
@@ -206,27 +216,37 @@ class MutationsKeeper:
         self.discipline_results_mutations: List[DisciplineResultsMutationRecord] = []
 
     def submit_model_updated(self, model: "BaseModel") -> None:
-        self.models_mutations.append(ModelMutationRecord.from_model(model, ModelChangeAction.UPDATE))
+        self.models_mutations.append(
+            ModelMutationRecord.from_model(model, ModelChangeAction.UPDATE)
+        )
 
     def submit_model_created(self, model: "BaseModel") -> None:
-        self.models_mutations.append(ModelMutationRecord.from_model(model, ModelChangeAction.CREATE))
+        self.models_mutations.append(
+            ModelMutationRecord.from_model(model, ModelChangeAction.CREATE)
+        )
 
     def submit_model_deleted(self, model: "BaseModel") -> None:
-        self.models_mutations.append(ModelMutationRecord.from_model(model, ModelChangeAction.DELETE))
+        self.models_mutations.append(
+            ModelMutationRecord.from_model(model, ModelChangeAction.DELETE)
+        )
 
     def submit_tour_results_update(self, tour: "Tour") -> None:
         self.tour_results_mutations.append(TourResultsMutationRecord.from_model(tour))
 
     def submit_discipline_results_update(self, discipline: "Discipline") -> None:
-        self.discipline_results_mutations.append(DisciplineResultsMutationRecord.from_model(discipline))
+        self.discipline_results_mutations.append(
+            DisciplineResultsMutationRecord.from_model(discipline)
+        )
 
     def finalize(self) -> "FinalizedMutations":
         return FinalizedMutations(
             models_mutations=ModelMutationRecord.combine_records(self.models_mutations),
-            discipline_results_mutations=DisciplineResultsMutationRecord.combine_records((
-                *self.discipline_results_mutations,
-                *(rec.discipline_record for rec in self.tour_results_mutations),
-            )),
+            discipline_results_mutations=DisciplineResultsMutationRecord.combine_records(
+                (
+                    *self.discipline_results_mutations,
+                    *(rec.discipline_record for rec in self.tour_results_mutations),
+                )
+            ),
         )
 
 
@@ -238,38 +258,37 @@ class FinalizedMutations(NamedTuple):
         return bool(self.models_mutations) or bool(self.discipline_results_mutations)
 
     def __prefetch_disciplines_to_session(self, session: Session) -> List[Discipline]:
-        model_tree = ModelTreeNode.from_dict(Discipline, {
-            "discipline_judges": {
-                "judge": {},
+        model_tree = ModelTreeNode.from_dict(
+            Discipline,
+            {
+                "discipline_judges": {"judge": {}},
+                "tours": {"runs": {"acrobatics": {}, "scores": {"parts": {}}}},
             },
-            "tours": {
-                "runs": {
-                    "acrobatics": {},
-                    "scores": {
-                        "parts": {},
-                    },
-                },
-            },
-        })
-        discipline_ids = [rec.discipline_id for rec in self.discipline_results_mutations]
+        )
+        discipline_ids = [
+            rec.discipline_id for rec in self.discipline_results_mutations
+        ]
         disciplines = (
-            session
-                .query(Discipline)
-                .filter(Discipline.id.in_(discipline_ids))
-                .options(*model_tree.build_prefetcher())
-                .all()
+            session.query(Discipline)
+            .filter(Discipline.id.in_(discipline_ids))
+            .options(*model_tree.build_prefetcher())
+            .all()
         )
         for discipline in disciplines:
             model_tree.save_to_session(session, discipline)
 
-    def __prefetch_models_to_session(self, session: Session) -> Tuple["ModelsSet", "ModelsSet"]:
+    def __prefetch_models_to_session(
+        self, session: Session
+    ) -> Tuple["ModelsSet", "ModelsSet"]:
         models_to_fetch = ModelsSet()
         for record in self.models_mutations:
             if record.action != ModelChangeAction.DELETE:
                 models_to_fetch[record.model_type].add(record.model_id)
         models_to_fetch.leave_uncached(session).prefetch(session)
 
-    def fetch(self, session: Session, *, fetch_results: bool, skip_prefetch: bool = False) -> "FetchedMutations":
+    def fetch(
+        self, session: Session, *, fetch_results: bool, skip_prefetch: bool = False
+    ) -> "FetchedMutations":
         models_mutations: List[FetchedModelMutation] = []
         tour_results_mutations: List[FetchedTourResultsMutation] = []
         discipline_results_mutations: List[FetchedDisciplineResultsMutation] = []
@@ -280,19 +299,22 @@ class FinalizedMutations(NamedTuple):
             for record in self.discipline_results_mutations:
                 discipline = Discipline.get(session, record.discipline_id)
                 discipline_results_data, computed_tours = discipline.get_results()
-                discipline_results_mutations.append(FetchedDisciplineResultsMutation(
-                    mutation_record=record,
-                    data=discipline_results_data,
-                ))
+                discipline_results_mutations.append(
+                    FetchedDisciplineResultsMutation(
+                        mutation_record=record, data=discipline_results_data
+                    )
+                )
                 for tour_id, tour_results_data in computed_tours.items():
-                    tour_results_mutations.append(FetchedTourResultsMutation(
-                        mutation_record=TourResultsMutationRecord(
-                            tour_id=tour_id,
-                            discipline_id=record.discipline_id,
-                            competition_id=record.competition_id,
-                        ),
-                        data=tour_results_data,
-                    ))
+                    tour_results_mutations.append(
+                        FetchedTourResultsMutation(
+                            mutation_record=TourResultsMutationRecord(
+                                tour_id=tour_id,
+                                discipline_id=record.discipline_id,
+                                competition_id=record.competition_id,
+                            ),
+                            data=tour_results_data,
+                        )
+                    )
         # Prepare models
         if not skip_prefetch:
             self.__prefetch_models_to_session(session)
@@ -302,14 +324,11 @@ class FinalizedMutations(NamedTuple):
                 if record.action != ModelChangeAction.DELETE
                 else None
             )
-            models_mutations.append(FetchedModelMutation(
-                mutation_record=record,
-                model=model,
-            ))
+            models_mutations.append(
+                FetchedModelMutation(mutation_record=record, model=model)
+            )
         return FetchedMutations(
-            models_mutations,
-            tour_results_mutations,
-            discipline_results_mutations,
+            models_mutations, tour_results_mutations, discipline_results_mutations
         )
 
 
@@ -325,30 +344,46 @@ class FetchedMutations(NamedTuple):
             or bool(self.discipline_results_mutations)
         )
 
-    def filter_for_subscriptions(self, subscriptions: List["SubscriptionBase"]) -> "FetchedMutations":
+    def filter_for_subscriptions(
+        self, subscriptions: List["SubscriptionBase"]
+    ) -> "FetchedMutations":
         models_mutations = [
-            mut for mut in self.models_mutations
-            if any(sub.should_push_model_mutation(mut.mutation_record) for sub in subscriptions)
+            mut
+            for mut in self.models_mutations
+            if any(
+                sub.should_push_model_mutation(mut.mutation_record)
+                for sub in subscriptions
+            )
         ]
         tour_results_mutations = [
-            mut for mut in self.tour_results_mutations
-            if any(sub.should_push_tour_results_mutation(mut.mutation_record) for sub in subscriptions)
+            mut
+            for mut in self.tour_results_mutations
+            if any(
+                sub.should_push_tour_results_mutation(mut.mutation_record)
+                for sub in subscriptions
+            )
         ]
         discipline_results_mutations = [
-            mut for mut in self.discipline_results_mutations
-            if any(sub.should_push_discipline_results_mutation(mut.mutation_record) for sub in subscriptions)
+            mut
+            for mut in self.discipline_results_mutations
+            if any(
+                sub.should_push_discipline_results_mutation(mut.mutation_record)
+                for sub in subscriptions
+            )
         ]
         return type(self)(
-            models_mutations,
-            tour_results_mutations,
-            discipline_results_mutations,
+            models_mutations, tour_results_mutations, discipline_results_mutations
         )
 
     def serialize(self) -> Any:
         return {
             "models_mutations": [mut.serialize() for mut in self.models_mutations],
-            "tour_results_updates": [mut.serialize() for mut in self.tour_results_mutations],
-            "discipline_results_updates": [mut.serialize() for mut in self.discipline_results_mutations],
+            "tour_results_updates": [
+                mut.serialize() for mut in self.tour_results_mutations
+            ],
+            "discipline_results_updates": [
+                mut.serialize() for mut in self.discipline_results_mutations
+            ],
         }
 
 
@@ -373,10 +408,7 @@ class ModelsSet(DefaultDict[Type["BaseModel"], Set[int]]):
             db.add_to_session_context(session, models)
 
     def clone(self) -> "ModelsSet":
-        return type(self)({
-            type_: copy.copy(value)
-            for type_, value in self.items()
-        })
+        return type(self)({type_: copy.copy(value) for type_, value in self.items()})
 
     def leave_uncached(self, session: Session) -> "ModelsSet":
         result: ModelsSet = self.clone()

@@ -26,7 +26,6 @@ class CachedClass:
         object.__getattribute__(self, "_CachedClass__cache")[key] = value
 
 
-
 def get_median(scores: List[frac]) -> frac:
     if len(scores) == 0:
         return frac(0)
@@ -52,9 +51,7 @@ def float_to_frac(value: Union[float, int]) -> frac:
 
 
 def safe_max(
-    values: Iterable[Union[frac, int]],
-    *,
-    default: Union[frac, int] = 0,
+    values: Iterable[Union[frac, int]], *, default: Union[frac, int] = 0
 ) -> frac:
     l_values = list(values)
     if len(l_values) == 0:
@@ -63,9 +60,7 @@ def safe_max(
 
 
 def safe_min(
-    values: Iterable[Union[frac, int]],
-    *,
-    default: Union[frac, int] = 0,
+    values: Iterable[Union[frac, int]], *, default: Union[frac, int] = 0
 ) -> frac:
     l_values = list(values)
     if len(l_values) == 0:

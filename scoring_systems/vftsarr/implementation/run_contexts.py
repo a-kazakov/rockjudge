@@ -23,7 +23,7 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
 
     @staticmethod
     def get_class(scoring_system_name) -> Type["RunContextBase"]:
-        if scoring_system_name in ("formation", "formation_simplified", ):
+        if scoring_system_name in ("formation", "formation_simplified"):
             return RunContextFormation
         if scoring_system_name == "formation_acro":
             return RunContextFormationAcro
@@ -33,11 +33,11 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
             return RunContextAmFinalAcro
         if scoring_system_name == "am_qual":
             return RunContextAmQual
-        if scoring_system_name in ("acro", "acro_extended", ):
+        if scoring_system_name in ("acro", "acro_extended"):
             return RunContextAcro
         if scoring_system_name == "simplified":
             return RunContextSimplified
-        if scoring_system_name in ("solo", "solo_rough", ):
+        if scoring_system_name in ("solo", "solo_rough"):
             return RunContextSolo
         return RunContextDance
 
@@ -49,9 +49,7 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
         scoring_system_name: str,
     ) -> "RunContextBase":
         return cls.get_class(scoring_system_name)(
-            run_info,
-            tour_request,
-            scoring_system_name,
+            run_info, tour_request, scoring_system_name
         )
 
     @property
@@ -62,20 +60,15 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
     @property
     def inherited_data(self) -> Dict[str, Any]:
         inherited_dict = self.tour_request.inherited_data or {}
-        return (
-            inherited_dict
-                .get("by_participant", {})
-                .get(self.run_info.participant_id, {})
+        return inherited_dict.get("by_participant", {}).get(
+            self.run_info.participant_id, {}
         )
 
     @property
     def scores(self) -> List[ScoreContextBase]:
         return [
             ScoreContextBase.make_from_request(
-                score_info,
-                self.run_info,
-                self.tour_request,
-                self.scoring_system_name
+                score_info, self.run_info, self.tour_request, self.scoring_system_name
             )
             for score_info in self.run_info.scores
         ]
@@ -83,12 +76,8 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
     @property
     def scores_by_role(self) -> Dict[str, List[ScoreContextBase]]:
         return {
-            role: [
-                score
-                for score in self.scores
-                if score.judge_role == role
-            ]
-            for role in ("dance_judge", "acro_judge", "tech_judge", "head_judge", )
+            role: [score for score in self.scores if score.judge_role == role]
+            for role in ("dance_judge", "acro_judge", "tech_judge", "head_judge")
         }
 
     @property
@@ -96,26 +85,37 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
         has_prev_cards = len(self.inherited_data.get("cards", [])) > 0
         all_current_cards = [
             score.counting_score["card"]
-            for score in itertools.chain(self.scores_by_role["tech_judge"], self.scores_by_role["head_judge"])
+            for score in itertools.chain(
+                self.scores_by_role["tech_judge"], self.scores_by_role["head_judge"]
+            )
         ]
-        current_card = ("RC" if "RC" in all_current_cards else
-                        "YC" if "YC" in all_current_cards else
-                        "OK")
-        return ("RC" if current_card == "RC" or (current_card == "YC" and has_prev_cards) else
-                "YC" if current_card == "YC" else
-                "OK")
+        current_card = (
+            "RC"
+            if "RC" in all_current_cards
+            else "YC"
+            if "YC" in all_current_cards
+            else "OK"
+        )
+        return (
+            "RC"
+            if current_card == "RC" or (current_card == "YC" and has_prev_cards)
+            else "YC"
+            if current_card == "YC"
+            else "OK"
+        )
 
     @property
     def card_reasons(self) -> Dict[str, bool]:
         result: Dict[str, bool] = {}
         for score in itertools.chain(
-            self.scores_by_role["tech_judge"],
-            self.scores_by_role["head_judge"],
+            self.scores_by_role["tech_judge"], self.scores_by_role["head_judge"]
         ):
-            result.update({
-                reason: value or result.get(reason, False)
-                for reason, value in score.counting_score["card_reasons"].items()
-            })
+            result.update(
+                {
+                    reason: value or result.get(reason, False)
+                    for reason, value in score.counting_score["card_reasons"].items()
+                }
+            )
         return result
 
     @property
@@ -135,13 +135,10 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
     def data_to_inherit(self) -> Dict[str, Any]:
         current_cards = self.inherited_data.get("cards", [])
         if self.card != "OK" and self.run_info.status == RunStatus.OK:
-            current_cards = current_cards + [{
-                "tour_id": self.tour_request.tour_id,
-                "card": self.card,
-            }]
-        return {
-            "cards": current_cards,
-        }
+            current_cards = current_cards + [
+                {"tour_id": self.tour_request.tour_id, "card": self.card}
+            ]
+        return {"cards": current_cards}
 
     @property
     def criterias_scores(self) -> Dict[str, frac]:
@@ -152,8 +149,7 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
                 if criteria_name in criterias:
                     scores_by_criteria[criteria_name].append(criteria_value)
         return {
-            key: get_scaled_median(values)
-            for key, values in scores_by_criteria.items()
+            key: get_scaled_median(values) for key, values in scores_by_criteria.items()
         }
 
     @property
@@ -176,23 +172,14 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
     def sorting_score(self) -> Tuple[Union[int, frac], ...]:
         status = self.run_info.status
         if status != RunStatus.OK:
-            return (
-                1,
-                int(status == RunStatus.DQ),
-                int(status == RunStatus.NP),
-            )
-        return (
-            0,
-            -self.total_score,
-            -int(self.bonus),
-        )
+            return (1, int(status == RunStatus.DQ), int(status == RunStatus.NP))
+        return (0, -self.total_score, -int(self.bonus))
 
     @property
     def extra_data(self) -> Dict[str, Any]:
-        if self.run_info.status != RunStatus.DQ :
+        if self.run_info.status != RunStatus.DQ:
             criterias_scores: Optional[Dict[str, float]] = {
-                k: float(v)
-                for k, v in self.criterias_scores.items()
+                k: float(v) for k, v in self.criterias_scores.items()
             }
         else:
             criterias_scores = None
@@ -213,7 +200,7 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
         }
 
     def make_result(self, place: int, advanced: bool) -> RunResult:
-        if self.run_info.status != RunStatus.DQ :
+        if self.run_info.status != RunStatus.DQ:
             display_score: str = self.display_score
         else:
             display_score = "—"
@@ -228,32 +215,19 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
 class RunContextSimplified(RunContextBase):
     @property
     def scoring_criterias(self) -> Tuple[str, ...]:
-        return (
-            "points",
-        )
+        return ("points",)
 
 
 class RunContextDance(RunContextBase):
     @property
     def scoring_criterias(self) -> Tuple[str, ...]:
-        return (
-            "fw_man",
-            "fw_woman",
-            "dance_figs",
-            "composition",
-            "mistakes",
-        )
+        return ("fw_man", "fw_woman", "dance_figs", "composition", "mistakes")
 
 
 class RunContextSolo(RunContextBase):
     @property
     def scoring_criterias(self) -> Tuple[str, ...]:
-        return (
-            "fw",
-            "dance_figs",
-            "composition",
-            "mistakes",
-        )
+        return ("fw", "dance_figs", "composition", "mistakes")
 
 
 class RunContextAcroBase(RunContextBase):
@@ -265,8 +239,7 @@ class RunContextAcroBase(RunContextBase):
     @property
     def fall_down(self) -> frac:
         return safe_max(
-            s.counting_score["fall_down"]
-            for s in self.scores_by_role["tech_judge"]
+            s.counting_score["fall_down"] for s in self.scores_by_role["tech_judge"]
         )
 
     @property
@@ -296,21 +269,18 @@ class RunContextAmQual(RunContextAcro):
     def total_score(self) -> frac:
         result = frac(0)
         for criteria, score_value in self.criterias_scores.items():
-            if criteria in ("fw_woman", "fw_man", "dance_figs", "composition", ):
+            if criteria in ("fw_woman", "fw_man", "dance_figs", "composition"):
                 score_value *= frac(10, 13)
             result += score_value
         result += self.penalty
-        result -=  30 * self.fall_down
+        result -= 30 * self.fall_down
         return result
 
 
 class RunContextAmFinalFw(RunContextDance):
     @property
     def data_to_inherit(self) -> Dict[str, Any]:
-        return {
-            "fw_score": self.total_score,
-            **super().data_to_inherit,
-        }
+        return {"fw_score": self.total_score, **super().data_to_inherit}
 
 
 class RunContextAmFinalAcro(RunContextAcroBase):
@@ -338,17 +308,8 @@ class RunContextAmFinalAcro(RunContextAcroBase):
     def sorting_score(self) -> Tuple[Union[int, frac], ...]:
         status = self.run_info.status
         if status != RunStatus.OK:
-            return (
-                1,
-                int(status == RunStatus.DQ),
-                int(status == RunStatus.NP),
-            )
-        return (
-            0,
-            -self.total_score,
-            -self.acro_total_score,
-            -int(self.bonus),
-        )
+            return (1, int(status == RunStatus.DQ), int(status == RunStatus.NP))
+        return (0, -self.total_score, -self.acro_total_score, -int(self.bonus))
 
     @property
     def extra_data(self) -> Dict[str, Any]:
@@ -363,8 +324,7 @@ class RunContextFormation(RunContextBase):
     @property
     def undercount(self) -> frac:
         return safe_max(
-            s.counting_score["undercount"]
-            for s in self.scores_by_role["tech_judge"]
+            s.counting_score["undercount"] for s in self.scores_by_role["tech_judge"]
         )
 
     @property
@@ -373,13 +333,7 @@ class RunContextFormation(RunContextBase):
 
     @property
     def scoring_criterias(self) -> Tuple[str, ...]:
-        return (
-            "fw",
-            "dance_figs",
-            "composition",
-            "figures",
-            "mistakes",
-        )
+        return ("fw", "dance_figs", "composition", "figures", "mistakes")
 
 
 class RunContextFormationAcro(RunContextFormation, RunContextAcroBase):

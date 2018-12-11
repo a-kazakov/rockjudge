@@ -6,7 +6,7 @@ import time
 from contextlib import contextmanager
 
 
-def profile(sort='cumulative', lines=50, strip_dirs=False):
+def profile(sort="cumulative", lines=50, strip_dirs=False):
     def outer(fun):
         def inner(*args, **kwargs):
             file = tempfile.NamedTemporaryFile(mode="w", delete=False)
@@ -29,12 +29,13 @@ def profile(sort='cumulative', lines=50, strip_dirs=False):
 
             file.close()
             return ret
+
         return inner
 
     # in case this is defined as "@profile" instead of "@profile()"
-    if hasattr(sort, '__call__'):
+    if hasattr(sort, "__call__"):
         fun = sort
-        sort = 'cumulative'
+        sort = "cumulative"
         outer = outer(fun)
     return outer
 

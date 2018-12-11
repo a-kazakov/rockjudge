@@ -29,22 +29,22 @@ def load_config():
                 print("ERROR: Missing [WORD] section in config file.")
             if index["downloads"] == "":
                 ok = False
-                print("ERROR: Downloads path is not set. Please set it print-config.txt.")
+                print(
+                    "ERROR: Downloads path is not set. Please set it print-config.txt."
+                )
             if index["word"] == "":
                 ok = False
                 print("ERROR: MS Word path is not set. Please set it print-config.txt.")
             if not ok:
                 return None
-            return {
-                "downloads": index["downloads"],
-                "word": index["word"],
-            }
+            return {"downloads": index["downloads"], "word": index["word"]}
     except FileNotFoundError:
         print("Config file not found.")
         return None
     except:
         print("Config file is incorrect.")
         return None
+
 
 config = load_config()
 
@@ -60,7 +60,16 @@ class MyServer(BaseHTTPRequestHandler):
             for idx in range(copies):
                 local_path = "{}_{}.docx".format(path, idx)
                 sp.call(["copy", path, local_path], shell=True)
-                sp.Popen([config["word"], "/q", "/n", "/mFilePrintDefault", "/mFileCloseOrExit", local_path])
+                sp.Popen(
+                    [
+                        config["word"],
+                        "/q",
+                        "/n",
+                        "/mFilePrintDefault",
+                        "/mFileCloseOrExit",
+                        local_path,
+                    ]
+                )
             break
 
     def do_GET(self):

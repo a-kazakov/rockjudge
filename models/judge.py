@@ -23,7 +23,9 @@ class Judge(ModelBase, BaseModel):
     __tablename__ = "judges"
 
     id = Column(Integer, primary_key=True)
-    competition_id = Column(Integer, ForeignKey("competitions.id", ondelete="RESTRICT"), nullable=False)
+    competition_id = Column(
+        Integer, ForeignKey("competitions.id", ondelete="RESTRICT"), nullable=False
+    )
     number = Column(String, default="", nullable=False)
     name = Column(String, default="", nullable=False)
     category = Column(String, default="", nullable=False)
@@ -48,14 +50,20 @@ class Judge(ModelBase, BaseModel):
     # Permissions
 
     @classmethod
-    def check_create_permission(cls, session: Session, request: "ApiRequest", data: Dict[str, Any]) -> bool:
-        auth = ClientAuth.get_for_competition(session, request.client, data["competition_id"])
+    def check_create_permission(
+        cls, session: Session, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
+        auth = ClientAuth.get_for_competition(
+            session, request.client, data["competition_id"]
+        )
         return auth.access_level == AccessLevel.ADMIN
 
     def check_read_permission(self, request: "ApiRequest") -> bool:
         return self.get_auth(request.client).access_level != AccessLevel.NONE
 
-    def check_update_permission(self, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+    def check_update_permission(
+        self, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
         return self.get_auth(request.client).access_level == AccessLevel.ADMIN
 
     def check_delete_permission(self, request: "ApiRequest") -> bool:
@@ -64,10 +72,10 @@ class Judge(ModelBase, BaseModel):
     # Create logic
 
     @classmethod
-    def before_create(cls, session: Session, data: Dict[str, Any], *, unsafe: bool) -> Dict[str, Any]:
-        return {
-            "competition": session.query(Competition).get(data["competition_id"]),
-        }
+    def before_create(
+        cls, session: Session, data: Dict[str, Any], *, unsafe: bool
+    ) -> Dict[str, Any]:
+        return {"competition": session.query(Competition).get(data["competition_id"])}
 
     # Update logic
 
@@ -75,6 +83,7 @@ class Judge(ModelBase, BaseModel):
 
     def before_delete(self) -> None:
         from models.discipline_judge import DisciplineJudge
+
         if self.session.query(DisciplineJudge).filter_by(judge_id=self.id).count() > 0:
             raise ApiError("errors.judge.delete_with_disciplines")
 
@@ -90,14 +99,9 @@ class Judge(ModelBase, BaseModel):
         mk: "MutationsKeeper",
     ) -> None:
         for _ in cls.load_models_base(
-            objects,
-            competition.session,
-            mk,
-            competition_id=competition.id,
+            objects, competition.session, mk, competition_id=competition.id
         ):
             pass
-
-
 
     # RW_PROPS = ["name", "category", "role_description", "number", "sp", "external_id"]
     #

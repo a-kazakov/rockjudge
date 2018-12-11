@@ -1,5 +1,16 @@
 import itertools
-from typing import Any, Dict, Iterable, List, NamedTuple, Optional, Set, TYPE_CHECKING, Tuple, Union
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    List,
+    NamedTuple,
+    Optional,
+    Set,
+    TYPE_CHECKING,
+    Tuple,
+    Union,
+)
 
 from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Session, relationship
@@ -28,10 +39,7 @@ class DisciplineResultsRow(NamedTuple):
     run: "Run"
 
     def serialize(self) -> Dict[str, Any]:
-        return {
-            "place": self.place,
-            "run_id": self.run.id,
-        }
+        return {"place": self.place, "run_id": self.run.id}
 
 
 class DisciplineResults(NamedTuple):
@@ -57,7 +65,9 @@ class Discipline(ModelBase, BaseModel):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     sp = Column(Integer, nullable=False)
-    competition_id = Column(Integer, ForeignKey("competitions.id", ondelete="RESTRICT"), nullable=False)
+    competition_id = Column(
+        Integer, ForeignKey("competitions.id", ondelete="RESTRICT"), nullable=False
+    )
     external_id = Column(String, nullable=True)
 
     competition = relationship(Competition, backref="disciplines")
@@ -74,7 +84,7 @@ class Discipline(ModelBase, BaseModel):
 
     @property
     def sorting_key(self) -> Tuple[Union[int, str], ...]:
-        return (self.sp, )
+        return (self.sp,)
 
     @property
     def _tours_inited(self) -> bool:
@@ -90,8 +100,12 @@ class Discipline(ModelBase, BaseModel):
     # Permissions
 
     @classmethod
-    def check_create_permission(cls, session: Session, request: "ApiRequest", data: Dict[str, Any]) -> bool:
-        auth = ClientAuth.get_for_competition(session, request.client, int(data["competition_id"]))
+    def check_create_permission(
+        cls, session: Session, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
+        auth = ClientAuth.get_for_competition(
+            session, request.client, int(data["competition_id"])
+        )
         if not auth:
             return False
         return auth.access_level == AccessLevel.ADMIN
@@ -99,7 +113,9 @@ class Discipline(ModelBase, BaseModel):
     def check_read_permission(self, request: "ApiRequest") -> bool:
         return self.get_auth(request.client).access_level != AccessLevel.NONE
 
-    def check_update_permission(self, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+    def check_update_permission(
+        self, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
         return self.get_auth(request.client).access_level == AccessLevel.ADMIN
 
     def check_delete_permission(self, request: "ApiRequest") -> bool:
@@ -107,10 +123,10 @@ class Discipline(ModelBase, BaseModel):
 
     # Create logic
     @classmethod
-    def before_create(cls, session: Session, data: Dict[str, Any], *, unsafe: bool) -> Dict[str, Any]:
-        return {
-            "competition": session.query(Competition).get(data["competition_id"])
-        }
+    def before_create(
+        cls, session: Session, data: Dict[str, Any], *, unsafe: bool
+    ) -> Dict[str, Any]:
+        return {"competition": session.query(Competition).get(data["competition_id"])}
 
     # Update logic
     # (default)
@@ -120,6 +136,7 @@ class Discipline(ModelBase, BaseModel):
     def before_delete(self) -> None:
         from models.participant import Participant
         from models.tour import Tour
+
         if self.session.query(Participant).filter_by(discipline_id=self.id).count() > 0:
             raise ApiError("errors.discipline.delete_with_participants")
         if self.session.query(Tour).filter_by(discipline_id=self.id).count() > 0:
@@ -161,6 +178,7 @@ class Discipline(ModelBase, BaseModel):
     # @timed("Get discipline results")
     def get_results(self) -> Tuple[DisciplineResults, Dict[int, TourComputationResult]]:
         from models.run import Run
+
         rows: List[DisciplineResultsRow] = []
         participants_added: Set[int] = set()
         computed_tours = list(reversed(self.compute_tours()))
@@ -183,22 +201,25 @@ class Discipline(ModelBase, BaseModel):
                 row = DisciplineResultsRow(
                     place=(
                         c_run.place + place_offset
-                        if not skip_place and not c_run.advanced and c_run.place is not None
+                        if not skip_place
+                        and not c_run.advanced
+                        and c_run.place is not None
                         else None
                     ),
                     run=run,
                 )
                 participants_added.add(participant_id)
                 rows.append(row)
-        result = DisciplineResults(rows=rows, finalized_tours={t.id for t in tours if t.finalized})
+        result = DisciplineResults(
+            rows=rows, finalized_tours={t.id for t in tours if t.finalized}
+        )
         return result, tours_results_dict
 
     def set_judges(
-        self,
-        new_judges_data: List[Dict[str, Union[int, str]]],
-        mk: "MutationsKeeper",
+        self, new_judges_data: List[Dict[str, Union[int, str]]], mk: "MutationsKeeper"
     ) -> bool:  # True if judges were added
         from models.discipline_judge import DisciplineJudge
+
         # TODO: typecheck new_judges_data, check judge role with scoring system meta
         new_data = {
             (judge_data["judge_id"], judge_data["role"])
@@ -210,20 +231,22 @@ class Discipline(ModelBase, BaseModel):
         }
         if new_data == old_data:
             return False
-        self.check_no_finalized_tours("errors.discipline.change_judges_with_finalized_tour")
+        self.check_no_finalized_tours(
+            "errors.discipline.change_judges_with_finalized_tour"
+        )
         new_ids = {judge_data["judge_id"] for judge_data in new_judges_data}
-        old_ids = {discipline_judge.judge_id for discipline_judge in self.discipline_judges}
+        old_ids = {
+            discipline_judge.judge_id for discipline_judge in self.discipline_judges
+        }
         rev_judges: Dict[int, "Judge"] = {
-            judge.id: judge
-            for judge in self.competition.judges
+            judge.id: judge for judge in self.competition.judges
         }
         rev_discipline_judges: Dict[int, "DisciplineJudge"] = {
             discipline_judge.judge_id: discipline_judge
             for discipline_judge in self.discipline_judges
         }
         rev_judges_data: Dict[int, Dict[str, Union[int, str]]] = {
-            obj["judge_id"]: obj
-            for obj in new_judges_data
+            obj["judge_id"]: obj for obj in new_judges_data
         }
         judges_ids_to_add = new_ids - old_ids
         judges_ids_to_update = new_ids.intersection(old_ids)
@@ -241,8 +264,7 @@ class Discipline(ModelBase, BaseModel):
             )
         for judge_id in judges_ids_to_update:
             rev_discipline_judges[judge_id].update(
-                {"role": rev_judges_data[judge_id]["role"]},
-                mk,
+                {"role": rev_judges_data[judge_id]["role"]}, mk
             )
         for judge_id in judges_ids_to_delete:
             rev_discipline_judges[judge_id].delete(mk)
@@ -250,12 +272,16 @@ class Discipline(ModelBase, BaseModel):
 
     def check_no_finalized_tours(self, error_message: str) -> None:
         from models.tour import Tour
-        if self.session.query(Tour).filter_by(discipline=self, finalized=True).count() > 0:
+
+        if (
+            self.session.query(Tour).filter_by(discipline=self, finalized=True).count()
+            > 0
+        ):
             raise ApiError(error_message)
 
     def normalize_tours_sps(self) -> None:
         for idx, tour in enumerate(self.tours_sorted):
-            tour.sp = idx * 2**10
+            tour.sp = idx * 2 ** 10
 
     @classmethod
     def load_models(
@@ -270,10 +296,7 @@ class Discipline(ModelBase, BaseModel):
         from models.tour import Tour
 
         for model, created, raw_data in cls.load_models_base(
-            objects,
-            competition.session,
-            mk,
-            competition_id=competition.id
+            objects, competition.session, mk, competition_id=competition.id
         ):
             if "participants" in raw_data and items["participants"]:
                 Participant.load_models(model, raw_data["participants"], mk)

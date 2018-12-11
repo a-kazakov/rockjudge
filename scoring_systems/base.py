@@ -20,6 +20,7 @@ ScoringSystemName = NewType("ScoringSystemName", str)
 
 # Request types
 
+
 class ScoreInfo(NamedTuple):
     score_id: ScoreId
     judge_id: JudgeId
@@ -42,7 +43,9 @@ class TourComputationRequest(NamedTuple):
     runs: List[RunInfo]
     inherited_data: Any
 
+
 # Result types
+
 
 class RunResult(NamedTuple):
     total_score_str: str
@@ -105,6 +108,7 @@ class JudgeRolePermissions(NamedTuple):
     can_update_tour: bool
     can_update_run_status: bool
 
+
 # Base class
 
 
@@ -127,15 +131,21 @@ class BaseScoringSystem(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def filter_score_component(self, judge_role: str, key: str, value: Any, prev_value: Any) -> Any:
+    def filter_score_component(
+        self, judge_role: str, key: str, value: Any, prev_value: Any
+    ) -> Any:
         pass
 
     @abstractmethod
-    def get_full_score_data(self, judge_role: str, data: Dict[str, Any]) -> Dict[str, Any]:
+    def get_full_score_data(
+        self, judge_role: str, data: Dict[str, Any]
+    ) -> Dict[str, Any]:
         pass
 
     @abstractmethod
-    def get_judge_role_permissions(self, judge_role: Optional[str]) -> JudgeRolePermissions:
+    def get_judge_role_permissions(
+        self, judge_role: Optional[str]
+    ) -> JudgeRolePermissions:
         pass
 
     @abstractmethod

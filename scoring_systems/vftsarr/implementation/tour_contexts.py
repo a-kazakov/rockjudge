@@ -1,14 +1,20 @@
 from typing import List, Optional, Any, Dict
 
 from enums import RunStatus
-from scoring_systems.base import TourComputationRequest, JudgeResult, TourComputationResult
+from scoring_systems.base import (
+    TourComputationRequest,
+    JudgeResult,
+    TourComputationResult,
+)
 from .common import CachedClass
 
 from .run_contexts import RunContextBase
 
 
 class TourContext(CachedClass):
-    def __init__(self, tour_request: TourComputationRequest, scoring_system_name: str) -> None:
+    def __init__(
+        self, tour_request: TourComputationRequest, scoring_system_name: str
+    ) -> None:
         self.tour_request = tour_request
         self.scoring_system_name = scoring_system_name
 
@@ -25,18 +31,16 @@ class TourContext(CachedClass):
     @property
     def runs(self) -> List[RunContextBase]:
         return [
-            RunContextBase.make(
-                run_info,
-                self.tour_request,
-                self.scoring_system_name,
-            )
+            RunContextBase.make(run_info, self.tour_request, self.scoring_system_name)
             for run_info in self.tour_request.runs
         ]
 
     @property
     def data_to_inherit(self) -> Dict[str, Any]:
         return {
-            "by_participant": {run.run_info.participant_id: run.data_to_inherit for run in self.runs},
+            "by_participant": {
+                run.run_info.participant_id: run.data_to_inherit for run in self.runs
+            },
             "extra_advanced": self.next_extra_advanced,
         }
 
@@ -49,7 +53,9 @@ class TourContext(CachedClass):
     @property
     def next_extra_advanced(self) -> int:
         actual_num_advanced = sum(self.advances) if self.advances else 0
-        return self.extra_advanced + (actual_num_advanced - self.tour_request.num_advances)
+        return self.extra_advanced + (
+            actual_num_advanced - self.tour_request.num_advances
+        )
 
     def make_advances(self, runs: List[RunContextBase], places: List[Optional[int]]):
         target_advances = self.tour_request.num_advances - self.extra_advanced

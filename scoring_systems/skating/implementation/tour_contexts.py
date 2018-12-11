@@ -2,7 +2,12 @@ from abc import ABCMeta, abstractmethod
 from typing import Any, Dict, List, Type, cast, Iterable
 
 from enums import RunStatus
-from scoring_systems.base import TourComputationRequest, ScoringSystemName, TourComputationResult, JudgeResult
+from scoring_systems.base import (
+    TourComputationRequest,
+    ScoringSystemName,
+    TourComputationResult,
+    JudgeResult,
+)
 from .common import CachedClass, SkatingSystemTour, SkatingSystemDiscipline
 from .run_contexts import RunContextBase, RunContextFinal
 
@@ -17,9 +22,7 @@ class TourContextBase(CachedClass, metaclass=ABCMeta):
         self.scoring_system_name = scoring_system_name
 
     @staticmethod
-    def get_class(
-        scoring_system_name: ScoringSystemName,
-    ) -> Type["TourContextBase"]:
+    def get_class(scoring_system_name: ScoringSystemName,) -> Type["TourContextBase"]:
         if scoring_system_name == "qualification_simple":
             return TourContextQualification
         if scoring_system_name in ("final_simple", "final_3d"):
@@ -33,19 +36,12 @@ class TourContextBase(CachedClass, metaclass=ABCMeta):
         tour_request: TourComputationRequest,
         scoring_system_name: ScoringSystemName,
     ) -> "TourContextBase":
-        return cls.get_class(scoring_system_name)(
-            tour_request,
-            scoring_system_name,
-        )
+        return cls.get_class(scoring_system_name)(tour_request, scoring_system_name)
 
     @property
     def runs(self) -> List[RunContextBase]:
         return [
-            RunContextBase.make(
-                run_info,
-                self,
-                self.scoring_system_name,
-            )
+            RunContextBase.make(run_info, self, self.scoring_system_name)
             for run_info in self.tour_request.runs
         ]
 
@@ -75,7 +71,9 @@ class TourContextBase(CachedClass, metaclass=ABCMeta):
     @property
     def data_to_inherit(self) -> Dict[str, Any]:
         return {
-            "by_participant": {run.run_info.participant_id: run.data_to_inherit for run in self.runs},
+            "by_participant": {
+                run.run_info.participant_id: run.data_to_inherit for run in self.runs
+            }
         }
 
     @property
@@ -91,10 +89,11 @@ class TourContextQualification(TourContextBase):
         places = self.make_places([r.sorting_score for r in sorted_runs])
         advances = self.make_advances(sorted_runs, places)
         return TourComputationResult(
-            extra_data = {},
-            inherited_data = {
-                "extra_advanced": self.extra_advanced + (len(advances) - self.tour_request.num_advances),
-                **self.data_to_inherit
+            extra_data={},
+            inherited_data={
+                "extra_advanced": self.extra_advanced
+                + (len(advances) - self.tour_request.num_advances),
+                **self.data_to_inherit,
             },
             results_order=[run.run_info.run_id for run in sorted_runs],
             runs_results={
@@ -112,33 +111,30 @@ class TourContextQualification(TourContextBase):
             },
         )
 
+
 class TourContextFinal(TourContextBase):
     @property
     def result(self) -> TourComputationResult:
-        sst = SkatingSystemTour([
-            cast(RunContextFinal, run).get_places(len(self.runs))
-            for run in self.runs
-        ])
+        sst = SkatingSystemTour(
+            [cast(RunContextFinal, run).get_places(len(self.runs)) for run in self.runs]
+        )
         sorted_rows = sorted(
             zip(self.runs, sst.places),
-            key=lambda row: (row[1] or 10**10, row[0].run_info.run_id),
+            key=lambda row: (row[1] or 10 ** 10, row[0].run_info.run_id),
         )
         return TourComputationResult(
-            extra_data = {
-                "skating_quorum": sst.n_judges // 2 + 1,
-            },
-            inherited_data = self.data_to_inherit,
+            extra_data={"skating_quorum": sst.n_judges // 2 + 1},
+            inherited_data=self.data_to_inherit,
             results_order=[run.run_info.run_id for run, _ in sorted_rows],
             runs_results={
                 run.run_info.run_id: run.make_result(
                     int_place if run.run_info.status != RunStatus.DQ else None,
                     run.run_info.status != RunStatus.DQ,
-                    {
-                        "skating_row": sk_row,
-                        "tour_place": float(place),
-                    },
+                    {"skating_row": sk_row, "tour_place": float(place)},
                 )
-                for run, sk_row, place, int_place in zip(self.runs, sst.skating_rows, sst.places, sst.int_places)
+                for run, sk_row, place, int_place in zip(
+                    self.runs, sst.skating_rows, sst.places, sst.int_places
+                )
             },
             scores_results={
                 score.score_info.score_id: score.result
@@ -166,7 +162,9 @@ class TourContextFinalSummary(TourContextBase):
 
     @property
     def result(self) -> TourComputationResult:
-        all_inherited_data = [run.inherited_data.get("raw_places", []) for run in self.runs]
+        all_inherited_data = [
+            run.inherited_data.get("raw_places", []) for run in self.runs
+        ]
         sk_tours = [
             SkatingSystemTour(self.transform_places(places))
             for places in zip(*all_inherited_data)
@@ -175,17 +173,17 @@ class TourContextFinalSummary(TourContextBase):
         all_tours_places = zip(*(st.places for st in sk_tours))
         sorted_rows = sorted(
             zip(self.runs, ssd.places),
-            key=lambda row: (row[1] or 10**10, row[0].run_info.run_id),
+            key=lambda row: (row[1] or 10 ** 10, row[0].run_info.run_id),
         )
         return TourComputationResult(
-            extra_data={
-                "skating_quorum": ssd.n_judges * ssd.n_tours // 2 + 1,
-            },
+            extra_data={"skating_quorum": ssd.n_judges * ssd.n_tours // 2 + 1},
             inherited_data={},
             results_order=[run.run_info.run_id for run, _ in sorted_rows],
             runs_results={
                 run.run_info.run_id: run.make_result(
-                    int(float(place)) if run.run_info.status != RunStatus.DQ else None,  # FIXME
+                    int(float(place))
+                    if run.run_info.status != RunStatus.DQ
+                    else None,  # FIXME
                     True,
                     {
                         "tours_places": list(map(float, tour_places)),

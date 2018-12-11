@@ -10,9 +10,8 @@ os.rename("__init__.py", "_init.py")
 try:
     setup(
         ext_modules=cythonize(
-            "*.py",
-            exclude=[fn for fn in os.listdir() if fn.startswith("_")],
-        ),
+            "*.py", exclude=[fn for fn in os.listdir() if fn.startswith("_")]
+        )
     )
 finally:
     os.rename("_init.py", "__init__.py")

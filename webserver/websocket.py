@@ -13,7 +13,12 @@ from api import Api, ApiMethod, ApiRequest, ApiResponse
 from db import db
 from exceptions import ApiError
 from models.client import Client
-from mutations import DisciplineResultsMutationRecord, FetchedMutations, FinalizedMutations, MutationsKeeper
+from mutations import (
+    DisciplineResultsMutationRecord,
+    FetchedMutations,
+    FinalizedMutations,
+    MutationsKeeper,
+)
 from postprocessor import BasePostProcessor, PrivatePostProcessor, PublicPostProcessor
 from subscriptions import SubscriptionBase
 from utils import DbQueriesLogger, catch_all_async
@@ -126,16 +131,17 @@ class DisciplineResultsPostponedUpdater:
             mk = MutationsKeeper()
             mk.discipline_results_mutations = records
             all_mutations = await asyncio.get_event_loop().run_in_executor(
-                None,
-                self._fetch_mutations,
-                session,
-                mk.finalize(),
+                None, self._fetch_mutations, session, mk.finalize()
             )
             ws_manager = WebSocketConnectionsManager.instance()
             connections = ws_manager.get_all_connections()
             for conn in connections:
-                conn_mutations = all_mutations.filter_for_subscriptions(conn.subscriptions)
-                await conn.send_message(MutationsPushOutgoingMessage(conn_mutations, is_initial=False))
+                conn_mutations = all_mutations.filter_for_subscriptions(
+                    conn.subscriptions
+                )
+                await conn.send_message(
+                    MutationsPushOutgoingMessage(conn_mutations, is_initial=False)
+                )
         finally:
             db.close_session(session)
             total_time = time.monotonic() - start_time
@@ -147,7 +153,9 @@ class DisciplineResultsPostponedUpdater:
             self.__status = DisciplineResultsPostponedUpdaterStatus.IDLE
             self.maybe_schedule_flush()
 
-    def _fetch_mutations(self, session: Session, mutations: FinalizedMutations) -> FetchedMutations:
+    def _fetch_mutations(
+        self, session: Session, mutations: FinalizedMutations
+    ) -> FetchedMutations:
         return mutations.fetch(session, fetch_results=True)
 
 
@@ -180,7 +188,9 @@ class WebSocketConnectionsManager:
     def remove_connection(self, client_id):
         self._connections.pop(client_id, None)
 
-    def __get_connections_for_postprocessor(self, pp: BasePostProcessor) -> List["WebSocketHandler"]:
+    def __get_connections_for_postprocessor(
+        self, pp: BasePostProcessor
+    ) -> List["WebSocketHandler"]:
         if isinstance(pp, PrivatePostProcessor):
             conn = self._connections.get(pp.ws_client_id)
             if conn is None:
@@ -233,9 +243,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
             response = await self.process_request(request, data, json_data, signature)
         except ApiError as ex:
             response = ApiResponse(
-                request=request,
-                error_code=ex.code,
-                error_args=ex.args,
+                request=request, error_code=ex.code, error_args=ex.args
             )
         except Exception as ex:
             print_exc()
@@ -257,7 +265,10 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
     ) -> ApiResponse:
         manager = WebSocketConnectionsManager.instance()
         session = db.make_session()
-        if request.method not in (ApiMethod.AUTH_START_REGISTRATION, ApiMethod.AUTH_COMPLETE_REGISTRATION,):
+        if request.method not in (
+            ApiMethod.AUTH_START_REGISTRATION,
+            ApiMethod.AUTH_COMPLETE_REGISTRATION,
+        ):
             client = Client.get_and_validate(
                 session=session,
                 client_id=raw_data["client_id"],
@@ -290,17 +301,19 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
                             f"{len(self.subscriptions)}"
                         )
                     postprocessor: BasePostProcessor = PrivatePostProcessor(
-                        response,
-                        api_executor.next_session,
-                        self.client_id,
+                        response, api_executor.next_session, self.client_id
                     )
                 else:
-                    postprocessor = PublicPostProcessor(response, api_executor.next_session)
+                    postprocessor = PublicPostProcessor(
+                        response, api_executor.next_session
+                    )
 
                 try:
                     manager.register_postprocessor(postprocessor)
                     await postprocessor.prepare()
-                    DisciplineResultsPostponedUpdater.instance().add(postprocessor.postponed_discipline_updates)
+                    DisciplineResultsPostponedUpdater.instance().add(
+                        postprocessor.postponed_discipline_updates
+                    )
                     await manager.mark_postprocessor_ready(postprocessor)
                 finally:
                     await manager.finalize_postprocessor(postprocessor)
@@ -331,7 +344,4 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         WebSocketConnectionsManager.instance().remove_connection(self.client_id)
 
     def get_compression_options(self):
-        return {
-            "compression_level": 4,
-            "mem_level": 9,
-        }
+        return {"compression_level": 4, "mem_level": 9}

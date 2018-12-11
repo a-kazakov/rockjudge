@@ -72,6 +72,7 @@ class NewDatabase:
         from models.score import Score
         from models.score_part import ScorePart
         from models.tour import Tour
+
         return [
             Client,
             ClientAuth,
@@ -89,6 +90,7 @@ class NewDatabase:
             ScorePart,
             Tour,
         ]
+
 
 db = NewDatabase()
 

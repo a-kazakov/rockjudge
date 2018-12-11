@@ -17,8 +17,8 @@ from webserver.websocket import WebSocketHandler
 
 
 BASE_PATH = os.path.dirname(__file__)
-STATIC_PATH = os.path.join(BASE_PATH, 'static')
-SCREEN_STATIC_PATH = os.path.join(BASE_PATH, 'screen', 'static')
+STATIC_PATH = os.path.join(BASE_PATH, "static")
+SCREEN_STATIC_PATH = os.path.join(BASE_PATH, "screen", "static")
 
 handlers = [
     (r"/$", StartPageHandler),

@@ -18,7 +18,12 @@ from models.run import Run
 from models.run_acrobatic import RunAcrobatic
 from models.score import Score
 from models.tour import Tour
-from mutations import (DisciplineResultsMutationRecord, ModelMutationRecord, MutationsKeeper, TourResultsMutationRecord)
+from mutations import (
+    DisciplineResultsMutationRecord,
+    ModelMutationRecord,
+    MutationsKeeper,
+    TourResultsMutationRecord,
+)
 from prefetching import ModelTreeNode, RecursiveDict
 
 
@@ -39,15 +44,21 @@ class SubscriptionBase(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def should_push_tour_results_mutation(self, record: "TourResultsMutationRecord") -> bool:
+    def should_push_tour_results_mutation(
+        self, record: "TourResultsMutationRecord"
+    ) -> bool:
         pass
 
     @abstractmethod
-    def should_push_discipline_results_mutation(self, record: "DisciplineResultsMutationRecord") -> bool:
+    def should_push_discipline_results_mutation(
+        self, record: "DisciplineResultsMutationRecord"
+    ) -> bool:
         pass
 
     @abstractmethod
-    def get_initial_models(self, session: Session) -> Generator[InitialModelData, None, None]:
+    def get_initial_models(
+        self, session: Session
+    ) -> Generator[InitialModelData, None, None]:
         pass
 
     def add_initial_models_to_mk(self, session: Session, mk: MutationsKeeper) -> None:
@@ -60,9 +71,13 @@ class SubscriptionBase(metaclass=ABCMeta):
                 elif isinstance(model, Discipline):
                     mk.submit_discipline_results_update(model)
                 else:
-                    raise ValueError(f"No results can be fetched for model {type(model).__name__}")
+                    raise ValueError(
+                        f"No results can be fetched for model {type(model).__name__}"
+                    )
 
-    def _yield_models(self, model: "BaseModel", schema: RecursiveDict) -> Generator[BaseModel, None, None]:
+    def _yield_models(
+        self, model: "BaseModel", schema: RecursiveDict
+    ) -> Generator[BaseModel, None, None]:
         yield model
         for key, subschema in schema.items():
             for submodel in getattr(model, key):
@@ -78,10 +93,9 @@ class SubscriptionBase(metaclass=ABCMeta):
     ) -> Generator[InitialModelData, None, None]:
         model_tree = ModelTreeNode.from_dict(model_type, prefetch_alt_schema or schema)
         root_model = (
-            session
-                .query(model_type)
-                .options(*model_tree.build_prefetcher())
-                .get(model_id)
+            session.query(model_type)
+            .options(*model_tree.build_prefetcher())
+            .get(model_id)
         )
         model_tree.save_to_session(session, root_model)
         for model in self._yield_models(root_model, schema):
@@ -94,23 +108,26 @@ class SubscriptionClient(SubscriptionBase):
         self.__client_id = client_id
 
     def should_push_model_mutation(self, mutation: "ModelMutationRecord") -> bool:
-        return (
-            mutation.client_id == self.__client_id
-            and mutation.model_type in {Client, ClientAuth}
-        )
-
-    def should_push_tour_results_mutation(self, record: "TourResultsMutationRecord") -> bool:
-        return False
-
-    def should_push_discipline_results_mutation(self, record: "DisciplineResultsMutationRecord") -> bool:
-        return False
-
-    def get_initial_models(self, session: Session) -> Generator[InitialModelData, None, None]:
-        yield from self._get_initial_general(
-            session,
+        return mutation.client_id == self.__client_id and mutation.model_type in {
             Client,
-            self.__client_id,
-            {"authorizations": {}},
+            ClientAuth,
+        }
+
+    def should_push_tour_results_mutation(
+        self, record: "TourResultsMutationRecord"
+    ) -> bool:
+        return False
+
+    def should_push_discipline_results_mutation(
+        self, record: "DisciplineResultsMutationRecord"
+    ) -> bool:
+        return False
+
+    def get_initial_models(
+        self, session: Session
+    ) -> Generator[InitialModelData, None, None]:
+        yield from self._get_initial_general(
+            session, Client, self.__client_id, {"authorizations": {}}
         )
 
 
@@ -118,14 +135,22 @@ class SubscriptionAllCompetitions(SubscriptionBase):
     def should_push_model_mutation(self, mutation: "ModelMutationRecord") -> bool:
         return mutation.model_type == Competition
 
-    def should_push_tour_results_mutation(self, record: "TourResultsMutationRecord") -> bool:
+    def should_push_tour_results_mutation(
+        self, record: "TourResultsMutationRecord"
+    ) -> bool:
         return False
 
-    def should_push_discipline_results_mutation(self, record: "DisciplineResultsMutationRecord") -> bool:
+    def should_push_discipline_results_mutation(
+        self, record: "DisciplineResultsMutationRecord"
+    ) -> bool:
         return False
 
-    def get_initial_models(self, session: Session) -> Generator[InitialModelData, None, None]:
-        yield from map(InitialModelData, session.query(Competition).filter_by(deleted=False).all())
+    def get_initial_models(
+        self, session: Session
+    ) -> Generator[InitialModelData, None, None]:
+        yield from map(
+            InitialModelData, session.query(Competition).filter_by(deleted=False).all()
+        )
 
 
 class SubscriptionCompetition(SubscriptionBase):
@@ -136,7 +161,8 @@ class SubscriptionCompetition(SubscriptionBase):
     def should_push_model_mutation(self, mutation: "ModelMutationRecord") -> bool:
         return (
             mutation.competition_id == self.__competition_id
-            and mutation.model_type in {
+            and mutation.model_type
+            in {
                 Competition,
                 Discipline,
                 Tour,
@@ -152,25 +178,27 @@ class SubscriptionCompetition(SubscriptionBase):
             }
         )
 
-    def should_push_tour_results_mutation(self, record: "TourResultsMutationRecord") -> bool:
+    def should_push_tour_results_mutation(
+        self, record: "TourResultsMutationRecord"
+    ) -> bool:
         return False
 
-    def should_push_discipline_results_mutation(self, record: "DisciplineResultsMutationRecord") -> bool:
+    def should_push_discipline_results_mutation(
+        self, record: "DisciplineResultsMutationRecord"
+    ) -> bool:
         return record.competition_id == self.__competition_id
 
-    def get_initial_models(self, session: Session) -> Generator[InitialModelData, None, None]:
+    def get_initial_models(
+        self, session: Session
+    ) -> Generator[InitialModelData, None, None]:
         gen_result = self._get_initial_general(
             session,
             Competition,
             self.__competition_id,
             {
                 "disciplines": {
-                    "tours": {
-                        "runs": {},
-                    },
-                    "participants": {
-                        "programs": {},
-                    },
+                    "tours": {"runs": {}},
+                    "participants": {"programs": {}},
                     "discipline_judges": {},
                 },
                 "clubs": {},
@@ -180,17 +208,8 @@ class SubscriptionCompetition(SubscriptionBase):
             },
             {
                 "disciplines": {
-                    "tours": {
-                        "runs": {
-                            "scores": {
-                                "parts": {},
-                            },
-                            "acrobatics": {},
-                        },
-                    },
-                    "participants": {
-                        "programs": {},
-                    },
+                    "tours": {"runs": {"scores": {"parts": {}}, "acrobatics": {}}},
+                    "participants": {"programs": {}},
                     "discipline_judges": {},
                 },
                 "clubs": {},
@@ -212,47 +231,36 @@ class SubscriptionTour(SubscriptionBase):
         self.__tour_id = tour_id
 
     def should_push_model_mutation(self, mutation: "ModelMutationRecord") -> bool:
-        return (
-            mutation.tour_id == self.__tour_id
-            and mutation.model_type in {
-                Tour,
-                Run,
-                Score,
-                RunAcrobatic,
-            }
-        )
+        return mutation.tour_id == self.__tour_id and mutation.model_type in {
+            Tour,
+            Run,
+            Score,
+            RunAcrobatic,
+        }
 
-    def should_push_tour_results_mutation(self, record: "TourResultsMutationRecord") -> bool:
+    def should_push_tour_results_mutation(
+        self, record: "TourResultsMutationRecord"
+    ) -> bool:
         return record.tour_id == self.__tour_id
 
-    def should_push_discipline_results_mutation(self, record: "DisciplineResultsMutationRecord") -> bool:
+    def should_push_discipline_results_mutation(
+        self, record: "DisciplineResultsMutationRecord"
+    ) -> bool:
         return False
 
-    def get_initial_models(self, session: Session) -> Generator[InitialModelData, None, None]:
+    def get_initial_models(
+        self, session: Session
+    ) -> Generator[InitialModelData, None, None]:
         gen_result = self._get_initial_general(
             session,
             Tour,
             self.__tour_id,
-            {
-                "runs": {
-                    "scores": {},
-                    "acrobatics": {},
-                },
-            },
+            {"runs": {"scores": {}, "acrobatics": {}}},
             {
                 "discipline": {
-                    "discipline_judges": {
-                        "judge": {},
-                    },
-                    "tours": {
-                        "runs": {
-                            "scores": {
-                                "parts": {},
-                            },
-                            "acrobatics": {},
-                        },
-                    },
-                },
+                    "discipline_judges": {"judge": {}},
+                    "tours": {"runs": {"scores": {"parts": {}}, "acrobatics": {}}},
+                }
             },
         )
         for model_record in gen_result:
@@ -260,4 +268,3 @@ class SubscriptionTour(SubscriptionBase):
                 yield model_record.with_results()
             else:
                 yield model_record
-

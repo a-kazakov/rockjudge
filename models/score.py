@@ -25,11 +25,15 @@ class Score(ModelBase, BaseModel):
 
     id = Column(Integer, primary_key=True)
     run_id = Column(Integer, ForeignKey("runs.id", ondelete="CASCADE"))
-    discipline_judge_id = Column(Integer, ForeignKey("discipline_judges.id", ondelete="CASCADE"))
+    discipline_judge_id = Column(
+        Integer, ForeignKey("discipline_judges.id", ondelete="CASCADE")
+    )
     confirmed = Column(Boolean, default=False, nullable=False)
 
     run = relationship(Run, backref=backref("scores", cascade="delete"))
-    discipline_judge = relationship(DisciplineJudge, backref=backref("scores", cascade="delete"))
+    discipline_judge = relationship(
+        DisciplineJudge, backref=backref("scores", cascade="delete")
+    )
 
     parts: Iterable["ScorePart"]
 
@@ -47,18 +51,15 @@ class Score(ModelBase, BaseModel):
 
     @property
     def data(self) -> Dict[str, Any]:
-        db_data = {
-            part.key: part.value
-            for part in self.parts
-        }
+        db_data = {part.key: part.value for part in self.parts}
         return self.run.tour.scoring_system.get_full_score_data(
-            self.discipline_judge.role,
-            db_data,
+            self.discipline_judge.role, db_data
         )
 
     @data.setter
     def data(self, data_update: Dict[str, Any]) -> None:
         from models.score_part import ScorePart
+
         ScorePart.create_and_validate(self.session, self, data_update)
 
     # Custom model consts/vars
@@ -77,7 +78,9 @@ class Score(ModelBase, BaseModel):
     def check_read_permission(self, request: "ApiRequest") -> bool:
         return self.get_auth(request.client).access_level != AccessLevel.NONE
 
-    def check_update_permission(self, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+    def check_update_permission(
+        self, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
         auth = self.get_auth(request.client)
         access_level = auth.access_level
         if access_level == AccessLevel.ADMIN:
@@ -100,7 +103,9 @@ class Score(ModelBase, BaseModel):
         data.pop("discipline_judge_id", None)
         return data
 
-    def submit_update_mutations(self, mk: "MutationsKeeper", data: Dict[str, Any]) -> None:
+    def submit_update_mutations(
+        self, mk: "MutationsKeeper", data: Dict[str, Any]
+    ) -> None:
         mk.submit_model_updated(self)
         if "data" in data:
             mk.submit_tour_results_update(self.run.tour)

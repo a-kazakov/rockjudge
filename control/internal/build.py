@@ -40,7 +40,9 @@ def run(*cmd, **kwargs):
     print_cmd = kwargs.pop("print_cmd", False)
     if print_cmd:
         print("[from {}]".format(os.getcwd()), " ".join(cmd))
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+    p = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True
+    )
     stdout, _ = p.communicate()
     success_code = kwargs.pop("success_code", 0)
     success_codes = kwargs.pop("success_codes", None)
@@ -83,7 +85,14 @@ def task_prepare_python_sources():
     copyfiles(jp(HOME, "*.py"), SERVER_SRC_PATH)
     if os.path.exists(jp(SERVER_SRC_PATH, "settings_prod.py")):
         os.unlink(jp(SERVER_SRC_PATH, "settings_prod.py"))
-    run("robocopy", jp(HOME, "scoring_systems"), jp(SERVER_SRC_PATH, "scoring_systems"), "*.py", "/s", success_code=1)
+    run(
+        "robocopy",
+        jp(HOME, "scoring_systems"),
+        jp(SERVER_SRC_PATH, "scoring_systems"),
+        "*.py",
+        "/s",
+        success_code=1,
+    )
     copy_python_module("service")
     copy_python_module("protection")
     copy_python_module("models")
@@ -101,9 +110,7 @@ def task_build_python_module(module):
 def task_build_all_python_modules():
     with pushd(SERVER_SRC_PATH):
         modules = [
-            root
-            for root, _dirs, files in os.walk(".")
-            if "_compile.py" in files
+            root for root, _dirs, files in os.walk(".") if "_compile.py" in files
         ]
         with ProcessPoolExecutor(len(modules)) as p:
             p.map(task_build_python_module, modules)
@@ -114,7 +121,13 @@ def task_bundle_python_modules():
     with pushd(SERVER_BUILD_PATH):
         runpython(jp(HOME, "control", "internal", "make_exe_spec.py"), SERVER_SRC_PATH)
         run("pyinstaller", "exe.spec")
-        run("robocopy", jp(SERVER_BUILD_PATH, "dist", "rockjudge"), jp(HOME, "dist", "data"), "/s", success_codes=(0, 1, 2, 3))
+        run(
+            "robocopy",
+            jp(SERVER_BUILD_PATH, "dist", "rockjudge"),
+            jp(HOME, "dist", "data"),
+            "/s",
+            success_codes=(0, 1, 2, 3),
+        )
 
 
 @task("Building server")
@@ -139,8 +152,9 @@ def task_copy_screen():
         jp(HOME, "screen"),
         screen_dir,
         "/s",
-        "/XD", jp(HOME, "screen", "src", "node_modules"),
-        success_code=1
+        "/XD",
+        jp(HOME, "screen", "src", "node_modules"),
+        success_code=1,
     )
 
 
@@ -148,8 +162,20 @@ def task_copy_screen():
 def task_copy_static():
     static_dir = jp(os.getcwd(), "dist", "data", "static")
     os.makedirs(static_dir, exist_ok=True)
-    run("robocopy", jp(HOME, "static", "thirdparty"), jp(static_dir, "thirdparty"), "/s", success_code=1)
-    run("robocopy", jp(HOME, "static", "img"), jp(static_dir, "img"), "/s", success_code=1)
+    run(
+        "robocopy",
+        jp(HOME, "static", "thirdparty"),
+        jp(static_dir, "thirdparty"),
+        "/s",
+        success_code=1,
+    )
+    run(
+        "robocopy",
+        jp(HOME, "static", "img"),
+        jp(static_dir, "img"),
+        "/s",
+        success_code=1,
+    )
 
 
 @task("Copying templates")
@@ -173,13 +199,23 @@ def task_build_print_server():
     shutil.copy(jp(HOME, "tools", "print.py"), PRINTER_BUILD_PATH)
     with pushd(PRINTER_BUILD_PATH):
         run("pyinstaller", "-F", jp(PRINTER_BUILD_PATH, "print.py"))
-    shutil.copy(jp(PRINTER_BUILD_PATH, "dist", "print.exe"), jp(HOME, "dist", "print_server"))
-    shutil.copy(jp(HOME, "tools", "print-config-sample.txt"), jp(HOME, "dist", "print_server", "print-config.txt"))
+    shutil.copy(
+        jp(PRINTER_BUILD_PATH, "dist", "print.exe"), jp(HOME, "dist", "print_server")
+    )
+    shutil.copy(
+        jp(HOME, "tools", "print-config-sample.txt"),
+        jp(HOME, "dist", "print_server", "print-config.txt"),
+    )
 
 
 @task("Copying launch scripts")
 def task_copy_launch_scripts():
-    run("robocopy", jp(HOME, "control", "internal", "exe_controllers"), jp(HOME, "dist"), success_codes=(0, 1, 2, 3))
+    run(
+        "robocopy",
+        jp(HOME, "control", "internal", "exe_controllers"),
+        jp(HOME, "dist"),
+        success_codes=(0, 1, 2, 3),
+    )
 
 
 @task("Building RockJudge")

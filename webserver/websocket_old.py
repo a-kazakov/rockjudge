@@ -8,10 +8,7 @@ from typing import List, Dict, Type, Tuple, Any, TYPE_CHECKING, NamedTuple
 import tornado.ioloop
 import tornado.websocket
 
-from db import (
-    Database,
-    StatsCounter,
-)
+from db import Database, StatsCounter
 from models import Client
 
 
@@ -72,9 +69,9 @@ class WebSocketConnectionsManager:
     def queue_message(self, token, message_object, client_id=None, broadcast=False):
         message_binary = self.encode_message(message_object)
         if token is None:  # Independent from db state message
-            self._send_message((message_binary, client_id, broadcast, ))
+            self._send_message((message_binary, client_id, broadcast))
             return
-        self._pending_messages[token] = (message_binary, client_id, broadcast, )
+        self._pending_messages[token] = (message_binary, client_id, broadcast)
         self._flush_queue()
 
     def _flush_queue(self):
@@ -102,11 +99,9 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
     _client_id = None
 
     def on_message(self, msg):
-        from api import (
-            ApiRequestOld,
-            ApiError,
-        )
+        from api import ApiRequestOld, ApiError
         from models import Client
+
         with StatsCounter() as stats:
             public_ws_message = WsMessage(client_id=self._client_id, broadcast=True)
             private_ws_message = WsMessage(client_id=self._client_id, broadcast=False)
@@ -115,7 +110,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
                 signature, json_data = msg.split("|", 1)
                 data = json.loads(json_data)
                 method = data["method"]
-                if method not in ("auth.register", "auth.exchange_keys", ):
+                if method not in ("auth.register", "auth.exchange_keys"):
                     client = Client.get_and_validate(
                         client_id=data["client_id"],
                         method=data["method"],
@@ -137,23 +132,29 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
                 private_ws_message.add_api_call(request)
             except ApiError as ex:
                 if data["response_key"] is not None:
-                    private_ws_message.add_api_response(data["response_key"], {
-                        "success": False,
-                        "code": ex.code,
-                        "args": ex.args,
-                    })
+                    private_ws_message.add_api_response(
+                        data["response_key"],
+                        {"success": False, "code": ex.code, "args": ex.args},
+                    )
             except Exception:
                 ex_str = traceback.format_exc()
                 print(ex_str)
                 if data["response_key"] is not None:
-                    private_ws_message.add_api_response(data["response_key"], {
-                        "success": False,
-                        "code": "errors.global.internal_server_error",
-                    })
+                    private_ws_message.add_api_response(
+                        data["response_key"],
+                        {
+                            "success": False,
+                            "code": "errors.global.internal_server_error",
+                        },
+                    )
             finally:
                 private_ws_message.make_transaction_and_send()
                 public_ws_message.make_transaction_and_send()
-                print("Api call: {:<35s} {:4d}ms {:4d} queries".format(method, stats.time, stats.queries))
+                print(
+                    "Api call: {:<35s} {:4d}ms {:4d} queries".format(
+                        method, stats.time, stats.queries
+                    )
+                )
 
     def open(self):
         manager = WebSocketConnectionsManager.instance()
@@ -163,10 +164,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         WebSocketConnectionsManager.instance().remove_connection(self._client_id)
 
     def get_compression_options(self):
-        return {
-            "compression_level": 4,
-            "mem_level": 9,
-        }
+        return {"compression_level": 4, "mem_level": 9}
 
 
 class TourResultsUpdateGetter:
@@ -195,24 +193,17 @@ class TourResultsUpdateGetter:
         # self._latest_update = t
         # if to_wait > 0:
         self._is_waiting = True
-        tornado.ioloop.IOLoop.instance().call_later(
-            0.75,
-            self._push_results,
-        )
+        tornado.ioloop.IOLoop.instance().call_later(0.75, self._push_results)
         return None
         # return self._fetch_results()
 
     def _fetch_results(self):
         from models import Tour
+
         discipline = Tour.get(id=self._tour_id).discipline
         discipline.prefetch_for_results()
         tour = next(t for t in discipline.tours if t.id == self._tour_id)
-        return tour.serialize_as_child({
-            "discipline": {
-                "results": {},
-            },
-            "results": {},
-        })
+        return tour.serialize_as_child({"discipline": {"results": {}}, "results": {}})
 
     def _push_results(self):
         if not self._is_waiting:
@@ -274,19 +265,14 @@ class WsMessage:
         self._need_transaction = True
         if schema is None:
             schema = {}
-        self._model_updates.append({
-            "model_type": model_type,
-            "model_id": model_id,
-            "schema": schema,
-        })
+        self._model_updates.append(
+            {"model_type": model_type, "model_id": model_id, "schema": schema}
+        )
 
     def add_tour_results_update(self, tour_id, immediate=False):
         self._empty = False
         self._need_transaction = True
-        self._tour_results_updates.append((
-            tour_id,
-            immediate,
-        ))
+        self._tour_results_updates.append((tour_id, immediate))
 
     def add_active_tours_update(self, competition_id):
         self._empty = False
@@ -295,10 +281,7 @@ class WsMessage:
 
     def add_message(self, message, data=None):
         self._empty = False
-        self._messages.append((
-            message,
-            data,
-        ))
+        self._messages.append((message, data))
 
     def add_api_call(self, request):
         self._empty = False
@@ -321,6 +304,7 @@ class WsMessage:
     def serialize(self):
         from models import Competition
         from api import Api
+
         messages = copy.copy(self._messages)
         updates = []
         # Models
@@ -330,7 +314,9 @@ class WsMessage:
             if key not in schemas:
                 schemas[key] = {}
             self.merge_schemas(schemas[key], x["schema"])
-        models_to_prefetch: Dict[Tuple[Type[BaseModel], str], List[int]] = defaultdict(list)
+        models_to_prefetch: Dict[Tuple[Type[BaseModel], str], List[int]] = defaultdict(
+            list
+        )
         schemas_by_json: Dict[str, SchemaType] = {}
         for (model_type, model_id), schema in schemas.items():
             try:
@@ -340,9 +326,18 @@ class WsMessage:
                 models_to_prefetch[key].append(model_id)
             except model_type.DoesNotExist:
                 if self._recepient is not None:
-                    messages.append(("error", "errors.model_does_not_exist.{}".format(model_type.__name__.lower()), ))
+                    messages.append(
+                        (
+                            "error",
+                            "errors.model_does_not_exist.{}".format(
+                                model_type.__name__.lower()
+                            ),
+                        )
+                    )
         for (model_type, schema_json), model_ids in models_to_prefetch.items():
-            models: List[BaseModel] = list(model_type.filter(model_type.id << model_ids))
+            models: List[BaseModel] = list(
+                model_type.filter(model_type.id << model_ids)
+            )
             schema = schemas_by_json[schema_json]
             model_type.smart_prefetch_multiple(models, schema)
             for model in models:
@@ -351,18 +346,24 @@ class WsMessage:
         for competition_id in self._active_tours_updates:
             active_tours = Competition.get(id=competition_id).get_active_tours()
             for tour in active_tours:
-                tour.smart_prefetch({
-                    "discipline": {
-                        "discipline_judges": {},
+                tour.smart_prefetch({"discipline": {"discipline_judges": {}}})
+            messages.append(
+                (
+                    "active_tours_update",
+                    {
+                        "competition_id": competition_id,
+                        "active_tours": [
+                            {
+                                "tour_id": tour.id,
+                                "judges": [
+                                    dj.judge_id for dj in tour.discipline_judges
+                                ],
+                            }
+                            for tour in active_tours
+                        ],
                     },
-                })
-            messages.append(("active_tours_update", {
-                "competition_id": competition_id,
-                "active_tours": [{
-                    "tour_id": tour.id,
-                    "judges": [dj.judge_id for dj in tour.discipline_judges],
-                } for tour in active_tours],
-            }))
+                )
+            )
         # Tour results
         for tour_id, immediate in self._tour_results_updates:
             upd = TourResultsUpdateGetter.instance(tour_id).get_results(force=immediate)

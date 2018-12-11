@@ -102,29 +102,31 @@ class BaseModel:
         for rel in cls.get_relationships().values():
             cols = rel.local_columns
             if len(cols) != 1:
-                raise NotImplementedError("Only relationships with one column are supported")
+                raise NotImplementedError(
+                    "Only relationships with one column are supported"
+                )
             col = next(iter(cols))
             result[col.name] = rel
         return result
 
     @classmethod
     def get_managable_fields(cls) -> Set[str]:
-        columns = {key for key, value in cls.get_columns().items() if not value.foreign_keys}
-        relationships = {key for key, value in cls.get_relationships().items() if value.backref}
-        return (columns | relationships | cls.VIRTUAL_FIELDS) - cls.HIDDEN_FIELDS - {"id"}
+        columns = {
+            key for key, value in cls.get_columns().items() if not value.foreign_keys
+        }
+        relationships = {
+            key for key, value in cls.get_relationships().items() if value.backref
+        }
+        return (
+            (columns | relationships | cls.VIRTUAL_FIELDS) - cls.HIDDEN_FIELDS - {"id"}
+        )
 
     @classmethod
     def filter_non_managable_fields(
-        cls,
-        data: Dict[str, Any],
-        extra_fields: Optional[Set[str]] = None,
+        cls, data: Dict[str, Any], extra_fields: Optional[Set[str]] = None
     ) -> Dict[str, Any]:
         allowed_fields = cls.get_managable_fields() | (extra_fields or set())
-        return {
-            key: value
-            for key, value in data.items()
-            if key in allowed_fields
-        }
+        return {key: value for key, value in data.items() if key in allowed_fields}
 
     @classmethod
     def get_multiple(
@@ -157,6 +159,7 @@ class BaseModel:
 
     def get_auth(self, client: "Client") -> "ClientAuth":
         from models.client_auth import ClientAuth
+
         return ClientAuth.get_for_competition(self.session, client, self.competition_id)
 
     # User methods
@@ -169,13 +172,17 @@ class BaseModel:
         pass
 
     @classmethod
-    def check_create_permission(cls, session: Session, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+    def check_create_permission(
+        cls, session: Session, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
         raise ForbiddenForEveryoneError
 
     def check_read_permission(self, request: "ApiRequest") -> bool:
         raise ForbiddenForEveryoneError
 
-    def check_update_permission(self, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+    def check_update_permission(
+        self, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
         raise ForbiddenForEveryoneError
 
     def check_delete_permission(self, request: "ApiRequest") -> bool:
@@ -184,7 +191,9 @@ class BaseModel:
     # Creating logic
 
     @classmethod
-    def before_create(cls, session: Session, data: Dict[str, Any], *, unsafe: bool) -> Dict[str, Any]:
+    def before_create(
+        cls, session: Session, data: Dict[str, Any], *, unsafe: bool
+    ) -> Dict[str, Any]:
         # This method can modify data object.
         # It should also return another dict which will be added to original one after filtering
         return {}
@@ -223,11 +232,7 @@ class BaseModel:
         return {}
 
     def update(
-        self,
-        data: Dict[str, Any],
-        mk: "MutationsKeeper",
-        *,
-        unsafe: bool = False,
+        self, data: Dict[str, Any], mk: "MutationsKeeper", *, unsafe: bool = False
     ) -> None:
         data = copy.copy(data)
         extra_data = self.before_update(data, unsafe=unsafe)
@@ -243,7 +248,9 @@ class BaseModel:
     def after_update(self) -> None:
         pass
 
-    def submit_update_mutations(self, mk: "MutationsKeeper", data: Dict[str, Any]) -> None:
+    def submit_update_mutations(
+        self, mk: "MutationsKeeper", data: Dict[str, Any]
+    ) -> None:
         mk.submit_model_updated(self)
 
     # Deleting logic
@@ -271,14 +278,13 @@ class BaseModel:
 
     @classmethod
     def __get_column_descriptor(
-        cls,
-        name: str,
-        col: Column,
-        fk_mapping: Dict[str, RelationshipProperty],
+        cls, name: str, col: Column, fk_mapping: Dict[str, RelationshipProperty]
     ) -> Dict[str, Any]:
         fks: Set[ForeignKey] = col.foreign_keys
         if len(fks) >= 2:
-            raise NotImplementedError("Base model doesn't support columns with 2 or more foreign keys")
+            raise NotImplementedError(
+                "Base model doesn't support columns with 2 or more foreign keys"
+            )
         if fks:
             ref = fk_mapping[col.name]
             return {
@@ -287,10 +293,7 @@ class BaseModel:
                 "key": ref.key,
                 "backref": ref.back_populates,
             }
-        return {
-            "name": name,
-            "foreign_key_model": None,
-        }
+        return {"name": name, "foreign_key_model": None}
 
     @classmethod
     def get_model_descriptor(cls) -> Dict[str, Any]:
@@ -301,13 +304,9 @@ class BaseModel:
             if name not in cls.HIDDEN_FIELDS
         ]
         columns += [
-            {"name": name, "foreign_key_model": None}
-            for name in cls.VIRTUAL_FIELDS
+            {"name": name, "foreign_key_model": None} for name in cls.VIRTUAL_FIELDS
         ]
-        return {
-            "name": cls.__name__,
-            "fields": columns,
-        }
+        return {"name": cls.__name__, "fields": columns}
 
     # Serializing logic
 
@@ -321,9 +320,7 @@ class BaseModel:
             if key not in self.HIDDEN_FIELDS
         }
         result.update(self.serialize_extra())
-        result.update({
-            "_sorting_key": self.sorting_key,
-        })
+        result.update({"_sorting_key": self.sorting_key})
         result = self.after_serialize(result)
         return result
 
@@ -349,27 +346,25 @@ class BaseModel:
         **kwargs: Any,
     ) -> Generator[Tuple[TBaseModel, bool, Dict[str, Any]], None, None]:
         if prepared is None:
-            prepared = [
-                cls.get_import_params(obj, **kwargs)
-                for obj in objects
-            ]
+            prepared = [cls.get_import_params(obj, **kwargs) for obj in objects]
         external_ids = [
-            data["external_id"]
-            for data in prepared
-            if "external_id" in data
+            data["external_id"] for data in prepared if "external_id" in data
         ]
         if len(set(external_ids)) != len(external_ids):
             raise ApiError("errors.api.duplicated_external_id")
         if len(external_ids) == 0:
             models_to_update = []
         else:
-            models_to_update_condition = (cls.external_id.in_(external_ids))
+            models_to_update_condition = cls.external_id.in_(external_ids)
             for key, value in kwargs.items():
-                models_to_update_condition = models_to_update_condition & (getattr(cls, key) == value)
-            models_to_update_query = session.query(cls).filter(models_to_update_condition)
+                models_to_update_condition = models_to_update_condition & (
+                    getattr(cls, key) == value
+                )
+            models_to_update_query = session.query(cls).filter(
+                models_to_update_condition
+            )
             models_to_update: Dict[str, BaseModel] = {
-                model.external_id: model
-                for model in models_to_update_query.all()
+                model.external_id: model for model in models_to_update_query.all()
             }
         for obj, data in zip(objects, prepared):
             external_id = data.get("external_id")

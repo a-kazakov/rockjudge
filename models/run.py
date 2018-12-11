@@ -1,7 +1,14 @@
 import random
 from typing import Any, Dict, Iterable, List, Optional, Set, TYPE_CHECKING, Tuple, Union
 
-from sqlalchemy import Column, Enum as EnumColumn, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy import (
+    Column,
+    Enum as EnumColumn,
+    ForeignKey,
+    Integer,
+    String,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Session, relationship, backref
 
 from db import ModelBase
@@ -31,8 +38,12 @@ class Run(ModelBase, BaseModel):
     )
 
     id = Column(Integer, primary_key=True)
-    participant_id = Column(Integer, ForeignKey("participants.id", ondelete="CASCADE"), nullable=False)
-    tour_id = Column(Integer, ForeignKey("tours.id", ondelete="CASCADE"), nullable=False)
+    participant_id = Column(
+        Integer, ForeignKey("participants.id", ondelete="CASCADE"), nullable=False
+    )
+    tour_id = Column(
+        Integer, ForeignKey("tours.id", ondelete="CASCADE"), nullable=False
+    )
     heat = Column(Integer, default=0, nullable=False)
     heat_secondary = Column(Integer, nullable=False)
     status = Column(EnumColumn(RunStatus), default=RunStatus.OK, nullable=False)
@@ -68,30 +79,40 @@ class Run(ModelBase, BaseModel):
     def check_read_permission(self, request: "ApiRequest") -> bool:
         return self.get_auth(request.client).access_level != AccessLevel.NONE
 
-    def check_update_permission(self, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+    def check_update_permission(
+        self, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
         from models.discipline_judge import DisciplineJudge
+
         auth = self.get_auth(request.client)
         if auth.access_level == AccessLevel.ADMIN:
             return True
         if auth.access_level == AccessLevel.ANY_JUDGE:
-            return self.tour.scoring_system.get_judge_role_permissions(None).can_update_run_status
+            return self.tour.scoring_system.get_judge_role_permissions(
+                None
+            ).can_update_run_status
         if auth.access_level == AccessLevel.JUDGE:
             if set(data.keys()) == {"status"}:
-                dj = self.session.query(DisciplineJudge).filter_by(
-                    judge_id=auth.judge_id,
-                    discipline_id=self.tour.discipline_id,
-                ).first()
-                return self.tour.scoring_system.get_judge_role_permissions(dj.role).can_update_run_status
+                dj = (
+                    self.session.query(DisciplineJudge)
+                    .filter_by(
+                        judge_id=auth.judge_id, discipline_id=self.tour.discipline_id
+                    )
+                    .first()
+                )
+                return self.tour.scoring_system.get_judge_role_permissions(
+                    dj.role
+                ).can_update_run_status
             return False
         return False
 
     # Create logic
 
     @classmethod
-    def before_create(cls, session: Session, data: Dict[str, Any], *, unsafe: bool) -> Dict[str, Any]:
-        return {
-            "heat_secondary": random.randint(0, 10**9),
-        }
+    def before_create(
+        cls, session: Session, data: Dict[str, Any], *, unsafe: bool
+    ) -> Dict[str, Any]:
+        return {"heat_secondary": random.randint(0, 10 ** 9)}
 
     def after_create(self, mk: "MutationsKeeper") -> None:
         self.create_scores(mk, check_existing=False)
@@ -110,7 +131,9 @@ class Run(ModelBase, BaseModel):
             data["status"] = RunStatus(data["status"])
         return {}
 
-    def submit_update_mutations(self, mk: "MutationsKeeper", data: Dict[str, Any]) -> None:
+    def submit_update_mutations(
+        self, mk: "MutationsKeeper", data: Dict[str, Any]
+    ) -> None:
         mk.submit_model_updated(self)
         if "status" in data:
             mk.submit_tour_results_update(self.tour)
@@ -124,9 +147,7 @@ class Run(ModelBase, BaseModel):
     # Serialization logic
 
     def serialize_extra(self) -> Dict[str, Any]:
-        return {
-            "status": self.status.value,
-        }
+        return {"status": self.status.value}
 
     # Custom model logic
 
@@ -144,15 +165,19 @@ class Run(ModelBase, BaseModel):
             participant_id=ParticipantId(self.participant_id),
             status=self.status,
             acro_scores=[AcroScore(acro.score) for acro in self.acrobatics_sorted],
-            scores=[score.make_scoring_system_request() for score in self.scores_sorted]
+            scores=[
+                score.make_scoring_system_request() for score in self.scores_sorted
+            ],
         )
 
-    def create_scores(self, mk: "MutationsKeeper", *, check_existing: bool = True) -> None:
+    def create_scores(
+        self, mk: "MutationsKeeper", *, check_existing: bool = True
+    ) -> None:
         from models.score import Score
+
         if check_existing:
             existing_ids: Set[int] = {
-                score.discipline_judge.id
-                for score in self.scores
+                score.discipline_judge.id for score in self.scores
             }
         else:
             existing_ids = set()
@@ -160,16 +185,16 @@ class Run(ModelBase, BaseModel):
             if discipline_judge.id not in existing_ids:
                 Score.create(
                     self.session,
-                    {
-                        "run": self,
-                        "discipline_judge": discipline_judge,
-                    },
+                    {"run": self, "discipline_judge": discipline_judge},
                     mk,
                     unsafe=True,
                 )
 
-    def load_acrobatics(self, program: Optional[Program], mk: "MutationsKeeper") -> None:
+    def load_acrobatics(
+        self, program: Optional[Program], mk: "MutationsKeeper"
+    ) -> None:
         from models.run_acrobatic import RunAcrobatic
+
         deleted = False
         for acro in self.acrobatics:
             acro.delete(mk)
@@ -211,7 +236,9 @@ class Run(ModelBase, BaseModel):
     def disqualified(self):
         return self.status == RunStatus.DQ
 
-    def reset(self, mk: "MutationsKeeper", synchronize_session: Union[bool, str] = False) -> None:
+    def reset(
+        self, mk: "MutationsKeeper", synchronize_session: Union[bool, str] = False
+    ) -> None:
         from models.run_acrobatic import RunAcrobatic
         from models.score import Score
         from models.score_part import ScorePart
@@ -221,21 +248,18 @@ class Run(ModelBase, BaseModel):
 
         score_ids: List[int] = []
         for score in self.session.query(Score).filter_by(run=self).all():
-            score.update(
-                { "confirmed": False },
-                mk,
-            )
+            score.update({"confirmed": False}, mk)
             score_ids.append(score.id)
         (
             self.session.query(ScorePart)
-                .filter(ScorePart.score_id.in_(score_ids))
-                .delete(synchronize_session=synchronize_session)
+            .filter(ScorePart.score_id.in_(score_ids))
+            .delete(synchronize_session=synchronize_session)
         )
         for acro in self.session.query(RunAcrobatic).filter_by(run=self).all():
             mk.submit_model_updated(acro)
             self.session.query(RunAcrobatic).filter_by(run=self).update(
-            {"score": RunAcrobatic.initial_score},
-            synchronize_session=synchronize_session,
-        )
+                {"score": RunAcrobatic.initial_score},
+                synchronize_session=synchronize_session,
+            )
         mk.submit_tour_results_update(self.tour)
-        self.update({ "status": RunStatus.OK }, mk)
+        self.update({"status": RunStatus.OK}, mk)

@@ -3,7 +3,12 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Tuple, Type
 
 from enums import RunStatus
-from scoring_systems.base import RunInfo, RunResult, ScoringSystemName, TourComputationRequest
+from scoring_systems.base import (
+    RunInfo,
+    RunResult,
+    ScoringSystemName,
+    TourComputationRequest,
+)
 from .common import CachedClass
 from .score_contexts import ScoreContextBase
 
@@ -23,9 +28,7 @@ class RunContextBase(CachedClass):
         self.scoring_system_name = scoring_system_name
 
     @staticmethod
-    def get_class(
-        scoring_system_name: ScoringSystemName,
-    ) -> Type["RunContextBase"]:
+    def get_class(scoring_system_name: ScoringSystemName,) -> Type["RunContextBase"]:
         if scoring_system_name == "qualification_simple":
             return RunContextQualification
         if scoring_system_name in ("final_simple", "final_3d"):
@@ -41,9 +44,7 @@ class RunContextBase(CachedClass):
         scoring_system_name: ScoringSystemName,
     ) -> "RunContextBase":
         return cls.get_class(scoring_system_name)(
-            run_info,
-            tour_context,
-            scoring_system_name,
+            run_info, tour_context, scoring_system_name
         )
 
     @property
@@ -53,19 +54,15 @@ class RunContextBase(CachedClass):
     @property
     def inherited_data(self) -> Dict[str, Any]:
         inherited_dict = self.tour_request.inherited_data or {}
-        return (
-            inherited_dict
-                .get("by_participant", {})
-                .get(self.run_info.participant_id, {})
+        return inherited_dict.get("by_participant", {}).get(
+            self.run_info.participant_id, {}
         )
 
     @property
     def scores(self) -> List[ScoreContextBase]:
         return [
             ScoreContextBase.make_from_request(
-                score_info,
-                self.tour_context,
-                self.scoring_system_name
+                score_info, self.tour_context, self.scoring_system_name
             )
             for score_info in self.run_info.scores
         ]
@@ -73,20 +70,19 @@ class RunContextBase(CachedClass):
     @property
     def scores_by_role(self) -> Dict[str, List[ScoreContextBase]]:
         return {
-            role: [
-                score
-                for score in self.scores
-                if score.judge_role == role
-            ]
-            for role in ("dance_judge", "head_judge", )
+            role: [score for score in self.scores if score.judge_role == role]
+            for role in ("dance_judge", "head_judge")
         }
 
     @property
     def bonus(self) -> int:
-        return sum((
-            score.counting_score["bonus"]
-            for score in self.scores_by_role["head_judge"]
-        ), 0)
+        return sum(
+            (
+                score.counting_score["bonus"]
+                for score in self.scores_by_role["head_judge"]
+            ),
+            0,
+        )
 
     @property
     def data_to_inherit(self) -> Any:
@@ -97,21 +93,15 @@ class RunContextBase(CachedClass):
         return {}
 
     def make_result(
-        self,
-        place: int,
-        advanced: bool,
-        extra_data: Optional[Dict[str, Any]] = None,
+        self, place: int, advanced: bool, extra_data: Optional[Dict[str, Any]] = None
     ) -> RunResult:
-        if self.run_info.status != RunStatus.DQ :
+        if self.run_info.status != RunStatus.DQ:
             display_score: str = self.display_score
         else:
             display_score = "—"
         return RunResult(
             total_score_str=display_score,
-            extra_data={
-                **self.extra_data,
-                **(extra_data or {}),
-            },
+            extra_data={**self.extra_data, **(extra_data or {})},
             place=(None if self.run_info.status == RunStatus.DQ else place),
             advanced=advanced,
         )
@@ -120,10 +110,7 @@ class RunContextBase(CachedClass):
 class RunContextQualification(RunContextBase):
     @property
     def dance_crosses(self) -> List[Optional[bool]]:
-        return [
-            s.counting_score["cross"]
-            for s in self.scores_by_role["dance_judge"]
-        ]
+        return [s.counting_score["cross"] for s in self.scores_by_role["dance_judge"]]
 
     @property
     def crosses_count(self) -> int:
@@ -137,11 +124,7 @@ class RunContextQualification(RunContextBase):
                 int(self.run_info.status == RunStatus.DQ),
                 int(self.run_info.status == RunStatus.NP),
             )
-        return (
-            0,
-            -self.crosses_count,
-            -int(self.bonus),
-        )
+        return (0, -self.crosses_count, -int(self.bonus))
 
     @property
     def display_score(self) -> str:
@@ -154,9 +137,7 @@ class RunContextQualification(RunContextBase):
 
     @property
     def extra_data(self) -> Dict[str, Any]:
-        return {
-            "user_score": str(self.crosses_count)
-        }
+        return {"user_score": str(self.crosses_count)}
 
 
 class RunContextFinal(RunContextBase):
@@ -183,7 +164,7 @@ class RunContextFinal(RunContextBase):
     @property
     def data_to_inherit(self) -> Dict[str, Any]:
         return {
-            "raw_places": self.inherited_data.get("raw_places", []) + [self.raw_places],
+            "raw_places": self.inherited_data.get("raw_places", []) + [self.raw_places]
         }
 
 

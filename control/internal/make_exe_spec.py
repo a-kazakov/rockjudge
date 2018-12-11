@@ -7,7 +7,9 @@ import sys
 
 
 def gen(**kwargs) -> str:
-    kwargs["hidden_imports"] = ", ".join(["'{}'".format(s) for s in kwargs["hidden_imports"]])
+    kwargs["hidden_imports"] = ", ".join(
+        ["'{}'".format(s) for s in kwargs["hidden_imports"]]
+    )
     return """# -*- mode: python -*-
 
 block_cipher = pyi_crypto.PyiBlockCipher(key='{chipher}')
@@ -40,7 +42,9 @@ coll = COLLECT(exe,
                strip=None,
                upx=False,
                name='{exe_name}')
-    """.format(**kwargs)
+    """.format(
+        **kwargs
+    )
 
 
 def path_to_module(path: str) -> str:
@@ -65,7 +69,12 @@ def main(code_path: str) -> None:
         os.chdir(cwd)
 
     spec = gen(
-        chipher="".join(random.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits) for _ in range(50)),
+        chipher="".join(
+            random.choice(
+                string.ascii_lowercase + string.ascii_uppercase + string.digits
+            )
+            for _ in range(50)
+        ),
         exe_name="rockjudge",
         hidden_imports=hidden_imports,
         work_dir=os.getcwd().replace("\\", "\\\\"),

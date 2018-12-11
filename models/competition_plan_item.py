@@ -26,7 +26,9 @@ class CompetitionPlanItem(ModelBase, BaseModel):
     )
 
     id = Column(Integer, primary_key=True)
-    competition_id = Column(Integer, ForeignKey("competitions.id", ondelete="RESTRICT"), nullable=False)
+    competition_id = Column(
+        Integer, ForeignKey("competitions.id", ondelete="RESTRICT"), nullable=False
+    )
     tour_id = Column(Integer, ForeignKey("tours.id", ondelete="CASCADE"), nullable=True)
     verbose_name = Column(String(10000), default="", nullable=False)
     estimated_beginning = Column(String, default="", nullable=False)
@@ -44,7 +46,7 @@ class CompetitionPlanItem(ModelBase, BaseModel):
 
     @property
     def sorting_key(self) -> Tuple[Union[int, str], ...]:
-        return (self.sp, )
+        return (self.sp,)
 
     def validate(self) -> None:
         if self.tour is not None:
@@ -54,14 +56,20 @@ class CompetitionPlanItem(ModelBase, BaseModel):
     # Permissions
 
     @classmethod
-    def check_create_permission(cls, session: Session, request: "ApiRequest", data: Dict[str, Any]) -> bool:
-        auth = ClientAuth.get_for_competition(session, request.client, int(data["competition_id"]))
+    def check_create_permission(
+        cls, session: Session, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
+        auth = ClientAuth.get_for_competition(
+            session, request.client, int(data["competition_id"])
+        )
         return auth.access_level == AccessLevel.ADMIN
 
     def check_read_permission(self, request: "ApiRequest") -> bool:
         return self.get_auth(request.client).access_level != AccessLevel.NONE
 
-    def check_update_permission(self, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+    def check_update_permission(
+        self, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
         return self.get_auth(request.client).access_level == AccessLevel.ADMIN
 
     def check_delete_permission(self, request: "ApiRequest") -> bool:
@@ -70,8 +78,11 @@ class CompetitionPlanItem(ModelBase, BaseModel):
     # Create logic
 
     @classmethod
-    def before_create(cls, session: Session, data: Dict[str, Any], *, unsafe: bool) -> Dict[str, Any]:
+    def before_create(
+        cls, session: Session, data: Dict[str, Any], *, unsafe: bool
+    ) -> Dict[str, Any]:
         from models.tour import Tour
+
         tour_id = data.get("tour_id")
         return {
             "competition": session.query(Competition).get(data["competition_id"]),
@@ -82,10 +93,13 @@ class CompetitionPlanItem(ModelBase, BaseModel):
 
     def before_update(self, data: Dict[str, Any], *, unsafe: bool) -> Dict[str, Any]:
         from models.tour import Tour
+
         extra = {}
         if "tour_id" in data:
             tour_id = data["tour_id"]
-            extra["tour"] = None if tour_id is None else self.session.query(Tour).get(tour_id)
+            extra["tour"] = (
+                None if tour_id is None else self.session.query(Tour).get(tour_id)
+            )
         return extra
 
     # Delete logic
@@ -119,12 +133,7 @@ class CompetitionPlanItem(ModelBase, BaseModel):
                 else:
                     obj["tour_id"] = None
                 CompetitionPlanItem.create(
-                    competition.session,
-                    {
-                        "competition_id": competition.id,
-                        **obj,
-                    },
-                    mk,
+                    competition.session, {"competition_id": competition.id, **obj}, mk
                 )
         except StopIteration:
             failed_discipline = None
@@ -132,11 +141,11 @@ class CompetitionPlanItem(ModelBase, BaseModel):
                 if discipline.external_id == latest_discipline_external_id:
                     failed_discipline = discipline
                     break
-            raise ApiError("errors.competition_plan.too_many_tours", failed_discipline.name)
+            raise ApiError(
+                "errors.competition_plan.too_many_tours", failed_discipline.name
+            )
         except KeyError:
-            raise# ApiError("errors.competition_plan.invalid_discipline_found")
-
-
+            raise  # ApiError("errors.competition_plan.invalid_discipline_found")
 
     # RW_PROPS = ["sp", "verbose_name", "estimated_beginning", "estimated_duration"]
     # RO_PROPS = ["tour_id"]

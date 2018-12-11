@@ -60,8 +60,7 @@ class ScoreContextBase(CachedClass):
 
     @staticmethod
     def get_class(
-        judge_role: JudgeRole,
-        scoring_system_name: ScoringSystemName,
+        judge_role: JudgeRole, scoring_system_name: ScoringSystemName
     ) -> Type["ScoreContextBase"]:
         if judge_role == "dance_judge":
             if scoring_system_name == "qualification_simple":
@@ -104,9 +103,7 @@ class ScoreContextBase(CachedClass):
 
     @property
     def extra_data(self) -> Dict[str, Any]:
-        return {
-            "parts": self.user_data,
-        }
+        return {"parts": self.user_data}
 
     @property
     def is_valid(self) -> bool:
@@ -114,21 +111,26 @@ class ScoreContextBase(CachedClass):
 
     @property
     def user_data(self) -> ScoreRawData:
-        return ScoreRawData({
-            **self.INITIAL_SCORES,
-            **{
-                key: self.db_data[key]
-                for key in self.INITIAL_SCORES
-                if key in self.db_data and self.SCORES_VALIDATORS[key](self.db_data[key])
-            },
-        })
+        return ScoreRawData(
+            {
+                **self.INITIAL_SCORES,
+                **{
+                    key: self.db_data[key]
+                    for key in self.INITIAL_SCORES
+                    if key in self.db_data
+                    and self.SCORES_VALIDATORS[key](self.db_data[key])
+                },
+            }
+        )
 
     @property
     def counting_score(self) -> ScoreRawData:
-        return ScoreRawData({
-            key: (value if value is not None else self.DEFAULT_SCORES[key])
-            for key, value in self.user_data.items()
-        })
+        return ScoreRawData(
+            {
+                key: (value if value is not None else self.DEFAULT_SCORES[key])
+                for key, value in self.user_data.items()
+            }
+        )
 
     @property
     def result(self) -> ScoreResult:
@@ -140,16 +142,8 @@ class ScoreContextBase(CachedClass):
 
 
 class ScoreContextDanceSimpleQualification(ScoreContextBase):
-    DEFAULT_SCORES = {
-        "cross": False,
-        "note_number": None,
-        "note_pics": "",
-    }
-    INITIAL_SCORES = {
-        "cross": False,
-        "note_number": None,
-        "note_pics": "",
-    }
+    DEFAULT_SCORES = {"cross": False, "note_number": None, "note_pics": ""}
+    INITIAL_SCORES = {"cross": False, "note_number": None, "note_pics": ""}
     SCORES_VALIDATORS = {
         "cross": lambda x: isinstance(x, bool),
         "note_number": lambda x: x is None or (isinstance(x, int) and 1 <= x <= 5),
@@ -158,22 +152,14 @@ class ScoreContextDanceSimpleQualification(ScoreContextBase):
 
     @property
     def total_score(self) -> str:
-        return (
-            "X"
-            if self.user_data["cross"]
-            else ""
-        )
+        return "X" if self.user_data["cross"] else ""
 
 
 class ScoreContextDanceSimpleFinal(ScoreContextBase):
-    DEFAULT_SCORES = {
-        "place": 0,
-    }
-    INITIAL_SCORES = {
-        "place": None,
-    }
+    DEFAULT_SCORES = {"place": 0}
+    INITIAL_SCORES = {"place": None}
     SCORES_VALIDATORS = {
-        "place": lambda x: x is None or (isinstance(x, int) and 1 <= x <= 100),
+        "place": lambda x: x is None or (isinstance(x, int) and 1 <= x <= 100)
     }
 
     @property
@@ -195,18 +181,8 @@ class ScoreContextDanceSimpleFinal(ScoreContextBase):
 
 
 class ScoreContextDance3dFinal(ScoreContextBase):
-    DEFAULT_SCORES = {
-        "tech": 0,
-        "composition": 0,
-        "art": 0,
-        "place": 0,
-    }
-    INITIAL_SCORES = {
-        "tech": None,
-        "composition": None,
-        "art": None,
-        "place": None,
-    }
+    DEFAULT_SCORES = {"tech": 0, "composition": 0, "art": 0, "place": 0}
+    INITIAL_SCORES = {"tech": None, "composition": None, "art": None, "place": None}
     SCORES_VALIDATORS = {
         "tech": lambda x: x is None or (isinstance(x, int) and 1 <= x <= 10),
         "composition": lambda x: x is None or (isinstance(x, int) and 1 <= x <= 10),
@@ -224,9 +200,9 @@ class ScoreContextDance3dFinal(ScoreContextBase):
     @property
     def scores_sum(self) -> int:
         return (
-            self.counting_score["tech"] +
-            self.counting_score["composition"] +
-            self.counting_score["art"]
+            self.counting_score["tech"]
+            + self.counting_score["composition"]
+            + self.counting_score["art"]
         )
 
     @property
@@ -235,10 +211,7 @@ class ScoreContextDance3dFinal(ScoreContextBase):
 
     @property
     def extra_data(self) -> Dict[str, Any]:
-        return {
-            **super().extra_data,
-            "scores_sum": self.scores_sum,
-        }
+        return {**super().extra_data, "scores_sum": self.scores_sum}
 
     @property
     def is_valid(self) -> bool:
@@ -253,15 +226,9 @@ class ScoreContextDance3dFinal(ScoreContextBase):
 
 
 class ScoreContextHeadQualification(ScoreContextBase):
-    DEFAULT_SCORES = {
-        "bonus": 0,
-    }
-    INITIAL_SCORES = {
-        "bonus": 0,
-    }
-    SCORES_VALIDATORS = {
-        "bonus": lambda x: isinstance(x, int) and -10 <= x <= 10,
-    }
+    DEFAULT_SCORES = {"bonus": 0}
+    INITIAL_SCORES = {"bonus": 0}
+    SCORES_VALIDATORS = {"bonus": lambda x: isinstance(x, int) and -10 <= x <= 10}
 
     @property
     def total_score(self) -> str:

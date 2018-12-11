@@ -69,17 +69,24 @@ class Competition(ModelBase, BaseModel):
     # Permissions
 
     @classmethod
-    def check_create_permission(cls, session: Session, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+    def check_create_permission(
+        cls, session: Session, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
         return False
 
     def check_read_permission(self, request: "ApiRequest") -> bool:
         return True
 
-    def check_update_permission(self, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+    def check_update_permission(
+        self, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
         auth = self.get_auth(request.client)
         if auth.access_level == AccessLevel.ADMIN:
             return True
-        if set(data.keys()) == {"screen_data"} and auth.access_level == AccessLevel.PRESENTER:
+        if (
+            set(data.keys()) == {"screen_data"}
+            and auth.access_level == AccessLevel.PRESENTER
+        ):
             return True
         return False
 
@@ -89,7 +96,9 @@ class Competition(ModelBase, BaseModel):
     # Create logic
 
     @classmethod
-    def before_create(cls, session: Session, data: Dict[str, Any], *, unsafe: bool) -> Dict[str, Any]:
+    def before_create(
+        cls, session: Session, data: Dict[str, Any], *, unsafe: bool
+    ) -> Dict[str, Any]:
         data.pop("deleted", None)
         return {}
 
@@ -110,7 +119,9 @@ class Competition(ModelBase, BaseModel):
 
     # Custom model logic
 
-    def load(self, encoded_data: str, items: Dict[str, Any], mk: "MutationsKeeper") -> None:
+    def load(
+        self, encoded_data: str, items: Dict[str, Any], mk: "MutationsKeeper"
+    ) -> None:
         from models.club import Club
         from models.competition_plan_item import CompetitionPlanItem
         from models.discipline import Discipline

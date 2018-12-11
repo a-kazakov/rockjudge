@@ -35,7 +35,9 @@ class Element(NamedTuple):
                 type_ = (int, float)
             if not isinstance(getattr(self, key), type_):
                 src_type = type(getattr(self, key))
-                raise TypeError(f"Element.{key} has invalid type {src_type}. Expected {type_}.")
+                raise TypeError(
+                    f"Element.{key} has invalid type {src_type}. Expected {type_}."
+                )
         if self.score < 0:
             raise ValueError("Score can't be negative")
 
@@ -49,17 +51,23 @@ class Program(ModelBase, BaseModel):
     __tablename__ = "programs"
 
     __table_args__ = (
-        UniqueConstraint("participant_id", "external_id", name="participant_external_id_idx"),
+        UniqueConstraint(
+            "participant_id", "external_id", name="participant_external_id_idx"
+        ),
     )
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
-    participant_id = Column(Integer, ForeignKey("participants.id", ondelete="CASCADE"), nullable=False)
+    participant_id = Column(
+        Integer, ForeignKey("participants.id", ondelete="CASCADE"), nullable=False
+    )
     default_for = Column(String, nullable=True)
     external_id = Column(String, nullable=True)
     elements_json = Column(JSON, default=[], nullable=False)
 
-    participant = relationship(Participant, backref=backref("programs", cascade="delete"))
+    participant = relationship(
+        Participant, backref=backref("programs", cascade="delete")
+    )
 
     HIDDEN_FIELDS = {"elements_json"}
     VIRTUAL_FIELDS = {"elements"}
@@ -96,20 +104,26 @@ class Program(ModelBase, BaseModel):
 
     @property
     def sorting_key(self) -> Tuple[Union[int, str], ...]:
-        return (self.name, self.id, )
+        return (self.name, self.id)
 
     # Permissions
 
     @classmethod
-    def check_create_permission(cls, session: Session, request: "ApiRequest", data: Dict[str, Any]) -> bool:
-        competition_id = session.query(Participant).get(data["participant_id"]).competition_id
+    def check_create_permission(
+        cls, session: Session, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
+        competition_id = (
+            session.query(Participant).get(data["participant_id"]).competition_id
+        )
         auth = ClientAuth.get_for_competition(session, request.client, competition_id)
         return auth.access_level == AccessLevel.ADMIN
 
     def check_read_permission(self, request: "ApiRequest") -> bool:
         return self.get_auth(request.client).access_level != AccessLevel.NONE
 
-    def check_update_permission(self, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+    def check_update_permission(
+        self, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
         return self.get_auth(request.client).access_level == AccessLevel.ADMIN
 
     def check_delete_permission(self, request: "ApiRequest") -> bool:
@@ -118,7 +132,9 @@ class Program(ModelBase, BaseModel):
     # Create logic
 
     @classmethod
-    def before_create(cls, session: Session, data: Dict[str, Any], *, unsafe: bool) -> Dict[str, Any]:
+    def before_create(
+        cls, session: Session, data: Dict[str, Any], *, unsafe: bool
+    ) -> Dict[str, Any]:
         return {
             "participant": session.query(Participant).get(data["participant_id"]),
             "elements": [Element.from_dict(sp) for sp in data.pop("elements")],
@@ -138,9 +154,7 @@ class Program(ModelBase, BaseModel):
     # Serialization logic
 
     def serialize_extra(self) -> Dict[str, Any]:
-        return {
-            "elements": [s.to_dict() for s in self.elements],
-        }
+        return {"elements": [s.to_dict() for s in self.elements]}
 
     # Custom model logic
 
@@ -152,14 +166,10 @@ class Program(ModelBase, BaseModel):
         mk: "MutationsKeeper",
     ):
         fixed_objects = [
-            {"elements": obj["acrobatics"], **obj}
-            for obj in objects
+            {"elements": obj["acrobatics"], **obj} for obj in objects
         ]  # TODO: fix reg system names
         for _ in cls.load_models_base(
-            fixed_objects,
-            participant.session,
-            mk,
-            participant_id=participant.id
+            fixed_objects, participant.session, mk, participant_id=participant.id
         ):
             pass
 

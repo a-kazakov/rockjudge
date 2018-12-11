@@ -1,5 +1,15 @@
 import itertools
-from typing import Any, Callable, Dict, Generator, NamedTuple, Optional, Type, TypeVar, TYPE_CHECKING
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generator,
+    NamedTuple,
+    Optional,
+    Type,
+    TypeVar,
+    TYPE_CHECKING,
+)
 
 from sqlalchemy.orm import joinedload, relationship, subqueryload, selectinload, Session
 from sqlalchemy.orm.strategy_options import loader_option, Load
@@ -23,7 +33,9 @@ class ModelTreeNode(NamedTuple):
     lower_children: Dict[str, "ModelTreeNode"]
 
     @classmethod
-    def from_dict(cls, model_type: Type["BaseModel"], data: RecursiveDict) -> "ModelTreeNode":
+    def from_dict(
+        cls, model_type: Type["BaseModel"], data: RecursiveDict
+    ) -> "ModelTreeNode":
         upper_children: Dict[str, "ModelTreeNode"] = {}
         lower_children: Dict[str, "ModelTreeNode"] = {}
         relationships = model_type.get_relationships()
@@ -34,18 +46,11 @@ class ModelTreeNode(NamedTuple):
                 lower_children[key] = next_node
             else:
                 upper_children[key] = next_node
-        return cls(
-            model_type,
-            upper_children,
-            lower_children,
-        )
+        return cls(model_type, upper_children, lower_children)
 
     @staticmethod
     def uprgade_prefetcher(
-        base: Optional[loader_option],
-        rel: relationship,
-        *,
-        use_joined: bool,
+        base: Optional[loader_option], rel: relationship, *, use_joined: bool
     ) -> loader_option:
         if base is None:
             if use_joined:
@@ -58,20 +63,18 @@ class ModelTreeNode(NamedTuple):
             else:
                 return base.selectinload(rel)
 
-    def build_prefetcher(self, parent: Optional[loader_option] = None) -> Generator[loader_option, None, None]:
+    def build_prefetcher(
+        self, parent: Optional[loader_option] = None
+    ) -> Generator[loader_option, None, None]:
         for rel_name, child in self.lower_children.items():
             next_pf = self.uprgade_prefetcher(
-                parent,
-                getattr(self.model, rel_name),
-                use_joined=False,
+                parent, getattr(self.model, rel_name), use_joined=False
             )
             yield next_pf
             yield from child.build_prefetcher(next_pf)
         for rel_name, child in self.upper_children.items():
             next_pf = self.uprgade_prefetcher(
-                parent,
-                getattr(self.model, rel_name),
-                use_joined=True,
+                parent, getattr(self.model, rel_name), use_joined=True
             )
             yield next_pf
             yield from child.build_prefetcher(next_pf)

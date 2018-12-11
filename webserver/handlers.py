@@ -11,7 +11,9 @@ from models.judge import Judge
 
 class StaticFileHandlerNoCache(tornado.web.StaticFileHandler):
     def set_extra_headers(self, path):
-        self.set_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        self.set_header(
+            "Cache-Control", "no-store, no-cache, must-revalidate, max-age=0"
+        )
 
 
 class AdminHandler(tornado.web.RequestHandler):
@@ -72,9 +74,7 @@ class JudgeHandler(tornado.web.RequestHandler):
 class PresenterHandler(tornado.web.RequestHandler):
     def get(self, competition_id):
         return self.render(
-            "presenter.html",
-            competition_id=competition_id,
-            settings=settings,
+            "presenter.html", competition_id=competition_id, settings=settings
         )
 
 
@@ -83,7 +83,9 @@ class ScreenHandler(tornado.web.RequestHandler):
         return self.render(
             "screen.html",
             competition_id=competition_id,
-            manifest=json.load(open("screen/manifest.json", "rt", encoding="utf-8-sig")),
+            manifest=json.load(
+                open("screen/manifest.json", "rt", encoding="utf-8-sig")
+            ),
             settings=settings,
         )
 
@@ -93,14 +95,13 @@ class ScreenOperatorHandler(tornado.web.RequestHandler):
         return self.render(
             "screen_operator.html",
             competition_id=competition_id,
-            manifest=json.load(open("screen/manifest.json", "rt", encoding="utf-8-sig")),
+            manifest=json.load(
+                open("screen/manifest.json", "rt", encoding="utf-8-sig")
+            ),
             settings=settings,
         )
 
 
 class StartPageHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render(
-            "start_page.html",
-            settings=settings,
-        )
+        self.render("start_page.html", settings=settings)

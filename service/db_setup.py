@@ -60,19 +60,29 @@ def setup():
 
     try:
         print("   Creating database user ...")
-        cursor.execute("""CREATE ROLE {username} LOGIN PASSWORD '{passwd}'
+        cursor.execute(
+            """CREATE ROLE {username} LOGIN PASSWORD '{passwd}'
           NOINHERIT
            VALID UNTIL 'infinity'
-        """.format(username=db_name, passwd=passwd))
+        """.format(
+                username=db_name, passwd=passwd
+            )
+        )
 
         print("   Creating database table ...")
-        cursor.execute("""CREATE DATABASE {db_name}
+        cursor.execute(
+            """CREATE DATABASE {db_name}
           WITH ENCODING='UTF8'
                OWNER={owner}
                CONNECTION LIMIT=-1
-        """.format(db_name=db_name, owner=db_name))
+        """.format(
+                db_name=db_name, owner=db_name
+            )
+        )
         print("   Adding hstore extension ...")
-        local_conn = psycopg2.connect(user="postgres", password=db_admin_passwd, database=db_name)
+        local_conn = psycopg2.connect(
+            user="postgres", password=db_admin_passwd, database=db_name
+        )
         local_conn.autocommit = True
         local_cursor = local_conn.cursor()
         local_cursor.execute("CREATE EXTENSION IF NOT EXISTS hstore")

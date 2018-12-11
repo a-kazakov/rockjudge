@@ -23,11 +23,15 @@ class Club(ModelBase, BaseModel):
     __tablename__ = "clubs"
 
     __table_args__ = (
-        UniqueConstraint("competition_id", "external_id", name="competition_external_id_idx"),
+        UniqueConstraint(
+            "competition_id", "external_id", name="competition_external_id_idx"
+        ),
     )
 
     id = Column(Integer, primary_key=True)
-    competition_id = Column(Integer, ForeignKey("competitions.id", ondelete="RESTRICT"), nullable=False)
+    competition_id = Column(
+        Integer, ForeignKey("competitions.id", ondelete="RESTRICT"), nullable=False
+    )
     name = Column(String, nullable=False)
     city = Column(String, nullable=False)
     external_id = Column(String, nullable=True)
@@ -49,14 +53,20 @@ class Club(ModelBase, BaseModel):
     # Permissions
 
     @classmethod
-    def check_create_permission(cls, session: Session, request: "ApiRequest", data: Dict[str, Any]) -> bool:
-        auth = ClientAuth.get_for_competition(session, request.client, int(data["competition_id"]))
+    def check_create_permission(
+        cls, session: Session, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
+        auth = ClientAuth.get_for_competition(
+            session, request.client, int(data["competition_id"])
+        )
         return auth.access_level == AccessLevel.ADMIN
 
     def check_read_permission(self, request: "ApiRequest") -> bool:
         return self.get_auth(request.client).access_level != AccessLevel.NONE
 
-    def check_update_permission(self, request: "ApiRequest", data: Dict[str, Any]) -> bool:
+    def check_update_permission(
+        self, request: "ApiRequest", data: Dict[str, Any]
+    ) -> bool:
         return self.get_auth(request.client).access_level == AccessLevel.ADMIN
 
     def check_delete_permission(self, request: "ApiRequest") -> bool:
@@ -65,10 +75,10 @@ class Club(ModelBase, BaseModel):
     # Create logic
 
     @classmethod
-    def before_create(cls, session: Session, data: Dict[str, Any], *, unsafe: bool) -> Dict[str, Any]:
-        return {
-            "competition": session.query(Competition).get(data["competition_id"])
-        }
+    def before_create(
+        cls, session: Session, data: Dict[str, Any], *, unsafe: bool
+    ) -> Dict[str, Any]:
+        return {"competition": session.query(Competition).get(data["competition_id"])}
 
     # Update logic
     # (default)
@@ -77,6 +87,7 @@ class Club(ModelBase, BaseModel):
 
     def before_delete(self) -> None:
         from models.participant import Participant
+
         if self.session.query(Participant).filter_by(club=self).count() > 0:
             raise ApiError("errors.club.delete_with_participants")
 
@@ -91,13 +102,9 @@ class Club(ModelBase, BaseModel):
         mk: "MutationsKeeper",
     ) -> None:
         for _ in cls.load_models_base(
-            objects,
-            competition.session,
-            mk,
-            competition_id=competition.id,
+            objects, competition.session, mk, competition_id=competition.id
         ):
             pass
-
 
     #
     # def export(self):

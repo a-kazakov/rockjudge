@@ -33,14 +33,12 @@ class Grid:
 
     def getRow(self, row, num_elements):
         return [
-            self.sheet[self.getCellIdx(row, col)].value
-            for col in range(num_elements)
+            self.sheet[self.getCellIdx(row, col)].value for col in range(num_elements)
         ]
 
     def getCol(self, col, num_elements):
         return [
-            self.sheet[self.getCellIdx(row, col)].value
-            for row in range(num_elements)
+            self.sheet[self.getCellIdx(row, col)].value for row in range(num_elements)
         ]
 
 
@@ -71,27 +69,27 @@ class Discipline:
 
     @property
     def has_participants(self):
-        return len([
-            None
-            for p in list(Couple.storage.values()) + Formation.storage
-            if p.discipline == self.name
-        ]) > 0
+        return (
+            len(
+                [
+                    None
+                    for p in list(Couple.storage.values()) + Formation.storage
+                    if p.discipline == self.name
+                ]
+            )
+            > 0
+        )
 
     @property
     def has_judges(self):
-        return len([
-            None
-            for p in DisciplineJudge.storage
-            if p.discipline == self.name
-        ]) > 0
+        return (
+            len([None for p in DisciplineJudge.storage if p.discipline == self.name])
+            > 0
+        )
 
     @property
     def has_tours(self):
-        return len([
-            None
-            for p in Tour.storage
-            if p.discipline == self.name
-        ]) > 0
+        return len([None for p in Tour.storage if p.discipline == self.name]) > 0
 
     def serialize(self, add_tours=True):
         result = {k: getattr(self, k) for k in ["name", "external_id", "sp"]}
@@ -107,9 +105,7 @@ class Discipline:
         ]
         if add_tours:
             result["tours"] = [
-                t.serialize()
-                for t in Tour.storage
-                if t.discipline == self.name
+                t.serialize() for t in Tour.storage if t.discipline == self.name
             ]
         return result
 
@@ -129,7 +125,14 @@ class Judge:
     def serialize(self):
         return {
             k: getattr(self, k) if getattr(self, k) is not None else ""
-            for k in ["name", "category", "number", "role_description", "sp", "external_id"]
+            for k in [
+                "name",
+                "category",
+                "number",
+                "role_description",
+                "sp",
+                "external_id",
+            ]
         }
 
 
@@ -161,44 +164,60 @@ class Couple:
             raise StopIteration
         self.sportsmen = []
         if row[1] is not None:
-            self.sportsmen.append({
-                "last_name": str(row[1]),
-                "first_name": str(row[2]),
-                "year_of_birth": int(row[3]),
-                "gender": "F",
-            })
+            self.sportsmen.append(
+                {
+                    "last_name": str(row[1]),
+                    "first_name": str(row[2]),
+                    "year_of_birth": int(row[3]),
+                    "gender": "F",
+                }
+            )
         if row[4] is not None:
-            self.sportsmen.append({
-                "last_name": str(row[4]),
-                "first_name": str(row[5]),
-                "year_of_birth": int(row[6]),
-                "gender": "M",
-            })
+            self.sportsmen.append(
+                {
+                    "last_name": str(row[4]),
+                    "first_name": str(row[5]),
+                    "year_of_birth": int(row[6]),
+                    "gender": "M",
+                }
+            )
         acrobatics = []
         for idx in range(12, 12 + 6 * 2, 2):
             if row[idx] is not None:
-                acrobatics.append({
-                    "description": str(row[idx]),
-                    "score": float(row[idx + 1])
-                })
+                acrobatics.append(
+                    {"description": str(row[idx]), "score": float(row[idx + 1])}
+                )
         self.number = row[0]
         self.discipline = str(row[7])
         self.club = Club.storage[row[8]].external_id
         self.coaches = str(row[9])
         program_name = row[10]
         default_for = row[11]
-        self.programs = [] if program_name is None else [{
-            "external_id": str(program_name),
-            "default_for": default_for,
-            "name": str(program_name),
-            "acrobatics": acrobatics,
-        }]
-        self.external_id = md5((
-            str(self.number) + "|" +
-            str(self.discipline) + "|" +
-            self.club + "|" +
-            "|".join([s["first_name"] + "$" + s["last_name"] for s in self.sportsmen])
-        ).encode("utf-8")).hexdigest()
+        self.programs = (
+            []
+            if program_name is None
+            else [
+                {
+                    "external_id": str(program_name),
+                    "default_for": default_for,
+                    "name": str(program_name),
+                    "acrobatics": acrobatics,
+                }
+            ]
+        )
+        self.external_id = md5(
+            (
+                str(self.number)
+                + "|"
+                + str(self.discipline)
+                + "|"
+                + self.club
+                + "|"
+                + "|".join(
+                    [s["first_name"] + "$" + s["last_name"] for s in self.sportsmen]
+                )
+            ).encode("utf-8")
+        ).hexdigest()
         if self.external_id in self.storage:
             if len(self.programs) > 0:
                 self.storage[self.external_id].programs.append(self.programs[0])
@@ -208,7 +227,14 @@ class Couple:
     def serialize(self):
         result = {
             k: getattr(self, k)
-            for k in ["sportsmen", "club", "coaches", "number", "programs", "external_id"]
+            for k in [
+                "sportsmen",
+                "club",
+                "coaches",
+                "number",
+                "programs",
+                "external_id",
+            ]
             if getattr(self, k) is not None
         }
         return result
@@ -231,24 +257,39 @@ class Formation:
                 "first_name": row[6],
                 "year_of_birth": row[7],
                 "gender": row[8],
-            } for row in rows
+            }
+            for row in rows
             if row[5] is not None
         ]
         self.acrobatics = []
-        self.external_id = md5((
-            self.club + "|" + self.formation_name + "|" + str(self.number) + "|" + self.discipline
-        ).encode("utf-8")).hexdigest()
+        self.external_id = md5(
+            (
+                self.club
+                + "|"
+                + self.formation_name
+                + "|"
+                + str(self.number)
+                + "|"
+                + self.discipline
+            ).encode("utf-8")
+        ).hexdigest()
         self.storage.append(self)
 
     def serialize(self):
         result = {
             k: getattr(self, k)
-            for k in ["formation_name", "sportsmen", "acrobatics", "club", "coaches", "number", "external_id"]
+            for k in [
+                "formation_name",
+                "sportsmen",
+                "acrobatics",
+                "club",
+                "coaches",
+                "number",
+                "external_id",
+            ]
             if getattr(self, k) is not None
         }
-        result.update({
-            "programs": [],
-        })
+        result.update({"programs": []})
         return result
 
 
@@ -262,14 +303,23 @@ class Tour:
         self.discipline = row[0]
         self.name = row[1]
         self.hope_tour = row[2] == "Y"
-        self.scoring_system_name, self.num_advances, self.participants_per_heat = row[3:6]
+        self.scoring_system_name, self.num_advances, self.participants_per_heat = row[
+            3:6
+        ]
         self.default_program = "" if row[6] is None else row[6]
         self.storage.append(self)
 
     def serialize(self):
         return {
             k: getattr(self, k)
-            for k in ["name", "hope_tour", "scoring_system_name", "num_advances", "participants_per_heat", "default_program"]
+            for k in [
+                "name",
+                "hope_tour",
+                "scoring_system_name",
+                "num_advances",
+                "participants_per_heat",
+                "default_program",
+            ]
         }
 
 
@@ -282,14 +332,24 @@ class CompetitionPlanItem:
             return
         self.sp = row[0]
         self.verbose_name = row[1] if row[1] is not None else ""
-        self.discipline_external_id = Discipline.storage[row[2]].external_id if row[2] is not None else None
-        self.estimated_beginning, self.estimated_duration = ["" if x is None else x for x in row[4:6]]
+        self.discipline_external_id = (
+            Discipline.storage[row[2]].external_id if row[2] is not None else None
+        )
+        self.estimated_beginning, self.estimated_duration = [
+            "" if x is None else x for x in row[4:6]
+        ]
         self.storage.append(self)
 
     def serialize(self):
         return {
             k: getattr(self, k)
-            for k in ["sp", "verbose_name", "discipline_external_id", "estimated_beginning", "estimated_duration"]
+            for k in [
+                "sp",
+                "verbose_name",
+                "discipline_external_id",
+                "estimated_beginning",
+                "estimated_duration",
+            ]
         }
 
 
@@ -304,15 +364,31 @@ def step(s):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='Converts Excel sheet to RockJudge import format')
-    parser.add_argument('infile', metavar='<input file>', type=str,
-                        help='Input XLSX file')
-    parser.add_argument('outfile', metavar='<output file>', type=str,
-                        help='Output TXT file')
-    parser.add_argument('-t', '--no-tour', dest='add_tours', action='store_false', default=True,
-                        help='Do not include tours into output file')
-    parser.add_argument('-p', '--no-plan', dest='add_plan', action='store_false', default=True,
-                        help='Do not include competition plan into output file')
+    parser = argparse.ArgumentParser(
+        description="Converts Excel sheet to RockJudge import format"
+    )
+    parser.add_argument(
+        "infile", metavar="<input file>", type=str, help="Input XLSX file"
+    )
+    parser.add_argument(
+        "outfile", metavar="<output file>", type=str, help="Output TXT file"
+    )
+    parser.add_argument(
+        "-t",
+        "--no-tour",
+        dest="add_tours",
+        action="store_false",
+        default=True,
+        help="Do not include tours into output file",
+    )
+    parser.add_argument(
+        "-p",
+        "--no-plan",
+        dest="add_plan",
+        action="store_false",
+        default=True,
+        help="Do not include competition plan into output file",
+    )
     args = parser.parse_args()
     with step("Opening document"):
         filename = args.infile
@@ -382,13 +458,22 @@ if __name__ == "__main__":
 
     with step("Saving"):
         with open(args.outfile, "wt", encoding="utf-8") as f:
-            f.write(json.dumps({
-                "judges": [x.serialize() for x in Judge.storage.values()],
-                "clubs": [x.serialize() for x in Club.storage.values()],
-                "disciplines": [
-                    x.serialize(add_tours=args.add_tours)
-                    for x in Discipline.storage.values()
-                    if x.has_participants or x.has_judges or x.has_tours
-                ],
-                "plan": [x.serialize() for x in CompetitionPlanItem.storage] if args.add_plan else []
-            }, sort_keys=True, indent=4, ensure_ascii=False))
+            f.write(
+                json.dumps(
+                    {
+                        "judges": [x.serialize() for x in Judge.storage.values()],
+                        "clubs": [x.serialize() for x in Club.storage.values()],
+                        "disciplines": [
+                            x.serialize(add_tours=args.add_tours)
+                            for x in Discipline.storage.values()
+                            if x.has_participants or x.has_judges or x.has_tours
+                        ],
+                        "plan": [x.serialize() for x in CompetitionPlanItem.storage]
+                        if args.add_plan
+                        else [],
+                    },
+                    sort_keys=True,
+                    indent=4,
+                    ensure_ascii=False,
+                )
+            )

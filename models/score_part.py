@@ -14,12 +14,12 @@ class ScorePart(ModelBase, BaseModel):
 
     __tablename__ = "score_parts"
 
-    __table_args__ = (
-        UniqueConstraint("score_id", "key", name="score_key_idx"),
-    )
+    __table_args__ = (UniqueConstraint("score_id", "key", name="score_key_idx"),)
 
     id = Column(Integer, primary_key=True)
-    score_id = Column(Integer, ForeignKey("scores.id", ondelete="CASCADE"), nullable=False)
+    score_id = Column(
+        Integer, ForeignKey("scores.id", ondelete="CASCADE"), nullable=False
+    )
     key = Column(String, nullable=False)
     value_json = Column(JSON(none_as_null=True), nullable=True)
 
@@ -34,17 +34,12 @@ class ScorePart(ModelBase, BaseModel):
     @value.setter
     def value(self, new_value: Any) -> None:
         self.value_json = self.score.run.tour.scoring_system.filter_score_component(
-            self.score.discipline_judge.role,
-            self.key,
-            new_value,
+            self.score.discipline_judge.role, self.key, new_value
         )
 
     @classmethod
     def create_and_validate(
-        cls: Type["ScorePart"],
-        session: Session,
-        score: Score,
-        data: Dict[str, Any],
+        cls: Type["ScorePart"], session: Session, score: Score, data: Dict[str, Any]
     ) -> None:
         scoring_system = score.run.tour.scoring_system
         judge_role = score.discipline_judge.role
@@ -53,10 +48,7 @@ class ScorePart(ModelBase, BaseModel):
         for key, value in data.items():
             try:
                 filtered_data[key] = scoring_system.filter_score_component(
-                    judge_role,
-                    key,
-                    value,
-                    prev_data.get(key, None)
+                    judge_role, key, value, prev_data.get(key, None)
                 )
             except ValueError:
                 pass
@@ -65,15 +57,10 @@ class ScorePart(ModelBase, BaseModel):
         for idx, (key, value) in enumerate(filtered_data.items()):
             if value is None:
                 values_strings.append(f"(:score_id, :k{idx}, NULL)")
-                params.update({
-                    f"k{idx}": key,
-                })
+                params.update({f"k{idx}": key})
             else:
                 values_strings.append(f"(:score_id, :k{idx}, :v{idx})")
-                params.update({
-                    f"k{idx}": key,
-                    f"v{idx}": json.dumps(value),
-                })
+                params.update({f"k{idx}": key, f"v{idx}": json.dumps(value)})
         session.execute(
             (
                 f"INSERT INTO {cls.__tablename__} (score_id, key, value_json) "

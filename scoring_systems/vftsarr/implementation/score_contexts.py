@@ -7,7 +7,7 @@ from scoring_systems.base import ScoreInfo, RunInfo, TourComputationRequest, Sco
 from .common import CachedClass, float_to_frac
 
 
-POSSIBLE_REDUCTIONS = (0, 5, 10, 15, 25, 35, 50, 75, 100, )
+POSSIBLE_REDUCTIONS = (0, 5, 10, 15, 25, 35, 50, 75, 100)
 
 ARR_CARD_REASONS = {
     "base": {
@@ -17,14 +17,8 @@ ARR_CARD_REASONS = {
         "MUSIC": 40,
         "OTHER": 1000,
     },
-    "acro": {
-        "ACRO_COUNT": 100,
-        "NO_REQUIRED_ACRO": 110,
-        "FORBIDDEN_ACRO": 120,
-    },
-    "formation": {
-        "INCOMPLETE_COUPLE": 200,
-    },
+    "acro": {"ACRO_COUNT": 100, "NO_REQUIRED_ACRO": 110, "FORBIDDEN_ACRO": 120},
+    "formation": {"INCOMPLETE_COUPLE": 200},
 }
 
 
@@ -40,33 +34,44 @@ def get_all_card_reasons(*card_groups: str) -> Set[str]:
     )
     return result
 
-def make_apply_reduction(criteria: str, max_value: Union[int, frac] = 10) -> Callable[[Dict[str, Any]], frac]:
+
+def make_apply_reduction(
+    criteria: str, max_value: Union[int, frac] = 10
+) -> Callable[[Dict[str, Any]], frac]:
     def apply_reduction(score: Dict[str, Any]) -> frac:
         return (100 - float_to_frac(score[criteria])) * frac(max_value) * frac(1, 100)
+
     return apply_reduction
 
 
 def make_multiply(criteria: str, multiplier: frac) -> Callable[[Dict[str, Any]], frac]:
     def multiply(score: Dict[str, Any]) -> frac:
         return float_to_frac(score[criteria]) * multiplier
+
     return multiply
 
 
 def make_combine_fields(**values: Union[int, frac]) -> Callable[[Dict[str, Any]], frac]:
     def combine_fields(score: Dict[str, Any]) -> frac:
-        return sum(float_to_frac(score[key]) * frac(value) for key, value in values.items())
+        return sum(
+            float_to_frac(score[key]) * frac(value) for key, value in values.items()
+        )
+
     return combine_fields
 
 
 def make_validate_card_reasons(*card_groups: str) -> Callable[[Any], bool]:
     all_reasons = get_all_card_reasons(*card_groups)
+
     def validate_card_reasons(reasons: Any) -> bool:
         return (
-            isinstance(reasons, dict) and
-            all(k in all_reasons and type(v) is bool for k, v in reasons.items()) and
-            len(reasons) == len(all_reasons)
+            isinstance(reasons, dict)
+            and all(k in all_reasons and type(v) is bool for k, v in reasons.items())
+            and len(reasons) == len(all_reasons)
         )
+
     return validate_card_reasons
+
 
 def make_validate_number(
     min_value: int = 0,
@@ -77,7 +82,7 @@ def make_validate_number(
     def validate_number(value: Any) -> bool:
         if value is None:
             return allow_none
-        if not isinstance(value, (int, float, )):
+        if not isinstance(value, (int, float)):
             return False
         denominator = 50 if allow_halves else 100
         if round(value * 100) % denominator != 0:
@@ -85,7 +90,9 @@ def make_validate_number(
         if not (min_value - 1e-5 < value < max_value + 1e-5):
             return False
         return True
+
     return validate_number
+
 
 def validate_reduction(value: Any) -> bool:
     if value is None:
@@ -117,11 +124,10 @@ class ScoreContextBase(CachedClass, metaclass=ABCMeta):
 
     @staticmethod
     def get_class(
-        judge_role: str,
-        scoring_system_name: str,
+        judge_role: str, scoring_system_name: str
     ) -> Type["ScoreContextBase"]:
         if judge_role == "dance_judge":
-            if scoring_system_name in ("formation", "formation_acro", ):
+            if scoring_system_name in ("formation", "formation_acro"):
                 return ScoreContextFormation
             if scoring_system_name == "formation_simplified":
                 return ScoreContextFormationSimplified
@@ -131,11 +137,11 @@ class ScoreContextBase(CachedClass, metaclass=ABCMeta):
                 return ScoreContextSolo
             if scoring_system_name == "solo_rough":
                 return ScoreContextSoloRough
-            if scoring_system_name in ("dance_extended", "acro_extended", ):
+            if scoring_system_name in ("dance_extended", "acro_extended"):
                 return ScoreContextDanceExtended
             if scoring_system_name == "dance_rough":
                 return ScoreContextDanceRough
-            if scoring_system_name in ("am_final_fw", "am_final_acro", ):
+            if scoring_system_name in ("am_final_fw", "am_final_acro"):
                 return ScoreContextAmFinalDance
             return ScoreContextDance
         if judge_role == "acro_judge":
@@ -158,7 +164,7 @@ class ScoreContextBase(CachedClass, metaclass=ABCMeta):
                 "acro_extended",
             ):
                 return ScoreContextTechAcro
-            if scoring_system_name in ("formation", "formation_simplified", ):
+            if scoring_system_name in ("formation", "formation_simplified"):
                 return ScoreContextTechFormation
             if scoring_system_name == "formation_acro":
                 return ScoreContextTechFormationAcro
@@ -189,7 +195,9 @@ class ScoreContextBase(CachedClass, metaclass=ABCMeta):
         db_data = score_info.data
         judge_role = tour_request.judge_roles[score_info.judge_id]
         acro_scores = run_info.acro_scores
-        result = cls.make_from_data(db_data, judge_role, scoring_system_name, acro_scores)
+        result = cls.make_from_data(
+            db_data, judge_role, scoring_system_name, acro_scores
+        )
         result.score_info = score_info
         return result
 
@@ -205,7 +213,8 @@ class ScoreContextBase(CachedClass, metaclass=ABCMeta):
             **{
                 key: self.db_data[key]
                 for key in self.INITIAL_SCORES
-                if key in self.db_data and self.SCORES_VALIDATORS[key](self.db_data[key])
+                if key in self.db_data
+                and self.SCORES_VALIDATORS[key](self.db_data[key])
             },
         }
 
@@ -236,18 +245,12 @@ class ScoreContextBase(CachedClass, metaclass=ABCMeta):
 
 
 class ScoreContextSimplified(ScoreContextBase):
-    DEFAULT_SCORES = {
-        "points": 0,
-    }
-    INITIAL_SCORES = {
-        "points": None,
-    }
+    DEFAULT_SCORES = {"points": 0}
+    INITIAL_SCORES = {"points": None}
     SCORES_VALIDATORS = {
-        "points": make_validate_number(min_value=1, max_value=40, allow_none=True),
+        "points": make_validate_number(min_value=1, max_value=40, allow_none=True)
     }
-    CRITERIAS_MODIFIERS = {
-        "points": lambda x: frac(x["points"]),
-    }
+    CRITERIAS_MODIFIERS = {"points": lambda x: frac(x["points"])}
 
     @property
     def total_score(self) -> Union[str, float, int, frac]:
@@ -282,26 +285,38 @@ class ScoreContextDanceExtended(ScoreContextBase):
     SCORES_VALIDATORS = {
         "fw_man": validate_reduction,
         "fw_woman": validate_reduction,
-        "df_accuracy": make_validate_number(max_value=5, allow_halves=True, allow_none=True),
-        "df_complexity": make_validate_number(max_value=4, allow_halves=True, allow_none=True),
+        "df_accuracy": make_validate_number(
+            max_value=5, allow_halves=True, allow_none=True
+        ),
+        "df_complexity": make_validate_number(
+            max_value=4, allow_halves=True, allow_none=True
+        ),
         "df_art": make_validate_number(max_value=1, allow_halves=True, allow_none=True),
         "c_idea": make_validate_number(max_value=5, allow_halves=True, allow_none=True),
-        "c_performance": make_validate_number(max_value=4, allow_halves=True, allow_none=True),
-        "c_bonus": make_validate_number(max_value=1, allow_halves=True, allow_none=True),
+        "c_performance": make_validate_number(
+            max_value=4, allow_halves=True, allow_none=True
+        ),
+        "c_bonus": make_validate_number(
+            max_value=1, allow_halves=True, allow_none=True
+        ),
         "small_mistakes": make_validate_number(max_value=100),
         "big_mistakes": make_validate_number(max_value=100),
     }
     CRITERIAS_MODIFIERS = {
         "fw_woman": make_apply_reduction("fw_woman"),
         "fw_man": make_apply_reduction("fw_man"),
-        "dance_figs": make_combine_fields(df_accuracy=frac(5, 2), df_complexity=frac(5, 2), df_art=frac(5, 2)),
+        "dance_figs": make_combine_fields(
+            df_accuracy=frac(5, 2), df_complexity=frac(5, 2), df_art=frac(5, 2)
+        ),
         "composition": make_combine_fields(c_idea=2, c_performance=2, c_bonus=2),
         "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-30),
     }
 
     @property
     def total_score(self) -> str:
-        num_set = sum(self.user_data[key] is not None for key in self.INITIAL_SCORES.keys())
+        num_set = sum(
+            self.user_data[key] is not None for key in self.INITIAL_SCORES.keys()
+        )
         if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
             return "–"
         if num_set == len(self.DEFAULT_SCORES):
@@ -344,7 +359,9 @@ class ScoreContextDance(ScoreContextBase):
 
     @property
     def total_score(self) -> str:
-        num_set = sum(self.user_data[key] is not None for key in self.INITIAL_SCORES.keys())
+        num_set = sum(
+            self.user_data[key] is not None for key in self.INITIAL_SCORES.keys()
+        )
         if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
             return "–"
         if num_set == len(self.DEFAULT_SCORES):
@@ -367,10 +384,13 @@ class ScoreContextAmFinalDance(ScoreContextDanceExtended):
     CRITERIAS_MODIFIERS = {
         "fw_woman": make_apply_reduction("fw_woman", 5),
         "fw_man": make_apply_reduction("fw_man", 5),
-        "dance_figs": make_combine_fields(df_accuracy=frac(5, 4), df_complexity=frac(5, 4), df_art=frac(5, 4)),
+        "dance_figs": make_combine_fields(
+            df_accuracy=frac(5, 4), df_complexity=frac(5, 4), df_art=frac(5, 4)
+        ),
         "composition": make_combine_fields(c_idea=1, c_performance=1, c_bonus=1),
         "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-30),
     }
+
 
 class ScoreContextSolo(ScoreContextBase):
     DEFAULT_SCORES = {
@@ -403,7 +423,9 @@ class ScoreContextSolo(ScoreContextBase):
 
     @property
     def total_score(self) -> str:
-        num_set = sum(self.user_data[key] is not None for key in self.INITIAL_SCORES.keys())
+        num_set = sum(
+            self.user_data[key] is not None for key in self.INITIAL_SCORES.keys()
+        )
         if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
             return "–"
         if num_set == len(self.DEFAULT_SCORES):
@@ -456,14 +478,18 @@ class ScoreContextAcro(ScoreContextBase):
     @property
     def criterias(self) -> Dict[str, frac]:
         return {
-            f"a{idx}": (100 - float_to_frac(self.counting_score[f"a{idx}"])) * float_to_frac(base_score) * frac(1, 100)
+            f"a{idx}": (100 - float_to_frac(self.counting_score[f"a{idx}"]))
+            * float_to_frac(base_score)
+            * frac(1, 100)
             for idx, base_score in enumerate(self.acro_scores, start=1)
         }
 
     @property
     def total_score(self) -> str:
         num_acros = len(self.acro_scores)
-        num_set = sum(self.user_data[f"a{x}"] is not None for x in range(1, num_acros + 1))
+        num_set = sum(
+            self.user_data[f"a{x}"] is not None for x in range(1, num_acros + 1)
+        )
         return f"{num_set} / {num_acros}"
 
 
@@ -498,29 +524,51 @@ class ScoreContextFormation(ScoreContextBase):
     }
     SCORES_VALIDATORS = {
         "fw": validate_reduction,
-        "df_accuracy": make_validate_number(max_value=5, allow_halves=True, allow_none=True),
-        "df_difficulty": make_validate_number(max_value=4, allow_halves=True, allow_none=True),
+        "df_accuracy": make_validate_number(
+            max_value=5, allow_halves=True, allow_none=True
+        ),
+        "df_difficulty": make_validate_number(
+            max_value=4, allow_halves=True, allow_none=True
+        ),
         "df_art": make_validate_number(max_value=1, allow_halves=True, allow_none=True),
-        "c_ideas": make_validate_number(max_value=5, allow_halves=True, allow_none=True),
-        "c_structure": make_validate_number(max_value=4, allow_halves=True, allow_none=True),
-        "c_bonus": make_validate_number(max_value=1, allow_halves=True, allow_none=True),
-        "fig_execution": make_validate_number(max_value=5, allow_halves=True, allow_none=True),
-        "fig_patterns": make_validate_number(max_value=4, allow_halves=True, allow_none=True),
-        "fig_transitions": make_validate_number(max_value=1, allow_halves=True, allow_none=True),
+        "c_ideas": make_validate_number(
+            max_value=5, allow_halves=True, allow_none=True
+        ),
+        "c_structure": make_validate_number(
+            max_value=4, allow_halves=True, allow_none=True
+        ),
+        "c_bonus": make_validate_number(
+            max_value=1, allow_halves=True, allow_none=True
+        ),
+        "fig_execution": make_validate_number(
+            max_value=5, allow_halves=True, allow_none=True
+        ),
+        "fig_patterns": make_validate_number(
+            max_value=4, allow_halves=True, allow_none=True
+        ),
+        "fig_transitions": make_validate_number(
+            max_value=1, allow_halves=True, allow_none=True
+        ),
         "small_mistakes": make_validate_number(max_value=100),
         "big_mistakes": make_validate_number(max_value=100),
     }
     CRITERIAS_MODIFIERS = {
         "fw": make_apply_reduction("fw"),
         "dance_figs": make_combine_fields(df_accuracy=2, df_difficulty=2, df_art=2),
-        "composition": make_combine_fields(c_ideas=frac(3, 2), c_structure=frac(3, 2), c_bonus=frac(3, 2)),
-        "figures": make_combine_fields(fig_execution=2, fig_patterns=2, fig_transitions=2),
+        "composition": make_combine_fields(
+            c_ideas=frac(3, 2), c_structure=frac(3, 2), c_bonus=frac(3, 2)
+        ),
+        "figures": make_combine_fields(
+            fig_execution=2, fig_patterns=2, fig_transitions=2
+        ),
         "mistakes": make_combine_fields(small_mistakes=-2, big_mistakes=-10),
     }
 
     @property
     def total_score(self) -> str:
-        num_set = sum(self.user_data[key] is not None for key in self.INITIAL_SCORES.keys())
+        num_set = sum(
+            self.user_data[key] is not None for key in self.INITIAL_SCORES.keys()
+        )
         if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
             return "–"
         if num_set == len(self.DEFAULT_SCORES):
@@ -563,7 +611,9 @@ class ScoreContextFormationSimplified(ScoreContextBase):
 
     @property
     def total_score(self) -> str:
-        num_set = sum(self.user_data[key] is not None for key in self.INITIAL_SCORES.keys())
+        num_set = sum(
+            self.user_data[key] is not None for key in self.INITIAL_SCORES.keys()
+        )
         if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
             return "–"
         if num_set == len(self.DEFAULT_SCORES):
@@ -631,14 +681,18 @@ class ScoreContextTechFormation(ScoreContextBase):
         "jump_steps": 0,
         "time": None,
         "card": "OK",
-        "card_reasons": {key: False for key in get_all_card_reasons("base", "formation")},
+        "card_reasons": {
+            key: False for key in get_all_card_reasons("base", "formation")
+        },
         "undercount": 0,
     }
     INITIAL_SCORES = {
         "jump_steps": 0,
         "time": None,
         "card": "OK",
-        "card_reasons": {key: False for key in get_all_card_reasons("base", "formation")},
+        "card_reasons": {
+            key: False for key in get_all_card_reasons("base", "formation")
+        },
         "undercount": 0,
     }
     SCORES_VALIDATORS = {
@@ -661,7 +715,9 @@ class ScoreContextTechFormationAcro(ScoreContextBase):
         "jump_steps": 0,
         "time": None,
         "card": "OK",
-        "card_reasons": {key: False for key in get_all_card_reasons("base", "acro", "formation")},
+        "card_reasons": {
+            key: False for key in get_all_card_reasons("base", "acro", "formation")
+        },
         "undercount": 0,
         "fall_down": 0,
     }
@@ -669,7 +725,9 @@ class ScoreContextTechFormationAcro(ScoreContextBase):
         "jump_steps": 0,
         "time": None,
         "card": "OK",
-        "card_reasons": {key: False for key in get_all_card_reasons("base", "acro", "formation")},
+        "card_reasons": {
+            key: False for key in get_all_card_reasons("base", "acro", "formation")
+        },
         "undercount": 0,
         "fall_down": 0,
     }
@@ -694,16 +752,20 @@ class ScoreContextHead(ScoreContextBase):
     DEFAULT_SCORES = {
         "bonus": 0,
         "card": "OK",
-        "card_reasons": {key: False for key in get_all_card_reasons("base", "acro", "formation")},
+        "card_reasons": {
+            key: False for key in get_all_card_reasons("base", "acro", "formation")
+        },
     }
     INITIAL_SCORES = {
         "bonus": 0,
         "card": "OK",
-        "card_reasons": {key: False for key in get_all_card_reasons("base", "acro", "formation")},
+        "card_reasons": {
+            key: False for key in get_all_card_reasons("base", "acro", "formation")
+        },
     }
     SCORES_VALIDATORS = {
         "bonus": lambda x: type(x) is int and -10 <= x <= 10,
-        "card": lambda x: x in ("OK", "YC", "RC",),
+        "card": lambda x: x in ("OK", "YC", "RC"),
         "card_reasons": make_validate_card_reasons("base", "acro", "formation"),
     }
 
