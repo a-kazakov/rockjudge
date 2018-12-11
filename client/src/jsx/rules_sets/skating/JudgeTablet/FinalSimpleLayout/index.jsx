@@ -1,13 +1,11 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
 
 import PlaceButton from "./PlaceButton";
 
-
 const MULTIPLE_RUNS = Symbol();
-
 
 export default class FinalSimpleLayout extends React.Component {
     static propTypes = {
@@ -18,7 +16,7 @@ export default class FinalSimpleLayout extends React.Component {
     };
 
     handlePlaceSelect = (run_id, place) => {
-        this.props.onScoreUpdate(this.score_ids.get(run_id), {place});
+        this.props.onScoreUpdate(this.score_ids.get(run_id), { place });
     };
 
     setupCache() {
@@ -44,18 +42,12 @@ export default class FinalSimpleLayout extends React.Component {
     renderTableHeader() {
         let cells = [];
         for (const run of this.props.tour.runs) {
-            cells.push(
-                <th key={ run.id }>
-                    { run.participant.number }
-                </th>
-            );
+            cells.push(<th key={run.id}>{run.participant.number}</th>);
         }
         return (
             <tr>
-                { cells }
-                <th className="participant">
-                    { _("tablet.dance_judge.participant") }
-                </th>
+                {cells}
+                <th className="participant">{_("tablet.dance_judge.participant")}</th>
             </tr>
         );
     }
@@ -68,9 +60,9 @@ export default class FinalSimpleLayout extends React.Component {
         if (run === MULTIPLE_RUNS) {
             return (
                 <span className="multiple-participants">
-                    { _("tablet.dance_judge.multiple_participants") }
+                    {_("tablet.dance_judge.multiple_participants")}
                 </span>
-            )
+            );
         }
         return `№${run.participant.number}: ${run.participant.name}`;
     }
@@ -83,22 +75,20 @@ export default class FinalSimpleLayout extends React.Component {
             for (const run of this.props.tour.runs) {
                 cells.push(
                     <PlaceButton
-                        key={ run.id }
-                        place={ place }
-                        run={ run }
-                        runHasSelected={ this.places.get(run.id) != null }
-                        selected={ this.places.get(run.id) === place }
-                        onSelect={ this.handlePlaceSelect }
-                    />
-                )
+                        key={run.id}
+                        place={place}
+                        run={run}
+                        runHasSelected={this.places.get(run.id) != null}
+                        selected={this.places.get(run.id) === place}
+                        onSelect={this.handlePlaceSelect}
+                    />,
+                );
             }
             rows.push(
-                <tr key={ place }>
-                    { cells }
-                    <td className="participant">
-                        { this.renderParticipant(place) }
-                    </td>
-                </tr>
+                <tr key={place}>
+                    {cells}
+                    <td className="participant">{this.renderParticipant(place)}</td>
+                </tr>,
             );
         }
         return rows;
@@ -106,29 +96,28 @@ export default class FinalSimpleLayout extends React.Component {
 
     render() {
         this.setupCache();
-        const judge_number = this.props.disciplineJudge.judge.role_description ||
+        const judge_number =
+            this.props.disciplineJudge.judge.role_description ||
             _("global.phrases.judge_n", this.props.disciplineJudge.judge.number);
         return (
             <div className="skating-JudgeTablet GeneralLayout">
                 <header>
                     <div className="data">
                         <div className="box">
-                            <h1>{ judge_number }</h1>
-                            <h2>{ this.props.disciplineJudge.judge.name }</h2>
+                            <h1>{judge_number}</h1>
+                            <h2>{this.props.disciplineJudge.judge.name}</h2>
                         </div>
                         <div className="box">
-                            <h1>{ this.props.tour.discipline.name }</h1>
-                            <h2>
-                                { this.props.tour.name }
-                            </h2>
+                            <h1>{this.props.tour.discipline.name}</h1>
+                            <h2>{this.props.tour.name}</h2>
                         </div>
                     </div>
                 </header>
                 <div className="body">
                     <table className="places-table">
                         <tbody>
-                            { this.renderTableHeader() }
-                            { this.renderTableRows() }
+                            {this.renderTableHeader()}
+                            {this.renderTableRows()}
                         </tbody>
                     </table>
                 </div>

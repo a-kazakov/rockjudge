@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -16,13 +16,13 @@ export default class ConfirmationButton extends React.Component {
     render() {
         return (
             <button
-                className={ this.getClassName() }
+                className={this.getClassName()}
                 type="button"
-                onClick={ this.props.onConfirmationToggle }
+                onClick={this.props.onConfirmationToggle}
             >
-                { this.props.confirmed
+                {this.props.confirmed
                     ? _("admin.buttons.unconfirm_score")
-                    : _("admin.buttons.confirm_score") }
+                    : _("admin.buttons.confirm_score")}
             </button>
         );
     }

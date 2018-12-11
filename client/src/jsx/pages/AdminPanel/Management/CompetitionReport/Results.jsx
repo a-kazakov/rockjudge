@@ -13,20 +13,19 @@ export default class Results extends React.Component {
         }).isRequired,
     };
 
-    renderDiscipline = (discipline) => {
+    renderDiscipline = discipline => {
         if (!this.props.config.disciplines[discipline.id]) {
             return null;
         }
         const Renderer = rules_set.discipline_results_table;
         return (
-            <div key={ discipline.id }>
-                <h5><p>{ discipline.name }</p></h5>
-                <Renderer
-                    forCompetitionReport
-                    discipline={ discipline }
-                />
+            <div key={discipline.id}>
+                <h5>
+                    <p>{discipline.name}</p>
+                </h5>
+                <Renderer forCompetitionReport discipline={discipline} />
             </div>
-        )
+        );
     };
 
     render() {
@@ -44,14 +43,10 @@ export default class Results extends React.Component {
         return (
             <div className="rules-set">
                 <h4>
-                    <p>
-                        { _("admin.headers.competition_results") }
-                    </p>
+                    <p>{_("admin.headers.competition_results")}</p>
                 </h4>
-                { this.props.competition.disciplines.map(this.renderDiscipline) }
+                {this.props.competition.disciplines.map(this.renderDiscipline)}
             </div>
-        )
+        );
     }
 }
-
-

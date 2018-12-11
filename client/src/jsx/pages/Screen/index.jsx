@@ -22,17 +22,23 @@ export default class Screen extends React.Component {
 
     componentDidMount() {
         this._storage = new Storage();
-        this._storage.init(this.reload).then(this.subscribe).catch(console.error.bind(console));
+        this._storage
+            .init(this.reload)
+            .then(this.subscribe)
+            .catch(console.error.bind(console));
     }
 
     subscribe = () => {
-        this._competition_subscription = new CompetitionSubscription(this.props.competitionId);
-        this._storage.subscribe(this._competition_subscription)
+        this._competition_subscription = new CompetitionSubscription(
+            this.props.competitionId,
+        );
+        this._storage
+            .subscribe(this._competition_subscription)
             .then(this.updateCompetitionStorage)
             .catch(console.error.bind(console));
     };
 
-    subscribeTour = (tour_id) => {
+    subscribeTour = tour_id => {
         this._tour_subscription = new TourSubscription(tour_id);
         this._storage.subscribe(this._tour_subscription).then(this.updateTourStorage);
     };
@@ -40,16 +46,16 @@ export default class Screen extends React.Component {
         this._storage.unsubscribe(this._tour_subscription);
     }
 
-    updateCompetitionStorage = (competitionStorage) => {
-        this.setState({competitionStorage});
+    updateCompetitionStorage = competitionStorage => {
+        this.setState({ competitionStorage });
     };
-    updateTourStorage = (tourStorage) => {
-        this.setState({tourStorage});
+    updateTourStorage = tourStorage => {
+        this.setState({ tourStorage });
     };
 
     reload = () => this.forceUpdate();
 
-    handleActiveTourIdChange = (next_tour_id) => {
+    handleActiveTourIdChange = next_tour_id => {
         if (this.state.activeTourId === next_tour_id) {
             return;
         }
@@ -59,7 +65,7 @@ export default class Screen extends React.Component {
         if (next_tour_id != null) {
             this.subscribeTour(next_tour_id);
         }
-        this.setState({activeTourId: next_tour_id});
+        this.setState({ activeTourId: next_tour_id });
     };
 
     get manifest() {
@@ -67,24 +73,25 @@ export default class Screen extends React.Component {
     }
 
     render() {
-        const competition = this.state.competitionStorage?.get("Competition", this.props.competitionId);
+        const competition = this.state.competitionStorage?.get(
+            "Competition",
+            this.props.competitionId,
+        );
         if (!competition) {
-            return (
-                <div />
-            );
+            return <div />;
         }
         if (!loader.loaded) {
             setTimeout(() => this.forceUpdate(), 1000);
-            return (
-                <div />
-            );
+            return <div />;
         }
         const RenderingComponent = loader.component;
         return (
             <RenderingComponent
-                activeTour={ this.state.tourStorage?.get("Tour", this.state.activeTourId) || null }
-                competition={ competition }
-                onActiveTourIdChange={ this.handleActiveTourIdChange }
+                activeTour={
+                    this.state.tourStorage?.get("Tour", this.state.activeTourId) || null
+                }
+                competition={competition}
+                onActiveTourIdChange={this.handleActiveTourIdChange}
             />
         );
     }

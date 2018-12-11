@@ -13,13 +13,15 @@ export default class DisciplinesShown extends React.Component {
     };
 
     hasDisabledDisciplines() {
-        return this.props.competition.disciplines.findIndex(
-            d => !this.props.config.disciplines[d.id]
-        ) >= 0;
+        return (
+            this.props.competition.disciplines.findIndex(
+                d => !this.props.config.disciplines[d.id],
+            ) >= 0
+        );
     }
     getEnabledDisciplines() {
         return this.props.competition.disciplines.filter(
-            d => this.props.config.disciplines[d.id]
+            d => this.props.config.disciplines[d.id],
         );
     }
 
@@ -34,18 +36,14 @@ export default class DisciplinesShown extends React.Component {
         return (
             <div className="disciplines-shown">
                 <p>
-                    <strong>
-                        { _("admin.headers.disciplines_shown") }
-                    </strong>
+                    <strong>{_("admin.headers.disciplines_shown")}</strong>
                 </p>
                 <ul>
-                    { disciplines.map(d =>
-                        <li key={ d.id }>
-                            { d.name }
-                        </li>
-                    ) }
+                    {disciplines.map(d => (
+                        <li key={d.id}>{d.name}</li>
+                    ))}
                 </ul>
             </div>
-        )
+        );
     }
 }

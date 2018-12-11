@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -21,19 +21,15 @@ export default class GeneralEditor extends React.Component {
 
     handleChange = (key, value) => {
         this.setState({
-            values: Object.assign(
-                {},
-                this.state.values,
-                {[key]: value},
-            ),
+            values: Object.assign({}, this.state.values, { [key]: value }),
         });
     };
 
-    handleDiscardClick = (event) => {
+    handleDiscardClick = event => {
         event.stopPropagation();
         this.props.onDiscard();
     };
-    handleSubmission = (event) => {
+    handleSubmission = event => {
         event.preventDefault();
         this.props.onSubmit(this.state.values);
     };
@@ -45,28 +41,25 @@ export default class GeneralEditor extends React.Component {
                     <button
                         className="btn btn-primary"
                         type="button"
-                        onClick={ this.handleDiscardClick }
+                        onClick={this.handleDiscardClick}
                     >
-                        { _("global.buttons.close") }
+                        {_("global.buttons.close")}
                     </button>
                 </div>
             );
         }
         return (
             <div className="buttons">
-                <button
-                    className="submit-button"
-                    type="submit"
-                >
-                    { _("global.buttons.submit") }
+                <button className="submit-button" type="submit">
+                    {_("global.buttons.submit")}
                 </button>
                 &nbsp;
                 <button
                     className="discard-button"
                     type="button"
-                    onClick={ this.handleDiscardClick }
+                    onClick={this.handleDiscardClick}
                 >
-                    { _("global.buttons.discard") }
+                    {_("global.buttons.discard")}
                 </button>
             </div>
         );
@@ -77,25 +70,19 @@ export default class GeneralEditor extends React.Component {
             if (!child) {
                 return null;
             }
-            return React.cloneElement(
-                child,
-                {
-                    key: child.props.field,
-                    readOnly: self.props.readOnly,
-                    value: self.state.values[child.props.field],
-                    onChange: self.handleChange,
-                },
-            );
+            return React.cloneElement(child, {
+                key: child.props.field,
+                readOnly: self.props.readOnly,
+                value: self.state.values[child.props.field],
+                onChange: self.handleChange,
+            });
         }
         return (
-            <form
-                className="score-editor"
-                onSubmit={ this.handleSubmission }
-            >
+            <form className="score-editor" onSubmit={this.handleSubmission}>
                 <div className="fields">
-                    { React.Children.map(this.props.children, prepareChild) }
+                    {React.Children.map(this.props.children, prepareChild)}
                 </div>
-                { this.renderButtons() }
+                {this.renderButtons()}
             </form>
         );
     }

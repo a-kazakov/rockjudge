@@ -8,7 +8,7 @@ import AdminScoreInput from "AdminScoreInput";
 import getJudgeTableMark from "getJudgeTableMark";
 import meta from "meta";
 
-import {setup} from "HostModules";
+import { setup } from "HostModules";
 
 const response = window.registerRulesSet("VFTSARR", {
     meta: meta,

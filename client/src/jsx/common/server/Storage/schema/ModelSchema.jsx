@@ -35,7 +35,10 @@ export default class ModelSchema {
     getValue(key, model_data, subscription_storage, overrides) {
         const ref = this.getRef(key);
         if (ref != null) {
-            return ref.getForwardModel(model_data[ref.id_field_name], subscription_storage);
+            return ref.getForwardModel(
+                model_data[ref.id_field_name],
+                subscription_storage,
+            );
         }
         const backref = this.getBackRef(key);
         if (backref != null) {

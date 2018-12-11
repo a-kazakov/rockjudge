@@ -2,12 +2,7 @@ import BaseSubscription from "./BaseSubscription";
 import Api from "common/server/Api";
 
 export default class TourSubscription extends BaseSubscription {
-    static MODELS = [
-        "Tour",
-        "Run",
-        "Score",
-        "RunAcrobatic",
-    ];
+    static MODELS = ["Tour", "Run", "Score", "RunAcrobatic"];
     constructor(tour_id) {
         super();
         this.tour_id = tour_id;
@@ -19,7 +14,7 @@ export default class TourSubscription extends BaseSubscription {
         return this.constructor.MODELS.includes(mutation.model_name);
     }
     subscribe() {
-        return new Promise(this._subscribe)
+        return new Promise(this._subscribe);
     }
     _subscribe = (resolve, reject) => {
         Api("model/subscribe", {

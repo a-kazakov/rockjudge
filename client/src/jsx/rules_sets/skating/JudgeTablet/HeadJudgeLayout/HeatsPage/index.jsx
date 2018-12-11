@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import Grid from "JudgeTablet/Grid";
@@ -18,23 +18,21 @@ export default class HeatsPage extends React.Component {
     }
 
     renderScores() {
-        return this.runs.map(run =>
+        return this.runs.map(run => (
             <ScoringLayout
-                disciplineJudge={ this.props.disciplineJudge }
-                key={ run.id }
-                run={ run }
-                tour={ this.props.tour }
-                onScoreUpdate={ this.props.onScoreUpdate }
+                disciplineJudge={this.props.disciplineJudge}
+                key={run.id}
+                run={run}
+                tour={this.props.tour}
+                onScoreUpdate={this.props.onScoreUpdate}
             />
-        );
+        ));
     }
     render() {
         this.setupCache();
         return (
             <div className="body heats">
-                <Grid>
-                    { this.renderScores() }
-                </Grid>
+                <Grid>{this.renderScores()}</Grid>
             </div>
         );
     }

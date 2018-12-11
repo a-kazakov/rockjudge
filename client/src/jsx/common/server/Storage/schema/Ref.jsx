@@ -1,6 +1,6 @@
 export default class Ref {
     constructor(base_model_name, raw_data, storage) {
-        const {name, foreign_key_model, key, backref} = raw_data;
+        const { name, foreign_key_model, key, backref } = raw_data;
         this.base_model_name = base_model_name;
         this.ref_model_name = foreign_key_model;
         this.id_field_name = name;

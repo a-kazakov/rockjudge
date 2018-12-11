@@ -13,14 +13,14 @@ export default class DisciplineSelector extends React.Component {
     render() {
         return (
             <div className="disciplines">
-                { this.props.competition.disciplines.map(discipline =>
+                {this.props.competition.disciplines.map(discipline => (
                     <Item
-                        active={ discipline.id === this.props.value }
-                        discipline={ discipline }
-                        key={ discipline.id }
-                        onDisciplineChange={ this.props.onDisciplineChange }
+                        active={discipline.id === this.props.value}
+                        discipline={discipline}
+                        key={discipline.id}
+                        onDisciplineChange={this.props.onDisciplineChange}
                     />
-                ) }
+                ))}
             </div>
         );
     }

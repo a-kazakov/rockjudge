@@ -12,11 +12,11 @@ export default class SportsmenList extends React.Component {
     handleSportsmanAddition = () => {
         let list = this.props.sportsmen.slice(); // clone
         list.push({
-            "last_name": "",
-            "first_name": "",
-            "year_of_birth": "0",
-            "gender": "F",
-            "substitute": false,
+            last_name: "",
+            first_name: "",
+            year_of_birth: "0",
+            gender: "F",
+            substitute: false,
         });
         this.props.onChange(list);
     };
@@ -25,7 +25,7 @@ export default class SportsmenList extends React.Component {
         list[idx] = value;
         this.props.onChange(list);
     };
-    handleSportsmanDeletion = (idx) => {
+    handleSportsmanDeletion = idx => {
         let list = this.props.sportsmen.slice(); // clone
         list.splice(idx, 1);
         this.props.onChange(list);
@@ -34,30 +34,27 @@ export default class SportsmenList extends React.Component {
     renderRow = (sportsman, idx) => {
         return (
             <Row
-                idx={ idx }
-                key={ idx }
-                sportsman={ sportsman }
-                onChange={ this.handleSportsmanChange }
-                onDelete={ this.handleSportsmanDeletion }
+                idx={idx}
+                key={idx}
+                sportsman={sportsman}
+                onChange={this.handleSportsmanChange}
+                onDelete={this.handleSportsmanDeletion}
             />
         );
     };
     render() {
         return (
             <div className="sportsmen">
-                <label>
-                    { _("models.participant.sportsmen") }
-                </label>
-                { this.props.sportsmen.map(this.renderRow) }
+                <label>{_("models.participant.sportsmen")}</label>
+                {this.props.sportsmen.map(this.renderRow)}
                 <button
                     className="add"
                     type="button"
-                    onClick={ this.handleSportsmanAddition }
+                    onClick={this.handleSportsmanAddition}
                 >
-                    { _("global.buttons.add") }
+                    {_("global.buttons.add")}
                 </button>
             </div>
         );
     }
 }
-

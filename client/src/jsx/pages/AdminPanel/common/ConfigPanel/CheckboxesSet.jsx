@@ -9,12 +9,10 @@ export default class CheckboxesSet extends React.Component {
     static propTypes = {
         items: PT.arrayOf(
             PT.shape({
-                id: PT.oneOfType([
-                    PT.string.isRequired,
-                    PT.number.isRequired,
-                ]).isRequired,
+                id: PT.oneOfType([PT.string.isRequired, PT.number.isRequired])
+                    .isRequired,
                 name: PT.string.isRequired,
-            }).isRequired
+            }).isRequired,
         ).isRequired,
         mkey: PT.string.isRequired,
         values: PT.object.isRequired,
@@ -32,33 +30,33 @@ export default class CheckboxesSet extends React.Component {
         let new_values = Object.assign({}, this.props.values);
         new_values[id] = value;
         this.props.onChange(this.props.mkey, new_values);
-    }
-    handleSelectAll = (event) => {
+    };
+    handleSelectAll = event => {
         event.preventDefault();
         this.setAll(true);
-    }
-    handleDeselectAll = (event) => {
+    };
+    handleDeselectAll = event => {
         event.preventDefault();
         this.setAll(false);
-    }
+    };
 
     render() {
         return (
             <div className="CheckboxesSet">
-                { this.props.items.map(item =>
+                {this.props.items.map(item => (
                     <OneCheckbox
-                        key={ item.id }
-                        label={ item.name }
-                        mkey={ item.id }
-                        value={ this.props.values[item.id] }
-                        onChange={ this.handleCbChange }
+                        key={item.id}
+                        label={item.name}
+                        mkey={item.id}
+                        value={this.props.values[item.id]}
+                        onChange={this.handleCbChange}
                     />
-                ) }
-                <a href="#" onClick={ this.handleSelectAll }>
-                    { _("global.buttons.select_all") }
+                ))}
+                <a href="#" onClick={this.handleSelectAll}>
+                    {_("global.buttons.select_all")}
                 </a>
-                <a href="#" onClick={ this.handleDeselectAll }>
-                    { _("global.buttons.deselect_all") }
+                <a href="#" onClick={this.handleDeselectAll}>
+                    {_("global.buttons.deselect_all")}
                 </a>
             </div>
         );

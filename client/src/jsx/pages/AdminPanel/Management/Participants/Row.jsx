@@ -14,35 +14,21 @@ export default class Row extends React.Component {
     };
 
     handleDeletion = () => {
-        showConfirm(
-            _("admin.confirms.delete_participant"),
-            this.props.onDelete,
-        );
+        showConfirm(_("admin.confirms.delete_participant"), this.props.onDelete);
     };
     render() {
         const participant = this.props.entry;
         return (
-            <tr
-                className="viewer"
-                onClick={ this.props.onStartEditing }
-            >
-                <td className="number">
-                    { participant.number }
-                </td>
-                <td className="name">
-                    { participant.name }
-                </td>
-                <td className="club-name">
-                    { participant.club.name }
-                </td>
-                <td className="club-city">
-                    { participant.club.city }
-                </td>
+            <tr className="viewer" onClick={this.props.onStartEditing}>
+                <td className="number">{participant.number}</td>
+                <td className="name">{participant.name}</td>
+                <td className="club-name">{participant.club.name}</td>
+                <td className="club-city">{participant.club.city}</td>
                 <td className="delete">
                     <button
                         className="btn btn-danger"
                         type="button"
-                        onClick={ this.handleDeletion }
+                        onClick={this.handleDeletion}
                     >
                         X
                     </button>

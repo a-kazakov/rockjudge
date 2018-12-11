@@ -16,9 +16,7 @@ export default class EditorRow extends React.Component {
             name: PT.string.isRequired,
             sp: PT.string.isRequired,
             external_id: PT.string.isRequired,
-            discipline_judges: PT.arrayOf(
-                PT.object.isRequired,
-            ).isRequired,
+            discipline_judges: PT.arrayOf(PT.object.isRequired).isRequired,
         }).isRequired,
         loading: PT.bool.isRequired,
         onDiscard: PT.func.isRequired,
@@ -26,78 +24,78 @@ export default class EditorRow extends React.Component {
         onSubmit: PT.func.isRequired,
     };
 
-    handleNameChange = (event) => this.props.onFieldChange("name", event.target.value);
-    handleSpChange = (event) => this.props.onFieldChange("sp", event.target.value);
-    handleExternalIdChange = (event) => this.props.onFieldChange("external_id", event.target.value);
-    handleDisciplineJudgesChange = (value) => this.props.onFieldChange("discipline_judges", value);
-    handleSubmission = (event) => {
+    handleNameChange = event => this.props.onFieldChange("name", event.target.value);
+    handleSpChange = event => this.props.onFieldChange("sp", event.target.value);
+    handleExternalIdChange = event =>
+        this.props.onFieldChange("external_id", event.target.value);
+    handleDisciplineJudgesChange = value =>
+        this.props.onFieldChange("discipline_judges", value);
+    handleSubmission = event => {
         event.preventDefault();
         this.props.onSubmit();
     };
 
     getClassName() {
         return makeClassName({
-            "editor": true,
-            "create": this.props.creating,
+            editor: true,
+            create: this.props.creating,
         });
     }
     render() {
         return (
-            <tr className={ this.getClassName() }>
+            <tr className={this.getClassName()}>
                 <td colSpan="5">
-                    <form onSubmit={ this.handleSubmission }>
+                    <form onSubmit={this.handleSubmission}>
                         <div className="col-8">
                             <label className="full-width">
-                                { _("models.discipline.name") }
+                                {_("models.discipline.name")}
                                 <input
-                                    disabled={ this.props.loading }
-                                    value={ this.props.formData.name }
-                                    onChange={ this.handleNameChange }
+                                    disabled={this.props.loading}
+                                    value={this.props.formData.name}
+                                    onChange={this.handleNameChange}
                                 />
                             </label>
                             <label className="full-width">
-                                { _("models.discipline.sp") }
+                                {_("models.discipline.sp")}
                                 <input
-                                    disabled={ this.props.loading }
-                                    value={ this.props.formData.sp }
-                                    onChange={ this.handleSpChange }
+                                    disabled={this.props.loading}
+                                    value={this.props.formData.sp}
+                                    onChange={this.handleSpChange}
                                 />
                             </label>
                             <label className="full-width">
-                                { _("models.discipline.external_id") }<br />
+                                {_("models.discipline.external_id")}
+                                <br />
                                 <input
-                                    disabled={ this.props.loading }
-                                    value={ this.props.formData.external_id }
-                                    onChange={ this.handleExternalIdChange }
+                                    disabled={this.props.loading}
+                                    value={this.props.formData.external_id}
+                                    onChange={this.handleExternalIdChange}
                                 />
                             </label>
                         </div>
                         <div className="col-12">
                             <label className="full-width">
-                                { _("models.discipline.discipline_judges") }
+                                {_("models.discipline.discipline_judges")}
                             </label>
                             <DisciplineJudges
-                                competition={ this.props.context.competition }
-                                disabled={ this.props.loading }
-                                value={ this.props.formData.discipline_judges }
-                                onChange={ this.handleDisciplineJudgesChange }
+                                competition={this.props.context.competition}
+                                disabled={this.props.loading}
+                                value={this.props.formData.discipline_judges}
+                                onChange={this.handleDisciplineJudgesChange}
                             />
                         </div>
                         <div className="col-4">
                             <label>&nbsp;</label>
                             <div className="buttons vertical">
-                                <button
-                                    disabled={ this.props.loading }
-                                    type="submit"
-                                >
-                                    { _("global.buttons.submit") }
+                                <button disabled={this.props.loading} type="submit">
+                                    {_("global.buttons.submit")}
                                 </button>
                                 <button
-                                    disabled={ this.props.loading }
+                                    disabled={this.props.loading}
                                     type="button"
-                                    onClick={ this.props.onDiscard }
+                                    onClick={this.props.onDiscard}
                                 >
-                                    { _("global.buttons.discard") }
+                                    {_("global.buttons.discard")}
                                 </button>
                             </div>
                         </div>
@@ -107,4 +105,3 @@ export default class EditorRow extends React.Component {
         );
     }
 }
-

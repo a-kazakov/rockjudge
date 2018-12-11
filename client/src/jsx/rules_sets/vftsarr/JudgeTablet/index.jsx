@@ -1,4 +1,4 @@
-import {Api, React} from "HostModules";
+import { Api, React } from "HostModules";
 
 import getScoringType from "common/getScoringType";
 import _ from "l10n";
@@ -20,32 +20,29 @@ export default class JudgeTablet extends React.Component {
     };
 
     static LAYOUTS = {
-        "acro": AcrobaticsLayout,
-        "dance": DanceLayout,
-        "dance_extended": DanceExtendedLayout,
-        "formation": FormationLayout,
-        "formation_simplified": FormationSimplifiedLayout,
-        "simplified": SimplifiedLayout,
-        "solo": SoloLayout,
-        "head": HeadJudgeLayout,
-        "tech": TechLayout,
+        acro: AcrobaticsLayout,
+        dance: DanceLayout,
+        dance_extended: DanceExtendedLayout,
+        formation: FormationLayout,
+        formation_simplified: FormationSimplifiedLayout,
+        simplified: SimplifiedLayout,
+        solo: SoloLayout,
+        head: HeadJudgeLayout,
+        tech: TechLayout,
     };
 
     handleScoreUpdate = (score_id, score_data) => {
         Api("model/update", {
             model_name: "Score",
             model_id: score_id,
-            data: {data: score_data},
+            data: { data: score_data },
         })
-            .setPendingMutation(
-                this.props.tour.global_storage,
-                "Score",
-                score_id,
-                {data: score_data},
-            )
+            .setPendingMutation(this.props.tour.global_storage, "Score", score_id, {
+                data: score_data,
+            })
             .send();
     };
-    handleHeatConfirm = (heat) => {
+    handleHeatConfirm = heat => {
         const api = Api("tour/confirm_heat", {
             tour_id: this.props.tour.id,
             discipline_judge_id: this.props.disciplineJudge.id,
@@ -53,17 +50,24 @@ export default class JudgeTablet extends React.Component {
         });
         this.props.tour.runs
             .filter(run => run.heat === heat)
-            .map(run => run.scores.find(score => score.discipline_judge_id === this.props.disciplineJudge.id))
+            .map(run =>
+                run.scores.find(
+                    score =>
+                        score.discipline_judge_id === this.props.disciplineJudge.id,
+                ),
+            )
             .filter(score => score != null)
-            .forEach(score => api.setPendingMutation(
-                this.props.tour.global_storage,
-                "Score",
-                score.id,
-                {confirmed: true},
-            ));
+            .forEach(score =>
+                api.setPendingMutation(
+                    this.props.tour.global_storage,
+                    "Score",
+                    score.id,
+                    { confirmed: true },
+                ),
+            );
         api.send();
     };
-    handleScoreConfirm = (score_id) => {
+    handleScoreConfirm = score_id => {
         const data = {
             confirmed: true,
         };
@@ -72,12 +76,9 @@ export default class JudgeTablet extends React.Component {
             model_id: score_id,
             data: data,
         })
-            .setPendingMutation(
-                this.props.tour.global_storage,
-                "Score",
-                score_id,
-                {confirmed: true},
-            )
+            .setPendingMutation(this.props.tour.global_storage, "Score", score_id, {
+                confirmed: true,
+            })
             .send();
     };
 
@@ -90,25 +91,23 @@ export default class JudgeTablet extends React.Component {
             return (
                 <div className="vftsarr-JudgeTablet">
                     <div className="error-message">
-                        { _("tablet.global.wrong_judge_role") }
+                        {_("tablet.global.wrong_judge_role")}
                     </div>
                 </div>
             );
         }
         let LayoutClass = JudgeTablet.LAYOUTS[scoring_type];
         if (!LayoutClass) {
-            return (
-                <div>Not implemented!</div>
-            );
+            return <div>Not implemented!</div>;
         }
         return (
             <div className="vftsarr-JudgeTablet">
                 <LayoutClass
-                    disciplineJudge={ this.props.disciplineJudge }
-                    tour={ this.props.tour }
-                    onHeatConfirm={ this.handleHeatConfirm }
-                    onScoreConfirm={ this.handleScoreConfirm }
-                    onScoreUpdate={ this.handleScoreUpdate }
+                    disciplineJudge={this.props.disciplineJudge}
+                    tour={this.props.tour}
+                    onHeatConfirm={this.handleHeatConfirm}
+                    onScoreConfirm={this.handleScoreConfirm}
+                    onScoreUpdate={this.handleScoreUpdate}
                 />
             </div>
         );

@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import SelectorBlock from "../SelectorBlock";
@@ -15,25 +15,21 @@ export default class MultipleSelectorBlock extends SelectorBlock {
     handleChange = (key, value) => {
         this.props.onChange(
             this.props.field,
-            Object.assign(
-                {},
-                this.props.value,
-                {[key]: value},
-            ),
+            Object.assign({}, this.props.value, { [key]: value }),
         );
     };
 
-    _getOptionValue = (opt) => this.props.value[opt[0]];
-    _getOptionLabel = (opt) => opt[1];
+    _getOptionValue = opt => this.props.value[opt[0]];
+    _getOptionLabel = opt => opt[1];
 
     renderOptions() {
         return this.getOptions().map(([key, label], idx) => (
             <Item
-                key={ idx }
-                label={ label }
-                selected={ this.props.value[key] }
-                value={ key }
-                onChange={ this.handleChange }
+                key={idx}
+                label={label}
+                selected={this.props.value[key]}
+                value={key}
+                onChange={this.handleChange}
             />
         ));
     }
@@ -45,29 +41,21 @@ export default class MultipleSelectorBlock extends SelectorBlock {
             return (
                 <div className="score-value">
                     <div className="read-only">
-                        { texts.map((text, idx) => (
-                            <div key={ idx }>
-                                { text }
-                            </div>
-                        )) }
+                        {texts.map((text, idx) => (
+                            <div key={idx}>{text}</div>
+                        ))}
                     </div>
                 </div>
             );
         }
-        return (
-            <div className="score-value">
-                { this.renderOptions() }
-            </div>
-        );
+        return <div className="score-value">{this.renderOptions()}</div>;
     }
     render() {
         return (
             <div className="item item-large">
-                <div className="score-label">
-                    { this.props.label }
-                </div>
-                { this.renderValue() }
+                <div className="score-label">{this.props.label}</div>
+                {this.renderValue()}
             </div>
-        )
+        );
     }
 }

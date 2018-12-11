@@ -17,56 +17,39 @@ export default class Row extends React.Component {
 
     getClassName() {
         return makeClassName({
-            "viewer": true,
-            "error": this.props.context.errors.has(this.props.entry.id),
+            viewer: true,
+            error: this.props.context.errors.has(this.props.entry.id),
         });
     }
     renderName() {
         if (this.props.entry.verbose_name) {
             return (
                 <td colSpan="2">
-                    <b>{ this.props.entry.verbose_name }</b>
+                    <b>{this.props.entry.verbose_name}</b>
                 </td>
             );
         }
         const tour = this.props.entry.tour;
         if (!tour) {
-            return (
-                <td colSpan="2" />
-            );
+            return <td colSpan="2" />;
         }
-        return [
-            <td key="D">
-                { tour.discipline.name }
-            </td>,
-            <td key="T">
-                { tour.name }
-            </td>,
-        ];
+        return [<td key="D">{tour.discipline.name}</td>, <td key="T">{tour.name}</td>];
     }
     render() {
         return (
-            <tr
-                className={ this.getClassName() }
-                onClick={ this.props.onStartEditing }
-            >
-                <td className="sp">
-                    { this.props.entry.sp }
-                </td>
-                { this.renderName() }
+            <tr className={this.getClassName()} onClick={this.props.onStartEditing}>
+                <td className="sp">{this.props.entry.sp}</td>
+                {this.renderName()}
                 <td className="estimated_beginning">
-                    { this.props.entry.estimated_beginning }
+                    {this.props.entry.estimated_beginning}
                 </td>
                 <td className="estimated_duration">
-                    { this.props.entry.estimated_duration }
+                    {this.props.entry.estimated_duration}
                 </td>
                 <td className="delete">
-                    <button onClick={ this.props.onDelete }>
-                        X
-                    </button>
+                    <button onClick={this.props.onDelete}>X</button>
                 </td>
             </tr>
         );
     }
 }
-

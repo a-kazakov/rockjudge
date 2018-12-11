@@ -16,22 +16,19 @@ export default class Item extends React.Component {
 
     handleClick = () => {
         this.props.onActiveTourChange(this.props.tour.id);
-    }
+    };
 
     getClassName() {
         return makeClassName({
             "level-2": true,
-            "grey": this.props.tour.finalized,
-            "active": this.props.active,
+            grey: this.props.tour.finalized,
+            active: this.props.active,
         });
     }
     render() {
         return (
-            <div
-                className={ this.getClassName() }
-                onClick={ this.handleClick }
-            >
-                { this.props.tour.name }
+            <div className={this.getClassName()} onClick={this.handleClick}>
+                {this.props.tour.name}
             </div>
         );
     }

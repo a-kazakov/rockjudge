@@ -27,14 +27,17 @@ export default class Disciplines extends UniversalTable {
         {
             name: "discipline_judges",
             defaultValue: [],
-            toFormValue: (dj_models) => dj_models.map(dj => ({judge_id: dj.judge_id, role: dj.role})),
+            toFormValue: dj_models =>
+                dj_models.map(dj => ({ judge_id: dj.judge_id, role: dj.role })),
             validator: (value, context) => {
                 const subscription_storage = context.competition.subscription_storage;
                 let used_judges = new Set();
                 for (const dj of value) {
                     if (used_judges.has(dj.judge_id)) {
                         const judge = subscription_storage.get("Judge", dj.judge_id);
-                        showError(_("errors.discipline_judge.repeating_judge", judge.name));
+                        showError(
+                            _("errors.discipline_judge.repeating_judge", judge.name),
+                        );
                         return false;
                     }
                     used_judges.add(dj.judge_id);
@@ -76,19 +79,15 @@ export default class Disciplines extends UniversalTable {
             <table>
                 <tbody>
                     <tr>
-                        <th className="name">
-                            { _("models.discipline.name") }
-                        </th>
-                        <th className="sp">
-                            { _("models.discipline.sp") }
-                        </th>
+                        <th className="name">{_("models.discipline.name")}</th>
+                        <th className="sp">{_("models.discipline.sp")}</th>
                         <th className="external-id">
-                            { _("models.discipline.external_id") }
+                            {_("models.discipline.external_id")}
                         </th>
                         <th className="delete" />
                     </tr>
-                    { this.renderRows() }
-                    { this.renderCreationButton() }
+                    {this.renderRows()}
+                    {this.renderCreationButton()}
                 </tbody>
             </table>
         );
@@ -97,15 +96,10 @@ export default class Disciplines extends UniversalTable {
         return (
             <div className="Disciplines">
                 <header>
-                    <h1>
-                        { _("admin.headers.disciplines_management") }
-                    </h1>
+                    <h1>{_("admin.headers.disciplines_management")}</h1>
                 </header>
-                <div className="body">
-                    { this.renderTable() }
-                </div>
+                <div className="body">{this.renderTable()}</div>
             </div>
         );
     }
 }
-

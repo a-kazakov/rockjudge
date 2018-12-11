@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -23,7 +23,7 @@ export default class Editor extends React.Component {
         onSubmit: PT.func.isRequired,
     };
 
-    handleDiscardClick = (event) => {
+    handleDiscardClick = event => {
         event.stopPropagation();
         this.props.onDiscard();
     };
@@ -32,15 +32,15 @@ export default class Editor extends React.Component {
         return (
             <div className="score-editor">
                 <div className="error-message">
-                    { _("admin.messages.wrong_judge_role") }
+                    {_("admin.messages.wrong_judge_role")}
                 </div>
                 <div className="buttons">
                     <button
                         className="discard-button"
                         type="button"
-                        onClick={ this.handleDiscardClick }
+                        onClick={this.handleDiscardClick}
                     >
-                        { _("global.buttons.discard") }
+                        {_("global.buttons.discard")}
                     </button>
                 </div>
             </div>
@@ -51,30 +51,22 @@ export default class Editor extends React.Component {
             readOnly: this.props.readOnly,
             scoreData: this.props.scoreData,
             scoringSystemName: this.props.scoringSystemName,
-            onSubmit:  this.props.onSubmit,
+            onSubmit: this.props.onSubmit,
             onDiscard: this.props.onDiscard,
         };
         switch (scoring_type) {
-        case "qualification_simple":
-            return (
-                <QualificationSimpleScore { ...score_props } />
-            );
-        case "final_simple":
-            return (
-                <FinalSimpleScore { ...score_props } />
-            );
-        case "final_3d":
-            return (
-                <Final3dScore { ...score_props } />
-            );
-        case "head":
-            return (
-                <HeadJudgeScore { ...score_props } />
-            );
-        case null:
-            return this.renderWrongJudgeRoleMessage();
-        default:
-            console.error(`Unknown scoring type: ${scoring_type}`);
+            case "qualification_simple":
+                return <QualificationSimpleScore {...score_props} />;
+            case "final_simple":
+                return <FinalSimpleScore {...score_props} />;
+            case "final_3d":
+                return <Final3dScore {...score_props} />;
+            case "head":
+                return <HeadJudgeScore {...score_props} />;
+            case null:
+                return this.renderWrongJudgeRoleMessage();
+            default:
+                console.error(`Unknown scoring type: ${scoring_type}`);
         }
     }
     renderConfirmationButton(scoring_type) {
@@ -83,17 +75,20 @@ export default class Editor extends React.Component {
         }
         return (
             <ConfirmationButton
-                confirmed={ this.props.confirmed }
-                onConfirmationToggle={ this.props.onConfirmationToggle }
+                confirmed={this.props.confirmed}
+                onConfirmationToggle={this.props.onConfirmationToggle}
             />
-        )
+        );
     }
     render() {
-        const scoring_type = getScoringType(this.props.disciplineJudgeRole, this.props.scoringSystemName);
+        const scoring_type = getScoringType(
+            this.props.disciplineJudgeRole,
+            this.props.scoringSystemName,
+        );
         return (
             <div className="AdminScoreInput">
-                { this.renderBody(scoring_type) }
-                { this.renderConfirmationButton(scoring_type) }
+                {this.renderBody(scoring_type)}
+                {this.renderConfirmationButton(scoring_type)}
             </div>
         );
     }

@@ -13,14 +13,14 @@ export default class PlanPage extends React.Component {
                     tours: PT.arrayOf(
                         PT.shape({
                             id: PT.number.isRequired,
-                        }).isRequired
+                        }).isRequired,
                     ).isRequired,
-                }).isRequired
+                }).isRequired,
             ).isRequired,
             plan: PT.arrayOf(
                 PT.shape({
                     id: PT.number.isRequired,
-                }).isRequired
+                }).isRequired,
             ).isRequired,
         }).isRequired,
     };
@@ -40,34 +40,30 @@ export default class PlanPage extends React.Component {
 
     renderItems() {
         const tours = this.getTours();
-        return this.props.competition.plan.map(item =>
-            <Item
-                item={ item }
-                key={ item.id }
-                tours={ tours }
-            />
-        )
+        return this.props.competition.plan.map(item => (
+            <Item item={item} key={item.id} tours={tours} />
+        ));
     }
     render() {
         return (
             <div className="plan">
-                <table><tbody>
-                    <tr>
-                        <th className="estimated-beginning">
-                            { _("presenter.labels.estimated_beginning") }
-                        </th>
-                        <th className="discipline">
-                            { _("presenter.labels.discipline") }
-                        </th>
-                        <th className="tour">
-                            { _("presenter.labels.tour") }
-                        </th>
-                        <th className="estimated-duration">
-                            { _("presenter.labels.estimated_duration") }
-                        </th>
-                    </tr>
-                    { this.renderItems() }
-                </tbody></table>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th className="estimated-beginning">
+                                {_("presenter.labels.estimated_beginning")}
+                            </th>
+                            <th className="discipline">
+                                {_("presenter.labels.discipline")}
+                            </th>
+                            <th className="tour">{_("presenter.labels.tour")}</th>
+                            <th className="estimated-duration">
+                                {_("presenter.labels.estimated_duration")}
+                            </th>
+                        </tr>
+                        {this.renderItems()}
+                    </tbody>
+                </table>
             </div>
         );
     }

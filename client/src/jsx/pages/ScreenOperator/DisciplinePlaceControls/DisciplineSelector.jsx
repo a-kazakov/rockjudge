@@ -10,23 +10,25 @@ export default class DisciplineSelector extends React.Component {
         onChange: PT.func.isRequired,
     };
 
-    handleChange = (event) => {
-        this.props.onChange(event.target.value === "" ? null : Number(event.target.value));
-    }
+    handleChange = event => {
+        this.props.onChange(
+            event.target.value === "" ? null : Number(event.target.value),
+        );
+    };
 
     render() {
         return (
             <select
                 className="form-control"
-                value={ this.props.value || "" }
-                onChange={ this.handleChange }
+                value={this.props.value || ""}
+                onChange={this.handleChange}
             >
                 <option value="">----------</option>
-                { this.props.competition.disciplines.map(discipline =>
-                    <option key={ discipline.id } value={ discipline.id }>
-                        { discipline.name }
+                {this.props.competition.disciplines.map(discipline => (
+                    <option key={discipline.id} value={discipline.id}>
+                        {discipline.name}
                     </option>
-                ) }
+                ))}
             </select>
         );
     }

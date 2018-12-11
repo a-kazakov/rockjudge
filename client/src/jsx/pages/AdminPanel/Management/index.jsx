@@ -34,15 +34,17 @@ export default class Management extends React.Component {
             pageProps: props,
         });
         let props_pairs = [];
-        Object.getOwnPropertyNames(props).forEach((key) => {
+        Object.getOwnPropertyNames(props).forEach(key => {
             props_pairs.push([key, props[key]]);
         });
-        const props_pairs_str = props_pairs.map((p) => p.join("=")).join("$");
+        const props_pairs_str = props_pairs.map(p => p.join("=")).join("$");
         window.location.hash = `#management/${page}/${props_pairs_str}`;
     }
     getPageFromHash() {
         let chunks = window.location.hash.substr(1).split("/");
-        if (chunks[1] && [
+        if (
+            chunks[1] &&
+            [
                 "import_export",
                 "manage_competition_plan",
                 "manage_tours",
@@ -51,7 +53,9 @@ export default class Management extends React.Component {
                 "manage_clubs",
                 "manage_disciplines",
                 "start_list",
-                "competition_report"].indexOf(chunks[1]) >= 0) {
+                "competition_report",
+            ].indexOf(chunks[1]) >= 0
+        ) {
             return chunks[1];
         }
         return null;
@@ -80,38 +84,34 @@ export default class Management extends React.Component {
 
     renderContent() {
         const Component = {
-            "import_export"           : ImportExport,
-            "manage_tours"            : Tours,
-            "manage_participants"     : Participants,
-            "manage_judges"           : Judges,
-            "manage_clubs"            : Clubs,
-            "manage_competition_plan" : CompetitionPlan,
-            "manage_disciplines"      : Disciplines,
-            "start_list"              : StartList,
-            "competition_report"      : CompetitionReport,
+            import_export: ImportExport,
+            manage_tours: Tours,
+            manage_participants: Participants,
+            manage_judges: Judges,
+            manage_clubs: Clubs,
+            manage_competition_plan: CompetitionPlan,
+            manage_disciplines: Disciplines,
+            start_list: StartList,
+            competition_report: CompetitionReport,
         }[this.state.page];
         if (!Component) {
             return null;
         }
         return (
-            <Component
-                competition={ this.props.competition }
-                { ...this.state.pageProps }
-            />
+            <Component competition={this.props.competition} {...this.state.pageProps} />
         );
     }
     render() {
         return (
             <div className="Management">
                 <SideMenu
-                    activePage={ this.state.page }
-                    activePageProps={ this.state.pageProps }
-                    competition={ this.props.competition }
-                    onNavigate={ this.handleNavigation }
+                    activePage={this.state.page}
+                    activePageProps={this.state.pageProps}
+                    competition={this.props.competition}
+                    onNavigate={this.handleNavigation}
                 />
-                { this.renderContent() }
+                {this.renderContent()}
             </div>
         );
     }
 }
-

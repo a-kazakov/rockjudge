@@ -32,7 +32,7 @@ export default class DisciplineJudges extends React.Component {
         next_value[idx] = value;
         this.props.onChange(next_value);
     };
-    handleDelete = (idx) => {
+    handleDelete = idx => {
         let next_value = this.props.value.slice();
         next_value.splice(idx, 1);
         this.props.onChange(next_value);
@@ -41,27 +41,26 @@ export default class DisciplineJudges extends React.Component {
     render() {
         return (
             <div className="discipline-judges">
-                { this.props.value.map((dj, idx) =>
+                {this.props.value.map((dj, idx) => (
                     <DisciplineJudgeRow
-                        competition={ this.props.competition }
-                        disabled={ this.props.disabled }
-                        idx={ idx }
-                        key={ idx }
-                        value={ dj }
-                        onChange={ this.handleChange }
-                        onDelete={ this.handleDelete }
+                        competition={this.props.competition}
+                        disabled={this.props.disabled}
+                        idx={idx}
+                        key={idx}
+                        value={dj}
+                        onChange={this.handleChange}
+                        onDelete={this.handleDelete}
                     />
-                ) }
+                ))}
                 <button
                     className="add"
-                    disabled={ this.props.disabled }
+                    disabled={this.props.disabled}
                     type="button"
-                    onClick={ this.handleAdd }
+                    onClick={this.handleAdd}
                 >
-                    { _("global.buttons.add") }
+                    {_("global.buttons.add")}
                 </button>
             </div>
         );
     }
 }
-

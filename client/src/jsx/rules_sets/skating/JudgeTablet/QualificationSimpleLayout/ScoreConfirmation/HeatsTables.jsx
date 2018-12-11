@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import HeatsTableItem from "./HeatsTableItem";
@@ -27,14 +27,14 @@ export default class HeatsTables extends React.Component {
     render() {
         return (
             <div className="heats-tables">
-                { this.getHeats().map((heat_runs, idx) =>
+                {this.getHeats().map((heat_runs, idx) => (
                     <HeatsTableItem
-                        disciplineJudge={ this.props.disciplineJudge }
-                        heatRuns={ heat_runs }
-                        key={ idx }
+                        disciplineJudge={this.props.disciplineJudge}
+                        heatRuns={heat_runs}
+                        key={idx}
                     />
-                ) }
+                ))}
             </div>
-        )
+        );
     }
 }

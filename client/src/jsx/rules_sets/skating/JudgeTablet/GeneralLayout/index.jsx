@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import Header from "JudgeTablet/Header";
@@ -7,7 +7,6 @@ import Participant from "./Participant";
 import Footer from "JudgeTablet/Footer";
 import FooterItem from "JudgeTablet/Footer/FooterItem";
 import lastOf from "common/tools/lastOf";
-
 
 export default class GeneralLayout extends React.Component {
     static propTypes = {
@@ -24,7 +23,7 @@ export default class GeneralLayout extends React.Component {
     static get defaultProps() {
         return {
             footerText: null,
-        }
+        };
     }
 
     constructor(props) {
@@ -49,8 +48,11 @@ export default class GeneralLayout extends React.Component {
     }
 
     getStartingHeat() {
-        const completed_heats = [].concat(...this.props.tour.runs.map(run => run.scores))
-            .filter(score => score.discipline_judge_id === this.props.disciplineJudge.id)
+        const completed_heats = []
+            .concat(...this.props.tour.runs.map(run => run.scores))
+            .filter(
+                score => score.discipline_judge_id === this.props.disciplineJudge.id,
+            )
             .filter(this.props.scoreCompletionChecker)
             .map(score => score.run.heat);
         return Math.max(1, ...completed_heats);
@@ -74,9 +76,8 @@ export default class GeneralLayout extends React.Component {
         this.scores = this.getScores();
     }
 
-
-    setHeat = (heat) => this.setState({ heat });
-    updateHeat = (delta) => this.setHeat(this.state.heat + delta);
+    setHeat = heat => this.setState({ heat });
+    updateHeat = delta => this.setHeat(this.state.heat + delta);
 
     handlePrevHeatClick = () => this.updateHeat(-1);
     handleNextHeatClick = () => this.updateHeat(1);
@@ -87,16 +88,16 @@ export default class GeneralLayout extends React.Component {
         return (
             <div className="body">
                 <Grid>
-                    { this.runs.map(run =>
+                    {this.runs.map(run => (
                         <Participant
-                            disciplineJudge={ this.props.disciplineJudge }
-                            key={ run.id }
-                            layoutClass={ this.props.layoutClass }
-                            run={ run }
-                            score={ this.scores.get(run.id) }
-                            onScoreUpdate={ this.props.onScoreUpdate }
+                            disciplineJudge={this.props.disciplineJudge}
+                            key={run.id}
+                            layoutClass={this.props.layoutClass}
+                            run={run}
+                            score={this.scores.get(run.id)}
+                            onScoreUpdate={this.props.onScoreUpdate}
                         />
-                    )}
+                    ))}
                 </Grid>
             </div>
         );
@@ -109,9 +110,9 @@ export default class GeneralLayout extends React.Component {
             }
             return (
                 <ConfirmationClass
-                    disciplineJudge={ this.props.disciplineJudge }
-                    tour={ this.props.tour }
-                    onScoreUpdate={ this.props.onScoreUpdate }
+                    disciplineJudge={this.props.disciplineJudge}
+                    tour={this.props.tour}
+                    onScoreUpdate={this.props.onScoreUpdate}
                 />
             );
         }
@@ -123,10 +124,7 @@ export default class GeneralLayout extends React.Component {
         }
         return (
             <Footer>
-                <FooterItem
-                    type="text"
-                    value={ this.props.footerText }
-                />
+                <FooterItem type="text" value={this.props.footerText} />
             </Footer>
         );
     }
@@ -136,21 +134,24 @@ export default class GeneralLayout extends React.Component {
         return (
             <div className="skating-JudgeTablet GeneralLayout">
                 <Header
-                    canFinish={ !this.state.showResults && !this.props.tour.global_storage.hasOverrides() }
-                    canReturn={ this.state.showResults }
-                    heat={ this.state.heat }
-                    heatsCount={ this.heats_count }
-                    hideHeatsButtons={ this.state.showResults }
-                    judge={ this.props.disciplineJudge.judge }
-                    maxHeat={ lastOf(this.props.tour.runs)?.heat ?? 1 }
-                    tour={ this.props.tour }
-                    onFinishClick={ this.handleFinishClick }
-                    onNextHeatClick={ this.handleNextHeatClick }
-                    onPrevHeatClick={ this.handlePrevHeatClick }
-                    onReturnClick={ this.handleReturnClick }
+                    canFinish={
+                        !this.state.showResults &&
+                        !this.props.tour.global_storage.hasOverrides()
+                    }
+                    canReturn={this.state.showResults}
+                    heat={this.state.heat}
+                    heatsCount={this.heats_count}
+                    hideHeatsButtons={this.state.showResults}
+                    judge={this.props.disciplineJudge.judge}
+                    maxHeat={lastOf(this.props.tour.runs)?.heat ?? 1}
+                    tour={this.props.tour}
+                    onFinishClick={this.handleFinishClick}
+                    onNextHeatClick={this.handleNextHeatClick}
+                    onPrevHeatClick={this.handlePrevHeatClick}
+                    onReturnClick={this.handleReturnClick}
                 />
-                { this.renderBody() }
-                { this.renderFooter() }
+                {this.renderBody()}
+                {this.renderFooter()}
             </div>
         );
     }

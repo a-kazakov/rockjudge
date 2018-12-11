@@ -1,11 +1,6 @@
 const meta = {
-    "judge_roles": [
-        "dance_judge",
-        "acro_judge",
-        "head_judge",
-        "tech_judge",
-    ],
-    "scoring_systems": [
+    judge_roles: ["dance_judge", "acro_judge", "head_judge", "tech_judge"],
+    scoring_systems: [
         "vftsarr.dance",
         "vftsarr.dance_rough",
         "vftsarr.dance_extended",
@@ -21,12 +16,7 @@ const meta = {
         "vftsarr.am_final_fw",
         "vftsarr.am_final_acro",
     ],
-    "suggested_programs": [
-        "default",
-        "qualification",
-        "quarterfinal",
-        "final",
-    ],
+    suggested_programs: ["default", "qualification", "quarterfinal", "final"],
 };
 
 export default meta;

@@ -16,13 +16,13 @@ export default class TourHeatControls extends React.Component {
         onChange: PT.func.isRequired,
     };
 
-    handleTourChange = (new_value) => {
+    handleTourChange = new_value => {
         let new_state = Object.assign({}, this.props.controlsState);
         new_state.tour_id = new_value;
         new_state.heat = null;
         this.props.onChange(new_state);
     };
-    handleHeatChange = (new_value) => {
+    handleHeatChange = new_value => {
         let new_state = Object.assign({}, this.props.controlsState);
         new_state.heat = new_value;
         this.props.onChange(new_state);
@@ -32,19 +32,20 @@ export default class TourHeatControls extends React.Component {
         if (this.props.controlsState.tour_id == null) {
             return null;
         }
-        const tour = this.props.competition.global_storage.get("Tour", this.props.controlsState.tour_id);
+        const tour = this.props.competition.global_storage.get(
+            "Tour",
+            this.props.controlsState.tour_id,
+        );
         if (!tour) {
             return null;
         }
         return (
             <div>
-                <h3>
-                    { _("screen_operator.headers.heat") }
-                </h3>
+                <h3>{_("screen_operator.headers.heat")}</h3>
                 <HeatSelector
-                    tour={ tour }
-                    value={ this.props.controlsState.heat }
-                    onHeatSelect={ this.handleHeatChange }
+                    tour={tour}
+                    value={this.props.controlsState.heat}
+                    onHeatSelect={this.handleHeatChange}
                 />
             </div>
         );
@@ -52,15 +53,13 @@ export default class TourHeatControls extends React.Component {
     render() {
         return (
             <div>
-                <h3>
-                    { _("screen_operator.headers.tour") }
-                </h3>
+                <h3>{_("screen_operator.headers.tour")}</h3>
                 <TourSelector
-                    competition={ this.props.competition }
-                    value={ this.props.controlsState.tour_id }
-                    onChange={ this.handleTourChange }
+                    competition={this.props.competition}
+                    value={this.props.controlsState.tour_id}
+                    onChange={this.handleTourChange}
                 />
-                { this.renderHeatSelector() }
+                {this.renderHeatSelector()}
             </div>
         );
     }

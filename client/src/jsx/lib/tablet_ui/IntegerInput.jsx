@@ -20,11 +20,11 @@ export default class IntegerInput extends React.Component {
             max: 100,
             min: 0,
             readOnly: false,
-        }
+        };
     }
 
     handleUpdate(delta) {
-        const {min, max, value} = this.props;
+        const { min, max, value } = this.props;
         const next_value = value + delta;
         if (this.props.readOnly) {
             return;
@@ -37,33 +37,27 @@ export default class IntegerInput extends React.Component {
     handleMinus = () => this.handleUpdate(-1);
     handlePlus = () => this.handleUpdate(1);
 
-
     getClassName() {
         return makeClassName({
-            "IntegerInput": true,
-            "jumbo": this.props.jumbo,
+            IntegerInput: true,
+            jumbo: this.props.jumbo,
             "read-only": this.props.readOnly,
         });
     }
     render() {
         return (
-            <div className={ this.getClassName() }>
+            <div className={this.getClassName()}>
                 <button
                     className="tbtn btn-minus"
-                    { ...onTouchOrClick(this.handleMinus) }
+                    {...onTouchOrClick(this.handleMinus)}
                 >
                     &minus;
                 </button>
-                <div className="value">
-                    { this.props.value }
-                </div>
-                <button
-                    className="tbtn btn-plus"
-                    { ...onTouchOrClick(this.handlePlus) }
-                >
+                <div className="value">{this.props.value}</div>
+                <button className="tbtn btn-plus" {...onTouchOrClick(this.handlePlus)}>
                     +
                 </button>
             </div>
-        )
+        );
     }
 }

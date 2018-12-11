@@ -22,7 +22,7 @@ export default class Row extends React.Component {
         onSubmit: PT.func.isRequired,
     };
 
-    static dummyFunction = (value) => value;
+    static dummyFunction = value => value;
     static alwaysTrueFunction = () => true;
 
     constructor(props) {
@@ -33,9 +33,10 @@ export default class Row extends React.Component {
         };
     }
 
-    handleStartEditing = () => this.setState({editingState: this.makeInitialEditingState()});
-    handleStopEditing = () => this.setState({editingState: null});
-    handleStopLoading = () => this.setState({isLoading: false});
+    handleStartEditing = () =>
+        this.setState({ editingState: this.makeInitialEditingState() });
+    handleStopEditing = () => this.setState({ editingState: null });
+    handleStopLoading = () => this.setState({ isLoading: false });
     handleDelete = () => {
         this.props.onDelete(
             this.props.entry.id,
@@ -43,14 +44,17 @@ export default class Row extends React.Component {
             this.handleStopLoading,
             this.props.context,
         );
-        this.setState({isLoading: true});
+        this.setState({ isLoading: true });
     };
     handleSubmit = () => {
         const final_state = {};
         for (const field of this.props.fields) {
             const transformer = field.fromFormValue || this.constructor.dummyFunction;
             const validator = field.validator || this.constructor.alwaysTrueFunction;
-            const field_result = transformer(this.state.editingState[field.name], this.props.context);
+            const field_result = transformer(
+                this.state.editingState[field.name],
+                this.props.context,
+            );
             if (!validator(field_result, this.props.context)) {
                 return;
             }
@@ -72,18 +76,16 @@ export default class Row extends React.Component {
                 this.props.context,
             );
         }
-        this.setState({isLoading: true});
+        this.setState({ isLoading: true });
     };
     handleFieldChange = (field_name, value) => {
         const field = this.props.fields.find(f => f.name === field_name);
         const transformer = field.modifyFormValue || this.constructor.dummyFunction;
         const filtered_value = transformer(value, this.props.context);
         this.setState({
-            editingState: Object.assign(
-                {},
-                this.state.editingState,
-                {[field.name]: filtered_value},
-            ),
+            editingState: Object.assign({}, this.state.editingState, {
+                [field.name]: filtered_value,
+            }),
         });
     };
 
@@ -91,7 +93,10 @@ export default class Row extends React.Component {
         let result = {};
         for (const field of this.props.fields) {
             const transformer = field.toFormValue || this.constructor.dummyFunction;
-            result[field.name] = transformer(this.props.entry[field.name], this.props.context);
+            result[field.name] = transformer(
+                this.props.entry[field.name],
+                this.props.context,
+            );
         }
         return result;
     }
@@ -100,11 +105,11 @@ export default class Row extends React.Component {
         const Component = this.props.displayComponent;
         return (
             <Component
-                context={ this.props.context }
-                entry={ this.props.entry }
-                loading={ this.state.isLoading }
-                onDelete={ this.handleDelete }
-                onStartEditing={ this.handleStartEditing }
+                context={this.props.context}
+                entry={this.props.entry}
+                loading={this.state.isLoading}
+                onDelete={this.handleDelete}
+                onStartEditing={this.handleStartEditing}
             />
         );
     }
@@ -112,14 +117,14 @@ export default class Row extends React.Component {
         const Component = this.props.editingComponent;
         return (
             <Component
-                context={ this.props.context }
-                creating={ !this.props.entry }
-                entry={ this.props.entry }
-                formData={ this.state.editingState }
-                loading={ this.state.isLoading }
-                onDiscard={ this.handleStopEditing }
-                onFieldChange={ this.handleFieldChange }
-                onSubmit={ this.handleSubmit }
+                context={this.props.context}
+                creating={!this.props.entry}
+                entry={this.props.entry}
+                formData={this.state.editingState}
+                loading={this.state.isLoading}
+                onDiscard={this.handleStopEditing}
+                onFieldChange={this.handleFieldChange}
+                onSubmit={this.handleSubmit}
             />
         );
     }

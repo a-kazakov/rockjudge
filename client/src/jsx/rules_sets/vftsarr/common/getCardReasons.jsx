@@ -1,20 +1,20 @@
 import checkSS from "common/checkSS";
 
 const ARR_CARD_REASONS = {
-    "base": {
-        "DURATION": 10,
-        "BASIC_STEPS_COUNT": 20,
-        "COSTUME": 30,
-        "MUSIC": 40,
-        "OTHER": 1000,
+    base: {
+        DURATION: 10,
+        BASIC_STEPS_COUNT: 20,
+        COSTUME: 30,
+        MUSIC: 40,
+        OTHER: 1000,
     },
-    "acro": {
-        "ACRO_COUNT": 100,
-        "NO_REQUIRED_ACRO": 110,
-        "FORBIDDEN_ACRO": 120,
+    acro: {
+        ACRO_COUNT: 100,
+        NO_REQUIRED_ACRO: 110,
+        FORBIDDEN_ACRO: 120,
     },
-    "formation": {
-        "INCOMPLETE_COUPLE": 200,
+    formation: {
+        INCOMPLETE_COUPLE: 200,
     },
 };
 
@@ -37,6 +37,6 @@ export default function getCardReasons(scoring_system_name) {
             pairs.push([reason, priority]);
         }
     }
-    pairs.sort((a, b) => (a[1] - b[1]));
+    pairs.sort((a, b) => a[1] - b[1]);
     return pairs.map(p => p[0]);
 }

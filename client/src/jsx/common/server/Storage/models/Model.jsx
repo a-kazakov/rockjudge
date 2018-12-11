@@ -12,7 +12,9 @@ export default class Model {
     }
     constructor(_sentinel_DO_NOT_USE, global_schema, mutation, subscription_storage) {
         if (_sentinel_DO_NOT_USE !== 12345) {
-            throw new Error("Model class shouldn't be created directly. Use create static method.");
+            throw new Error(
+                "Model class shouldn't be created directly. Use create static method.",
+            );
         }
         this.subscription_storage = subscription_storage;
         this.schema = global_schema.get(mutation.model_name);
@@ -23,8 +25,10 @@ export default class Model {
     }
     get results() {
         const id = this.getValue("id");
-        const {model_name} = this.schema;
-        const subscription_storages = this.global_storage.getAllSubscriptionStorages(model_name);
+        const { model_name } = this.schema;
+        const subscription_storages = this.global_storage.getAllSubscriptionStorages(
+            model_name,
+        );
         for (const sub_storage of subscription_storages) {
             let result = null;
             switch (model_name) {
@@ -47,12 +51,16 @@ export default class Model {
             key,
             this._raw_data,
             this.subscription_storage,
-            this.global_storage.overrides.getNoCreate(`${this.schema.model_name}/${this._raw_data.id}`),
+            this.global_storage.overrides.getNoCreate(
+                `${this.schema.model_name}/${this._raw_data.id}`,
+            ),
         );
     }
     _checkIndexUpdateNeeded(mutation) {
         for (const ref of this.schema.refs.values()) {
-            if (this._raw_data[ref.id_field_name] !== mutation.data[ref.id_field_name]) {
+            if (
+                this._raw_data[ref.id_field_name] !== mutation.data[ref.id_field_name]
+            ) {
                 return true;
             }
         }
@@ -61,11 +69,11 @@ export default class Model {
     update(mutation) {
         const upd_index = this._checkIndexUpdateNeeded(mutation);
         if (upd_index) {
-            this.subscription_storage.deleteModelFromIndex(this)
+            this.subscription_storage.deleteModelFromIndex(this);
         }
         this._raw_data = mutation.data;
         if (upd_index) {
-            this.subscription_storage.addModelToIndex(this)
+            this.subscription_storage.addModelToIndex(this);
         }
     }
     getIndexKeys() {

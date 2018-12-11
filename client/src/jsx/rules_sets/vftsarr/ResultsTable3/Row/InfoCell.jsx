@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import lastOf from "common/tools/lastOf";
 import _ from "l10n";
@@ -23,14 +23,15 @@ export default class InfoCell extends React.Component {
             <div>
                 <p>
                     <strong>
-                        { _("global.phrases.participant_n",
+                        {_(
+                            "global.phrases.participant_n",
                             this.props.row.run.participant.number,
                             null,
-                            this.props.row.run.participant.sportsmen.length)
-                        }
+                            this.props.row.run.participant.sportsmen.length,
+                        )}
                     </strong>
                 </p>
-                { getParticipantDisplay(this.props.row.run.participant) }
+                {getParticipantDisplay(this.props.row.run.participant)}
             </div>
         );
     }
@@ -48,19 +49,16 @@ export default class InfoCell extends React.Component {
         }
         result.push(
             <p key="C">
-                <strong>
-                    { _(`cards.verbose.${card}`) }
-                </strong>
-            </p>
+                <strong>{_(`cards.verbose.${card}`)}</strong>
+            </p>,
         );
-        result = result.concat(texts.map((text, idx) => (
-            <p
-                key={ idx }
-                style={ { marginLeft: "5pt", fontStyle: "italic"} }
-            >
-                { text }
-            </p>
-        )));
+        result = result.concat(
+            texts.map((text, idx) => (
+                <p key={idx} style={{ marginLeft: "5pt", fontStyle: "italic" }}>
+                    {text}
+                </p>
+            )),
+        );
         return result;
     }
     renderAcroTable() {
@@ -74,45 +72,43 @@ export default class InfoCell extends React.Component {
             return null;
         }
         const has_acro_overrides = this.props.row.run.acrobatics.some(
-            element => element.score !== element.initial_score
+            element => element.score !== element.initial_score,
         );
-        const acro_cell_width = `${(100 / this.props.row.run.acrobatics.length)}%`;
-        const table_layout = this.props.row.run.acrobatics.length > 6 ? "auto" : "fixed";
+        const acro_cell_width = `${100 / this.props.row.run.acrobatics.length}%`;
+        const table_layout =
+            this.props.row.run.acrobatics.length > 6 ? "auto" : "fixed";
         return (
             <div>
                 <p>
                     <strong>
-                        { has_acro_overrides
+                        {has_acro_overrides
                             ? _("results.labels.acrobatics_verbose")
-                            : _("results.labels.acrobatics")
-                        }:
+                            : _("results.labels.acrobatics")}
+                        :
                     </strong>
                 </p>
-                <table
-                    className="acro-table"
-                    style={ {tableLayout: table_layout} }
-                >
+                <table className="acro-table" style={{ tableLayout: table_layout }}>
                     <tbody>
                         <tr>
-                            { this.props.row.run.acrobatics.map((acro, idx) => (
-                                <td key={ idx } style={ { width: acro_cell_width } }>
+                            {this.props.row.run.acrobatics.map((acro, idx) => (
+                                <td key={idx} style={{ width: acro_cell_width }}>
                                     <p className="text-center">
-                                        { floatToFixed(acro.initial_score, 1) }
+                                        {floatToFixed(acro.initial_score, 1)}
                                     </p>
                                 </td>
-                            )) }
+                            ))}
                         </tr>
-                        { has_acro_overrides ? (
+                        {has_acro_overrides ? (
                             <tr>
-                                { this.props.row.run.acrobatics.map((acro, idx) => (
-                                    <td key={ idx } style={ { width: acro_cell_width } }>
+                                {this.props.row.run.acrobatics.map((acro, idx) => (
+                                    <td key={idx} style={{ width: acro_cell_width }}>
                                         <p className="text-center">
-                                            { floatToFixed(acro.score, 1) }
+                                            {floatToFixed(acro.score, 1)}
                                         </p>
                                     </td>
-                                )) }
+                                ))}
                             </tr>
-                        ) : null }
+                        ) : null}
                     </tbody>
                 </table>
             </div>
@@ -128,10 +124,8 @@ export default class InfoCell extends React.Component {
         const score = this.props.row.run_result.extra_data.fw_score?.toFixed(3) || "—";
         return (
             <p>
-                <strong>
-                    { _("results.labels.fw_score") }
-                </strong>
-                { `: ${score}` }
+                <strong>{_("results.labels.fw_score")}</strong>
+                {`: ${score}`}
             </p>
         );
     }
@@ -142,13 +136,12 @@ export default class InfoCell extends React.Component {
         if (this.props.tour.scoring_system_name !== "vftsarr.am_final_acro") {
             return null;
         }
-        const score = this.props.row.run_result.extra_data.acro_score?.toFixed(3) || "—";
+        const score =
+            this.props.row.run_result.extra_data.acro_score?.toFixed(3) || "—";
         return (
             <p>
-                <strong>
-                    { _("results.labels.acro_score") }
-                </strong>
-                { `: ${score}` }
+                <strong>{_("results.labels.acro_score")}</strong>
+                {`: ${score}`}
             </p>
         );
     }
@@ -159,7 +152,9 @@ export default class InfoCell extends React.Component {
         return (
             <p>
                 <strong>
-                    { `${_("results.labels.total_score")}: ${this.props.row.run_result.total_score_str}` }
+                    {`${_("results.labels.total_score")}: ${
+                        this.props.row.run_result.total_score_str
+                    }`}
                 </strong>
             </p>
         );
@@ -170,11 +165,9 @@ export default class InfoCell extends React.Component {
         }
         return (
             <p>
-                <em>
-                    { _("results.labels.not_performed") }
-                </em>
+                <em>{_("results.labels.not_performed")}</em>
             </p>
-        )
+        );
     }
     renderDisqualifiedLabel() {
         if (this.props.row.run_result.extra_data.status !== "DQ") {
@@ -182,39 +175,35 @@ export default class InfoCell extends React.Component {
         }
         return (
             <p>
-                <em>
-                    { _("results.labels.disqualified") }
-                </em>
+                <em>{_("results.labels.disqualified")}</em>
             </p>
-        )
+        );
     }
     renderUndercount() {
-        const need_fall_down = checkSS(this.props.tour.scoring_system_name, "formation") &&
+        const need_fall_down =
+            checkSS(this.props.tour.scoring_system_name, "formation") &&
             this.props.row.run_result.extra_data.undercount > 0;
         if (!need_fall_down) {
             return null;
         }
         return (
             <p>
-                <strong>
-                    { `${_("score_parts.tech.long.undercount")}: ` }
-                </strong>
-                { this.props.row.run_result.extra_data.undercount}
+                <strong>{`${_("score_parts.tech.long.undercount")}: `}</strong>
+                {this.props.row.run_result.extra_data.undercount}
             </p>
         );
     }
     renderFallDown() {
-        const need_fall_down = checkSS(this.props.tour.scoring_system_name, "acro") &&
+        const need_fall_down =
+            checkSS(this.props.tour.scoring_system_name, "acro") &&
             this.props.row.run_result.extra_data.fall_down > 0;
         if (!need_fall_down) {
             return null;
         }
         return (
             <p>
-                <strong>
-                    { `${_("score_parts.tech.long.fall_down")}: ` }
-                </strong>
-                { this.props.row.run_result.extra_data.fall_down}
+                <strong>{`${_("score_parts.tech.long.fall_down")}: `}</strong>
+                {this.props.row.run_result.extra_data.fall_down}
             </p>
         );
     }
@@ -227,30 +216,27 @@ export default class InfoCell extends React.Component {
         }
         return (
             <p>
-                <strong>
-                    { `${_("results.labels.next_tour")}: ` }
-                </strong>
-                { this.props.row.run_result.advanced
+                <strong>{`${_("results.labels.next_tour")}: `}</strong>
+                {this.props.row.run_result.advanced
                     ? _("global.labels.yes")
-                    : _("global.labels.no")
-                }
+                    : _("global.labels.no")}
             </p>
         );
     }
     render() {
         return (
             <td className="info-block">
-                { this.renderParticipantInfo() }
-                { this.renderCard() }
-                { this.renderAcroTable() }
-                { this.renderUndercount() }
-                { this.renderFallDown() }
-                { this.renderAmClassFwScore() }
-                { this.renderAmClassAcroScore() }
-                { this.renderTotalScore() }
-                { this.renderNotPerformedLabel() }
-                { this.renderDisqualifiedLabel() }
-                { this.renderNextTourLabel() }
+                {this.renderParticipantInfo()}
+                {this.renderCard()}
+                {this.renderAcroTable()}
+                {this.renderUndercount()}
+                {this.renderFallDown()}
+                {this.renderAmClassFwScore()}
+                {this.renderAmClassAcroScore()}
+                {this.renderTotalScore()}
+                {this.renderNotPerformedLabel()}
+                {this.renderDisqualifiedLabel()}
+                {this.renderNextTourLabel()}
             </td>
         );
     }

@@ -24,18 +24,18 @@ export default class Programs extends UniversalTable {
         {
             name: "elements",
             defaultValue: [],
-            toFormValue: (value) => {
+            toFormValue: value => {
                 return value.map(element => {
-                    let {score, ...other} = element;
+                    let { score, ...other } = element;
                     score = score.toFixed(1);
-                    return {score, ...other};
+                    return { score, ...other };
                 });
             },
-            fromFormValue: (value) => {
-                return value.map(element=> {
-                    let {score, ...other} = element;
+            fromFormValue: value => {
+                return value.map(element => {
+                    let { score, ...other } = element;
                     score = parseFloat(score.replace(" ", "").replace(",", ".")) || 0;
-                    return {score, ...other};
+                    return { score, ...other };
                 });
             },
         },
@@ -52,7 +52,7 @@ export default class Programs extends UniversalTable {
     static renderNewParticipant() {
         return (
             <div className="add-programs-after-creation-alert">
-                { _("admin.alerts.add_programs_after_creation") }
+                {_("admin.alerts.add_programs_after_creation")}
             </div>
         );
     }
@@ -62,19 +62,13 @@ export default class Programs extends UniversalTable {
         }
         return (
             <div>
-                <label>
-                    { _("models.participant.programs") }
-                </label>
-                { this.renderRows() }
-                { this.renderCreationButton() }
-            </div>
-        )
-    }
-    render() {
-        return (
-            <div className="programs">
-                { this.renderBody() }
+                <label>{_("models.participant.programs")}</label>
+                {this.renderRows()}
+                {this.renderCreationButton()}
             </div>
         );
+    }
+    render() {
+        return <div className="programs">{this.renderBody()}</div>;
     }
 }

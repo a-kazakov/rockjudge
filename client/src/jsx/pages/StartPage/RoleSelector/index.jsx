@@ -10,7 +10,6 @@ import Presenter from "./Presenter";
 import SingleJudge from "./SingleJudge";
 import UniversalSelector from "./UniversalSelector";
 
-
 export default class RoleSelector extends React.Component {
     static propTypes = {
         auth: PT.instanceOf(Model),
@@ -37,11 +36,13 @@ export default class RoleSelector extends React.Component {
 
     subscribe = () => {
         this._subscription = new CompetitionSubscription(this.props.competition.id);
-        this.props.competition.global_storage.subscribe(this._subscription).then(this.updateCompetitionStorage);
+        this.props.competition.global_storage
+            .subscribe(this._subscription)
+            .then(this.updateCompetitionStorage);
     };
 
-    updateCompetitionStorage = (competitionStorage) => {
-        this.setState({competitionStorage});
+    updateCompetitionStorage = competitionStorage => {
+        this.setState({ competitionStorage });
     };
 
     get has_access() {
@@ -54,68 +55,50 @@ export default class RoleSelector extends React.Component {
     renderBody() {
         if (window.location.hostname !== "127.0.0.1") {
             if (!this.props.auth) {
-                return (
-                    <AccessRequest
-                        competitionId={ this.props.competition.id }
-                    />
-                );
+                return <AccessRequest competitionId={this.props.competition.id} />;
             }
             if (this.props.auth.access_level === "none") {
-                return (
-                    <NoAccess />
-                );
+                return <NoAccess />;
             }
         }
         if (this.state.competitionStorage == null) {
-            return (
-                <Loader />
-            );
+            return <Loader />;
         }
-        const competition = this.state.competitionStorage.get("Competition", this.props.competition.id);
-        if (window.location.hostname === "127.0.0.1" || this.props.auth.access_level === "admin") {
-            return (
-                <UniversalSelector
-                    showAdmin
-                    competition={ competition }
-                />
-            );
+        const competition = this.state.competitionStorage.get(
+            "Competition",
+            this.props.competition.id,
+        );
+        if (
+            window.location.hostname === "127.0.0.1" ||
+            this.props.auth.access_level === "admin"
+        ) {
+            return <UniversalSelector showAdmin competition={competition} />;
         }
         if (this.props.auth.access_level === "any_judge") {
-            return (
-                <UniversalSelector
-                    competition={ competition }
-                />
-            );
+            return <UniversalSelector competition={competition} />;
         }
         if (this.props.auth.access_level === "judge") {
             return (
                 <SingleJudge
-                    judge={ competition.global_storage.get("Judge", this.props.auth.judge_id) }
+                    judge={competition.global_storage.get(
+                        "Judge",
+                        this.props.auth.judge_id,
+                    )}
                 />
             );
         }
         if (this.props.auth.access_level === "presenter") {
-            return (
-                <Presenter
-                    competition={ competition }
-                />
-            );
+            return <Presenter competition={competition} />;
         }
-        return (
-            <h3>Not implemented</h3>
-        );
+        return <h3>Not implemented</h3>;
     }
     render() {
         return (
             <div className="RoleSelector">
                 <header>
-                    <h1>
-                        { this.props.competition.name }
-                    </h1>
+                    <h1>{this.props.competition.name}</h1>
                 </header>
-                <div className="body">
-                    { this.renderBody() }
-                </div>
+                <div className="body">{this.renderBody()}</div>
             </div>
         );
     }

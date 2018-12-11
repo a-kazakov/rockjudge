@@ -25,57 +25,53 @@ export default class ActiveJob extends React.Component {
         if (!this.props.queueItem) {
             return null;
         }
-        const docx_params = { filename: this.createFilename(), onDone: this.props.onDone };
+        const docx_params = {
+            filename: this.createFilename(),
+            onDone: this.props.onDone,
+        };
         switch (this.props.queueItem.type) {
-        case "heats":
-            return (
-                <HeatsTab
-                    autoDocx={ docx_params }
-                    tour={ this.props.queueItem.tour }
-                />
-            );
-        case "results_1":
-            return (
-                <TourLoader
-                    autoDocx={ docx_params }
-                    renderer={ TourResultsTab }
-                    tour={ this.props.queueItem.tour }
-                    verbosity={ 1 }
-                />
-            );
-        case "results_2":
-            return (
-                <TourLoader
-                    autoDocx={ docx_params }
-                    renderer={ TourResultsTab }
-                    tour={ this.props.queueItem.tour }
-                    verbosity={ 2 }
-                />
-            );
-        case "results_3":
-            return (
-                <TourLoader
-                    autoDocx={ docx_params }
-                    renderer={ TourResultsTab }
-                    tour={ this.props.queueItem.tour }
-                    verbosity={ 3 }
-                />
-            );
-        case "discipline_results":
-            return (
-                <DisciplineResultsTab
-                    autoDocx={ docx_params }
-                    discipline={ this.props.queueItem.tour.discipline }
-                />
-            );
-        case "test":
-            return (
-                <TestPage
-                    autoDocx={ docx_params }
-                />
-            );
-        default:
-            console.error("Invalid job type:", this.props.queueItem.type);
+            case "heats":
+                return (
+                    <HeatsTab autoDocx={docx_params} tour={this.props.queueItem.tour} />
+                );
+            case "results_1":
+                return (
+                    <TourLoader
+                        autoDocx={docx_params}
+                        renderer={TourResultsTab}
+                        tour={this.props.queueItem.tour}
+                        verbosity={1}
+                    />
+                );
+            case "results_2":
+                return (
+                    <TourLoader
+                        autoDocx={docx_params}
+                        renderer={TourResultsTab}
+                        tour={this.props.queueItem.tour}
+                        verbosity={2}
+                    />
+                );
+            case "results_3":
+                return (
+                    <TourLoader
+                        autoDocx={docx_params}
+                        renderer={TourResultsTab}
+                        tour={this.props.queueItem.tour}
+                        verbosity={3}
+                    />
+                );
+            case "discipline_results":
+                return (
+                    <DisciplineResultsTab
+                        autoDocx={docx_params}
+                        discipline={this.props.queueItem.tour.discipline}
+                    />
+                );
+            case "test":
+                return <TestPage autoDocx={docx_params} />;
+            default:
+                console.error("Invalid job type:", this.props.queueItem.type);
         }
         return null;
     }

@@ -7,10 +7,12 @@ import ElementRow from "./ElementRow";
 export default class Elements extends React.Component {
     static propTypes = {
         loading: PT.bool.isRequired,
-        value: PT.arrayOf(PT.shape({
-            description: PT.string.isRequired,
-            score: PT.string.isRequired,
-        })).isRequired,
+        value: PT.arrayOf(
+            PT.shape({
+                description: PT.string.isRequired,
+                score: PT.string.isRequired,
+            }),
+        ).isRequired,
         onChange: PT.func.isRequired,
     };
 
@@ -27,7 +29,7 @@ export default class Elements extends React.Component {
         });
         this.props.onChange(new_value);
     };
-    handleElementDelete = (idx) => {
+    handleElementDelete = idx => {
         let new_value = this.props.value.slice();
         new_value.splice(idx, 1);
         this.props.onChange(new_value);
@@ -36,26 +38,25 @@ export default class Elements extends React.Component {
     render() {
         return (
             <div className="elements">
-                { this.props.value.map((element, idx) =>
+                {this.props.value.map((element, idx) => (
                     <ElementRow
-                        element={ element }
-                        idx={ idx }
-                        key={ idx }
-                        loading={ this.props.loading }
-                        onChange={ this.handleElementChange }
-                        onDelete={ this.handleElementDelete }
+                        element={element}
+                        idx={idx}
+                        key={idx}
+                        loading={this.props.loading}
+                        onChange={this.handleElementChange}
+                        onDelete={this.handleElementDelete}
                     />
-                ) }
+                ))}
                 <button
                     className="add-element-button"
-                    disabled={ this.props.loading }
+                    disabled={this.props.loading}
                     type="button"
-                    onClick={ this.handleElementAdd }
+                    onClick={this.handleElementAdd}
                 >
-                    { _("admin.buttons.add_element") }
+                    {_("admin.buttons.add_element")}
                 </button>
             </div>
         );
     }
 }
-

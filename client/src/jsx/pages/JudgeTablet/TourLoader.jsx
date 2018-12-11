@@ -28,27 +28,27 @@ export default class TourLoader extends React.Component {
 
     subscribe = () => {
         this._subscription = new TourSubscription(this.props.tour.id);
-        this.props.tour.global_storage.subscribe(this._subscription).then(this.updateTourStorage);
+        this.props.tour.global_storage
+            .subscribe(this._subscription)
+            .then(this.updateTourStorage);
     };
     unsubscribe() {
         this.props.tour.global_storage.unsubscribe(this._subscription);
     }
 
-    updateTourStorage = (tourStorage) => {
-        this.setState({tourStorage});
+    updateTourStorage = tourStorage => {
+        this.setState({ tourStorage });
     };
 
     render() {
         if (!this.state.tourStorage) {
-            return (
-                <Loader />
-            );
+            return <Loader />;
         }
         const JudgeTabletComponent = rules_set.judge_tablet;
         return (
             <JudgeTabletComponent
-                disciplineJudge={ this.props.disciplineJudge }
-                tour={ this.props.tour }
+                disciplineJudge={this.props.disciplineJudge}
+                tour={this.props.tour}
             />
         );
     }

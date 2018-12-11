@@ -1,4 +1,4 @@
-import {Api, React} from "HostModules";
+import { Api, React } from "HostModules";
 
 import lastOf from "common/tools/lastOf";
 import PT from "prop-types";
@@ -39,11 +39,13 @@ export default class ActionsPage extends React.Component {
         showConfirm(_("tablet.confirms.stop_tour_and_start_next"), () => {
             if (this.props.tour) {
                 let tour_id = this.props.tour.id;
-                Api("tour/stop", { tour_id }).onSuccess(() => {
-                    Api("tour/start_next", { tour_id })
-                        .onSuccess(closeDialog)
-                        .send();
-                }).send();
+                Api("tour/stop", { tour_id })
+                    .onSuccess(() => {
+                        Api("tour/start_next", { tour_id })
+                            .onSuccess(closeDialog)
+                            .send();
+                    })
+                    .send();
             }
         });
     };
@@ -56,7 +58,8 @@ export default class ActionsPage extends React.Component {
                         Api("tour/start_next", { tour_id })
                             .onSuccess(closeDialog)
                             .send();
-                    }).send();
+                    })
+                    .send();
             }
         });
     };
@@ -108,29 +111,32 @@ export default class ActionsPage extends React.Component {
         return (
             <div className="warning">
                 <div className="content">
-                    { _("tablet.alerts.has_unconfirmed_scores") }
+                    {_("tablet.alerts.has_unconfirmed_scores")}
                 </div>
             </div>
         );
     }
     renderButton(code, callback) {
         return (
-            <button
-                type="button"
-                { ...onTouchOrClick(callback) }
-            >
-                { _(`tablet.buttons.${code}`) }
+            <button type="button" {...onTouchOrClick(callback)}>
+                {_(`tablet.buttons.${code}`)}
             </button>
         );
     }
     render() {
         return (
             <div className="body actions">
-                { this.renderWarning() }
-                { this.renderButton("stop_tour", this.stopTour) }
-                { this.renderButton("finalize_tour", this.finalizeTour) }
-                { this.renderButton("stop_tour_and_start_next", this.stopTourAndStartNext) }
-                { this.renderButton("finalize_tour_and_start_next", this.finalizeTourAndStartNext) }
+                {this.renderWarning()}
+                {this.renderButton("stop_tour", this.stopTour)}
+                {this.renderButton("finalize_tour", this.finalizeTour)}
+                {this.renderButton(
+                    "stop_tour_and_start_next",
+                    this.stopTourAndStartNext,
+                )}
+                {this.renderButton(
+                    "finalize_tour_and_start_next",
+                    this.finalizeTourAndStartNext,
+                )}
             </div>
         );
     }

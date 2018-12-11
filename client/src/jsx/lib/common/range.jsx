@@ -1,12 +1,12 @@
 // https://stackoverflow.com/questions/8273047/javascript-function-similar-to-python-range
 export default function range(start, stop, step) {
-    if (typeof stop === 'undefined') {
+    if (typeof stop === "undefined") {
         // one param defined
         stop = start;
         start = 0;
     }
 
-    if (typeof step === 'undefined') {
+    if (typeof step === "undefined") {
         step = 1;
     }
 

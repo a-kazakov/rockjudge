@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -13,17 +13,17 @@ export default class Item extends React.Component {
         onChange: PT.func.isRequired,
     };
 
-    handleChange = (value) => {
+    handleChange = value => {
         this.props.onChange(this.props.reason, value);
     };
 
     render() {
         return (
             <CheckboxInput
-                label={ _(`card_reasons.long.${this.props.reason.toLowerCase()}`) }
-                readOnly={ this.props.readOnly }
-                value={ this.props.selected }
-                onChange={ this.handleChange }
+                label={_(`card_reasons.long.${this.props.reason.toLowerCase()}`)}
+                readOnly={this.props.readOnly}
+                value={this.props.selected}
+                onChange={this.handleChange}
             />
         );
     }

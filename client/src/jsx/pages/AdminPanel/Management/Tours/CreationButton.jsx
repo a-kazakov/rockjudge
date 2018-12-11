@@ -25,11 +25,10 @@ export default class CreationButton extends React.Component {
             <button
                 className="add-tour-button"
                 type="button"
-                onClick={ this.handleClick }
+                onClick={this.handleClick}
             >
-                { _("admin.buttons.add_tour") }
+                {_("admin.buttons.add_tour")}
             </button>
         );
     }
 }
-

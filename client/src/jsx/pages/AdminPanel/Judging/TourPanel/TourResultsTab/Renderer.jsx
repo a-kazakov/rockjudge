@@ -33,23 +33,26 @@ export default class Renderer extends React.Component {
         this.props.autoDocx.onDone(this.props.autoDocx.filename);
     };
 
-    makePrintableRef = (ref) => this._printable = ref;
+    makePrintableRef = ref => (this._printable = ref);
 
-    handleSignal = (message) => {
+    handleSignal = message => {
         switch (message) {
-        case "docx":
-            this.createDocx();
-            break;
-        default:
-            console.error("Unknown message:", message)
+            case "docx":
+                this.createDocx();
+                break;
+            default:
+                console.error("Unknown message:", message);
         }
     };
 
     getRenderingComponent() {
         switch (this.props.verbosity) {
-            case 1: return rules_set.tour_results_table_1;
-            case 2: return rules_set.tour_results_table_2;
-            case 3: return rules_set.tour_results_table_3;
+            case 1:
+                return rules_set.tour_results_table_1;
+            case 2:
+                return rules_set.tour_results_table_2;
+            case 3:
+                return rules_set.tour_results_table_3;
         }
     }
     renderNonFinalizedWarning() {
@@ -58,39 +61,46 @@ export default class Renderer extends React.Component {
         }
         return (
             <div className="non-finalized-warning">
-                { _("results.alerts.not_finalized") }
+                {_("results.alerts.not_finalized")}
             </div>
         );
     }
     renderBody() {
         const RenderingComponent = this.getRenderingComponent();
         const computedTour = makeTourResultsTable(this.props.tour);
-        return (
-            <RenderingComponent computedTour={ computedTour } />
-        );
+        return <RenderingComponent computedTour={computedTour} />;
     }
-    render() { // eslint-disable-line react/sort-comp
+
+    // eslint-disable-next-line react/sort-comp
+    render() {
         const Component = this.getRenderingComponent();
-        const orientation = Component.getPaperOrientation?.(this.props.tour) ?? "portrait";
+        const orientation =
+            Component.getPaperOrientation?.(this.props.tour) ?? "portrait";
         return (
             <Paper
-                header={ `${this.props.tour.discipline.competition.name}, ${this.props.tour.discipline.competition.date}` }
-                margins={ [10, 10, 15, 10] }
-                orientation={ orientation }
-                ref={ this.makePrintableRef }
-                title1={ _("admin.headers.tour_results") }
-                title2={ `${this.props.tour.discipline.name} — ${this.props.tour.name}` }
+                header={`${this.props.tour.discipline.competition.name}, ${
+                    this.props.tour.discipline.competition.date
+                }`}
+                margins={[10, 10, 15, 10]}
+                orientation={orientation}
+                ref={this.makePrintableRef}
+                title1={_("admin.headers.tour_results")}
+                title2={`${this.props.tour.discipline.name} — ${this.props.tour.name}`}
             >
-                { this.renderNonFinalizedWarning() }
-                { this.renderBody() }
+                {this.renderNonFinalizedWarning()}
+                {this.renderBody()}
             </Paper>
         );
     }
 
-    createDocx(filename="tour-results.docx") {
+    createDocx(filename = "tour-results.docx") {
         const docx = Docx(filename)
             .setMargins([10, 10, 15, 10])
-            .setHeader(`${this.props.tour.discipline.competition.name}, ${this.props.tour.discipline.competition.date}`)
+            .setHeader(
+                `${this.props.tour.discipline.competition.name}, ${
+                    this.props.tour.discipline.competition.date
+                }`,
+            )
             .setTitle1(_("admin.headers.tour_results"))
             .setTitle2(`${this.props.tour.discipline.name} — ${this.props.tour.name}`)
             .setBody(this._printable.getPrintableHTML());

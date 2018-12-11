@@ -23,48 +23,41 @@ export default class AutoPrinterStatus extends React.Component {
     componentDidMount() {
         let xhr = new XMLHttpRequest();
         xhr.open("GET", "http://127.0.0.1:5949", true);
-        xhr.onload = () => this.setState({ available: true });  //eslint-disable-line react/no-did-mount-set-state
-        xhr.onerror = () => this.setState({ available: false });  //eslint-disable-line react/no-did-mount-set-state
+        xhr.onload = () => this.setState({ available: true }); //eslint-disable-line react/no-did-mount-set-state
+        xhr.onerror = () => this.setState({ available: false }); //eslint-disable-line react/no-did-mount-set-state
         xhr.send();
     }
 
     handleClick = () => {
         if (!auto_printer || auto_printer.closed) {
             auto_printer = window.open(
-                `/printer/${ this.props.competition.id }`,
+                `/printer/${this.props.competition.id}`,
                 "printer",
-                "resizable=yes,location=no"
+                "resizable=yes,location=no",
             );
         } else {
             auto_printer.focus();
         }
-    }
+    };
 
     render() {
         if (this.state.available == null) {
-            return <Loader />
+            return <Loader />;
         }
         if (!this.state.available) {
             return (
                 <div className="auto-printer-status fail">
-                    <p>
-                        { _("admin.alerts.auto_printer_not_available") }
-                    </p>
+                    <p>{_("admin.alerts.auto_printer_not_available")}</p>
                 </div>
             );
         }
         return (
             <div className="auto-printer-status ok">
-                <p>
-                    { _("admin.alerts.auto_printer_available") }
-                </p>
-                <button
-                    type="button"
-                    onClick={ this.handleClick }
-                >
-                    { _("admin.buttons.launch_auto_printer") }
+                <p>{_("admin.alerts.auto_printer_available")}</p>
+                <button type="button" onClick={this.handleClick}>
+                    {_("admin.buttons.launch_auto_printer")}
                 </button>
             </div>
-        )
+        );
     }
 }

@@ -50,33 +50,33 @@ export default class UniversalTable extends React.Component {
             .send();
     };
 
-    renderEntry = (entry) => {
+    renderEntry = entry => {
         return (
             <Row
-                context={ this._context }
-                displayComponent={ this.constructor.DISPLAY_COMPONENT }
-                editingComponent={ this.constructor.EDITOR_COMPONENT }
-                entry={ entry }
-                fields={ this.constructor.FIELDS }
-                key={ entry.id }
-                onDelete={ this.handleDelete }
-                onSubmit={ this.handleUpdate }
+                context={this._context}
+                displayComponent={this.constructor.DISPLAY_COMPONENT}
+                editingComponent={this.constructor.EDITOR_COMPONENT}
+                entry={entry}
+                fields={this.constructor.FIELDS}
+                key={entry.id}
+                onDelete={this.handleDelete}
+                onSubmit={this.handleUpdate}
             />
         );
     };
-    renderRows(context_params=null) {
+    renderRows(context_params = null) {
         this._context = this.getContext(context_params);
         return this.getEntries().map(this.renderEntry);
     }
     renderCreationButton(context_params = null, key = null) {
         return (
             <CreationRow
-                context={ this.getContext(context_params) }
-                createButtonComponent={ this.constructor.CREATION_BUTTON_COMPONENT }
-                editingComponent={ this.constructor.EDITOR_COMPONENT }
-                fields={ this.constructor.FIELDS }
-                key={ key }
-                onSubmit={ this.handleCreate }
+                context={this.getContext(context_params)}
+                createButtonComponent={this.constructor.CREATION_BUTTON_COMPONENT}
+                editingComponent={this.constructor.EDITOR_COMPONENT}
+                fields={this.constructor.FIELDS}
+                key={key}
+                onSubmit={this.handleCreate}
             />
         );
     }

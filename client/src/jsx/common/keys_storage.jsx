@@ -7,15 +7,15 @@ class KeysStorage {
     constructor() {
         const keys_json = localStorage.getItem(this.ls_key);
         if (!keys_json) {
-            this.has_keys  = false;
+            this.has_keys = false;
             this.client_id = null;
-            this.secret    = null;
+            this.secret = null;
             return;
         }
         const keys_obj = JSON.parse(keys_json);
-        this.has_keys  = true;
+        this.has_keys = true;
         this.client_id = keys_obj.client_id;
-        this.secret    = keys_obj.secret;
+        this.secret = keys_obj.secret;
         this._awaiting_resolvers = [];
     }
 
@@ -24,13 +24,16 @@ class KeysStorage {
     }
 
     updateKeys(client_id, secret) {
-        this.has_keys  = true;
+        this.has_keys = true;
         this.client_id = client_id;
-        this.secret    = secret;
-        localStorage.setItem(this.ls_key, JSON.stringify({
-            client_id: client_id,
-            secret: secret,
-        }));
+        this.secret = secret;
+        localStorage.setItem(
+            this.ls_key,
+            JSON.stringify({
+                client_id: client_id,
+                secret: secret,
+            }),
+        );
     }
 
     resetKeys() {
@@ -38,7 +41,7 @@ class KeysStorage {
     }
 
     obtainKeys() {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             this._awaiting_resolvers.push(resolve);
             if (this._awaiting_resolvers.length === 1) {
                 this._obtainKeysImpl();
@@ -50,7 +53,9 @@ class KeysStorage {
         function makeRandomBN() {
             let result = "";
             for (let i = 0; i < 20; ++i) {
-                result += Math.random().toFixed(5).slice(2);
+                result += Math.random()
+                    .toFixed(5)
+                    .slice(2);
             }
             return new BN(result);
         }
@@ -61,11 +66,11 @@ class KeysStorage {
             .onSuccess(response => {
                 const client_id = response.client_id;
                 // Sever data
-                const dh_p  = new BN(response.dh_p);
-                const dh_g  = new BN(response.dh_g);
+                const dh_p = new BN(response.dh_p);
+                const dh_g = new BN(response.dh_g);
                 const dh_ga = new BN(response.dh_ga);
                 // My data
-                const dh_b  = makeRandomBN();
+                const dh_b = makeRandomBN();
                 // Reductions
                 const red_ctx = BN.mont(dh_p);
                 const dh_g_red = dh_g.toRed(red_ctx);
@@ -83,7 +88,10 @@ class KeysStorage {
                 })
                     .disableSignature()
                     .onSuccess(ex_response => {
-                        if (md5(`RockJudge|${secret}`) !== ex_response.verification_string) {
+                        if (
+                            md5(`RockJudge|${secret}`) !==
+                            ex_response.verification_string
+                        ) {
                             console.error("Key exchange failed");
                             return;
                         }

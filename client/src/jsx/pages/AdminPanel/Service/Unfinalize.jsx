@@ -18,16 +18,16 @@ export default class Unfinalize extends React.Component {
                             id: PT.number.isRequired,
                             finalized: PT.bool.isRequired,
                             name: PT.string.isRequired,
-                        }).isRequired
+                        }).isRequired,
                     ).isRequired,
-                }).isRequired
+                }).isRequired,
             ).isRequired,
         }).isRequired,
     };
 
-    makeSelectRef = (ref) => this._select = ref;
+    makeSelectRef = ref => (this._select = ref);
 
-    handleFormSubmit = (event) => {
+    handleFormSubmit = event => {
         event.preventDefault();
         showInput(
             _("admin.headers.unfinalize_tour"),
@@ -53,7 +53,7 @@ export default class Unfinalize extends React.Component {
                 });
             },
         );
-    }
+    };
 
     render() {
         let eligible_tours = [];
@@ -62,9 +62,9 @@ export default class Unfinalize extends React.Component {
                 const tour = discipline.tours[idx];
                 if (tour.finalized) {
                     eligible_tours.push(
-                        <option key={ tour.id } value={ tour.id }>
-                            { `${discipline.name} — ${tour.name}` }
-                        </option>
+                        <option key={tour.id} value={tour.id}>
+                            {`${discipline.name} — ${tour.name}`}
+                        </option>,
                     );
                     break;
                 }
@@ -73,25 +73,18 @@ export default class Unfinalize extends React.Component {
         if (eligible_tours.length === 0) {
             return (
                 <div className="unfinalize-warning">
-                    { _("admin.alerts.no_finalized") }
+                    {_("admin.alerts.no_finalized")}
                 </div>
             );
         }
         return (
             <div>
                 <div className="unfinalize-warning">
-                    { _("admin.alerts.unfinalize_warning") }
+                    {_("admin.alerts.unfinalize_warning")}
                 </div>
-                <form
-                    className="unfinalization"
-                    onSubmit={ this.handleFormSubmit }
-                >
-                    <select ref={ this.makeSelectRef }>
-                        { eligible_tours }
-                    </select>
-                    <button type="submit">
-                        { _("admin.buttons.unfinalize") }
-                    </button>
+                <form className="unfinalization" onSubmit={this.handleFormSubmit}>
+                    <select ref={this.makeSelectRef}>{eligible_tours}</select>
+                    <button type="submit">{_("admin.buttons.unfinalize")}</button>
                 </form>
             </div>
         );

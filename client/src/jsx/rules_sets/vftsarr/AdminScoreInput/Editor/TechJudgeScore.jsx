@@ -1,8 +1,8 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import checkSS from "../../common/checkSS";
-import GeneralEditor from "./GeneralEditor"
+import GeneralEditor from "./GeneralEditor";
 import CardReasonsBlock from "./GeneralEditor/blocks/CardReasonsBlock";
 import NumberBlock from "./GeneralEditor/blocks/NumberBlock";
 import SelectorBlock from "./GeneralEditor/blocks/SelectorBlock";
@@ -21,63 +21,38 @@ export default class TechJudgeScore extends React.Component {
         if (!checkSS(this.props.scoringSystemName, "acro")) {
             return null;
         }
-        return (
-            <NumberBlock
-                field="fall_down"
-                label="FD"
-                max={ 100 }
-            />
-        );
+        return <NumberBlock field="fall_down" label="FD" max={100} />;
     }
     renderUndercount() {
         if (!checkSS(this.props.scoringSystemName, "formation")) {
             return null;
         }
-        return (
-            <NumberBlock
-                field="undercount"
-                label="UC"
-                max={ 100 }
-            />
-        );
+        return <NumberBlock field="undercount" label="UC" max={100} />;
     }
     render() {
         return (
             <GeneralEditor
-                initialData={ this.props.scoreData }
-                readOnly={ this.props.readOnly }
-                onDiscard={ this.props.onDiscard }
-                onSubmit={ this.props.onSubmit }
+                initialData={this.props.scoreData}
+                readOnly={this.props.readOnly}
+                onDiscard={this.props.onDiscard}
+                onSubmit={this.props.onSubmit}
             >
-                <NumberBlock
-                    field="jump_steps"
-                    label="BS"
-                    max={ 100 }
-                />
-                <TimeBlock
-                    nullable
-                    field="time"
-                    label="T"
-                />
-                { this.renderFallDown() }
-                { this.renderUndercount() }
+                <NumberBlock field="jump_steps" label="BS" max={100} />
+                <TimeBlock nullable field="time" label="T" />
+                {this.renderFallDown()}
+                {this.renderUndercount()}
                 <SelectorBlock
                     nullable
                     field="card"
                     label="C"
-                    options={ [
-                        ["OK", "OK"],
-                        ["YC", "YC"],
-                        ["RC", "RC"],
-                    ] }
+                    options={[["OK", "OK"], ["YC", "YC"], ["RC", "RC"]]}
                 />
                 <CardReasonsBlock
                     field="card_reasons"
                     label="Card reasons"
-                    scoringSystemName={ this.props.scoringSystemName }
+                    scoringSystemName={this.props.scoringSystemName}
                 />
             </GeneralEditor>
         );
     }
 }
-

@@ -42,14 +42,14 @@ export default class JudgeHeaderCell extends React.Component {
         showConfirm(
             [
                 _("judging.confirms.confirm_all"),
-                `${judge.role_description || _("global.phrases.judge_n", judge.number)}: ${judge.name}`,
+                `${judge.role_description ||
+                    _("global.phrases.judge_n", judge.number)}: ${judge.name}`,
             ],
             () => {
                 Api("tour/confirm_judge", {
                     tour_id: this.props.tour.id,
                     discipline_judge_id: this.props.disciplineJudge.id,
-                })
-                    .send();
+                }).send();
             },
         );
         this.props.onStopEditing();
@@ -59,14 +59,14 @@ export default class JudgeHeaderCell extends React.Component {
         showConfirm(
             [
                 _("judging.confirms.unconfirm_all"),
-                `${judge.role_description || _("global.phrases.judge_n", judge.number)}: ${judge.name}`,
+                `${judge.role_description ||
+                    _("global.phrases.judge_n", judge.number)}: ${judge.name}`,
             ],
             () => {
                 Api("tour/unconfirm_judge", {
                     tour_id: this.props.tour.id,
                     discipline_judge_id: this.props.disciplineJudge.id,
-                })
-                    .send();
+                }).send();
             },
         );
         this.props.onStopEditing();
@@ -76,14 +76,14 @@ export default class JudgeHeaderCell extends React.Component {
         showConfirm(
             [
                 _("judging.confirms.reset_judge_scores"),
-                `${judge.role_description || _("global.phrases.judge_n", judge.number)}: ${judge.name}`,
+                `${judge.role_description ||
+                    _("global.phrases.judge_n", judge.number)}: ${judge.name}`,
             ],
             () => {
                 Api("tour/reset_judge", {
                     tour_id: this.props.tour.id,
                     discipline_judge_id: this.props.disciplineJudge.id,
-                })
-                    .send();
+                }).send();
             },
         );
         this.props.onStopEditing();
@@ -91,14 +91,15 @@ export default class JudgeHeaderCell extends React.Component {
 
     getClassName() {
         return makeClassName({
-            "judge": true,
-            "opened": this.props.opened,
+            judge: true,
+            opened: this.props.opened,
         });
     }
     renderClosedState() {
         return (
             <span>
-                { rules_set.get_judge_table_mark(this.props.disciplineJudge) }&nbsp;&#9660;
+                {rules_set.get_judge_table_mark(this.props.disciplineJudge)}
+                &nbsp;&#9660;
             </span>
         );
     }
@@ -106,41 +107,36 @@ export default class JudgeHeaderCell extends React.Component {
         return (
             <div className="menu">
                 <ActionButton
-                    text={ _("judging.buttons.confirm_all") }
-                    onClick={ this.handleConfirmAll }
+                    text={_("judging.buttons.confirm_all")}
+                    onClick={this.handleConfirmAll}
                 />
                 <ActionButton
-                    text={ _("judging.buttons.unconfirm_all") }
-                    onClick={ this.handleUnconfirmAll }
+                    text={_("judging.buttons.unconfirm_all")}
+                    onClick={this.handleUnconfirmAll}
                 />
                 <br />
                 <ActionButton
                     style="red"
-                    text={ _("judging.buttons.reset_score") }
-                    onClick={ this.handleResetJudgeScores }
+                    text={_("judging.buttons.reset_score")}
+                    onClick={this.handleResetJudgeScores}
                 />
                 <br />
                 <ActionButton
                     style="dark"
-                    text={ _("judging.buttons.close_actions_menu") }
-                    onClick={ this.props.onStopEditing }
+                    text={_("judging.buttons.close_actions_menu")}
+                    onClick={this.props.onStopEditing}
                 />
             </div>
-        )
+        );
     }
     renderBody() {
-        return this.props.opened
-            ? this.renderOpenedState()
-            : this.renderClosedState();
+        return this.props.opened ? this.renderOpenedState() : this.renderClosedState();
     }
 
     render() {
         return (
-            <th
-                className={ this.getClassName() }
-                onClick={ this.handleToggleMenu }
-            >
-                { this.renderBody() }
+            <th className={this.getClassName()} onClick={this.handleToggleMenu}>
+                {this.renderBody()}
             </th>
         );
     }

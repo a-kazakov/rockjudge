@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -27,47 +27,37 @@ export default class ScoringLayout extends React.Component {
 
     render() {
         this.setupCache();
-        const header = _("global.phrases.participant_n",
+        const header = _(
+            "global.phrases.participant_n",
             this.props.run.participant.number,
             this.props.run.participant.name,
-            this.props.run.participant.sportsmen.length);
+            this.props.run.participant.sportsmen.length,
+        );
         if (this.props.run.status !== "OK") {
             return (
                 <div className="layout-participant">
-                    <h2>
-                        { header }
-                    </h2>
-                    <StatusSwitch
-                        run={ this.props.run }
-                    />
+                    <h2>{header}</h2>
+                    <StatusSwitch run={this.props.run} />
                 </div>
-            )
+            );
         }
         if (this.score == null) {
             return (
                 <div className="layout-participant">
-                    <h2>
-                        { header }
-                    </h2>
-                    <div className="not-performing">
-                        { _("tablet.global.no_score") }
-                    </div>
+                    <h2>{header}</h2>
+                    <div className="not-performing">{_("tablet.global.no_score")}</div>
                 </div>
             );
         }
         return (
             <div className="layout-participant">
-                <h2>
-                    { header }
-                </h2>
+                <h2>{header}</h2>
                 <div className="spacer" />
                 <LineJudgesScores
-                    disciplineJudges={ this.props.run.tour.discipline.discipline_judges }
-                    run={ this.props.run }
+                    disciplineJudges={this.props.run.tour.discipline.discipline_judges}
+                    run={this.props.run}
                 />
-                <StatusSwitch
-                    run={ this.props.run }
-                />
+                <StatusSwitch run={this.props.run} />
             </div>
         );
     }

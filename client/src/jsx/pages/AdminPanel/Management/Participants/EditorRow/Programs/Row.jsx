@@ -13,23 +13,16 @@ export default class Row extends React.Component {
         onStartEditing: PT.func.isRequired,
     };
 
-    handleDeletion = (event) => {
+    handleDeletion = event => {
         event.preventDefault();
-        showConfirm(
-            _("admin.confirms.delete_program"),
-            this.props.onDelete,
-        );
+        showConfirm(_("admin.confirms.delete_program"), this.props.onDelete);
     };
 
     renderElement = (element, idx) => {
         return (
-            <tr key={ idx }>
-                <td>
-                    { element.description }
-                </td>
-                <td className="text-right">
-                    { element.score.toFixed(1) }
-                </td>
+            <tr key={idx}>
+                <td>{element.description}</td>
+                <td className="text-right">{element.score.toFixed(1)}</td>
             </tr>
         );
     };
@@ -38,28 +31,24 @@ export default class Row extends React.Component {
         return (
             <div className="program">
                 <h5>
-                    { program.name }
-                    { program.default_for
-                        ? <em>&nbsp;({ program.default_for })</em>
-                        : null
-                    }
+                    {program.name}
+                    {program.default_for ? (
+                        <em>&nbsp;({program.default_for})</em>
+                    ) : null}
                     <div className="actions">
-                        <a href="#" onClick={ this.props.onStartEditing }>
+                        <a href="#" onClick={this.props.onStartEditing}>
                             Редактировать
                         </a>
-                        { " / " }
-                        <a href="#" onClick={ this.handleDeletion }>
+                        {" / "}
+                        <a href="#" onClick={this.handleDeletion}>
                             Удалить
                         </a>
                     </div>
                 </h5>
                 <table className="program-table">
-                    <tbody>
-                        { program.elements.map(this.renderElement) }
-                    </tbody>
+                    <tbody>{program.elements.map(this.renderElement)}</tbody>
                 </table>
             </div>
         );
     }
 }
-

@@ -36,25 +36,25 @@ export default class StatusCell extends React.Component {
             <td className="status">
                 <div className="status-controls">
                     <input
-                        checked={ this.props.run.status === "OK" }
+                        checked={this.props.run.status === "OK"}
                         className="status-ok"
-                        title={ _("global.statuses.OK") }
+                        title={_("global.statuses.OK")}
                         type="radio"
-                        onChange={ this.handleSetStatusOK }
+                        onChange={this.handleSetStatusOK}
                     />
                     <input
-                        checked={ this.props.run.status === "NP" }
+                        checked={this.props.run.status === "NP"}
                         className="status-np"
-                        title={ _("global.statuses.NP") }
+                        title={_("global.statuses.NP")}
                         type="radio"
-                        onChange={ this.handleSetStatusNP }
+                        onChange={this.handleSetStatusNP}
                     />
                     <input
-                        checked={ this.props.run.status === "DQ" }
+                        checked={this.props.run.status === "DQ"}
                         className="status-dq"
-                        title={ _("global.statuses.DQ") }
+                        title={_("global.statuses.DQ")}
                         type="radio"
-                        onChange={ this.handleSetStatusDQ }
+                        onChange={this.handleSetStatusDQ}
                     />
                 </div>
             </td>

@@ -10,17 +10,17 @@ export default class CreationButton extends React.Component {
 
     render() {
         return (
-            <tr><td colSpan="6">
-                <button
-                    className="create-button"
-                    type="button"
-                    onClick={ this.props.onClick }
-                >
-                    { _("admin.buttons.add_competition_plan_item") }
-                </button>
-            </td></tr>
+            <tr>
+                <td colSpan="6">
+                    <button
+                        className="create-button"
+                        type="button"
+                        onClick={this.props.onClick}
+                    >
+                        {_("admin.buttons.add_competition_plan_item")}
+                    </button>
+                </td>
+            </tr>
         );
     }
 }
-
-

@@ -13,28 +13,27 @@ export default class Judges extends React.Component {
                     name: PT.string.isRequired,
                     number: PT.string.isRequired,
                     role_description: PT.string.isRequired,
-                }).isRequired
+                }).isRequired,
             ).isRequired,
         }).isRequired,
     };
 
-    renderRow = (judge) => {
+    renderRow = judge => {
         return (
-            <tr key={ judge.id }>
+            <tr key={judge.id}>
                 <th>
-                    { judge.role_description || _("global.phrases.judge_n", judge.number) }
+                    {judge.role_description ||
+                        _("global.phrases.judge_n", judge.number)}
                 </th>
-                <td>
-                    { `${judge.name} — ${judge.category}` }
-                </td>
+                <td>{`${judge.name} — ${judge.category}`}</td>
             </tr>
         );
-    }
+    };
     render() {
         return (
-            <table className="judges"><tbody>
-                { this.props.competition.judges.map(this.renderRow) }
-            </tbody></table>
+            <table className="judges">
+                <tbody>{this.props.competition.judges.map(this.renderRow)}</tbody>
+            </table>
         );
     }
 }

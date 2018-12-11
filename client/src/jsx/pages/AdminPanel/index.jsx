@@ -27,18 +27,24 @@ export default class AdminPanel extends React.Component {
 
     componentDidMount() {
         this._storage = new Storage();
-        this._storage.init(this.reload).then(this.subscribe).catch(console.error.bind(console));
+        this._storage
+            .init(this.reload)
+            .then(this.subscribe)
+            .catch(console.error.bind(console));
     }
 
     subscribe = () => {
-        this._competition_subscription = new CompetitionSubscription(this.props.competitionId);
-        this._storage.subscribe(this._competition_subscription)
+        this._competition_subscription = new CompetitionSubscription(
+            this.props.competitionId,
+        );
+        this._storage
+            .subscribe(this._competition_subscription)
             .then(this.updateCompetitionStorage)
             .catch(console.error.bind(console));
     };
 
-    updateCompetitionStorage = (competitionStorage) => {
-        this.setState({competitionStorage});
+    updateCompetitionStorage = competitionStorage => {
+        this.setState({ competitionStorage });
     };
     reload = () => this.forceUpdate();
 
@@ -54,7 +60,7 @@ export default class AdminPanel extends React.Component {
 
     // Handlers
 
-    handleAppChange = (app) => {
+    handleAppChange = app => {
         this.setState({
             activeApp: app,
         });
@@ -65,57 +71,52 @@ export default class AdminPanel extends React.Component {
 
     renderActiveApp(competition) {
         switch (this.state.activeApp) {
-        case "management":
-            return (
-                <Management competition={ competition } />
-            );
-        case "judging":
-            return (
-                <Judging competition={ competition } />
-            );
-        case "service":
-            return (
-                <Service competition={ competition } />
-            );
+            case "management":
+                return <Management competition={competition} />;
+            case "judging":
+                return <Judging competition={competition} />;
+            case "service":
+                return <Service competition={competition} />;
         }
     }
     renderButton(mkey, title) {
         return (
             <NavigationButton
-                active={ this.state.activeApp === mkey }
-                mkey={ mkey }
-                title={ title }
-                onClick={ this.handleAppChange }
+                active={this.state.activeApp === mkey}
+                mkey={mkey}
+                title={title}
+                onClick={this.handleAppChange}
             />
         );
     }
     render() {
-        const competition = this.state.competitionStorage?.get("Competition", this.props.competitionId);
+        const competition = this.state.competitionStorage?.get(
+            "Competition",
+            this.props.competitionId,
+        );
         if (!competition) {
-            return (
-                <Loader />
-            );
+            return <Loader />;
         }
         return (
             <div className="AdminPanel">
                 <div className="header">
                     <div className="caption">
-                        { `${competition.name} (${competition.date})` }
+                        {`${competition.name} (${competition.date})`}
                     </div>
                 </div>
                 <div className="body">
                     <div className="left-col noselect">
-                        { this.renderButton("management", "Management") }
-                        { this.renderButton("judging", "Judging") }
-                        { this.renderButton("service", "Service") }
+                        {this.renderButton("management", "Management")}
+                        {this.renderButton("judging", "Judging")}
+                        {this.renderButton("service", "Service")}
                         <div className="spacer" />
                         <div className="bottom-cell">
                             <a className="back-button" href="/">
-                                { _("admin.buttons.to_start_page") }
+                                {_("admin.buttons.to_start_page")}
                             </a>
                         </div>
                     </div>
-                    { this.renderActiveApp(competition) }
+                    {this.renderActiveApp(competition)}
                 </div>
             </div>
         );

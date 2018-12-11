@@ -24,7 +24,7 @@ export default class BulkTourInit extends React.Component {
     };
     constructor(props) {
         super(props);
-        this.state ={
+        this.state = {
             tourIds: null,
             currentIdx: null,
             failures: null,
@@ -59,17 +59,20 @@ export default class BulkTourInit extends React.Component {
     }
 
     run = () => {
-        this.setState({
-            tourIds: this.props.competition.disciplines
-                .filter(d => d.tours.length > 0)
-                .filter(d => !d.tours[0].finalized)
-                .filter(d => !d.tours[0].active)
-                .map(d => d.tours[0].id),
-            currentIdx: 0,
-            failures: 0,
-        }, () => {
-            this.initNextTour(0);
-        });
+        this.setState(
+            {
+                tourIds: this.props.competition.disciplines
+                    .filter(d => d.tours.length > 0)
+                    .filter(d => !d.tours[0].finalized)
+                    .filter(d => !d.tours[0].active)
+                    .map(d => d.tours[0].id),
+                currentIdx: 0,
+                failures: 0,
+            },
+            () => {
+                this.initNextTour(0);
+            },
+        );
     };
 
     handleClick = () => {
@@ -79,18 +82,19 @@ export default class BulkTourInit extends React.Component {
     renderStatus() {
         return (
             <div className="status">
-                { _("admin.messages.bulk_tour_init_status",
+                {_(
+                    "admin.messages.bulk_tour_init_status",
                     this.state.currentIdx,
                     this.state.tourIds.length,
                     this.state.failures,
-                ) }
+                )}
             </div>
         );
     }
     renderButton() {
         return (
-            <button onClick={ this.handleClick }>
-                { _("admin.buttons.bulk_tour_init") }
+            <button onClick={this.handleClick}>
+                {_("admin.buttons.bulk_tour_init")}
             </button>
         );
     }
@@ -102,10 +106,6 @@ export default class BulkTourInit extends React.Component {
         }
     }
     render() {
-        return (
-            <div className="BulkTourInit">
-                { this.renderBody() }
-            </div>
-        );
+        return <div className="BulkTourInit">{this.renderBody()}</div>;
     }
 }

@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -39,35 +39,31 @@ export default class HeadJudgeLayout extends React.Component {
         return Math.max(1, ...this.props.tour.runs.map(run => run.heat));
     }
 
-    setHeat = (heat) => this.setState({ heat });
-    updateHeat = (delta) => this.setHeat(this.state.heat + delta);
+    setHeat = heat => this.setState({ heat });
+    updateHeat = delta => this.setHeat(this.state.heat + delta);
 
     handlePrevHeatClick = () => this.updateHeat(-1);
     handleNextHeatClick = () => this.updateHeat(1);
-    handlePageChange = (page) => this.setState({ page });
+    handlePageChange = page => this.setState({ page });
 
     renderHeats() {
         return (
             <HeatsPage
-                disciplineJudge={ this.props.disciplineJudge }
-                heat={ this.state.heat }
-                tour={ this.props.tour }
-                onScoreUpdate={ this.props.onScoreUpdate }
+                disciplineJudge={this.props.disciplineJudge}
+                heat={this.state.heat}
+                tour={this.props.tour}
+                onScoreUpdate={this.props.onScoreUpdate}
             />
         );
     }
     renderResults() {
-        return (
-            <ResultsPage
-                tour={ this.props.tour }
-            />
-        );
+        return <ResultsPage tour={this.props.tour} />;
     }
     renderActions() {
         return (
             <ActionsPage
-                disciplineJudge={ this.props.disciplineJudge }
-                tour={ this.props.tour }
+                disciplineJudge={this.props.disciplineJudge}
+                tour={this.props.tour}
             />
         );
     }
@@ -75,54 +71,42 @@ export default class HeadJudgeLayout extends React.Component {
         const heats_count = this.getHeatsCount();
         return (
             <Header
-                heat={ this.state.heat }
-                heatsCount={ heats_count }
-                hideHeatsButtons={ this.state.page !== "heats" }
-                judge={ this.props.disciplineJudge.judge }
-                maxHeat={ heats_count }
-                tour={ this.props.tour }
-                onNextHeatClick={ this.handleNextHeatClick }
-                onPrevHeatClick={ this.handlePrevHeatClick }
+                heat={this.state.heat}
+                heatsCount={heats_count}
+                hideHeatsButtons={this.state.page !== "heats"}
+                judge={this.props.disciplineJudge.judge}
+                maxHeat={heats_count}
+                tour={this.props.tour}
+                onNextHeatClick={this.handleNextHeatClick}
+                onPrevHeatClick={this.handlePrevHeatClick}
             />
         );
     }
     renderBody() {
         switch (this.state.page) {
-        case "heats":
-            return this.renderHeats();
-        case "results":
-            return this.renderResults();
-        case "actions":
-            return this.renderActions();
+            case "heats":
+                return this.renderHeats();
+            case "results":
+                return this.renderResults();
+            case "actions":
+                return this.renderActions();
         }
     }
     renderFooter() {
         return (
-            <Footer
-                value={ this.state.page }
-                onChange={ this.handlePageChange }
-            >
-                <FooterItem
-                    label={ _("tablet.pages.heats") }
-                    mkey="heats"
-                />
-                <FooterItem
-                    label={ _("tablet.pages.results") }
-                    mkey="results"
-                />
-                <FooterItem
-                    label={ _("tablet.pages.actions") }
-                    mkey="actions"
-                />
+            <Footer value={this.state.page} onChange={this.handlePageChange}>
+                <FooterItem label={_("tablet.pages.heats")} mkey="heats" />
+                <FooterItem label={_("tablet.pages.results")} mkey="results" />
+                <FooterItem label={_("tablet.pages.actions")} mkey="actions" />
             </Footer>
         );
     }
     render() {
         return (
             <div className="vftsarr-JudgeTablet HeadJudgeLayout">
-                { this.renderHeader() }
-                { this.renderBody() }
-                { this.renderFooter() }
+                {this.renderHeader()}
+                {this.renderBody()}
+                {this.renderFooter()}
             </div>
         );
     }

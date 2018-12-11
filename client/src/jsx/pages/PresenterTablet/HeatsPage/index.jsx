@@ -17,7 +17,8 @@ export default class HeatsPage extends React.Component {
         };
     }
 
-    handleAutoHeatCheckboxChange = (event) => this.setState({ autoHeat: event.target.checked });
+    handleAutoHeatCheckboxChange = event =>
+        this.setState({ autoHeat: event.target.checked });
 
     getActiveTours() {
         let result = [];
@@ -36,41 +37,41 @@ export default class HeatsPage extends React.Component {
     renderTour(tour, layout) {
         return (
             <TourHeats
-                autoHeat={ this.state.autoHeat }
-                key={ tour.id }
-                layout={ layout }
-                tour={ tour }
+                autoHeat={this.state.autoHeat}
+                key={tour.id}
+                layout={layout}
+                tour={tour}
             />
         );
     }
     renderTours(tours) {
         let layout = "small";
         switch (tours.length) {
-            case 1: layout = "large"; break;
-            case 2: layout = "medium"; break;
+            case 1:
+                layout = "large";
+                break;
+            case 2:
+                layout = "medium";
+                break;
         }
         return tours.map(tour => this.renderTour(tour, layout));
     }
     render() {
         const tours = this.getActiveTours();
         if (tours.length === 0) {
-            return (
-                <NoTourScreen />
-            );
+            return <NoTourScreen />;
         }
         return (
             <div className="heats-page">
-                <div className="tours">
-                    { this.renderTours(tours) }
-                </div>
+                <div className="tours">{this.renderTours(tours)}</div>
                 <div className="autoheat-switch">
                     <label>
                         <input
-                            checked={ this.state.autoHeat }
+                            checked={this.state.autoHeat}
                             type="checkbox"
-                            onChange={ this.handleAutoHeatCheckboxChange }
+                            onChange={this.handleAutoHeatCheckboxChange}
                         />
-                        { _("presenter.labels.enable_auto_heat") }
+                        {_("presenter.labels.enable_auto_heat")}
                     </label>
                 </div>
             </div>

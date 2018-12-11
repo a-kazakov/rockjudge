@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import ConfirmationButton from "JudgeTablet/components/ConfirmationButton";
 import Grid from "JudgeTablet/components/Grid";
@@ -19,7 +19,7 @@ export default class GeneralLayout extends React.Component {
     static get defaultProps() {
         return {
             smallBlocks: false,
-        }
+        };
     }
 
     constructor(props) {
@@ -102,7 +102,10 @@ export default class GeneralLayout extends React.Component {
                 return run.heat;
             }
         }
-        return this.heats_count || Math.max(1, ...this.props.tour.runs.map(run => run.heat));
+        return (
+            this.heats_count ||
+            Math.max(1, ...this.props.tour.runs.map(run => run.heat))
+        );
     }
     getScores() {
         let result = new Map();
@@ -117,7 +120,7 @@ export default class GeneralLayout extends React.Component {
         }
         return result;
     }
-    checkCanFinish(props=null) {
+    checkCanFinish(props = null) {
         if (props == null) {
             props = this.props;
         }
@@ -125,8 +128,7 @@ export default class GeneralLayout extends React.Component {
             return false;
         }
         function checkScoreIsBad(s) {
-            return s.discipline_judge_id === props.disciplineJudge.id &&
-                   !s.confirmed;
+            return s.discipline_judge_id === props.disciplineJudge.id && !s.confirmed;
         }
         for (const run of props.tour.runs) {
             if (run.status !== "OK" || run.heat <= 0) {
@@ -146,46 +148,43 @@ export default class GeneralLayout extends React.Component {
         this.can_finish = this.checkCanFinish();
     }
 
-
-    setHeat = (heat) => this.setState({ heat });
-    updateHeat = (delta) => this.setHeat(this.state.heat + delta);
+    setHeat = heat => this.setState({ heat });
+    updateHeat = delta => this.setHeat(this.state.heat + delta);
 
     handlePrevHeatClick = () => this.updateHeat(-1);
     handleNextHeatClick = () => this.updateHeat(1);
     handleFinishClick = () => this.setState({ showLastPage: true });
     handleReturnClick = () => this.setState({ showLastPage: false });
 
-    checkRunConfirmed = (run) => {
+    checkRunConfirmed = run => {
         const score = this.scores.get(run.id);
         return run.status !== "OK" || score?.confirmed;
     };
 
     renderBody() {
         if (this.state.showLastPage) {
-            return (
-                <LastPage />
-            );
+            return <LastPage />;
         }
         return (
             <div className="body">
-                <Grid smallBlocks={ this.props.smallBlocks }>
-                    { this.runs.map(run =>
+                <Grid smallBlocks={this.props.smallBlocks}>
+                    {this.runs.map(run => (
                         <Participant
-                            disciplineJudge={ this.props.disciplineJudge }
-                            key={ run.id }
-                            layoutClass={ this.props.layoutClass }
-                            run={ run }
-                            score={ this.scores.get(run.id) }
-                            tour={ this.props.tour }
-                            onScoreUpdate={ this.props.onScoreUpdate }
+                            disciplineJudge={this.props.disciplineJudge}
+                            key={run.id}
+                            layoutClass={this.props.layoutClass}
+                            run={run}
+                            score={this.scores.get(run.id)}
+                            tour={this.props.tour}
+                            onScoreUpdate={this.props.onScoreUpdate}
                         />
-                    )}
+                    ))}
                 </Grid>
                 <ConfirmationButton
-                    canConfirm={ this.canConfirm() }
-                    confirmed={ this.runs.every(this.checkRunConfirmed) }
-                    key={ this.state.heat }
-                    onConfirm={ this.handleConfirm }
+                    canConfirm={this.canConfirm()}
+                    confirmed={this.runs.every(this.checkRunConfirmed)}
+                    key={this.state.heat}
+                    onConfirm={this.handleConfirm}
                 />
             </div>
         );
@@ -196,20 +195,20 @@ export default class GeneralLayout extends React.Component {
         return (
             <div className="vftsarr-JudgeTablet GeneralLayout">
                 <Header
-                    canFinish={ !this.state.showLastPage && this.can_finish }
-                    canReturn={ this.state.showLastPage }
-                    heat={ this.state.heat }
-                    heatsCount={ this.heats_count }
-                    hideHeatsButtons={ this.state.showLastPage }
-                    judge={ this.props.disciplineJudge.judge }
-                    maxHeat={ this.first_non_confirmed_heat }
-                    tour={ this.props.tour }
-                    onFinishClick={ this.handleFinishClick }
-                    onNextHeatClick={ this.handleNextHeatClick }
-                    onPrevHeatClick={ this.handlePrevHeatClick }
-                    onReturnClick={ this.handleReturnClick }
+                    canFinish={!this.state.showLastPage && this.can_finish}
+                    canReturn={this.state.showLastPage}
+                    heat={this.state.heat}
+                    heatsCount={this.heats_count}
+                    hideHeatsButtons={this.state.showLastPage}
+                    judge={this.props.disciplineJudge.judge}
+                    maxHeat={this.first_non_confirmed_heat}
+                    tour={this.props.tour}
+                    onFinishClick={this.handleFinishClick}
+                    onNextHeatClick={this.handleNextHeatClick}
+                    onPrevHeatClick={this.handlePrevHeatClick}
+                    onReturnClick={this.handleReturnClick}
                 />
-                { this.renderBody() }
+                {this.renderBody()}
             </div>
         );
     }

@@ -4,7 +4,7 @@ import Model from "common/server/Storage/models/Model";
 import PT from "prop-types";
 
 export default class Row extends React.Component {
-    static propTypes= {
+    static propTypes = {
         headerCells: PT.number.isRequired,
         heat: PT.number.isRequired,
         isFirstCell: PT.bool.isRequired,
@@ -36,43 +36,34 @@ export default class Row extends React.Component {
 
     render() {
         const style = this.getCellStyle();
-        const header = this.props.isFirstCell
-            ? (
-                <td
-                    className="w-8"
-                    rowSpan={ this.props.headerCells }
-                    style={ Object.assign({}, style, {
-                        borderRight: "1pt solid black",
-                        verticalAlign: "middle",
-                    }) }
-                >
-                    <p className="text-center">
-                        { this.props.heat }
-                    </p>
-                </td>
-            ) : null;
+        const header = this.props.isFirstCell ? (
+            <td
+                className="w-8"
+                rowSpan={this.props.headerCells}
+                style={Object.assign({}, style, {
+                    borderRight: "1pt solid black",
+                    verticalAlign: "middle",
+                })}
+            >
+                <p className="text-center">{this.props.heat}</p>
+            </td>
+        ) : null;
         return (
             <tr>
-                { header }
+                {header}
                 <td
                     className="w-8"
-                    style={ Object.assign({}, style, {
+                    style={Object.assign({}, style, {
                         fontWeight: "bold",
-                    }) }
+                    })}
                 >
-                    <p className="text-center">
-                        { this.props.participant.number }
-                    </p>
+                    <p className="text-center">{this.props.participant.number}</p>
                 </td>
-                <td style={ style }>
-                    <p>
-                        { this.props.participant.name }
-                    </p>
+                <td style={style}>
+                    <p>{this.props.participant.name}</p>
                 </td>
-                <td className="club-name" style={ style }>
-                    <p>
-                        { this.props.participant.club.name }
-                    </p>
+                <td className="club-name" style={style}>
+                    <p>{this.props.participant.club.name}</p>
                 </td>
             </tr>
         );

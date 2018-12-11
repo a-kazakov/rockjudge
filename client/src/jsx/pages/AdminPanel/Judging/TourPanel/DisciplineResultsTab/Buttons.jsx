@@ -14,14 +14,10 @@ export default class Buttons extends React.Component {
     render() {
         return (
             <div>
-                <button
-                    className="btn btn-primary"
-                    onClick={ this.handleDocxClick }
-                >
+                <button className="btn btn-primary" onClick={this.handleDocxClick}>
                     DOCX
                 </button>
             </div>
         );
     }
 }
-

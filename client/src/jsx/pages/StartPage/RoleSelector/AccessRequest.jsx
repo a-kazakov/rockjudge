@@ -17,21 +17,15 @@ export default class AccessRequest extends React.Component {
                 client_id: keys_storage.client_id,
                 competition_id: this.props.competitionId,
             },
-        })
-            .send();
+        }).send();
     };
 
     render() {
         return (
             <div className="access-request">
-                <h3>
-                    { _("start_page.messages.access_request") }
-                </h3>
-                <button
-                    type="button"
-                    onClick={ this.handleButtonClick }
-                >
-                    { _("start_page.buttons.request_access") }
+                <h3>{_("start_page.messages.access_request")}</h3>
+                <button type="button" onClick={this.handleButtonClick}>
+                    {_("start_page.buttons.request_access")}
                 </button>
             </div>
         );

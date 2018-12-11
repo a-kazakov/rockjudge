@@ -11,9 +11,9 @@ export default class TourResultsTab extends React.Component {
         verbosity: PT.number.isRequired,
     };
 
-    makeResultsRef = (ref) => this._results = ref;
+    makeResultsRef = ref => (this._results = ref);
 
-    handleSignal = (message) => {
+    handleSignal = message => {
         this._results.handleSignal(message);
     };
 
@@ -23,13 +23,12 @@ export default class TourResultsTab extends React.Component {
         return (
             <div className="TourResultsTab rules-set">
                 <Renderer
-                    autoDocx={ this.props.autoDocx }
-                    ref={ this.makeResultsRef }
-                    tour={ this.props.tour }
-                    verbosity={ this.props.verbosity }
+                    autoDocx={this.props.autoDocx}
+                    ref={this.makeResultsRef}
+                    tour={this.props.tour}
+                    verbosity={this.props.verbosity}
                 />
             </div>
         );
     }
 }
-

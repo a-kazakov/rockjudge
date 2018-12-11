@@ -22,10 +22,21 @@ export default class Tours extends UniversalTable {
     static MODEL_NAME = "Tour";
     static FIELDS = [
         FieldTypes.makeNonEmptyTextField("name", "errors.tour.empty_name"),
-        FieldTypes.makeIntegerField("num_advances", "errors.tour.invalid_num_advances", [0, null]),
-        FieldTypes.makeIntegerField("participants_per_heat", "errors.tour.participants_per_heat", [1, null]),
-        {name: "hope_tour", defaultValue: false},
-        {name: "scoring_system_name", defaultValueGetter: () => rules_set.meta.scoring_systems[0]},
+        FieldTypes.makeIntegerField(
+            "num_advances",
+            "errors.tour.invalid_num_advances",
+            [0, null],
+        ),
+        FieldTypes.makeIntegerField(
+            "participants_per_heat",
+            "errors.tour.participants_per_heat",
+            [1, null],
+        ),
+        { name: "hope_tour", defaultValue: false },
+        {
+            name: "scoring_system_name",
+            defaultValueGetter: () => rules_set.meta.scoring_systems[0],
+        },
         FieldTypes.makeTextField("default_program"),
     ];
 
@@ -47,7 +58,12 @@ export default class Tours extends UniversalTable {
     }
 
     get discipline() {
-        return this.props.competition.subscription_storage.get("Discipline", this.props.disciplineId) || null;
+        return (
+            this.props.competition.subscription_storage.get(
+                "Discipline",
+                this.props.disciplineId,
+            ) || null
+        );
     }
 
     renderRows(discipline) {
@@ -57,10 +73,15 @@ export default class Tours extends UniversalTable {
             const this_tour = tours[idx];
             const next_tour = tours[idx + 1] || null;
             result.push(this.renderEntry(this_tour));
-            result.push(this.renderCreationButton({
-                afterId: this_tour.id,
-                nextTour: next_tour,
-            }, `button_${this_tour.id}`))
+            result.push(
+                this.renderCreationButton(
+                    {
+                        afterId: this_tour.id,
+                        nextTour: next_tour,
+                    },
+                    `button_${this_tour.id}`,
+                ),
+            );
         }
         return result;
     }
@@ -68,35 +89,35 @@ export default class Tours extends UniversalTable {
         const discipline = this.discipline;
         if (discipline == null) {
             return (
-                <Loader />  // TODO: replace with error message
+                <Loader /> // TODO: replace with error message
             );
         }
         return (
             <div className="Tours">
                 <header>
-                    <h1>
-                        { discipline.name }
-                    </h1>
+                    <h1>{discipline.name}</h1>
                 </header>
                 <div className="body">
-                    { this.renderCreationButton({
-                        afterId: null,
-                        nextTour: discipline.tours[0] || null,
-                    }, "button") }
-                    { this.renderRows(discipline) }
+                    {this.renderCreationButton(
+                        {
+                            afterId: null,
+                            nextTour: discipline.tours[0] || null,
+                        },
+                        "button",
+                    )}
+                    {this.renderRows(discipline)}
                 </div>
                 <datalist id="dl_tours">
-                    { rules_set.translate.tour_name_suggestions.map((n, idx) =>
-                        <option key={ idx } value={ n } />
-                    ) }
+                    {rules_set.translate.tour_name_suggestions.map((n, idx) => (
+                        <option key={idx} value={n} />
+                    ))}
                 </datalist>
                 <datalist id="dl_programs">
-                    { rules_set.meta.suggested_programs.map((n, idx) =>
-                        <option key={ idx } value={ n } />
-                    ) }
+                    {rules_set.meta.suggested_programs.map((n, idx) => (
+                        <option key={idx} value={n} />
+                    ))}
                 </datalist>
             </div>
         );
     }
 }
-

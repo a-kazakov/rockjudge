@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 
@@ -10,7 +10,7 @@ export default class Item extends React.Component {
         onChange: PT.func.isRequired,
     };
 
-    handleChange = (event) => {
+    handleChange = event => {
         this.props.onChange(this.props.value, event.target.checked);
     };
 
@@ -19,15 +19,13 @@ export default class Item extends React.Component {
             <label>
                 <div className="input">
                     <input
-                        checked={ this.props.selected }
+                        checked={this.props.selected}
                         type="checkbox"
-                        onChange={ this.handleChange }
+                        onChange={this.handleChange}
                     />
                 </div>
-                <div className="text">
-                    { this.props.label }
-                </div>
+                <div className="text">{this.props.label}</div>
             </label>
-        )
+        );
     }
 }

@@ -14,7 +14,7 @@ export default class CheckboxInput extends React.Component {
     static get defaultProps() {
         return {
             readOnly: false,
-        }
+        };
     }
 
     handleClick = () => {
@@ -23,23 +23,18 @@ export default class CheckboxInput extends React.Component {
 
     getSquareClassName() {
         return makeClassName({
-            "square": true,
-            "checked": this.props.value,
+            square: true,
+            checked: this.props.value,
             "read-only": this.props.readOnly,
         });
     }
     render() {
         return (
-            <div
-                className="CheckboxInput"
-                { ...onTouchEndOrClick(this.handleClick ) }
-            >
-                <div className={ this.getSquareClassName() }>
-                    { this.props.value ? "🗸" : ""}
+            <div className="CheckboxInput" {...onTouchEndOrClick(this.handleClick)}>
+                <div className={this.getSquareClassName()}>
+                    {this.props.value ? "🗸" : ""}
                 </div>
-                <div className="label">
-                    { this.props.label }
-                </div>
+                <div className="label">{this.props.label}</div>
             </div>
         );
     }

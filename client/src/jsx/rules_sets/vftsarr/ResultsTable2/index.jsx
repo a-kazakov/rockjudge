@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import lastOf from "common/tools/lastOf";
 import _ from "l10n";
@@ -21,8 +21,7 @@ export default class ResultsTable2 extends React.Component {
     };
 
     static transformDocx(docx) {
-        docx
-            .addStyle("table", "font-size", "9pt")
+        docx.addStyle("table", "font-size", "9pt")
             .addStyle("th", "border-bottom", "1pt solid black")
             .addStyle("th.advances-header", "border-bottom", "1pt solid black")
             .addStyle("th.advances-header", "padding-top", "10pt")
@@ -51,34 +50,22 @@ export default class ResultsTable2 extends React.Component {
             return null;
         }
         return (
-            <tr key={ `AH${row.run.id}` }>
-                <th className="advances-header" colSpan={ n_cols }>
-                    <p className="text-left">
-                        { this.getStatusHeader(next_status) }
-                    </p>
+            <tr key={`AH${row.run.id}`}>
+                <th className="advances-header" colSpan={n_cols}>
+                    <p className="text-left">{this.getStatusHeader(next_status)}</p>
                 </th>
             </tr>
-        )
+        );
     }
     renderRows() {
-        const {tour, rows} = this.props.computedTour;
+        const { tour, rows } = this.props.computedTour;
         const all_tours = tour.discipline.tours;
         const has_next_tour = lastOf(all_tours).id !== tour.id;
         let result = [];
         let prev_row = null;
         for (const row of rows) {
-            result.push(this.renderAdvancesHeader(
-                prev_row,
-                row,
-                has_next_tour,
-                6,
-            ));
-            result.push(
-                <Row
-                    key={ row.run.id }
-                    row={ row }
-                />
-            );
+            result.push(this.renderAdvancesHeader(prev_row, row, has_next_tour, 6));
+            result.push(<Row key={row.run.id} row={row} />);
             prev_row = row;
         }
         return result;
@@ -91,43 +78,38 @@ export default class ResultsTable2 extends React.Component {
                     <thead>
                         <tr>
                             <th className="w-6">
-                                <p className="place">
-                                    { _("results.labels.place") }
-                                </p>
+                                <p className="place">{_("results.labels.place")}</p>
                             </th>
                             <th className="w-4">
                                 <p className="text-center">
-                                    { _("results.labels.number") }
+                                    {_("results.labels.number")}
                                 </p>
                             </th>
                             <th className="w-18">
                                 <p className="text-left">
-                                    { _("results.labels.participant_name") }
+                                    {_("results.labels.participant_name")}
                                 </p>
                             </th>
                             <th className="w-49">
                                 <p className="text-center">
-                                    { _("results.labels.criterias") }
+                                    {_("results.labels.criterias")}
                                 </p>
                             </th>
                             <th className="w-11">
                                 <p className="text-center">
-                                    { _("results.labels.total_score") }
+                                    {_("results.labels.total_score")}
                                 </p>
                             </th>
                             <th className="w-13">
                                 <p className="text-center">
-                                    { _("results.labels.card") }
+                                    {_("results.labels.card")}
                                 </p>
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
-                        { this.renderRows() }
-                    </tbody>
+                    <tbody>{this.renderRows()}</tbody>
                 </table>
             </div>
         );
     }
 }
-

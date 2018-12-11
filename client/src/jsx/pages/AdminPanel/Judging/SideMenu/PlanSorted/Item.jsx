@@ -18,7 +18,7 @@ export default class Item extends React.Component {
 
     handleClick = () => {
         this.props.onActiveTourChange(this.props.tour.id);
-    }
+    };
 
     getClassName() {
         let result = "level-2";
@@ -32,17 +32,12 @@ export default class Item extends React.Component {
     }
     render() {
         return (
-            <div
-                className={ this.getClassName() }
-                onClick={ this.handleClick }
-            >
+            <div className={this.getClassName()} onClick={this.handleClick}>
                 <small>
-                    <strong>
-                        { this.props.discipline.name }
-                    </strong>
+                    <strong>{this.props.discipline.name}</strong>
                     <br />
                 </small>
-                { this.props.tour.name }
+                {this.props.tour.name}
             </div>
         );
     }

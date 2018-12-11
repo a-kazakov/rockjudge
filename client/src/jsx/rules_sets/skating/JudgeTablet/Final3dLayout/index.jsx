@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 
@@ -13,16 +13,20 @@ export default class Final3dLayout extends React.Component {
     };
 
     static checkScoreCompletion(score) {
-        return score.data.tech != null && score.data.composition != null && score.data.art != null;
+        return (
+            score.data.tech != null &&
+            score.data.composition != null &&
+            score.data.art != null
+        );
     }
 
     render() {
         return (
             <GeneralLayout
-                confirmationClass={ PlacesPage }
-                layoutClass={ ScoringLayout }
-                scoreCompletionChecker={ this.constructor.checkScoreCompletion }
-                { ...this.props }
+                confirmationClass={PlacesPage}
+                layoutClass={ScoringLayout}
+                scoreCompletionChecker={this.constructor.checkScoreCompletion}
+                {...this.props}
             />
         );
     }

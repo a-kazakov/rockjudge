@@ -18,15 +18,19 @@ export default class GeneralInfo extends React.Component {
         onFieldChange: PT.func.isRequired,
     };
 
-    handleNumberChange = (event) => this.props.onFieldChange("number", event.target.value);
-    handleClubIdChange = (event) => this.props.onFieldChange("club_id", event.target.value);
-    handleCoachesChange = (event) => this.props.onFieldChange("coaches", event.target.value);
-    handleFormationNameChange = (event) => this.props.onFieldChange("formation_name", event.target.value);
+    handleNumberChange = event =>
+        this.props.onFieldChange("number", event.target.value);
+    handleClubIdChange = event =>
+        this.props.onFieldChange("club_id", event.target.value);
+    handleCoachesChange = event =>
+        this.props.onFieldChange("coaches", event.target.value);
+    handleFormationNameChange = event =>
+        this.props.onFieldChange("formation_name", event.target.value);
 
-    renderClubListItem = (club) => {
+    renderClubListItem = club => {
         return (
-            <option key={ club.id } value={ club.id }>
-                { club.name }
+            <option key={club.id} value={club.id}>
+                {club.name}
             </option>
         );
     };
@@ -34,43 +38,42 @@ export default class GeneralInfo extends React.Component {
         return (
             <div>
                 <label>
-                    { _("models.participant.number") }
+                    {_("models.participant.number")}
                     <input
-                        disabled={ this.props.loading }
+                        disabled={this.props.loading}
                         type="number"
-                        value={ this.props.formData.number }
-                        onChange={ this.handleNumberChange }
+                        value={this.props.formData.number}
+                        onChange={this.handleNumberChange}
                     />
                 </label>
                 <label>
-                    { _("models.participant.club_name") }
+                    {_("models.participant.club_name")}
                     <select
                         className="full-width"
-                        disabled={ this.props.loading }
-                        value={ this.props.formData.club_id }
-                        onChange={ this.handleClubIdChange }
+                        disabled={this.props.loading}
+                        value={this.props.formData.club_id}
+                        onChange={this.handleClubIdChange}
                     >
-                        { this.props.competition.clubs.map(this.renderClubListItem) }
+                        {this.props.competition.clubs.map(this.renderClubListItem)}
                     </select>
                 </label>
                 <label>
-                    { _("models.participant.coaches") }
+                    {_("models.participant.coaches")}
                     <input
-                        disabled={ this.props.loading }
-                        value={ this.props.formData.coaches }
-                        onChange={ this.handleCoachesChange }
+                        disabled={this.props.loading}
+                        value={this.props.formData.coaches}
+                        onChange={this.handleCoachesChange}
                     />
                 </label>
                 <label>
-                    { _("models.participant.formation_name") }
+                    {_("models.participant.formation_name")}
                     <input
-                        disabled={ this.props.loading }
-                        value={ this.props.formData.formation_name }
-                        onChange={ this.handleFormationNameChange }
+                        disabled={this.props.loading}
+                        value={this.props.formData.formation_name}
+                        onChange={this.handleFormationNameChange}
                     />
                 </label>
             </div>
         );
     }
 }
-

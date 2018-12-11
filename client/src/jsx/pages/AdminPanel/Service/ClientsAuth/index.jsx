@@ -10,16 +10,17 @@ export default class ClientsAuth extends React.Component {
     };
     render() {
         return (
-            <table className="clients-auth"><tbody>
-                { this.props.competition.clients.map(client =>
-                    <Row
-                        client={ client }
-                        competition={ this.props.competition }
-                        key={ client.id }
-                    />
-                ) }
-            </tbody></table>
+            <table className="clients-auth">
+                <tbody>
+                    {this.props.competition.clients.map(client => (
+                        <Row
+                            client={client}
+                            competition={this.props.competition}
+                            key={client.id}
+                        />
+                    ))}
+                </tbody>
+            </table>
         );
     }
 }
-

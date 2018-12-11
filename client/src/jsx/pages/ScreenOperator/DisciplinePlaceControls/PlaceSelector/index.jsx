@@ -27,15 +27,15 @@ export default class PlaceSelector extends React.Component {
                 <button
                     className="reset-button"
                     type="button"
-                    { ...onTouchEndOrClick(this.handlePlaceReset) }
+                    {...onTouchEndOrClick(this.handlePlaceReset)}
                 >
-                    { _("screen_operator.buttons.reset_place") }
+                    {_("screen_operator.buttons.reset_place")}
                 </button>
                 <Renderer
-                    discipline={ this.props.discipline }
-                    key={ this.props.disciplineId }
-                    value={ this.props.value }
-                    onPositionSelect={ this.props.onChange }
+                    discipline={this.props.discipline}
+                    key={this.props.disciplineId}
+                    value={this.props.value}
+                    onPositionSelect={this.props.onChange}
                 />
             </div>
         );

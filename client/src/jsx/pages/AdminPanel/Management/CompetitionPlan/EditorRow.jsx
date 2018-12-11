@@ -8,9 +8,7 @@ import PT from "prop-types";
 export default class EditorRow extends React.Component {
     static propTypes = {
         context: PT.shape({
-            tours: PT.arrayOf(
-                PT.instanceOf(Model).isRequired,
-            ).isRequired,
+            tours: PT.arrayOf(PT.instanceOf(Model).isRequired).isRequired,
         }).isRequired,
         creating: PT.bool.isRequired,
         entry: PT.instanceOf(Model),
@@ -27,84 +25,86 @@ export default class EditorRow extends React.Component {
         onSubmit: PT.func.isRequired,
     };
 
-    handleSpChange = (event) => this.props.onFieldChange("sp", event.target.value);
-    handleVerboseNameChange = (event) => this.props.onFieldChange("verbose_name", event.target.value);
-    handleTourIdChange = (event) => this.props.onFieldChange("tour_id", event.target.value);
-    handleEstimatedBeginningChange = (event) => this.props.onFieldChange("estimated_beginning", event.target.value);
-    handleEstimatedDurationChange = (event) => this.props.onFieldChange("estimated_duration", event.target.value);
-    handleSubmission = (event) => {
+    handleSpChange = event => this.props.onFieldChange("sp", event.target.value);
+    handleVerboseNameChange = event =>
+        this.props.onFieldChange("verbose_name", event.target.value);
+    handleTourIdChange = event =>
+        this.props.onFieldChange("tour_id", event.target.value);
+    handleEstimatedBeginningChange = event =>
+        this.props.onFieldChange("estimated_beginning", event.target.value);
+    handleEstimatedDurationChange = event =>
+        this.props.onFieldChange("estimated_duration", event.target.value);
+    handleSubmission = event => {
         event.preventDefault();
         this.props.onSubmit();
     };
 
     getClassName() {
         return makeClassName({
-            "editor": true,
-            "create": this.props.creating,
+            editor: true,
+            create: this.props.creating,
         });
     }
 
-    renderTour = (tour) => {
+    renderTour = tour => {
         return (
-            <option key={ tour.id } value={ tour.id }>
-                { `${tour.discipline.name} — ${tour.name}` }
+            <option key={tour.id} value={tour.id}>
+                {`${tour.discipline.name} — ${tour.name}`}
             </option>
         );
     };
     render() {
         return (
-            <tr className={ this.getClassName() }>
+            <tr className={this.getClassName()}>
                 <td colSpan="6">
-                    <form onSubmit={ this.handleSubmission }>
+                    <form onSubmit={this.handleSubmission}>
                         <div className="col-5">
                             <label>
-                                { _("models.competition_plan_item.sp") }
+                                {_("models.competition_plan_item.sp")}
                                 <input
-                                    disabled={ this.props.loading }
+                                    disabled={this.props.loading}
                                     type="number"
-                                    value={ this.props.formData.sp }
-                                    onChange={ this.handleSpChange }
+                                    value={this.props.formData.sp}
+                                    onChange={this.handleSpChange}
                                 />
                             </label>
                         </div>
                         <div className="col-10">
                             <label>
-                                { _("models.competition_plan_item.verbose_name") }
+                                {_("models.competition_plan_item.verbose_name")}
                                 <input
-                                    disabled={ this.props.loading }
-                                    value={ this.props.formData.verbose_name }
-                                    onChange={ this.handleVerboseNameChange }
+                                    disabled={this.props.loading}
+                                    value={this.props.formData.verbose_name}
+                                    onChange={this.handleVerboseNameChange}
                                 />
                             </label>
                             <label>
-                                { _("models.competition_plan_item.tour") }
+                                {_("models.competition_plan_item.tour")}
                                 <select
-                                    disabled={ this.props.loading }
-                                    value={ this.props.formData.tour_id }
-                                    onChange={ this.handleTourIdChange }
+                                    disabled={this.props.loading}
+                                    value={this.props.formData.tour_id}
+                                    onChange={this.handleTourIdChange}
                                 >
-                                    <option value="null">
-                                        ----------
-                                    </option>
-                                    { this.props.context.tours.map(this.renderTour) }
+                                    <option value="null">----------</option>
+                                    {this.props.context.tours.map(this.renderTour)}
                                 </select>
                             </label>
                         </div>
                         <div className="col-5">
                             <label>
-                                { _("models.competition_plan_item.estimated_beginning") }
+                                {_("models.competition_plan_item.estimated_beginning")}
                                 <input
-                                    disabled={ this.props.loading }
-                                    value={ this.props.formData.estimated_beginning }
-                                    onChange={ this.handleEstimatedBeginningChange }
+                                    disabled={this.props.loading}
+                                    value={this.props.formData.estimated_beginning}
+                                    onChange={this.handleEstimatedBeginningChange}
                                 />
                             </label>
                             <label>
-                                { _("models.competition_plan_item.estimated_duration") }
+                                {_("models.competition_plan_item.estimated_duration")}
                                 <input
-                                    disabled={ this.props.loading }
-                                    value={ this.props.formData.estimated_duration }
-                                    onChange={ this.handleEstimatedDurationChange }
+                                    disabled={this.props.loading}
+                                    value={this.props.formData.estimated_duration}
+                                    onChange={this.handleEstimatedDurationChange}
                                 />
                             </label>
                         </div>
@@ -112,18 +112,18 @@ export default class EditorRow extends React.Component {
                             <div className="buttons vertical">
                                 <button
                                     className="btn btn-primary"
-                                    disabled={ this.props.loading }
+                                    disabled={this.props.loading}
                                     type="submit"
                                 >
-                                    { _("global.buttons.submit") }
+                                    {_("global.buttons.submit")}
                                 </button>
                                 <button
                                     className="btn btn-danger"
-                                    disabled={ this.props.loading }
+                                    disabled={this.props.loading}
                                     type="button"
-                                    onClick={ this.props.onDiscard }
+                                    onClick={this.props.onDiscard}
                                 >
-                                    { _("global.buttons.discard") }
+                                    {_("global.buttons.discard")}
                                 </button>
                             </div>
                         </div>
@@ -133,4 +133,3 @@ export default class EditorRow extends React.Component {
         );
     }
 }
-

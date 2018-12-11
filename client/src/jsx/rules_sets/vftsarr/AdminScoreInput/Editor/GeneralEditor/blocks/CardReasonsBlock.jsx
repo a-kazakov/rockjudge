@@ -13,7 +13,9 @@ export default class CardReasonsBlock extends MultipleSelectorBlock {
     }
 
     getOptions() {
-        return getCardReasons(this.props.scoringSystemName)
-            .map(cr => [cr, _(`card_reasons.long.${cr.toLowerCase()}`)])
+        return getCardReasons(this.props.scoringSystemName).map(cr => [
+            cr,
+            _(`card_reasons.long.${cr.toLowerCase()}`),
+        ]);
     }
 }

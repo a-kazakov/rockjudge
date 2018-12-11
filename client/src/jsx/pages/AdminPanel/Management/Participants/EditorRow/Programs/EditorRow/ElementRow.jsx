@@ -20,8 +20,9 @@ export default class ElementRow extends React.Component {
         new_element[field] = value;
         this.props.onChange(this.props.idx, new_element);
     }
-    handleDescriptionChange = (event) => this.handleChange("description", event.target.value);
-    handleScoreChange       = (event) => this.handleChange("score",       event.target.value);
+    handleDescriptionChange = event =>
+        this.handleChange("description", event.target.value);
+    handleScoreChange = event => this.handleChange("score", event.target.value);
     handleDeletion = () => {
         this.props.onDelete(this.props.idx);
     };
@@ -31,25 +32,25 @@ export default class ElementRow extends React.Component {
             <div className="acrobatic">
                 <input
                     className="description"
-                    disabled={ this.props.loading }
-                    placeholder={ _("models.participant.acro_description") }
+                    disabled={this.props.loading}
+                    placeholder={_("models.participant.acro_description")}
                     type="text"
-                    value={ this.props.element.description }
-                    onChange={ this.handleDescriptionChange }
+                    value={this.props.element.description}
+                    onChange={this.handleDescriptionChange}
                 />
                 <input
                     className="score"
-                    disabled={ this.props.loading }
-                    placeholder={ _("models.participant.acro_score") }
+                    disabled={this.props.loading}
+                    placeholder={_("models.participant.acro_score")}
                     type="text"
-                    value={ this.props.element.score }
-                    onChange={ this.handleScoreChange }
+                    value={this.props.element.score}
+                    onChange={this.handleScoreChange}
                 />
                 <button
                     className="delete"
-                    disabled={ this.props.loading }
+                    disabled={this.props.loading}
                     type="button"
-                    onClick={ this.handleDeletion }
+                    onClick={this.handleDeletion}
                 >
                     X
                 </button>
@@ -57,4 +58,3 @@ export default class ElementRow extends React.Component {
         );
     }
 }
-

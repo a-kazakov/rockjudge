@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -16,11 +16,11 @@ export default class JudgingPositionSelector extends React.Component {
         for (let idx = 0; idx < this.props.numOptions; ++idx) {
             result.push(
                 <Button
-                    key={ idx }
-                    numOptions={ this.props.numOptions }
-                    position={ idx }
-                    onSelected={ this.props.onSelected }
-                />
+                    key={idx}
+                    numOptions={this.props.numOptions}
+                    position={idx}
+                    onSelected={this.props.onSelected}
+                />,
             );
         }
         return result;
@@ -29,11 +29,9 @@ export default class JudgingPositionSelector extends React.Component {
         return (
             <div className="body position-selector">
                 <div className="prompt">
-                    { _("tablet.tech_judge.judging_position_prompt") }
+                    {_("tablet.tech_judge.judging_position_prompt")}
                 </div>
-                <div className="buttons">
-                    { this.renderButtons() }
-                </div>
+                <div className="buttons">{this.renderButtons()}</div>
             </div>
         );
     }

@@ -29,7 +29,7 @@ export default class StartList extends React.Component {
                 disciplines: {},
                 clubs: {},
             },
-        }
+        };
     }
 
     getConfig() {
@@ -37,28 +37,25 @@ export default class StartList extends React.Component {
         let new_disciplines_config = {};
         let new_clubs_config = {};
         for (const discipline of this.props.competition.disciplines) {
-            new_disciplines_config[discipline.id] = (discipline.id in config.disciplines)
-                ? config.disciplines[discipline.id]
-                : true;
+            new_disciplines_config[discipline.id] =
+                discipline.id in config.disciplines
+                    ? config.disciplines[discipline.id]
+                    : true;
         }
         for (const club of this.props.competition.clubs) {
-            new_clubs_config[club.id] = (club.id in config.clubs)
-                ? config.clubs[club.id]
-                : true;
+            new_clubs_config[club.id] =
+                club.id in config.clubs ? config.clubs[club.id] : true;
         }
-        return Object.assign(
-            config,
-            {
-                disciplines: new_disciplines_config,
-                clubs: new_clubs_config,
-            },
-        );
+        return Object.assign(config, {
+            disciplines: new_disciplines_config,
+            clubs: new_clubs_config,
+        });
     }
 
-    makeNumbersRef = (ref) => this._numbers = ref;
-    makePrintableRef = (ref) => this._printable = ref;
+    makeNumbersRef = ref => (this._numbers = ref);
+    makePrintableRef = ref => (this._printable = ref);
 
-    handleConfigChange = (config) => this.setState({ config });
+    handleConfigChange = config => this.setState({ config });
 
     handleDocxCreation = () => this.createDocx();
     handleNumbersDocxCreation = () => this._numbers.createDocx();
@@ -71,7 +68,7 @@ export default class StartList extends React.Component {
             return _("admin.headers.disciplines_summary");
         }
         if (config.show_sportsmen_only) {
-            return _("admin.headers.sportsmen_list")
+            return _("admin.headers.sportsmen_list");
         }
         return _("admin.headers.start_list");
     }
@@ -82,78 +79,84 @@ export default class StartList extends React.Component {
         };
         if (config.show_summary) {
             if (config.group_by_clubs) {
-                return (
-                    <ClubsSummary { ...props } />
-                );
+                return <ClubsSummary {...props} />;
             }
-            return (
-                <DisciplinesSummary { ...props } />
-            );
+            return <DisciplinesSummary {...props} />;
         }
         if (config.group_by_clubs) {
-            return (
-                <Clubs { ...props } />
-            );
+            return <Clubs {...props} />;
         }
-        return (
-            <Disciplines { ...props } />
-        );
+        return <Disciplines {...props} />;
     }
     renderNumbers(config) {
         return (
             <Numbers
-                competition={ this.props.competition }
-                config={ config }
-                ref={ this.makeNumbersRef }
+                competition={this.props.competition}
+                config={config}
+                ref={this.makeNumbersRef}
             />
-        )
+        );
     }
-    render() {  // eslint-disable-line react/sort-comp
+    // eslint-disable-next-line react/sort-comp
+    render() {
         const config = this.getConfig();
         return (
             <div className="StartList">
                 <header>
                     <div className="controls">
-                        <button onClick={ this.handleDocxCreation }>
-                            DOCX
-                        </button>
-                        <button onClick={ this.handleNumbersDocxCreation }>
-                            { _("admin.buttons.docx_numbers") }
+                        <button onClick={this.handleDocxCreation}>DOCX</button>
+                        <button onClick={this.handleNumbersDocxCreation}>
+                            {_("admin.buttons.docx_numbers")}
                         </button>
                     </div>
-                    <h1>
-                        { _("admin.headers.start_list") }
-                    </h1>
+                    <h1>{_("admin.headers.start_list")}</h1>
                 </header>
                 <div className="body">
                     <ConfigPanel
-                        clubs={ this.props.competition.clubs }
-                        config={ config }
-                        customControls={ [
-                            {key: "include_acrobatics",            label: _("admin.labels.include_acrobatics")},
-                            {key: "include_formation_sportsmen",   label: _("admin.labels.include_formation_sportsmen")},
-                            {key: "group_by_clubs",                label: _("admin.labels.group_by_clubs")},
-                            {key: "show_sportsmen_only",           label: _("admin.labels.show_sportsmen_only")},
-                            {key: "show_summary",                  label: _("admin.labels.show_summary")},
-                        ] }
-                        disciplines={ this.props.competition.disciplines }
-                        onChange={ this.handleConfigChange }
+                        clubs={this.props.competition.clubs}
+                        config={config}
+                        customControls={[
+                            {
+                                key: "include_acrobatics",
+                                label: _("admin.labels.include_acrobatics"),
+                            },
+                            {
+                                key: "include_formation_sportsmen",
+                                label: _("admin.labels.include_formation_sportsmen"),
+                            },
+                            {
+                                key: "group_by_clubs",
+                                label: _("admin.labels.group_by_clubs"),
+                            },
+                            {
+                                key: "show_sportsmen_only",
+                                label: _("admin.labels.show_sportsmen_only"),
+                            },
+                            {
+                                key: "show_summary",
+                                label: _("admin.labels.show_summary"),
+                            },
+                        ]}
+                        disciplines={this.props.competition.disciplines}
+                        onChange={this.handleConfigChange}
                     />
                     <Paper
-                        header={ `${this.props.competition.name}, ${this.props.competition.date}` }
-                        margins={ [10, 15, 10, 25] }
-                        ref={ this.makePrintableRef }
-                        title2={ this.getTitle(config) }
+                        header={`${this.props.competition.name}, ${
+                            this.props.competition.date
+                        }`}
+                        margins={[10, 15, 10, 25]}
+                        ref={this.makePrintableRef}
+                        title2={this.getTitle(config)}
                     >
-                        { this.renderBody(config) }
+                        {this.renderBody(config)}
                     </Paper>
-                    { this.renderNumbers(config) }
+                    {this.renderNumbers(config)}
                 </div>
             </div>
         );
     }
 
-    createDocx(filename="start-list.docx") {
+    createDocx(filename = "start-list.docx") {
         const config = this.getConfig();
         Docx(filename)
             .setMargins([10, 15, 10, 25])

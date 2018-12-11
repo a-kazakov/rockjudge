@@ -9,7 +9,7 @@ export default class MultipleOptionsInput extends React.Component {
         onChange: PT.func.isRequired,
     };
 
-    handleChange = (item) => {
+    handleChange = item => {
         const new_value = this.props.value.includes(item)
             ? this.props.value.replace(item, "")
             : this.props.value + item;
@@ -21,10 +21,10 @@ export default class MultipleOptionsInput extends React.Component {
         return (
             <SelectorInput
                 multiple
-                value={ value }
-                onChange={ this.handleChange }
-                { ...other_props }
+                value={value}
+                onChange={this.handleChange}
+                {...other_props}
             />
-        )
+        );
     }
 }

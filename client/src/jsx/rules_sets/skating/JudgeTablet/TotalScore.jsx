@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -15,9 +15,9 @@ export default class TotalScore extends React.Component {
     render() {
         return (
             <div className="total-score">
-                { _("tablet.global.total_score") }: { this.props.score.data.total_score.toFixed(3).replace(/\.?0*$/, "") }
+                {_("tablet.global.total_score")}:{" "}
+                {this.props.score.data.total_score.toFixed(3).replace(/\.?0*$/, "")}
             </div>
         );
     }
 }
-

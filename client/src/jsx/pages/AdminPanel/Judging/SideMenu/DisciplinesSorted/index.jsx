@@ -10,7 +10,7 @@ export default class DisciplinesSorted extends React.Component {
             disciplines: PT.arrayOf(
                 PT.shape({
                     id: PT.number.isRequired,
-                }).isRequired
+                }).isRequired,
             ).isRequired,
         }).isRequired,
         onActiveTourChange: PT.func.isRequired,
@@ -19,14 +19,14 @@ export default class DisciplinesSorted extends React.Component {
     render() {
         return (
             <div className="noselect">
-                { this.props.competition.disciplines.map(discipline =>
+                {this.props.competition.disciplines.map(discipline => (
                     <Section
-                        activeTourId={ this.props.activeTourId }
-                        discipline={ discipline }
-                        key={ discipline.id }
-                        onActiveTourChange={ this.props.onActiveTourChange }
+                        activeTourId={this.props.activeTourId}
+                        discipline={discipline}
+                        key={discipline.id}
+                        onActiveTourChange={this.props.onActiveTourChange}
                     />
-                ) }
+                ))}
             </div>
         );
     }

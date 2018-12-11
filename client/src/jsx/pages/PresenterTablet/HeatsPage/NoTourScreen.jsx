@@ -7,13 +7,10 @@ export default class NoTourScreen extends React.Component {
         return (
             <div className="heats">
                 <div className="splash-screen">
-                    <div>
-                        { _("presenter.labels.no_active_tour") }
-                    </div>
+                    <div>{_("presenter.labels.no_active_tour")}</div>
                     <div className="spacer" />
                 </div>
             </div>
         );
     }
 }
-

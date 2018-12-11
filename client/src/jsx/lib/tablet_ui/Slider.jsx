@@ -3,7 +3,7 @@ import React from "react";
 import PT from "prop-types";
 import makeClassName from "common/makeClassName";
 
-export default  class Slider extends React.Component {
+export default class Slider extends React.Component {
     static propTypes = {
         done: PT.bool.isRequired,
         doneText: PT.string.isRequired,
@@ -73,8 +73,8 @@ export default  class Slider extends React.Component {
             finished: true,
         });
         this.props.onActivate();
-    }
-    handleTouchStart = (event) => {
+    };
+    handleTouchStart = event => {
         event.preventDefault();
         if (this.state.finished || this.props.done) {
             return;
@@ -84,8 +84,8 @@ export default  class Slider extends React.Component {
             position: this.getSliderPos(event),
             touch: true,
         });
-    }
-    handleTouchMove = (event) => {
+    };
+    handleTouchMove = event => {
         event.preventDefault();
         if (this.state.finished || this.props.done) {
             return;
@@ -93,8 +93,8 @@ export default  class Slider extends React.Component {
         this.setState({
             position: this.getSliderPos(event),
         });
-    }
-    handleTouchEnd = (event) => {
+    };
+    handleTouchEnd = event => {
         event.preventDefault();
         if (this.state.finished || this.props.done) {
             return;
@@ -112,25 +112,25 @@ export default  class Slider extends React.Component {
                 touch: false,
             });
         }
-    }
+    };
 
     renderText() {
         if (this.props.done) {
             return (
-                <span
-                    className={ "done-text" }
-                    style={ { color: "rgb(100,100,100)" } }
-                >
-                    { this.props.doneText }
+                <span className={"done-text"} style={{ color: "rgb(100,100,100)" }}>
+                    {this.props.doneText}
                 </span>
             );
         } else {
             return (
                 <span
-                    className={ makeClassName({ "slide-text" : true, "free": this.isFree() }) }
-                    style={ { color: `rgba(100,100,100,${this.getOuterTextOpacity()})` } }
+                    className={makeClassName({
+                        "slide-text": true,
+                        free: this.isFree(),
+                    })}
+                    style={{ color: `rgba(100,100,100,${this.getOuterTextOpacity()})` }}
                 >
-                    { this.props.slideText }
+                    {this.props.slideText}
                 </span>
             );
         }
@@ -138,16 +138,22 @@ export default  class Slider extends React.Component {
     render() {
         return (
             <div className="Slider">
-                <div className={ makeClassName({ "inner": true, "free": this.isFree() }) }
-                    style={ { left: (this.props.done || this.state.finished) ? "200px" : `${this.state.position}px` } }
-                    onClick={ this.handleClick }
-                    onTouchEnd={ this.handleTouchEnd }
-                    onTouchMove={ this.handleTouchMove }
-                    onTouchStart={ this.handleTouchStart }
+                <div
+                    className={makeClassName({ inner: true, free: this.isFree() })}
+                    style={{
+                        left:
+                            this.props.done || this.state.finished
+                                ? "200px"
+                                : `${this.state.position}px`,
+                    }}
+                    onClick={this.handleClick}
+                    onTouchEnd={this.handleTouchEnd}
+                    onTouchMove={this.handleTouchMove}
+                    onTouchStart={this.handleTouchStart}
                 >
                     →
                 </div>
-                { this.renderText() }
+                {this.renderText()}
             </div>
         );
     }

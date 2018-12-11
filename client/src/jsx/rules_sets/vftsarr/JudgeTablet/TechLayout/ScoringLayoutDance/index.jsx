@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -21,16 +21,16 @@ export default class ScoringLayoutDance extends React.Component {
         return true;
     }
 
-    handleCardChange = (value) => {
+    handleCardChange = value => {
         this.props.onScoreUpdate(null, value);
     };
-    handleTimeChange = (value, force_submit=false) => {
+    handleTimeChange = (value, force_submit = false) => {
         this.props.onScoreUpdate("time", value, force_submit);
     };
-    handleJumpStepsChange = (value) => {
+    handleJumpStepsChange = value => {
         this.props.onScoreUpdate("jump_steps", value);
     };
-    handleUndercountChange = (value) => {
+    handleUndercountChange = value => {
         this.props.onScoreUpdate("undercount", value);
     };
 
@@ -40,12 +40,12 @@ export default class ScoringLayoutDance extends React.Component {
         }
         return (
             <div className="undercount mistakes">
-                <h3>{ _("tablet.tech_judge.undercount") }</h3>
+                <h3>{_("tablet.tech_judge.undercount")}</h3>
                 <IntegerInput
                     jumbo
-                    readOnly={ this.props.score.confirmed }
-                    value={ this.props.score.data.undercount }
-                    onChange={ this.handleUndercountChange }
+                    readOnly={this.props.score.confirmed}
+                    value={this.props.score.data.undercount}
+                    onChange={this.handleUndercountChange}
                 />
             </div>
         );
@@ -54,33 +54,31 @@ export default class ScoringLayoutDance extends React.Component {
         return (
             <div className="dance-part">
                 <div className="side-part">
-                    <h3>{ _("tablet.tech_judge.jump_steps") }</h3>
+                    <h3>{_("tablet.tech_judge.jump_steps")}</h3>
                     <IntegerInput
                         jumbo
-                        readOnly={ this.props.score.confirmed }
-                        value={ this.props.score.data.jump_steps }
-                        onChange={ this.handleJumpStepsChange }
+                        readOnly={this.props.score.confirmed}
+                        value={this.props.score.data.jump_steps}
+                        onChange={this.handleJumpStepsChange}
                     />
                 </div>
                 <div className="main-part">
-                    <h3>
-                        { _("tablet.tech_judge.stopwatch") }
-                    </h3>
+                    <h3>{_("tablet.tech_judge.stopwatch")}</h3>
                     <StopWatch
-                        readOnly={ this.props.score.confirmed }
-                        stopwatchId={ this.props.score.id }
-                        value={ this.props.score.data.time }
-                        onChange={ this.handleTimeChange }
+                        readOnly={this.props.score.confirmed}
+                        stopwatchId={this.props.score.id}
+                        value={this.props.score.data.time}
+                        onChange={this.handleTimeChange}
                     />
-                    { this.renderFormationUndercountInput() }
+                    {this.renderFormationUndercountInput()}
                     <PreviousCards
-                        run={ this.props.score.run }
-                        tourResults={ this.props.score.run.tour.results }
+                        run={this.props.score.run}
+                        tourResults={this.props.score.run.tour.results}
                     />
                     <CardInput
-                        readOnly={ this.props.score.confirmed }
-                        score={ this.props.score }
-                        onChange={ this.handleCardChange }
+                        readOnly={this.props.score.confirmed}
+                        score={this.props.score}
+                        onChange={this.handleCardChange}
                     />
                 </div>
             </div>

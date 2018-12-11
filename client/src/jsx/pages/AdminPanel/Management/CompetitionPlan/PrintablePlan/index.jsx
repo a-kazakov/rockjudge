@@ -10,13 +10,8 @@ export default class PrintablePlan extends React.Component {
         competition: PT.instanceOf(Model).isRequired,
     };
 
-    renderRow = (item) => {
-        return (
-            <Row
-                item={ item }
-                key={ item.id }
-            />
-        );
+    renderRow = item => {
+        return <Row item={item} key={item.id} />;
     };
     render() {
         return (
@@ -25,22 +20,30 @@ export default class PrintablePlan extends React.Component {
                     <thead>
                         <tr>
                             <th>
-                                <p>{ _("models.competition_plan_item.estimated_beginning") }</p>
+                                <p>
+                                    {_(
+                                        "models.competition_plan_item.estimated_beginning",
+                                    )}
+                                </p>
                             </th>
                             <th>
-                                <p className="text-left">{ _("models.competition_plan_item.discipline") }</p>
+                                <p className="text-left">
+                                    {_("models.competition_plan_item.discipline")}
+                                </p>
                             </th>
                             <th>
-                                <p>{ _("models.competition_plan_item.tour") }</p>
+                                <p>{_("models.competition_plan_item.tour")}</p>
                             </th>
                             <th>
-                                <p>{ _("models.competition_plan_item.estimated_duration") }</p>
+                                <p>
+                                    {_(
+                                        "models.competition_plan_item.estimated_duration",
+                                    )}
+                                </p>
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
-                        { this.props.competition.plan.map(this.renderRow) }
-                    </tbody>
+                    <tbody>{this.props.competition.plan.map(this.renderRow)}</tbody>
                 </table>
             </div>
         );

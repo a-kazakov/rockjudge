@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -18,11 +18,11 @@ export default class StopWatch extends React.Component {
     static get defaultProps() {
         return {
             readOnly: false,
-        }
+        };
     }
 
     static now() {
-        return (new Date()).getTime();
+        return new Date().getTime();
     }
 
     constructor(props) {
@@ -55,7 +55,7 @@ export default class StopWatch extends React.Component {
         return !this.active && this.flooredStateValue() === this.props.value;
     }
     flooredStateValue() {
-        return Math.floor(this.state.value / 1000)
+        return Math.floor(this.state.value / 1000);
     }
 
     start() {
@@ -65,7 +65,7 @@ export default class StopWatch extends React.Component {
             interval: setInterval(this.handleTick, 10),
         });
     }
-    stop(force_submit=false) {
+    stop(force_submit = false) {
         clearInterval(this.state.interval);
         this.submitValue(this.value(), force_submit);
         this.setState({
@@ -110,7 +110,10 @@ export default class StopWatch extends React.Component {
     modStart(delta) {
         const next_value = Math.max(0, this.state.value + 1000 * delta);
         this.setState({
-            start_at: Math.min(this.state.start_at - 1000 * delta, this.constructor.now()),
+            start_at: Math.min(
+                this.state.start_at - 1000 * delta,
+                this.constructor.now(),
+            ),
             value: next_value,
         });
         if (!this.state.active) {
@@ -124,7 +127,7 @@ export default class StopWatch extends React.Component {
 
     value() {
         return this.state.active
-            ? (this.constructor.now() - this.state.start_at)
+            ? this.constructor.now() - this.state.start_at
             : this.state.value;
     }
 
@@ -132,9 +135,10 @@ export default class StopWatch extends React.Component {
         const s = `0000${num}`;
         return s.substr(s.length - size);
     }
-    getStrValue(val=null) {
+    getStrValue(val = null) {
         val = val == null ? this.value() : val;
-        let m = 0, s = 0;
+        let m = 0,
+            s = 0;
         m = Math.floor(val / (60 * 1000));
         val %= 60 * 1000;
         s = Math.floor(val / 1000);
@@ -143,64 +147,59 @@ export default class StopWatch extends React.Component {
 
     getToggleButtonClassName() {
         return makeClassName({
-            "tbtn": true,
+            tbtn: true,
             "btn-toggle": true,
-            "active": this.state.active,
+            active: this.state.active,
         });
     }
     getClassName() {
         return makeClassName({
-            "stopwatch": true,
+            stopwatch: true,
             "read-only": this.props.readOnly,
         });
     }
 
     render() {
         return (
-            <div className={ this.getClassName() }>
+            <div className={this.getClassName()}>
                 <button
-                    className={ this.getToggleButtonClassName() }
-                    { ...onTouchOrClick(this.handleToggle) }
+                    className={this.getToggleButtonClassName()}
+                    {...onTouchOrClick(this.handleToggle)}
                 >
-                    { this.state.active
+                    {this.state.active
                         ? _("tablet.buttons.stop_stopwatch")
-                        : _("tablet.buttons.start_stopwatch")
-                    }
+                        : _("tablet.buttons.start_stopwatch")}
                 </button>
                 <button
                     className="tbtn btn-reset"
-                    { ...onTouchOrClick(this.handleReset) }
+                    {...onTouchOrClick(this.handleReset)}
                 >
-                    { _("tablet.buttons.reset_stopwatch") }
+                    {_("tablet.buttons.reset_stopwatch")}
                 </button>
                 <button
                     className="tbtn btn-ctl"
-                    { ...onTouchOrClick(this.handleMinus10 ) }
+                    {...onTouchOrClick(this.handleMinus10)}
                 >
                     &minus;10
                 </button>
-                <button
-                    className="tbtn btn-ctl"
-                    { ...onTouchOrClick(this.handleMinus1 ) }
-                >
+                <button className="tbtn btn-ctl" {...onTouchOrClick(this.handleMinus1)}>
                     &minus;1
                 </button>
-                <div className={ makeClassName({"time": true, "synchronized": this.isSynchronized()}) }>
-                    { this.getStrValue() }
-                </div>
-                <button
-                    className="tbtn btn-ctl"
-                    { ...onTouchOrClick(this.handlePlus1 ) }
+                <div
+                    className={makeClassName({
+                        time: true,
+                        synchronized: this.isSynchronized(),
+                    })}
                 >
+                    {this.getStrValue()}
+                </div>
+                <button className="tbtn btn-ctl" {...onTouchOrClick(this.handlePlus1)}>
                     +1
                 </button>
-                <button
-                    className="tbtn btn-ctl"
-                    { ...onTouchOrClick(this.handlePlus10 ) }
-                >
+                <button className="tbtn btn-ctl" {...onTouchOrClick(this.handlePlus10)}>
                     +10
                 </button>
             </div>
-        )
+        );
     }
 }

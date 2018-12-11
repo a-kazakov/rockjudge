@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -14,12 +14,8 @@ export default class RunMetrics extends React.Component {
         const card = this.run_result?.extra_data.card || "OK";
         return (
             <tr>
-                <th>
-                    { _("tablet.head_judge.final_card") }
-                </th>
-                <td className={ `card-${card}` }>
-                    { _(`cards.long.${card}`) }
-                </td>
+                <th>{_("tablet.head_judge.final_card")}</th>
+                <td className={`card-${card}`}>{_(`cards.long.${card}`)}</td>
             </tr>
         );
     }
@@ -33,15 +29,11 @@ export default class RunMetrics extends React.Component {
         }
         return (
             <tr>
-                <th>
-                    { _("tablet.head_judge.card_reasons") }
-                </th>
+                <th>{_("tablet.head_judge.card_reasons")}</th>
                 <td className="card-reasons">
-                    { texts.map((text, idx) => (
-                        <div key={ idx }>
-                            { text }
-                        </div>
-                    )) }
+                    {texts.map((text, idx) => (
+                        <div key={idx}>{text}</div>
+                    ))}
                 </td>
             </tr>
         );
@@ -53,12 +45,8 @@ export default class RunMetrics extends React.Component {
         }
         return (
             <tr>
-                <th>
-                    { _("tablet.head_judge.undercount") }
-                </th>
-                <td>
-                    { undercount }
-                </td>
+                <th>{_("tablet.head_judge.undercount")}</th>
+                <td>{undercount}</td>
             </tr>
         );
     }
@@ -69,12 +57,8 @@ export default class RunMetrics extends React.Component {
         }
         return (
             <tr>
-                <th>
-                    { _("tablet.head_judge.fall_down") }
-                </th>
-                <td>
-                    { fall_down }
-                </td>
+                <th>{_("tablet.head_judge.fall_down")}</th>
+                <td>{fall_down}</td>
             </tr>
         );
     }
@@ -83,10 +67,10 @@ export default class RunMetrics extends React.Component {
         return (
             <table className="run-metrics">
                 <tbody>
-                    { this.renderFinalCard() }
-                    { this.renderCardReasons() }
-                    { this.renderFormationUndercount() }
-                    { this.renderAcroFalldown() }
+                    {this.renderFinalCard()}
+                    {this.renderCardReasons()}
+                    {this.renderFormationUndercount()}
+                    {this.renderAcroFalldown()}
                 </tbody>
             </table>
         );

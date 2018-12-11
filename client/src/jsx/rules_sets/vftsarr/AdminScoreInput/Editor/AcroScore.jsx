@@ -1,6 +1,6 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
-import GeneralEditor from "./GeneralEditor"
+import GeneralEditor from "./GeneralEditor";
 import checkSS from "common/checkSS";
 import range from "common/range";
 import ReductionBlock from "./GeneralEditor/blocks/ReductionBlock";
@@ -20,21 +20,20 @@ export default class DanceScore extends React.Component {
         const acro_count = checkSS(ssn, "acro_6") ? 6 : checkSS(ssn, "acro_8") ? 8 : 5;
         return (
             <GeneralEditor
-                initialData={ this.props.scoreData }
-                readOnly={ this.props.readOnly }
-                onDiscard={ this.props.onDiscard }
-                onSubmit={ this.props.onSubmit }
+                initialData={this.props.scoreData}
+                readOnly={this.props.readOnly}
+                onDiscard={this.props.onDiscard}
+                onSubmit={this.props.onSubmit}
             >
-                { range(1, acro_count + 1).map(idx => (
+                {range(1, acro_count + 1).map(idx => (
                     <ReductionBlock
                         nullable
-                        field={ `a${idx}` }
-                        key={ idx }
-                        label={ `A${idx}` }
+                        field={`a${idx}`}
+                        key={idx}
+                        label={`A${idx}`}
                     />
-                )) }
+                ))}
             </GeneralEditor>
         );
     }
 }
-

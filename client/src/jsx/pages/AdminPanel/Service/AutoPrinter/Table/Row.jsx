@@ -27,25 +27,25 @@ export default class Row extends React.Component {
         let new_row = Object.assign({}, this.props.row);
         new_row[action] = new_value;
         this.props.onChange(this.props.tour.id, new_row);
-    }
+    };
 
     render() {
         return (
             <tr>
                 <td className="discipline">
-                    { `${this.props.tour.discipline.name} — ${this.props.tour.name}` }
+                    {`${this.props.tour.discipline.name} — ${this.props.tour.name}`}
                 </td>
-                { this.props.possibleActions.map(action =>
+                {this.props.possibleActions.map(action => (
                     <Cell
-                        action={ action }
-                        activeCell={ this.props.activeCell }
-                        key={ action }
-                        tour={ this.props.tour }
-                        value={ this.props.row[action] || "" }
-                        onChange={ this.handleChange }
-                        onMove={ this.props.onMove }
+                        action={action}
+                        activeCell={this.props.activeCell}
+                        key={action}
+                        tour={this.props.tour}
+                        value={this.props.row[action] || ""}
+                        onChange={this.handleChange}
+                        onMove={this.props.onMove}
                     />
-                ) }
+                ))}
             </tr>
         );
     }

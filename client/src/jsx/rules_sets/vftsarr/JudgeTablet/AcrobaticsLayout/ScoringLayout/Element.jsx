@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -13,18 +13,18 @@ export default class Element extends React.Component {
         onAcroReductionUpdate: PT.func.isRequired,
     };
 
-    handleChange = (value) => {
+    handleChange = value => {
         this.props.onAcroReductionUpdate(this.props.acroIdx, value);
     };
 
     render() {
         return (
             <GeneralScale
-                header={ _("tablet.acro_judge.acro_n", this.props.acroIdx) }
-                readOnly={ this.props.readOnly }
+                header={_("tablet.acro_judge.acro_n", this.props.acroIdx)}
+                readOnly={this.props.readOnly}
                 scale="reduction"
-                value={ this.props.reduction }
-                onChange={ this.handleChange }
+                value={this.props.reduction}
+                onChange={this.handleChange}
             />
         );
     }

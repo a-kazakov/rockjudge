@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import Element from "./Element";
@@ -25,15 +25,15 @@ export default class ScoringLayout extends React.Component {
     render() {
         return (
             <div>
-                { this.props.score.run.acrobatics.slice(0, 8).map((acro, acro_idx) =>
+                {this.props.score.run.acrobatics.slice(0, 8).map((acro, acro_idx) => (
                     <Element
-                        acroIdx={ acro_idx }
-                        key={ acro_idx }
-                        readOnly={ this.props.score.confirmed }
-                        reduction={ this.props.score.data[`a${acro_idx + 1}`] }
-                        onAcroReductionUpdate={ this.handleAcroReductionUpdate }
+                        acroIdx={acro_idx}
+                        key={acro_idx}
+                        readOnly={this.props.score.confirmed}
+                        reduction={this.props.score.data[`a${acro_idx + 1}`]}
+                        onAcroReductionUpdate={this.handleAcroReductionUpdate}
                     />
-                ) }
+                ))}
             </div>
         );
     }

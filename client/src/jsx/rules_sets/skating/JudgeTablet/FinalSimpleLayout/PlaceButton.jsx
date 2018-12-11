@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 import PT from "prop-types";
 import makeClassName from "common/makeClassName";
 
@@ -16,19 +16,16 @@ export default class PlaceButton extends React.Component {
 
     getClassName() {
         return makeClassName({
-            "btn": true,
-            "active": this.props.selected,
+            btn: true,
+            active: this.props.selected,
             "in-active-col": this.props.runHasSelected,
         });
     }
     render() {
         return (
-            <td
-                className={ this.getClassName() }
-                onClick={ this.handleClick }
-            >
-                { this.props.place }
+            <td className={this.getClassName()} onClick={this.handleClick}>
+                {this.props.place}
             </td>
-        )
+        );
     }
 }

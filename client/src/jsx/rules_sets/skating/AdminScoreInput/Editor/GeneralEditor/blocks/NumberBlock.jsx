@@ -25,7 +25,12 @@ export default class NumberBlock extends SelectorBlock {
         if (this.props.nullable) {
             result.push([null, "—"]);
         }
-        return result.concat(range(this.props.min, this.props.max + this.props.step - 1e-5, this.props.step)
-            .map(x => [x, floatToFixed(x, 2)]));
+        return result.concat(
+            range(
+                this.props.min,
+                this.props.max + this.props.step - 1e-5,
+                this.props.step,
+            ).map(x => [x, floatToFixed(x, 2)]),
+        );
     }
 }

@@ -13,15 +13,12 @@ export default class Button extends React.Component {
 
     handleClick = () => {
         this.props.onSelect(this.props.competition.id);
-    }
+    };
 
     render() {
         return (
-            <div
-                className="button"
-                onClick={ this.handleClick }
-            >
-                { this.props.competition.name }
+            <div className="button" onClick={this.handleClick}>
+                {this.props.competition.name}
             </div>
         );
     }

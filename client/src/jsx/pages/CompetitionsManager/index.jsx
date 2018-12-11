@@ -13,11 +13,7 @@ import FieldTypes from "pages/AdminPanel/Management/UniversalTable/FieldTypes";
 
 export default class CompetitionsManager extends UniversalTable {
     static propTypes = {
-        rulesSets: PT.arrayOf(
-            PT.arrayOf(
-                PT.string.isRequired,
-            ).isRequired,
-        ).isRequired,
+        rulesSets: PT.arrayOf(PT.arrayOf(PT.string.isRequired).isRequired).isRequired,
     };
 
     static DISPLAY_COMPONENT = Row;
@@ -27,12 +23,12 @@ export default class CompetitionsManager extends UniversalTable {
     static FIELDS = [
         FieldTypes.makeTextField("name"),
         FieldTypes.makeTextField("date"),
-        {name: "active", defaultValue: true},
+        { name: "active", defaultValue: true },
         {
             name: "rules_set",
-            defaultValueGetter: (context) => context.rulesSets[0]?.[0] || '',
+            defaultValueGetter: context => context.rulesSets[0]?.[0] || "",
         },
-        {name: "info", defaultValueGetter: () => []},
+        { name: "info", defaultValueGetter: () => [] },
     ];
 
     state = {
@@ -41,18 +37,22 @@ export default class CompetitionsManager extends UniversalTable {
 
     componentDidMount() {
         this._storage = new Storage();
-        this._storage.init(this.reload).then(this.subscribe).catch(console.error.bind(console));
+        this._storage
+            .init(this.reload)
+            .then(this.subscribe)
+            .catch(console.error.bind(console));
     }
 
     subscribe = () => {
         this._competitions_subscription = new AllCompetitionsSubscription();
-        this._storage.subscribe(this._competitions_subscription)
+        this._storage
+            .subscribe(this._competitions_subscription)
             .then(this.updateCompetitionsStorage)
             .catch(console.error.bind(console));
     };
 
-    updateCompetitionsStorage = (competitionsStorage) => {
-        this.setState({competitionsStorage});
+    updateCompetitionsStorage = competitionsStorage => {
+        this.setState({ competitionsStorage });
     };
 
     reload = () => this.forceUpdate();
@@ -66,39 +66,27 @@ export default class CompetitionsManager extends UniversalTable {
             <table>
                 <tbody>
                     <tr>
-                        <th className="name">
-                            { _("models.competition.name") }
-                        </th>
-                        <th className="date">
-                            { _("models.competition.date") }
-                        </th>
-                        <th className="is-active">
-                            { _("models.competition.active") }
-                        </th>
+                        <th className="name">{_("models.competition.name")}</th>
+                        <th className="date">{_("models.competition.date")}</th>
+                        <th className="is-active">{_("models.competition.active")}</th>
                         <th className="delete" />
                     </tr>
-                    { this.renderRows() }
-                    { this.renderCreationButton() }
+                    {this.renderRows()}
+                    {this.renderCreationButton()}
                 </tbody>
             </table>
         );
     }
     render() {
-        if (this.state.competitionsStorage == null)  {
-            return (
-                <Loader />
-            );
+        if (this.state.competitionsStorage == null) {
+            return <Loader />;
         }
         return (
             <div className="CompetitionsManager">
                 <header>
-                    <h1>
-                        { _("admin.headers.competitions_management") }
-                    </h1>
+                    <h1>{_("admin.headers.competitions_management")}</h1>
                 </header>
-                <div className="body">
-                    { this.renderTable() }
-                </div>
+                <div className="body">{this.renderTable()}</div>
             </div>
         );
     }

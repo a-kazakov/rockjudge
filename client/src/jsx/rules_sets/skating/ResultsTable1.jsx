@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -32,7 +32,7 @@ export default class ResultsTable1 extends React.Component {
     }
 
     setupCache() {
-        const {tour} = this.props.computedTour;
+        const { tour } = this.props.computedTour;
         const all_tours = tour.discipline.tours;
         this.is_final = tour.scoring_system_name.includes("final");
         this.show_total_score = !this.is_final;
@@ -40,27 +40,32 @@ export default class ResultsTable1 extends React.Component {
     }
 
     getCols() {
-        let result = [{
-            "key": "place",
-            "title":  _("results.labels.place"),
-            "textAlign": "center",
-            "lines": ["right"],
-            "width": 7,
-        }, {
-            "key": "number",
-            "title":  _("results.labels.number"),
-            "textAlign": "center",
-            "fontWeight": "bold",
-            "width": 6,
-        }, {
-            "key": "participant_name",
-            "title":  _("results.labels.participant_name"),
-            "width": "flex",
-        }, {
-            "key": "participant_club",
-            "title":  _("results.labels.participant_club"),
-            "width": "flex",
-        }];
+        let result = [
+            {
+                key: "place",
+                title: _("results.labels.place"),
+                textAlign: "center",
+                lines: ["right"],
+                width: 7,
+            },
+            {
+                key: "number",
+                title: _("results.labels.number"),
+                textAlign: "center",
+                fontWeight: "bold",
+                width: 6,
+            },
+            {
+                key: "participant_name",
+                title: _("results.labels.participant_name"),
+                width: "flex",
+            },
+            {
+                key: "participant_club",
+                title: _("results.labels.participant_club"),
+                width: "flex",
+            },
+        ];
         if (this.show_total_score) {
             result.push({
                 key: "total_score",
@@ -85,24 +90,24 @@ export default class ResultsTable1 extends React.Component {
 
     getRows() {
         let result = [];
-        const {rows} = this.props.computedTour;
+        const { rows } = this.props.computedTour;
         for (let idx = 0; idx < rows.length; ++idx) {
             const row = rows[idx];
             const prev_row = rows[idx - 1];
             const adv_text = this.getAdvancesRow(prev_row, row);
             if (adv_text != null) {
                 result.push({
-                    "_type": "section_header",
-                    "title": adv_text,
-                })
+                    _type: "section_header",
+                    title: adv_text,
+                });
             }
             result.push({
-                "run_id": row.run.id,
-                "place": row.run_result.place,
-                "number": row.run.participant.number,
-                "participant_name": row.run.participant.name,
-                "participant_club": row.run.participant.club.name,
-                "total_score": row.run_result.extra_data.user_score,
+                run_id: row.run.id,
+                place: row.run_result.place,
+                number: row.run.participant.number,
+                participant_name: row.run.participant.name,
+                participant_club: row.run.participant.club.name,
+                total_score: row.run_result.extra_data.user_score,
             });
         }
         return result;
@@ -113,13 +118,12 @@ export default class ResultsTable1 extends React.Component {
         return (
             <div className="ResultsTable1">
                 <CustomTable
-                    cols={ this.getCols() }
+                    cols={this.getCols()}
                     fontSize="12pt"
                     rowKey="run_id"
-                    rows={ this.getRows() }
+                    rows={this.getRows()}
                 />
             </div>
         );
     }
 }
-

@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import GeneralLayout from "JudgeTablet/GeneralLayout";
@@ -12,16 +12,14 @@ export default class TechLayout extends React.Component {
     };
 
     renderAcroLayout() {
-        return (
-            <TechAcroLayout { ...this.props } />
-        )
+        return <TechAcroLayout {...this.props} />;
     }
     renderDanceLayout() {
         return (
             <GeneralLayout
                 smallBlocks
-                layoutClass={ ScoringLayoutDance }
-                { ...this.props }
+                layoutClass={ScoringLayoutDance}
+                {...this.props}
             />
         );
     }

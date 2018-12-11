@@ -27,23 +27,23 @@ export default class HeatsTab extends React.Component {
         }
     }
 
-    makePrintableRef = (ref) => this._printable = ref;
+    makePrintableRef = ref => (this._printable = ref);
 
-    handleSignal = (message) => {
+    handleSignal = message => {
         switch (message) {
-        case "docx":
-            this.createDocx();
-            break;
-        default:
-            console.error("Unknown message:", message)
+            case "docx":
+                this.createDocx();
+                break;
+            default:
+                console.error("Unknown message:", message);
         }
     };
 
     checkHeatsDiffer(prev_row, next_row) {
         return (
-            (typeof prev_row === "undefined") ||
-            (typeof next_row === "undefined") ||
-            (prev_row.heat !== next_row.heat)
+            typeof prev_row === "undefined" ||
+            typeof next_row === "undefined" ||
+            prev_row.heat !== next_row.heat
         );
     }
 
@@ -51,7 +51,7 @@ export default class HeatsTab extends React.Component {
         const runs = this.props.tour.runs;
         let counts = new Map();
         for (const run of runs) {
-            counts.set(run.heat, (counts.get(run.heat) || 0) + 1)
+            counts.set(run.heat, (counts.get(run.heat) || 0) + 1);
         }
         let result = [];
         for (let i = 0; i < runs.length; ++i) {
@@ -60,63 +60,71 @@ export default class HeatsTab extends React.Component {
             }
             result.push(
                 <Row
-                    headerCells={ counts.get(runs[i].heat)  }
-                    heat={ runs[i].heat }
-                    isFirstCell={ this.checkHeatsDiffer(runs[i - 1], runs[i]) }
-                    isLastCell={ this.checkHeatsDiffer(runs[i], runs[i + 1]) }
-                    key={ runs[i].id }
-                    participant={ runs[i].participant }
-                />
+                    headerCells={counts.get(runs[i].heat)}
+                    heat={runs[i].heat}
+                    isFirstCell={this.checkHeatsDiffer(runs[i - 1], runs[i])}
+                    isLastCell={this.checkHeatsDiffer(runs[i], runs[i + 1])}
+                    key={runs[i].id}
+                    participant={runs[i].participant}
+                />,
             );
         }
         return result;
     }
-    render() {  // eslint-disable-line react/sort-comp
+
+    // eslint-disable-next-line react/sort-comp
+    render() {
         return (
             <div className="HeatsTab">
                 <Paper
-                    header={ `${this.props.tour.discipline.competition.name}, ${this.props.tour.discipline.competition.date}` }
-                    ref={ this.makePrintableRef }
-                    title1={ _("admin.headers.tour_heats") }
-                    title2={ `${this.props.tour.discipline.name} — ${this.props.tour.name}` }
+                    header={`${this.props.tour.discipline.competition.name}, ${
+                        this.props.tour.discipline.competition.date
+                    }`}
+                    ref={this.makePrintableRef}
+                    title1={_("admin.headers.tour_heats")}
+                    title2={`${this.props.tour.discipline.name} — ${
+                        this.props.tour.name
+                    }`}
                 >
                     <table>
                         <thead>
                             <tr>
                                 <th className="w-8">
                                     <p className="text-center">
-                                        { _("judging.labels.heat") }
+                                        {_("judging.labels.heat")}
                                     </p>
                                 </th>
                                 <th className="w-8">
                                     <p className="text-center">
-                                        { _("judging.labels.number") }
+                                        {_("judging.labels.number")}
                                     </p>
                                 </th>
                                 <th>
                                     <p className="text-left">
-                                        { _("judging.labels.participant_name") }
+                                        {_("judging.labels.participant_name")}
                                     </p>
                                 </th>
                                 <th>
                                     <p className="text-left">
-                                        { _("judging.labels.club") }
+                                        {_("judging.labels.club")}
                                     </p>
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
-                            { this.renderRows() }
-                        </tbody>
+                        <tbody>{this.renderRows()}</tbody>
                     </table>
                 </Paper>
             </div>
         );
     }
 
-    createDocx(filename="tour-heats.docx") {
+    createDocx(filename = "tour-heats.docx") {
         Docx(filename)
-            .setHeader(`${this.props.tour.discipline.competition.name}, ${this.props.tour.discipline.competition.date}`)
+            .setHeader(
+                `${this.props.tour.discipline.competition.name}, ${
+                    this.props.tour.discipline.competition.date
+                }`,
+            )
             .setTitle1(_("admin.headers.tour_heats"))
             .setTitle2(`${this.props.tour.discipline.name} — ${this.props.tour.name}`)
             .setBody(this._printable.getPrintableHTML())

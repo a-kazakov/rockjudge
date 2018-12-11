@@ -1,4 +1,4 @@
-import {Api, React} from "HostModules";
+import { Api, React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -17,7 +17,7 @@ export default class StatusSwitch extends React.Component {
         Api("model/update", {
             model_name: "Run",
             model_id: this.props.run.id,
-            data: {status},
+            data: { status },
         }).send();
     }
 
@@ -31,9 +31,9 @@ export default class StatusSwitch extends React.Component {
                 <button
                     className="performed"
                     type="button"
-                    { ...onTouchEndOrClick(this.handleSetStatusOK) }
+                    {...onTouchEndOrClick(this.handleSetStatusOK)}
                 >
-                    { _("tablet.global.discard_not_performed") }
+                    {_("tablet.global.discard_not_performed")}
                 </button>
             );
         }
@@ -42,9 +42,9 @@ export default class StatusSwitch extends React.Component {
                 <button
                     className="not-disqualified"
                     type="button"
-                    { ...onTouchEndOrClick(this.handleSetStatusOK) }
+                    {...onTouchEndOrClick(this.handleSetStatusOK)}
                 >
-                    { _("tablet.global.discard_disqualified") }
+                    {_("tablet.global.discard_disqualified")}
                 </button>
             );
         }
@@ -53,26 +53,22 @@ export default class StatusSwitch extends React.Component {
                 <button
                     className="not-performed"
                     type="button"
-                    { ...onTouchEndOrClick(this.handleSetStatusNP) }
+                    {...onTouchEndOrClick(this.handleSetStatusNP)}
                 >
-                    { _("tablet.global.mark_not_performed") }
+                    {_("tablet.global.mark_not_performed")}
                 </button>
                 &nbsp;
                 <button
                     className="disqualified"
                     type="button"
-                    { ...onTouchEndOrClick(this.handleSetStatusDQ) }
+                    {...onTouchEndOrClick(this.handleSetStatusDQ)}
                 >
-                    { _("tablet.global.mark_disqualified") }
+                    {_("tablet.global.mark_disqualified")}
                 </button>
             </div>
         );
     }
     render() {
-        return (
-            <div className="status-switch">
-                { this.renderButton() }
-            </div>
-        );
+        return <div className="status-switch">{this.renderButton()}</div>;
     }
 }

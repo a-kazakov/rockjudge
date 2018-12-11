@@ -19,10 +19,12 @@ export default class Row extends React.Component {
     }
 
     get has_override() {
-        return Math.abs(this.props.element.score - this.props.element.initial_score) > 1e-3;
+        return (
+            Math.abs(this.props.element.score - this.props.element.initial_score) > 1e-3
+        );
     }
 
-    makeInputRef = (ref) => {
+    makeInputRef = ref => {
         if (ref && !this._input) {
             ref.select();
         }
@@ -33,20 +35,21 @@ export default class Row extends React.Component {
         Api("model/update", {
             model_name: "RunAcrobatic",
             model_id: this.props.element.id,
-            data: {score: this.props.element.initial_score},
-        })
-            .send();
+            data: { score: this.props.element.initial_score },
+        }).send();
     };
     handleStartEditing = () => {
         this.setState({
             editing: true,
-        })
+        });
     };
-    handleInputKeyUp = (event) => {
+    handleInputKeyUp = event => {
         const code = event.keyCode || event.which;
-        if (code === 13) { // Enter
+        if (code === 13) {
+            // Enter
             this.submit();
-        } else if (code === 27) { // Esc
+        } else if (code === 27) {
+            // Esc
             this.stopEditing();
         }
     };
@@ -60,7 +63,7 @@ export default class Row extends React.Component {
         Api("model/update", {
             model_name: "RunAcrobatic",
             model_id: this.props.element.id,
-            data: {score: value},
+            data: { score: value },
         })
             .onSuccess(this.stopEditing)
             .send();
@@ -80,29 +83,23 @@ export default class Row extends React.Component {
                 <td className="controls">
                     <input
                         className="edit-field"
-                        defaultValue={ this.props.element.score.toFixed(1) }
-                        ref={ this.makeInputRef }
+                        defaultValue={this.props.element.score.toFixed(1)}
+                        ref={this.makeInputRef}
                         type="text"
-                        onKeyUp={ this.handleInputKeyUp }
+                        onKeyUp={this.handleInputKeyUp}
                     />
                 </td>
             );
         }
         return (
             <td className="controls">
-                { this.has_override ? (
-                    <button
-                        className="reset-button"
-                        onClick={ this.handleReset }
-                    >
-                        { _("judging.buttons.reset_acrobatic_override") }
+                {this.has_override ? (
+                    <button className="reset-button" onClick={this.handleReset}>
+                        {_("judging.buttons.reset_acrobatic_override")}
                     </button>
-                ) : null }
-                <button
-                    className="edit-button"
-                    onClick={ this.handleStartEditing }
-                >
-                    { _("judging.buttons.edit_acrobatic_override") }
+                ) : null}
+                <button className="edit-button" onClick={this.handleStartEditing}>
+                    {_("judging.buttons.edit_acrobatic_override")}
                 </button>
             </td>
         );
@@ -110,21 +107,15 @@ export default class Row extends React.Component {
     render() {
         return (
             <tr>
-                <td className="description">
-                    { this.props.element.description }
-                </td>
+                <td className="description">{this.props.element.description}</td>
                 <td className="old-score">
-                    { this.props.element.initial_score.toFixed(1) }
+                    {this.props.element.initial_score.toFixed(1)}
                 </td>
                 <td className="new-score">
-                    { this.has_override
-                        ? this.props.element.score.toFixed(1)
-                        : null }
+                    {this.has_override ? this.props.element.score.toFixed(1) : null}
                 </td>
-                { this.renderControls() }
+                {this.renderControls()}
             </tr>
         );
     }
 }
-
-

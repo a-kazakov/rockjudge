@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -12,31 +12,39 @@ export default class ScoringLayout extends React.Component {
         onScoreUpdate: PT.func.isRequired,
     };
 
-    renderPart(code, scale, additional_props={}) {
+    renderPart(code, scale, additional_props = {}) {
         return (
             <GeneralScale
-                code={ code }
-                header={ _(`tablet.dance_judge.${code}`) }
-                readOnly={ this.props.score.confirmed }
-                scale={ scale }
-                value={ this.props.score.data[code] }
-                onChange={ this.props.onScoreUpdate }
-                { ...additional_props }
+                code={code}
+                header={_(`tablet.dance_judge.${code}`)}
+                readOnly={this.props.score.confirmed}
+                scale={scale}
+                value={this.props.score.data[code]}
+                onChange={this.props.onScoreUpdate}
+                {...additional_props}
             />
         );
     }
     render() {
         return (
             <div>
-                { this.renderPart("fw", "reduction") }
-                { this.renderPart("dance_figs", "number", { min: 0, max: 10, step: 0.5 }) }
-                { this.renderPart("composition", "number", { min: 0, max: 10, step: 0.5 }) }
-                { this.renderPart("figures", "number", { min: 0, max: 10, step: 0.5 }) }
+                {this.renderPart("fw", "reduction")}
+                {this.renderPart("dance_figs", "number", {
+                    min: 0,
+                    max: 10,
+                    step: 0.5,
+                })}
+                {this.renderPart("composition", "number", {
+                    min: 0,
+                    max: 10,
+                    step: 0.5,
+                })}
+                {this.renderPart("figures", "number", { min: 0, max: 10, step: 0.5 })}
                 <Mistakes
                     formation
-                    readOnly={ this.props.score.confirmed }
-                    scoreData={ this.props.score.data }
-                    onScoreUpdate={ this.props.onScoreUpdate }
+                    readOnly={this.props.score.confirmed}
+                    scoreData={this.props.score.data}
+                    onScoreUpdate={this.props.onScoreUpdate}
                 />
             </div>
         );

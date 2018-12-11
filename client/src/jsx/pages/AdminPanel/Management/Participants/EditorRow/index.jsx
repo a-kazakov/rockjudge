@@ -29,53 +29,53 @@ export default class EditorRow extends React.Component {
         onSubmit: PT.func.isRequired,
     };
 
-    handleSportsmenChange = (value) => this.props.onFieldChange("sportsmen", value);
-    handleSubmission = (event) => {
+    handleSportsmenChange = value => this.props.onFieldChange("sportsmen", value);
+    handleSubmission = event => {
         event.preventDefault();
         this.props.onSubmit();
     };
 
     getClassName() {
         return makeClassName({
-            "editor": true,
-            "create": this.props.creating,
+            editor: true,
+            create: this.props.creating,
         });
     }
     render() {
         return (
-            <tr className={ this.getClassName() }>
+            <tr className={this.getClassName()}>
                 <td colSpan="6">
                     <div className="col-15 wrapper">
-                        <form onSubmit={ this.handleSubmission }>
+                        <form onSubmit={this.handleSubmission}>
                             <div className="col-10">
                                 <GeneralInfo
-                                    competition={ this.props.context.competition }
-                                    formData={ this.props.formData }
-                                    loading={ this.props.loading }
-                                    onFieldChange={ this.props.onFieldChange }
+                                    competition={this.props.context.competition}
+                                    formData={this.props.formData}
+                                    loading={this.props.loading}
+                                    onFieldChange={this.props.onFieldChange}
                                 />
                                 <div className="buttons horizontal">
                                     <button type="submit">
-                                        { _("global.buttons.submit") }
+                                        {_("global.buttons.submit")}
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={ this.props.onDiscard }
+                                        onClick={this.props.onDiscard}
                                     >
-                                        { _("global.buttons.discard") }
+                                        {_("global.buttons.discard")}
                                     </button>
                                 </div>
                             </div>
                             <div className="col-14">
                                 <SportsmenList
-                                    sportsmen={ this.props.formData.sportsmen }
-                                    onChange={ this.handleSportsmenChange }
+                                    sportsmen={this.props.formData.sportsmen}
+                                    onChange={this.handleSportsmenChange}
                                 />
                             </div>
                         </form>
                     </div>
                     <div className="col-9">
-                        <Programs participant={ this.props.entry } />
+                        <Programs participant={this.props.entry} />
                     </div>
                 </td>
             </tr>

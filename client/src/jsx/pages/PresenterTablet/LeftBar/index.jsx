@@ -14,20 +14,20 @@ export default class LeftBar extends React.Component {
     renderItem(page) {
         return (
             <Item
-                active={ this.props.page === page }
-                page={ page }
-                title={ _(`presenter.headers.${page}`) }
-                onPageChange={ this.props.onPageChange }
+                active={this.props.page === page}
+                page={page}
+                title={_(`presenter.headers.${page}`)}
+                onPageChange={this.props.onPageChange}
             />
         );
     }
     render() {
         return (
             <div className="left-bar">
-                { this.renderItem("info") }
-                { this.renderItem("plan") }
-                { this.renderItem("heats") }
-                { this.renderItem("results") }
+                {this.renderItem("info")}
+                {this.renderItem("plan")}
+                {this.renderItem("heats")}
+                {this.renderItem("results")}
             </div>
         );
     }

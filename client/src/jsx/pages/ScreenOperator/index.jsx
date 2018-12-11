@@ -1,6 +1,6 @@
 import React from "react";
 
-import FullscreenButton from "common/components/FullscreenButton"
+import FullscreenButton from "common/components/FullscreenButton";
 import Loader from "common/components/Loader";
 import ScreenManifest from "common/ScreenManifest";
 import Api from "common/server/Api";
@@ -14,7 +14,6 @@ import DisciplinePlaceControls from "./DisciplinePlaceControls";
 import LeftCol from "./LeftCol";
 import TourControls from "./TourControls";
 import TourHeatControls from "./TourHeatControls";
-
 
 export default class ScreenOperator extends React.Component {
     static propTypes = {
@@ -34,23 +33,32 @@ export default class ScreenOperator extends React.Component {
 
     componentDidMount() {
         this._storage = new Storage();
-        this._storage.init(this.reload).then(this.subscribe).catch(console.error.bind(console));
+        this._storage
+            .init(this.reload)
+            .then(this.subscribe)
+            .catch(console.error.bind(console));
     }
 
     subscribe = () => {
-        this._competition_subscription = new CompetitionSubscription(this.props.competitionId);
-        this._storage.subscribe(this._competition_subscription)
+        this._competition_subscription = new CompetitionSubscription(
+            this.props.competitionId,
+        );
+        this._storage
+            .subscribe(this._competition_subscription)
             .then(this.updateCompetitionStorage)
             .catch(console.error.bind(console));
     };
 
-    updateCompetitionStorage = (competitionStorage) => {
-        this.setState({competitionStorage});
+    updateCompetitionStorage = competitionStorage => {
+        this.setState({ competitionStorage });
     };
     reload = () => this.forceUpdate();
 
     get competition() {
-        return this.state.competitionStorage?.get("Competition", this.props.competitionId);
+        return this.state.competitionStorage?.get(
+            "Competition",
+            this.props.competitionId,
+        );
     }
     get data() {
         return this.state.pendingData || this.competition.screen_data;
@@ -105,7 +113,7 @@ export default class ScreenOperator extends React.Component {
         });
     }
 
-    handleScreenChange = (new_id) => {
+    handleScreenChange = new_id => {
         this.updateData(data => {
             if (data.screen_id !== new_id) {
                 const screen_data = this.manifest.getScreenDataById(new_id);
@@ -118,7 +126,7 @@ export default class ScreenOperator extends React.Component {
             return data;
         });
     };
-    handleControlsStateChange = (new_value) => {
+    handleControlsStateChange = new_value => {
         this.updateData(data => {
             data.controls_state = new_value;
             return data;
@@ -129,15 +137,17 @@ export default class ScreenOperator extends React.Component {
         if (!this.state.pendingData) {
             return false;
         }
-        const controls_type = this.manifest.getScreenDataById(this.state.pendingData.screen_id).controls;
+        const controls_type = this.manifest.getScreenDataById(
+            this.state.pendingData.screen_id,
+        ).controls;
         switch (controls_type) {
-        case "none":
-            return true;
-        case "tour":
-        case "tour-heat":
-            return this.state.pendingData.controls_state.tour_id != null;
-        case "discipline-place":
-            return this.state.pendingData.controls_state.discipline_id != null;
+            case "none":
+                return true;
+            case "tour":
+            case "tour-heat":
+                return this.state.pendingData.controls_state.tour_id != null;
+            case "discipline-place":
+                return this.state.pendingData.controls_state.discipline_id != null;
         }
     }
 
@@ -145,32 +155,32 @@ export default class ScreenOperator extends React.Component {
         const controls_type = this.manifest.getScreenDataById(data.screen_id).controls;
         switch (controls_type) {
             case "none":
-                return null
+                return null;
             case "tour-heat":
                 return (
                     <TourHeatControls
-                        competition={ this.competition }
-                        controlsState={ data.controls_state }
-                        key={ data.screen_id }
-                        onChange={ this.handleControlsStateChange }
+                        competition={this.competition}
+                        controlsState={data.controls_state}
+                        key={data.screen_id}
+                        onChange={this.handleControlsStateChange}
                     />
                 );
             case "tour":
                 return (
                     <TourControls
-                        competition={ this.competition }
-                        controlsState={ data.controls_state }
-                        key={ data.screen_id }
-                        onChange={ this.handleControlsStateChange }
+                        competition={this.competition}
+                        controlsState={data.controls_state}
+                        key={data.screen_id}
+                        onChange={this.handleControlsStateChange}
                     />
                 );
             case "discipline-place":
                 return (
                     <DisciplinePlaceControls
-                        competition={ this.competition }
-                        controlsState={ data.controls_state }
-                        key={ data.screen_id }
-                        onChange={ this.handleControlsStateChange }
+                        competition={this.competition}
+                        controlsState={data.controls_state}
+                        key={data.screen_id}
+                        onChange={this.handleControlsStateChange}
                     />
                 );
         }
@@ -184,17 +194,17 @@ export default class ScreenOperator extends React.Component {
                 <button
                     className="discard-button"
                     type="button"
-                    { ...onTouchEndOrClick(this.handleDataReset) }
+                    {...onTouchEndOrClick(this.handleDataReset)}
                 >
-                    { _("global.buttons.discard") }
+                    {_("global.buttons.discard")}
                 </button>
                 <button
                     className="submit-button"
-                    disabled={ !this.validatePendingData() }
+                    disabled={!this.validatePendingData()}
                     type="button"
-                    { ...onTouchEndOrClick(this.handleDataSubmission) }
+                    {...onTouchEndOrClick(this.handleDataSubmission)}
                 >
-                    { _("global.buttons.submit") }
+                    {_("global.buttons.submit")}
                 </button>
             </div>
         );
@@ -202,23 +212,19 @@ export default class ScreenOperator extends React.Component {
 
     render() {
         if (!this.competition) {
-            return (
-                <Loader />
-            );
+            return <Loader />;
         }
         const data = this.data;
         return (
             <div className="ScreenOperator">
                 <LeftCol
-                    activeScreenId={ data.screen_id }
-                    manifest={ this.manifest }
-                    onScreenChange={ this.handleScreenChange }
+                    activeScreenId={data.screen_id}
+                    manifest={this.manifest}
+                    onScreenChange={this.handleScreenChange}
                 />
                 <div className="body">
-                    <div className="controls">
-                        { this.renderContols(data) }
-                    </div>
-                    { this.renderButtons() }
+                    <div className="controls">{this.renderContols(data)}</div>
+                    {this.renderButtons()}
                 </div>
                 <FullscreenButton />
             </div>

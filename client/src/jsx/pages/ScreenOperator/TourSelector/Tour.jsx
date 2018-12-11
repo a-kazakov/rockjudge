@@ -14,23 +14,23 @@ export default class Tour extends React.Component {
 
     handleClick = () => {
         this.props.onTourSelect(this.props.tour.id);
-    }
+    };
 
     getClassName() {
         return makeClassName({
-            "tour": true,
-            "selected": this.props.selected,
-            "active": this.props.tour.active,
-            "finalized": this.props.tour.finalized,
+            tour: true,
+            selected: this.props.selected,
+            active: this.props.tour.active,
+            finalized: this.props.tour.finalized,
         });
     }
     render() {
         return (
             <div
-                className={ this.getClassName() }
-                { ...onTouchEndOrClick(this.handleClick) }
+                className={this.getClassName()}
+                {...onTouchEndOrClick(this.handleClick)}
             >
-                { this.props.tour.name }
+                {this.props.tour.name}
             </div>
         );
     }

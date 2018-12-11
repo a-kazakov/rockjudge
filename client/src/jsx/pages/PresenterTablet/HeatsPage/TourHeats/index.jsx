@@ -23,7 +23,7 @@ export default class TourHeats extends React.Component {
         let total_counts = new DefaultMap(() => 0);
         let conf_counts = new DefaultMap(() => 0);
         for (const score of run.scores) {
-            const {role} = score.discipline_judge;
+            const { role } = score.discipline_judge;
             total_counts.set(role, total_counts.get(role) + 1);
             if (score.confirmed) {
                 conf_counts.set(role, conf_counts.get(role) + 1);
@@ -53,20 +53,22 @@ export default class TourHeats extends React.Component {
     }
     UNSAFE_componentWIllReceiveProps(nextProps) {
         if (!nextProps.autoHeat && this.props.autoHeat) {
-            this.setState({heat: this.auto_heat_value});
+            this.setState({ heat: this.auto_heat_value });
         }
     }
 
     subscribe = () => {
         this._subscription = new TourSubscription(this.props.tour.id);
-        this.props.tour.global_storage.subscribe(this._subscription).then(this.updateTourStorage);
+        this.props.tour.global_storage
+            .subscribe(this._subscription)
+            .then(this.updateTourStorage);
     };
     unsubscribe() {
         this.props.tour.global_storage.unsubscribe(this._subscription);
     }
 
-    updateTourStorage = (tourStorage) => {
-        this.setState({tourStorage});
+    updateTourStorage = tourStorage => {
+        this.setState({ tourStorage });
     };
 
     get auto_heat_value() {
@@ -83,23 +85,17 @@ export default class TourHeats extends React.Component {
 
     getClassName() {
         return makeClassName({
-            "heats": true,
+            heats: true,
             [this.props.layout]: true,
         });
     }
     renderRun(run, layout) {
-        return (
-            <RunInfo
-                key={ run.id }
-                layout={ layout }
-                run={ run }
-            />
-        );
+        return <RunInfo key={run.id} layout={layout} run={run} />;
     }
     render() {
         if (this.state.tourStorage == null) {
             return (
-                <div className={ this.getClassName() }>
+                <div className={this.getClassName()}>
                     <Loader />
                 </div>
             );
@@ -109,17 +105,17 @@ export default class TourHeats extends React.Component {
         const run_layout = runs.length > 3 ? "small" : this.props.layout;
         const max_heat = lastOf(this.props.tour.runs)?.heat || 1;
         return (
-            <div className={ this.getClassName() }>
+            <div className={this.getClassName()}>
                 <Header
-                    heat={ heat }
-                    maxHeat={ max_heat }
-                    showButtons={ !this.props.autoHeat }
-                    tour={ this.props.tour }
-                    onNextHeatClick={ this.handleNextHeatClick }
-                    onPrevHeatClick={ this.handlePrevHeatClick }
+                    heat={heat}
+                    maxHeat={max_heat}
+                    showButtons={!this.props.autoHeat}
+                    tour={this.props.tour}
+                    onNextHeatClick={this.handleNextHeatClick}
+                    onPrevHeatClick={this.handlePrevHeatClick}
                 />
                 <div className="content">
-                    { runs.map(r => this.renderRun(r, run_layout)) }
+                    {runs.map(r => this.renderRun(r, run_layout))}
                 </div>
             </div>
         );

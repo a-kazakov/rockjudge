@@ -42,40 +42,36 @@ class WebSocketHandler {
         };
         this.ws.onmessage = this.handleMessage;
     };
-    send = (message) => {
+    send = message => {
         if (!this.opened) {
             this.send_queue.push(message);
             return;
         }
         this.ws.send(message);
     };
-    handleMessage = (message) => {
+    handleMessage = message => {
         let data = message.raw_data;
         if (!data) {
             data = JSON.parse(message.data);
         }
-        const {message_type, body, ...extra} = data;
+        const { message_type, body, ...extra } = data;
         switch (message_type) {
             case "api_response": {
-                const {response_key} = extra;
+                const { response_key } = extra;
                 waiting_api_requests.pushResponse(response_key, body);
                 break;
             }
             case "mutations_push": {
-                const {is_initial, subscription_id} = extra;
+                const { is_initial, subscription_id } = extra;
                 // eslint-disable-next-line no-unused-expressions
-                this.storage?.handleMutations(
-                    body,
-                    is_initial,
-                    subscription_id,
-                );
+                this.storage?.handleMutations(body, is_initial, subscription_id);
                 break;
             }
             case "broadcast": {
                 switch (body) {
                     case "refresh": {
-                       window.location.reload(true);
-                       break;
+                        window.location.reload(true);
+                        break;
                     }
                 }
             }
@@ -88,7 +84,6 @@ class WebSocketHandler {
         this.storage = storage;
     }
 }
-
 
 const websocket = new WebSocketHandler();
 export default websocket;

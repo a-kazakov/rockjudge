@@ -22,69 +22,58 @@ export default class Row extends React.Component {
         this.props.onChange(this.props.idx, new_sportsman);
     }
 
-    handleLastNameChange    = (e) => this.handleChange("last_name",     e.target.value);
-    handleFirstNameChange   = (e) => this.handleChange("first_name",    e.target.value);
-    handleYobChange         = (e) => this.handleChange("year_of_birth", e.target.value);
-    handleGenderChange      = (e) => this.handleChange("gender",        e.target.value);
-    handleSubstitudeChange  = (e) => this.handleChange("substitute",    e.target.value === "Y");
+    handleLastNameChange = e => this.handleChange("last_name", e.target.value);
+    handleFirstNameChange = e => this.handleChange("first_name", e.target.value);
+    handleYobChange = e => this.handleChange("year_of_birth", e.target.value);
+    handleGenderChange = e => this.handleChange("gender", e.target.value);
+    handleSubstitudeChange = e =>
+        this.handleChange("substitute", e.target.value === "Y");
 
     handleDeletion = () => {
-        this.props.onDelete(this.props.idx)
-    }
+        this.props.onDelete(this.props.idx);
+    };
 
     render() {
         return (
             <div className="sportsman">
                 <input
                     className="last-name"
-                    placeholder={ _("models.participant.last_name") }
+                    placeholder={_("models.participant.last_name")}
                     type="text"
-                    value={ this.props.sportsman.last_name }
-                    onChange={ this.handleLastNameChange }
+                    value={this.props.sportsman.last_name}
+                    onChange={this.handleLastNameChange}
                 />
                 <input
                     className="first-name"
-                    placeholder={ _("models.participant.first_name") }
+                    placeholder={_("models.participant.first_name")}
                     type="text"
-                    value={ this.props.sportsman.first_name }
-                    onChange={ this.handleFirstNameChange }
+                    value={this.props.sportsman.first_name}
+                    onChange={this.handleFirstNameChange}
                 />
                 <input
                     className="yob"
-                    placeholder={ _("models.participant.yob") }
+                    placeholder={_("models.participant.yob")}
                     type="text"
-                    value={ this.props.sportsman.year_of_birth }
-                    onChange={ this.handleYobChange }
+                    value={this.props.sportsman.year_of_birth}
+                    onChange={this.handleYobChange}
                 />
                 <select
                     className="gender"
-                    value={ this.props.sportsman.gender }
-                    onChange={ this.handleGenderChange }
+                    value={this.props.sportsman.gender}
+                    onChange={this.handleGenderChange}
                 >
-                    <option value="F">
-                        { _("models.participant.gender_f") }
-                    </option>
-                    <option value="M">
-                        { _("models.participant.gender_m") }
-                    </option>
+                    <option value="F">{_("models.participant.gender_f")}</option>
+                    <option value="M">{_("models.participant.gender_m")}</option>
                 </select>
                 <select
                     className="substitute"
-                    value={ this.props.sportsman.substitute ? "Y" : "N" }
-                    onChange={ this.handleSubstitudeChange }
+                    value={this.props.sportsman.substitute ? "Y" : "N"}
+                    onChange={this.handleSubstitudeChange}
                 >
-                    <option value="N">
-                        { _("models.participant.substitute_n") }
-                    </option>
-                    <option value="Y">
-                        { _("models.participant.substitute_y") }
-                    </option>
+                    <option value="N">{_("models.participant.substitute_n")}</option>
+                    <option value="Y">{_("models.participant.substitute_y")}</option>
                 </select>
-                <button
-                    className="delete"
-                    type="button"
-                    onClick={ this.handleDeletion }
-                >
+                <button className="delete" type="button" onClick={this.handleDeletion}>
                     X
                 </button>
             </div>

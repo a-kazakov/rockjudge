@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import makeClassName from "common/makeClassName";
 import CardInput from "JudgeTablet/components/CardInput";
@@ -21,88 +21,86 @@ export default class ScoringLayout extends React.Component {
     };
 
     getScore() {
-        return this.props.run.scores.find(score => score.discipline_judge_id === this.props.disciplineJudge.id) || null;
+        return (
+            this.props.run.scores.find(
+                score => score.discipline_judge_id === this.props.disciplineJudge.id,
+            ) || null
+        );
     }
     setupCache() {
         this.score = this.getScore();
     }
 
-    handleCardChange = (value) => {
+    handleCardChange = value => {
         this.props.onScoreUpdate(this.score.id, value);
     };
 
     render() {
         this.setupCache();
-        const header = _("global.phrases.participant_n",
+        const header = _(
+            "global.phrases.participant_n",
             this.props.run.participant.number,
             this.props.run.participant.name,
-            this.props.run.participant.sportsmen.length);
+            this.props.run.participant.sportsmen.length,
+        );
         if (this.props.run.status !== "OK") {
             return (
                 <div className="layout-participant">
-                    <h2>
-                        { header }
-                    </h2>
-                    <StatusSwitch run={ this.props.run } />
+                    <h2>{header}</h2>
+                    <StatusSwitch run={this.props.run} />
                 </div>
-            )
+            );
         }
         if (this.score == null) {
             return (
                 <div className="layout-participant">
-                    <h2>
-                        { header }
-                    </h2>
-                    <div className="not-performing">
-                        { _("tablet.global.no_score") }
-                    </div>
+                    <h2>{header}</h2>
+                    <div className="not-performing">{_("tablet.global.no_score")}</div>
                 </div>
             );
         }
         const class_name = makeClassName({
             "layout-participant": true,
-            "single": this.props.isSingle,
+            single: this.props.isSingle,
         });
         const discipline_judges = this.props.run.tour.discipline.discipline_judges;
         return (
-            <div className={ class_name }>
-                <h2>
-                    { header }
-                </h2>
+            <div className={class_name}>
+                <h2>{header}</h2>
                 <div className="panes">
                     <div className="left-pane">
-                        <StatusSwitch run={ this.props.run } />
+                        <StatusSwitch run={this.props.run} />
                         <div className="spacer" />
                         <LineJudgesScores
-                            disciplineJudges={ discipline_judges }
-                            run={ this.props.run }
-                            tourResults={ this.props.tourResults }
+                            disciplineJudges={discipline_judges}
+                            run={this.props.run}
+                            tourResults={this.props.tourResults}
                         />
                         <TechJudgesScores
-                            disciplineJudges={ discipline_judges }
-                            run={ this.props.run }
-                            tourResults={ this.props.tourResults }
+                            disciplineJudges={discipline_judges}
+                            run={this.props.run}
+                            tourResults={this.props.tourResults}
                         />
                         <div className="spacer" />
                     </div>
                     <div className="right-pane">
                         <RunMetrics
-                            run={ this.props.run }
-                            tourResults={ this.props.tourResults }
+                            run={this.props.run}
+                            tourResults={this.props.tourResults}
                         />
                         <div className="spacer" />
                         <CardInput
-                            readOnly={ false }
-                            score={ this.score }
-                            onChange={ this.handleCardChange }
+                            readOnly={false}
+                            score={this.score}
+                            onChange={this.handleCardChange}
                         />
                         <PreviousCards
-                            run={ this.props.run }
-                            tourResults={ this.props.tourResults }
+                            run={this.props.run}
+                            tourResults={this.props.tourResults}
                         />
                         <AcrobaticOverrides
-                            run={ this.props.run }
-                            tourResults={ this.props.tourResults }
+                            run={this.props.run}
+                            tourResults={this.props.tourResults}
                         />
                     </div>
                 </div>

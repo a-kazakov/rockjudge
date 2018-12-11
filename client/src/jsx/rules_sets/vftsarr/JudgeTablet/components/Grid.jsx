@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import makeClassName from "../../../../lib/common/makeClassName";
@@ -13,7 +13,7 @@ export default class Grid extends React.Component {
         return {
             noMaxWidth: false,
             smallBlocks: false,
-        }
+        };
     }
 
     getMaxWidth() {
@@ -32,9 +32,9 @@ export default class Grid extends React.Component {
             : [this.props.children];
         this.two_rows = this.children.length >= 4;
         this.width_value = this.two_rows
-            ? 99.9 / (this.children.length + 1) * 2
+            ? (99.9 / (this.children.length + 1)) * 2
             : 99.9 / this.children.length;
-        this.width = `${ this.width_value.toFixed(5) }%`;
+        this.width = `${this.width_value.toFixed(5)}%`;
         this.max_width = this.getMaxWidth();
         this.asym_layout = this.two_rows && this.children.length % 2 === 0;
     }
@@ -53,20 +53,22 @@ export default class Grid extends React.Component {
             class_name += " align-left";
         }
         return (
-            <table className={ class_name } style={ { width: row_width } }><tbody>
-                <tr className={ makeClassName({"compact-row": is_compact}) }>
-                    { elements.map((e, idx) =>
-                        <td
-                            className="item"
-                            key={ idx }
-                            style={ { width: this.width } }
-                        >
-                            { e }
-                        </td>
-                    ) }
-                </tr>
-            </tbody></table>
-        )
+            <table className={class_name} style={{ width: row_width }}>
+                <tbody>
+                    <tr className={makeClassName({ "compact-row": is_compact })}>
+                        {elements.map((e, idx) => (
+                            <td
+                                className="item"
+                                key={idx}
+                                style={{ width: this.width }}
+                            >
+                                {e}
+                            </td>
+                        ))}
+                    </tr>
+                </tbody>
+            </table>
+        );
     }
     render() {
         this.setupCache();
@@ -80,10 +82,10 @@ export default class Grid extends React.Component {
         const max_row_size = Math.max(first_row.length, second_row?.length || 0);
         const is_compact = max_row_size >= 3;
         return (
-            <div className={ class_name } style={ { maxWidth: this.max_width } }>
-                { this.renderRow(first_row, false, is_compact) }
-                { this.renderRow(second_row, true, is_compact) }
+            <div className={class_name} style={{ maxWidth: this.max_width }}>
+                {this.renderRow(first_row, false, is_compact)}
+                {this.renderRow(second_row, true, is_compact)}
             </div>
-        )
+        );
     }
 }

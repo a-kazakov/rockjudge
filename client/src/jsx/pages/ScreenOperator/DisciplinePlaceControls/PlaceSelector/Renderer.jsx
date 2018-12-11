@@ -21,20 +21,20 @@ export default class Renderer extends React.Component {
             return null;
         }
         return (
-            <div className="tour-name" key={ `H${next_row.run.id}` }>
-                { next_row.run.tour.name }
+            <div className="tour-name" key={`H${next_row.run.id}`}>
+                {next_row.run.tour.name}
             </div>
         );
     }
     renderRow(row, position) {
         return (
             <RendererRow
-                key={ `R${row.run.id}` }
-                participant={ row.run.participant }
-                place={ row.place }
-                position={ position }
-                selected={ this.props.value != null && position >= this.props.value }
-                onPositionSelect={ this.props.onPositionSelect }
+                key={`R${row.run.id}`}
+                participant={row.run.participant}
+                place={row.place}
+                position={position}
+                selected={this.props.value != null && position >= this.props.value}
+                onPositionSelect={this.props.onPositionSelect}
             />
         );
     }
@@ -52,14 +52,8 @@ export default class Renderer extends React.Component {
     }
     render() {
         if (this.props.discipline == null) {
-            return (
-                <Loader />
-            );
+            return <Loader />;
         }
-        return (
-            <div className="discipline-results">
-                { this.renderRows() }
-            </div>
-        );
+        return <div className="discipline-results">{this.renderRows()}</div>;
     }
 }

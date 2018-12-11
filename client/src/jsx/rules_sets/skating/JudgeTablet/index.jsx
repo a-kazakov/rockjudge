@@ -1,4 +1,4 @@
-import {Api, React} from "HostModules";
+import { Api, React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -17,10 +17,10 @@ export default class JudgeTablet extends React.Component {
     };
 
     static LAYOUTS = {
-        "qualification_simple": QualificationSimpleLayout,
-        "final_simple": FinalSimpleLayout,
-        "final_3d": Final3dLayout,
-        "head": HeadJudgeLayout,
+        qualification_simple: QualificationSimpleLayout,
+        final_simple: FinalSimpleLayout,
+        final_3d: Final3dLayout,
+        head: HeadJudgeLayout,
     };
 
     handleScoreUpdate = (score_id, score_data) => {
@@ -32,15 +32,10 @@ export default class JudgeTablet extends React.Component {
             model_id: score_id,
             data: data,
         })
-            .setPendingMutation(
-                this.props.tour.global_storage,
-                "Score",
-                score_id,
-                data,
-            )
+            .setPendingMutation(this.props.tour.global_storage, "Score", score_id, data)
             .send();
     };
-    handleHeatConfirm = (heat) => {
+    handleHeatConfirm = heat => {
         Api("tour/confirm_heat", {
             tour_id: this.props.tour.id,
             discipline_judge_id: this.props.disciplineJudge.id,
@@ -57,24 +52,22 @@ export default class JudgeTablet extends React.Component {
             return (
                 <div className="skating-JudgeTablet">
                     <div className="error-message">
-                        { _("tablet.global.wrong_judge_role") }
+                        {_("tablet.global.wrong_judge_role")}
                     </div>
                 </div>
             );
         }
         let LayoutClass = JudgeTablet.LAYOUTS[scoring_type];
         if (!LayoutClass) {
-            return (
-                <div>Not implemented!</div>
-            );
+            return <div>Not implemented!</div>;
         }
         return (
             <div className="skating-JudgeTablet">
                 <LayoutClass
-                    disciplineJudge={ this.props.disciplineJudge }
-                    tour={ this.props.tour }
-                    onHeatConfirm={ this.handleHeatConfirm }
-                    onScoreUpdate={ this.handleScoreUpdate }
+                    disciplineJudge={this.props.disciplineJudge}
+                    tour={this.props.tour}
+                    onHeatConfirm={this.handleHeatConfirm}
+                    onScoreUpdate={this.handleScoreUpdate}
                 />
             </div>
         );

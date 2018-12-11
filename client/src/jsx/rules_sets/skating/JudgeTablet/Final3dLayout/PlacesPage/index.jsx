@@ -1,4 +1,4 @@
-import {Api, React} from "HostModules";
+import { Api, React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -7,7 +7,6 @@ import PlaceButton from "./PlaceButton";
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 import showConfirm from "common/dialogs/showConfirm";
 import ConfirmationButton from "../../ConfirmationButton";
-
 
 export default class PlacesPage extends React.Component {
     static propTypes = {
@@ -20,23 +19,19 @@ export default class PlacesPage extends React.Component {
         Api("tour/confirm_judge", {
             discipline_judge_id: this.props.disciplineJudge.id,
             tour_id: this.props.tour.id,
-        })
-            .send();
+        }).send();
     };
     handlePlaceSelect = (run_id, place) => {
-        this.props.onScoreUpdate(this.score_ids.get(run_id), {place});
+        this.props.onScoreUpdate(this.score_ids.get(run_id), { place });
     };
     handleAutoAssignClick = () => {
-        showConfirm(
-            _("tablet.messages.confirm_auto_assign"),
-            this.autoAssignPlaces,
-        );
+        showConfirm(_("tablet.messages.confirm_auto_assign"), this.autoAssignPlaces);
     };
 
     getRunScoresSum(run) {
         const score = this.scores.get(run.id);
         const score_data = this.props.tour.results.scores_results[score.id];
-        return score_data?.extra_data?.scores_sum ?? '-';
+        return score_data?.extra_data?.scores_sum ?? "-";
     }
 
     autoAssignPlaces = () => {
@@ -46,7 +41,7 @@ export default class PlacesPage extends React.Component {
             if (score_id == null) {
                 continue;
             }
-            scores[score_id] = {data: {place}};
+            scores[score_id] = { data: { place } };
         }
         if (Object.keys(scores).length > 0) {
             Api("model/batch_update", {
@@ -59,9 +54,12 @@ export default class PlacesPage extends React.Component {
     setupExpectedPlaces() {
         this.expected_places = new Map();
         this.auto_places = new Map();
-        const sorted_runs = this.props.tour.runs.slice().sort(
-            (a, b) => (this.getRunScoresSum(b) ?? 0) - (this.getRunScoresSum(a) ?? 0)
-        );
+        const sorted_runs = this.props.tour.runs
+            .slice()
+            .sort(
+                (a, b) =>
+                    (this.getRunScoresSum(b) ?? 0) - (this.getRunScoresSum(a) ?? 0),
+            );
         let latest_sum = null;
         let current_place = 1;
         let places_buf = [];
@@ -125,75 +123,51 @@ export default class PlacesPage extends React.Component {
         for (const run of this.props.tour.runs) {
             const scores_sum = this.getRunScoresSum(run);
             cells.push(
-                <th key={ run.id }>
-                    <div className="number">
-                        { run.participant.number }
-                    </div>
+                <th key={run.id}>
+                    <div className="number">{run.participant.number}</div>
                     <div className="score">
-                        { run.status === "OK"
-                            ? `(${scores_sum})`
-                            : <span>&nbsp;</span>
-                        }
+                        {run.status === "OK" ? `(${scores_sum})` : <span>&nbsp;</span>}
                     </div>
-                </th>
+                </th>,
             );
         }
         return (
             <tr>
-                { cells }
+                {cells}
                 <th className="number-right">
-                    { _("tablet.dance_judge.participant_number") }
+                    {_("tablet.dance_judge.participant_number")}
                 </th>
-                <th className="participant">
-                    { _("tablet.dance_judge.participant") }
-                </th>
-                <th className="score-right">
-                    { _("tablet.dance_judge.score") }
-                </th>
+                <th className="participant">{_("tablet.dance_judge.participant")}</th>
+                <th className="score-right">{_("tablet.dance_judge.score")}</th>
             </tr>
         );
     }
 
     renderParticipant(place) {
         if (!this.place_to_runs.has(place)) {
-            return (
-                <td className="participant" colSpan={ 3 } />
-            );
+            return <td className="participant" colSpan={3} />;
         }
         const runs = this.place_to_runs.get(place);
         if (runs.length > 1) {
             const numbers = runs.map(r => `№${r.participant.number}`).join(", ");
             return (
-                <td className="multiple participant" colSpan={ 3 }>
-                    { `${_("tablet.dance_judge.multiple_participants")} (${numbers})` }
+                <td className="multiple participant" colSpan={3}>
+                    {`${_("tablet.dance_judge.multiple_participants")} (${numbers})`}
                 </td>
-            )
+            );
         }
         const run = runs[0];
         const scores_sum = this.getRunScoresSum(run) ?? 0;
         return [
-            (
-                <td
-                    className="number-right"
-                    key="number"
-                >
-                    { run.participant.number }
-                </td>
-            ), (
-                <td
-                    className="participant"
-                    key="participant"
-                >
-                    { run.participant.name }
-                </td>
-            ), (
-                <td
-                    className="score-right"
-                    key="score"
-                >
-                    { scores_sum }
-                </td>
-            ),
+            <td className="number-right" key="number">
+                {run.participant.number}
+            </td>,
+            <td className="participant" key="participant">
+                {run.participant.name}
+            </td>,
+            <td className="score-right" key="score">
+                {scores_sum}
+            </td>,
         ];
     }
 
@@ -204,22 +178,22 @@ export default class PlacesPage extends React.Component {
             for (const run of this.props.tour.runs) {
                 cells.push(
                     <PlaceButton
-                        disabled={ run.status !== "OK" }
-                        key={ run.id }
-                        place={ place }
-                        readOnly={ this.scores.get(run.id)?.confirmed }
-                        run={ run }
-                        runHasSelected={ !this.expected_places.get(run.id)?.has(place) }
-                        selected={ this.places.get(run.id) === place }
-                        onSelect={ this.handlePlaceSelect }
-                    />
-                )
+                        disabled={run.status !== "OK"}
+                        key={run.id}
+                        place={place}
+                        readOnly={this.scores.get(run.id)?.confirmed}
+                        run={run}
+                        runHasSelected={!this.expected_places.get(run.id)?.has(place)}
+                        selected={this.places.get(run.id) === place}
+                        onSelect={this.handlePlaceSelect}
+                    />,
+                );
             }
             rows.push(
-                <tr key={ place }>
-                    { cells }
-                    { this.renderParticipant(place) }
-                </tr>
+                <tr key={place}>
+                    {cells}
+                    {this.renderParticipant(place)}
+                </tr>,
             );
         }
         return rows;
@@ -233,9 +207,9 @@ export default class PlacesPage extends React.Component {
             <button
                 className="auto-assign-button"
                 type="button"
-                { ...onTouchEndOrClick(this.handleAutoAssignClick) }
+                {...onTouchEndOrClick(this.handleAutoAssignClick)}
             >
-                { _("tablet.buttons.auto_assign_places") }
+                {_("tablet.buttons.auto_assign_places")}
             </button>
         );
     }
@@ -243,21 +217,26 @@ export default class PlacesPage extends React.Component {
         this.setupCache();
         const scores = this.props.tour.runs
             .filter(run => run.status === "OK")
-            .map(run => run.scores.find(score => score?.discipline_judge_id === this.props.disciplineJudge.id))
-            .filter(score => score);  // Case if score not found
+            .map(run =>
+                run.scores.find(
+                    score =>
+                        score?.discipline_judge_id === this.props.disciplineJudge.id,
+                ),
+            )
+            .filter(score => score); // Case if score not found
         return (
             <div className="body">
                 <table className="places-table">
                     <tbody>
-                        { this.renderTableHeader() }
-                        { this.renderTableRows() }
+                        {this.renderTableHeader()}
+                        {this.renderTableRows()}
                     </tbody>
                 </table>
-                { this.renderAutoAssignButton(scores) }
+                {this.renderAutoAssignButton(scores)}
                 <ConfirmationButton
-                    canConfirm={ this.can_confirm }
-                    confirmed={ scores.every(s => s.confirmed) }
-                    onConfirm={ this.handleConfirm }
+                    canConfirm={this.can_confirm}
+                    confirmed={scores.every(s => s.confirmed)}
+                    onConfirm={this.handleConfirm}
                 />
             </div>
         );

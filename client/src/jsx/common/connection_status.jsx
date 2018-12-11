@@ -16,10 +16,7 @@ class ConnectionStatus extends React.Component {
     static init() {
         let element = window.document.getElementById("connection_status");
         if (element && !element.hasChildNodes()) {
-            return ReactDOM.render(
-                <ConnectionStatus />,
-                element
-            );
+            return ReactDOM.render(<ConnectionStatus />, element);
         }
         return new ConnectionStatusMock();
     }
@@ -34,9 +31,9 @@ class ConnectionStatus extends React.Component {
         window.addEventListener("beforeunload", event => {
             if (this.state.hasPendingData) {
                 event.preventDefault();
-                event.returnValue = '';
+                event.returnValue = "";
             }
-        })
+        });
     }
 
     componentWillUnmount() {
@@ -78,7 +75,10 @@ class ConnectionStatus extends React.Component {
             showPendingData: false,
         });
         setTimeout(
-            () => this.setState(state => state.hasPendingData ? {showPendingData: true} : {}),
+            () =>
+                this.setState(state =>
+                    state.hasPendingData ? { showPendingData: true } : {},
+                ),
             2000,
         );
     }
@@ -93,8 +93,8 @@ class ConnectionStatus extends React.Component {
     getClassName() {
         return makeClassName({
             "connection-status": true,
-            "error": true,
-            "tick": this.state.tick,
+            error: true,
+            tick: this.state.tick,
         });
     }
     render() {
@@ -102,28 +102,26 @@ class ConnectionStatus extends React.Component {
             if (this.state.showPendingData) {
                 return (
                     <div className="connection-status warning">
-                        { _("global.labels.data_pending") }
+                        {_("global.labels.data_pending")}
                     </div>
                 );
             }
-            return (
-                <div className="connection-status ok" />
-            );
+            return <div className="connection-status ok" />;
         }
         if (this.state.connected == null) {
             return (
                 <div className="connection-status waiting">
-                    { _("global.labels.connecting") }
+                    {_("global.labels.connecting")}
                 </div>
-            )
+            );
         }
         return (
-            <div className={ this.getClassName() }>
-                { this.state.hasPendingData
+            <div className={this.getClassName()}>
+                {this.state.hasPendingData
                     ? _("global.labels.connection_problem_data_pending")
-                    : _("global.labels.connection_problem") }
+                    : _("global.labels.connection_problem")}
             </div>
-        )
+        );
     }
 }
 

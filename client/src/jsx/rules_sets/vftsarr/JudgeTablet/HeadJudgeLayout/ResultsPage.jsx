@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import makeTourResultsTable from "common/makeTourResultsTable";
 import PT from "prop-types";
@@ -17,10 +17,8 @@ export default class ResultsPage extends React.Component {
     render() {
         return (
             <div className="body results">
-                <ResultsTable2
-                    computedTour={ makeTourResultsTable(this.props.tour) }
-                />
+                <ResultsTable2 computedTour={makeTourResultsTable(this.props.tour)} />
             </div>
-        )
+        );
     }
 }

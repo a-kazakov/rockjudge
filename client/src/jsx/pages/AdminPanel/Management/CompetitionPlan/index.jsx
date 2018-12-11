@@ -27,8 +27,8 @@ export default class CompetitionPlan extends UniversalTable {
         {
             name: "tour_id",
             defaultValueGetter: () => "null",
-            toFormValue: (value) => value == null ? "null" : value.toString(),
-            fromFormValue: (value) => value === "null" ? null : parseInt(value),
+            toFormValue: value => (value == null ? "null" : value.toString()),
+            fromFormValue: value => (value === "null" ? null : parseInt(value)),
         },
         FieldTypes.makeTextField("estimated_beginning"),
         FieldTypes.makeTextField("estimated_duration"),
@@ -49,11 +49,11 @@ export default class CompetitionPlan extends UniversalTable {
         };
     }
 
-    static getTours = (entry) => entry.tours;
-    static getTourId = (entry) => entry.tour_id;
-    static filterValidId = (value) => typeof value === "number";
+    static getTours = entry => entry.tours;
+    static getTourId = entry => entry.tour_id;
+    static filterValidId = value => typeof value === "number";
 
-    makePrintableRef = (ref) => this._printable = ref;
+    makePrintableRef = ref => (this._printable = ref);
 
     handleDocxCreation = () => this.createDocx();
 
@@ -83,14 +83,16 @@ export default class CompetitionPlan extends UniversalTable {
         return result;
     }
     getAllTours() {
-        const unflattened = this.props.competition.disciplines.map(this.constructor.getTours);
+        const unflattened = this.props.competition.disciplines.map(
+            this.constructor.getTours,
+        );
         return [].concat(...unflattened);
     }
     getUnpickedTours() {
         const picked_tours = new Set(
             this.props.competition.plan
                 .map(this.constructor.getTourId)
-                .filter(this.constructor.filterValidId)
+                .filter(this.constructor.filterValidId),
         );
         return this.getAllTours().filter(tour => !picked_tours.has(tour.id));
     }
@@ -101,15 +103,13 @@ export default class CompetitionPlan extends UniversalTable {
         }
         return (
             <div className="unpicked-tours">
-                <h4>
-                    { _("admin.headers.unpicked_tours") }
-                </h4>
+                <h4>{_("admin.headers.unpicked_tours")}</h4>
                 <ul className="unpicked-tours">
-                    { unpicked_tours.map((tour) =>
-                        <li className="item" key={ tour.id }>
-                            { `${tour.discipline.name} — ${tour.name}` }
+                    {unpicked_tours.map(tour => (
+                        <li className="item" key={tour.id}>
+                            {`${tour.discipline.name} — ${tour.name}`}
                         </li>
-                    ) }
+                    ))}
                 </ul>
             </div>
         );
@@ -117,59 +117,56 @@ export default class CompetitionPlan extends UniversalTable {
     renderTable() {
         return (
             <div className="wrapper">
-                { this.renderUnpickedTours() }
+                {this.renderUnpickedTours()}
                 <table>
                     <tbody>
                         <tr>
                             <th className="sp">
-                                { _("models.competition_plan_item.sp") }
+                                {_("models.competition_plan_item.sp")}
                             </th>
                             <th className="discipline">
-                                { _("models.competition_plan_item.discipline") }
+                                {_("models.competition_plan_item.discipline")}
                             </th>
                             <th className="tour">
-                                { _("models.competition_plan_item.tour") }
+                                {_("models.competition_plan_item.tour")}
                             </th>
                             <th className="estimated_beginning">
-                                { _("models.competition_plan_item.estimated_beginning") }
+                                {_("models.competition_plan_item.estimated_beginning")}
                             </th>
                             <th className="estimated_duration">
-                                { _("models.competition_plan_item.estimated_duration") }
+                                {_("models.competition_plan_item.estimated_duration")}
                             </th>
                             <th className="delete" />
                         </tr>
-                        { this.renderRows() }
-                        { this.renderCreationButton() }
+                        {this.renderRows()}
+                        {this.renderCreationButton()}
                     </tbody>
                 </table>
             </div>
         );
     }
-    render() {  // eslint-disable-line react/sort-comp
+    render() {
+        // eslint-disable-line react/sort-comp
         return (
             <div className="CompetitionPlan">
                 <header>
                     <div className="controls">
-                        <button onClick={ this.handleDocxCreation }>
-                            DOCX
-                        </button>
+                        <button onClick={this.handleDocxCreation}>DOCX</button>
                     </div>
-                    <h1>
-                        { _("admin.headers.competition_plan_management") }
-                    </h1>
+                    <h1>{_("admin.headers.competition_plan_management")}</h1>
                 </header>
                 <div className="body">
-                    { this.renderTable() }
+                    {this.renderTable()}
                     <PrintablePlan
-                        competition={ this.props.competition }
-                        ref={ this.makePrintableRef }
+                        competition={this.props.competition}
+                        ref={this.makePrintableRef}
                     />
                 </div>
             </div>
         );
     }
 
-    createDocx(filename="program.docx") {
+    createDocx(filename = "program.docx") {
         Docx(filename)
             .setMargins([10, 15, 10, 15])
             .setHeader(`${this.props.competition.name}, ${this.props.competition.date}`)

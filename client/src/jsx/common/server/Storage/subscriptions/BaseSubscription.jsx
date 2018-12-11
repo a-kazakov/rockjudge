@@ -14,7 +14,7 @@ export default class BaseSubscription {
         throw new Error("Not implemented");
     }
     unsubscribe() {
-        return new Promise(this._unsubscribe)
+        return new Promise(this._unsubscribe);
     }
     _unsubscribe = (resolve, reject) => {
         Api("model/unsubscribe", {

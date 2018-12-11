@@ -16,7 +16,8 @@ export default class ModelOverride {
         if (all_overrides.length === 0) {
             return base_value;
         }
-        return typeof(base_value) === "object" && all_overrides.every(v => typeof(v) === "object")
+        return typeof base_value === "object" &&
+            all_overrides.every(v => typeof v === "object")
             ? Object.assign({}, base_value, ...all_overrides)
             : lastOf(all_overrides);
     }

@@ -19,33 +19,25 @@ export default class Item extends React.Component {
 
     handleClick = () => {
         this.props.onClick(this.props.mkey);
-    }
+    };
 
     getClassName() {
         return makeClassName({
             [`level-${this.props.level}`]: true,
-            "active": this.props.active,
+            active: this.props.active,
         });
     }
     renderMainPart() {
         return (
-            <div
-                className={ this.getClassName() }
-                onClick={ this.handleClick }
-            >
-                { this.props.title }
+            <div className={this.getClassName()} onClick={this.handleClick}>
+                {this.props.title}
             </div>
         );
     }
     render() {
         if (this.props.level === 1) {
-            return (
-                <div className="block">
-                    { this.renderMainPart() }
-                </div>
-            );
+            return <div className="block">{this.renderMainPart()}</div>;
         }
         return this.renderMainPart();
-
     }
 }

@@ -6,19 +6,17 @@ export default class FullscreenButton extends React.Component {
     constructor(props) {
         super(props);
         this._top_node = window.document.documentElement;
-        this._enter_func = (
+        this._enter_func =
             this._top_node.requestFullscreen ||
             this._top_node.mozRequestFullScreen ||
             this._top_node.msRequestFullscreen ||
             this._top_node.webkitRequestFullscreen ||
-            this._top_node.webkitEnterFullscreen
-        );
-        this._exit_func = (
+            this._top_node.webkitEnterFullscreen;
+        this._exit_func =
             window.document.cancelFullScreen ||
             window.document.mozCancelFullScreen ||
             window.document.msCancelFullScreen ||
-            window.document.webkitCancelFullScreen
-        );
+            window.document.webkitCancelFullScreen;
     }
 
     checkInFullScreen() {
@@ -38,8 +36,7 @@ export default class FullscreenButton extends React.Component {
         } else {
             this._exit_func.apply(window.document);
         }
-    }
-
+    };
 
     render() {
         if (!this.checkFullScreenSupport()) {
@@ -48,11 +45,10 @@ export default class FullscreenButton extends React.Component {
         return (
             <div
                 className="btn-fullscreen"
-                { ...onTouchEndOrClick(this.handleToggleFullScreen) }
+                {...onTouchEndOrClick(this.handleToggleFullScreen)}
             >
                 <div />
             </div>
         );
     }
 }
-

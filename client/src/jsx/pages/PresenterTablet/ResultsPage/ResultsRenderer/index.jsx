@@ -17,22 +17,13 @@ export default class ResultsRenderer extends React.Component {
             return null;
         }
         return (
-            <div
-                className="tour-name"
-                key={ `H${next_row.run.id}` }
-            >
-                { next_row.run.tour.name }
+            <div className="tour-name" key={`H${next_row.run.id}`}>
+                {next_row.run.tour.name}
             </div>
         );
     }
     renderRow(row) {
-        return (
-            <Row
-                key={ `R${row.run.id}` }
-                place={ row.place }
-                run={ row.run }
-            />
-        );
+        return <Row key={`R${row.run.id}`} place={row.place} run={row.run} />;
     }
     renderRows() {
         const table = makeDisciplineResultsTable(this.props.discipline);
@@ -47,10 +38,6 @@ export default class ResultsRenderer extends React.Component {
         return result;
     }
     render() {
-        return (
-            <div className="discipline-results">
-                { this.renderRows() }
-            </div>
-        );
+        return <div className="discipline-results">{this.renderRows()}</div>;
     }
 }

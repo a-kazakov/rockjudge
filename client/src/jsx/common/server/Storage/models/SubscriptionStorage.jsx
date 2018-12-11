@@ -32,16 +32,16 @@ export default class SubscriptionStorage {
             if (a[i] === b[i]) {
                 continue;
             }
-            return SubscriptionStorage.compareSortingKeyItem(a[i], b[i])
+            return SubscriptionStorage.compareSortingKeyItem(a[i], b[i]);
         }
         return 0;
     }
-    static sameFunc = (x) => x;
+    static sameFunc = x => x;
 
     get global_schema() {
         return this.global_storage.global_schema;
     }
-    applyModelMutation = (mutation) => {
+    applyModelMutation = mutation => {
         if (!this.subscription.checkMutation(mutation)) {
             return false;
         }
@@ -56,7 +56,11 @@ export default class SubscriptionStorage {
             case "U": {
                 const model = this.models.get(key);
                 if (!model) {
-                    console.error(`Trying to update for unknown model ${mutation.model_name}/${mutation.id}`);
+                    console.error(
+                        `Trying to update for unknown model ${mutation.model_name}/${
+                            mutation.id
+                        }`,
+                    );
                     return false;
                 }
                 model.update(mutation);
@@ -65,7 +69,11 @@ export default class SubscriptionStorage {
             case "D": {
                 const model = this.models.get(key);
                 if (!model) {
-                    console.error(`Trying to delete for unknown model ${mutation.model_name}/${mutation.id}`);
+                    console.error(
+                        `Trying to delete for unknown model ${mutation.model_name}/${
+                            mutation.id
+                        }`,
+                    );
                     return false;
                 }
                 this.deleteModelFromIndex(model);
@@ -78,41 +86,35 @@ export default class SubscriptionStorage {
         }
         return true;
     };
-    applyTourResultMutation = (mutation) => {
+    applyTourResultMutation = mutation => {
         if (!this.subscription.shouldApplyTourResultsMutation(mutation)) {
             return false;
         }
         this.tour_results.set(mutation.tour_id, mutation.data);
         return true;
     };
-    applyDisciplineResultMutation = (mutation) => {
+    applyDisciplineResultMutation = mutation => {
         if (!this.subscription.shouldApplyDisciplineResultsMutation(mutation)) {
             return false;
         }
         this.discipline_results.set(mutation.discipline_id, mutation.data);
         return true;
     };
-    applyMutations(mutations, is_initial=false) {
+    applyMutations(mutations, is_initial = false) {
         if (is_initial) {
             this.ready = true;
         } else if (!this.ready) {
             return;
         }
-        const models_changed = (
-            mutations.models_mutations
-                .map(this.applyModelMutation)
-                .some(this.constructor.sameFunc)
-        );
-        const tours_changed = (
-            mutations.tour_results_updates
-                .map(this.applyTourResultMutation)
-                .some(this.constructor.sameFunc)
-        );
-        const disciplines_changed = (
-            mutations.discipline_results_updates
-                .map(this.applyDisciplineResultMutation)
-                .some(this.constructor.sameFunc)
-        );
+        const models_changed = mutations.models_mutations
+            .map(this.applyModelMutation)
+            .some(this.constructor.sameFunc);
+        const tours_changed = mutations.tour_results_updates
+            .map(this.applyTourResultMutation)
+            .some(this.constructor.sameFunc);
+        const disciplines_changed = mutations.discipline_results_updates
+            .map(this.applyDisciplineResultMutation)
+            .some(this.constructor.sameFunc);
         if (is_initial) {
             this.global_storage.rebuildSubscriptionStorageIndex();
         }

@@ -37,31 +37,37 @@ export default class ImportItemsSelector extends React.Component {
         this.setState({
             items: new_items,
         });
-    }
+    };
     getValue() {
         return this.state.items;
     }
-    renderCheckbox(type, disabled=false) {
+    renderCheckbox(type, disabled = false) {
         return (
             <ImportItemsCheckbox
-                disabled={ disabled }
-                label={ _(`admin.labels.${type}`) }
-                type={ type }
-                value={ this.state.items[type] }
-                onChange={ this.handleChange }
+                disabled={disabled}
+                label={_(`admin.labels.${type}`)}
+                type={type}
+                value={this.state.items[type]}
+                onChange={this.handleChange}
             />
         );
     }
     render() {
         return (
             <div className="import-items-selector">
-                { this.renderCheckbox("disciplines") }
-                { this.renderCheckbox("clubs") }
-                { this.renderCheckbox("judges") }
-                { this.renderCheckbox("tours", !this.state.items.disciplines) }
-                { this.renderCheckbox("participants", !this.state.items.disciplines || !this.state.items.clubs) }
-                { this.renderCheckbox("discipline_judges", !this.state.items.disciplines || !this.state.items.judges) }
-                { this.renderCheckbox("plan") }
+                {this.renderCheckbox("disciplines")}
+                {this.renderCheckbox("clubs")}
+                {this.renderCheckbox("judges")}
+                {this.renderCheckbox("tours", !this.state.items.disciplines)}
+                {this.renderCheckbox(
+                    "participants",
+                    !this.state.items.disciplines || !this.state.items.clubs,
+                )}
+                {this.renderCheckbox(
+                    "discipline_judges",
+                    !this.state.items.disciplines || !this.state.items.judges,
+                )}
+                {this.renderCheckbox("plan")}
             </div>
         );
     }

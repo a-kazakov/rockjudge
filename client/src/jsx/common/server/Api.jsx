@@ -8,13 +8,12 @@ import showError from "common/dialogs/showError";
 import waiting_api_requests from "common/server/waiting_api_requests";
 import Enum from "common/Enum";
 
-
 class ApiQueue {
     static State = new Enum({
-        "EMPTY": [],
-        "SUBMITTING": ["api_obj"],
-        "WAIT_RETRY": ["api_obj", "timer_id"],
-        "INTERMEDIATE": [],
+        EMPTY: [],
+        SUBMITTING: ["api_obj"],
+        WAIT_RETRY: ["api_obj", "timer_id"],
+        INTERMEDIATE: [],
     });
 
     static _instance = null;
@@ -37,13 +36,13 @@ class ApiQueue {
     }
     _sendNextRequest = () => {
         let next_api_obj = this.current_state.match({
-            "EMPTY": () => this._popQueue(),
-            "SUBMITTING": null,
-            "WAIT_RETRY": ({api_obj, timer_id}) => {
+            EMPTY: () => this._popQueue(),
+            SUBMITTING: null,
+            WAIT_RETRY: ({ api_obj, timer_id }) => {
                 clearTimeout(timer_id);
                 return api_obj;
             },
-            "INTERMEDIATE": () => {
+            INTERMEDIATE: () => {
                 if (this.queue.length === 0) {
                     this.current_state = this.constructor.State.EMPTY();
                     return null;
@@ -54,8 +53,11 @@ class ApiQueue {
         if (next_api_obj == null) {
             return;
         }
-        this.current_state = this.constructor.State.SUBMITTING({api_obj: next_api_obj});
-        next_api_obj._sendImpl()
+        this.current_state = this.constructor.State.SUBMITTING({
+            api_obj: next_api_obj,
+        });
+        next_api_obj
+            ._sendImpl()
             .then(this._handleRequestSuccess)
             .catch(this._handleRequestFailure);
     };
@@ -72,7 +74,7 @@ class ApiQueue {
             console.error("Invalid ApiQueue state", this.current_state);
             return;
         }
-        let {api_obj} = enum_data;
+        let { api_obj } = enum_data;
         this.current_state = this.constructor.State.WAIT_RETRY({
             api_obj,
             timer_id: setTimeout(this._sendNextRequest, 1000),
@@ -81,7 +83,8 @@ class ApiQueue {
 }
 
 class ApiObject {
-    static defaultErrorAction = (msg, code, args) => showError(code ? _(code, ...(args || [])) : msg);
+    static defaultErrorAction = (msg, code, args) =>
+        showError(code ? _(code, ...(args || [])) : msg);
 
     cb_success = () => {};
     cb_error = ApiObject.defaultErrorAction;
@@ -115,7 +118,7 @@ class ApiObject {
         this._pending_mutations.push([storage, model_name, model_id, data]);
         return this;
     }
-    send(skip_queue=false) {
+    send(skip_queue = false) {
         for (const [storage, model_name, model_id, data] of this._pending_mutations) {
             storage.addOverride(this._response_key, model_name, model_id, data);
         }
@@ -125,10 +128,11 @@ class ApiObject {
         }
         ApiQueue.instance().submit(this);
     }
-    _sendImpl(out_of_queue=false) {
+    _sendImpl(out_of_queue = false) {
         if (this._signature_required && !keys_storage.has_keys) {
             return new Promise((resolve, reject) => {
-                keys_storage.obtainKeys()
+                keys_storage
+                    .obtainKeys()
                     .then(this._sendImpl())
                     .then(resolve)
                     .catch(reject);
@@ -139,21 +143,25 @@ class ApiObject {
             console.log("-> Api call", this.method, this.data);
         }
         const str_data = JSON.stringify({
-            "method": this.method,
-            "params": this.data,
-            "client_id": keys_storage.client_id,
-            "random": rand_str,
-            "response_key": this._response_key,
+            method: this.method,
+            params: this.data,
+            client_id: keys_storage.client_id,
+            random: rand_str,
+            response_key: this._response_key,
         });
         const signature = this._signature_required
-            ? md5(`${keys_storage.client_id}|${this.method}|${str_data}|${rand_str}|${keys_storage.secret}`)
+            ? md5(
+                  `${keys_storage.client_id}|${this.method}|${str_data}|${rand_str}|${
+                      keys_storage.secret
+                  }`,
+              )
             : "";
         return new Promise((resolve, reject) => {
             if (websocket.closed && !out_of_queue) {
                 return reject("Websocket is closed");
             }
             websocket.send(`${signature}|${str_data}`);
-            waiting_api_requests.add(this._response_key, this, resolve, reject)
+            waiting_api_requests.add(this._response_key, this, resolve, reject);
         });
     }
     processResponse(response) {

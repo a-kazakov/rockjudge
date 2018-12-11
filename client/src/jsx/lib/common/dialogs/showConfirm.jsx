@@ -1,6 +1,6 @@
 import _ from "l10n";
 
-import swal from "sweetalert2"
+import swal from "sweetalert2";
 
 export default function showConfirm(message, action) {
     return swal({
@@ -9,7 +9,7 @@ export default function showConfirm(message, action) {
         showCancelButton: true,
         confirmButtonText: _("global.labels.yes"),
         cancelButtonText: _("global.labels.no"),
-    }).then((data) => {
+    }).then(data => {
         if (data.value) {
             action();
         }

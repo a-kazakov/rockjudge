@@ -9,6 +9,6 @@ import Screen from "pages/Screen";
 window.React = React;
 
 ReactDOM.render(
-    <Screen { ...window.page_props } />,
-    window.document.getElementById("content")
+    <Screen {...window.page_props} />,
+    window.document.getElementById("content"),
 );

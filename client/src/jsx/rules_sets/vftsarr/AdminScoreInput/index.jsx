@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import Editor from "./Editor";
@@ -23,18 +23,11 @@ export default class AdminScoreInput extends React.Component {
         onSubmit: PT.func.isRequired,
     };
     render() {
-        const {editing, scoreComputedData, ...other_props} = this.props;
+        const { editing, scoreComputedData, ...other_props } = this.props;
         if (!editing) {
-            return (
-                <span>
-                    { scoreComputedData.total_score_str }
-                </span>
-            );
+            return <span>{scoreComputedData.total_score_str}</span>;
         } else {
-            return (
-                <Editor { ...other_props } />
-            );
+            return <Editor {...other_props} />;
         }
     }
 }
-

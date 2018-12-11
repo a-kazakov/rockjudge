@@ -21,12 +21,16 @@ export default class StartPage extends React.Component {
 
     componentDidMount() {
         this._storage = new Storage();
-        this._storage.init(this.reload).then(this.subscribe).catch(console.error.bind(console));
+        this._storage
+            .init(this.reload)
+            .then(this.subscribe)
+            .catch(console.error.bind(console));
     }
 
     subscribe = () => {
         this._competitions_subscription = new AllCompetitionsSubscription();
-        this._storage.subscribe(this._competitions_subscription)
+        this._storage
+            .subscribe(this._competitions_subscription)
             .then(this.updateCompetitionsStorage)
             .catch(console.error.bind(console));
         this.trySubscribeClient();
@@ -38,58 +42,60 @@ export default class StartPage extends React.Component {
             return;
         }
         this._client_subscription = new ClientSubscription(client_id);
-        this._storage.subscribe(this._client_subscription).then(this.updateClientStorage);
+        this._storage
+            .subscribe(this._client_subscription)
+            .then(this.updateClientStorage);
     };
 
-    updateCompetitionsStorage = (competitionsStorage) => {
-        this.setState({competitionsStorage});
+    updateCompetitionsStorage = competitionsStorage => {
+        this.setState({ competitionsStorage });
     };
-    updateClientStorage = (clientStorage) => {
-        this.setState({clientStorage});
+    updateClientStorage = clientStorage => {
+        this.setState({ clientStorage });
     };
     reload = () => this.forceUpdate();
 
-    handleCompetitionSelect = (activeCompetitionId) => this.setState({ activeCompetitionId });
+    handleCompetitionSelect = activeCompetitionId =>
+        this.setState({ activeCompetitionId });
 
     renderBody() {
-        if (this.state.competitionsStorage == null || this.state.clientStorage == null)  {
-            return (
-                <Loader />
-            );
+        if (
+            this.state.competitionsStorage == null ||
+            this.state.clientStorage == null
+        ) {
+            return <Loader />;
         }
-        const competitions = this.state.competitionsStorage.getType("Competition").filter(c => c.active);
-        const active_competition = (
-            this.state.activeCompetitionId
-                ? this.state.competitionsStorage.get("Competition", this.state.activeCompetitionId)
-                : competitions.length === 1
-                    ? competitions[0]
-                    : null
-        );
+        const competitions = this.state.competitionsStorage
+            .getType("Competition")
+            .filter(c => c.active);
+        const active_competition = this.state.activeCompetitionId
+            ? this.state.competitionsStorage.get(
+                  "Competition",
+                  this.state.activeCompetitionId,
+              )
+            : competitions.length === 1
+            ? competitions[0]
+            : null;
         if (active_competition == null) {
             return (
                 <CompetitionSelector
-                    clientStorage={ this.state.clientStorage }
-                    competitions={ competitions }
-                    onSelect={ this.handleCompetitionSelect }
+                    clientStorage={this.state.clientStorage}
+                    competitions={competitions}
+                    onSelect={this.handleCompetitionSelect}
                 />
-            )
+            );
         }
-        const auth= this.state.clientStorage
+        const auth = this.state.clientStorage
             .getType("ClientAuth")
             .find(a => a.competition_id === active_competition.id);
-        return (
-            <RoleSelector
-                auth={ auth }
-                competition={ active_competition }
-            />
-        );
+        return <RoleSelector auth={auth} competition={active_competition} />;
     }
     render() {
         return (
             <div className="StartPage">
-                { this.renderBody() }
+                {this.renderBody()}
                 <div className="client-id">
-                    { _("start_page.messages.client_id", keys_storage.client_id) }
+                    {_("start_page.messages.client_id", keys_storage.client_id)}
                 </div>
             </div>
         );

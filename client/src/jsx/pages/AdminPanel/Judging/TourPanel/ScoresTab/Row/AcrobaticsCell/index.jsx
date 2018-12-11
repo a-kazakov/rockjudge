@@ -26,20 +26,17 @@ export default class AcrobaticsCell extends React.Component {
             return (
                 <td className="acrobatics editing">
                     <Editor
-                        participant={ this.props.participant }
-                        readOnly={ this.props.readOnly }
-                        run={ this.props.run }
-                        onStopEditing={ this.props.onStopEditing }
+                        participant={this.props.participant}
+                        readOnly={this.props.readOnly}
+                        run={this.props.run}
+                        onStopEditing={this.props.onStopEditing}
                     />
                 </td>
             );
         }
         if (this.props.run.program_name == null) {
             return (
-                <td
-                    className="acrobatics"
-                    onClick={ this.handleStartEditing }
-                >
+                <td className="acrobatics" onClick={this.handleStartEditing}>
                     &mdash;
                 </td>
             );
@@ -53,15 +50,11 @@ export default class AcrobaticsCell extends React.Component {
             has_overrides = has_overrides || acro.score !== acro.initial_score;
         }
         return (
-            <td
-                className="acrobatics"
-                onClick={ this.handleStartEditing }
-            >
-                { has_overrides
+            <td className="acrobatics" onClick={this.handleStartEditing}>
+                {has_overrides
                     ? `${initial_score.toFixed(1)} → ${score.toFixed(1)}`
-                    : score.toFixed(1) }
+                    : score.toFixed(1)}
             </td>
         );
     }
 }
-

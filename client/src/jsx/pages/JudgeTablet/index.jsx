@@ -47,55 +47,54 @@ export default class JudgeTablet extends React.Component {
 
     componentDidMount() {
         this._storage = new Storage();
-        this._storage.init(this.reload).then(this.subscribe).catch(console.error.bind(console));
+        this._storage
+            .init(this.reload)
+            .then(this.subscribe)
+            .catch(console.error.bind(console));
     }
 
     subscribe = () => {
-        this._competition_subscription = new CompetitionSubscription(this.props.competitionId);
-        this._storage.subscribe(this._competition_subscription)
+        this._competition_subscription = new CompetitionSubscription(
+            this.props.competitionId,
+        );
+        this._storage
+            .subscribe(this._competition_subscription)
             .then(this.updateCompetitionStorage)
             .catch(console.error.bind(console));
     };
 
-    updateCompetitionStorage = (competitionStorage) => {
-        this.setState({competitionStorage});
+    updateCompetitionStorage = competitionStorage => {
+        this.setState({ competitionStorage });
     };
     reload = () => this.forceUpdate();
-
 
     // Rendering
 
     renderBody() {
         const judge = this.state.competitionStorage?.get("Judge", this.props.judgeId);
         if (!judge) {
-            return (
-                <Loader />
-            );
+            return <Loader />;
         }
         const [tour, discipline_judge] = this.constructor.findJudgeActiveTour(judge);
         const has_active_tours = this.constructor.checkHasActiveTour(judge.competition);
         if (tour == null) {
             return (
                 <SplashScreen
-                    hasActiveTours={ has_active_tours }
-                    judge={ judge }
-                    tour={ tour }
+                    hasActiveTours={has_active_tours}
+                    judge={judge}
+                    tour={tour}
                 />
             );
         }
         return (
-            <TourLoader
-                disciplineJudge={ discipline_judge }
-                key={ tour.id }
-                tour={ tour }
-            />
+            <TourLoader disciplineJudge={discipline_judge} key={tour.id} tour={tour} />
         );
     }
 
     render() {
         return (
             <div className="JudgeTablet rules-set" key="outer">
-                { this.renderBody() }
+                {this.renderBody()}
                 <FullscreenButton />
             </div>
         );

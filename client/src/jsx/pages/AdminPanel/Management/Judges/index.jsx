@@ -9,7 +9,6 @@ import PT from "prop-types";
 import EditorRow from "./EditorRow";
 import Row from "./Row";
 
-
 export default class Judges extends UniversalTable {
     static propTypes = {
         competition: PT.instanceOf(Model).isRequired,
@@ -43,18 +42,14 @@ export default class Judges extends UniversalTable {
                 <tbody>
                     <tr>
                         <th className="role_description">
-                            { _("models.judge.role_description") }
+                            {_("models.judge.role_description")}
                         </th>
-                        <th className="name">
-                            { _("models.judge.name") }
-                        </th>
-                        <th className="category">
-                            { _("models.judge.category") }
-                        </th>
+                        <th className="name">{_("models.judge.name")}</th>
+                        <th className="category">{_("models.judge.category")}</th>
                         <th className="delete" />
                     </tr>
-                    { this.renderRows() }
-                    { this.renderCreationButton() }
+                    {this.renderRows()}
+                    {this.renderCreationButton()}
                 </tbody>
             </table>
         );
@@ -63,13 +58,9 @@ export default class Judges extends UniversalTable {
         return (
             <div className="Judges">
                 <header>
-                    <h1>
-                        { _("admin.headers.judges_management") }
-                    </h1>
+                    <h1>{_("admin.headers.judges_management")}</h1>
                 </header>
-                <div className="body">
-                    { this.renderTable() }
-                </div>
+                <div className="body">{this.renderTable()}</div>
             </div>
         );
     }

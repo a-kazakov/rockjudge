@@ -14,9 +14,9 @@ export default class StatInfo extends React.Component {
                         first_name: PT.string.isRequired,
                         year_of_birth: PT.number.isRequired,
                         gender: PT.oneOf(["M", "F"]).isRequired,
-                    }).isRequired
+                    }).isRequired,
                 ).isRequired,
-            }).isRequired
+            }).isRequired,
         ).isRequired,
         tableRow: PT.bool,
     };
@@ -53,50 +53,57 @@ export default class StatInfo extends React.Component {
         return {
             total: sportsmen.length,
             substitute_only: sportsmen.filter(s => s.p_count === 0).length,
-        }
+        };
     }
 
     render() {
         const sp_count = StatInfo.countSportsmen(this.props.participants);
         const p_count = sp_count.total - sp_count.substitute_only;
         const s_count = sp_count.substitute_only;
-        const pt_count = this.props.participants.reduce((acc, part) => acc + part.sportsmen.length, 0);
+        const pt_count = this.props.participants.reduce(
+            (acc, part) => acc + part.sportsmen.length,
+            0,
+        );
         if (this.props.tableRow) {
             return (
                 <tr>
                     <td
                         className="w-45"
-                        style={ { borderRight: "1pt solid black", fontWeight: "bold" } }
+                        style={{ borderRight: "1pt solid black", fontWeight: "bold" }}
                     >
+                        <p className="text-left">{this.props.label}</p>
+                    </td>
+                    <td className="w-15">
                         <p className="text-left">
-                            { this.props.label }
+                            {_(
+                                "admin.phrases.n_participants",
+                                this.props.participants.length,
+                            )}
                         </p>
                     </td>
                     <td className="w-15">
                         <p className="text-left">
-                            { _("admin.phrases.n_participants", this.props.participants.length) }
-                        </p>
-                    </td>
-                    <td className="w-15">
-                        <p className="text-left">
-                            { _("admin.phrases.n_participations", pt_count) }
+                            {_("admin.phrases.n_participations", pt_count)}
                         </p>
                     </td>
                     <td className="w-25">
                         <p className="text-left">
-                            { _("admin.phrases.n_sportsmen_short", p_count, s_count) }
+                            {_("admin.phrases.n_sportsmen_short", p_count, s_count)}
                         </p>
                     </td>
                 </tr>
             );
         }
-        const n_participants_str = _("admin.phrases.total_n_participants", this.props.participants.length);
+        const n_participants_str = _(
+            "admin.phrases.total_n_participants",
+            this.props.participants.length,
+        );
         const n_sportsmen_str = _("admin.phrases.n_sportsmen", p_count, s_count);
         const n_participations_str = _("admin.phrases.n_participations", pt_count);
         return (
             <p className="text-right">
                 <strong>
-                    { `${n_participants_str}, ${n_participations_str}, ${n_sportsmen_str}` }
+                    {`${n_participants_str}, ${n_participations_str}, ${n_sportsmen_str}`}
                 </strong>
             </p>
         );

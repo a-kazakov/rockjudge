@@ -25,7 +25,8 @@ export default class CreationRow extends Row {
     makeInitialEditingState() {
         let result = {};
         for (const field of this.props.fields) {
-            result[field.name] = field.defaultValueGetter?.(this.props.context) || field.defaultValue;
+            result[field.name] =
+                field.defaultValueGetter?.(this.props.context) || field.defaultValue;
         }
         return result;
     }
@@ -33,10 +34,7 @@ export default class CreationRow extends Row {
     renderDisplay() {
         const Component = this.props.createButtonComponent;
         return (
-            <Component
-                context={ this.props.context }
-                onClick={ this.handleStartEditing }
-            />
+            <Component context={this.props.context} onClick={this.handleStartEditing} />
         );
     }
 }

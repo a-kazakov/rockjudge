@@ -6,11 +6,8 @@ export default class NoAccess extends React.Component {
     render() {
         return (
             <div className="no-access">
-                <h3>
-                    { _("start_page.messages.pending_access_request") }
-                </h3>
+                <h3>{_("start_page.messages.pending_access_request")}</h3>
             </div>
         );
     }
 }
-

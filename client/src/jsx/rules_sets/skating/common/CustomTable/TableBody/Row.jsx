@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 
@@ -11,7 +11,7 @@ export default class Row extends React.Component {
 
     static renderCellContent(content) {
         if (["string", "number"].includes(typeof content)) {
-            content = {"text": content.toString()}
+            content = { text: content.toString() };
         }
         if (content == null || typeof content !== "object") {
             return null;
@@ -21,58 +21,58 @@ export default class Row extends React.Component {
         }
         return (
             <p
-                style={ {
+                style={{
                     margin: "0",
                     color: content.color,
-                } }
+                }}
             >
-                { content.text }
+                {content.text}
             </p>
-        )
+        );
     }
-    renderCell = (col) => {
+    renderCell = col => {
         return (
             <td
-                key={ col.key }
-                style={ {
+                key={col.key}
+                style={{
                     fontWeight: col.fontWeight,
                     textAlign: col.textAlign,
-                    borderLeft: (col.lines || []).includes("left") ? "1pt solid black" : "none",
-                    borderRight: (col.lines || []).includes("right") ? "1pt solid black" : "none",
+                    borderLeft: (col.lines || []).includes("left")
+                        ? "1pt solid black"
+                        : "none",
+                    borderRight: (col.lines || []).includes("right")
+                        ? "1pt solid black"
+                        : "none",
                     borderBottom: "0.5pt solid #aaa",
                     padding: "1pt 3pt",
                     width: this.props.widths[col.key],
-                } }
+                }}
             >
-                { this.constructor.renderCellContent(this.props.row[col.key]) }
+                {this.constructor.renderCellContent(this.props.row[col.key])}
             </td>
-        )
+        );
     };
     renderSectionHeader() {
         return (
             <td
-                colSpan={ this.props.cols.length }
-                style={ {
+                colSpan={this.props.cols.length}
+                style={{
                     borderBottom: "1pt solid black",
                     paddingTop: "10pt",
                     fontWeight: "bold",
-                } }
+                }}
             >
-                { this.props.row.title }
+                {this.props.row.title}
             </td>
-        )
+        );
     }
     renderData() {
         if (this.props.row._type === "section_header") {
             return this.renderSectionHeader();
         }
-        return this.props.cols.map(this.renderCell)
+        return this.props.cols.map(this.renderCell);
     }
     render() {
-        return (
-            <tr>
-                { this.renderData() }
-            </tr>
-        )
+        return <tr>{this.renderData()}</tr>;
     }
 }

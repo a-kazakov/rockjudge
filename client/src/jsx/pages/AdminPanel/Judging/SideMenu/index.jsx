@@ -25,29 +25,29 @@ export default class SideMenu extends React.Component {
             sortByPlan: true,
         });
         sessionStorage.setItem("sortByPlan", "1");
-    }
+    };
     handleDisciplinesSwitch = () => {
         this.setState({
             sortByPlan: false,
         });
         sessionStorage.setItem("sortByPlan", "0");
-    }
+    };
 
     renderList() {
         if (this.state.sortByPlan) {
             return (
                 <PlanSorted
-                    activeTourId={ this.props.activeTourId }
-                    competition={ this.props.competition }
-                    onActiveTourChange={ this.props.onActiveTourChange }
+                    activeTourId={this.props.activeTourId}
+                    competition={this.props.competition}
+                    onActiveTourChange={this.props.onActiveTourChange}
                 />
             );
         } else {
             return (
                 <DisciplinesSorted
-                    activeTourId={ this.props.activeTourId }
-                    competition={ this.props.competition }
-                    onActiveTourChange={ this.props.onActiveTourChange }
+                    activeTourId={this.props.activeTourId}
+                    competition={this.props.competition}
+                    onActiveTourChange={this.props.onActiveTourChange}
                 />
             );
         }
@@ -57,18 +57,18 @@ export default class SideMenu extends React.Component {
             return (
                 <button
                     className="btn btn-default btn-sm full-width"
-                    onClick={ this.handleDisciplinesSwitch }
+                    onClick={this.handleDisciplinesSwitch}
                 >
-                    { _("admin.buttons.switch_to_disciplines") }
+                    {_("admin.buttons.switch_to_disciplines")}
                 </button>
             );
         } else {
             return (
                 <button
                     className="btn btn-default btn-sm full-width"
-                    onClick={ this.handlePlanSwitch }
+                    onClick={this.handlePlanSwitch}
                 >
-                    { _("admin.buttons.switch_to_plan") }
+                    {_("admin.buttons.switch_to_plan")}
                 </button>
             );
         }
@@ -76,10 +76,8 @@ export default class SideMenu extends React.Component {
     render() {
         return (
             <div className="SideMenu">
-                <div className="tours">
-                    { this.renderList() }
-                </div>
-                { this.renderButton() }
+                <div className="tours">{this.renderList()}</div>
+                {this.renderButton()}
             </div>
         );
     }

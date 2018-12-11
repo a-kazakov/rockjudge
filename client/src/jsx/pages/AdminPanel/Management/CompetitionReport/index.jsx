@@ -35,30 +35,30 @@ export default class CompetitionReport extends React.Component {
         const config = this.state.config;
         let new_disciplines_config = {};
         for (const discipline of this.props.competition.disciplines) {
-            new_disciplines_config[discipline.id] = (discipline.id in config.disciplines)
-                ? config.disciplines[discipline.id]
-                : true;
+            new_disciplines_config[discipline.id] =
+                discipline.id in config.disciplines
+                    ? config.disciplines[discipline.id]
+                    : true;
         }
-        return Object.assign(
-            config,
-            { disciplines: new_disciplines_config },
-        );
+        return Object.assign(config, { disciplines: new_disciplines_config });
     }
 
-    makePrintableRef = (ref) => this._printable = ref;
+    makePrintableRef = ref => (this._printable = ref);
 
-    handleConfigChange = (config) => this.setState({ config });
+    handleConfigChange = config => this.setState({ config });
 
     handleDocxCreation = () => this.createDocx();
 
     getTitle(config) {
-        const n_disciplines = Object.keys(config.disciplines)
-                                    .filter(key => config.disciplines[key]).length;
+        const n_disciplines = Object.keys(config.disciplines).filter(
+            key => config.disciplines[key],
+        ).length;
         return n_disciplines > 0
             ? _("admin.headers.competition_report")
             : _("admin.headers.competition_info");
     }
-    render() {  // eslint-disable-line react/sort-comp
+    // eslint-disable-next-line react/sort-comp
+    render() {
         const config = this.getConfig();
         const title = this.getTitle(config);
         return (
@@ -67,50 +67,62 @@ export default class CompetitionReport extends React.Component {
                     <div className="controls">
                         <button
                             className="btn btn-primary"
-                            onClick={ this.handleDocxCreation }
+                            onClick={this.handleDocxCreation}
                         >
                             DOCX
                         </button>
                     </div>
-                    <h1>{ title }</h1>
+                    <h1>{title}</h1>
                 </header>
                 <div className="body">
                     <ConfigPanel
-                        config={ config }
-                        customControls={ [
-                            {key: "include_extended_info",      label: _("admin.labels.include_extended_info")},
-                            {key: "include_clubs",              label: _("admin.labels.include_clubs")},
-                            {key: "include_judges",             label: _("admin.labels.include_judges")},
-                            {key: "include_discipline_judges",  label: _("admin.labels.include_discipline_judges")},
-                        ] }
-                        disciplines={ this.props.competition.disciplines }
-                        onChange={ this.handleConfigChange }
+                        config={config}
+                        customControls={[
+                            {
+                                key: "include_extended_info",
+                                label: _("admin.labels.include_extended_info"),
+                            },
+                            {
+                                key: "include_clubs",
+                                label: _("admin.labels.include_clubs"),
+                            },
+                            {
+                                key: "include_judges",
+                                label: _("admin.labels.include_judges"),
+                            },
+                            {
+                                key: "include_discipline_judges",
+                                label: _("admin.labels.include_discipline_judges"),
+                            },
+                        ]}
+                        disciplines={this.props.competition.disciplines}
+                        onChange={this.handleConfigChange}
                     />
                     <Paper
-                        margins={ [10, 15, 10, 25] }
-                        ref={ this.makePrintableRef }
-                        title2={ title }
+                        margins={[10, 15, 10, 25]}
+                        ref={this.makePrintableRef}
+                        title2={title}
                     >
                         <div>
                             <Info
-                                competition={ this.props.competition }
-                                config={ config }
+                                competition={this.props.competition}
+                                config={config}
                             />
                             <Clubs
-                                competition={ this.props.competition }
-                                config={ config }
+                                competition={this.props.competition}
+                                config={config}
                             />
                             <Judges
-                                competition={ this.props.competition }
-                                config={ config }
+                                competition={this.props.competition}
+                                config={config}
                             />
                             <DisciplineJudges
-                                competition={ this.props.competition }
-                                config={ config }
+                                competition={this.props.competition}
+                                config={config}
                             />
                             <Results
-                                competition={ this.props.competition }
-                                config={ config }
+                                competition={this.props.competition}
+                                config={config}
                             />
                         </div>
                     </Paper>
@@ -125,11 +137,14 @@ export default class CompetitionReport extends React.Component {
             .setTitle2(this.getTitle())
             .setBody(this._printable.getPrintableHTML())
             .addStyle("table.discipline-judges td", "border-bottom", "0.5pt solid #aaa")
-            .addStyle("table.discipline-judges tr.header th", "border-bottom", "1pt solid black");
+            .addStyle(
+                "table.discipline-judges tr.header th",
+                "border-bottom",
+                "1pt solid black",
+            );
         if (rules_set.discipline_results_table.transformDocx) {
             rules_set.discipline_results_table.transformDocx(docx);
         }
         docx.save();
-    }
+    };
 }
-

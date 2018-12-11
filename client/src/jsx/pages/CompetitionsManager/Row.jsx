@@ -17,41 +17,28 @@ export default class Row extends React.Component {
         super(props);
         this.state = {
             editing: false,
-        }
+        };
     }
 
-    handleDeletion = (event) => {
+    handleDeletion = event => {
         event.stopPropagation();
-        showConfirm(
-            _("admin.confirms.delete_competition"),
-            this.props.onDelete,
-        );
+        showConfirm(_("admin.confirms.delete_competition"), this.props.onDelete);
     };
     render() {
-        const {entry} = this.props;
+        const { entry } = this.props;
         return (
-            <tr
-                className="viewer"
-                onClick={ this.props.onStartEditing }
-            >
-                <td className="name">
-                    { entry.name }
-                </td>
-                <td className="date">
-                    { entry.date }
-                </td>
+            <tr className="viewer" onClick={this.props.onStartEditing}>
+                <td className="name">{entry.name}</td>
+                <td className="date">{entry.date}</td>
                 <td className="is-active">
-                    { entry.active
-                        ? _("global.labels.yes")
-                        : _("global.labels.no")
-                    }
+                    {entry.active ? _("global.labels.yes") : _("global.labels.no")}
                 </td>
                 <td className="delete">
                     <button
                         className="btn btn-danger"
-                        tabIndex={ -1 }
+                        tabIndex={-1}
                         type="button"
-                        onClick={ this.handleDeletion }
+                        onClick={this.handleDeletion}
                     >
                         X
                     </button>

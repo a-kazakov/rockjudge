@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -32,7 +32,7 @@ export default class HeatsTableItem extends React.Component {
         return makeClassName({
             "score-value": true,
             "no-score": value == null,
-            "cross": cross,
+            cross: cross,
             "no-cross": cross === false,
         });
     }
@@ -40,57 +40,58 @@ export default class HeatsTableItem extends React.Component {
     renderHeader() {
         return (
             <tr>
-                { this.props.heatRuns.map(run =>
-                    <th key={ run.id }>
-                        { run.participant.number }
-                    </th>
-                ) }
+                {this.props.heatRuns.map(run => (
+                    <th key={run.id}>{run.participant.number}</th>
+                ))}
             </tr>
         );
     }
     renderScore(value, cross) {
         return (
-            <td className={ this.getScoreClassName(value, cross) }>
-                &nbsp;{ value }&nbsp;
+            <td className={this.getScoreClassName(value, cross)}>
+                &nbsp;{value}&nbsp;
             </td>
-        )
+        );
     }
     renderScores() {
         return (
             <tr>
-                { this.props.heatRuns.map(run => {
+                {this.props.heatRuns.map(run => {
                     if (run.status !== "OK") {
                         return this.renderScore(null, null);
                     }
-                    const score = run.scores.find(s => s?.discipline_judge_id === this.props.disciplineJudge.id);
+                    const score = run.scores.find(
+                        s => s?.discipline_judge_id === this.props.disciplineJudge.id,
+                    );
                     if (typeof score === "undefined") {
                         return this.renderScore(null, null);
                     }
-                    return this.renderScore(score.data.cross ? "X" : "", score.data.cross);
-                } ) }
+                    return this.renderScore(
+                        score.data.cross ? "X" : "",
+                        score.data.cross,
+                    );
+                })}
             </tr>
         );
     }
     renderNoteNumber(number) {
-        return (
-            <td className="note-number">
-                &nbsp;{ number }&nbsp;
-            </td>
-        )
+        return <td className="note-number">&nbsp;{number}&nbsp;</td>;
     }
     renderNotesNumbers() {
         return (
             <tr>
-                { this.props.heatRuns.map(run => {
+                {this.props.heatRuns.map(run => {
                     if (run.status !== "OK") {
                         return this.renderNoteNumber(null);
                     }
-                    const score = run.scores.find(s => s?.discipline_judge_id === this.props.disciplineJudge.id);
+                    const score = run.scores.find(
+                        s => s?.discipline_judge_id === this.props.disciplineJudge.id,
+                    );
                     if (typeof score === "undefined") {
                         return this.renderNoteNumber(null);
                     }
                     return this.renderNoteNumber(score.data.note_number);
-                } ) }
+                })}
             </tr>
         );
     }
@@ -106,56 +107,54 @@ export default class HeatsTableItem extends React.Component {
             for (const [letter, icon, cls] of opts) {
                 if (pics.includes(letter)) {
                     result.push(
-                        <span
-                            className={ cls }
-                            key={ letter }
-                        >
-                            { icon }
-                        </span>
-                    )
+                        <span className={cls} key={letter}>
+                            {icon}
+                        </span>,
+                    );
                 }
             }
         }
-        return (
-            <td className="note-pic">
-                &nbsp;{ result }&nbsp;
-            </td>
-        )
+        return <td className="note-pic">&nbsp;{result}&nbsp;</td>;
     }
     renderNotesPics() {
         return (
             <tr>
-                { this.props.heatRuns.map(run => {
+                {this.props.heatRuns.map(run => {
                     if (run.status !== "OK") {
                         return this.renderNotePic(null);
                     }
-                    const score = run.scores.find(s => s?.discipline_judge_id === this.props.disciplineJudge.id);
+                    const score = run.scores.find(
+                        s => s?.discipline_judge_id === this.props.disciplineJudge.id,
+                    );
                     if (typeof score === "undefined") {
                         return this.renderNotePic(null);
                     }
                     return this.renderNotePic(score.data.note_pics);
-                } ) }
+                })}
             </tr>
         );
     }
     render() {
         const width = Math.max(60, 45 * this.props.heatRuns.length);
         return (
-            <div className="table-wrapper" style={ {width: `${width}px`} }>
+            <div className="table-wrapper" style={{ width: `${width}px` }}>
                 <table>
                     <tbody>
                         <tr>
-                            <th colSpan={ this.props.heatRuns.length.toString() }>
-                                { _("tablet.dance_judge.heat", this.props.heatRuns[0].heat) }
+                            <th colSpan={this.props.heatRuns.length.toString()}>
+                                {_(
+                                    "tablet.dance_judge.heat",
+                                    this.props.heatRuns[0].heat,
+                                )}
                             </th>
                         </tr>
-                        { this.renderHeader() }
-                        { this.renderScores() }
-                        { this.renderNotesNumbers() }
-                        { this.renderNotesPics() }
+                        {this.renderHeader()}
+                        {this.renderScores()}
+                        {this.renderNotesNumbers()}
+                        {this.renderNotesPics()}
                     </tbody>
                 </table>
             </div>
-        )
+        );
     }
 }

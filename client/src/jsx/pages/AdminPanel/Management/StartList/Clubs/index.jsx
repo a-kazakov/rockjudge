@@ -15,23 +15,17 @@ export default class Clubs extends React.Component {
         }).isRequired,
     };
 
-    filterClub = (club) => this.props.config.clubs[club.id];
+    filterClub = club => this.props.config.clubs[club.id];
 
-    renderSection = (club) => {
-        return (
-            <Section
-                club={ club }
-                key={ club.id }
-                { ...this.props }
-            />
-        );
+    renderSection = club => {
+        return <Section club={club} key={club.id} {...this.props} />;
     };
     render() {
         const clubs = this.props.competition.clubs.filter(this.filterClub);
         return (
             <div>
-                <DisciplinesShown { ...this.props } />
-                { clubs.map(this.renderSection) }
+                <DisciplinesShown {...this.props} />
+                {clubs.map(this.renderSection)}
             </div>
         );
     }

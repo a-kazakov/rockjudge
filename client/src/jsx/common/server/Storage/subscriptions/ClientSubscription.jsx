@@ -2,10 +2,7 @@ import BaseSubscription from "./BaseSubscription";
 import Api from "common/server/Api";
 
 export default class ClientSubscription extends BaseSubscription {
-    static MODELS = [
-        "Client",
-        "ClientAuth",
-    ];
+    static MODELS = ["Client", "ClientAuth"];
     constructor(client_id) {
         super();
         this.client_id = client_id;
@@ -17,7 +14,7 @@ export default class ClientSubscription extends BaseSubscription {
         return this.constructor.MODELS.includes(mutation.model_name);
     }
     subscribe() {
-        return new Promise(this._subscribe)
+        return new Promise(this._subscribe);
     }
     _subscribe = (resolve, reject) => {
         Api("model/subscribe", {
@@ -28,5 +25,5 @@ export default class ClientSubscription extends BaseSubscription {
             .onSuccess(resolve)
             .onError(reject)
             .send(true /* skip_queue */);
-    }
+    };
 }

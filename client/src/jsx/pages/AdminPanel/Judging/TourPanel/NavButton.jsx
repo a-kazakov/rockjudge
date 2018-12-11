@@ -10,24 +10,18 @@ export default class NavButton extends React.Component {
         onPageSwitch: PT.func.isRequired,
     };
 
-    handleClick = (event) => {
+    handleClick = event => {
         event.preventDefault();
         this.props.onPageSwitch(this.props.mkey);
-    }
+    };
 
     getClassName() {
-        return this.props.active
-            ? "active"
-            : "";
+        return this.props.active ? "active" : "";
     }
     render() {
         return (
-            <a
-                className={ this.getClassName() }
-                href="#"
-                onClick={ this.handleClick }
-            >
-                { this.props.label }
+            <a className={this.getClassName()} href="#" onClick={this.handleClick}>
+                {this.props.label}
             </a>
         );
     }

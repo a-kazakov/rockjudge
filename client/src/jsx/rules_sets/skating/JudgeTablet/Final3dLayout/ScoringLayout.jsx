@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -15,48 +15,48 @@ export default class ScoringLayout extends React.Component {
         onScoreUpdate: PT.func.isRequired,
     };
 
-    handleTechChange = (value) => {
+    handleTechChange = value => {
         this.props.onScoreUpdate("tech", value);
     };
-    handleCompositionChange = (value) => {
+    handleCompositionChange = value => {
         this.props.onScoreUpdate("composition", value);
     };
-    handleArtChange = (value) => {
+    handleArtChange = value => {
         this.props.onScoreUpdate("art", value);
     };
 
     render() {
         return (
             <div>
-                <h3>{ _("tablet.dance_judge.tech") }</h3>
+                <h3>{_("tablet.dance_judge.tech")}</h3>
                 <NumberSelectorInput
                     jumbo
-                    max={ 10 }
-                    min={ 1 }
-                    readOnly={ this.props.readOnly }
+                    max={10}
+                    min={1}
+                    readOnly={this.props.readOnly}
                     style="one-line"
-                    value={ this.props.scoreData.tech }
-                    onChange={ this.handleTechChange }
+                    value={this.props.scoreData.tech}
+                    onChange={this.handleTechChange}
                 />
-                <h3>{ _("tablet.dance_judge.composition") }</h3>
+                <h3>{_("tablet.dance_judge.composition")}</h3>
                 <NumberSelectorInput
                     jumbo
-                    max={ 10 }
-                    min={ 1 }
-                    readOnly={ this.props.readOnly }
+                    max={10}
+                    min={1}
+                    readOnly={this.props.readOnly}
                     style="one-line"
-                    value={ this.props.scoreData.composition }
-                    onChange={ this.handleCompositionChange }
+                    value={this.props.scoreData.composition}
+                    onChange={this.handleCompositionChange}
                 />
-                <h3>{ _("tablet.dance_judge.art") }</h3>
+                <h3>{_("tablet.dance_judge.art")}</h3>
                 <NumberSelectorInput
                     jumbo
-                    max={ 10 }
-                    min={ 1 }
-                    readOnly={ this.props.readOnly }
+                    max={10}
+                    min={1}
+                    readOnly={this.props.readOnly}
                     style="one-line"
-                    value={ this.props.scoreData.art }
-                    onChange={ this.handleArtChange }
+                    value={this.props.scoreData.art}
+                    onChange={this.handleArtChange}
                 />
             </div>
         );

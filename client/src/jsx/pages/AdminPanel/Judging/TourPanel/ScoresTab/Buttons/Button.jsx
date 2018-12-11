@@ -17,15 +17,12 @@ export default class Button extends React.Component {
 
     handleClick = () => {
         this.props.onSignal(this.props.signalMessage);
-    }
+    };
 
     render() {
         return (
-            <button
-                className={ this.props.className }
-                onClick={ this.handleClick }
-            >
-                { this.props.label }
+            <button className={this.props.className} onClick={this.handleClick}>
+                {this.props.label}
             </button>
         );
     }

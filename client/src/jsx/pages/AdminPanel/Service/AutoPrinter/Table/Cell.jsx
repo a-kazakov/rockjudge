@@ -22,7 +22,10 @@ export default class Cell extends React.Component {
         if (!this.props.activeCell) {
             return;
         }
-        if (prev_props.activeCell && prev_props.activeCell.token === this.props.activeCell.token) {
+        if (
+            prev_props.activeCell &&
+            prev_props.activeCell.token === this.props.activeCell.token
+        ) {
             return;
         }
         if (
@@ -33,13 +36,13 @@ export default class Cell extends React.Component {
         }
     }
 
-    makeInputRef = (ref) => this._input = ref;
+    makeInputRef = ref => (this._input = ref);
 
-    handleChange = (event) => {
+    handleChange = event => {
         const value = parseInt(event.target.value, 10) || 0;
-        this.props.onChange(this.props.action, value)
-    }
-    handleKeyDown = (event) => {
+        this.props.onChange(this.props.action, value);
+    };
+    handleKeyDown = event => {
         const code = event.keyCode || event.which;
         const direction = {
             "37": "left",
@@ -52,17 +55,17 @@ export default class Cell extends React.Component {
         }
         event.preventDefault();
         this.props.onMove(this.props.tour.id, this.props.action, direction);
-    }
+    };
 
     render() {
         return (
             <td className="input">
                 <input
-                    defaultValue={ this.props.value }
-                    ref={ this.makeInputRef }
+                    defaultValue={this.props.value}
+                    ref={this.makeInputRef}
                     type="text"
-                    onChange={ this.handleChange }
-                    onKeyDown={ this.handleKeyDown }
+                    onChange={this.handleChange}
+                    onKeyDown={this.handleKeyDown}
                 />
             </td>
         );

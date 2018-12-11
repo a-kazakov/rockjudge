@@ -38,19 +38,13 @@ export default class Clubs extends UniversalTable {
             <table>
                 <tbody>
                     <tr>
-                        <th className="name">
-                            { _("models.club.name") }
-                        </th>
-                        <th className="city">
-                            { _("models.club.city") }
-                        </th>
-                        <th className="external-id">
-                            { _("models.club.external_id") }
-                        </th>
+                        <th className="name">{_("models.club.name")}</th>
+                        <th className="city">{_("models.club.city")}</th>
+                        <th className="external-id">{_("models.club.external_id")}</th>
                         <th className="delete" />
                     </tr>
-                    { this.renderRows() }
-                    { this.renderCreationButton() }
+                    {this.renderRows()}
+                    {this.renderCreationButton()}
                 </tbody>
             </table>
         );
@@ -59,15 +53,10 @@ export default class Clubs extends UniversalTable {
         return (
             <div className="Clubs">
                 <header>
-                    <h1>
-                        { _("admin.headers.clubs_management") }
-                    </h1>
+                    <h1>{_("admin.headers.clubs_management")}</h1>
                 </header>
-                <div className="body">
-                    { this.renderTable() }
-                </div>
+                <div className="body">{this.renderTable()}</div>
             </div>
         );
     }
 }
-

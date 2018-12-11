@@ -9,9 +9,7 @@ import makeClassName from "common/makeClassName";
 export default class HeatSelectorRow extends React.Component {
     static propTypes = {
         heat: PT.number.isRequired,
-        runs: PT.arrayOf(
-            PT.instanceOf(Model).isRequired,
-        ).isRequired,
+        runs: PT.arrayOf(PT.instanceOf(Model).isRequired).isRequired,
         selected: PT.bool.isRequired,
         onHeatSelect: PT.func.isRequired,
     };
@@ -26,36 +24,30 @@ export default class HeatSelectorRow extends React.Component {
             selected: this.props.selected,
         });
     }
-    renderRun = (run) => {
+    renderRun = run => {
         return (
-            <div className="participant" key={ run.id }>
-                <div className="number">
-                    { run.participant.number }
-                </div>
-                <div className="name">
-                    { run.participant.name }
-                </div>
+            <div className="participant" key={run.id}>
+                <div className="number">{run.participant.number}</div>
+                <div className="name">{run.participant.name}</div>
             </div>
         );
     };
     render() {
         return (
             <table
-                className={ this.getClassName() }
-                { ...onTouchEndOrClick(this.handleClick) }
+                className={this.getClassName()}
+                {...onTouchEndOrClick(this.handleClick)}
             >
                 <tbody>
                     <tr>
                         <td className="heat-number">
-                            <div>
-                                { this.props.heat }
-                            </div>
+                            <div>{this.props.heat}</div>
                             <div className="heat-label">
-                                { _("screen_operator.labels.heat") }
+                                {_("screen_operator.labels.heat")}
                             </div>
                         </td>
                         <td className="participants">
-                            { this.props.runs.map(this.renderRun) }
+                            {this.props.runs.map(this.renderRun)}
                         </td>
                     </tr>
                 </tbody>

@@ -10,34 +10,35 @@ export default class RunInfo extends React.Component {
 
     renderLarge() {
         return (
-            <table><tbody>
-                <tr>
-                    <td className="number" rowSpan="2">
-                        { this.props.run.participant.number }
-                    </td>
-                    <td className="name">
-                        { this.props.run.participant.name }
-                    </td>
-                </tr><tr>
-                    <td className="club">
-                        { `${this.props.run.participant.club.name}, ${this.props.run.participant.club.city}` }
-                    </td>
-                </tr>
-            </tbody></table>
+            <table>
+                <tbody>
+                    <tr>
+                        <td className="number" rowSpan="2">
+                            {this.props.run.participant.number}
+                        </td>
+                        <td className="name">{this.props.run.participant.name}</td>
+                    </tr>
+                    <tr>
+                        <td className="club">
+                            {`${this.props.run.participant.club.name}, ${
+                                this.props.run.participant.club.city
+                            }`}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         );
     }
     renderSmall() {
         return (
-            <table className="small"><tbody>
-                <tr>
-                    <td className="number">
-                        { this.props.run.participant.number }
-                    </td>
-                    <td className="name">
-                        { this.props.run.participant.name }
-                    </td>
-                </tr>
-            </tbody></table>
+            <table className="small">
+                <tbody>
+                    <tr>
+                        <td className="number">{this.props.run.participant.number}</td>
+                        <td className="name">{this.props.run.participant.name}</td>
+                    </tr>
+                </tbody>
+            </table>
         );
     }
     render() {

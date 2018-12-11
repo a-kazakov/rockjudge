@@ -16,35 +16,26 @@ export default class SplashScreen extends React.Component {
         }
         return (
             <div className="not-judging-message">
-                { _("tablet.messages.not_judging_discipline") }
+                {_("tablet.messages.not_judging_discipline")}
             </div>
         );
     }
     render() {
-        const judge_number = (
+        const judge_number =
             this.props.judge.role_description ||
-            _("global.phrases.judge_n", this.props.judge.number)
-        );
+            _("global.phrases.judge_n", this.props.judge.number);
         return (
             <div className="JudgeTablet splash-screen">
                 <header>
                     <div className="button">
-                        <a href="/">
-                            { _("tablet.buttons.to_start_page") }
-                        </a>
+                        <a href="/">{_("tablet.buttons.to_start_page")}</a>
                     </div>
-                    <h1>
-                        { this.props.judge.competition.name }
-                    </h1>
+                    <h1>{this.props.judge.competition.name}</h1>
                 </header>
                 <div className="body">
-                    <div className="judge-number">
-                        { judge_number }
-                    </div>
-                    <div className="judge-name">
-                        { this.props.judge.name }
-                    </div>
-                    { this.renderNotJudgingText() }
+                    <div className="judge-number">{judge_number}</div>
+                    <div className="judge-name">{this.props.judge.name}</div>
+                    {this.renderNotJudgingText()}
                 </div>
             </div>
         );

@@ -24,8 +24,13 @@ export default class Renderer extends React.Component {
     }
 
     tryAutoDocx = () => {
-        const results_ft = this.props.discipline.results.finalized_tours.sort((a, b) => a - b).toString();
-        const props_ft = this.props.discipline.tours.map(tour => tour.id).sort((a, b) => a - b).toString();
+        const results_ft = this.props.discipline.results.finalized_tours
+            .sort((a, b) => a - b)
+            .toString();
+        const props_ft = this.props.discipline.tours
+            .map(tour => tour.id)
+            .sort((a, b) => a - b)
+            .toString();
         if (results_ft !== props_ft) {
             setTimeout(this.tryAutoDocx, 500);
             return;
@@ -34,45 +39,50 @@ export default class Renderer extends React.Component {
         this.props.autoDocx.onDone(this.props.autoDocx.filename);
     };
 
-    makePrintableRef = (ref) => this._printable = ref;
+    makePrintableRef = ref => (this._printable = ref);
 
-    handleSignal = (message) => {
+    handleSignal = message => {
         switch (message) {
-        case "docx":
-            this.createDocx();
-            break;
-        default:
-            console.error("Unknown message:", message)
+            case "docx":
+                this.createDocx();
+                break;
+            default:
+                console.error("Unknown message:", message);
         }
     };
 
     renderBody() {
         const RenderingComponent = rules_set.discipline_results_table;
-        return (
-            <RenderingComponent discipline={ this.props.discipline } />
-        );
+        return <RenderingComponent discipline={this.props.discipline} />;
     }
-    render() { // eslint-disable-line react/sort-comp
+    // eslint-disable-next-line react/sort-comp
+    render() {
         return (
             <Paper
-                header={ `${this.props.discipline.competition.name}, ${this.props.discipline.competition.date}` }
-                ref={ this.makePrintableRef }
-                title1={ _("admin.headers.discipline_results") }
-                title3={ this.props.discipline.name }
+                header={`${this.props.discipline.competition.name}, ${
+                    this.props.discipline.competition.date
+                }`}
+                ref={this.makePrintableRef}
+                title1={_("admin.headers.discipline_results")}
+                title3={this.props.discipline.name}
             >
-                { this.renderBody() }
+                {this.renderBody()}
             </Paper>
         );
     }
 
-    createDocx(filename="discipline-results.docx") {
+    createDocx(filename = "discipline-results.docx") {
         const docx = Docx(filename)
-            .setHeader(`${this.props.discipline.competition.name}, ${this.props.discipline.competition.date}`)
+            .setHeader(
+                `${this.props.discipline.competition.name}, ${
+                    this.props.discipline.competition.date
+                }`,
+            )
             .setTitle1(_("admin.headers.discipline_results"))
             .setTitle3(this.props.discipline.name)
             .setBody(this._printable.getPrintableHTML());
         if (rules_set.discipline_results_table.transformDocx) {
-            rules_set.discipline_results_table.transformDocx(docx)
+            rules_set.discipline_results_table.transformDocx(docx);
         }
         docx.save();
     }

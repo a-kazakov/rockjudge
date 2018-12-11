@@ -3,7 +3,6 @@ import React from "react";
 import TourSubscription from "common/server/Storage/subscriptions/TourSubscription";
 import PT from "prop-types";
 
-
 export default class TourLoader extends React.Component {
     static propTypes = {
         renderer: PT.func.isRequired,
@@ -26,14 +25,16 @@ export default class TourLoader extends React.Component {
 
     subscribe = () => {
         this._subscription = new TourSubscription(this.props.tour.id);
-        this.props.tour.global_storage.subscribe(this._subscription).then(this.updateTourStorage);
+        this.props.tour.global_storage
+            .subscribe(this._subscription)
+            .then(this.updateTourStorage);
     };
     unsubscribe() {
         this.props.tour.global_storage.unsubscribe(this._subscription);
     }
 
-    updateTourStorage = (tourStorage) => {
-        this.setState({tourStorage});
+    updateTourStorage = tourStorage => {
+        this.setState({ tourStorage });
     };
 
     render() {
@@ -41,8 +42,6 @@ export default class TourLoader extends React.Component {
             return null;
         }
         const { renderer: RenderingComponent, ...props } = this.props;
-        return (
-            <RenderingComponent { ...props } />
-        );
+        return <RenderingComponent {...props} />;
     }
 }

@@ -6,10 +6,10 @@ export default class FieldTypes {
             name: name,
             defaultValue: "",
             fromFormValue: value => value.trim(),
-        }
+        };
     }
 
-    static makeIntegerField(name, error_message, bounds=[null, null]) {
+    static makeIntegerField(name, error_message, bounds = [null, null]) {
         const [lower, upper] = bounds;
         return {
             name: name,
@@ -17,17 +17,19 @@ export default class FieldTypes {
             toFormValue: value => value.toString(),
             fromFormValue: value => parseInt(value),
             validator: makeValidator(
-                value => !isNaN(value) && (upper == null || value <= upper) && (lower == null || value >= lower),
+                value =>
+                    !isNaN(value) &&
+                    (upper == null || value <= upper) &&
+                    (lower == null || value >= lower),
                 error_message,
             ),
-        }
+        };
     }
 
     static makeNonEmptyTextField(name, error_message) {
-        return Object.assign(
-            this.makeTextField(name),
-            { validator: makeValidator(value => value !== "", error_message) },
-        );
+        return Object.assign(this.makeTextField(name), {
+            validator: makeValidator(value => value !== "", error_message),
+        });
     }
 
     static makeExternalIdField() {
@@ -35,8 +37,8 @@ export default class FieldTypes {
             name: "external_id",
             defaultValue: "",
             toFormValue: value => value || "",
-            fromFormValue: value => value ? value.trim() : null,
-        }
+            fromFormValue: value => (value ? value.trim() : null),
+        };
     }
 
     static makeSpField() {

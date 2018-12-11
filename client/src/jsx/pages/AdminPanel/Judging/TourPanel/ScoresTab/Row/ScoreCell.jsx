@@ -18,7 +18,7 @@ export default class ScoreCell extends React.Component {
     static get defaultProps() {
         return {
             score: null,
-        }
+        };
     }
     handleStartEditing = () => {
         this.props.onEditRequest({
@@ -27,11 +27,11 @@ export default class ScoreCell extends React.Component {
         });
     };
 
-    handleSubmission = (data) => {
+    handleSubmission = data => {
         Api("model/update", {
             model_name: "Score",
             model_id: this.props.score.id,
-            data: {data},
+            data: { data },
         })
             .onSuccess(this.props.onStopEditing)
             .send();
@@ -43,15 +43,14 @@ export default class ScoreCell extends React.Component {
             data: {
                 confirmed: !this.props.score.confirmed,
             },
-        })
-            .send();
+        }).send();
     };
 
     getClasssName() {
         return makeClassName({
-            "judge": true,
+            judge: true,
             "rules-set": true,
-            "editing": this.props.editing,
+            editing: this.props.editing,
             "confirmed-score": this.props.score.confirmed,
         });
     }
@@ -59,32 +58,24 @@ export default class ScoreCell extends React.Component {
         const score = this.props.score;
         const computed_data = score?.run.tour.results?.scores_results[score?.id];
         if (!score || !computed_data) {
-            return (
-                <td className="judge no-score">
-                    &nbsp;
-                </td>
-            );
+            return <td className="judge no-score">&nbsp;</td>;
         }
         const InputComponent = rules_set.admin_score_input;
         return (
-            <td
-                className={ this.getClasssName() }
-                onClick={ this.handleStartEditing }
-            >
+            <td className={this.getClasssName()} onClick={this.handleStartEditing}>
                 <InputComponent
-                    confirmed={ this.props.score.confirmed }
-                    disciplineJudgeRole={ this.props.disciplineJudge.role }
-                    editing={ this.props.editing }
-                    readOnly={ this.props.readOnly }
-                    scoreComputedData={ computed_data }
-                    scoreData={ this.props.score.data }
-                    scoringSystemName={ this.props.score.run.tour.scoring_system_name }
-                    onConfirmationToggle={ this.handleConfirmationToggle }
-                    onDiscard={ this.props.onStopEditing }
-                    onSubmit={ this.handleSubmission }
+                    confirmed={this.props.score.confirmed}
+                    disciplineJudgeRole={this.props.disciplineJudge.role}
+                    editing={this.props.editing}
+                    readOnly={this.props.readOnly}
+                    scoreComputedData={computed_data}
+                    scoreData={this.props.score.data}
+                    scoringSystemName={this.props.score.run.tour.scoring_system_name}
+                    onConfirmationToggle={this.handleConfirmationToggle}
+                    onDiscard={this.props.onStopEditing}
+                    onSubmit={this.handleSubmission}
                 />
             </td>
-        )
+        );
     }
 }
-

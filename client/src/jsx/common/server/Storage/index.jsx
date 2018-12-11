@@ -13,7 +13,7 @@ export default class Storage {
         this.ready = false;
         this.postponed_subscriptions = new Map();
         this.subscription_storage_index = new DefaultMap(() => []);
-        this.overrides = new DefaultMap(() => new ModelOverride);
+        this.overrides = new DefaultMap(() => new ModelOverride());
     }
     init(mutation_callback) {
         if (this.init_started) {
@@ -29,7 +29,7 @@ export default class Storage {
             .onError(reject)
             .send();
     };
-    finishInit = (response) => {
+    finishInit = response => {
         this.global_schema = new GlobalSchema(response, this);
         this.subscription_storages = new Map();
         this.ready = true;
@@ -44,9 +44,15 @@ export default class Storage {
             }
         }
     }
-    getSubscriptionStorageByModel(for_model_name, existing_model_name, existing_model_id) {
+    getSubscriptionStorageByModel(
+        for_model_name,
+        existing_model_name,
+        existing_model_id,
+    ) {
         const options = this.subscription_storage_index.get(for_model_name);
-        return options.find(sub_storage => sub_storage.has(existing_model_name, existing_model_id));
+        return options.find(sub_storage =>
+            sub_storage.has(existing_model_name, existing_model_id),
+        );
     }
     getAllSubscriptionStorages(model_name) {
         return this.subscription_storage_index.get(model_name);
@@ -80,22 +86,31 @@ export default class Storage {
         subscription.unsubscribe();
     }
     resubscribeAll() {
-        const promises = Array.from(this.subscription_storages.values()).map(ms => ms.resubscribe());
+        const promises = Array.from(this.subscription_storages.values()).map(ms =>
+            ms.resubscribe(),
+        );
         return Promise.all(promises);
     }
     postponeSubscription(subscription) {
-        return new Promise((resolve, reject) => this._postponeSubscription(subscription, resolve, reject));
+        return new Promise((resolve, reject) =>
+            this._postponeSubscription(subscription, resolve, reject),
+        );
     }
     _postponeSubscription = (subscription, resolve, reject) => {
         this.postponed_subscriptions.set(subscription, [resolve, reject]);
     };
     subscribePostponed() {
-        for (const [subscription, [resolve, reject]] of this.postponed_subscriptions.entries()) {
-            this.subscribe(subscription).then(resolve).catch(reject);
+        for (const [
+            subscription,
+            [resolve, reject],
+        ] of this.postponed_subscriptions.entries()) {
+            this.subscribe(subscription)
+                .then(resolve)
+                .catch(reject);
         }
         this.postponed_subscriptions.clear();
     }
-    handleMutations(mutations, is_initial=false, subscription_id=null) {
+    handleMutations(mutations, is_initial = false, subscription_id = null) {
         if (!is_initial && !this.ready) {
             return;
         }

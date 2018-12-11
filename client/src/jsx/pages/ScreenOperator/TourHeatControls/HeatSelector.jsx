@@ -22,33 +22,31 @@ export default class HeatSelector extends React.Component {
 
     render() {
         if (this.props.tour == null) {
-            return (
-                <Loader />
-            );
+            return <Loader />;
         }
         let result = [];
         const max_heat = lastOf(this.props.tour.runs)?.heat || 1;
         for (let heat = 1; heat <= max_heat; ++heat) {
             result.push(
                 <HeatSelectorRow
-                    heat={ heat }
-                    key={ heat }
-                    runs={ this.props.tour.runs.filter((run) => run.heat === heat) }
-                    selected={ this.props.value === heat }
-                    onHeatSelect={ this.props.onHeatSelect }
-                />
-            )
+                    heat={heat}
+                    key={heat}
+                    runs={this.props.tour.runs.filter(run => run.heat === heat)}
+                    selected={this.props.value === heat}
+                    onHeatSelect={this.props.onHeatSelect}
+                />,
+            );
         }
         return (
             <div className="heat-selector">
                 <button
                     className="reset-button"
                     type="button"
-                    { ...onTouchEndOrClick(this.handleHeatReset) }
+                    {...onTouchEndOrClick(this.handleHeatReset)}
                 >
-                    { _("screen_operator.buttons.reset_heat") }
+                    {_("screen_operator.buttons.reset_heat")}
                 </button>
-                { result }
+                {result}
             </div>
         );
     }

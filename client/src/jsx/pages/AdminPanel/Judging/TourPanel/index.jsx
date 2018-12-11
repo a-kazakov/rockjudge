@@ -37,20 +37,20 @@ export default class TourPanel extends React.Component {
 
     subscribe = () => {
         this._subscription = new TourSubscription(this.props.tour.id);
-        this.props.tour.global_storage.subscribe(this._subscription).then(this.updateTourStorage);
+        this.props.tour.global_storage
+            .subscribe(this._subscription)
+            .then(this.updateTourStorage);
     };
     unsubscribe() {
         this.props.tour.global_storage.unsubscribe(this._subscription);
     }
 
-    updateTourStorage = (tourStorage) => {
-        this.setState({tourStorage});
+    updateTourStorage = tourStorage => {
+        this.setState({ tourStorage });
     };
 
     getDefaultPage() {
-        return this.props.tour.finalized
-            ? "results-1"
-            : "tour-admin";
+        return this.props.tour.finalized ? "results-1" : "tour-admin";
     }
     getPageFromHash() {
         let chunks = window.location.hash.substr(1).split("/");
@@ -60,14 +60,14 @@ export default class TourPanel extends React.Component {
         return this.getDefaultPage();
     }
 
-    handlePageSwitch = (page) => {
+    handlePageSwitch = page => {
         this.setState({ page });
         window.location.hash = `#judging/${this.props.tour.id}/${page}`;
     };
 
-    makeBodyRef = (ref) => this._body = ref;
+    makeBodyRef = ref => (this._body = ref);
 
-    handleSignal = (message) => {
+    handleSignal = message => {
         if (this._body) {
             this._body.handleSignal(message);
         }
@@ -76,10 +76,10 @@ export default class TourPanel extends React.Component {
     renderNavButton(code) {
         return (
             <NavButton
-                active={ this.state.page === code }
-                label={ _(`admin.judging-tabs.${code}`) }
-                mkey={ code }
-                onPageSwitch={ this.handlePageSwitch }
+                active={this.state.page === code}
+                label={_(`admin.judging-tabs.${code}`)}
+                mkey={code}
+                onPageSwitch={this.handlePageSwitch}
             />
         );
     }
@@ -89,48 +89,34 @@ export default class TourPanel extends React.Component {
             onSignal: this.handleSignal,
         };
         switch (this.state.page) {
-        case "tour-admin":
-            return (
-                <ScoresTabButtons { ...props } />
-            );
-        case "heats":
-            return (
-                <HeatsTabButtons { ...props } />
-            );
-        case "results-1":
-        case "results-2":
-        case "results-3":
-            return (
-                <TourResultsTabButtons { ...props } />
-            );
-        case "discipline-results":
-            return (
-                <DisciplineResultsTabButtons { ...props } />
-            );
-        default:
-            console.error("Unknown page:", this.state.page);
+            case "tour-admin":
+                return <ScoresTabButtons {...props} />;
+            case "heats":
+                return <HeatsTabButtons {...props} />;
+            case "results-1":
+            case "results-2":
+            case "results-3":
+                return <TourResultsTabButtons {...props} />;
+            case "discipline-results":
+                return <DisciplineResultsTabButtons {...props} />;
+            default:
+                console.error("Unknown page:", this.state.page);
         }
     }
     renderHeader() {
         return (
             <header>
-                <div className="controls">
-                    { this.renderButtons(this.props.tour) }
-                </div>
-                <h1>
-                    { this.props.tour.discipline.name }
-                </h1>
-                <h2>
-                    { this.props.tour.name }
-                </h2>
+                <div className="controls">{this.renderButtons(this.props.tour)}</div>
+                <h1>{this.props.tour.discipline.name}</h1>
+                <h2>{this.props.tour.name}</h2>
                 <div className="clearfix" />
                 <nav>
-                    { this.renderNavButton("tour-admin") }
-                    { this.renderNavButton("heats") }
-                    { this.renderNavButton("results-1") }
-                    { this.renderNavButton("results-2") }
-                    { this.renderNavButton("results-3") }
-                    { this.renderNavButton("discipline-results") }
+                    {this.renderNavButton("tour-admin")}
+                    {this.renderNavButton("heats")}
+                    {this.renderNavButton("results-1")}
+                    {this.renderNavButton("results-2")}
+                    {this.renderNavButton("results-3")}
+                    {this.renderNavButton("discipline-results")}
                 </nav>
                 <div className="clearfix" />
             </header>
@@ -143,55 +129,39 @@ export default class TourPanel extends React.Component {
             onPageSwitch: this.handlePageSwitch,
         };
         switch (this.state.page) {
-        case "tour-admin":
-            return (
-                <ScoresTab { ...props } />
-            );
-        case "heats":
-            return (
-                <HeatsTab { ...props } />
-            );
-        case "results-1":
-            return (
-                <TourResultsTab verbosity={ 1 } { ...props } />
-            );
-        case "results-2":
-            return (
-                <TourResultsTab verbosity={ 2 } { ...props } />
-            );
-        case "results-3":
-            return (
-                <TourResultsTab verbosity={ 3 } { ...props } />
-            );
-        case "discipline-results":
-            return (
-                <DisciplineResultsTab
-                    discipline={ this.props.tour.discipline }
-                    ref={ this.makeBodyRef }
-                />
-            );
-        default:
-            console.error("Unknown page:", this.state.page);
+            case "tour-admin":
+                return <ScoresTab {...props} />;
+            case "heats":
+                return <HeatsTab {...props} />;
+            case "results-1":
+                return <TourResultsTab verbosity={1} {...props} />;
+            case "results-2":
+                return <TourResultsTab verbosity={2} {...props} />;
+            case "results-3":
+                return <TourResultsTab verbosity={3} {...props} />;
+            case "discipline-results":
+                return (
+                    <DisciplineResultsTab
+                        discipline={this.props.tour.discipline}
+                        ref={this.makeBodyRef}
+                    />
+                );
+            default:
+                console.error("Unknown page:", this.state.page);
         }
     }
     render() {
         if (!this.state.tourStorage) {
-            return (
-                <Loader />
-            );
+            return <Loader />;
         }
         const tour = this.state.tourStorage.getSame(this.props.tour);
         if (!tour) {
-            return (
-                <Loader />
-            );
+            return <Loader />;
         }
         return (
             <div className="TourPanel">
-                { this.renderHeader() }
-                <div className="body">
-                    { this.renderBody(tour) }
-                </div>
+                {this.renderHeader()}
+                <div className="body">{this.renderBody(tour)}</div>
             </div>
         );
     }

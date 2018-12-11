@@ -1,7 +1,7 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
-import GeneralEditor from "./GeneralEditor"
+import GeneralEditor from "./GeneralEditor";
 import NumberBlock from "./GeneralEditor/blocks/NumberBlock";
 
 export default class HeadJudgeScore extends React.Component {
@@ -16,18 +16,12 @@ export default class HeadJudgeScore extends React.Component {
     render() {
         return (
             <GeneralEditor
-                initialData={ this.props.scoreData }
-                readOnly={ this.props.readOnly }
-                onDiscard={ this.props.onDiscard }
-                onSubmit={ this.props.onSubmit }
+                initialData={this.props.scoreData}
+                readOnly={this.props.readOnly}
+                onDiscard={this.props.onDiscard}
+                onSubmit={this.props.onSubmit}
             >
-                <NumberBlock
-                    nullable
-                    field="bonus"
-                    label="B"
-                    max={ 10 }
-                    min={ -10 }
-                />
+                <NumberBlock nullable field="bonus" label="B" max={10} min={-10} />
             </GeneralEditor>
         );
     }

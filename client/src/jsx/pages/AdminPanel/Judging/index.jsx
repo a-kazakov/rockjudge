@@ -29,10 +29,13 @@ export default class Judging extends React.Component {
         if (this.state.activeTourId == null) {
             return null;
         }
-        return this.props.competition.subscription_storage.get("Tour", this.state.activeTourId);
+        return this.props.competition.subscription_storage.get(
+            "Tour",
+            this.state.activeTourId,
+        );
     }
 
-    handleActiveTourChange = (activeTourId) => {
+    handleActiveTourChange = activeTourId => {
         this.setState({ activeTourId });
         window.location.hash = `#judging/${activeTourId}`;
     };
@@ -42,24 +45,18 @@ export default class Judging extends React.Component {
         if (!tour) {
             return null;
         }
-        return (
-            <TourPanel
-                key={ tour.id }
-                tour={ tour }
-            />
-        );
+        return <TourPanel key={tour.id} tour={tour} />;
     }
     render() {
         return (
             <div className="Judging">
                 <SideMenu
-                    activeTourId={ this.state.activeTourId }
-                    competition={ this.props.competition }
-                    onActiveTourChange={ this.handleActiveTourChange }
+                    activeTourId={this.state.activeTourId}
+                    competition={this.props.competition}
+                    onActiveTourChange={this.handleActiveTourChange}
                 />
-                { this.renderTourPanel() }
+                {this.renderTourPanel()}
             </div>
         );
     }
 }
-

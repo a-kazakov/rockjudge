@@ -11,21 +11,21 @@ export default class ImportItemsCheckbox extends React.Component {
         onChange: PT.func.isRequired,
     };
 
-    handleChange = (e) => {
+    handleChange = e => {
         this.props.onChange(this.props.type, e.target.checked);
-    }
+    };
 
     render() {
         return (
             <div className="switch">
                 <label>
                     <input
-                        checked={ this.props.value }
-                        disabled={ this.props.disabled }
+                        checked={this.props.value}
+                        disabled={this.props.disabled}
                         type="checkbox"
-                        onChange={ this.handleChange }
+                        onChange={this.handleChange}
                     />
-                    { this.props.label }
+                    {this.props.label}
                 </label>
             </div>
         );

@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import Row from "./Row";
@@ -12,22 +12,19 @@ export default class TableBody extends React.Component {
     };
 
     renderRow = (row, idx) => {
-        const key = this.props.rowKey != null ? (row[this.props.rowKey] || `nokey_${idx}`) : idx;
+        const key =
+            this.props.rowKey != null ? row[this.props.rowKey] || `nokey_${idx}` : idx;
         return (
             <Row
-                cols={ this.props.cols }
-                key={ key }
-                row={ row }
-                widths={ this.props.widths }
+                cols={this.props.cols}
+                key={key}
+                row={row}
+                widths={this.props.widths}
             />
-        )
+        );
     };
 
     render() {
-        return (
-            <tbody>
-                { this.props.rows.map(this.renderRow) }
-            </tbody>
-        );
+        return <tbody>{this.props.rows.map(this.renderRow)}</tbody>;
     }
 }

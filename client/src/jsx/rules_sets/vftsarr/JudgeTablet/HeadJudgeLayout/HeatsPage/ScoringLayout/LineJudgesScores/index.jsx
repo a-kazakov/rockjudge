@@ -1,9 +1,9 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
 
-import {CRITERIAS_ORDER} from "common/constants";
+import { CRITERIAS_ORDER } from "common/constants";
 
 import Row from "./Row";
 
@@ -14,12 +14,9 @@ const COMPLEX_CRITERIAS = new Map([
     ["figures", ["fig_execution", "fig_patterns", "fig_transitions"]],
 ]);
 
-
 export default class LineJudgesScores extends React.Component {
     static propTypes = {
-        disciplineJudges: PT.arrayOf(
-            PT.object.isRequired,
-        ).isRequired,
+        disciplineJudges: PT.arrayOf(PT.object.isRequired).isRequired,
         run: PT.object.isRequired,
         tourResults: PT.object.isRequired,
     };
@@ -29,13 +26,12 @@ export default class LineJudgesScores extends React.Component {
         if (!this.names_cache.get(name)) {
             const new_name_part = name
                 .split("")
-                .map((ch, idx, arr) => (idx === 0 || arr[idx - 1] === "_") ? ch.toUpperCase() : ch)
+                .map((ch, idx, arr) =>
+                    idx === 0 || arr[idx - 1] === "_" ? ch.toUpperCase() : ch,
+                )
                 .filter(ch => ch !== "_")
                 .join("");
-            this.names_cache.set(
-                name,
-                `get${new_name_part}`,
-            );
+            this.names_cache.set(name, `get${new_name_part}`);
         }
         return this.names_cache.get(name);
     }
@@ -49,49 +45,51 @@ export default class LineJudgesScores extends React.Component {
     }
 
     resetCache() {
-        this._cache.clear()
+        this._cache.clear();
     }
-    getValue(value_name, use_cache_or_context=true, state=null, props=null) {
+    getValue(value_name, use_cache_or_context = true, state = null, props = null) {
         const func = this.constructor.convertName(value_name);
-        const context = typeof use_cache_or_context === "object"
-            ? use_cache_or_context
-            : {
-                use_cache: use_cache_or_context,
-                state: state || this.state,
-                props: props || this.props,
-            };
+        const context =
+            typeof use_cache_or_context === "object"
+                ? use_cache_or_context
+                : {
+                      use_cache: use_cache_or_context,
+                      state: state || this.state,
+                      props: props || this.props,
+                  };
         if (context.use_cache) {
             if (!this._cache.has(value_name)) {
                 this._cache.set(value_name, this[func](context));
             }
-            return this._cache.get(value_name)
+            return this._cache.get(value_name);
         } else {
             return this[func](context);
         }
     }
 
     getLineJudges(context) {
-        return context.props.disciplineJudges
-            .filter(dj => ["dance_judge", "acro_judge"].includes(dj.role))
+        return context.props.disciplineJudges.filter(dj =>
+            ["dance_judge", "acro_judge"].includes(dj.role),
+        );
     }
 
     getLineJudgesIndex(context) {
-        return new Map(this.getValue("line_judges", context).map(dj => [dj.id, dj]))
+        return new Map(this.getValue("line_judges", context).map(dj => [dj.id, dj]));
     }
 
     getScores(context) {
         const lj_index = this.getValue("line_judges_index");
-        return context.props.run.scores
-            .filter(score => lj_index.has(score.discipline_judge_id))
+        return context.props.run.scores.filter(score =>
+            lj_index.has(score.discipline_judge_id),
+        );
     }
 
     getTable(context) {
         let result = new Map();
         for (const score of this.getValue("scores", context)) {
-            const criterias_values = (
-                context.props.tourResults.scores_results[score.id]
-                    ?.extra_data.criterias
-            ) || {};
+            const criterias_values =
+                context.props.tourResults.scores_results[score.id]?.extra_data
+                    .criterias || {};
             const dj_id = score.discipline_judge_id;
             for (const criteria of Object.keys(criterias_values)) {
                 const key = `${dj_id}/${criteria}`;
@@ -115,10 +113,9 @@ export default class LineJudgesScores extends React.Component {
 
     getAllCriterias(context) {
         // let cr_found = new Set;
-        const criterias_values = (
-            context.props.tourResults.runs_results[context.props.run.id]
-                ?.extra_data.criterias_scores
-        ) || {};
+        const criterias_values =
+            context.props.tourResults.runs_results[context.props.run.id]?.extra_data
+                .criterias_scores || {};
         return new Set(Object.keys(criterias_values));
     }
 
@@ -151,32 +148,45 @@ export default class LineJudgesScores extends React.Component {
         return result;
     }
 
-    get line_judges() { return this.getValue("line_judges") }
-    get line_judges_index() { return this.getValue("line_judges_index") }
-    get scores() { return this.getValue("scores") }
-    get table() { return this.getValue("table") }
-    get all_criterias() { return this.getValue("all_criterias") }
-    get medians() { return this.getValue("medians") }
+    get line_judges() {
+        return this.getValue("line_judges");
+    }
+    get line_judges_index() {
+        return this.getValue("line_judges_index");
+    }
+    get scores() {
+        return this.getValue("scores");
+    }
+    get table() {
+        return this.getValue("table");
+    }
+    get all_criterias() {
+        return this.getValue("all_criterias");
+    }
+    get medians() {
+        return this.getValue("medians");
+    }
 
-    makeTableRef = (ref) => this._table = ref;
+    makeTableRef = ref => (this._table = ref);
 
-    handleShowVerboseScore = (event) => {
+    handleShowVerboseScore = event => {
         event.preventDefault();
         this.handleShowVerboseScoreNoPrevent(event);
     };
 
-    handleShowVerboseScoreNoPrevent = (event) => {
+    handleShowVerboseScoreNoPrevent = event => {
         const position_obj = event.touches ? event.touches[0] : event;
         const target = this._table;
         const rect = target.getBoundingClientRect();
         const offset = position_obj.clientX - rect.left;
-        const selected_idx = Math.floor(offset / (target.offsetWidth / (this.scores.length + 1))) - 1;
+        const selected_idx =
+            Math.floor(offset / (target.offsetWidth / (this.scores.length + 1))) - 1;
         this.setState({
             verboseIdx: selected_idx,
         });
     };
 
-    handleHideVerboseScore = (event) => {
+    handleHideVerboseScore = event => {
         event.preventDefault();
         this.setState({ verboseIdx: null });
     };
@@ -188,7 +198,7 @@ export default class LineJudgesScores extends React.Component {
         return (
             <div className="verbose-score">
                 <div className="judge-name">
-                    { this.line_judges_index.get(score.discipline_judge_id).judge.name }
+                    {this.line_judges_index.get(score.discipline_judge_id).judge.name}
                 </div>
                 <div className="triangle" />
             </div>
@@ -198,53 +208,56 @@ export default class LineJudgesScores extends React.Component {
         return this.scores.map((score, idx) => {
             const dj = this.line_judges_index.get(score.discipline_judge_id);
             return (
-                <td key={ score.id }>
-                    { `${dj.judge.number }${ dj.role === "acro_judge" ? " (A)" : "" }` }
-                    { this.renderJudgeName(score, idx) }
+                <td key={score.id}>
+                    {`${dj.judge.number}${dj.role === "acro_judge" ? " (A)" : ""}`}
+                    {this.renderJudgeName(score, idx)}
                 </td>
             );
         });
     }
     renderRows() {
-        const criterias_scores = this.props.tourResults.runs_results[this.props.run.id]?.extra_data.criterias_scores;
+        const criterias_scores = this.props.tourResults.runs_results[this.props.run.id]
+            ?.extra_data.criterias_scores;
         if (!criterias_scores) {
             return null;
         }
-        const criterias = Object.keys(criterias_scores)
-            .sort((a, b) => (CRITERIAS_ORDER.get(a) || 1000) - (CRITERIAS_ORDER.get(b) || 1000));
-        return criterias.map(criteria =>
-            <Row
-                criteria={ criteria }
-                key={ criteria }
-                lineJudgesIndex={ this.line_judges_index }
-                medians={ this.medians }
-                scores={ this.scores }
-                table={ this.table }
-            />
+        const criterias = Object.keys(criterias_scores).sort(
+            (a, b) =>
+                (CRITERIAS_ORDER.get(a) || 1000) - (CRITERIAS_ORDER.get(b) || 1000),
         );
+        return criterias.map(criteria => (
+            <Row
+                criteria={criteria}
+                key={criteria}
+                lineJudgesIndex={this.line_judges_index}
+                medians={this.medians}
+                scores={this.scores}
+                table={this.table}
+            />
+        ));
     }
     render() {
         this.resetCache();
         return (
             <div>
-                <h3>{ _("tablet.head_judge.dance_judge_scores") }</h3>
+                <h3>{_("tablet.head_judge.dance_judge_scores")}</h3>
                 <table
                     className="line-judge-scores"
-                    ref={ this.makeTableRef }
-                    onMouseMove={ this.handleShowVerboseScore }
-                    onMouseOut={ this.handleHideVerboseScore }
-                    onMouseUp={ this.handleHideVerboseScore }
-                    onTouchCancel={ this.handleHideVerboseScore }
-                    onTouchEnd={ this.handleHideVerboseScore }
-                    onTouchMove={ this.handleShowVerboseScoreNoPrevent }
-                    onTouchStart={ this.handleShowVerboseScore }
+                    ref={this.makeTableRef}
+                    onMouseMove={this.handleShowVerboseScore}
+                    onMouseOut={this.handleHideVerboseScore}
+                    onMouseUp={this.handleHideVerboseScore}
+                    onTouchCancel={this.handleHideVerboseScore}
+                    onTouchEnd={this.handleHideVerboseScore}
+                    onTouchMove={this.handleShowVerboseScoreNoPrevent}
+                    onTouchStart={this.handleShowVerboseScore}
                 >
                     <tbody>
                         <tr className="numbers">
                             <td />
-                            { this.renderNumbers() }
+                            {this.renderNumbers()}
                         </tr>
-                        { this.renderRows() }
+                        {this.renderRows()}
                     </tbody>
                 </table>
             </div>

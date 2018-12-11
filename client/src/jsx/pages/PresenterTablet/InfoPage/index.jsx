@@ -15,24 +15,12 @@ export default class InfoPage extends React.Component {
     render() {
         return (
             <div className="info">
-                <h2>
-                    { this.props.competition.name }
-                </h2>
-                <CompetitionInfo
-                    competition={ this.props.competition }
-                />
-                <h3>
-                    { _("presenter.headers.judges") }
-                </h3>
-                <Judges
-                    competition={ this.props.competition }
-                />
-                <h3>
-                    { _("presenter.headers.clubs") }
-                </h3>
-                <Clubs
-                    competition={ this.props.competition }
-                />
+                <h2>{this.props.competition.name}</h2>
+                <CompetitionInfo competition={this.props.competition} />
+                <h3>{_("presenter.headers.judges")}</h3>
+                <Judges competition={this.props.competition} />
+                <h3>{_("presenter.headers.clubs")}</h3>
+                <Clubs competition={this.props.competition} />
             </div>
         );
     }

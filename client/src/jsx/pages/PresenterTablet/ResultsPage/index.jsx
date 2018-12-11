@@ -13,32 +13,27 @@ export default class ResultsPage extends React.Component {
         super(props);
         this.state = {
             currentDiscipline: null,
-        }
+        };
     }
 
-    handleCurrentDisciplineChange = (currentDiscipline) => this.setState({ currentDiscipline });
+    handleCurrentDisciplineChange = currentDiscipline =>
+        this.setState({ currentDiscipline });
 
     renderDisciplineResults() {
         if (this.state.currentDiscipline == null) {
-            return (
-                <div className="discipline-results" />
-            );
+            return <div className="discipline-results" />;
         }
-        return (
-            <ResultsRenderer
-                discipline={ this.state.currentDiscipline }
-            />
-        );
+        return <ResultsRenderer discipline={this.state.currentDiscipline} />;
     }
     render() {
         return (
             <div className="results">
                 <DisciplineSelector
-                    competition={ this.props.competition }
-                    value={ this.state.currentDiscipline?.id }
-                    onDisciplineChange={ this.handleCurrentDisciplineChange }
+                    competition={this.props.competition}
+                    value={this.state.currentDiscipline?.id}
+                    onDisciplineChange={this.handleCurrentDisciplineChange}
                 />
-                { this.renderDisciplineResults() }
+                {this.renderDisciplineResults()}
             </div>
         );
     }

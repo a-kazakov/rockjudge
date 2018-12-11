@@ -35,9 +35,7 @@ export default class Judges extends React.Component {
         }
         return (
             <td className="w-10">
-                <p className="text-right">
-                    { numbers[idx] }
-                </p>
+                <p className="text-right">{numbers[idx]}</p>
             </td>
         );
     }
@@ -49,29 +47,27 @@ export default class Judges extends React.Component {
         return (
             <div>
                 <h4>
-                    <p>
-                        { _("admin.headers.judges") }
-                    </p>
+                    <p>{_("admin.headers.judges")}</p>
                 </h4>
-                <table className="judges"><tbody>
-                    { this.props.competition.judges.map((judge, idx) =>
-                        <tr key={ judge.id }>
-                            { this.renderIdx(idx, numbers) }
-                            <th className="w-35">
-                                <p className="text-left">
-                                    { judge.role_description || _("global.phrases.judge_n", judge.number) }
-                                </p>
-                            </th>
-                            <td className="w-55">
-                                <p>
-                                    { `${judge.name}, ${judge.category}` }
-                                </p>
-                            </td>
-                        </tr>
-                    ) }
-                </tbody></table>
+                <table className="judges">
+                    <tbody>
+                        {this.props.competition.judges.map((judge, idx) => (
+                            <tr key={judge.id}>
+                                {this.renderIdx(idx, numbers)}
+                                <th className="w-35">
+                                    <p className="text-left">
+                                        {judge.role_description ||
+                                            _("global.phrases.judge_n", judge.number)}
+                                    </p>
+                                </th>
+                                <td className="w-55">
+                                    <p>{`${judge.name}, ${judge.category}`}</p>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         );
     }
 }
-

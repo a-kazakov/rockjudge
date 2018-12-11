@@ -16,40 +16,42 @@ export default class Numbers extends React.Component {
         }).isRequired,
     };
 
-    static getParticipants = (group) => group.participants;
+    static getParticipants = group => group.participants;
 
-    makeRef = (ref) => this._body = ref;
+    makeRef = ref => (this._body = ref);
 
     makeParticipantsList() {
         const groups = this.props.config.group_by_clubs
             ? this.props.competition.clubs
             : this.props.competition.disciplines;
-        return [].concat.apply([], groups.map(this.constructor.getParticipants))
+        return [].concat
+            .apply([], groups.map(this.constructor.getParticipants))
             .filter(this.filterParticipant);
     }
 
-    filterParticipant = (participant) => {
+    filterParticipant = participant => {
         return (
-            this.props.config.disciplines[participant.discipline.id]
-            && this.props.config.clubs[participant.club.id]
+            this.props.config.disciplines[participant.discipline.id] &&
+            this.props.config.clubs[participant.club.id]
         );
     };
 
-    render() {  // eslint-disable-line react/sort-comp
+    // eslint-disable-next-line react/sort-comp
+    render() {
         return (
-            <div className="print-only" ref={ this.makeRef }>
-                { this.makeParticipantsList().map((participant) =>
+            <div className="print-only" ref={this.makeRef}>
+                {this.makeParticipantsList().map(participant => (
                     <OneNumber
-                        competition={ this.props.competition }
-                        key={ participant.id }
-                        participant={ participant }
+                        competition={this.props.competition}
+                        key={participant.id}
+                        participant={participant}
                     />
-                ) }
+                ))}
             </div>
         );
     }
 
-    createDocx(filename="numbers.docx") {
+    createDocx(filename = "numbers.docx") {
         Docx(filename)
             .setMargins([0, 10, 0, 10])
             .setBody(this._body.innerHTML)

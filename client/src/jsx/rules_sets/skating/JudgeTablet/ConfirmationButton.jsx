@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -16,23 +16,23 @@ export default class ConfirmationButton extends React.Component {
     static get defaultProps() {
         return {
             canConfirm: true,
-        }
+        };
     }
 
     getClassName() {
         return makeClassName({
-            "confirm": true,
-            "hidden": !this.props.canConfirm,
+            confirm: true,
+            hidden: !this.props.canConfirm,
         });
     }
     render() {
         return (
-            <div className={ this.getClassName() }>
+            <div className={this.getClassName()}>
                 <Slider
-                    done={ this.props.confirmed }
-                    doneText={ _("tablet.global.confirmed") }
-                    slideText={ _("tablet.global.confirm_score") }
-                    onActivate={ this.props.onConfirm }
+                    done={this.props.confirmed}
+                    doneText={_("tablet.global.confirmed")}
+                    slideText={_("tablet.global.confirm_score")}
+                    onActivate={this.props.onConfirm}
                 />
             </div>
         );

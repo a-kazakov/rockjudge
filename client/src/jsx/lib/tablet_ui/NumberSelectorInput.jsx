@@ -34,9 +34,9 @@ export default class NumberSelectorInput extends React.Component {
         const { min, max, step, decimalSize, ...other_props } = this.props;
         return (
             <SelectorInput
-                choices={ this.makeChoices(min, max, step, decimalSize) }
-                { ...other_props }
+                choices={this.makeChoices(min, max, step, decimalSize)}
+                {...other_props}
             />
-        )
+        );
     }
 }

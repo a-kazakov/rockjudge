@@ -27,7 +27,7 @@ export default class CompetitionSubscription extends BaseSubscription {
         return this.constructor.MODELS.includes(mutation.model_name);
     }
     subscribe() {
-        return new Promise(this._subscribe)
+        return new Promise(this._subscribe);
     }
     _subscribe = (resolve, reject) => {
         Api("model/subscribe", {

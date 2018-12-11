@@ -7,7 +7,7 @@ export default class ScreenManifest {
         });
     }
 
-    getScreenDataById(id, is_default=false) {
+    getScreenDataById(id, is_default = false) {
         const result = this.raw_data.screens[this.idx_by_id[id]];
         if (!result) {
             if (is_default) {

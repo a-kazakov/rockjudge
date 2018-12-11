@@ -16,7 +16,7 @@ export default class JobQueue extends React.Component {
         this.scheduleJob();
     }
 
-    addJob = (job_type, tour, copies, submit=true) => {
+    addJob = (job_type, tour, copies, submit = true) => {
         this._pending_jobs.push({
             type: job_type,
             tour: tour,
@@ -59,12 +59,14 @@ export default class JobQueue extends React.Component {
         });
         this.scheduleJob();
     };
-    handleDocxCreated = (filename) => {
+    handleDocxCreated = filename => {
         clearTimeout(this.timer);
         setTimeout(() => {
             let job = this.state.nowRendering;
             let xhr = new XMLHttpRequest();
-            let address = `http://127.0.0.1:5949/print-docx?filename=${ filename }&copies=${ job.copies }`;
+            let address = `http://127.0.0.1:5949/print-docx?filename=${filename}&copies=${
+                job.copies
+            }`;
             xhr.open("GET", address, true);
             xhr.onload = () => {};
             xhr.onerror = () => this.addJob(job.type, job.tour, job.copies);
@@ -82,8 +84,8 @@ export default class JobQueue extends React.Component {
         return (
             <ActiveJob
                 key="active-job"
-                queueItem={ this.state.nowRendering }
-                onDone={ this.handleDocxCreated }
+                queueItem={this.state.nowRendering}
+                onDone={this.handleDocxCreated}
             />
         );
     }
@@ -91,36 +93,28 @@ export default class JobQueue extends React.Component {
         if (this.state.queue.length === 0) {
             return (
                 <div className="queue queue-empty">
-                    { _("admin.auto_printer.queue_empty") }
-                    <div className="hidden-container">
-                        { this.renderActiveJob() }
-                    </div>
+                    {_("admin.auto_printer.queue_empty")}
+                    <div className="hidden-container">{this.renderActiveJob()}</div>
                 </div>
             );
         }
         return (
             <div className="queue">
-                { this.state.queue.map((item) =>
-                    <div className="row" key={ item.id }>
+                {this.state.queue.map(item => (
+                    <div className="row" key={item.id}>
                         <div className="name">
-                            { item.type === "test"
+                            {item.type === "test"
                                 ? _("admin.auto_printer.test_page")
-                                : `${item.tour.discipline.name} — ${item.tour.name}`
-                            }
+                                : `${item.tour.discipline.name} — ${item.tour.name}`}
                         </div>
                         <div className="type">
-                            { _(`admin.auto_printer.${item.type}`) }
+                            {_(`admin.auto_printer.${item.type}`)}
                         </div>
-                        <div className="copies">
-                            { item.copies }
-                        </div>
+                        <div className="copies">{item.copies}</div>
                     </div>
-                ) }
-                <div className="hidden-container">
-                    { this.renderActiveJob() }
-                </div>
+                ))}
+                <div className="hidden-container">{this.renderActiveJob()}</div>
             </div>
         );
     }
 }
-

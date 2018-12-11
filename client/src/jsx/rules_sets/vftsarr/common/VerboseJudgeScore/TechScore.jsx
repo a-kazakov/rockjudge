@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import _ from "l10n";
 import PT from "prop-types";
@@ -19,9 +19,10 @@ export default class TechScore extends React.Component {
     getTime() {
         let val = this.props.scoreResult.extra_data.parts.time;
         if (val == null) {
-            return "—"
+            return "—";
         }
-        let m = 0, s = 0;
+        let m = 0,
+            s = 0;
         m = Math.floor(val / 60);
         val %= 60;
         s = Math.floor(val);
@@ -35,10 +36,15 @@ export default class TechScore extends React.Component {
         return (
             <tr>
                 <th>
-                    <p>{ _("score_parts.components.short.fall_down") }:</p>
+                    <p>{_("score_parts.components.short.fall_down")}:</p>
                 </th>
                 <td>
-                    <p>{ formatScore(this.props.scoreResult.extra_data.parts.fall_down, "$") }</p>
+                    <p>
+                        {formatScore(
+                            this.props.scoreResult.extra_data.parts.fall_down,
+                            "$",
+                        )}
+                    </p>
                 </td>
             </tr>
         );
@@ -50,10 +56,15 @@ export default class TechScore extends React.Component {
         return (
             <tr>
                 <th>
-                    <p>{ _("score_parts.components.short.undercount") }:</p>
+                    <p>{_("score_parts.components.short.undercount")}:</p>
                 </th>
                 <td>
-                    <p>{ formatScore(this.props.scoreResult.extra_data.parts.undercount, "$") }</p>
+                    <p>
+                        {formatScore(
+                            this.props.scoreResult.extra_data.parts.undercount,
+                            "$",
+                        )}
+                    </p>
                 </td>
             </tr>
         );
@@ -67,51 +78,58 @@ export default class TechScore extends React.Component {
         }
         return (
             <tr>
-                <td
-                    className="card-reason"
-                    colSpan={ 2 }
-                >
-                    { texts.map((text, idx) => (
-                        <div key={ idx }>
-                            { text }
-                        </div>
-                    )) }
+                <td className="card-reason" colSpan={2}>
+                    {texts.map((text, idx) => (
+                        <div key={idx}>{text}</div>
+                    ))}
                 </td>
             </tr>
         );
     }
     render() {
         return (
-            <table className="score-breakdown"><tbody>
-                <tr>
-                    <th>
-                        <p>{ _("results.breakdown.js") }:</p>
-                    </th>
-                    <td>
-                        <p>{ formatScore(this.props.scoreResult.extra_data.parts.jump_steps, "$") }</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        <p>{ _("results.breakdown.time") }:</p>
-                    </th>
-                    <td>
-                        <p>{ this.getTime() }</p>
-                    </td>
-                </tr>
-                { this.renderFallDowns() }
-                { this.renderUndercount() }
-                <tr>
-                    <th>
-                        <p>{ _("score_parts.components.short.card") }:</p>
-                    </th>
-                    <td>
-                        <p>{ _(`cards.short.${this.props.scoreResult.extra_data.parts.card}`) }</p>
-                    </td>
-                </tr>
-                { this.renderCardsReasons() }
-            </tbody></table>
+            <table className="score-breakdown">
+                <tbody>
+                    <tr>
+                        <th>
+                            <p>{_("results.breakdown.js")}:</p>
+                        </th>
+                        <td>
+                            <p>
+                                {formatScore(
+                                    this.props.scoreResult.extra_data.parts.jump_steps,
+                                    "$",
+                                )}
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <p>{_("results.breakdown.time")}:</p>
+                        </th>
+                        <td>
+                            <p>{this.getTime()}</p>
+                        </td>
+                    </tr>
+                    {this.renderFallDowns()}
+                    {this.renderUndercount()}
+                    <tr>
+                        <th>
+                            <p>{_("score_parts.components.short.card")}:</p>
+                        </th>
+                        <td>
+                            <p>
+                                {_(
+                                    `cards.short.${
+                                        this.props.scoreResult.extra_data.parts.card
+                                    }`,
+                                )}
+                            </p>
+                        </td>
+                    </tr>
+                    {this.renderCardsReasons()}
+                </tbody>
+            </table>
         );
     }
 }
-

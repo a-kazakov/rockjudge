@@ -15,20 +15,14 @@ export default class SingleJudge extends React.Component {
 
     render() {
         const judge = this.props.judge;
-        const judge_role = judge.role_description || _("global.phrases.judge_n", judge.number);
+        const judge_role =
+            judge.role_description || _("global.phrases.judge_n", judge.number);
         return (
             <div className="single-judge">
-                <h3>
-                    { _("start_page.messages.single_judge_access") }
-                </h3>
-                <h4>
-                    { `${judge_role}: ${judge.name}` }
-                </h4>
-                <button
-                    type="button"
-                    onClick={ this.handleButtonClick }
-                >
-                    { _("global.buttons.continue") }
+                <h3>{_("start_page.messages.single_judge_access")}</h3>
+                <h4>{`${judge_role}: ${judge.name}`}</h4>
+                <button type="button" onClick={this.handleButtonClick}>
+                    {_("global.buttons.continue")}
                 </button>
             </div>
         );

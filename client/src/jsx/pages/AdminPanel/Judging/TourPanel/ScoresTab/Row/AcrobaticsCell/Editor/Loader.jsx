@@ -13,54 +13,40 @@ export default class Loader extends React.Component {
         run: PT.instanceOf(Model).isRequired,
     };
 
-    makeSelectorRef = (ref) => this._selector = ref;
+    makeSelectorRef = ref => (this._selector = ref);
 
-    handleSubmission = (e) => {
+    handleSubmission = e => {
         e.preventDefault();
         const program_id_str = this._selector.value;
-        const program_id = program_id_str === ""
-            ? null
-            : Number(program_id_str);
-        showConfirm(
-            _("judging.confirms.load_program"),
-            () => {
-                Api("run/load_program", {
-                    program_id: program_id,
-                    run_id: this.props.run.id,
-                })
-                    .onSuccess(closeDialog)
-                    .send();
-            }
-        );
-    }
+        const program_id = program_id_str === "" ? null : Number(program_id_str);
+        showConfirm(_("judging.confirms.load_program"), () => {
+            Api("run/load_program", {
+                program_id: program_id,
+                run_id: this.props.run.id,
+            })
+                .onSuccess(closeDialog)
+                .send();
+        });
+    };
 
     renderSelector() {
         return (
-            <select
-                defaultValue=""
-                ref={ this.makeSelectorRef }
-            >
+            <select defaultValue="" ref={this.makeSelectorRef}>
                 <option value="">&mdash;</option>
-                { this.props.participant.programs.map(program =>
-                    <option key={ program.id }  value={ program.id }>
-                        { program.name }
+                {this.props.participant.programs.map(program => (
+                    <option key={program.id} value={program.id}>
+                        {program.name}
                     </option>
-                ) }
+                ))}
             </select>
         );
     }
     render() {
         return (
-            <form
-                className="acro-loader pull-left"
-                onSubmit={ this.handleSubmission }
-            >
-                { this.renderSelector() }
-                <button
-                    className="btn btn-primary btn-sm"
-                    type="submit"
-                >
-                    { _("global.buttons.load") }
+            <form className="acro-loader pull-left" onSubmit={this.handleSubmission}>
+                {this.renderSelector()}
+                <button className="btn btn-primary btn-sm" type="submit">
+                    {_("global.buttons.load")}
                 </button>
             </form>
         );

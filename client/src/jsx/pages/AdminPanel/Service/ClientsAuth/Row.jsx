@@ -21,7 +21,7 @@ export default class Row extends React.Component {
                     number: PT.string.isRequired,
                     name: PT.string.isRequired,
                     role_description: PT.string.isRequired,
-                }).isRequired
+                }).isRequired,
             ).isRequired,
         }).isRequired,
     };
@@ -33,17 +33,21 @@ export default class Row extends React.Component {
     }
 
     getAccessLevels() {
-        let result = new Map(["none", "admin", "presenter", "any_judge"].map(level =>
-            [level, _(`global.access_levels.${level}`)]
-        ));
+        let result = new Map(
+            ["none", "admin", "presenter", "any_judge"].map(level => [
+                level,
+                _(`global.access_levels.${level}`),
+            ]),
+        );
         for (const judge of this.props.competition.judges) {
-            const judge_role = judge.role_description || _("global.phrases.judge_n", judge.number);
+            const judge_role =
+                judge.role_description || _("global.phrases.judge_n", judge.number);
             result.set(`judge_${judge.id}`, `${judge_role}: ${judge.name}`);
         }
         return result;
     }
 
-    makeSelectRef = (ref) => this._select = ref;
+    makeSelectRef = ref => (this._select = ref);
 
     handleStartEditing = () => this.setState({ editing: true });
     handleStopEditing = () => this.setState({ editing: false });
@@ -66,47 +70,40 @@ export default class Row extends React.Component {
             .onSuccess(this.handleStopEditing)
             .send();
     };
-    handleDeletion = (event) => {
+    handleDeletion = event => {
         event.stopPropagation();
-        showConfirm(
-            _("admin.confirms.delete_client"),
-            () => {
-                Api("model/delete", {
-                    model_name: "ClientAuth",
-                    model_id: this.props.client.id,
-                })
-                    .onSuccess(closeDialog)
-                    .send();
-            },
-        );
+        showConfirm(_("admin.confirms.delete_client"), () => {
+            Api("model/delete", {
+                model_name: "ClientAuth",
+                model_id: this.props.client.id,
+            })
+                .onSuccess(closeDialog)
+                .send();
+        });
     };
 
     renderAccessLevelCell() {
         const access_levels = this.getAccessLevels();
-        const current_level_str = this.props.client.access_level === "judge"
-            ? `${this.props.client.access_level}_${this.props.client.judge_id}`
-            : this.props.client.access_level;
+        const current_level_str =
+            this.props.client.access_level === "judge"
+                ? `${this.props.client.access_level}_${this.props.client.judge_id}`
+                : this.props.client.access_level;
         if (!this.state.editing) {
             return (
-                <td className="access-level">
-                    { access_levels.get(current_level_str) }
-                </td>
-            )
+                <td className="access-level">{access_levels.get(current_level_str)}</td>
+            );
         }
         return (
             <td className="access-level">
-                <select
-                    defaultValue={ current_level_str }
-                    ref={ this.makeSelectRef }
-                >
-                    { Array.from(access_levels.entries()).map(([level, description]) =>
-                        <option key={ level } value={ level }>
-                            { description }
+                <select defaultValue={current_level_str} ref={this.makeSelectRef}>
+                    {Array.from(access_levels.entries()).map(([level, description]) => (
+                        <option key={level} value={level}>
+                            {description}
                         </option>
-                    ) }
+                    ))}
                 </select>
             </td>
-        )
+        );
     }
     renderButtons() {
         if (this.state.editing) {
@@ -115,16 +112,16 @@ export default class Row extends React.Component {
                     <button
                         className="save-button"
                         type="button"
-                        onClick={ this.handleSubmission }
+                        onClick={this.handleSubmission}
                     >
-                        { _("global.buttons.save") }
+                        {_("global.buttons.save")}
                     </button>
                     <button
                         className="discard-button"
                         type="button"
-                        onClick={ this.handleStopEditing }
+                        onClick={this.handleStopEditing}
                     >
-                        { _("global.buttons.discard") }
+                        {_("global.buttons.discard")}
                     </button>
                 </div>
             );
@@ -134,16 +131,16 @@ export default class Row extends React.Component {
                 <button
                     className="edit-button"
                     type="button"
-                    onClick={ this.handleStartEditing }
+                    onClick={this.handleStartEditing}
                 >
-                    { _("global.buttons.edit") }
+                    {_("global.buttons.edit")}
                 </button>
                 <button
                     className="delete-button"
                     type="button"
-                    onClick={ this.handleDeletion }
+                    onClick={this.handleDeletion}
                 >
-                    { _("global.buttons.delete") }
+                    {_("global.buttons.delete")}
                 </button>
             </div>
         );
@@ -151,13 +148,9 @@ export default class Row extends React.Component {
     render() {
         return (
             <tr>
-                <th className="id">
-                    { `ID ${ this.props.client.client_id }` }
-                </th>
-                { this.renderAccessLevelCell() }
-                <td className="buttons">
-                    { this.renderButtons() }
-                </td>
+                <th className="id">{`ID ${this.props.client.client_id}`}</th>
+                {this.renderAccessLevelCell()}
+                <td className="buttons">{this.renderButtons()}</td>
             </tr>
         );
     }

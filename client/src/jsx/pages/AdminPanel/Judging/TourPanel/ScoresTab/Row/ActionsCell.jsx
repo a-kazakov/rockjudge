@@ -8,8 +8,7 @@ import makeClassName from "common/makeClassName";
 
 import showConfirm from "common/dialogs/showConfirm";
 
-import ActionButton from "../ActionButton"
-
+import ActionButton from "../ActionButton";
 
 export default class ActionsCell extends React.Component {
     static propTypes = {
@@ -38,8 +37,12 @@ export default class ActionsCell extends React.Component {
             });
         }
     };
-    handleMoveToPos = (next_pos) => {
-        this.props.onPositionMove(this.props.run.heat, this.props.heatPosition, next_pos);
+    handleMoveToPos = next_pos => {
+        this.props.onPositionMove(
+            this.props.run.heat,
+            this.props.heatPosition,
+            next_pos,
+        );
         this.props.onStopEditing();
     };
     handleResetScore = () => {
@@ -48,8 +51,7 @@ export default class ActionsCell extends React.Component {
             () => {
                 Api("run/reset", {
                     run_id: this.props.run.id,
-                })
-                    .send();
+                }).send();
             },
         );
         this.props.onStopEditing();
@@ -57,14 +59,12 @@ export default class ActionsCell extends React.Component {
 
     getClassName() {
         return makeClassName({
-            "actions": true,
-            "opened": this.props.opened,
+            actions: true,
+            opened: this.props.opened,
         });
     }
     renderClosedState() {
-        return (
-            <span>&#9660;</span>
-        );
+        return <span>&#9660;</span>;
     }
     renderMoveToPositionButtons() {
         let result = [];
@@ -72,11 +72,11 @@ export default class ActionsCell extends React.Component {
             if (this.props.heatPosition !== idx) {
                 result.push(
                     <ActionButton
-                        key={ idx }
-                        mkey={ idx }
-                        text={ _("judging.buttons.move_to_position", idx + 1) }
-                        onClick={ this.handleMoveToPos }
-                    />
+                        key={idx}
+                        mkey={idx}
+                        text={_("judging.buttons.move_to_position", idx + 1)}
+                        onClick={this.handleMoveToPos}
+                    />,
                 );
             }
         }
@@ -88,33 +88,28 @@ export default class ActionsCell extends React.Component {
     renderOpenedState() {
         return (
             <div className="menu">
-                { this.renderMoveToPositionButtons() }
+                {this.renderMoveToPositionButtons()}
                 <ActionButton
                     style="red"
-                    text={ _("judging.buttons.reset_score") }
-                    onClick={ this.handleResetScore }
+                    text={_("judging.buttons.reset_score")}
+                    onClick={this.handleResetScore}
                 />
                 <br />
                 <ActionButton
                     style="dark"
-                    text={ _("judging.buttons.close_actions_menu") }
-                    onClick={ this.props.onStopEditing }
+                    text={_("judging.buttons.close_actions_menu")}
+                    onClick={this.props.onStopEditing}
                 />
             </div>
-        )
+        );
     }
     renderBody() {
-        return this.props.opened
-            ? this.renderOpenedState()
-            : this.renderClosedState();
+        return this.props.opened ? this.renderOpenedState() : this.renderClosedState();
     }
     render() {
         return (
-            <td
-                className={ this.getClassName() }
-                onClick={ this.handleToggleMenu }
-            >
-                { this.renderBody() }
+            <td className={this.getClassName()} onClick={this.handleToggleMenu}>
+                {this.renderBody()}
             </td>
         );
     }

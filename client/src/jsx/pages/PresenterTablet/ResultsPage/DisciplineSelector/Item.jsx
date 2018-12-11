@@ -17,17 +17,17 @@ export default class Item extends React.Component {
 
     getClassName() {
         return makeClassName({
-            "item": true,
-            "active": this.props.active,
+            item: true,
+            active: this.props.active,
         });
     }
     render() {
         return (
             <div
-                className={ this.getClassName() }
-                { ...onTouchEndOrClick(this.handleClick) }
+                className={this.getClassName()}
+                {...onTouchEndOrClick(this.handleClick)}
             >
-                { this.props.discipline.name }
+                {this.props.discipline.name}
             </div>
         );
     }

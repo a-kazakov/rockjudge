@@ -8,9 +8,7 @@ import Model from "common/server/Storage/models/Model";
 
 export default class CompetitionSelector extends React.Component {
     static propTypes = {
-        competitions: PT.arrayOf(
-            PT.instanceOf(Model).isRequired
-        ).isRequired,
+        competitions: PT.arrayOf(PT.instanceOf(Model).isRequired).isRequired,
         onSelect: PT.func.isRequired,
     };
 
@@ -19,16 +17,17 @@ export default class CompetitionSelector extends React.Component {
         if (window.location.hostname === "127.0.0.1") {
             link = (
                 <h4>
-                    { _("start_page.messages.competitions_management_link", `${window.location.origin}/c`) }
+                    {_(
+                        "start_page.messages.competitions_management_link",
+                        `${window.location.origin}/c`,
+                    )}
                 </h4>
             );
         }
         return (
             <div className="CompetitionSelector no-competitions">
-                <h3>
-                    { _("start_page.messages.no_competitions") }
-                </h3>
-                { link }
+                <h3>{_("start_page.messages.no_competitions")}</h3>
+                {link}
             </div>
         );
     }
@@ -38,17 +37,15 @@ export default class CompetitionSelector extends React.Component {
         }
         return (
             <div className="CompetitionSelector">
-                <h3>
-                    { _("start_page.headers.select_competition") }
-                </h3>
+                <h3>{_("start_page.headers.select_competition")}</h3>
                 <div className="list">
-                    { this.props.competitions.map(comp =>
+                    {this.props.competitions.map(comp => (
                         <Button
-                            competition={ comp }
-                            key={ comp.id }
-                            onSelect={ this.props.onSelect }
+                            competition={comp}
+                            key={comp.id}
+                            onSelect={this.props.onSelect}
                         />
-                    ) }
+                    ))}
                 </div>
             </div>
         );

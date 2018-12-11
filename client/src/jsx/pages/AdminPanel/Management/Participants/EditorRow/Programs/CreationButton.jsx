@@ -14,12 +14,11 @@ export default class CreationButton extends React.Component {
                 <button
                     className="create-button"
                     type="button"
-                    onClick={ this.props.onClick }
+                    onClick={this.props.onClick}
                 >
-                    { _("global.buttons.add") }
+                    {_("global.buttons.add")}
                 </button>
             </div>
         );
     }
 }
-

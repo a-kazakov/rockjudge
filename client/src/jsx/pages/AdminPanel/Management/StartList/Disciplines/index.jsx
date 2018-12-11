@@ -15,23 +15,19 @@ export default class Disciplines extends React.Component {
         }).isRequired,
     };
 
-    filterDiscipline = (discipline) => this.props.config.disciplines[discipline.id];
+    filterDiscipline = discipline => this.props.config.disciplines[discipline.id];
 
-    renderSection = (discipline) => {
-        return (
-            <Section
-                discipline={ discipline }
-                key={ discipline.id }
-                { ...this.props }
-            />
-        );
+    renderSection = discipline => {
+        return <Section discipline={discipline} key={discipline.id} {...this.props} />;
     };
     render() {
-        const disciplines = this.props.competition.disciplines.filter(this.filterDiscipline);
+        const disciplines = this.props.competition.disciplines.filter(
+            this.filterDiscipline,
+        );
         return (
             <div>
-                <ClubsShown { ...this.props } />
-                { disciplines.map(this.renderSection) }
+                <ClubsShown {...this.props} />
+                {disciplines.map(this.renderSection)}
             </div>
         );
     }

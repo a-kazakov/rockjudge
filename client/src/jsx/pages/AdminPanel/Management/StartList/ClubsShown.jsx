@@ -10,7 +10,7 @@ export default class ClubsShown extends React.Component {
                 PT.shape({
                     id: PT.number.isRequired,
                     name: PT.string.isRequired,
-                }).isRequired
+                }).isRequired,
             ).isRequired,
         }).isRequired,
         config: PT.shape({
@@ -18,14 +18,14 @@ export default class ClubsShown extends React.Component {
         }).isRequired,
     };
     hasDisabledClubs() {
-        return this.props.competition.clubs.findIndex(
-            d => !this.props.config.clubs[d.id]
-        ) >= 0;
+        return (
+            this.props.competition.clubs.findIndex(
+                d => !this.props.config.clubs[d.id],
+            ) >= 0
+        );
     }
     getEnabledClubs() {
-        return this.props.competition.clubs.filter(
-            d => this.props.config.clubs[d.id]
-        );
+        return this.props.competition.clubs.filter(d => this.props.config.clubs[d.id]);
     }
 
     render() {
@@ -39,16 +39,14 @@ export default class ClubsShown extends React.Component {
         return (
             <div className="clubs-shown">
                 <p>
-                    <strong>
-                        { _("admin.headers.clubs_shown") }
-                    </strong>
+                    <strong>{_("admin.headers.clubs_shown")}</strong>
                 </p>
                 <ul>
-                    { clubs.map(c =>
-                        <li key={ c.id }>{ c.name }</li>
-                    ) }
+                    {clubs.map(c => (
+                        <li key={c.id}>{c.name}</li>
+                    ))}
                 </ul>
             </div>
-        )
+        );
     }
 }

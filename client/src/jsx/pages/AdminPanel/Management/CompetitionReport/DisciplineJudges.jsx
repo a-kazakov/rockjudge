@@ -18,7 +18,8 @@ export default class DisciplineJudges extends React.Component {
         let roles = {};
         for (const discipline of this.props.competition.disciplines) {
             for (const discipline_judge of discipline.discipline_judges) {
-                roles[`${discipline.id}_${discipline_judge.judge.id}`] = discipline_judge.role;
+                roles[`${discipline.id}_${discipline_judge.judge.id}`] =
+                    discipline_judge.role;
                 judges_used.add(discipline_judge.judge.id);
             }
         }
@@ -33,11 +34,16 @@ export default class DisciplineJudges extends React.Component {
             }
         });
         const table = this.props.competition.disciplines.map(discipline =>
-            judges.map(judge =>
-                roles[`${discipline.id}_${this.props.competition.judges[judge.idx].id}`] || null
-            )
+            judges.map(
+                judge =>
+                    roles[
+                        `${discipline.id}_${
+                            this.props.competition.judges[judge.idx].id
+                        }`
+                    ] || null,
+            ),
         );
-        return { judges, table }
+        return { judges, table };
     }
 
     render() {
@@ -45,52 +51,57 @@ export default class DisciplineJudges extends React.Component {
             return null;
         }
         const data = this.getJudgesDisciplines();
-        const style = { width: `${ (60 / data.judges.length).toFixed(3) }%` };
+        const style = { width: `${(60 / data.judges.length).toFixed(3)}%` };
         return (
             <div className="discipline-judges">
                 <h4>
-                    <p>
-                        { _("admin.headers.discipline_judges") }
-                    </p>
+                    <p>{_("admin.headers.discipline_judges")}</p>
                 </h4>
-                <table className="discipline-judges"><tbody>
-                    <tr className="header">
-                        <th className="w-40">
-                            <p className="text-left">
-                                { _("admin.labels.discipline") }
-                            </p>
-                        </th>
-                        { data.judges.map(judge =>
-                            <th key={ judge.idx } style={ style }>
-                                <p className="text-center">
-                                    { judge.number }
+                <table className="discipline-judges">
+                    <tbody>
+                        <tr className="header">
+                            <th className="w-40">
+                                <p className="text-left">
+                                    {_("admin.labels.discipline")}
                                 </p>
                             </th>
-                        ) }
-                    </tr>
-                    { data.table.map((row, idx) => {
-                        const discipline = this.props.competition.disciplines[idx];
-                        return (
-                            <tr key={ discipline.id }>
-                                <td className="w-40" style={ {borderRight: "1pt solid black", fontWeight: "bold" } }>
-                                    <p className="text-left">
-                                        { discipline.name }
-                                    </p>
-                                </td>
-                                { row.map((cell, row_idx) =>
-                                    <td key={ row_idx } style={ style }>
-                                        <p className="text-center">
-                                            { cell ? _(`models.discipline_judge.roles.${cell}`) : "—" }
-                                        </p>
+                            {data.judges.map(judge => (
+                                <th key={judge.idx} style={style}>
+                                    <p className="text-center">{judge.number}</p>
+                                </th>
+                            ))}
+                        </tr>
+                        {data.table.map((row, idx) => {
+                            const discipline = this.props.competition.disciplines[idx];
+                            return (
+                                <tr key={discipline.id}>
+                                    <td
+                                        className="w-40"
+                                        style={{
+                                            borderRight: "1pt solid black",
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        <p className="text-left">{discipline.name}</p>
                                     </td>
-                                ) }
-                            </tr>
-                        )
-                    } ) }
-                </tbody></table>
-                { _("models.discipline_judge.roles_legend") }
+                                    {row.map((cell, row_idx) => (
+                                        <td key={row_idx} style={style}>
+                                            <p className="text-center">
+                                                {cell
+                                                    ? _(
+                                                          `models.discipline_judge.roles.${cell}`,
+                                                      )
+                                                    : "—"}
+                                            </p>
+                                        </td>
+                                    ))}
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+                {_("models.discipline_judge.roles_legend")}
             </div>
         );
     }
 }
-

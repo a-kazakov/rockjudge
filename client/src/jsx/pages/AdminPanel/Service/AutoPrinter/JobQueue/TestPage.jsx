@@ -16,19 +16,18 @@ export default class TestPage extends React.Component {
         this.props.autoDocx.onDone(this.props.autoDocx.filename);
     }
 
-    makeContentRef = (ref) => this._content = ref;
+    makeContentRef = ref => (this._content = ref);
 
-    render() {  // eslint-disable-line react/sort-comp
+    // eslint-disable-next-line react/sort-comp
+    render() {
         return (
-            <div ref={ this.makeContentRef }>
-                <p>
-                    { _("admin.auto_printer.test_text") }
-                </p>
+            <div ref={this.makeContentRef}>
+                <p>{_("admin.auto_printer.test_text")}</p>
             </div>
         );
     }
 
-    createDocx(filename="test-page.docx") {
+    createDocx(filename = "test-page.docx") {
         Docx(filename)
             .setBody(this._content.innerHTML)
             .save();

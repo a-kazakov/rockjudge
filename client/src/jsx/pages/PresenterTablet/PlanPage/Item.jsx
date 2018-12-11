@@ -13,7 +13,7 @@ export default class Item extends React.Component {
         tours: PT.object.isRequired,
     };
 
-    makeRowRef = (ref) => {
+    makeRowRef = ref => {
         if (this._scrolled || !ref) {
             return;
         }
@@ -22,19 +22,19 @@ export default class Item extends React.Component {
         if (tour_info.tour.active) {
             ref.scrollIntoView();
         }
-    }
+    };
 
     renderVerbose() {
         return (
             <tr>
                 <td className="estimated-beginning">
-                    { this.props.item.estimated_beginning }
+                    {this.props.item.estimated_beginning}
                 </td>
                 <td className="verbose-name" colSpan="2">
-                    { this.props.item.verbose_name }
+                    {this.props.item.verbose_name}
                 </td>
                 <td className="estimated-duration">
-                    { this.props.item.estimated_duration }
+                    {this.props.item.estimated_duration}
                 </td>
             </tr>
         );
@@ -44,22 +44,16 @@ export default class Item extends React.Component {
             return this.renderVerbose();
         }
         const { tour, discipline } = this.props.tours.get(this.props.item.tour_id);
-        const class_name =
-            tour.finalized ? "finalized" :
-            tour.active ? "active" : "";
+        const class_name = tour.finalized ? "finalized" : tour.active ? "active" : "";
         return (
-            <tr className={ class_name } ref={ this.makeRowRef }>
+            <tr className={class_name} ref={this.makeRowRef}>
                 <td className="estimated-beginning">
-                    { this.props.item.estimated_beginning }
+                    {this.props.item.estimated_beginning}
                 </td>
-                <td className="discipline">
-                    { discipline.name }
-                </td>
-                <td className="tour">
-                    { tour.name }
-                </td>
+                <td className="discipline">{discipline.name}</td>
+                <td className="tour">{tour.name}</td>
                 <td className="estimated-duration">
-                    { this.props.item.estimated_duration }
+                    {this.props.item.estimated_duration}
                 </td>
             </tr>
         );

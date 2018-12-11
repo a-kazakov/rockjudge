@@ -21,30 +21,33 @@ export default class Participants extends UniversalTable {
     static CREATION_BUTTON_COMPONENT = CreationButton;
     static MODEL_NAME = "Participant";
     static FIELDS = [
-        FieldTypes.makeIntegerField("number", "errors.participant.invalid_number", [0, null]),
+        FieldTypes.makeIntegerField("number", "errors.participant.invalid_number", [
+            0,
+            null,
+        ]),
         {
             name: "club_id",
-            defaultValueGetter: (context) => context.competition.clubs[0]?.id || 0,
-            toFormValue: (value) => value.toString(),
-            fromFormValue: (value) => parseInt(value),
+            defaultValueGetter: context => context.competition.clubs[0]?.id || 0,
+            toFormValue: value => value.toString(),
+            fromFormValue: value => parseInt(value),
         },
         FieldTypes.makeTextField("coaches"),
         FieldTypes.makeTextField("formation_name"),
         {
             name: "sportsmen",
             defaultValue: [],
-            toFormValue: (value) => {
+            toFormValue: value => {
                 return value.map(sportsman => {
-                    let {year_of_birth, ...other} = sportsman;
+                    let { year_of_birth, ...other } = sportsman;
                     year_of_birth = year_of_birth.toString();
-                    return {year_of_birth, ...other};
+                    return { year_of_birth, ...other };
                 });
             },
-            fromFormValue: (value) => {
+            fromFormValue: value => {
                 return value.map(sportsman => {
-                    let {year_of_birth, ...other} = sportsman;
+                    let { year_of_birth, ...other } = sportsman;
                     year_of_birth = parseInt(year_of_birth) || 0;
-                    return {year_of_birth, ...other};
+                    return { year_of_birth, ...other };
                 });
             },
         },
@@ -64,7 +67,12 @@ export default class Participants extends UniversalTable {
     }
 
     get discipline() {
-        return this.props.competition.subscription_storage.get("Discipline", this.props.disciplineId) || null;
+        return (
+            this.props.competition.subscription_storage.get(
+                "Discipline",
+                this.props.disciplineId,
+            ) || null
+        );
     }
 
     renderTable() {
@@ -72,22 +80,18 @@ export default class Participants extends UniversalTable {
             <table>
                 <tbody>
                     <tr>
-                        <th className="number">
-                            { _("models.participant.number") }
-                        </th>
-                        <th className="name">
-                            { _("models.participant.name") }
-                        </th>
+                        <th className="number">{_("models.participant.number")}</th>
+                        <th className="name">{_("models.participant.name")}</th>
                         <th className="club-name">
-                            { _("models.participant.club_name") }
+                            {_("models.participant.club_name")}
                         </th>
                         <th className="club-city">
-                            { _("models.participant.club_city") }
+                            {_("models.participant.club_city")}
                         </th>
                         <th className="delete" />
                     </tr>
-                    { this.renderRows() }
-                    { this.renderCreationButton() }
+                    {this.renderRows()}
+                    {this.renderCreationButton()}
                 </tbody>
             </table>
         );
@@ -96,23 +100,22 @@ export default class Participants extends UniversalTable {
         const discipline = this.discipline;
         if (discipline == null) {
             return (
-                <Loader />  // TODO: replace with error message
+                <Loader /> // TODO: replace with error message
             );
         }
         return (
             <div className="Participants">
                 <header>
-                    <h1>
-                        { discipline.name }
-                    </h1>
-                    <h2>
-                        { _("admin.headers.participants_management") }
-                    </h2>
+                    <h1>{discipline.name}</h1>
+                    <h2>{_("admin.headers.participants_management")}</h2>
                 </header>
                 <div className="body">
-                    { this.renderTable() }
+                    {this.renderTable()}
                     <div className="total-participants">
-                        { _("admin.phrases.total_n_participants", discipline.participants.length) }
+                        {_(
+                            "admin.phrases.total_n_participants",
+                            discipline.participants.length,
+                        )}
                     </div>
                 </div>
             </div>

@@ -13,7 +13,7 @@ export default class Item extends React.Component {
 
     handleClick = () => {
         this.props.onPageChange(this.props.page);
-    }
+    };
 
     getClassName() {
         let result = "item";
@@ -24,11 +24,8 @@ export default class Item extends React.Component {
     }
     render() {
         return (
-            <div
-                className={ this.getClassName() }
-                { ...onTouchOrClick(this.handleClick) }
-            >
-                <span>{ this.props.title }</span>
+            <div className={this.getClassName()} {...onTouchOrClick(this.handleClick)}>
+                <span>{this.props.title}</span>
             </div>
         );
     }

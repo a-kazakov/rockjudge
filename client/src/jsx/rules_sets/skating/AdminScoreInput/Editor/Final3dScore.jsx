@@ -1,7 +1,7 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
-import GeneralEditor from "./GeneralEditor"
+import GeneralEditor from "./GeneralEditor";
 import NumberBlock from "./GeneralEditor/blocks/NumberBlock";
 
 export default class Final3dScore extends React.Component {
@@ -16,39 +16,15 @@ export default class Final3dScore extends React.Component {
     render() {
         return (
             <GeneralEditor
-                initialData={ this.props.scoreData }
-                readOnly={ this.props.readOnly }
-                onDiscard={ this.props.onDiscard }
-                onSubmit={ this.props.onSubmit }
+                initialData={this.props.scoreData}
+                readOnly={this.props.readOnly}
+                onDiscard={this.props.onDiscard}
+                onSubmit={this.props.onSubmit}
             >
-                <NumberBlock
-                    nullable
-                    field="tech"
-                    label="T"
-                    max={ 10 }
-                    min={ 1 }
-                />
-                <NumberBlock
-                    nullable
-                    field="composition"
-                    label="C"
-                    max={ 10 }
-                    min={ 1 }
-                />
-                <NumberBlock
-                    nullable
-                    field="art"
-                    label="A"
-                    max={ 10 }
-                    min={ 1 }
-                />
-                <NumberBlock
-                    nullable
-                    field="place"
-                    label="P"
-                    max={ 50 }
-                    min={ 1 }
-                />
+                <NumberBlock nullable field="tech" label="T" max={10} min={1} />
+                <NumberBlock nullable field="composition" label="C" max={10} min={1} />
+                <NumberBlock nullable field="art" label="A" max={10} min={1} />
+                <NumberBlock nullable field="place" label="P" max={50} min={1} />
             </GeneralEditor>
         );
     }

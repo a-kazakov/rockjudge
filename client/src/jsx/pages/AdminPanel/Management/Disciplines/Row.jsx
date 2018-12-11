@@ -13,35 +13,20 @@ export default class Row extends React.Component {
         onStartEditing: PT.func.isRequired,
     };
 
-    handleDeletion = (event) => {
+    handleDeletion = event => {
         event.stopPropagation();
-        showConfirm(
-            _("admin.confirms.delete_discipline"),
-            this.props.onDelete,
-        );
+        showConfirm(_("admin.confirms.delete_discipline"), this.props.onDelete);
     };
 
     render() {
         const discipline = this.props.entry;
         return (
-            <tr
-                className="viewer"
-                onClick={ this.props.onStartEditing }
-            >
-                <td className="name">
-                    { discipline.name }
-                </td>
-                <td className="sp">
-                    { discipline.sp }
-                </td>
-                <td className="external-id">
-                    { discipline.external_id }
-                </td>
+            <tr className="viewer" onClick={this.props.onStartEditing}>
+                <td className="name">{discipline.name}</td>
+                <td className="sp">{discipline.sp}</td>
+                <td className="external-id">{discipline.external_id}</td>
                 <td className="delete">
-                    <button
-                        className="btn btn-danger"
-                        onClick={ this.handleDeletion }
-                    >
+                    <button className="btn btn-danger" onClick={this.handleDeletion}>
                         X
                     </button>
                 </td>
@@ -49,4 +34,3 @@ export default class Row extends React.Component {
         );
     }
 }
-

@@ -19,8 +19,8 @@ export default class Header extends React.Component {
             return null;
         }
         return (
-            <button { ...onTouchOrClick(this.props.onPrevHeatClick) }>
-                { _("tablet.buttons.prev_heat_short") }
+            <button {...onTouchOrClick(this.props.onPrevHeatClick)}>
+                {_("tablet.buttons.prev_heat_short")}
             </button>
         );
     }
@@ -29,31 +29,25 @@ export default class Header extends React.Component {
             return null;
         }
         return (
-            <button { ...onTouchOrClick(this.props.onNextHeatClick) }>
-                { _("tablet.buttons.next_heat_short") }
+            <button {...onTouchOrClick(this.props.onNextHeatClick)}>
+                {_("tablet.buttons.next_heat_short")}
             </button>
         );
     }
     render() {
         return (
             <header className="flex">
-                <div className="button-container">
-                    { this.renderPrevHeatButton() }
-                </div>
+                <div className="button-container">{this.renderPrevHeatButton()}</div>
                 <div className="data">
-                    <h2>
-                        { this.props.tour.discipline.name }
-                    </h2>
-                    <h2>
-                        { this.props.tour.name }
-                    </h2>
+                    <h2>{this.props.tour.discipline.name}</h2>
+                    <h2>{this.props.tour.name}</h2>
                     <h1>
-                        { `${_("tablet.headers.heat")}: ${this.props.heat} / ${this.props.maxHeat}` }
+                        {`${_("tablet.headers.heat")}: ${this.props.heat} / ${
+                            this.props.maxHeat
+                        }`}
                     </h1>
                 </div>
-                <div className="button-container">
-                    { this.renderNextHeatButton() }
-                </div>
+                <div className="button-container">{this.renderNextHeatButton()}</div>
             </header>
         );
     }

@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import TableHead from "./TableHead";
@@ -16,13 +16,16 @@ export default class CustomTable extends React.Component {
         return {
             fontSize: "12pt",
             rowKey: null,
-        }
+        };
     }
 
     computeColumnWidths() {
         const raw_values = this.props.cols.map(col => col.width);
-        const eq_count = raw_values.filter(v => v == null || typeof v === "undefined").length;
-        const nums_sum = raw_values.filter(v => typeof v === "number").reduce((a, b) => a + b, 0);
+        const eq_count = raw_values.filter(v => v == null || typeof v === "undefined")
+            .length;
+        const nums_sum = raw_values
+            .filter(v => typeof v === "number")
+            .reduce((a, b) => a + b, 0);
         const new_values = raw_values.map(rv => {
             if (rv === "flex") {
                 return null;
@@ -46,18 +49,15 @@ export default class CustomTable extends React.Component {
     render() {
         const widths = this.computeColumnWidths();
         return (
-            <table style={ this.getTableStyle() }>
-                <TableHead
-                    cols={ this.props.cols }
-                    widths={ widths }
-                />
+            <table style={this.getTableStyle()}>
+                <TableHead cols={this.props.cols} widths={widths} />
                 <TableBody
-                    cols={ this.props.cols }
-                    rowKey={ this.props.rowKey }
-                    rows={ this.props.rows }
-                    widths={ widths }
+                    cols={this.props.cols}
+                    rowKey={this.props.rowKey}
+                    rows={this.props.rows}
+                    widths={widths}
                 />
             </table>
-        )
+        );
     }
 }

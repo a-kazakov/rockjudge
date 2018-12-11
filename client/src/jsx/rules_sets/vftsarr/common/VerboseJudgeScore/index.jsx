@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import getScoringType from "common/getScoringType";
 import PT from "prop-types";
@@ -9,7 +9,6 @@ import FormationScore from "./FormationScore";
 import FormationSimplifiedScore from "./FormationSimplifiedScore";
 import SoloScore from "./SoloScore";
 import TechScore from "./TechScore";
-
 
 export default class VerboseJudgeScore extends React.Component {
     static propTypes = {
@@ -22,56 +21,53 @@ export default class VerboseJudgeScore extends React.Component {
     static get defaultProps() {
         return {
             showScore: true,
-        }
+        };
     }
 
     render() {
         if (!this.props.showScore) {
-            return (
-                <p className="text-center">
-                    &mdash;
-                </p>
-            );
+            return <p className="text-center">&mdash;</p>;
         }
         const tour = this.props.score.run.tour;
         let ScoreComponent = null;
-        const scoring_type = getScoringType(this.props.disciplineJudge.role, tour.results.scoring_system_name);
+        const scoring_type = getScoringType(
+            this.props.disciplineJudge.role,
+            tour.results.scoring_system_name,
+        );
         switch (scoring_type) {
-        case "dance":
-            ScoreComponent = DanceScore;
-            break;
-        case "dance_extended":
-            ScoreComponent = DanceExtendedScore;
-            break;
-        case "acro":
-            ScoreComponent = AcroScore;
-            break;
-        case "formation":
-            ScoreComponent = FormationScore;
-            break;
-        case "formation_simplified":
-            ScoreComponent = FormationSimplifiedScore;
-            break;
-        case "solo":
-            ScoreComponent = SoloScore;
-            break;
-        case "tech":
-            ScoreComponent = TechScore;
-            break;
-        default:
-            return (
-                <p className="text-center">
-                    { this.props.scoreResult.total_score_str }
-                </p>
-            );
+            case "dance":
+                ScoreComponent = DanceScore;
+                break;
+            case "dance_extended":
+                ScoreComponent = DanceExtendedScore;
+                break;
+            case "acro":
+                ScoreComponent = AcroScore;
+                break;
+            case "formation":
+                ScoreComponent = FormationScore;
+                break;
+            case "formation_simplified":
+                ScoreComponent = FormationSimplifiedScore;
+                break;
+            case "solo":
+                ScoreComponent = SoloScore;
+                break;
+            case "tech":
+                ScoreComponent = TechScore;
+                break;
+            default:
+                return (
+                    <p className="text-center">
+                        {this.props.scoreResult.total_score_str}
+                    </p>
+                );
         }
         const props = {
             score: this.props.score,
             scoreResult: this.props.scoreResult,
             tour: tour,
         };
-        return (
-            <ScoreComponent { ...props } />
-        );
+        return <ScoreComponent {...props} />;
     }
 }

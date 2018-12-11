@@ -15,44 +15,44 @@ export default class Buttons extends React.Component {
     };
     render() {
         if (this.props.tour.finalized) {
-            return <div />
+            return <div />;
         }
         if (this.props.tour.active) {
             return (
                 <div>
                     <Button
                         className="stop-tour-button"
-                        label={ _("judging.buttons.stop_tour") }
+                        label={_("judging.buttons.stop_tour")}
                         signalMessage="stop_tour"
-                        onSignal={ this.props.onSignal }
+                        onSignal={this.props.onSignal}
                     />
                 </div>
-            )
+            );
         }
         return (
             <div>
                 <Button
-                    label={ _("judging.buttons.init_tour") }
+                    label={_("judging.buttons.init_tour")}
                     signalMessage="init_tour"
-                    onSignal={ this.props.onSignal }
+                    onSignal={this.props.onSignal}
                 />
                 <Button
-                    label={ _("judging.buttons.finalize_tour") }
+                    label={_("judging.buttons.finalize_tour")}
                     signalMessage="finalize_tour"
-                    onSignal={ this.props.onSignal }
+                    onSignal={this.props.onSignal}
                 />
                 <Button
-                    label={ _("judging.buttons.shuffle_heats") }
+                    label={_("judging.buttons.shuffle_heats")}
                     signalMessage="shuffle_heats"
-                    onSignal={ this.props.onSignal }
+                    onSignal={this.props.onSignal}
                 />
                 <Button
                     className="start-tour-button"
-                    label={ _("judging.buttons.start_tour") }
+                    label={_("judging.buttons.start_tour")}
                     signalMessage="start_tour"
-                    onSignal={ this.props.onSignal }
+                    onSignal={this.props.onSignal}
                 />
             </div>
-        )
+        );
     }
 }

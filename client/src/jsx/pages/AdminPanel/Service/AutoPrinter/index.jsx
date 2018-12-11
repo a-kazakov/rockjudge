@@ -5,7 +5,7 @@ import showConfirm from "common/dialogs/showConfirm";
 import Storage from "common/server/Storage";
 import CompetitionSubscription from "common/server/Storage/subscriptions/CompetitionSubscription";
 import makeRandomString from "common/tools/makeRandomString";
-import {saveAs} from "file-saver";
+import { saveAs } from "file-saver";
 import _ from "l10n";
 import PT from "prop-types";
 import JobQueue from "./JobQueue";
@@ -15,7 +15,13 @@ export default class AutoPrinter extends React.Component {
     static propTypes = {
         competitionId: PT.number.isRequired,
     };
-    static POSSIBLE_ACTIONS = ["heats", "results_1", "results_2", "results_3", "discipline_results"];
+    static POSSIBLE_ACTIONS = [
+        "heats",
+        "results_1",
+        "results_2",
+        "results_3",
+        "discipline_results",
+    ];
 
     static extractToursFromCompetition(competition) {
         return [].concat(...competition.disciplines.map(d => d.tours));
@@ -35,7 +41,7 @@ export default class AutoPrinter extends React.Component {
             return [];
         }
         let result = [];
-        for (const [tour_id, old_finalized] of old_mapping.entries()){
+        for (const [tour_id, old_finalized] of old_mapping.entries()) {
             const new_finalized = new_mapping.get(tour_id);
             if (!old_finalized && new_finalized) {
                 result.push(tour_id);
@@ -46,7 +52,9 @@ export default class AutoPrinter extends React.Component {
 
     constructor(props) {
         super(props);
-        const old_actions_str = localStorage.getItem(`auto_printer_${this.props.competitionId}`);
+        const old_actions_str = localStorage.getItem(
+            `auto_printer_${this.props.competitionId}`,
+        );
         const initial_actions = old_actions_str ? JSON.parse(old_actions_str) : {};
         this._tours_mapping = null;
         this.state = {
@@ -58,18 +66,24 @@ export default class AutoPrinter extends React.Component {
 
     componentDidMount() {
         this._storage = new Storage();
-        this._storage.init(this.reload).then(this.subscribe).catch(console.error.bind(console));
+        this._storage
+            .init(this.reload)
+            .then(this.subscribe)
+            .catch(console.error.bind(console));
     }
 
     subscribe = () => {
-        this._competition_subscription = new CompetitionSubscription(this.props.competitionId);
-        this._storage.subscribe(this._competition_subscription)
+        this._competition_subscription = new CompetitionSubscription(
+            this.props.competitionId,
+        );
+        this._storage
+            .subscribe(this._competition_subscription)
             .then(this.updateCompetitionStorage)
             .catch(console.error.bind(console));
     };
 
-    updateCompetitionStorage = (competitionStorage) => {
-        this.setState({competitionStorage});
+    updateCompetitionStorage = competitionStorage => {
+        this.setState({ competitionStorage });
         this.checkForToursUpdates();
     };
     reload = () => {
@@ -78,7 +92,10 @@ export default class AutoPrinter extends React.Component {
     };
     checkForToursUpdates() {
         const next_tours_mapping = this.constructor.getToursMapping(this.competition);
-        const new_tours_ids = this.constructor.getNewlyFinalizedTourIds(this._tours_mapping, next_tours_mapping);
+        const new_tours_ids = this.constructor.getNewlyFinalizedTourIds(
+            this._tours_mapping,
+            next_tours_mapping,
+        );
         for (const tour_id of new_tours_ids) {
             const tour = this.state.competitionStorage.get("Tour", tour_id);
             this.doActionsForTour(tour);
@@ -87,40 +104,51 @@ export default class AutoPrinter extends React.Component {
     }
 
     get competition() {
-        return this.state.competitionStorage?.get("Competition", this.props.competitionId) || null;
+        return (
+            this.state.competitionStorage?.get(
+                "Competition",
+                this.props.competitionId,
+            ) || null
+        );
     }
 
-    makeQueueRef = (ref) => this._queue = ref;
+    makeQueueRef = ref => (this._queue = ref);
 
-    handleActionsChange = (actions) => {
-        localStorage.setItem(`auto_printer_${this.props.competitionId}`, JSON.stringify(actions));
+    handleActionsChange = actions => {
+        localStorage.setItem(
+            `auto_printer_${this.props.competitionId}`,
+            JSON.stringify(actions),
+        );
         this.setState({ actions });
     };
 
     handlePrintTestPage = () => {
-        showConfirm(
-            _("admin.auto_printer.confirm_print_test_page"),
-            () => {
-                saveAs(new Blob(["dummy"], {type : 'text/plain'}), `autoprinter_dummy_${makeRandomString()}.tmp`);
-                saveAs(new Blob(["dummy"], {type : 'text/plain'}), `autoprinter_dummy_${makeRandomString()}.tmp`);
-                saveAs(new Blob(["dummy"], {type : 'text/plain'}), `autoprinter_dummy_${makeRandomString()}.tmp`);
-                this._queue.addJob("test", null, 1);
-            }
-        );
+        showConfirm(_("admin.auto_printer.confirm_print_test_page"), () => {
+            saveAs(
+                new Blob(["dummy"], { type: "text/plain" }),
+                `autoprinter_dummy_${makeRandomString()}.tmp`,
+            );
+            saveAs(
+                new Blob(["dummy"], { type: "text/plain" }),
+                `autoprinter_dummy_${makeRandomString()}.tmp`,
+            );
+            saveAs(
+                new Blob(["dummy"], { type: "text/plain" }),
+                `autoprinter_dummy_${makeRandomString()}.tmp`,
+            );
+            this._queue.addJob("test", null, 1);
+        });
     };
 
     handlePrintFirstToursHeats = () => {
         showConfirm(
             _("admin.auto_printer.confirm_print_first_tours_heats"),
-            this.printFirstToursHeats
+            this.printFirstToursHeats,
         );
     };
 
     handlePrintAllDocs = () => {
-        showConfirm(
-            _("admin.auto_printer.confirm_print_all_docs"),
-            this.printAllDocs
-        );
+        showConfirm(_("admin.auto_printer.confirm_print_all_docs"), this.printAllDocs);
     };
 
     getNextTour(tour) {
@@ -130,7 +158,7 @@ export default class AutoPrinter extends React.Component {
         return next_tour || null;
     }
 
-    doTheJob(tour, action_type, copies, submit=true) {
+    doTheJob(tour, action_type, copies, submit = true) {
         if (!tour) {
             return;
         }
@@ -139,13 +167,19 @@ export default class AutoPrinter extends React.Component {
     doActionsForTour(tour) {
         const actions = this.state.actions[tour.id];
         const next_tour = this.getNextTour(tour);
-        const next_tour_actions = next_tour != null ? this.state.actions[next_tour.id] : null;
+        const next_tour_actions =
+            next_tour != null ? this.state.actions[next_tour.id] : null;
         for (const action_type of this.constructor.POSSIBLE_ACTIONS) {
             const action_tour = action_type === "heats" ? next_tour : tour;
             const actions_row = action_type === "heats" ? next_tour_actions : actions;
             const count = actions_row?.[action_type];
             if (count) {
-                this.doTheJob(action_tour, action_type, actions_row[action_type], false);
+                this.doTheJob(
+                    action_tour,
+                    action_type,
+                    actions_row[action_type],
+                    false,
+                );
             }
         }
         this._queue.submitJobs();
@@ -181,52 +215,40 @@ export default class AutoPrinter extends React.Component {
 
     render() {
         if (!this.competition) {
-            return (
-                <Loader />
-            );
+            return <Loader />;
         }
         return (
             <div className="AutoPrinter">
                 <header>
-                    <h1>
-                        { _("admin.headers.auto_printer") }
-                    </h1>
+                    <h1>{_("admin.headers.auto_printer")}</h1>
                 </header>
                 <div className="body">
                     <div className="section-table">
-                        <h3>
-                            { _("admin.auto_printer.rules") }
-                        </h3>
+                        <h3>{_("admin.auto_printer.rules")}</h3>
                         <Table
-                            actions={ this.state.actions }
-                            possibleActions={ this.constructor.POSSIBLE_ACTIONS }
-                            tours={ this.constructor.extractToursFromCompetition(this.competition) }
-                            onChange={ this.handleActionsChange }
+                            actions={this.state.actions}
+                            possibleActions={this.constructor.POSSIBLE_ACTIONS}
+                            tours={this.constructor.extractToursFromCompetition(
+                                this.competition,
+                            )}
+                            onChange={this.handleActionsChange}
                         />
                     </div>
                     <div className="section-queue">
-                        <h3>
-                            { _("admin.auto_printer.queue") }
-                        </h3>
-                        <JobQueue ref={ this.makeQueueRef } />
+                        <h3>{_("admin.auto_printer.queue")}</h3>
+                        <JobQueue ref={this.makeQueueRef} />
                         <div className="actions">
-                            <button
-                                type="button"
-                                onClick={ this.handlePrintTestPage }
-                            >
-                                { _("admin.auto_printer.print_test_page") }
+                            <button type="button" onClick={this.handlePrintTestPage}>
+                                {_("admin.auto_printer.print_test_page")}
                             </button>
                             <button
                                 type="button"
-                                onClick={ this.handlePrintFirstToursHeats }
+                                onClick={this.handlePrintFirstToursHeats}
                             >
-                                { _("admin.auto_printer.print_fitst_tours_heats") }
+                                {_("admin.auto_printer.print_fitst_tours_heats")}
                             </button>
-                            <button
-                                type="button"
-                                onClick={ this.handlePrintAllDocs }
-                            >
-                                { _("admin.auto_printer.print_all_docs") }
+                            <button type="button" onClick={this.handlePrintAllDocs}>
+                                {_("admin.auto_printer.print_all_docs")}
                             </button>
                         </div>
                     </div>

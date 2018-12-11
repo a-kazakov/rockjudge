@@ -12,39 +12,36 @@ export default class Section extends React.Component {
             tours: PT.arrayOf(
                 PT.shape({
                     id: PT.number.isRequired,
-                }).isRequired
+                }).isRequired,
             ).isRequired,
         }).isRequired,
         onActiveTourChange: PT.func.isRequired,
     };
 
-    handleOpenClose = (event) => {
-        sessionStorage.setItem(`D_J_${this.props.discipline.id}`, event.target.parentNode.open ? 0 : 1);
-    }
+    handleOpenClose = event => {
+        sessionStorage.setItem(
+            `D_J_${this.props.discipline.id}`,
+            event.target.parentNode.open ? 0 : 1,
+        );
+    };
 
     isOpen() {
         return !!Number(sessionStorage.getItem(`D_J_${this.props.discipline.id}`));
     }
     render() {
         return (
-            <details
-                className="block"
-                open={ this.isOpen() }
-            >
-                <summary
-                    className="level-1"
-                    onClick={ this.handleOpenClose }
-                >
-                    { this.props.discipline.name }
+            <details className="block" open={this.isOpen()}>
+                <summary className="level-1" onClick={this.handleOpenClose}>
+                    {this.props.discipline.name}
                 </summary>
-                { this.props.discipline.tours.map(tour =>
+                {this.props.discipline.tours.map(tour => (
                     <Item
-                        active={ tour.id === this.props.activeTourId }
-                        key={ tour.id }
-                        tour={ tour }
-                        onActiveTourChange={ this.props.onActiveTourChange }
+                        active={tour.id === this.props.activeTourId}
+                        key={tour.id}
+                        tour={tour}
+                        onActiveTourChange={this.props.onActiveTourChange}
                     />
-                ) }
+                ))}
             </details>
         );
     }

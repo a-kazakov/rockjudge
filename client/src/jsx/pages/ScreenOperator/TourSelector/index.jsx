@@ -13,20 +13,18 @@ export default class TourSelector extends React.Component {
 
     renderDiscipline(discipline) {
         return (
-            <div className="discipline" key={ discipline.id }>
-                <div className="name">
-                    { discipline.name }
-                </div>
+            <div className="discipline" key={discipline.id}>
+                <div className="name">{discipline.name}</div>
                 <div className="tours">
                     <div className="inner">
-                        { discipline.tours.map(tour =>
+                        {discipline.tours.map(tour => (
                             <Tour
-                                key={ tour.id }
-                                selected={ this.props.value === tour.id }
-                                tour={ tour }
-                                onTourSelect={ this.props.onChange }
+                                key={tour.id}
+                                selected={this.props.value === tour.id}
+                                tour={tour}
+                                onTourSelect={this.props.onChange}
                             />
-                        )}
+                        ))}
                     </div>
                 </div>
             </div>
@@ -35,8 +33,8 @@ export default class TourSelector extends React.Component {
     render() {
         return (
             <div className="tour-selector">
-                { this.props.competition.disciplines.map(discipline =>
-                    this.renderDiscipline(discipline)
+                {this.props.competition.disciplines.map(discipline =>
+                    this.renderDiscipline(discipline),
                 )}
             </div>
         );

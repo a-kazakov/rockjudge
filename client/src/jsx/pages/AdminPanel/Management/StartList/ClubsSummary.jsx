@@ -15,16 +15,17 @@ export default class ClubsSummary extends React.Component {
         }).isRequired,
     };
 
-    filterParticipant = (participant) => this.props.config.disciplines[participant.discipline.id];
-    filterClub = (club) => this.props.config.clubs[club.id];
+    filterParticipant = participant =>
+        this.props.config.disciplines[participant.discipline.id];
+    filterClub = club => this.props.config.clubs[club.id];
 
-    renderClub = (club) => {
+    renderClub = club => {
         return (
             <StatInfo
                 tableRow
-                key={ club.id }
-                label={ `${club.name}, ${club.city}` }
-                participants={ club.participants.filter(this.filterParticipant) }
+                key={club.id}
+                label={`${club.name}, ${club.city}`}
+                participants={club.participants.filter(this.filterParticipant)}
             />
         );
     };
@@ -33,15 +34,17 @@ export default class ClubsSummary extends React.Component {
         const all_participants = [].concat.apply([], clubs.map(c => c.participants));
         return (
             <div className="summary">
-                <DisciplinesShown { ...this.props } />
-                <table className="outer"><tbody>
-                    <tr>
-                        <th colSpan={ 4 }>&nbsp;</th>
-                    </tr>
-                    { clubs.map(this.renderClub) }
-                </tbody></table>
+                <DisciplinesShown {...this.props} />
+                <table className="outer">
+                    <tbody>
+                        <tr>
+                            <th colSpan={4}>&nbsp;</th>
+                        </tr>
+                        {clubs.map(this.renderClub)}
+                    </tbody>
+                </table>
                 <p>&nbsp;</p>
-                <StatInfo participants={ all_participants } />
+                <StatInfo participants={all_participants} />
             </div>
         );
     }

@@ -10,16 +10,16 @@ export default class PlanSorted extends React.Component {
             plan: PT.arrayOf(
                 PT.shape({
                     tour_id: PT.number,
-                }).isRequired
+                }).isRequired,
             ).isRequired,
             disciplines: PT.arrayOf(
                 PT.shape({
                     tours: PT.arrayOf(
                         PT.shape({
                             id: PT.number.isRequired,
-                        })
+                        }),
                     ).isRequired,
-                }).isRequired
+                }).isRequired,
             ).isRequired,
         }).isRequired,
         onActiveTourChange: PT.func.isRequired,
@@ -38,18 +38,18 @@ export default class PlanSorted extends React.Component {
         const plan = this.props.competition.plan.filter(item => item.tour_id != null);
         return (
             <div>
-                { plan.map(item => {
+                {plan.map(item => {
                     const { tour, discipline } = tours.get(item.tour_id);
                     return (
                         <Item
-                            active={ tour.id === this.props.activeTourId }
-                            discipline={ discipline }
-                            key={ tour.id }
-                            tour={ tour }
-                            onActiveTourChange={ this.props.onActiveTourChange }
+                            active={tour.id === this.props.activeTourId}
+                            discipline={discipline}
+                            key={tour.id}
+                            tour={tour}
+                            onActiveTourChange={this.props.onActiveTourChange}
                         />
                     );
-                }) }
+                })}
             </div>
         );
     }

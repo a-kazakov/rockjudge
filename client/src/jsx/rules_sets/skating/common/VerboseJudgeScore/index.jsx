@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import getScoringType from "common/getScoringType";
@@ -17,26 +17,25 @@ export default class VerboseJudgeScore extends React.Component {
     static get defaultProps() {
         return {
             showScore: true,
-        }
+        };
     }
 
     render() {
         if (!this.props.showScore) {
-            return (
-                <p className="text-center">
-                    &mdash;
-                </p>
-            );
+            return <p className="text-center">&mdash;</p>;
         }
         // let ScoreComponent = null;
-        const scoring_type = getScoringType(this.props.disciplineJudge, this.props.score.run.tour.scoring_system_name);
+        const scoring_type = getScoringType(
+            this.props.disciplineJudge,
+            this.props.score.run.tour.scoring_system_name,
+        );
         switch (scoring_type) {
-        default:
-            return (
-                <p className="text-center">
-                    { this.props.scoreData.total_score_str }
-                </p>
-            );
+            default:
+                return (
+                    <p className="text-center">
+                        {this.props.scoreData.total_score_str}
+                    </p>
+                );
         }
         // const props = {
         //     run: this.props.run,
@@ -49,4 +48,3 @@ export default class VerboseJudgeScore extends React.Component {
         // );
     }
 }
-

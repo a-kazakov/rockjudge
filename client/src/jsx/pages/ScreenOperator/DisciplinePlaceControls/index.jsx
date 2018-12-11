@@ -17,13 +17,13 @@ export default class DisciplinePlaceControls extends React.Component {
         onChange: PT.func.isRequired,
     };
 
-    handleDisciplineChange = (new_value) => {
+    handleDisciplineChange = new_value => {
         let new_state = Object.assign({}, this.props.controlsState);
         new_state.discipline_id = new_value;
         new_state.position = null;
         this.props.onChange(new_state);
     };
-    handlePlaceChange = (new_value) => {
+    handlePlaceChange = new_value => {
         let new_state = Object.assign({}, this.props.controlsState);
         new_state.position = new_value;
         this.props.onChange(new_state);
@@ -35,16 +35,14 @@ export default class DisciplinePlaceControls extends React.Component {
         }
         return (
             <div>
-                <h3>
-                    { _("screen_operator.headers.places") }
-                </h3>
+                <h3>{_("screen_operator.headers.places")}</h3>
                 <PlaceSelector
-                    discipline={ this.props.competition.global_storage.get(
+                    discipline={this.props.competition.global_storage.get(
                         "Discipline",
-                        this.props.controlsState.discipline_id
-                    ) }
-                    value={ this.props.controlsState.position }
-                    onChange={ this.handlePlaceChange }
+                        this.props.controlsState.discipline_id,
+                    )}
+                    value={this.props.controlsState.position}
+                    onChange={this.handlePlaceChange}
                 />
             </div>
         );
@@ -52,15 +50,13 @@ export default class DisciplinePlaceControls extends React.Component {
     render() {
         return (
             <div>
-                <h3>
-                    { _("screen_operator.headers.discipline") }
-                </h3>
+                <h3>{_("screen_operator.headers.discipline")}</h3>
                 <DisciplineSelector
-                    competition={ this.props.competition }
-                    value={ this.props.controlsState.discipline_id }
-                    onChange={ this.handleDisciplineChange }
+                    competition={this.props.competition}
+                    value={this.props.controlsState.discipline_id}
+                    onChange={this.handleDisciplineChange}
                 />
-                { this.renderPlaceSelector() }
+                {this.renderPlaceSelector()}
             </div>
         );
     }

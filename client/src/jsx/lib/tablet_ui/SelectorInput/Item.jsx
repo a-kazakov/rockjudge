@@ -9,7 +9,12 @@ export default class Item extends React.Component {
     static propTypes = {
         active: PT.bool.isRequired,
         readOnly: PT.bool.isRequired,
-        style: PT.oneOf(["active-green", "active-red", "active-yellow", "active-white"]),
+        style: PT.oneOf([
+            "active-green",
+            "active-red",
+            "active-yellow",
+            "active-white",
+        ]),
         text: PT.string.isRequired,
         value: PT.oneOfType([
             PT.string.isRequired,
@@ -28,9 +33,9 @@ export default class Item extends React.Component {
 
     getClassName() {
         return makeClassName({
-            "tbtn": true,
+            tbtn: true,
             "score-btn": true,
-            "active": this.props.active,
+            active: this.props.active,
             "read-only": this.props.readOnly,
             "active-red": this.props.style === "active-red",
             "active-green": this.props.style === "active-green",
@@ -41,10 +46,10 @@ export default class Item extends React.Component {
     render() {
         return (
             <button
-                className={ this.getClassName() }
-                { ...onTouchOrClick(this.handleClick) }
+                className={this.getClassName()}
+                {...onTouchOrClick(this.handleClick)}
             >
-                { this.props.text }
+                {this.props.text}
             </button>
         );
     }

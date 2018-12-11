@@ -15,72 +15,64 @@ export default class Row extends React.Component {
     };
 
     handleTourDeletion = () => {
-        showConfirm(
-            _("admin.confirms.delete_tour"),
-            this.props.onDelete,
-        );
+        showConfirm(_("admin.confirms.delete_tour"), this.props.onDelete);
     };
 
     render() {
         const tour = this.props.entry;
         return (
             <div className="tour viewer">
-                <h3>
-                    { tour.name }
-                </h3>
+                <h3>{tour.name}</h3>
                 <div className="tour-content">
                     <div className="info">
                         <div className="first-col">
                             <p>
-                                <strong>
-                                    { `${_("models.tour.num_advances")}: ` }
-                                </strong>
-                                { tour.num_advances }
+                                <strong>{`${_("models.tour.num_advances")}: `}</strong>
+                                {tour.num_advances}
                             </p>
                             <p>
                                 <strong>
-                                    { `${_("models.tour.participants_per_heat")}: ` }
+                                    {`${_("models.tour.participants_per_heat")}: `}
                                 </strong>
-                                { tour.participants_per_heat }
+                                {tour.participants_per_heat}
                             </p>
                             <p>
-                                <strong>
-                                    { `${_("models.tour.is_hope_tour")}: ` }
-                                </strong>
-                                { tour.hope_tour
+                                <strong>{`${_("models.tour.is_hope_tour")}: `}</strong>
+                                {tour.hope_tour
                                     ? _("global.labels.yes")
-                                    : _("global.labels.no")
-                                }
+                                    : _("global.labels.no")}
                             </p>
                         </div>
                         <div className="second-col">
                             <p>
                                 <strong>
-                                    { `${_("models.tour.scoring_system_name")}: ` }
+                                    {`${_("models.tour.scoring_system_name")}: `}
                                 </strong>
-                                { rules_set.translate(`scoring_systems_names.${tour.scoring_system_name}`) }
+                                {rules_set.translate(
+                                    `scoring_systems_names.${tour.scoring_system_name}`,
+                                )}
                             </p>
                             <p>
                                 <strong>
-                                    { `${_("models.tour.default_program")}: ` }
+                                    {`${_("models.tour.default_program")}: `}
                                 </strong>
-                                { tour.default_program }
+                                {tour.default_program}
                             </p>
                         </div>
                     </div>
                     <div className="buttons">
                         <button
                             className="edit-button"
-                            onClick={ this.props.onStartEditing }
+                            onClick={this.props.onStartEditing}
                         >
-                            { _("global.buttons.edit") }
+                            {_("global.buttons.edit")}
                         </button>
                         <br />
                         <button
                             className="delete-button"
-                            onClick={ this.handleTourDeletion }
+                            onClick={this.handleTourDeletion}
                         >
-                            { _("global.buttons.delete") }
+                            {_("global.buttons.delete")}
                         </button>
                     </div>
                 </div>
@@ -88,4 +80,3 @@ export default class Row extends React.Component {
         );
     }
 }
-

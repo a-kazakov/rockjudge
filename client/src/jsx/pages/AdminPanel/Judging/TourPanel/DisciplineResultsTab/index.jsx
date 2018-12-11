@@ -10,9 +10,9 @@ export default class DisciplineResultsTab extends React.Component {
         discipline: PT.instanceOf(Model).isRequired,
     };
 
-    makeResultsRef = (ref) => this._results = ref;
+    makeResultsRef = ref => (this._results = ref);
 
-    handleSignal = (message) => {
+    handleSignal = message => {
         this._results.handleSignal(message);
     };
 
@@ -22,13 +22,11 @@ export default class DisciplineResultsTab extends React.Component {
         return (
             <div className="DisciplineResultsTab rules-set">
                 <Renderer
-                    autoDocx={ this.props.autoDocx }
-                    discipline={ this.props.discipline }
-                    ref={ this.makeResultsRef }
+                    autoDocx={this.props.autoDocx}
+                    discipline={this.props.discipline}
+                    ref={this.makeResultsRef}
                 />
             </div>
         );
     }
 }
-
-

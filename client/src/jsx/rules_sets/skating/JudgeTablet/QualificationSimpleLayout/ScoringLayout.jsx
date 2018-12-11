@@ -1,4 +1,4 @@
-import {React} from "HostModules";
+import { React } from "HostModules";
 
 import PT from "prop-types";
 import _ from "l10n";
@@ -17,10 +17,10 @@ export default class ScoringLayout extends React.Component {
     handleCrossChange = () => {
         this.props.onScoreUpdate("cross", !this.props.score.data.cross);
     };
-    handleNumberChange = (value) => {
+    handleNumberChange = value => {
         this.props.onScoreUpdate("note_number", value);
     };
-    handlePicsChange = (value) => {
+    handlePicsChange = value => {
         this.props.onScoreUpdate("note_pics", value);
     };
 
@@ -29,36 +29,34 @@ export default class ScoringLayout extends React.Component {
             <div>
                 <SelectorInput
                     jumbo
-                    choices={ [
-                        [true, "X", "active-green"],
-                    ] }
-                    readOnly={ this.props.readOnly }
+                    choices={[[true, "X", "active-green"]]}
+                    readOnly={this.props.readOnly}
                     style="one-line"
-                    value={ this.props.score.data.cross }
-                    onChange={ this.handleCrossChange }
+                    value={this.props.score.data.cross}
+                    onChange={this.handleCrossChange}
                 />
-                <h3>{ _("tablet.dance_judge.notes") }</h3>
+                <h3>{_("tablet.dance_judge.notes")}</h3>
                 <NumberSelectorInput
                     compact
-                    max={ 5 }
-                    min={ 1 }
-                    readOnly={ this.props.readOnly }
+                    max={5}
+                    min={1}
+                    readOnly={this.props.readOnly}
                     style="one-line"
-                    value={ this.props.score.data.note_number }
-                    onChange={ this.handleNumberChange }
+                    value={this.props.score.data.note_number}
+                    onChange={this.handleNumberChange}
                 />
                 <MultipleOptionsInput
                     compact
-                    choices={ [
+                    choices={[
                         ["S", "♠", "active-green"],
                         ["H", "♥", "active-red"],
                         ["C", "♣", "active-white"],
                         ["D", "♦", "active-yellow"],
-                    ] }
-                    readOnly={ this.props.readOnly }
+                    ]}
+                    readOnly={this.props.readOnly}
                     style="one-line"
-                    value={ this.props.score.data.note_pics }
-                    onChange={ this.handlePicsChange }
+                    value={this.props.score.data.note_pics}
+                    onChange={this.handlePicsChange}
                 />
             </div>
         );

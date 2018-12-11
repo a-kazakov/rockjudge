@@ -8,8 +8,8 @@ class EnumInstance {
     match(handles) {
         const handles_keys = Object.keys(handles).sort();
         if (
-            handles_keys.length !== this._enum_cls._keys.length
-            || handles_keys.some((v, i) => v !== this._enum_cls._keys[i])
+            handles_keys.length !== this._enum_cls._keys.length ||
+            handles_keys.some((v, i) => v !== this._enum_cls._keys[i])
         ) {
             console.error(`Match handles don't match enum definition`);
         }
@@ -45,8 +45,13 @@ export default class Enum {
             return null;
         }
         const values_keys = Object.keys(values).sort();
-        if (vars.length !== values_keys.length || values_keys.some((v, i) => v !== vars[i])) {
-            console.error(`Values for enum value ${key} don't match ones from definition`);
+        if (
+            vars.length !== values_keys.length ||
+            values_keys.some((v, i) => v !== vars[i])
+        ) {
+            console.error(
+                `Values for enum value ${key} don't match ones from definition`,
+            );
         }
         return new EnumInstance(key, values ?? {}, this);
     }

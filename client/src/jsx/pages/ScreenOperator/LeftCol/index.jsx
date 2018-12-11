@@ -8,9 +8,7 @@ export default class LeftCol extends React.Component {
         activeScreenId: PT.string,
         manifest: PT.shape({
             raw_data: PT.shape({
-                screens: PT.arrayOf(
-                    PT.shape({}).isRequired,
-                ).isRequired,
+                screens: PT.arrayOf(PT.shape({}).isRequired).isRequired,
             }).isRequired,
         }).isRequired,
         onScreenChange: PT.func.isRequired,
@@ -19,14 +17,14 @@ export default class LeftCol extends React.Component {
     render() {
         return (
             <div className="left-col">
-                { this.props.manifest.raw_data.screens.map(screen_data =>
+                {this.props.manifest.raw_data.screens.map(screen_data => (
                     <Item
-                        active={ screen_data.id === this.props.activeScreenId }
-                        key={ screen_data.id }
-                        screenData={ screen_data }
-                        onScreenChange={ this.props.onScreenChange }
+                        active={screen_data.id === this.props.activeScreenId}
+                        key={screen_data.id}
+                        screenData={screen_data}
+                        onScreenChange={this.props.onScreenChange}
                     />
-                ) }
+                ))}
             </div>
         );
     }

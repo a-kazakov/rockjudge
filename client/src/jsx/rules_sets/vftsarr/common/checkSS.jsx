@@ -1,27 +1,10 @@
-const GROUPS = (function () {
+const GROUPS = (function() {
     const raw_groups = {
-        "formation": [
-            "formation",
-            "formation_acro",
-            "formation_simplified",
-        ],
-        "acro": [
-            "acro",
-            "acro_extended",
-            "am_qual",
-            "am_final_acro",
-            "formation_acro",
-        ],
-        "acro_6": [
-            "am_final_acro",
-        ],
-        "acro_8": [
-            "formation_acro",
-        ],
-        "rough": [
-            "dance_rough",
-            "solo_rough",
-        ],
+        formation: ["formation", "formation_acro", "formation_simplified"],
+        acro: ["acro", "acro_extended", "am_qual", "am_final_acro", "formation_acro"],
+        acro_6: ["am_final_acro"],
+        acro_8: ["formation_acro"],
+        rough: ["dance_rough", "solo_rough"],
     };
     return new Map(Object.keys(raw_groups).map(key => [key, new Set(raw_groups[key])]));
 })();

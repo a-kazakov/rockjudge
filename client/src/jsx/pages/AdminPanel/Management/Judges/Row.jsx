@@ -13,36 +13,24 @@ export default class Row extends React.Component {
         onStartEditing: PT.func.isRequired,
     };
 
-    handleDeletion = (event) => {
+    handleDeletion = event => {
         event.stopPropagation();
-        showConfirm(
-            _("admin.confirms.delete_judge"),
-            this.props.onDelete,
-        );
+        showConfirm(_("admin.confirms.delete_judge"), this.props.onDelete);
     };
 
     render() {
         return (
-            <tr
-                className="viewer"
-                onClick={ this.props.onStartEditing }
-            >
+            <tr className="viewer" onClick={this.props.onStartEditing}>
                 <td className="role-description">
-                    { this.props.entry.role_description || _("global.phrases.judge_n", this.props.entry.number) }
+                    {this.props.entry.role_description ||
+                        _("global.phrases.judge_n", this.props.entry.number)}
                 </td>
-                <td className="name">
-                    { this.props.entry.name }
-                </td>
-                <td className="category">
-                    { this.props.entry.category }
-                </td>
+                <td className="name">{this.props.entry.name}</td>
+                <td className="category">{this.props.entry.category}</td>
                 <td className="delete">
-                    <button onClick={ this.handleDeletion }>
-                        X
-                    </button>
+                    <button onClick={this.handleDeletion}>X</button>
                 </td>
             </tr>
         );
     }
 }
-

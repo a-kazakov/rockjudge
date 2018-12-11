@@ -52,7 +52,7 @@ export default class SelectorInput extends React.Component {
         if (this.props.value instanceof Set) {
             return this.props.value.has(val);
         }
-        return this.props.value.includes(val)
+        return this.props.value.includes(val);
     }
     isValueEmpty() {
         if (!this.props.multiple) {
@@ -73,12 +73,12 @@ export default class SelectorInput extends React.Component {
 
     getClassName() {
         return makeClassName({
-            "SelectorInput": true,
-            "compact": this.props.compact,
-            "jumbo": this.props.jumbo,
+            SelectorInput: true,
+            compact: this.props.compact,
+            jumbo: this.props.jumbo,
             "one-row": this.props.style !== "two-lines",
             "two-rows": this.props.style === "two-lines",
-            "selected": !this.props.multiple && !this.isValueEmpty(),
+            selected: !this.props.multiple && !this.isValueEmpty(),
             [`n-${this.getButtonsCount()}`]: true,
         });
     }
@@ -99,30 +99,24 @@ export default class SelectorInput extends React.Component {
                 idx !== 0 &&
                 idx % this.props.rowSize === 0
             ) {
-                result.push(
-                    <br key={ `br${idx}` } />
-                );
+                result.push(<br key={`br${idx}`} />);
             }
             const [value, text, style] = this.props.choices[idx];
             result.push(
                 <Item
-                    active={ this.isSelected(value, idx, first_value_idx) }
-                    key={ idx }
-                    readOnly={ this.props.readOnly }
-                    style={ style }
-                    text={ text }
-                    value={ value }
-                    onClick={ this.props.onChange }
-                />
+                    active={this.isSelected(value, idx, first_value_idx)}
+                    key={idx}
+                    readOnly={this.props.readOnly}
+                    style={style}
+                    text={text}
+                    value={value}
+                    onClick={this.props.onChange}
+                />,
             );
         }
         return result;
     }
     render() {
-        return (
-            <div className={ this.getClassName() }>
-                { this.renderRows() }
-            </div>
-        );
+        return <div className={this.getClassName()}>{this.renderRows()}</div>;
     }
 }

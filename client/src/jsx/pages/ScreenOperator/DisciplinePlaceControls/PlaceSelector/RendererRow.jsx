@@ -22,8 +22,8 @@ export default class RendererRow extends React.Component {
 
     getClassName() {
         return makeClassName({
-            "row": true,
-            "selected": this.props.selected,
+            row: true,
+            selected: this.props.selected,
         });
     }
     renderPlace() {
@@ -32,38 +32,32 @@ export default class RendererRow extends React.Component {
         }
         return (
             <div>
-                { this.props.place }
-                <div className="place-label">
-                    { _("presenter.labels.place") }
-                </div>
+                {this.props.place}
+                <div className="place-label">{_("presenter.labels.place")}</div>
             </div>
         );
     }
     render() {
         return (
             <table
-                className={ this.getClassName() }
-                { ...onTouchEndOrClick(this.handleClick) }
+                className={this.getClassName()}
+                {...onTouchEndOrClick(this.handleClick)}
             >
                 <tbody>
                     <tr>
                         <td className="place" rowSpan="2">
-                            { this.renderPlace() }
+                            {this.renderPlace()}
                         </td>
-                        <td className="number">
-                            { this.props.participant.number }
-                        </td>
-                        <td className="name">
-                            { this.props.participant.name }
-                        </td>
+                        <td className="number">{this.props.participant.number}</td>
+                        <td className="name">{this.props.participant.name}</td>
                     </tr>
                     <tr>
                         <td className="club" colSpan="2">
-                            { this.props.participant.club.name }
+                            {this.props.participant.club.name}
                         </td>
                     </tr>
                 </tbody>
             </table>
-        )
+        );
     }
 }

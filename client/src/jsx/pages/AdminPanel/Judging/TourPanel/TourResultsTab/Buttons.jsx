@@ -9,15 +9,12 @@ export default class Buttons extends React.Component {
 
     handleDocxClick = () => {
         return this.props.onSignal("docx");
-    }
+    };
 
     render() {
         return (
             <div>
-                <button
-                    className="btn btn-primary"
-                    onClick={ this.handleDocxClick }
-                >
+                <button className="btn btn-primary" onClick={this.handleDocxClick}>
                     DOCX
                 </button>
             </div>
