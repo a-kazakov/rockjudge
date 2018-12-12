@@ -1,0 +1,15 @@
+; В данном файле необходимо указать путь к папке загрузок и путь
+; к исполняемому файлу MS Word.
+; Для более подробной информации обратитесь к инструкции.
+
+
+; В этой строке укажите путь к папке загрузок. Например:
+; [DOWNLOADS] C:\Users\Artem\Downloads
+
+[DOWNLOADS] C:\Users\Artem\Downloads
+
+
+; В этой строке укажите путь к исполняемому файлу MS Word. Например:
+; [WORD] C:\Program Files\Microsoft Office\Office16\winword.exe
+
+[WORD] C:\Program Files\Microsoft Office\Office16\winword.exe ; asdf ;sadf asdf

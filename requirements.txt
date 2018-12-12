@@ -1,6 +1,0 @@
-aiopg==0.13.2
-psycopg2==2.7.5
-pyasn1==0.4.2
-rsa==3.4.2
-SQLAlchemy==1.2.12
-tornado==4.5.3
