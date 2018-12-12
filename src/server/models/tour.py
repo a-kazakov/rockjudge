@@ -663,12 +663,3 @@ class Tour(ModelBase, BaseModel):
                 mk,
                 unsafe=True,
             )
-
-    # def export(self):
-    #     result = self.serialize_props()
-    #     result.update({
-    #         "id": self.id,
-    #         "results": self.results,
-    #         "runs": [run.export() for run in self.runs],
-    #     })
-    #     return result

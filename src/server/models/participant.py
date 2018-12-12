@@ -274,36 +274,3 @@ class Participant(ModelBase, BaseModel):
             discipline_id=discipline.id,
         ):
             Program.load_models(model, raw_data["programs"], mk)
-
-    # def delete_model(self, ws_message):
-    #     from models import Tour
-    #     discipline_id = self.discipline_id
-    #     if self.run_set.join(Tour).where(Tour.finalized == True).count() > 0:  # NOQA
-    #         raise ApiError("errors.participant.delete_with_finalized_tours")
-    #     self.delete_instance(recursive=True)
-    #     ws_message.add_model_update(
-    #         model_type=discipline_proxy,
-    #         model_id=discipline_id,
-    #         schema={
-    #             "participants": {},
-    #             "tours": {
-    #                 "runs": {},
-    #             },
-    #         }
-    #     )
-    #
-    # def serialize(self, children={}):
-    #     result = self.serialize_props()
-    #     result["name"] = self.get_name()
-    #     result = self.serialize_upper_child(result, "club", children)
-    #     result = self.serialize_lower_child(result, "programs", children)
-    #     return result
-
-    # def export(self):
-    #     result = self.serialize_props()
-    #     result.update({
-    #         "id": self.id,
-    #         "club_id": self.club_id,
-    #         "programs": [program.export() for program in self.programs],
-    #     })
-    #     return result

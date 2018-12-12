@@ -105,11 +105,3 @@ class Club(ModelBase, BaseModel):
             objects, competition.session, mk, competition_id=competition.id
         ):
             pass
-
-    #
-    # def export(self):
-    #     result = self.serialize_props()
-    #     result.update({
-    #         "id": self.id,
-    #     })
-    #     return result

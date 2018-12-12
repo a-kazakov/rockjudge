@@ -64,21 +64,8 @@ class DisciplineJudge(ModelBase, BaseModel):
 
     # Permissions
 
-    # @classmethod
-    # def check_create_permission(cls, session: Session, request: "ApiRequest", data: Dict[str, Any]) -> bool:
-    #     competition_id = session.query(Judge).get(data["judge_id"]).competition_id
-    #     auth = ClientAuth.get(session, request.client, competition_id)
-    #     return auth.access_level == AccessLevel.ADMIN
-
     def check_read_permission(self, request: "ApiRequest") -> bool:
         return self.get_auth(request.client).access_level != AccessLevel.NONE
-
-    #
-    # def check_update_permission(self, request: "ApiRequest", data: Dict[str, Any]) -> bool:
-    #     return self.get_auth(request.client).access_level == AccessLevel.ADMIN
-    #
-    # def check_delete_permission(self, request: "ApiRequest") -> bool:
-    #     return self.get_auth(request.client).access_level == AccessLevel.ADMIN
 
     # Create logic
 
@@ -137,45 +124,3 @@ class DisciplineJudge(ModelBase, BaseModel):
             for obj in objects
         ]
         discipline.set_judges(new_judges_data, mk)
-
-    # @classmethod
-    # def create_model(cls, discipline, judge, data, ws_message):
-    #     kwargs = cls.gen_model_kwargs(data, discipline=discipline, judge=judge)
-    #     cls.create(**kwargs)
-    #     ws_message.add_message("reload_data")
-    #
-    # def update_model(self, new_data, ws_message):
-    #     self.update_model_base(new_data)
-    #     ws_message.add_model_update(
-    #         model_type=Discipline,
-    #         model_id=self.discipline_id,
-    #         schema={
-    #             "judges": {},
-    #         }
-    #     )
-    #
-    # def delete_model(self, ws_message):
-    #     from models import (
-    #         Run,
-    #         Tour,
-    #     )
-    #     num_finalized_tours = self.discipline.raw_tours.where(Tour.finalized == True).count()  # NOQA
-    #     if num_finalized_tours > 0:
-    #         raise ApiError("errors.discipline_judge.delete_with_finalized")
-    #     if self.get_attr_count("score_set") > 0:
-    #         raise ApiError("errors.discipline_judge.delete_with_scores")
-    #     self.delete_instance()
-    #     ws_message.add_message("reload_data")
-    # def serialize(self, children={}):
-    #     result = self.serialize_props()
-    #     result = self.serialize_upper_child(result, "judge", children)
-    #     result = self.serialize_upper_child(result, "discipline", children)
-    #     return result
-    #
-    # def export(self):
-    #     result = self.serialize_props()
-    #     result.update({
-    #         "id": self.id,
-    #         "judge_id": self.judge_id,
-    #     })
-    #     return result

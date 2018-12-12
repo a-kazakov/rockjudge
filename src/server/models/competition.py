@@ -20,13 +20,6 @@ if TYPE_CHECKING:
     from mutations import MutationsKeeper
 
 
-# def serialize_competition_info(raw_data):
-#     return json.dumps([
-#         [str(row[0]), str(row[1])]
-#         for row in raw_data
-#     ], check_circular=False)
-
-
 class Competition(ModelBase, BaseModel):
     # DB schema
 
@@ -139,65 +132,3 @@ class Competition(ModelBase, BaseModel):
         if "plan" in data and items["plan"]:
             CompetitionPlanItem.load_models(self, data["plan"], mk)
 
-    # def serialize(self, children={}):
-    #     result = self.serialize_props()
-    #     result = self.serialize_lower_child(result, "disciplines", children)
-    #     result = self.serialize_lower_child(result, "judges", children)
-    #     result = self.serialize_lower_child(result, "clubs", children)
-    #     result = self.serialize_lower_child(result, "plan", children)
-    #     result = self.serialize_lower_child(result, "clients", children)
-    #     return result
-
-    # def export(self):
-    #     SCHEMA = {
-    #         "disciplines": {
-    #             "tours": {
-    #                 "runs": {
-    #                     "scores": {},
-    #                 }
-    #             },
-    #             "discipline_judges": {},
-    #             "participants": {
-    #                 "programs": {},
-    #             },
-    #         },
-    #         "judges": {},
-    #         "clubs": {},
-    #         "plan": {}
-    #     }
-    #     self.smart_prefetch(SCHEMA)
-    #     result = self.serialize_props()
-    #     result.update({
-    #         "version": settings.VERSION,
-    #         "disciplines": [
-    #             discipline.export()
-    #             for discipline in self.disciplines
-    #         ],
-    #         "judges": [
-    #             judge.export()
-    #             for judge in self.judges
-    #         ],
-    #         "clubs": [
-    #             club.export()
-    #             for club in self.clubs
-    #         ],
-    #         "plan": [
-    #             item.export()
-    #             for item in self.plan
-    #         ]
-    #     })
-    #     return result
-
-    # def get_active_tours(self, session: Session) -> List["Tour"]:
-    #     from models import (
-    #         Discipline,
-    #         Tour,
-    #     )
-    #     return list(session.query(Tour).filter(
-    #         (Tour.active == True) &
-    #         (Discipline.competition == self)
-    #     ))
-    #
-
-
-# competition_proxy.initialize(Competition)
