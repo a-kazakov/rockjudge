@@ -1,6 +1,9 @@
 import asyncio
+import json
+import os
 import time
 from enum import Enum
+from pathlib import Path
 from traceback import print_exc
 from typing import Any, Dict, NamedTuple, Optional, Tuple, Type, TypeVar, List
 
@@ -533,4 +536,11 @@ class Api:
         return {"verification_string": client.verification_string}
 
     def api_service_report_js_error(self, *args: Any, **kwargs: Any) -> Any:
-        pass  # TODO
+        ts = time.time()
+        dest_path = Path("logs", "js", f"error_{ts:.5f}.txt")
+        os.makedirs(dest_path.parent, exist_ok=True)
+        with open(dest_path, "wt", encoding="utf-8") as f:
+            f.write(json.dumps({
+                "args": list(args),
+                "kwargs": kwargs
+            }, indent=2, sort_keys=True, ensure_ascii=False))
