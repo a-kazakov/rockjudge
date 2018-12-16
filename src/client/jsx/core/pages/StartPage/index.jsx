@@ -8,6 +8,7 @@ import ClientSubscription from "common/server/Storage/subscriptions/ClientSubscr
 import _ from "l10n";
 import CompetitionSelector from "./CompetitionSelector";
 import RoleSelector from "./RoleSelector";
+import SafeTimeout from "common/SafeTimeout";
 
 export default class StartPage extends React.Component {
     constructor(props) {
@@ -26,6 +27,10 @@ export default class StartPage extends React.Component {
             .then(this.subscribe)
             .catch(console.error.bind(console));
     }
+    componentWillUnmount() {
+        this.st.clear();
+    }
+    st = new SafeTimeout();
 
     subscribe = () => {
         this._competitions_subscription = new AllCompetitionsSubscription();
@@ -38,7 +43,7 @@ export default class StartPage extends React.Component {
     trySubscribeClient = () => {
         const client_id = keys_storage.client_id;
         if (client_id == null) {
-            setTimeout(this.trySubscribeClient, 100);
+            this.st.setTimeout(this.trySubscribeClient, 100);
             return;
         }
         this._client_subscription = new ClientSubscription(client_id);

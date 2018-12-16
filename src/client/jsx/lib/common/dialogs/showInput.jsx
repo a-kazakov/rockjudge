@@ -1,4 +1,5 @@
 import swal from "sweetalert2";
+import showError from "./showError";
 
 export default function showInput(title, text, callback, validator = null) {
     swal({
@@ -7,5 +8,7 @@ export default function showInput(title, text, callback, validator = null) {
         showCancelButton: true,
         input: "text",
         inputValidator: validator,
-    }).then(callback);
+    })
+        .then(callback)
+        .catch(error => showError(error));
 }

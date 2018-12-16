@@ -177,7 +177,7 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
 
     @property
     def extra_data(self) -> Dict[str, Any]:
-        if self.run_info.status != RunStatus.DQ:
+        if self.run_info.status == RunStatus.OK:
             criterias_scores: Optional[Dict[str, float]] = {
                 k: float(v) for k, v in self.criterias_scores.items()
             }
@@ -200,7 +200,7 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
         }
 
     def make_result(self, place: int, advanced: bool) -> RunResult:
-        if self.run_info.status != RunStatus.DQ:
+        if self.run_info.status == RunStatus.OK:
             display_score: str = self.display_score
         else:
             display_score = "—"

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Tuple, Type
 
 from enums import RunStatus
@@ -20,7 +18,7 @@ class RunContextBase(CachedClass):
     def __init__(
         self,
         run_info: RunInfo,
-        tour_context: TourContextBase,
+        tour_context: "TourContextBase",
         scoring_system_name: ScoringSystemName,
     ) -> None:
         self.run_info = run_info
@@ -40,7 +38,7 @@ class RunContextBase(CachedClass):
     def make(
         cls,
         run_info: RunInfo,
-        tour_context: TourContextBase,
+        tour_context: "TourContextBase",
         scoring_system_name: ScoringSystemName,
     ) -> "RunContextBase":
         return cls.get_class(scoring_system_name)(

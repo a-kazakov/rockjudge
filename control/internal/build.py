@@ -1,241 +1,180 @@
-#!/usr/bin/env python3
-
-import glob
+import json
 import os
 import shutil
-import subprocess
-import time
+from pathlib import Path
+from time import sleep
+from typing import List
 
-from contextlib import contextmanager
-from concurrent.futures import ProcessPoolExecutor
+from build_lib import BuildController, BuildManager
 
-from sys import argv
-
-
-@contextmanager
-def pushd(new_dir, create=False):
-    if create:
-        os.makedirs(new_dir, exist_ok=True)
-    current_dir = os.getcwd()
-    os.chdir(new_dir)
-    yield
-    os.chdir(current_dir)
+if __name__ != "__main__":
+    raise RuntimeError("This file should never be imported")
 
 
-@contextmanager
-def task(description):
-    print("[Start] " + description)
-    try:
-        t = time.time()
-        yield
-        t = time.time() - t
-        print("[Done ] {} ({:.03f}s)".format(description, t))
-    except Exception as ex:
-        print("[FAIL ] " + description)
-        print(ex)
-        raise RuntimeError
+build_mgr = BuildManager()
+step = build_mgr.step_decorator
 
 
-def run(*cmd, **kwargs):
-    print_cmd = kwargs.pop("print_cmd", False)
-    if print_cmd:
-        print("[from {}]".format(os.getcwd()), " ".join(cmd))
-    p = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True
+@step("Loading client modules", terminal=True)
+def get_client_modules(ctl: BuildController) -> List[str]:
+    configs_str, _err = ctl.run_exe(
+        "node",
+        Path("env", "node_modules", "gulp", "bin", "gulp.js").absolute(),
+        "--tasks-json",
+        "--gbase",
+        "",
+        "--gdest",
+        "",
+        chdir=Path("env"),
     )
-    stdout, _ = p.communicate()
-    success_code = kwargs.pop("success_code", 0)
-    success_codes = kwargs.pop("success_codes", None)
-    if success_codes is None:
-        if p.returncode != success_code:
-            raise RuntimeError(stdout.decode())
-    else:
-        if p.returncode not in success_codes:
-            raise RuntimeError(stdout.decode())
+    print(_err)
+    configs_json = json.loads(configs_str)
+    modules: List[str] = []
+    for node in configs_json["nodes"]:
+        if node["type"] == "task" and node["nodes"] == []:
+            modules.append(node["label"])
+    return modules
 
 
-def runpython(*cmd, **kwargs):
-    run(*(["python"] + list(cmd)), **kwargs)
-
-
-def copyfiles(src, dest):
-    for file in glob.glob(src):
-        shutil.copy(file, dest)
-
-
-def jp(*parts):
-    return os.path.join(*parts)
-
-
-HOME = os.getcwd()
-SERVER_BUILD_PATH = jp(HOME, "dist", "build_root", "server")
-SERVER_SRC_PATH = jp(SERVER_BUILD_PATH, "src")
-PRINTER_BUILD_PATH = jp(HOME, "dist", "build_root", "printer")
-
-
-def copy_python_module(module):
-    dest_dir = jp(SERVER_SRC_PATH, module)
-    os.makedirs(dest_dir, exist_ok=True)
-    copyfiles(jp(HOME, module, "*.py"), dest_dir)
-
-
-@task("Copying python sources")
-def task_prepare_python_sources():
-    os.makedirs(SERVER_SRC_PATH, exist_ok=True)
-    copyfiles(jp(HOME, "*.py"), SERVER_SRC_PATH)
-    if os.path.exists(jp(SERVER_SRC_PATH, "settings_prod.py")):
-        os.unlink(jp(SERVER_SRC_PATH, "settings_prod.py"))
-    run(
-        "robocopy",
-        jp(HOME, "scoring_systems"),
-        jp(SERVER_SRC_PATH, "scoring_systems"),
-        "*.py",
-        "/s",
-        success_code=1,
+@step("Building module {1}", terminal=True)
+def build_client_module(
+    ctl: BuildController, dest_path: Path, module_name: str
+) -> None:
+    ctl.run_exe(
+        "node",
+        Path("env", "node_modules", "gulp", "bin", "gulp.js").absolute(),
+        module_name,
+        "--gtype",
+        "production",
+        "--gbase",
+        Path("src", "client").absolute(),
+        "--gdest",
+        (dest_path / "data").absolute(),
+        chdir=Path("env").absolute(),
     )
-    copy_python_module("service")
-    copy_python_module("protection")
-    copy_python_module("models")
-    copy_python_module("helpers")
-    copy_python_module("webserver")
 
 
-def task_build_python_module(module):
-    with task("Building module {}".format(module)):
-        with pushd(module):
-            runpython("_compile.py", "build_ext", "--inplace")
+@step("Building client")
+def client(ctl: BuildController, dest_path: Path) -> None:
+    modules: List[str] = ctl.child_step("get_client_modules").run()
+    ctl.run_parallel(
+        *(
+            ctl.child_step("build_client_module", dest_path, module)
+            for module in modules
+        )
+    )
 
 
-@task("Building python sources")
-def task_build_all_python_modules():
-    with pushd(SERVER_SRC_PATH):
-        modules = [
-            root for root, _dirs, files in os.walk(".") if "_compile.py" in files
-        ]
-        with ProcessPoolExecutor(len(modules)) as p:
-            p.map(task_build_python_module, modules)
+@step("Setting up Python build environment", terminal=True)
+def prepare_python_src(ctl: BuildController, dest_dir: Path) -> None:
+    base_dir = Path("src", "server").absolute()
+    dest_dir = dest_dir.absolute()
+    for root, files in ctl.walk_path(base_dir):
+        for fn in files:
+            if not fn.endswith(".py"):
+                continue
+            os.makedirs(str(dest_dir / root), exist_ok=True)
+            shutil.copy(str(base_dir / root / fn), str(dest_dir / root / fn))
 
 
-@task("Bundling python modules")
-def task_bundle_python_modules():
-    with pushd(SERVER_BUILD_PATH):
-        runpython(jp(HOME, "control", "internal", "make_exe_spec.py"), SERVER_SRC_PATH)
-        run("pyinstaller", "exe.spec")
-        run(
-            "robocopy",
-            jp(SERVER_BUILD_PATH, "dist", "rockjudge"),
-            jp(HOME, "dist", "data"),
-            "/s",
-            success_codes=(0, 1, 2, 3),
+@step(lambda md, td: f"Compiling module {md.relative_to(td)}", terminal=True)
+def build_python_module(
+    ctl: BuildController, module_dir: Path, _temp_dir: Path
+) -> None:
+    ctl.run_exe(
+        "python", module_dir / "_compile.py", "build_ext", "--inplace", chdir=module_dir
+    )
+
+
+@step("Compiling Python modules")
+def build_python(ctl: BuildController, src_dir: Path) -> None:
+    modules_paths = [
+        src_dir / root
+        for root, files in ctl.walk_path(src_dir)
+        if "_compile.py" in files
+    ]
+    ctl.run_parallel(
+        *(
+            ctl.child_step(
+                "build_python_module", module_path.absolute(), src_dir.absolute()
+            )
+            for module_path in modules_paths
+        )
+    )
+
+
+@step("Bundling everything together", terminal=True)
+def bundle_python(ctl: BuildController, src_dir: Path, dest_dir: Path) -> None:
+    ctl.run_exe(
+        "python",
+        Path("control", "internal", "make_exe_spec.py").absolute(),
+        src_dir,
+        chdir=src_dir,
+    )
+    ctl.run_exe("pyinstaller", "exe.spec", chdir=src_dir)
+    ctl.copytree(src_dir / "dist" / "rockjudge", dest_dir / "data")
+
+
+@step("Copying templates")
+def copy_templates(ctl: BuildController, dest_dir: Path) -> None:
+    ctl.copytree(Path("src", "server", "templates"), dest_dir / "data" / "templates")
+
+
+@step("Building server")
+def server(ctl: BuildController, dest_dir: Path) -> None:
+    with ctl.make_temp_dir() as src_temp_dir:
+        ctl.child_step("prepare_python_src", src_temp_dir).run()
+        ctl.child_step("build_python", src_temp_dir).run()
+        ctl.child_step("bundle_python", src_temp_dir, dest_dir).run()
+        ctl.child_step("copy_templates", dest_dir).run()
+
+
+@step("Building print server", terminal=True)
+def print_server(ctl: BuildController, dest_dir: Path) -> None:
+    src_path = Path("src", "tools", "print.py")
+    config_path = Path("src", "tools", "print-config-sample.txt")
+    os.makedirs(str(dest_dir / "print_server"), exist_ok=True)
+    with ctl.make_temp_dir() as temp_dir:
+        shutil.copy(str(src_path), str(temp_dir))
+        ctl.run_exe("pyinstaller", "--noupx", "-F", "print.py", chdir=temp_dir)
+        shutil.copy(
+            str(temp_dir / "dist" / "print.exe"), str(dest_dir / "print_server")
+        )
+        shutil.copy(
+            str(config_path), str(dest_dir / "print_server" / "print-config.txt")
         )
 
 
-@task("Building server")
-def task_build_server():
-    task_prepare_python_sources()
-    task_build_all_python_modules()
-    task_bundle_python_modules()
-
-
-@task("Building JS and CSS files")
-def task_build_js_css():
-    output_dir = jp(os.getcwd(), "dist", "data", "static")
-    with pushd("client"):
-        run("call", "gulp", "all", "--gtype", "production", "--gdest", output_dir)
-
-
-@task("Copying screen")
-def task_copy_screen():
-    screen_dir = jp(HOME, "dist", "data", "screen")
-    run(
-        "robocopy",
-        jp(HOME, "screen"),
-        screen_dir,
-        "/s",
-        "/XD",
-        jp(HOME, "screen", "src", "node_modules"),
-        success_code=1,
+@step("Building sources")
+def build(ctl: BuildController, dest_dir: Path) -> None:
+    ctl.run_parallel(
+        ctl.child_step("client", dest_dir),
+        ctl.child_step("server", dest_dir),
+        ctl.child_step("print_server", dest_dir),
     )
 
 
-@task("Copying static files")
-def task_copy_static():
-    static_dir = jp(os.getcwd(), "dist", "data", "static")
-    os.makedirs(static_dir, exist_ok=True)
-    run(
-        "robocopy",
-        jp(HOME, "static", "thirdparty"),
-        jp(static_dir, "thirdparty"),
-        "/s",
-        success_code=1,
-    )
-    run(
-        "robocopy",
-        jp(HOME, "static", "img"),
-        jp(static_dir, "img"),
-        "/s",
-        success_code=1,
-    )
+@step("Adding control scripts")
+def copy_scripts(_ctl: BuildController, dest_path: Path) -> None:
+    for fn in Path("control", "internal", "exe_controllers").iterdir():
+        shutil.copy(str(fn), str(dest_path))
 
 
-@task("Copying templates")
-def task_copy_templates():
-    os.makedirs(jp(HOME, "dist", "data", "templates"), exist_ok=True)
-    copyfiles(jp(HOME, "templates", "*.html"), jp(HOME, "dist", "data", "templates"))
+@step("Exporting result")
+def move_result(_ctl: BuildController, temp_dir: Path, dest_path: Path) -> None:
+    sleep(1)  # Hack to wait for al directory locks to become released
+    if os.path.exists(dest_path):
+        shutil.rmtree(str(dest_path))
+    shutil.move(str(temp_dir), str(dest_path))
 
 
-@task("Building client")
-def task_build_client():
-    task_copy_templates()
-    task_copy_screen()
-    task_copy_static()
-    task_build_js_css()
+@step("Building RockJudge")
+def all(ctl: BuildController) -> None:
+    dest_path = Path("dist")
+    with ctl.make_temp_dir() as temp_dir:
+        ctl.child_step("build", temp_dir).run()
+        ctl.child_step("copy_scripts", temp_dir).run()
+        ctl.child_step("move_result", temp_dir, dest_path).run()
 
 
-@task("Building print server")
-def task_build_print_server():
-    os.makedirs(PRINTER_BUILD_PATH, exist_ok=True)
-    os.makedirs(jp(HOME, "dist", "print_server"), exist_ok=True)
-    shutil.copy(jp(HOME, "tools", "print.py"), PRINTER_BUILD_PATH)
-    with pushd(PRINTER_BUILD_PATH):
-        run("pyinstaller", "-F", jp(PRINTER_BUILD_PATH, "print.py"))
-    shutil.copy(
-        jp(PRINTER_BUILD_PATH, "dist", "print.exe"), jp(HOME, "dist", "print_server")
-    )
-    shutil.copy(
-        jp(HOME, "tools", "print-config-sample.txt"),
-        jp(HOME, "dist", "print_server", "print-config.txt"),
-    )
-
-
-@task("Copying launch scripts")
-def task_copy_launch_scripts():
-    run(
-        "robocopy",
-        jp(HOME, "control", "internal", "exe_controllers"),
-        jp(HOME, "dist"),
-        success_codes=(0, 1, 2, 3),
-    )
-
-
-@task("Building RockJudge")
-def task_build_all():
-    if os.path.exists("dist"):
-        shutil.rmtree("dist")
-    with ProcessPoolExecutor(3) as p:
-        p.submit(task_build_server)
-        p.submit(task_build_client)
-        p.submit(task_build_print_server)
-    task_copy_launch_scripts()
-    shutil.rmtree(jp(HOME, "dist", "build_root"))
-
-
-if __name__ == "__main__":
-    try:
-        args = argv[1:]
-        if len(args) == 0:
-            task_build_all()
-        else:
-            globals()["task_" + argv[1]]()
-    except RuntimeError:
-        pass
+build_mgr.start("all")

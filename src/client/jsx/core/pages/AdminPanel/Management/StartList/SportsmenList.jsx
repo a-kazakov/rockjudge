@@ -23,7 +23,8 @@ export default class SportsmenList extends React.Component {
         );
     };
 
-    renderSportsman = (sportsman, idx) => {
+    renderSportsman = (sp_info, idx) => {
+        const { sportsman, p_count, s_count } = sp_info;
         return (
             <tr key={idx}>
                 <td className="w-5" style={{ borderRight: "1pt solid black" }}>
@@ -45,20 +46,19 @@ export default class SportsmenList extends React.Component {
                     </p>
                 </td>
                 <td className="w-15">
-                    <p className="text-center">{sportsman.p_count}</p>
+                    <p className="text-center">{p_count}</p>
                 </td>
                 <td className="w-15">
-                    <p className="text-center">{sportsman.s_count}</p>
+                    <p className="text-center">{s_count}</p>
                 </td>
             </tr>
         );
     };
 
     render() {
-        let sportsmen = StatInfo.getUniqueSportsmen(
+        const sp_infos = StatInfo.getUniqueSportsmen(
             this.props.participants.filter(this.filterParticipant),
-        );
-        sportsmen.sort((a, b) =>
+        ).sort((a, b) =>
             CmpChain()
                 .cmp(a.last_name, b.last_name)
                 .cmp(a.first_name, b.first_name)
@@ -98,7 +98,7 @@ export default class SportsmenList extends React.Component {
                         </th>
                     </tr>
                 </thead>
-                <tbody>{sportsmen.map(this.renderSportsman)}</tbody>
+                <tbody>{sp_infos.map(this.renderSportsman)}</tbody>
             </table>
         );
     }

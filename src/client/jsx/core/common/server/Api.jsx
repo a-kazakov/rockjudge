@@ -128,12 +128,12 @@ class ApiObject {
         }
         ApiQueue.instance().submit(this);
     }
-    _sendImpl(out_of_queue = false) {
+    _sendImpl = (out_of_queue = false) => {
         if (this._signature_required && !keys_storage.has_keys) {
             return new Promise((resolve, reject) => {
                 keys_storage
                     .obtainKeys()
-                    .then(this._sendImpl())
+                    .then(this._sendImpl)
                     .then(resolve)
                     .catch(reject);
             });
@@ -163,7 +163,7 @@ class ApiObject {
             websocket.send(`${signature}|${str_data}`);
             waiting_api_requests.add(this._response_key, this, resolve, reject);
         });
-    }
+    };
     processResponse(response) {
         if (window.location.hash === "#debug") {
             console.log("<- Api response", this.method, response);

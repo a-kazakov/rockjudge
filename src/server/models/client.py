@@ -52,7 +52,7 @@ class Client(ModelBase, BaseModel):
     HIDDEN_FIELDS = {"secret", "dh_a_str"}
 
     def __str__(self) -> str:
-        return f"<Client ID={self.id}>"
+        return "<Client ID={}>".format(self.id)
 
     # Virtual fields
 
@@ -131,7 +131,7 @@ class Client(ModelBase, BaseModel):
     def get_and_validate(
         cls,
         session: Session,
-        client_id: str,
+        client_id: int,
         method: "ApiMethod",
         str_data: str,
         random: str,

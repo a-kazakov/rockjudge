@@ -29,17 +29,16 @@ export default class ActiveJob extends React.Component {
             filename: this.createFilename(),
             onDone: this.props.onDone,
         };
+        const { type, tour } = this.props.queueItem;
         switch (this.props.queueItem.type) {
             case "heats":
-                return (
-                    <HeatsTab autoDocx={docx_params} tour={this.props.queueItem.tour} />
-                );
+                return <HeatsTab autoDocx={docx_params} tour={tour} />;
             case "results_1":
                 return (
                     <TourLoader
                         autoDocx={docx_params}
                         renderer={TourResultsTab}
-                        tour={this.props.queueItem.tour}
+                        tour={tour}
                         verbosity={1}
                     />
                 );
@@ -48,7 +47,7 @@ export default class ActiveJob extends React.Component {
                     <TourLoader
                         autoDocx={docx_params}
                         renderer={TourResultsTab}
-                        tour={this.props.queueItem.tour}
+                        tour={tour}
                         verbosity={2}
                     />
                 );
@@ -57,7 +56,7 @@ export default class ActiveJob extends React.Component {
                     <TourLoader
                         autoDocx={docx_params}
                         renderer={TourResultsTab}
-                        tour={this.props.queueItem.tour}
+                        tour={tour}
                         verbosity={3}
                     />
                 );
@@ -65,13 +64,13 @@ export default class ActiveJob extends React.Component {
                 return (
                     <DisciplineResultsTab
                         autoDocx={docx_params}
-                        discipline={this.props.queueItem.tour.discipline}
+                        discipline={tour.discipline}
                     />
                 );
             case "test":
                 return <TestPage autoDocx={docx_params} />;
             default:
-                console.error("Invalid job type:", this.props.queueItem.type);
+                console.error("Invalid job type:", type);
         }
         return null;
     }

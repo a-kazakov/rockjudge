@@ -3,6 +3,7 @@ import {React} from "HostModules";
 import PT from "prop-types";
 import makeTourResultsTable from "common/makeTourResultsTable";
 import lastOf from "common/tools/lastOf";
+import SafeTimeout from "common/SafeTimeout";
 
 const PARTICIPANTS_PER_PAGE = 15;
 const REFRESH_INTERVAL = 7000;
@@ -27,10 +28,14 @@ export default class TourResults extends React.Component {
         this.ensureCorrectTour();
         this.maybeUpdateLoop();
     }
+    componentWillUnmount() {
+        this.st.clear();
+    }
+    st = new SafeTimeout();
 
     ensureCorrectTour() {
         if (!this.is_tour_loaded) {
-            setTimeout(() => this.props.onActiveTourIdChange(this.controls.tour_id || null));
+            this.st.setTimeout(() => this.props.onActiveTourIdChange(this.controls.tour_id ?? null));
         }
     }
 

@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from db import db
 from enums import AccessLevel
-from exceptions import ApiError, InternalError
+from exceptions import ApiError, InternalError, ImmediateResponse
 from models.base_model import BaseModel
 from models.client import Client
 from models.competition import Competition
@@ -104,10 +104,15 @@ class ApiResponse(NamedTuple):
     new_subscription: Optional[SubscriptionBase] = None
     remove_subscription: Optional[str] = None
     broadcast_message: Optional[str] = None
+    is_immediate_response: bool = False
 
     @property
     def success(self) -> bool:
         return self.error_code is None
+
+    @property
+    def needs_postprocessor(self) -> bool:
+        return self.error_code is None and not self.is_immediate_response
 
     def serialize(self) -> Dict[str, Any]:
         if self.success:
@@ -133,11 +138,22 @@ class Api:
         start_time = time.monotonic()
         session_closed: bool = False
         try:
-            result = await asyncio.get_event_loop().run_in_executor(None, self._execute)
-            self.session.commit()
-            self.next_session = db.make_session()
-            self.next_session.connection()  # Start transaction
-            return result
+            try:
+                result = await asyncio.get_event_loop().run_in_executor(
+                    None, self._execute
+                )
+                self.session.commit()
+                self.next_session = db.make_session()
+                self.next_session.connection()  # Start transaction
+                return result
+            except ImmediateResponse as ex:
+                self.session.rollback()
+                session_closed = True
+                return ApiResponse(
+                    request=self.request,
+                    response=ex.get_response(self.request.method),
+                    is_immediate_response=True,
+                )
         except ApiError as ex:
             self.session.rollback()
             session_closed = True

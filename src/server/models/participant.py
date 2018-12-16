@@ -262,7 +262,10 @@ class Participant(ModelBase, BaseModel):
         }
         prepared = [
             cls.get_import_params(
-                obj, discipline_id=discipline.id, club_id=clubs[obj["club"]].id
+                obj,
+                discipline_id=discipline.id,
+                club=clubs[obj["club"]],
+                club_id=clubs[obj["club"]].id,
             )
             for obj in objects
         ]

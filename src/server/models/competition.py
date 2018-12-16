@@ -68,7 +68,7 @@ class Competition(ModelBase, BaseModel):
         return False
 
     def check_read_permission(self, request: "ApiRequest") -> bool:
-        return True
+        return self.get_auth(request.client).access_level != AccessLevel.NONE
 
     def check_update_permission(
         self, request: "ApiRequest", data: Dict[str, Any]
@@ -131,4 +131,3 @@ class Competition(ModelBase, BaseModel):
             Discipline.load_models(self, data["disciplines"], items, mk)
         if "plan" in data and items["plan"]:
             CompetitionPlanItem.load_models(self, data["plan"], mk)
-

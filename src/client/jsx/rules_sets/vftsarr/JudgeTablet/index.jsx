@@ -31,11 +31,15 @@ export default class JudgeTablet extends React.Component {
         tech: TechLayout,
     };
 
-    handleScoreUpdate = (score_id, score_data) => {
+    handleScoreUpdate = (score_id, score_data, force_submit = false) => {
+        const data = {
+            force: force_submit,
+            data: score_data,
+        };
         Api("model/update", {
             model_name: "Score",
             model_id: score_id,
-            data: { data: score_data },
+            data,
         })
             .setPendingMutation(this.props.tour.global_storage, "Score", score_id, {
                 data: score_data,

@@ -14,7 +14,7 @@ export default function getCard(run_result, tour, params = {}) {
         params,
     );
     if (run_result.extra_data.status !== "OK") {
-        return <p className="p-class">—</p>;
+        return <p className={p_class}>—</p>;
     }
     const loc_prefix = verbose ? "long" : "short";
     const card = run_result.extra_data.card;

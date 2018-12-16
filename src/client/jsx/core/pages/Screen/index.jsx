@@ -7,6 +7,7 @@ import TourSubscription from "common/server/Storage/subscriptions/TourSubscripti
 import PT from "prop-types";
 
 import loader from "./loader";
+import SafeTimeout from "common/SafeTimeout";
 
 export default class Screen extends React.Component {
     static propTypes = {
@@ -27,6 +28,10 @@ export default class Screen extends React.Component {
             .then(this.subscribe)
             .catch(console.error.bind(console));
     }
+    componentWillUnmount() {
+        this.st.clear();
+    }
+    st = new SafeTimeout();
 
     subscribe = () => {
         this._competition_subscription = new CompetitionSubscription(
@@ -81,7 +86,7 @@ export default class Screen extends React.Component {
             return <div />;
         }
         if (!loader.loaded) {
-            setTimeout(() => this.forceUpdate(), 1000);
+            this.st.setTimeout(() => this.forceUpdate(), 1000);
             return <div />;
         }
         const RenderingComponent = loader.component;

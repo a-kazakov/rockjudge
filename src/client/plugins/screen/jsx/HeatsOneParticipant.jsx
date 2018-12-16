@@ -1,6 +1,7 @@
 import {React} from "HostModules";
 
 import PT from "prop-types";
+import SafeTimeout from "common/SafeTimeout";
 
 export default class HeatsOneParticipant extends React.Component {
     static propTypes = {
@@ -21,10 +22,14 @@ export default class HeatsOneParticipant extends React.Component {
     componentDidUpdate() {
         this.ensureCorrectTour();
     }
+    componentWillUnmount() {
+        this.st.clear();
+    }
+    st = new SafeTimeout();
 
     ensureCorrectTour() {
         if (!this.is_tour_loaded) {
-            setTimeout(() => this.props.onActiveTourIdChange(this.controls.tour_id || null));
+            this.st.setTimeout(() => this.props.onActiveTourIdChange(this.controls.tour_id || null));
         }
     }
 

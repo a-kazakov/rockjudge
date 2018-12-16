@@ -490,7 +490,7 @@ class ScoreContextAcro(ScoreContextBase):
         num_set = sum(
             self.user_data[f"a{x}"] is not None for x in range(1, num_acros + 1)
         )
-        return f"{num_set} / {num_acros}"
+        return str(f"{num_set} / {num_acros}")
 
 
 class ScoreContextFormation(ScoreContextBase):
@@ -673,7 +673,7 @@ class ScoreContextTechAcro(ScoreContextBase):
     def total_score(self) -> str:
         card = self.user_data["card"] or "—"
         fall_down = self.user_data["fall_down"]
-        return f"{card}, {fall_down}"
+        return str(f"{card}, {fall_down}")
 
 
 class ScoreContextTechFormation(ScoreContextBase):
@@ -707,7 +707,7 @@ class ScoreContextTechFormation(ScoreContextBase):
     def total_score(self) -> str:
         card = self.user_data["card"] or "—"
         missing = self.user_data["undercount"]
-        return f"{card}, {missing}"
+        return str(f"{card}, {missing}")
 
 
 class ScoreContextTechFormationAcro(ScoreContextBase):
@@ -745,7 +745,7 @@ class ScoreContextTechFormationAcro(ScoreContextBase):
         card = self.user_data["card"] or "—"
         missing = self.user_data["undercount"]
         fall_down = self.user_data["fall_down"]
-        return f"{card}, {missing}/{fall_down}"
+        return str(f"{card}, {missing}/{fall_down}")
 
 
 class ScoreContextHead(ScoreContextBase):

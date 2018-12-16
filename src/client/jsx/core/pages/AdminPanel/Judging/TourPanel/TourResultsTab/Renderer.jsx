@@ -7,6 +7,7 @@ import _ from "l10n";
 import Paper from "pages/AdminPanel/common/Paper";
 import PT from "prop-types";
 import rules_set from "rules_sets/loader";
+import SafeTimeout from "common/SafeTimeout";
 
 export default class Renderer extends React.Component {
     static propTypes = {
@@ -20,17 +21,26 @@ export default class Renderer extends React.Component {
 
     componentDidMount() {
         if (this.props.autoDocx) {
-            this.tryAutoDocx();
+            this.st.setRepeatingTimeout(this.tryAutoDocx, 500);
         }
     }
 
+    componentWillUnmount() {
+        this.st.clear();
+    }
+    st = new SafeTimeout();
+
     tryAutoDocx = () => {
-        if (this.props.tour.finalized !== this.props.tour.results.finalized) {
-            setTimeout(this.tryAutoDocx, 500);
-            return;
+        const {
+            tour,
+            autoDocx: { filename, onDone },
+        } = this.props;
+        if (tour.finalized !== tour.results.finalized) {
+            return false;
         }
-        this.createDocx(this.props.autoDocx.filename);
-        this.props.autoDocx.onDone(this.props.autoDocx.filename);
+        this.createDocx(filename);
+        onDone(filename);
+        return true;
     };
 
     makePrintableRef = ref => (this._printable = ref);
@@ -104,9 +114,8 @@ export default class Renderer extends React.Component {
             .setTitle1(_("admin.headers.tour_results"))
             .setTitle2(`${this.props.tour.discipline.name} — ${this.props.tour.name}`)
             .setBody(this._printable.getPrintableHTML());
-        if (this.getRenderingComponent().transformDocx) {
-            this.getRenderingComponent().transformDocx(docx, this.props.tour);
-        }
+        // eslint-disable-next-line no-unused-expressions
+        this.getRenderingComponent().transformDocx?.(docx, this.props.tour);
         docx.save();
     }
 }

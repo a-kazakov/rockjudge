@@ -38,17 +38,21 @@ export default class StopWatch extends React.Component {
         this.state = state;
     }
 
+    componentDidUpdate() {
+        if (this.state.active && this.props.readOnly) {
+            this.stop(true);
+        }
+        if (
+            !this.state.active &&
+            this.props.value != null &&
+            this.props.value !== this.flooredStateValue()
+        ) {
+            this.setState({ value: this.props.value * 1000 });
+        }
+    }
     componentWillUnmount() {
         clearInterval(this.state.interval);
         stopwatches[this.props.stopwatchId] = this.state;
-    }
-    UNSAFE_componentWIllReceiveProps(nextProps) {
-        if (this.state.active && nextProps.readOnly) {
-            this.stop(true);
-        }
-        if (!this.state.active && nextProps.value !== this.flooredStateValue()) {
-            this.setState({ value: nextProps.value * 1000 });
-        }
     }
 
     isSynchronized() {
@@ -73,12 +77,12 @@ export default class StopWatch extends React.Component {
             value: this.value(),
         });
     }
-    submitValue(value) {
+    submitValue(value, force_submit = false) {
         let floored_value = Math.floor(value / 1000);
         if (floored_value === 0) {
             floored_value = null;
         }
-        this.props.onChange(floored_value, true);
+        this.props.onChange(floored_value, force_submit);
     }
 
     handleToggle = () => {
@@ -92,6 +96,9 @@ export default class StopWatch extends React.Component {
         }
     };
     handleReset = () => {
+        if (this.props.readOnly) {
+            return;
+        }
         clearInterval(this.state.interval);
         this.setState({
             active: false,
@@ -108,6 +115,9 @@ export default class StopWatch extends React.Component {
         }
     };
     modStart(delta) {
+        if (this.props.readOnly) {
+            return;
+        }
         const next_value = Math.max(0, this.state.value + 1000 * delta);
         this.setState({
             start_at: Math.min(

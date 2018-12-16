@@ -27,11 +27,15 @@ export default class ScoreCell extends React.Component {
         });
     };
 
-    handleSubmission = data => {
+    handleSubmission = score_data => {
+        const data = {
+            force: true,
+            data: score_data,
+        };
         Api("model/update", {
             model_name: "Score",
             model_id: this.props.score.id,
-            data: { data },
+            data,
         })
             .onSuccess(this.props.onStopEditing)
             .send();
@@ -42,6 +46,7 @@ export default class ScoreCell extends React.Component {
             model_id: this.props.score.id,
             data: {
                 confirmed: !this.props.score.confirmed,
+                force: true,
             },
         }).send();
     };

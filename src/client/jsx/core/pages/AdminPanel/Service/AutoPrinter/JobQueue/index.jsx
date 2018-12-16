@@ -4,6 +4,7 @@ import makeRandomString from "common/tools/makeRandomString";
 import _ from "l10n";
 
 import ActiveJob from "./ActiveJob";
+import SafeTimeout from "common/SafeTimeout";
 
 export default class JobQueue extends React.Component {
     constructor(props) {
@@ -15,6 +16,10 @@ export default class JobQueue extends React.Component {
         this._pending_jobs = [];
         this.scheduleJob();
     }
+    componentWillUnmount() {
+        this.st.clear();
+    }
+    st = new SafeTimeout();
 
     addJob = (job_type, tour, copies, submit = true) => {
         this._pending_jobs.push({
@@ -35,7 +40,7 @@ export default class JobQueue extends React.Component {
     }
 
     scheduleJob = () => {
-        setTimeout(this.processJob, 1000);
+        this.st.setTimeout(this.processJob, 1000);
     };
     processJob = () => {
         if (this.state.nowRendering) {
@@ -61,7 +66,7 @@ export default class JobQueue extends React.Component {
     };
     handleDocxCreated = filename => {
         clearTimeout(this.timer);
-        setTimeout(() => {
+        this.st.setTimeout(() => {
             let job = this.state.nowRendering;
             let xhr = new XMLHttpRequest();
             let address = `http://127.0.0.1:5949/print-docx?filename=${filename}&copies=${
@@ -81,9 +86,10 @@ export default class JobQueue extends React.Component {
         if (!this.state.nowRendering) {
             return null;
         }
+        const { type, tour } = this.state.nowRendering;
         return (
             <ActiveJob
-                key="active-job"
+                key={`active-job/${type}/${tour?.id ?? ""}`}
                 queueItem={this.state.nowRendering}
                 onDone={this.handleDocxCreated}
             />

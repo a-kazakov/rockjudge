@@ -40,7 +40,10 @@ export default class CompetitionReport extends React.Component {
                     ? config.disciplines[discipline.id]
                     : true;
         }
-        return Object.assign(config, { disciplines: new_disciplines_config });
+        return {
+            ...config,
+            disciplines: new_disciplines_config,
+        };
     }
 
     makePrintableRef = ref => (this._printable = ref);
@@ -49,10 +52,11 @@ export default class CompetitionReport extends React.Component {
 
     handleDocxCreation = () => this.createDocx();
 
-    getTitle(config) {
-        const n_disciplines = Object.keys(config.disciplines).filter(
-            key => config.disciplines[key],
-        ).length;
+    getTitle(config = null) {
+        if (config == null) {
+            config = this.getConfig();
+        }
+        const n_disciplines = Object.values(config.disciplines).filter(v => v).length;
         return n_disciplines > 0
             ? _("admin.headers.competition_report")
             : _("admin.headers.competition_info");

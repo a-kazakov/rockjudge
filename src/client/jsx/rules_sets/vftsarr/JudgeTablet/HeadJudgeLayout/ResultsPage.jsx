@@ -6,10 +6,7 @@ import ResultsTable2 from "ResultsTable2";
 
 export default class ResultsPage extends React.Component {
     static propTypes = {
-        tour: PT.shape({
-            id: PT.number.isRequired,
-            results: PT.array.isRequired,
-        }).isRequired,
+        tour: PT.object.isRequired,
     };
 
     // Initialization

@@ -329,11 +329,11 @@ class BaseModel:
 
     @classmethod
     def get_import_params(cls, data: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
-        result = copy.copy(data)
-        if result.get("external_id") == "":
-            result["external_id"] = None
-        result.update(kwargs)
-        return result
+        return {
+            **data,
+            **({"external_id": None} if data.get("external_id") == "" else {}),
+            **kwargs,
+        }
 
     @classmethod
     def load_models_base(

@@ -102,7 +102,7 @@ class ComputedTour(NamedTuple):
 
     def serialize(self) -> Dict[str, Any]:
         return {
-            "finaized": self.finalized,
+            "finalized": self.finalized,
             "scoring_system_name": self.scoring_system_name,
             "hope_tour": self.hope_tour,
             **self.computation_result.serialize(),
@@ -186,8 +186,12 @@ class Tour(ModelBase, BaseModel):
         if auth.access_level in (AccessLevel.ADMIN, AccessLevel.ANY_JUDGE):
             return True
         if auth.access_level == AccessLevel.JUDGE:
-            dj = self.session.query(DisciplineJudge).fliter_by(
-                judge_id=auth.judge_id, discipline_id=self.discipline_id
+            from models.discipline_judge import DisciplineJudge
+
+            dj = (
+                self.session.query(DisciplineJudge)
+                .filter_by(judge_id=auth.judge_id, discipline_id=self.discipline_id)
+                .first()
             )
             return self.scoring_system.get_judge_role_permissions(
                 dj.role

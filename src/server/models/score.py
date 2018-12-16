@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship, backref
 
 from db import ModelBase
 from enums import AccessLevel
-from exceptions import ApiError
+from exceptions import ImmediateResponse
 from models.base_model import BaseModel
 from models.discipline_judge import DisciplineJudge
 from models.run import Run
@@ -97,8 +97,16 @@ class Score(ModelBase, BaseModel):
     # Update logic
 
     def before_update(self, data: Dict[str, Any], *, unsafe: bool) -> Dict[str, Any]:
+        from api import ApiMethod
+
         if self.run.tour.finalized:
-            raise ApiError("errors.score.update_on_finalized_tour")
+            raise ImmediateResponse(
+                None,
+                allowed_methods=(ApiMethod.MODEL_UPDATE,),
+                exception_code="errors.score.update_on_finalized_tour",
+            )
+        if self.confirmed and not data.get("force", False):
+            raise ImmediateResponse(None, allowed_methods=(ApiMethod.MODEL_UPDATE,))
         data.pop("run_id", None)
         data.pop("discipline_judge_id", None)
         return data

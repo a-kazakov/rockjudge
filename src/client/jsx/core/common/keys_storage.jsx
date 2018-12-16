@@ -4,6 +4,8 @@ import BN from "bn.js";
 import Api from "common/server/Api";
 
 class KeysStorage {
+    _awaiting_resolvers = [];
+
     constructor() {
         const keys_json = localStorage.getItem(this.ls_key);
         if (!keys_json) {
@@ -16,7 +18,6 @@ class KeysStorage {
         this.has_keys = true;
         this.client_id = keys_obj.client_id;
         this.secret = keys_obj.secret;
-        this._awaiting_resolvers = [];
     }
 
     get ls_key() {
@@ -98,9 +99,9 @@ class KeysStorage {
                         this.updateKeys(client_id, secret);
                         this._awaiting_resolvers.forEach(resolve => resolve());
                     })
-                    .send();
+                    .send(true /* skip_queue */);
             })
-            .send();
+            .send(true /* skip_queue */);
     }
 }
 

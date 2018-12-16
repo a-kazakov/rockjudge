@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 import _ from "l10n";
 
 import makeClassName from "common/makeClassName";
+import SafeTimeout from "common/SafeTimeout";
 
 class ConnectionStatusMock {
     setOk() {}
@@ -37,24 +38,23 @@ class ConnectionStatus extends React.Component {
     }
 
     componentWillUnmount() {
-        this.stopInterval();
+        this.st.clear();
     }
+    st = new SafeTimeout();
 
     startInterval() {
         if (this.interval) {
             return;
         }
-        this.interval = setInterval(() => {
-            this.setState({
-                tick: !this.state.tick,
-            });
+        this.interval = this.st.setInterval(() => {
+            this.setState(({ tick }) => ({
+                tick: !tick,
+            }));
         }, 750);
     }
     stopInterval() {
-        if (!this.interval) {
-            return;
-        }
-        clearInterval(this.interval);
+        // eslint-disable-next-line no-unused-expressions
+        this.interval?.cancel();
         this.interval = null;
     }
 
@@ -74,7 +74,7 @@ class ConnectionStatus extends React.Component {
             hasPendingData: true,
             showPendingData: false,
         });
-        setTimeout(
+        this.st.setTimeout(
             () =>
                 this.setState(state =>
                     state.hasPendingData ? { showPendingData: true } : {},

@@ -23,7 +23,7 @@ export default class DisciplinesSummary extends React.Component {
             <StatInfo
                 tableRow
                 key={discipline.id}
-                label={`${discipline.name}, ${discipline.city}`}
+                label={`${discipline.name}`}
                 participants={discipline.participants.filter(this.filterParticipant)}
             />
         );

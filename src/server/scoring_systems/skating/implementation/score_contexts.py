@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from fractions import Fraction as frac
 from typing import Any, Callable, Dict, Optional, Type, TYPE_CHECKING
 
@@ -56,7 +54,7 @@ class ScoreContextBase(CachedClass):
         self.judge_role = judge_role
         self.scoring_system_name = scoring_system_name
         self.score_info: Optional[ScoreInfo] = None
-        self.tour_context: Optional[TourContextBase] = None
+        self.tour_context: Optional["TourContextBase"] = None
 
     @staticmethod
     def get_class(
@@ -87,7 +85,7 @@ class ScoreContextBase(CachedClass):
     def make_from_request(
         cls,
         score_info: ScoreInfo,
-        tour_context: TourContextBase,
+        tour_context: "TourContextBase",
         scoring_system_name: ScoringSystemName,
     ) -> "ScoreContextBase":
         db_data = score_info.data
@@ -207,7 +205,7 @@ class ScoreContextDance3dFinal(ScoreContextBase):
 
     @property
     def total_score(self) -> str:
-        return f"{self.place_prefix}({self.scores_sum})"
+        return "{}({})".format(self.place_prefix, self.scores_sum)
 
     @property
     def extra_data(self) -> Dict[str, Any]:

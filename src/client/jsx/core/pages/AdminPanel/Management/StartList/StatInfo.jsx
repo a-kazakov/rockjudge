@@ -30,26 +30,28 @@ export default class StatInfo extends React.Component {
         return `${s.last_name}\n${s.first_name}\n${s.year_of_birth}\n${s.gender}`;
     }
     static getUniqueSportsmen(participants) {
-        let found = {};
+        let found = new Map();
         for (const p of participants) {
             for (const s of p.sportsmen) {
-                let hash = StatInfo.hashSportsman(s);
-                if (!found[hash]) {
-                    found[hash] = Object.assign({}, s);
-                    found[hash].s_count = 0;
-                    found[hash].p_count = 0;
+                const hash = StatInfo.hashSportsman(s);
+                if (!found.has(hash)) {
+                    found.set(hash, {
+                        sportsman: s,
+                        s_count: 0,
+                        p_count: 0,
+                    });
                 }
                 if (s.substitute) {
-                    ++found[hash].s_count;
+                    ++found.get(hash).s_count;
                 } else {
-                    ++found[hash].p_count;
+                    ++found.get(hash).p_count;
                 }
             }
         }
-        return Object.keys(found).map(key => found[key]);
+        return Array.from(found.values());
     }
     static countSportsmen(participants) {
-        let sportsmen = StatInfo.getUniqueSportsmen(participants);
+        const sportsmen = StatInfo.getUniqueSportsmen(participants);
         return {
             total: sportsmen.length,
             substitute_only: sportsmen.filter(s => s.p_count === 0).length,

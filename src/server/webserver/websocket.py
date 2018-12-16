@@ -228,6 +228,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 
     @catch_all_async
     async def on_message(self, msg: str) -> None:
+        await asyncio.sleep(1)
         signature, json_data = msg.split("|", 1)
         data = json.loads(json_data)
         method = ApiMethod(data["method"])
@@ -281,7 +282,7 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         api_executor = Api(request, session)
         response = await api_executor.execute()
 
-        if response.success:
+        if response.needs_postprocessor:
             try:
                 if response.broadcast_message is not None:
                     msg = BroadcastOutgoingMessage(response.broadcast_message)

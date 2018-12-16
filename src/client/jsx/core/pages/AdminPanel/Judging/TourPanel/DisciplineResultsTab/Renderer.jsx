@@ -7,6 +7,7 @@ import Docx from "common/Docx";
 import rules_set from "rules_sets/loader";
 
 import Paper from "pages/AdminPanel/common/Paper";
+import SafeTimeout from "common/SafeTimeout";
 
 export default class Renderer extends React.Component {
     static propTypes = {
@@ -19,24 +20,33 @@ export default class Renderer extends React.Component {
 
     componentDidMount() {
         if (this.props.autoDocx) {
-            this.tryAutoDocx();
+            this.st.setRepeatingTimeout(this.tryAutoDocx, 500);
         }
     }
+    componentWillUnmount() {
+        this.st.clear();
+    }
+    st = new SafeTimeout();
 
     tryAutoDocx = () => {
-        const results_ft = this.props.discipline.results.finalized_tours
+        const {
+            discipline,
+            autoDocx: { filename, onDone },
+        } = this.props;
+        const results_ft = discipline.results.finalized_tours
             .sort((a, b) => a - b)
             .toString();
-        const props_ft = this.props.discipline.tours
+        const props_ft = discipline.tours
+            .filter(tour => tour.finalized)
             .map(tour => tour.id)
             .sort((a, b) => a - b)
             .toString();
         if (results_ft !== props_ft) {
-            setTimeout(this.tryAutoDocx, 500);
-            return;
+            return false;
         }
-        this.createDocx(this.props.autoDocx.filename);
-        this.props.autoDocx.onDone(this.props.autoDocx.filename);
+        this.createDocx(filename);
+        onDone(filename);
+        return true;
     };
 
     makePrintableRef = ref => (this._printable = ref);

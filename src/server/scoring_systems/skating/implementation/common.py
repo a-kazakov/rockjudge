@@ -3,19 +3,17 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Generator,
     Generic,
+    Iterable,
     List,
+    NewType,
     Optional,
     Tuple,
     TypeVar,
-    Iterable,
-    Generator,
     Union,
-    NewType,
     cast,
 )
-
-from scoring_systems.base import JudgeRole
 
 T = TypeVar("T")
 TF = TypeVar("TF", int, frac)
