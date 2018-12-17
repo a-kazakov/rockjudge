@@ -3,6 +3,7 @@ import { React } from "HostModules";
 import PT from "prop-types";
 import NumberSelectorInput from "tablet_ui/NumberSelectorInput";
 import SelectorInput from "tablet_ui/SelectorInput";
+import { consoleError } from "common/logging";
 
 export default class GeneralScale extends React.Component {
     static propTypes = {
@@ -83,7 +84,7 @@ export default class GeneralScale extends React.Component {
                     />
                 );
             default:
-                console.error(`Unknowd scale type: ${scale}`);
+                consoleError(`Unknowd scale type: ${scale}`);
                 return null;
         }
     }

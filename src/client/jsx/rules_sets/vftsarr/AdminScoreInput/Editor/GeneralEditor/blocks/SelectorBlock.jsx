@@ -2,6 +2,7 @@ import { React } from "HostModules";
 
 import PT from "prop-types";
 import BaseBlock from "./BaseBlock";
+import { consoleError } from "common/logging";
 
 export default class SelectorBlock extends BaseBlock {
     static get propTypes() {
@@ -19,7 +20,7 @@ export default class SelectorBlock extends BaseBlock {
 
     getOptions() {
         if (typeof this.props.options === "undefined") {
-            console.error("getOptions() is not implemented");
+            consoleError("getOptions() is not implemented");
             return [];
         }
         return this.props.options;

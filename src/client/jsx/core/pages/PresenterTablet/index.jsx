@@ -10,6 +10,7 @@ import InfoPage from "./InfoPage";
 import LeftBar from "./LeftBar";
 import PlanPage from "./PlanPage";
 import ResultsPage from "./ResultsPage";
+import { consoleError } from "common/logging";
 
 export default class PresenterTablet extends React.Component {
     static propTypes = {
@@ -31,7 +32,7 @@ export default class PresenterTablet extends React.Component {
         this._storage
             .init(this.reload)
             .then(this.subscribe)
-            .catch(console.error.bind(console));
+            .catch(consoleError);
     }
 
     subscribe = () => {
@@ -41,7 +42,7 @@ export default class PresenterTablet extends React.Component {
         this._storage
             .subscribe(this._competition_subscription)
             .then(this.updateCompetitionStorage)
-            .catch(console.error.bind(console));
+            .catch(consoleError);
     };
 
     updateCompetitionStorage = competitionStorage => {

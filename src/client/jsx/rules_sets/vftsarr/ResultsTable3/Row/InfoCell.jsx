@@ -6,7 +6,7 @@ import PT from "prop-types";
 import getParticipantDisplay from "common/getParticipantDisplay";
 import getCardReasons from "common/getCardReasons";
 import checkSS from "common/checkSS";
-import floatToFixed from "../../../../lib/common/floatToFixed";
+import floatToFixed from "common/floatToFixed";
 
 export default class InfoCell extends React.Component {
     static propTypes = {

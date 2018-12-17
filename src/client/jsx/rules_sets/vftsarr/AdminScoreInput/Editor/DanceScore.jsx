@@ -1,10 +1,10 @@
 import { React } from "HostModules";
 
 import PT from "prop-types";
-import checkSS from "../../common/checkSS";
 import GeneralEditor from "./GeneralEditor";
 import NumberBlock from "./GeneralEditor/blocks/NumberBlock";
 import ReductionBlock from "./GeneralEditor/blocks/ReductionBlock";
+import checkSS from "common/checkSS";
 
 export default class DanceScore extends React.Component {
     static propTypes = {

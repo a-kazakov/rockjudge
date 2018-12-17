@@ -8,6 +8,7 @@ import PT from "prop-types";
 
 import loader from "./loader";
 import SafeTimeout from "common/SafeTimeout";
+import { consoleError } from "common/logging";
 
 export default class Screen extends React.Component {
     static propTypes = {
@@ -26,7 +27,7 @@ export default class Screen extends React.Component {
         this._storage
             .init(this.reload)
             .then(this.subscribe)
-            .catch(console.error.bind(console));
+            .catch(consoleError);
     }
     componentWillUnmount() {
         this.st.clear();
@@ -40,7 +41,7 @@ export default class Screen extends React.Component {
         this._storage
             .subscribe(this._competition_subscription)
             .then(this.updateCompetitionStorage)
-            .catch(console.error.bind(console));
+            .catch(consoleError);
     };
 
     subscribeTour = tour_id => {

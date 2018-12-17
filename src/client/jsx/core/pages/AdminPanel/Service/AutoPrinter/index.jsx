@@ -10,6 +10,7 @@ import _ from "l10n";
 import PT from "prop-types";
 import JobQueue from "./JobQueue";
 import Table from "./Table";
+import { consoleError } from "common/logging";
 
 export default class AutoPrinter extends React.Component {
     static propTypes = {
@@ -69,7 +70,7 @@ export default class AutoPrinter extends React.Component {
         this._storage
             .init(this.reload)
             .then(this.subscribe)
-            .catch(console.error.bind(console));
+            .catch(consoleError);
     }
 
     subscribe = () => {
@@ -79,7 +80,7 @@ export default class AutoPrinter extends React.Component {
         this._storage
             .subscribe(this._competition_subscription)
             .then(this.updateCompetitionStorage)
-            .catch(console.error.bind(console));
+            .catch(consoleError);
     };
 
     updateCompetitionStorage = competitionStorage => {

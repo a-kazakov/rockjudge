@@ -9,6 +9,7 @@ import _ from "l10n";
 import CompetitionSelector from "./CompetitionSelector";
 import RoleSelector from "./RoleSelector";
 import SafeTimeout from "common/SafeTimeout";
+import { consoleError } from "common/logging";
 
 export default class StartPage extends React.Component {
     constructor(props) {
@@ -25,7 +26,7 @@ export default class StartPage extends React.Component {
         this._storage
             .init(this.reload)
             .then(this.subscribe)
-            .catch(console.error.bind(console));
+            .catch(consoleError);
     }
     componentWillUnmount() {
         this.st.clear();
@@ -37,7 +38,7 @@ export default class StartPage extends React.Component {
         this._storage
             .subscribe(this._competitions_subscription)
             .then(this.updateCompetitionsStorage)
-            .catch(console.error.bind(console));
+            .catch(consoleError);
         this.trySubscribeClient();
     };
     trySubscribeClient = () => {

@@ -2,6 +2,7 @@ import md5 from "js-md5";
 import BN from "bn.js";
 
 import Api from "common/server/Api";
+import { consoleError } from "common/logging";
 
 class KeysStorage {
     _awaiting_resolvers = [];
@@ -93,7 +94,7 @@ class KeysStorage {
                             md5(`RockJudge|${secret}`) !==
                             ex_response.verification_string
                         ) {
-                            console.error("Key exchange failed");
+                            consoleError("Key exchange failed");
                             return;
                         }
                         this.updateKeys(client_id, secret);

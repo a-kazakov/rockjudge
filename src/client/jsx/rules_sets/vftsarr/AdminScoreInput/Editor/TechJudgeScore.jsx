@@ -1,7 +1,7 @@
 import { React } from "HostModules";
 
 import PT from "prop-types";
-import checkSS from "../../common/checkSS";
+import checkSS from "common/checkSS";
 import GeneralEditor from "./GeneralEditor";
 import CardReasonsBlock from "./GeneralEditor/blocks/CardReasonsBlock";
 import NumberBlock from "./GeneralEditor/blocks/NumberBlock";

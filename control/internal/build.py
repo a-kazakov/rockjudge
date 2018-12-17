@@ -1,6 +1,8 @@
 import json
 import os
+import random
 import shutil
+import string
 from pathlib import Path
 from time import sleep
 from typing import List
@@ -145,6 +147,11 @@ def print_server(ctl: BuildController, dest_dir: Path) -> None:
         )
 
 
+@step("Checking source code", terminal=True)
+def check_sources(ctl: BuildController) -> None:
+    ctl.run_exe("python", Path("control", "internal", "seek_bad_code.py"))
+
+
 @step("Building sources")
 def build(ctl: BuildController, dest_dir: Path) -> None:
     ctl.run_parallel(
@@ -162,9 +169,19 @@ def copy_scripts(_ctl: BuildController, dest_path: Path) -> None:
 
 @step("Exporting result")
 def move_result(_ctl: BuildController, temp_dir: Path, dest_path: Path) -> None:
-    sleep(1)  # Hack to wait for al directory locks to become released
-    if os.path.exists(dest_path):
-        shutil.rmtree(str(dest_path))
+    attempt = 0
+    while True:
+        try:
+            if os.path.exists(dest_path):
+                shutil.rmtree(str(dest_path))
+            break
+        except Exception:
+            attempt += 1
+            if attempt > 10:
+                rnd = "".join(random.choice(string.ascii_lowercase) for _ in range(10))
+                dest_path = dest_path.parent / f"{dest_path.name}_{rnd}"
+                break
+            sleep(1)
     shutil.move(str(temp_dir), str(dest_path))
 
 
@@ -172,6 +189,7 @@ def move_result(_ctl: BuildController, temp_dir: Path, dest_path: Path) -> None:
 def all(ctl: BuildController) -> None:
     dest_path = Path("dist")
     with ctl.make_temp_dir() as temp_dir:
+        ctl.child_step("check_sources").run()
         ctl.child_step("build", temp_dir).run()
         ctl.child_step("copy_scripts", temp_dir).run()
         ctl.child_step("move_result", temp_dir, dest_path).run()

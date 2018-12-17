@@ -1,6 +1,7 @@
 import waiting_api_requests from "common/server/waiting_api_requests";
 
 import connection_status from "common/connection_status";
+import { consoleLog } from "common/logging";
 
 class WebSocketHandler {
     constructor() {
@@ -11,7 +12,7 @@ class WebSocketHandler {
         this.connect();
     }
     connect = () => {
-        console.log("Connecting to websocket...");
+        consoleLog("Connecting to websocket...");
         this.ws = new WebSocket(`ws://${window.location.host}/ws`);
         this.ws.onopen = () => {
             this.opened = true;
@@ -26,7 +27,7 @@ class WebSocketHandler {
                 }
             }
             connection_status.setOk();
-            console.log("Connected to websocket.");
+            consoleLog("Connected to websocket.");
             for (const message of this.send_queue) {
                 this.ws.send(message);
             }
@@ -34,7 +35,7 @@ class WebSocketHandler {
         };
         this.ws.onclose = () => {
             connection_status.setFail();
-            console.log("Connection to websocket closed.");
+            consoleLog("Connection to websocket closed.");
             waiting_api_requests.rejectAll();
             this.closed = true;
             this.opened = false;

@@ -1,5 +1,6 @@
 import Api from "common/server/Api";
 import websocket from "common/server/websocket";
+import { consoleError } from "common/logging";
 
 class RulesSetLoader {
     constructor() {
@@ -26,11 +27,11 @@ class RulesSetLoader {
         }
         for (const key of Object.keys(data)) {
             if (KEYS.indexOf(key) < 0) {
-                console.warn(`Module ${module_name} exports unknown ${key} parameter.`);
+                consoleError(`Module ${module_name} exports unknown ${key} parameter.`);
             }
         }
         this._loaded = true;
-        console.log(`Added scoring system: ${module_name}`);
+        consoleError(`Added scoring system: ${module_name}`);
     }
 
     _checkIfLoaded() {

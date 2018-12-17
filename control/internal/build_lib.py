@@ -198,6 +198,7 @@ class BuildManager:
         sys.stdout.write("\u001b[1000D\u001b[{}A".format(last_lines))
         self._paint()
 
+
 class ChildStepLauncher(NamedTuple):
     mgr: BuildManager
     step_name: str

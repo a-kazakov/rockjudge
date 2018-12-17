@@ -1,7 +1,7 @@
 import { React } from "HostModules";
 
 import PT from "prop-types";
-import makeClassName from "../../../../lib/common/makeClassName";
+import makeClassName from "common/makeClassName";
 
 export default class Grid extends React.Component {
     static propTypes = {

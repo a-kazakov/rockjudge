@@ -7,6 +7,7 @@ import CompetitionSubscription from "common/server/Storage/subscriptions/Competi
 import SplashScreen from "pages/JudgeTablet/SplashScreen";
 import TourLoader from "pages/JudgeTablet/TourLoader";
 import PT from "prop-types";
+import { consoleError } from "common/logging";
 
 export default class JudgeTablet extends React.Component {
     static propTypes = {
@@ -50,7 +51,7 @@ export default class JudgeTablet extends React.Component {
         this._storage
             .init(this.reload)
             .then(this.subscribe)
-            .catch(console.error.bind(console));
+            .catch(consoleError);
     }
 
     subscribe = () => {
@@ -60,7 +61,7 @@ export default class JudgeTablet extends React.Component {
         this._storage
             .subscribe(this._competition_subscription)
             .then(this.updateCompetitionStorage)
-            .catch(console.error.bind(console));
+            .catch(consoleError);
     };
 
     updateCompetitionStorage = competitionStorage => {

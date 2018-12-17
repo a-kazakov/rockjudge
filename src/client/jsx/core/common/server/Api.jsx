@@ -7,6 +7,7 @@ import makeRandomString from "common/tools/makeRandomString";
 import showError from "common/dialogs/showError";
 import waiting_api_requests from "common/server/waiting_api_requests";
 import Enum from "common/Enum";
+import { consoleError, consoleLog } from "common/logging";
 
 class ApiQueue {
     static State = new Enum({
@@ -63,7 +64,7 @@ class ApiQueue {
     };
     _handleRequestSuccess = () => {
         if (!this.current_state.check("SUBMITTING")) {
-            console.error("Invalid ApiQueue state", this.current_state);
+            consoleError("Invalid ApiQueue state", this.current_state);
         }
         this.current_state = this.constructor.State.INTERMEDIATE();
         this._sendNextRequest();
@@ -71,7 +72,7 @@ class ApiQueue {
     _handleRequestFailure = () => {
         const enum_data = this.current_state.unpack("SUBMITTING");
         if (enum_data == null) {
-            console.error("Invalid ApiQueue state", this.current_state);
+            consoleError("Invalid ApiQueue state", this.current_state);
             return;
         }
         let { api_obj } = enum_data;
@@ -139,9 +140,7 @@ class ApiObject {
             });
         }
         const rand_str = makeRandomString();
-        if (window.location.hash === "#debug") {
-            console.log("-> Api call", this.method, this.data);
-        }
+        consoleLog("-> Api call", this.method, this.data);
         const str_data = JSON.stringify({
             method: this.method,
             params: this.data,
@@ -165,9 +164,7 @@ class ApiObject {
         });
     };
     processResponse(response) {
-        if (window.location.hash === "#debug") {
-            console.log("<- Api response", this.method, response);
-        }
+        consoleLog("<- Api response", this.method, response);
         this.cb_done();
         if (response.success) {
             this.update_db(response.response);

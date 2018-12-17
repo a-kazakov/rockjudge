@@ -10,6 +10,7 @@ import QualificationSimpleScore from "./QualificationSimpleScore";
 import ConfirmationButton from "./ConfirmationButton";
 import FinalSimpleScore from "./FinalSimpleScore";
 import Final3dScore from "./Final3dScore";
+import { consoleError } from "common/logging";
 
 export default class Editor extends React.Component {
     static propTypes = {
@@ -66,7 +67,7 @@ export default class Editor extends React.Component {
             case null:
                 return this.renderWrongJudgeRoleMessage();
             default:
-                console.error(`Unknown scoring type: ${scoring_type}`);
+                consoleError(`Unknown scoring type: ${scoring_type}`);
         }
     }
     renderConfirmationButton(scoring_type) {

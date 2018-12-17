@@ -1,3 +1,5 @@
+import { consoleLog } from "common/logging";
+
 class ScreenLoader {
     constructor() {
         this._loaded = false;
@@ -6,7 +8,7 @@ class ScreenLoader {
     load(component) {
         this._component = component;
         this._loaded = true;
-        console.log("Added screen plugin");
+        consoleLog("Added screen plugin");
     }
 
     _checkIfLoaded() {

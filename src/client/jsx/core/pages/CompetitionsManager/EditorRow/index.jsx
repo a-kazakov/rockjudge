@@ -5,7 +5,7 @@ import _ from "l10n";
 import makeClassName from "common/makeClassName";
 
 import Info from "./Info";
-import Model from "../../../common/server/Storage/models/Model";
+import Model from "common/server/Storage/models/Model";
 
 export default class EditorRow extends React.Component {
     static propTypes = {

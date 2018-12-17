@@ -1,3 +1,5 @@
+import { consoleError } from "common/logging";
+
 export default class Model {
     static create(global_schema, mutation, subscription_storage) {
         const obj = new Model(12345, global_schema, mutation, subscription_storage);
@@ -43,7 +45,7 @@ export default class Model {
                 return result;
             }
         }
-        console.error(`Unable to get results of ${model_name} with ID = ${id}`);
+        consoleError(`Unable to get results of ${model_name} with ID = ${id}`);
         return null;
     }
     getValue(key) {

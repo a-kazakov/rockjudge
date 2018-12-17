@@ -6,6 +6,7 @@ import _ from "l10n";
 import Paper from "pages/AdminPanel/common/Paper";
 import PT from "prop-types";
 import Row from "./Row";
+import { consoleError } from "common/logging";
 
 export default class HeatsTab extends React.Component {
     static propTypes = {
@@ -35,7 +36,7 @@ export default class HeatsTab extends React.Component {
                 this.createDocx();
                 break;
             default:
-                console.error("Unknown message:", message);
+                consoleError("Unknown message:", message);
         }
     };
 

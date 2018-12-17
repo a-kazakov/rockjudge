@@ -13,6 +13,7 @@ import HeadJudgeScore from "./HeadJudgeScore";
 import SimplifiedScore from "./SimplifiedScore";
 import SoloScore from "./SoloScore";
 import TechJudgeScore from "./TechJudgeScore";
+import { consoleError } from "common/logging";
 
 export default class Editor extends React.Component {
     static propTypes = {
@@ -80,7 +81,7 @@ export default class Editor extends React.Component {
             case null:
                 return this.renderWrongJudgeRoleMessage();
             default:
-                console.error(`Unknown scoring type: ${scoring_type}`);
+                consoleError(`Unknown scoring type: ${scoring_type}`);
         }
     }
     renderConfirmationButton(scoring_type) {

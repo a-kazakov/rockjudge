@@ -10,6 +10,7 @@ import UniversalTable from "pages/AdminPanel/Management/UniversalTable";
 import EditorRow from "./EditorRow";
 import CreationButton from "./CreationButton";
 import FieldTypes from "pages/AdminPanel/Management/UniversalTable/FieldTypes";
+import { consoleError } from "common/logging";
 
 export default class CompetitionsManager extends UniversalTable {
     static propTypes = {
@@ -40,7 +41,7 @@ export default class CompetitionsManager extends UniversalTable {
         this._storage
             .init(this.reload)
             .then(this.subscribe)
-            .catch(console.error.bind(console));
+            .catch(consoleError);
     }
 
     subscribe = () => {
@@ -48,7 +49,7 @@ export default class CompetitionsManager extends UniversalTable {
         this._storage
             .subscribe(this._competitions_subscription)
             .then(this.updateCompetitionsStorage)
-            .catch(console.error.bind(console));
+            .catch(consoleError);
     };
 
     updateCompetitionsStorage = competitionsStorage => {

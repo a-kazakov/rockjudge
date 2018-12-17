@@ -1,4 +1,5 @@
 import React from "react";
+import { consoleError } from "common/logging";
 
 /* eslint-disable react/display-name */
 /* eslint-disable react/no-multi-comp */
@@ -811,7 +812,7 @@ export default function translate(src, ...args) {
     for (const chunk of path) {
         phrase_ptr = phrase_ptr[chunk];
         if (typeof phrase_ptr === "undefined") {
-            console.error(`Unable to find translation for ${src}`);
+            consoleError(`Unable to find translation for ${src}`);
             return "";
         }
     }

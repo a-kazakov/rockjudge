@@ -1,3 +1,5 @@
+import { consoleError } from "common/logging";
+
 class EnumInstance {
     constructor(key, values, enum_cls) {
         this._key = key;
@@ -11,14 +13,14 @@ class EnumInstance {
             handles_keys.length !== this._enum_cls._keys.length ||
             handles_keys.some((v, i) => v !== this._enum_cls._keys[i])
         ) {
-            console.error(`Match handles don't match enum definition`);
+            consoleError(`Match handles don't match enum definition`);
         }
         return handles[this._key]?.(this._values);
     }
 
     check(key) {
         if (!this._enum_cls._keys.includes(key)) {
-            console.error(`Checking enum against invalid value ${key}`);
+            consoleError(`Checking enum against invalid value ${key}`);
         }
         return this._key === key;
     }
@@ -41,7 +43,7 @@ export default class Enum {
             return new EnumInstance(key, {}, this);
         }
         if (values == null) {
-            console.error(`Values for enum value ${key} are not specified`);
+            consoleError(`Values for enum value ${key} are not specified`);
             return null;
         }
         const values_keys = Object.keys(values).sort();
@@ -49,7 +51,7 @@ export default class Enum {
             vars.length !== values_keys.length ||
             values_keys.some((v, i) => v !== vars[i])
         ) {
-            console.error(
+            consoleError(
                 `Values for enum value ${key} don't match ones from definition`,
             );
         }

@@ -8,6 +8,7 @@ import _ from "l10n";
 import PT from "prop-types";
 import JudgeHeaderCell from "./JudgeHeaderCell";
 import Row from "./Row";
+import { consoleError } from "common/logging";
 
 export default class ScoresTab extends React.Component {
     static propTypes = {
@@ -78,7 +79,7 @@ export default class ScoresTab extends React.Component {
             case "stop_tour":
                 return this.stopTour();
             default:
-                console.error("Unknown signal received:", message);
+                consoleError("Unknown signal received:", message);
         }
     };
     handleEditRequest = info => {

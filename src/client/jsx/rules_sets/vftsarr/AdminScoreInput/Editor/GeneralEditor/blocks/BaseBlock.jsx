@@ -1,6 +1,7 @@
 import { React } from "HostModules";
 
 import PT from "prop-types";
+import { consoleError } from "common/logging";
 
 export default class BaseBlock extends React.Component {
     static propTypes = {
@@ -16,7 +17,7 @@ export default class BaseBlock extends React.Component {
     }
 
     render() {
-        console.error("render() for block is not implemented");
+        consoleError("render() for block is not implemented");
         return null;
     }
 }

@@ -9,6 +9,7 @@ import Judging from "./Judging";
 import Management from "./Management";
 import NavigationButton from "./NavigationButton";
 import Service from "./Service";
+import { consoleError } from "common/logging";
 
 export default class AdminPanel extends React.Component {
     static propTypes = {
@@ -30,7 +31,7 @@ export default class AdminPanel extends React.Component {
         this._storage
             .init(this.reload)
             .then(this.subscribe)
-            .catch(console.error.bind(console));
+            .catch(consoleError);
     }
 
     subscribe = () => {
@@ -40,7 +41,7 @@ export default class AdminPanel extends React.Component {
         this._storage
             .subscribe(this._competition_subscription)
             .then(this.updateCompetitionStorage)
-            .catch(console.error.bind(console));
+            .catch(consoleError);
     };
 
     updateCompetitionStorage = competitionStorage => {

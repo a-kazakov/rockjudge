@@ -1,3 +1,5 @@
+import { consoleError } from "common/logging";
+
 export default function translate(src, ...args) {
     function chooseEnding(n, e1, e2, e5) {
         let x = n % 100;
@@ -252,7 +254,7 @@ export default function translate(src, ...args) {
     for (const chunk of path) {
         phrase_ptr = phrase_ptr[chunk];
         if (typeof phrase_ptr === "undefined") {
-            console.error(`Unable to find translation for ${src}`);
+            consoleError(`Unable to find translation for ${src}`);
             return "";
         }
     }

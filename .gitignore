@@ -1,5 +1,5 @@
 /.idea/**
-/dist/**
+/dist*/**
 /env/node_modules/**
 /env/venv/**
 /no-sharing/**

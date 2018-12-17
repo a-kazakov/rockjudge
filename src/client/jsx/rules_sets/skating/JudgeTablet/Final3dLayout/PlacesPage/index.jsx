@@ -6,7 +6,7 @@ import _ from "l10n";
 import PlaceButton from "./PlaceButton";
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 import showConfirm from "common/dialogs/showConfirm";
-import ConfirmationButton from "../../ConfirmationButton";
+import ConfirmationButton from "JudgeTablet/ConfirmationButton";
 
 export default class PlacesPage extends React.Component {
     static propTypes = {

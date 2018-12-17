@@ -540,7 +540,11 @@ class Api:
         dest_path = Path("logs", "js", f"error_{ts:.5f}.txt")
         os.makedirs(dest_path.parent, exist_ok=True)
         with open(dest_path, "wt", encoding="utf-8") as f:
-            f.write(json.dumps({
-                "args": list(args),
-                "kwargs": kwargs
-            }, indent=2, sort_keys=True, ensure_ascii=False))
+            f.write(
+                json.dumps(
+                    {"args": list(args), "kwargs": kwargs},
+                    indent=2,
+                    sort_keys=True,
+                    ensure_ascii=False,
+                )
+            )

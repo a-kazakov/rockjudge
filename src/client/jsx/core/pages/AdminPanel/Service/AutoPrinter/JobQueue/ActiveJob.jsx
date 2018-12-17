@@ -7,6 +7,7 @@ import TourResultsTab from "pages/AdminPanel/Judging/TourPanel/TourResultsTab";
 import DisciplineResultsTab from "pages/AdminPanel/Judging/TourPanel/DisciplineResultsTab";
 import TestPage from "./TestPage";
 import TourLoader from "./TourLoader";
+import { consoleError } from "common/logging";
 
 export default class ActiveJob extends React.Component {
     static propTypes = {
@@ -70,7 +71,7 @@ export default class ActiveJob extends React.Component {
             case "test":
                 return <TestPage autoDocx={docx_params} />;
             default:
-                console.error("Invalid job type:", type);
+                consoleError("Invalid job type:", type);
         }
         return null;
     }

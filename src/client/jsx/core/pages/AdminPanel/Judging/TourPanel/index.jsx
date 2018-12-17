@@ -14,6 +14,7 @@ import ScoresTab from "./ScoresTab";
 import ScoresTabButtons from "./ScoresTab/Buttons";
 import TourResultsTab from "./TourResultsTab";
 import TourResultsTabButtons from "./TourResultsTab/Buttons";
+import { consoleError } from "common/logging";
 
 export default class TourPanel extends React.Component {
     static propTypes = {
@@ -100,7 +101,7 @@ export default class TourPanel extends React.Component {
             case "discipline-results":
                 return <DisciplineResultsTabButtons {...props} />;
             default:
-                console.error("Unknown page:", this.state.page);
+                consoleError("Unknown page:", this.state.page);
         }
     }
     renderHeader() {
@@ -147,7 +148,7 @@ export default class TourPanel extends React.Component {
                     />
                 );
             default:
-                console.error("Unknown page:", this.state.page);
+                consoleError("Unknown page:", this.state.page);
         }
     }
     render() {

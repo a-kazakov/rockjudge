@@ -1,4 +1,5 @@
 import Model from "./Model";
+import { consoleError } from "common/logging";
 
 export default class SubscriptionStorage {
     constructor(global_storage, subscription) {
@@ -21,7 +22,7 @@ export default class SubscriptionStorage {
         if (typeof a === "string") {
             return a.localeCompare(b);
         }
-        console.warn("Unknown value type for sorting key", typeof a);
+        consoleError("Unknown value type for sorting key", typeof a);
         return 0;
     }
     static compareSortingKey(a_model, b_model) {
@@ -56,7 +57,7 @@ export default class SubscriptionStorage {
             case "U": {
                 const model = this.models.get(key);
                 if (!model) {
-                    console.error(
+                    consoleError(
                         `Trying to update for unknown model ${mutation.model_name}/${
                             mutation.id
                         }`,
@@ -69,7 +70,7 @@ export default class SubscriptionStorage {
             case "D": {
                 const model = this.models.get(key);
                 if (!model) {
-                    console.error(
+                    consoleError(
                         `Trying to delete for unknown model ${mutation.model_name}/${
                             mutation.id
                         }`,
@@ -81,7 +82,7 @@ export default class SubscriptionStorage {
                 break;
             }
             default:
-                console.error("Unknown mutation action", mutation.action);
+                consoleError("Unknown mutation action", mutation.action);
                 return false;
         }
         return true;

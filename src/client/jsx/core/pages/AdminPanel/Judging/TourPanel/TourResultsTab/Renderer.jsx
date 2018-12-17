@@ -8,6 +8,7 @@ import Paper from "pages/AdminPanel/common/Paper";
 import PT from "prop-types";
 import rules_set from "rules_sets/loader";
 import SafeTimeout from "common/SafeTimeout";
+import { consoleError } from "common/logging";
 
 export default class Renderer extends React.Component {
     static propTypes = {
@@ -51,7 +52,7 @@ export default class Renderer extends React.Component {
                 this.createDocx();
                 break;
             default:
-                console.error("Unknown message:", message);
+                consoleError("Unknown message:", message);
         }
     };
 
