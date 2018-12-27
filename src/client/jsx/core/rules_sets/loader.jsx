@@ -1,6 +1,6 @@
 import Api from "common/server/Api";
 import websocket from "common/server/websocket";
-import { consoleError } from "common/logging";
+import { consoleError, consoleLog } from "common/logging";
 
 class RulesSetLoader {
     constructor() {
@@ -31,7 +31,7 @@ class RulesSetLoader {
             }
         }
         this._loaded = true;
-        consoleError(`Added scoring system: ${module_name}`);
+        consoleLog(`Added scoring system: ${module_name}`);
     }
 
     _checkIfLoaded() {

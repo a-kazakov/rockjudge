@@ -57,8 +57,8 @@ export default function translate(src, ...args) {
                     "Финализировать тур и перейти к следующему",
                 finish: "Завершить",
                 next_heat: "След. заход",
-                not_performed: "Невыход на площадку",
-                performed: "Отмена невыхода на площадку",
+                not_performed: "Не вышел",
+                performed: "Отмена невыхода",
                 prev_heat: "Пред. заход",
                 reset_stopwatch: "Сброс",
                 return: "Назад",
@@ -108,12 +108,12 @@ export default function translate(src, ...args) {
                 confirm_score: "Зафиксировать",
                 confirmed: "Зафиксировано",
                 discard_disqualified: "Отмена дисквалификации",
-                discard_not_performed: "Отмена невыхода на площадку",
+                discard_not_performed: "Отмена невыхода",
                 disqualified: "Дисквалифицирован",
                 heat_number: (n, t) => `Заход ${n} из ${t}`,
                 judge_number: n => `Судья №${n}`,
-                mark_disqualified: "Дисквалификация",
-                mark_not_performed: "Невыход на площадку",
+                mark_disqualified: "Дисквал.",
+                mark_not_performed: "Не вышел",
                 no_score:
                     "Для этого захода не заведена карточка в системе.\nОбратитесь за помощью к администратору, ему необходимо пересоздать тур.",
                 not_performing: "Не выступает",
@@ -246,6 +246,22 @@ export default function translate(src, ...args) {
             "": "-",
             dance_judge: "Линейный судья",
             head_judge: "Главный судья",
+        },
+        score_parts: {
+            components: {
+                short: {
+                    cross: "К",
+                    tech: "T",
+                    composition: "К",
+                    art: "А",
+                    place: "М",
+                },
+                long: {
+                    cross: "Крест",
+                    crosses: "Кресты",
+                    notes: "Заметки",
+                },
+            },
         },
     };
 

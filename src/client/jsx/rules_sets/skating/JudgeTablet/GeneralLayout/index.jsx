@@ -2,78 +2,79 @@ import { React } from "HostModules";
 
 import PT from "prop-types";
 import Header from "JudgeTablet/Header";
-import Grid from "JudgeTablet/Grid";
-import Participant from "./Participant";
-import Footer from "JudgeTablet/Footer";
-import FooterItem from "JudgeTablet/Footer/FooterItem";
 import lastOf from "common/tools/lastOf";
+import GeneralHeat from "JudgeTablet/GeneralLayout/GeneralHeat";
+import makeClassName from "common/makeClassName";
 
 export default class GeneralLayout extends React.Component {
     static propTypes = {
-        confirmationClass: PT.func.isRequired,
+        allowIncompleteScores: PT.bool,
+        classNames: PT.object,
         disciplineJudge: PT.object.isRequired,
-        footerText: PT.string,
-        layoutClass: PT.func.isRequired,
+        footerRenderer: PT.func,
+        heatRenderer: PT.func,
+        initialHeatMode: PT.oneOf(["first", "max"]),
+        lastPageRenderer: PT.func,
         scoreCompletionChecker: PT.func.isRequired,
         tour: PT.object.isRequired,
-        onHeatConfirm: PT.func.isRequired,
-        onScoreUpdate: PT.func.isRequired,
     };
 
-    static get defaultProps() {
-        return {
-            footerText: null,
-        };
-    }
+    static defaultProps = {
+        allowIncompleteScores: false,
+        classNames: {},
+        footerRenderer: null,
+        initialHeatMode: "max",
+        heatRenderer: GeneralHeat,
+    };
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            heat: this.getStartingHeat(),
-            showResults: false,
-        };
-        this.setupCache();
-    }
+    state = this._makeInitialState();
 
-    UNSAFE_componentWIllReceiveProps(next_props) {
-        if (next_props.tour.id !== this.props.tour.id) {
-            const prev_props = this.props;
-            this.props = next_props;
+    componentDidUpdate(prevProps) {
+        if (prevProps.tour.id !== this.props.tour.id) {
             this.setState({
-                heat: this.getStartingHeat(),
-                showResults: false,
+                heat: this.getMaxHeat(),
+                showLastPage: false,
             });
-            this.props = prev_props;
         }
     }
 
-    getStartingHeat() {
-        const completed_heats = []
+    _makeInitialState() {
+        switch (this.props.initialHeatMode) {
+            case "first":
+                return {
+                    heat: 1,
+                    showLastPage: false,
+                };
+            case "max": {
+                const [max_heat, completed] = this.getMaxHeatAndCompletion();
+                return {
+                    heat: max_heat,
+                    showLastPage: completed && this.props.lastPageRenderer != null,
+                };
+            }
+            default:
+                throw new Error(
+                    `Invalid initial heat mode: ${this.props.initialHeatMode}`,
+                );
+        }
+    }
+
+    getMaxHeatAndCompletion() {
+        const incomplete_heats = []
             .concat(...this.props.tour.runs.map(run => run.scores))
             .filter(
                 score => score.discipline_judge_id === this.props.disciplineJudge.id,
             )
-            .filter(this.props.scoreCompletionChecker)
+            .filter(
+                score =>
+                    score.run.status === "OK" &&
+                    !this.props.scoreCompletionChecker(score),
+            )
             .map(score => score.run.heat);
-        return Math.max(1, ...completed_heats);
-    }
-    getScores() {
-        let result = new Map();
-        for (const run of this.runs) {
-            result.set(run.id, null);
-            for (const score of run.scores) {
-                if (score.discipline_judge_id === this.props.disciplineJudge.id) {
-                    result.set(run.id, score);
-                    break;
-                }
-            }
+        if (incomplete_heats.length === 0) {
+            return [lastOf(this.props.tour.runs)?.heat ?? 1, true];
         }
-        return result;
-    }
-    setupCache() {
-        this.heats_count = Math.max(1, ...this.props.tour.runs.map(run => run.heat));
-        this.runs = this.props.tour.runs.filter(run => run.heat === this.state.heat);
-        this.scores = this.getScores();
+        return [Math.min(...incomplete_heats), false];
     }
 
     setHeat = heat => this.setState({ heat });
@@ -81,75 +82,85 @@ export default class GeneralLayout extends React.Component {
 
     handlePrevHeatClick = () => this.updateHeat(-1);
     handleNextHeatClick = () => this.updateHeat(1);
-    handleFinishClick = () => this.setState({ showResults: true });
-    handleReturnClick = () => this.setState({ showResults: false });
+    handleFinishClick = () => this.setState({ showLastPage: true });
+    handleReturnClick = () => this.setState({ showLastPage: false });
+
+    getHeaderPropsOverrides() {
+        return {};
+    }
+
+    getClassName() {
+        return makeClassName({
+            "skating-JudgeTablet": true,
+            GeneralLayout: true,
+            ...this.props.classNames,
+        });
+    }
 
     renderScoringLayout() {
+        const {
+            heatRenderer: Renderer,
+            lastPageRenderer,
+            footerRenderer,
+            scoreCompletionChecker,
+            ...other_props
+        } = this.props;
+        return <Renderer heat={this.state.heat} {...other_props} />;
+    }
+    renderLastPage() {
+        const {
+            lastPageRenderer: Renderer,
+            footerRenderer,
+            heatRenderer,
+            scoreCompletionChecker,
+            ...other_props
+        } = this.props;
+        return <Renderer {...other_props} />;
+    }
+
+    renderHeader() {
+        const { tour, disciplineJudge } = this.props;
+        const heats_count = lastOf(tour.runs)?.heat ?? 1;
+        const [max_heat, completed] = this.getMaxHeatAndCompletion();
         return (
-            <div className="body">
-                <Grid>
-                    {this.runs.map(run => (
-                        <Participant
-                            disciplineJudge={this.props.disciplineJudge}
-                            key={run.id}
-                            layoutClass={this.props.layoutClass}
-                            run={run}
-                            score={this.scores.get(run.id)}
-                            onScoreUpdate={this.props.onScoreUpdate}
-                        />
-                    ))}
-                </Grid>
-            </div>
+            <Header
+                canFinish={
+                    !this.state.showLastPage &&
+                    this.props.lastPageRenderer != null &&
+                    (completed || this.props.allowIncompleteScores)
+                }
+                canReturn={this.state.showLastPage}
+                heat={this.state.heat}
+                heatsCount={heats_count}
+                hideHeatsButtons={this.state.showLastPage}
+                judge={disciplineJudge.judge}
+                maxHeat={this.props.allowIncompleteScores ? null : max_heat}
+                tour={tour}
+                onFinishClick={this.handleFinishClick}
+                onNextHeatClick={this.handleNextHeatClick}
+                onPrevHeatClick={this.handlePrevHeatClick}
+                onReturnClick={this.handleReturnClick}
+                {...this.getHeaderPropsOverrides()}
+            />
         );
     }
     renderBody() {
-        if (this.state.showResults) {
-            const ConfirmationClass = this.props.confirmationClass;
-            if (ConfirmationClass == null) {
-                return null;
-            }
-            return (
-                <ConfirmationClass
-                    disciplineJudge={this.props.disciplineJudge}
-                    tour={this.props.tour}
-                    onScoreUpdate={this.props.onScoreUpdate}
-                />
-            );
-        }
-        return this.renderScoringLayout();
+        return this.state.showLastPage
+            ? this.renderLastPage()
+            : this.renderScoringLayout();
     }
     renderFooter() {
-        if (this.props.footerText == null) {
+        const { tour, disciplineJudge, footerRenderer: Renderer } = this.props;
+        if (Renderer == null) {
             return null;
         }
-        return (
-            <Footer>
-                <FooterItem type="text" value={this.props.footerText} />
-            </Footer>
-        );
+        return <Renderer disciplineJudge={disciplineJudge} tour={tour} />;
     }
 
     render() {
-        this.setupCache();
         return (
-            <div className="skating-JudgeTablet GeneralLayout">
-                <Header
-                    canFinish={
-                        !this.state.showResults &&
-                        !this.props.tour.global_storage.hasOverrides()
-                    }
-                    canReturn={this.state.showResults}
-                    heat={this.state.heat}
-                    heatsCount={this.heats_count}
-                    hideHeatsButtons={this.state.showResults}
-                    judge={this.props.disciplineJudge.judge}
-                    maxHeat={lastOf(this.props.tour.runs)?.heat ?? 1}
-                    tour={this.props.tour}
-                    onFinishClick={this.handleFinishClick}
-                    onNextHeatClick={this.handleNextHeatClick}
-                    onPrevHeatClick={this.handlePrevHeatClick}
-                    onReturnClick={this.handleReturnClick}
-                />
+            <div className={this.getClassName()}>
+                {this.renderHeader()}
                 {this.renderBody()}
                 {this.renderFooter()}
             </div>

@@ -69,7 +69,8 @@ class ApiQueue {
         this.current_state = this.constructor.State.INTERMEDIATE();
         this._sendNextRequest();
     };
-    _handleRequestFailure = () => {
+    _handleRequestFailure = err => {
+        consoleError("API failure", err);
         const enum_data = this.current_state.unpack("SUBMITTING");
         if (enum_data == null) {
             consoleError("Invalid ApiQueue state", this.current_state);

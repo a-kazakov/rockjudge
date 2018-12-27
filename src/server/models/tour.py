@@ -33,7 +33,7 @@ from models.base_model import BaseModel
 from models.client_auth import ClientAuth
 from models.discipline import Discipline
 from protection.features_restriction import check_permissions
-from scoring_systems import get_scoring_system
+from scoring_systems import get_scoring_system, check_scoring_system
 from scoring_systems.base import (
     BaseScoringSystem,
     JudgeId,
@@ -656,7 +656,12 @@ class Tour(ModelBase, BaseModel):
     ) -> None:
         if discipline.tours:
             return  # Skip import
+        competition_rules_set = discipline.competition.rules_set
         for idx, obj in enumerate(objects):
+            if not check_scoring_system(
+                obj["scoring_system_name"], competition_rules_set
+            ):
+                raise ApiError("errors.import.wrong_scoring_system")
             cls.create(
                 discipline.session,
                 {

@@ -5,6 +5,13 @@ import _ from "l10n";
 
 import makeClassName from "common/makeClassName";
 
+const NOTE_PICS_OPTIONS = [
+    ["S", "♠", "pic color-green"],
+    ["H", "♥", "pic color-red"],
+    ["C", "♣", "pic color-blue"],
+    ["D", "♦", "pic color-yellow"],
+];
+
 export default class HeatsTableItem extends React.Component {
     static propTypes = {
         disciplineJudge: PT.shape({
@@ -98,13 +105,7 @@ export default class HeatsTableItem extends React.Component {
     renderNotePic(pics) {
         let result = [];
         if (pics != null) {
-            const opts = [
-                ["S", "♠", "pic color-green"],
-                ["H", "♥", "pic color-red"],
-                ["C", "♣", "pic color-blue"],
-                ["D", "♦", "pic color-yellow"],
-            ];
-            for (const [letter, icon, cls] of opts) {
+            for (const [letter, icon, cls] of NOTE_PICS_OPTIONS) {
                 if (pics.includes(letter)) {
                     result.push(
                         <span className={cls} key={letter}>

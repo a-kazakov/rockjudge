@@ -3,35 +3,34 @@ import { React } from "HostModules";
 import PT from "prop-types";
 import _ from "l10n";
 
-export default class Participant extends React.Component {
+export default class GeneralParticipant extends React.Component {
     static propTypes = {
-        layoutClass: PT.func.isRequired,
-        run: PT.object.isRequired,
-        score: PT.object.isRequired,
+        alwaysRenderParticipantLayout: PT.bool,
+        participantLayoutRenderer: PT.func.isRequired,
+        score: PT.object,
         onScoreUpdate: PT.func.isRequired,
+    };
+
+    static defaultProps = {
+        alwaysRenderParticipantLayout: false,
     };
 
     handleScoreUpdate = (key, value) => {
         if (this.props.score.confirmed) {
             return;
         }
-        let score_data = {};
-        score_data[key] = value;
-        this.props.onScoreUpdate(this.props.score.id, score_data);
+        this.props.onScoreUpdate(
+            this.props.score.id,
+            key == null ? value : { [key]: value },
+        );
     };
 
     renderScoringLayout() {
-        if (this.props.score == null) {
-            return <div className="not-performing">{_("tablet.global.no_score")}</div>;
-        }
-        const score_data = this.props.score.data;
-        const ScoringComponent = this.props.layoutClass;
+        const { score, participantLayoutRenderer: Renderer } = this.props;
         return (
-            <ScoringComponent
-                readOnly={this.props.score.confirmed}
-                run={this.props.run}
+            <Renderer
+                readOnly={this.props.score?.confirmed ?? true}
                 score={this.props.score}
-                scoreData={score_data}
                 onScoreUpdate={this.handleScoreUpdate}
             />
         );
@@ -39,23 +38,29 @@ export default class Participant extends React.Component {
     renderNotOkStatusMessage() {
         return (
             <div className="not-performing">
-                {this.props.run.status === "NP"
+                {this.props.score.run.status === "NP"
                     ? _("tablet.global.not_performing")
                     : _("tablet.global.disqualified")}
             </div>
         );
     }
     render() {
+        const { score } = this.props;
+        if (score == null) {
+            return <div className="not-performing">{_("tablet.global.no_score")}</div>;
+        }
+        const { run } = score;
+        const { number, name, sportsmen } = run.participant;
         const header = _(
             "global.phrases.participant_n",
-            this.props.run.participant.number,
-            this.props.run.participant.name,
-            this.props.run.participant.sportsmen.length,
+            number,
+            name,
+            sportsmen.length,
         );
         return (
             <div className="layout-participant">
                 <h2>{header}</h2>
-                {this.props.run.status === "OK"
+                {run.status === "OK" || this.props.alwaysRenderParticipantLayout
                     ? this.renderScoringLayout()
                     : this.renderNotOkStatusMessage()}
             </div>

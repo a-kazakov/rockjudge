@@ -7,11 +7,7 @@ import NumberSelectorInput from "tablet_ui/NumberSelectorInput";
 export default class ScoringLayout extends React.Component {
     static propTypes = {
         readOnly: PT.bool.isRequired,
-        scoreData: PT.shape({
-            tech: PT.number,
-            composition: PT.number,
-            art: PT.number,
-        }).isRequired,
+        score: PT.object.isRequired,
         onScoreUpdate: PT.func.isRequired,
     };
 
@@ -35,7 +31,7 @@ export default class ScoringLayout extends React.Component {
                     min={1}
                     readOnly={this.props.readOnly}
                     style="one-line"
-                    value={this.props.scoreData.tech}
+                    value={this.props.score.data.tech}
                     onChange={this.handleTechChange}
                 />
                 <h3>{_("tablet.dance_judge.composition")}</h3>
@@ -45,7 +41,7 @@ export default class ScoringLayout extends React.Component {
                     min={1}
                     readOnly={this.props.readOnly}
                     style="one-line"
-                    value={this.props.scoreData.composition}
+                    value={this.props.score.data.composition}
                     onChange={this.handleCompositionChange}
                 />
                 <h3>{_("tablet.dance_judge.art")}</h3>
@@ -55,7 +51,7 @@ export default class ScoringLayout extends React.Component {
                     min={1}
                     readOnly={this.props.readOnly}
                     style="one-line"
-                    value={this.props.scoreData.art}
+                    value={this.props.score.data.art}
                     onChange={this.handleArtChange}
                 />
             </div>

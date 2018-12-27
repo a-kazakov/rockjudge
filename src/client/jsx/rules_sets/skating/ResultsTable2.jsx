@@ -77,12 +77,30 @@ export default class ResultsTable2 extends React.Component {
     }
 
     getScoreText(row, score) {
-        if (row.run.status !== "OK" || !score) {
+        if (row.run.status !== "OK" || score == null) {
             return "—";
         }
         const score_result = this.props.computedTour.tour_result.scores_results[
             score.id
         ];
+        if (this.props.computedTour.tour.scoring_system_name === "skating.final_3d") {
+            const extra = score_result?.extra_data ?? {};
+            const parts = extra.parts ?? {};
+            const score_parts_str = ["tech", "composition", "art"]
+                .map(k => parts[k] ?? "-")
+                .join("/");
+            return {
+                raw: true,
+                text: (
+                    <p>
+                        <b>{parts.place ?? ""}</b>&nbsp;
+                        {`(${extra.scores_sum ?? "-"})`}
+                        <br />
+                        <small>{score_parts_str}</small>
+                    </p>
+                ),
+            };
+        }
         return score_result?.total_score_str ?? "";
     }
 
@@ -258,7 +276,7 @@ export default class ResultsTable2 extends React.Component {
     render() {
         this.setupCache();
         return (
-            <div className="ResultsTable1">
+            <div className="ResultsTable2">
                 <CustomTable
                     cols={this.getCols()}
                     fontSize={`${this.font_size}pt`}

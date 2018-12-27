@@ -93,7 +93,7 @@ class RunContextBase(CachedClass):
     def make_result(
         self, place: int, advanced: bool, extra_data: Optional[Dict[str, Any]] = None
     ) -> RunResult:
-        if self.run_info.status != RunStatus.DQ:
+        if self.run_info.status == RunStatus.OK:
             display_score: str = self.display_score
         else:
             display_score = "—"
@@ -135,7 +135,11 @@ class RunContextQualification(RunContextBase):
 
     @property
     def extra_data(self) -> Dict[str, Any]:
-        return {"user_score": str(self.crosses_count)}
+        return {
+            "user_score": str(self.crosses_count)
+            if self.run_info.status == RunStatus.OK
+            else "—"
+        }
 
 
 class RunContextFinal(RunContextBase):

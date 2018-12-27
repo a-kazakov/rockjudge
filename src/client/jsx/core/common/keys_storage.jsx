@@ -42,14 +42,14 @@ class KeysStorage {
         localStorage.removeItem(this.ls_key);
     }
 
-    obtainKeys() {
+    obtainKeys = () => {
         return new Promise(resolve => {
             this._awaiting_resolvers.push(resolve);
             if (this._awaiting_resolvers.length === 1) {
                 this._obtainKeysImpl();
             }
         });
-    }
+    };
 
     _obtainKeysImpl() {
         function makeRandomBN() {

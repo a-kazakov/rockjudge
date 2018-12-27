@@ -8,7 +8,12 @@ from scoring_systems.base import (
     TourComputationResult,
     JudgeResult,
 )
-from .common import CachedClass, SkatingSystemTour, SkatingSystemDiscipline
+from .common import (
+    CachedClass,
+    SkatingSystemTour,
+    SkatingSystemDiscipline,
+    apply_bonuses,
+)
 from .run_contexts import RunContextBase, RunContextFinal
 
 
@@ -118,8 +123,15 @@ class TourContextFinal(TourContextBase):
         sst = SkatingSystemTour(
             [cast(RunContextFinal, run).get_places(len(self.runs)) for run in self.runs]
         )
+        places = apply_bonuses(
+            {
+                run.run_info.run_id: place
+                for run, place in zip(self.runs, sst.int_places)
+            },
+            {run.run_info.run_id: run.bonus for run in self.runs},
+        )
         sorted_rows = sorted(
-            zip(self.runs, sst.places),
+            ((run, places[run.run_info.run_id]) for run in self.runs),
             key=lambda row: (row[1] or 10 ** 10, row[0].run_info.run_id),
         )
         return TourComputationResult(
@@ -128,12 +140,14 @@ class TourContextFinal(TourContextBase):
             results_order=[run.run_info.run_id for run, _ in sorted_rows],
             runs_results={
                 run.run_info.run_id: run.make_result(
-                    int_place if run.run_info.status != RunStatus.DQ else None,
+                    places[run.run_info.run_id]
+                    if run.run_info.status != RunStatus.DQ
+                    else None,
                     run.run_info.status != RunStatus.DQ,
-                    {"skating_row": sk_row, "tour_place": float(place)},
+                    {"skating_row": sk_row, "tour_place": float(float_place)},
                 )
-                for run, sk_row, place, int_place in zip(
-                    self.runs, sst.skating_rows, sst.places, sst.int_places
+                for run, sk_row, float_place in zip(
+                    self.runs, sst.skating_rows, sst.places
                 )
             },
             scores_results={
@@ -171,8 +185,12 @@ class TourContextFinalSummary(TourContextBase):
         ]
         ssd = SkatingSystemDiscipline(sk_tours)
         all_tours_places = zip(*(st.places for st in sk_tours))
+        places = apply_bonuses(
+            {run.run_info.run_id: place for run, place in zip(self.runs, ssd.places)},
+            {run.run_info.run_id: run.bonus for run in self.runs},
+        )
         sorted_rows = sorted(
-            zip(self.runs, ssd.places),
+            ((run, places[run.run_info.run_id]) for run in self.runs),
             key=lambda row: (row[1] or 10 ** 10, row[0].run_info.run_id),
         )
         return TourComputationResult(
@@ -181,7 +199,7 @@ class TourContextFinalSummary(TourContextBase):
             results_order=[run.run_info.run_id for run, _ in sorted_rows],
             runs_results={
                 run.run_info.run_id: run.make_result(
-                    int(float(place))
+                    places[run.run_info.run_id]
                     if run.run_info.status != RunStatus.DQ
                     else None,  # FIXME
                     True,
@@ -192,16 +210,8 @@ class TourContextFinalSummary(TourContextBase):
                         "ec_skating_row": [(float(a), float(b)) for a, b in ec_sk_row],
                     },
                 )
-                for (
-                    run,
-                    place,
-                    tour_places,
-                    tours_places_sum,
-                    big_sk_row,
-                    ec_sk_row,
-                ) in zip(
+                for (run, tour_places, tours_places_sum, big_sk_row, ec_sk_row) in zip(
                     self.runs,
-                    ssd.places,
                     all_tours_places,
                     ssd.tours_places_sum,
                     ssd.big_skating_rows,

@@ -5,7 +5,7 @@ import makeClassName from "common/makeClassName";
 
 import onTouchOrClick from "./onTouchOrClick";
 
-export default class IntegerInput extends React.Component {
+export default class IntegerInput extends React.PureComponent {
     static propTypes = {
         jumbo: PT.bool,
         max: PT.number,

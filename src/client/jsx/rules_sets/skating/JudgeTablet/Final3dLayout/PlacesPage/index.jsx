@@ -7,6 +7,7 @@ import PlaceButton from "./PlaceButton";
 import onTouchEndOrClick from "tablet_ui/onTouchEndOrClick";
 import showConfirm from "common/dialogs/showConfirm";
 import ConfirmationButton from "JudgeTablet/ConfirmationButton";
+import Loader from "common/components/Loader";
 
 export default class PlacesPage extends React.Component {
     static propTypes = {
@@ -15,11 +16,36 @@ export default class PlacesPage extends React.Component {
         onScoreUpdate: PT.func.isRequired,
     };
 
+    state = { inited: !this.props.tour.global_storage.hasOverrides() };
+
+    componentDidUpdate() {
+        if (!this.state.inited && !this.props.tour.global_storage.hasOverrides()) {
+            this.setState({ inited: true });
+        }
+    }
+
     handleConfirm = () => {
-        Api("tour/confirm_judge", {
+        const api = Api("tour/confirm_judge", {
             discipline_judge_id: this.props.disciplineJudge.id,
             tour_id: this.props.tour.id,
-        }).send();
+        });
+        this.props.tour.runs
+            .map(run =>
+                run.scores.find(
+                    score =>
+                        score.discipline_judge_id === this.props.disciplineJudge.id,
+                ),
+            )
+            .filter(score => score != null)
+            .forEach(score =>
+                api.setPendingMutation(
+                    this.props.tour.global_storage,
+                    "Score",
+                    score.id,
+                    { confirmed: true },
+                ),
+            );
+        api.send();
     };
     handlePlaceSelect = (run_id, place) => {
         this.props.onScoreUpdate(this.score_ids.get(run_id), { place });
@@ -30,7 +56,7 @@ export default class PlacesPage extends React.Component {
 
     getRunScoresSum(run) {
         const score = this.scores.get(run.id);
-        const score_data = this.props.tour.results.scores_results[score.id];
+        const score_data = this.props.tour.results.scores_results[score?.id ?? ""];
         return score_data?.extra_data?.scores_sum ?? "-";
     }
 
@@ -44,10 +70,23 @@ export default class PlacesPage extends React.Component {
             scores[score_id] = { data: { place } };
         }
         if (Object.keys(scores).length > 0) {
-            Api("model/batch_update", {
+            const api = Api("model/batch_update", {
                 model_name: "Score",
                 data: scores,
-            }).send();
+            });
+            for (const [run_id, place] of this.auto_places.entries()) {
+                const score_id = this.scores.get(run_id)?.id;
+                if (score_id == null) {
+                    continue;
+                }
+                api.setPendingMutation(
+                    this.props.tour.global_storage,
+                    "Score",
+                    score_id,
+                    { data: { place } },
+                );
+            }
+            api.send();
         }
     };
 
@@ -158,17 +197,13 @@ export default class PlacesPage extends React.Component {
         }
         const run = runs[0];
         const scores_sum = this.getRunScoresSum(run) ?? 0;
-        return [
-            <td className="number-right" key="number">
-                {run.participant.number}
-            </td>,
-            <td className="participant" key="participant">
-                {run.participant.name}
-            </td>,
-            <td className="score-right" key="score">
-                {scores_sum}
-            </td>,
-        ];
+        return (
+            <>
+                <td className="number-right">{run.participant.number}</td>
+                <td className="participant">{run.participant.name}</td>
+                <td className="score-right">{scores_sum}</td>
+            </>
+        );
     }
 
     renderTableRows() {
@@ -215,6 +250,13 @@ export default class PlacesPage extends React.Component {
     }
     render() {
         this.setupCache();
+        if (!this.state.inited) {
+            return (
+                <div className="body">
+                    <Loader />
+                </div>
+            );
+        }
         const scores = this.props.tour.runs
             .filter(run => run.status === "OK")
             .map(run =>

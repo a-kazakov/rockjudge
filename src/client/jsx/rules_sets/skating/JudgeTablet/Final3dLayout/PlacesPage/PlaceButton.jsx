@@ -15,6 +15,9 @@ export default class PlaceButton extends React.Component {
         onSelect: PT.func.isRequired,
     };
     handleClick = () => {
+        if (this.props.readOnly) {
+            return;
+        }
         this.props.onSelect(this.props.run.id, this.props.place);
     };
 

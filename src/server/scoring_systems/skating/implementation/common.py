@@ -1,3 +1,4 @@
+from collections import defaultdict
 from fractions import Fraction as frac
 from typing import (
     Any,
@@ -386,3 +387,27 @@ class SkatingSystemDiscipline(CachedClass):
             ]
             for row in range(self.n_runs)
         ]
+
+
+def apply_bonuses(
+    place_by_run_id: Dict[int, int], bonus_by_run_id: Dict[int, int]
+) -> Dict[int, int]:
+    runs_groups: List[List[int]] = []
+    run_ids_by_place: Dict[int, List[int]] = defaultdict(list)
+    for run_id, place in place_by_run_id.items():
+        run_ids_by_place[place].append(run_id)
+    for place, place_runs in sorted(run_ids_by_place.items(), key=lambda x: x[0]):
+        run_ids_by_bonus: Dict[int, List[int]] = defaultdict(list)
+        for run_id in place_runs:
+            run_ids_by_bonus[bonus_by_run_id[run_id]].append(run_id)
+        for bonus, bonus_runs in sorted(
+            run_ids_by_bonus.items(), key=lambda x: x[0], reverse=True
+        ):
+            runs_groups.append(bonus_runs)
+    current_place = 1
+    result: Dict[int, int] = {}
+    for group in runs_groups:
+        for run_id in group:
+            result[run_id] = current_place
+        current_place += len(group)
+    return result

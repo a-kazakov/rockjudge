@@ -2,10 +2,10 @@ import React from "react";
 
 import PT from "prop-types";
 import makeClassName from "common/makeClassName";
-
 import Item from "./Item";
+import deepCompare from "common/deepCompare";
 
-export default class SelectorInput extends React.Component {
+export default class SelectorInput extends React.PureComponent {
     static propTypes = {
         choices: PT.arrayOf(
             PT.arrayOf(
@@ -22,7 +22,7 @@ export default class SelectorInput extends React.Component {
         multiple: PT.bool.isRequired,
         readOnly: PT.bool,
         rowSize: PT.number,
-        style: PT.oneOf(["grid", "one-line", "two-lines"]),
+        style: PT.oneOf(["grid", "one-line", "two-lines", "vertical"]),
         value: PT.oneOfType([
             PT.string.isRequired,
             PT.number.isRequired,

@@ -4,7 +4,9 @@ import makeClassName from "common/makeClassName";
 
 export default class PlaceButton extends React.Component {
     static propTypes = {
+        disabled: PT.bool.isRequired,
         place: PT.number.isRequired,
+        readOnly: PT.bool.isRequired,
         run: PT.object.isRequired,
         runHasSelected: PT.bool.isRequired,
         selected: PT.bool.isRequired,
@@ -18,7 +20,9 @@ export default class PlaceButton extends React.Component {
         return makeClassName({
             btn: true,
             active: this.props.selected,
+            disabled: this.props.disabled,
             "in-active-col": this.props.runHasSelected,
+            "read-only": this.props.readOnly,
         });
     }
     render() {

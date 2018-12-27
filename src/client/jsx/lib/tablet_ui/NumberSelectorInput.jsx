@@ -3,7 +3,9 @@ import React from "react";
 import PT from "prop-types";
 import SelectorInput from "./SelectorInput";
 
-export default class NumberSelectorInput extends React.Component {
+const choicesCache = new Map();
+
+export default class NumberSelectorInput extends React.PureComponent {
     static propTypes = {
         decimalSize: PT.number,
         max: PT.number.isRequired,
@@ -17,7 +19,12 @@ export default class NumberSelectorInput extends React.Component {
         };
     }
 
-    makeChoices(min, max, step, decimal_size) {
+    static makeChoices(min, max, step, decimal_size) {
+        const cache_key = `${min}/${max}/${step}/${decimal_size}`;
+        const cached = choicesCache.get(cache_key);
+        if (cached != null) {
+            return cached;
+        }
         let result = [];
         for (let value = min; value <= max; value += step) {
             let text = value.toFixed(decimal_size);
@@ -27,6 +34,7 @@ export default class NumberSelectorInput extends React.Component {
             }
             result.push([value, text]);
         }
+        choicesCache.set(cache_key, result);
         return result;
     }
 
@@ -34,7 +42,7 @@ export default class NumberSelectorInput extends React.Component {
         const { min, max, step, decimalSize, ...other_props } = this.props;
         return (
             <SelectorInput
-                choices={this.makeChoices(min, max, step, decimalSize)}
+                choices={this.constructor.makeChoices(min, max, step, decimalSize)}
                 {...other_props}
             />
         );

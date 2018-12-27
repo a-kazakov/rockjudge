@@ -20,7 +20,14 @@ export default class ScoringLayoutAcro extends React.Component {
             model_name: "RunAcrobatic",
             model_id: acrobatic.id,
             data: { score: value },
-        }).send();
+        })
+            .setPendingMutation(
+                this.props.score.global_storage,
+                "RunAcrobatic",
+                acrobatic.id,
+                { score: value },
+            )
+            .send();
     };
     handleFallDownChange = value => {
         this.props.onScoreUpdate("fall_down", value);

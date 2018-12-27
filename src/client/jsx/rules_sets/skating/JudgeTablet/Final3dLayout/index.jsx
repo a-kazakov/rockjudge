@@ -23,8 +23,8 @@ export default class Final3dLayout extends React.Component {
     render() {
         return (
             <GeneralLayout
-                confirmationClass={PlacesPage}
-                layoutClass={ScoringLayout}
+                lastPageRenderer={PlacesPage}
+                participantLayoutRenderer={ScoringLayout}
                 scoreCompletionChecker={this.constructor.checkScoreCompletion}
                 {...this.props}
             />

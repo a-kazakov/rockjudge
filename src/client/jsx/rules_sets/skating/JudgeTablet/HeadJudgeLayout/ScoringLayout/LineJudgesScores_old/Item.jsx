@@ -6,45 +6,45 @@ import VerboseJudgeScore from "common/VerboseJudgeScore";
 export default class Item extends React.Component {
     static propTypes = {
         disciplineJudge: PT.object.isRequired,
-        score: PT.object.isRequired,
-        scoreData: PT.shape({
+        score: PT.object,
+        scoreResult: PT.shape({
             is_valid: PT.bool.isRequired,
             total_score_str: PT.string.isRequired,
             extra_data: PT.object.isRequired,
-        }).isRequired,
+        }),
         showVerbose: PT.bool.isRequired,
     };
 
     renderVerboseScore() {
-        if (!this.props.showVerbose) {
+        const { score, scoreResult, disciplineJudge } = this.props;
+        if (!this.props.showVerbose || score == null) {
             return null;
         }
         if (
             ["skating.qualification_simple", "skating.final_simple"].includes(
-                this.props.score.run.tour.scoring_system_name,
+                score.run.tour.scoring_system_name,
             )
         ) {
             return null;
         }
         return (
             <div className="verbose-score">
-                <div className="judge-name">
-                    {this.props.disciplineJudge.judge.name}
-                </div>
+                <div className="judge-name">{disciplineJudge.judge.name}</div>
                 <VerboseJudgeScore
-                    disciplineJudge={this.props.disciplineJudge}
-                    score={this.props.score}
-                    scoreData={this.props.scoreData}
+                    disciplineJudge={disciplineJudge}
+                    score={score}
+                    scoreResult={scoreResult}
                 />
                 <div className="triangle" />
             </div>
         );
     }
     render() {
-        const confirmed = this.props.score && this.props.score.confirmed;
+        const { score, scoreResult } = this.props;
+        const confirmed = score?.confirmed;
         return (
             <td className={confirmed ? "confirmed" : ""}>
-                {this.props.score ? this.props.scoreData.total_score_str : "—"}
+                {score != null ? scoreResult.total_score_str : "—"}
                 {this.renderVerboseScore()}
             </td>
         );

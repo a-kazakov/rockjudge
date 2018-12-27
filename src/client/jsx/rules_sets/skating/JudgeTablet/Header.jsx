@@ -17,7 +17,7 @@ export default class Header extends React.Component {
             role_description: PT.string,
             number: PT.string.isRequired,
         }).isRequired,
-        maxHeat: PT.number.isRequired,
+        maxHeat: PT.number,
         tour: PT.shape({
             name: PT.string.isRequired,
             discipline: PT.shape({
@@ -60,7 +60,10 @@ export default class Header extends React.Component {
         );
     }
     renderNextHeatButton() {
-        if (this.props.hideHeatsButtons || this.props.heat >= this.props.maxHeat) {
+        if (
+            this.props.hideHeatsButtons ||
+            this.props.heat >= (this.props.maxHeat ?? this.props.heatsCount)
+        ) {
             if (!this.props.canFinish) {
                 return <div className="button-container" />;
             }

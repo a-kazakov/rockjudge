@@ -4,7 +4,7 @@ import PT from "prop-types";
 import makeClassName from "common/makeClassName";
 import onTouchEndOrClick from "./onTouchEndOrClick";
 
-export default class CheckboxInput extends React.Component {
+export default class CheckboxInput extends React.PureComponent {
     static propTypes = {
         label: PT.string.isRequired,
         readOnly: PT.bool,

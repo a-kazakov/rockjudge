@@ -79,7 +79,7 @@ export default class ResultsPage extends React.Component {
                         {_(
                             "tablet.head_judge.advances_actual",
                             Object.values(tour.results.runs_results).filter(
-                                r => r.advances,
+                                r => r.advanced,
                             ).length,
                         )}
                     </div>
