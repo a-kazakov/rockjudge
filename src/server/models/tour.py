@@ -383,7 +383,7 @@ class Tour(ModelBase, BaseModel):
         if self.finalized:
             raise ApiError("error.tour.init_finalized")
         if self.prev_tour is not None and not self.prev_tour.finalized:
-            if len(list(self.prev_tour.runs)) > self.prev_tour.num_advances:
+            if 0 < self.prev_tour.num_advances <= len(list(self.prev_tour.runs)):
                 raise ApiError("errors.tour.prev_not_finailzed")
         self.create_runs(mk)
         if self.__is_participants_same_as_prev():
