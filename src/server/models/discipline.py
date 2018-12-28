@@ -202,7 +202,7 @@ class Discipline(ModelBase, BaseModel):
                     place=(
                         c_run.place + place_offset
                         if not skip_place
-                        and not c_run.advanced
+                        and (idx == 0 or not c_run.advanced)
                         and c_run.place is not None
                         else None
                     ),

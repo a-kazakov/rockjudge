@@ -478,12 +478,22 @@ class Tour(ModelBase, BaseModel):
             first_heat = 1
             runs = self.runs
         shuffled_runs = self.weighted_shuffle(runs, self.participants_per_heat)
+        heats_count = (
+            len(shuffled_runs) + self.participants_per_heat - 1
+        ) // self.participants_per_heat
+        base_heats_runs = (heats_count - 2) * self.participants_per_heat
         for idx, run in enumerate(shuffled_runs, start=0):
-            run.update(
-                {"heat": first_heat + idx // self.participants_per_heat},
-                mk,
-                unsafe=True,
-            )
+            if heats_count <= 1:
+                heat_offset = 0
+            else:
+                heat_offset = idx // self.participants_per_heat
+                if heat_offset >= heats_count - 2:
+                    rest_runs = len(shuffled_runs) - base_heats_runs
+                    if len(shuffled_runs) - rest_runs // 2 <= idx:
+                        heat_offset = heats_count - 1
+                    else:
+                        heat_offset = heats_count - 2
+            run.update({"heat": first_heat + heat_offset}, mk, unsafe=True)
 
     @staticmethod
     def weighted_shuffle(runs: List["Run"], participants_per_heat: int) -> List["Run"]:

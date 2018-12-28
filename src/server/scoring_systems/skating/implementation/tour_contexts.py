@@ -140,10 +140,16 @@ class TourContextFinal(TourContextBase):
             results_order=[run.run_info.run_id for run, _ in sorted_rows],
             runs_results={
                 run.run_info.run_id: run.make_result(
-                    places[run.run_info.run_id]
-                    if run.run_info.status != RunStatus.DQ
-                    else None,
-                    run.run_info.status != RunStatus.DQ,
+                    (
+                        places[run.run_info.run_id]
+                        if run.run_info.status != RunStatus.DQ
+                        else None
+                    ),
+                    (
+                        run.run_info.status != RunStatus.DQ
+                        and places[run.run_info.run_id]
+                        <= self.tour_request.num_advances
+                    ),
                     {"skating_row": sk_row, "tour_place": float(float_place)},
                 )
                 for run, sk_row, float_place in zip(

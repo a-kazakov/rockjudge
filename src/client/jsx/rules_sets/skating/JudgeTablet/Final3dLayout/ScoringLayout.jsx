@@ -26,6 +26,7 @@ export default class ScoringLayout extends React.Component {
             <div>
                 <h3>{_("tablet.dance_judge.tech")}</h3>
                 <NumberSelectorInput
+                    highlightLower
                     jumbo
                     max={10}
                     min={1}
@@ -36,6 +37,7 @@ export default class ScoringLayout extends React.Component {
                 />
                 <h3>{_("tablet.dance_judge.composition")}</h3>
                 <NumberSelectorInput
+                    highlightLower
                     jumbo
                     max={10}
                     min={1}
@@ -46,6 +48,7 @@ export default class ScoringLayout extends React.Component {
                 />
                 <h3>{_("tablet.dance_judge.art")}</h3>
                 <NumberSelectorInput
+                    highlightLower
                     jumbo
                     max={10}
                     min={1}
