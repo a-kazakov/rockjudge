@@ -91,7 +91,7 @@ class ApiRequest(NamedTuple):
         return raise_if_none(self.opt_client)
 
     def is_superuser(self) -> bool:
-        return self.remote_ip == self.host == "127.0.0.1"
+        return self.remote_ip == self.host.split(":")[0] == "127.0.0.1"
 
     def with_client(self, client: Client) -> "ApiRequest":
         params = {**self._asdict(), "opt_client": client}
