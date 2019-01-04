@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Tuple, Type
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Tuple, Type, cast
 
 from enums import RunStatus
 from scoring_systems.base import (
@@ -144,20 +144,21 @@ class RunContextQualification(RunContextBase):
 
 class RunContextFinal(RunContextBase):
     @staticmethod
-    def transform_place(place: int, n_runs: int) -> int:
-        if not 1 <= place <= n_runs:
-            return n_runs
+    def transform_place(place: int, max_place: int) -> int:
+        if not 1 <= place <= max_place:
+            return max_place
         return place
 
     @property
     def raw_places(self) -> List[int]:
-        return [
-            s.counting_score["place"] if self.run_info.status == RunStatus.OK else 0
-            for s in self.scores_by_role["dance_judge"]
-        ]
+        return [s.counting_score["place"] for s in self.scores_by_role["dance_judge"]]
 
-    def get_places(self, n_runs: int) -> List[int]:
-        return [self.transform_place(place, n_runs) for place in self.raw_places]
+    def get_places(self, max_place: int, np_place: int, dq_place: int) -> List[int]:
+        if self.run_info.status == RunStatus.NP:
+            return [np_place] * len(self.raw_places)
+        if self.run_info.status == RunStatus.DQ:
+            return [dq_place] * len(self.raw_places)
+        return [self.transform_place(place, max_place) for place in self.raw_places]
 
     @property
     def display_score(self) -> str:
@@ -165,8 +166,14 @@ class RunContextFinal(RunContextBase):
 
     @property
     def data_to_inherit(self) -> Dict[str, Any]:
+        from scoring_systems.skating.implementation.tour_contexts import (
+            TourContextFinal,
+        )
+
+        tour_ctx = cast(TourContextFinal, self.tour_context)
         return {
-            "raw_places": self.inherited_data.get("raw_places", []) + [self.raw_places]
+            "places": self.inherited_data.get("places", [])
+            + [tour_ctx.runs_places[self.run_info.run_id]]
         }
 
 

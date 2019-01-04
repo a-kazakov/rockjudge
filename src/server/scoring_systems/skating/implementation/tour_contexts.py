@@ -7,6 +7,7 @@ from scoring_systems.base import (
     ScoringSystemName,
     TourComputationResult,
     JudgeResult,
+    RunId,
 )
 from .common import (
     CachedClass,
@@ -119,9 +120,21 @@ class TourContextQualification(TourContextBase):
 
 class TourContextFinal(TourContextBase):
     @property
+    def runs_places(self) -> Dict[RunId, List[int]]:
+        max_place = sum(run.run_info.status == RunStatus.OK for run in self.runs)
+        np_place = max_place + 1
+        dq_place = len(self.runs)
+        return {
+            run.run_info.run_id: cast(RunContextFinal, run).get_places(
+                max_place, np_place, dq_place
+            )
+            for run in self.runs
+        }
+
+    @property
     def result(self) -> TourComputationResult:
         sst = SkatingSystemTour(
-            [cast(RunContextFinal, run).get_places(len(self.runs)) for run in self.runs]
+            [self.runs_places[run.run_info.run_id] for run in self.runs]
         )
         places = apply_bonuses(
             {
@@ -169,25 +182,11 @@ class TourContextFinal(TourContextBase):
 
 
 class TourContextFinalSummary(TourContextBase):
-    def transform_place(self, place: int) -> int:
-        if place <= 0:
-            return len(self.runs)
-        return place
-
-    def transform_places(self, all_places: Iterable[List[int]]) -> List[List[int]]:
-        return [
-            [self.transform_place(place) for place in tour_places]
-            for tour_places in all_places
-        ]
-
     @property
     def result(self) -> TourComputationResult:
-        all_inherited_data = [
-            run.inherited_data.get("raw_places", []) for run in self.runs
-        ]
+        all_inherited_data = [run.inherited_data.get("places", []) for run in self.runs]
         sk_tours = [
-            SkatingSystemTour(self.transform_places(places))
-            for places in zip(*all_inherited_data)
+            SkatingSystemTour(list(places)) for places in zip(*all_inherited_data)
         ]
         ssd = SkatingSystemDiscipline(sk_tours)
         all_tours_places = zip(*(st.places for st in sk_tours))
