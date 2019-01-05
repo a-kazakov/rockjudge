@@ -17,7 +17,6 @@ class DocxImpl {
             },
             table: {
                 "border-collapse": "collapse",
-                width: "100%",
             },
             tr: {
                 "page-break-inside": "avoid",

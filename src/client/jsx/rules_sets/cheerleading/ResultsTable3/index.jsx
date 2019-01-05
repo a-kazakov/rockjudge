@@ -5,6 +5,7 @@ import _ from "l10n";
 import PT from "prop-types";
 import ColumnsWidths from "./ColumnsWidths";
 import Row from "./Row";
+import JazzGroupScore from "common/VerboseJudgeScore/JazzGroupScore";
 
 export default class ResultsTable3 extends React.Component {
     static propTypes = {
@@ -23,47 +24,55 @@ export default class ResultsTable3 extends React.Component {
 
     static transformDocx(docx) {
         docx.addStyle("table.results-table", "font-size", "9pt")
-            .addStyle("table.results-table .acro-table td", "font-size", "9pt")
-            .addStyle("table.results-table .acro-table td", "padding", "0")
             .addStyle(
                 "table.results-table .acro-table td",
                 "border",
                 "0.5pt solid black",
             )
             .addStyle(
-                "table.results-table table.score-breakdown td, .bordered-table table.score-breakdown th",
+                "table.results-table table.score-breakdown td, table.score-breakdown th",
                 "font-size",
                 "9pt",
             )
             .addStyle(
-                "table.results-table table.score-breakdown td, .bordered-table table.score-breakdown th",
+                "table.results-table table.score-breakdown td, table.score-breakdown th",
                 "border",
                 "none",
             )
-            .addStyle(
-                "table.results-table table.score-breakdown th",
-                "padding",
-                "0 1pt 0 0",
-            )
-            .addStyle(
-                "table.results-table table.score-breakdown td",
-                "padding",
-                "0 0 0 1pt",
-            )
             .addStyle("table.results-table", "width", "100%")
             .addStyle("table.results-table td", "border-top", "1pt solid black")
-            .addStyle("table.score-breakdown th", "text-align", "right")
-            .addStyle("table.score-breakdown td", "text-align", "left")
-            .addStyle("table.score-breakdown", "width", "100%")
-            .addStyle("table.score-breakdown th", "width", "50%")
-            .addStyle("table.score-breakdown th", "min-width", "20pt")
-            .addStyle(".advances-header", "background-color", "#ddd")
+            .addStyle("table.results-table table.score-breakdown td", "width", "25pt")
+            .addStyle("table.results-table table.score-breakdown", "width", "50pt")
             .addStyle(".total-score", "font-weight", "bold");
+    }
+
+    renderHint() {
+        switch (this.props.computedTour.tour.scoring_system_name) {
+            case "cheerleading.jazz_group":
+                return (
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td style={{ verticalAlign: "top", width: "50pt" }}>
+                                    <div style={{ border: "1pt solid black" }}>
+                                        <JazzGroupScore example />
+                                    </div>
+                                </td>
+                                <td style={{ verticalAlign: "top" }}>
+                                    {_("results.hints.jazz_group")}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                );
+            default:
+                return null;
+        }
     }
 
     render() {
         const line_judges = this.props.computedTour.tour.discipline.discipline_judges.filter(
-            dj => ["acro_judge", "dance_judge"].includes(dj.role),
+            dj => dj.role === "dance_judge",
         );
         const widths = new ColumnsWidths(line_judges.length);
         return (
@@ -95,6 +104,9 @@ export default class ResultsTable3 extends React.Component {
                         ))}
                     </tbody>
                 </table>
+                <br />
+                <br />
+                {this.renderHint()}
             </div>
         );
     }

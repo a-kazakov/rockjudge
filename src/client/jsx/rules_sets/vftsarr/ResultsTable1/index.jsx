@@ -73,7 +73,7 @@ export default class ResultsTable1 extends React.Component {
     render() {
         return (
             <div className="ResultsTable1">
-                <table>
+                <table style={{ width: "100%" }}>
                     <thead>
                         <tr>
                             <th className="w-7 place">

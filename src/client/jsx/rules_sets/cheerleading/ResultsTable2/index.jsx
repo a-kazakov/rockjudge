@@ -74,7 +74,7 @@ export default class ResultsTable2 extends React.Component {
     render() {
         return (
             <div className="ResultsTable2">
-                <table style={{ width: "100%" }}>
+                <table>
                     <thead>
                         <tr>
                             <th className="w-6">

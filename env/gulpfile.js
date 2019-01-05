@@ -246,6 +246,7 @@ const CORE_MODULES = [
 const RULES_SETS = [
     'skating',
     'vftsarr',
+    'cheerleading',
 ];
 const PLUGINS = [
     'screen',

@@ -87,7 +87,7 @@ export default class HeatsTab extends React.Component {
                         this.props.tour.name
                     }`}
                 >
-                    <table>
+                    <table style={{ width: "100%" }}>
                         <thead>
                             <tr>
                                 <th className="w-8">

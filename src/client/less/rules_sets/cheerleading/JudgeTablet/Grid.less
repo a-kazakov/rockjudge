@@ -1,0 +1,37 @@
+.Grid {
+    margin: 0 auto;
+    &.multiple-rows {
+        text-align: center;
+        .item {
+            border: 2px solid black;
+            display: inline-block;
+            vertical-align: top;
+            padding: 5px;
+            margin: 5px;
+            min-width: 150px;
+            max-width: 250px;
+            box-sizing: content-box;
+        }
+    }
+    .grid-row {
+        table-layout: fixed;
+        &.align-center {
+            margin-left: auto;
+            margin-right: auto;
+        }
+        &.align-left {
+            margin-right: auto;
+        }
+        &.align-right {
+            margin-left: auto;
+        }
+        > tbody > tr > td {
+            text-align: left;
+            padding: 5px 10px;
+            vertical-align: top;
+            &:not(:first-child) {
+                border-left: 2px solid black;
+            }
+        }
+    }
+}

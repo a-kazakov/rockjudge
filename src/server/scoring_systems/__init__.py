@@ -1,12 +1,13 @@
 from typing import List, Tuple, Type, Dict
 
 from scoring_systems.base import BaseScoringSystem
+from scoring_systems.cheerleading import CheerleadingScoringSystem
 from scoring_systems.skating import SkatingScoringSystem
 from scoring_systems.vftsarr import VftsarrScoringSystem
 
 
 def get_all_rules_sets() -> List[Type[BaseScoringSystem]]:
-    return [VftsarrScoringSystem, SkatingScoringSystem]
+    return [VftsarrScoringSystem, SkatingScoringSystem, CheerleadingScoringSystem]
 
 
 RULES_SETS: Dict[str, Type[BaseScoringSystem]] = {
