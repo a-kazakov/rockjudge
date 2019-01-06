@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Tuple, Union, TYPE_CHECKING
+from typing import Any, Dict, Optional, Tuple, Union, TYPE_CHECKING, Generator, Set
 
 from sqlalchemy import Column, Enum as EnumColumn, ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import Session, relationship, backref
@@ -120,6 +120,12 @@ class ClientAuth(ModelBase, BaseModel):
 
     def serialize_extra(self) -> Dict[str, Any]:
         return {"access_level": self.access_level.value}
+
+    def get_export_items(
+        self, _mut_visited: Set[Tuple[str, int]]
+    ) -> Generator[Dict[str, Any], None, None]:
+        return
+        yield
 
     # Custom model logic
 

@@ -343,6 +343,33 @@ class Api:
                 raise ApiError("errors.auth.not_authenticated")
         competition.load(data, items, self.mk)
 
+    def api_competition_export(self, competition_id: int) -> Dict[str, Any]:
+        pf_schema = {
+            "judges": {},
+            "plan": {},
+            "clubs": {},
+            "disciplines": {
+                "participants": {
+                    "programs": {},
+                },
+                "discipline_judges": {},
+                "tours": {
+                    "runs": {
+                        "acrobatics": {},
+                        "scores": {
+                            "parts": {},
+                        },
+                    }
+                }
+            }
+        }
+        competition = Competition.get(self.session, competition_id, pf_schema)
+        if not self.request.is_superuser():
+            access_level = competition.get_auth(self.request.client).access_level
+            if access_level != AccessLevel.ADMIN:
+                raise ApiError("errors.auth.not_authenticated")
+        return competition.export()
+
     def api_discipline_create_with_judges(self, data: Dict[str, Any]) -> None:
         if not self.request.is_superuser():
             can_create = Discipline.check_create_permission(

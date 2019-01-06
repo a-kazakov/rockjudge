@@ -13,6 +13,7 @@ from typing import (
     Generator,
     Optional,
     Iterable,
+    cast,
 )
 
 from sqlalchemy import Column, ForeignKey, inspect
@@ -373,3 +374,23 @@ class BaseModel:
                 yield models_to_update[external_id], False, obj
             else:
                 yield cls.create(session, data, mk), True, obj
+
+    def export_self_only(self) -> Dict[str, Any]:
+        return {"name": type(self).__name__, "data": self.serialize()}
+
+    def get_export_items(
+        self, mut_visited: Set[Tuple[str, int]]
+    ) -> Generator[Dict[str, Any], None, None]:
+        descriptor = (type(self).__name__, self.id)
+        if descriptor in mut_visited:
+            return
+        mut_visited.add(descriptor)
+        yield self.export_self_only()
+        for name, rel in self.get_relationships().items():
+            if not rel.uselist:
+                continue
+            for item in getattr(self, name):
+                yield from cast(BaseModel, item).get_export_items(mut_visited)
+
+    def export(self) -> List[Dict[str, Any]]:
+        return list(self.get_export_items(set()))

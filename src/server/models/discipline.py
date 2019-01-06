@@ -304,3 +304,14 @@ class Discipline(ModelBase, BaseModel):
                 DisciplineJudge.load_models(model, raw_data["discipline_judges"], mk)
             if "tours" in raw_data and items["tours"]:
                 Tour.load_models(model, raw_data["tours"], mk)
+
+    def export_self_only(self) -> Dict[str, Any]:
+        discipline_results, tours_results = self.get_results()
+        return {
+            "name": type(self).__name__,
+            "data": self.serialize(),
+            "results": discipline_results.serialize(),
+            "tours_results": {
+                tour_id: result.serialize() for tour_id, result in tours_results.items()
+            },
+        }
