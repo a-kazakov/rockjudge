@@ -6,7 +6,7 @@ import PT from "prop-types";
 import GeneralEditor from "./GeneralEditor";
 import NumberBlock from "./GeneralEditor/blocks/NumberBlock";
 
-export default class JazzGroupScore extends React.Component {
+export default class CoupleScore extends React.Component {
     static propTypes = {
         readOnly: PT.bool.isRequired,
         scoreData: PT.object.isRequired,
@@ -34,15 +34,15 @@ export default class JazzGroupScore extends React.Component {
                 onDiscard={this.props.onDiscard}
                 onSubmit={this.props.onSubmit}
             >
-                {this.renderBlock("tech_execution")}
-                {this.renderBlock("tech_control_stretching")}
-                {this.renderBlock("tech_style_power")}
-                {this.renderBlock("group_sync")}
-                {this.renderBlock("group_similarity")}
-                {this.renderBlock("group_position")}
-                {this.renderBlock("choreography_art")}
-                {this.renderBlock("choreography_performance_effects")}
+                {this.renderBlock("tech_fulfillment")}
+                {this.renderBlock("tech_control")}
+                {this.renderBlock("tech_power")}
+                {this.renderBlock("tech_stretching")}
+                {this.renderBlock("choreography_musicality")}
                 {this.renderBlock("choreography_complexity")}
+                {this.renderBlock("choreography_style")}
+                {this.renderBlock("choreography_performance")}
+                {this.renderBlock("group_sync")}
                 {this.renderBlock("impression")}
             </GeneralEditor>
         );

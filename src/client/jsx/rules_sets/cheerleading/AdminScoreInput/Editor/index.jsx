@@ -9,6 +9,7 @@ import { consoleError } from "common/logging";
 import JazzGroupScore from "./JazzGroupScore";
 import HeadJudgeScore from "./HeadJudgeScore";
 import TechJudgeScore from "./TechJudgeScore";
+import CoupleScore from "./CoupleScore";
 
 export default class Editor extends React.Component {
     static propTypes = {
@@ -60,6 +61,8 @@ export default class Editor extends React.Component {
                 return <TechJudgeScore {...score_props} />;
             case "jazz_group":
                 return <JazzGroupScore {...score_props} />;
+            case "couple":
+                return <CoupleScore {...score_props} />;
             case null:
                 return this.renderWrongJudgeRoleMessage();
             default:
