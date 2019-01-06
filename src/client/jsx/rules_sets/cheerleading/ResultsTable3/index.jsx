@@ -6,6 +6,7 @@ import PT from "prop-types";
 import ColumnsWidths from "./ColumnsWidths";
 import Row from "./Row";
 import JazzGroupScore from "common/VerboseJudgeScore/JazzGroupScore";
+import CoupleScore from "common/VerboseJudgeScore/CoupleScore";
 
 export default class ResultsTable3 extends React.Component {
     static propTypes = {
@@ -46,23 +47,29 @@ export default class ResultsTable3 extends React.Component {
             .addStyle(".total-score", "font-weight", "bold");
     }
 
+    renderHintBody(Component, text) {
+        return (
+            <table>
+                <tbody>
+                    <tr>
+                        <td style={{ verticalAlign: "top", width: "50pt" }}>
+                            <Component example />
+                        </td>
+                        <td style={{ verticalAlign: "top" }}>{text}</td>
+                    </tr>
+                </tbody>
+            </table>
+        );
+    }
     renderHint() {
         switch (this.props.computedTour.tour.scoring_system_name) {
             case "cheerleading.jazz_group":
-                return (
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td style={{ verticalAlign: "top", width: "50pt" }}>
-                                    <JazzGroupScore example />
-                                </td>
-                                <td style={{ verticalAlign: "top" }}>
-                                    {_("results.hints.jazz_group")}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                return this.renderHintBody(
+                    JazzGroupScore,
+                    _("results.hints.jazz_group"),
                 );
+            case "cheerleading.couple":
+                return this.renderHintBody(CoupleScore, _("results.hints.couple"));
             default:
                 return null;
         }

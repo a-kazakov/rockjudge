@@ -4,16 +4,16 @@ import formatScore from "./formatScore";
 import _ from "l10n";
 
 const ROWS = [
-    ["tech_execution", "tech_control_stretching|Bottom"],
-    ["tech_style_power|Bottom", "group_sync|Left"],
-    ["group_similarity|Bottom", "group_position|Bottom"],
-    ["choreography_art", "choreography_performance_effects|Bottom"],
-    ["choreography_complexity|Right", "impression"],
+    ["tech_fulfillment", "tech_control"],
+    ["tech_power|Bottom", "tech_stretching|Bottom"],
+    ["choreography_musicality", "choreography_complexity"],
+    ["choreography_style|Bottom", "choreography_performance|Bottom"],
+    ["group_sync|Right", "impression"],
 ];
 
 const BORDER_STYLE = "0.5pt solid #999";
 
-export default class JazzGroupScore extends React.Component {
+export default class CoupleScore extends React.Component {
     static propTypes = {
         example: PT.bool,
         scoreResult: PT.object,

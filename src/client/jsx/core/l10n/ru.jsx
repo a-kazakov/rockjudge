@@ -631,7 +631,7 @@ export default function translate(src, ...args) {
         },
         results: {
             alerts: {
-                not_finalized: "Данные результаты не являются окончательными.",
+                not_finalized: "Предварительные результаты",
             },
             buttons: {
                 print: "Печать",

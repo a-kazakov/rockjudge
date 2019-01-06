@@ -56,28 +56,25 @@ export default class ScoringLayout extends React.Component {
                 </div>
                 <SeveralColumns ratios={RATIOS}>
                     <div className="parts-block">
-                        {this.renderSelector("tech_execution", "tech")}
-                        {this.renderSelector("tech_control_stretching")}
-                        {this.renderSelector("tech_style_power")}
+                        {this.renderSelector("tech_fulfillment", "tech")}
+                        {this.renderSelector("tech_control")}
+                        {this.renderSelector("tech_power")}
+                        {this.renderSelector("tech_stretching")}
                     </div>
                     <div className="parts-block">
-                        {this.renderSelector("group_sync", "group")}
-                        {this.renderSelector("group_similarity")}
-                        {this.renderSelector("group_position")}
+                        {this.renderSelector("choreography_musicality", "choreography")}
+                        {this.renderSelector("choreography_complexity")}
+                        {this.renderSelector("choreography_style")}
+                        {this.renderSelector("choreography_performance")}
                     </div>
                 </SeveralColumns>
                 <SeveralColumns ratios={RATIOS}>
                     <div className="parts-block">
-                        {this.renderSelector("choreography_art", "choreography")}
-                        {this.renderSelector("choreography_performance_effects")}
-                        {this.renderSelector("choreography_complexity")}
+                        {this.renderSelector("group_sync", "group")}
                     </div>
-                    <>
-                        <div className="parts-block">
-                            {this.renderSelector("impression", "impression")}
-                        </div>
-                        <br />
-                    </>
+                    <div className="parts-block">
+                        {this.renderSelector("impression", "impression")}
+                    </div>
                 </SeveralColumns>
             </div>
         );

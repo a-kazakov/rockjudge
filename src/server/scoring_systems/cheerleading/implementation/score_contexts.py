@@ -80,6 +80,8 @@ class ScoreContextBase(CachedClass):
         if judge_role == "dance_judge":
             if scoring_system_name == "jazz_group":
                 return ScoreContextJazzGroup
+            if scoring_system_name == "couple":
+                return ScoreContextCouple
         if judge_role == "tech_judge":
             return ScoreContextTechJudge
         if judge_role == "head_judge":
@@ -279,14 +281,29 @@ class ScoreContextDanceJudge(ScoreContextBase):
 class ScoreContextJazzGroup(ScoreContextDanceJudge):
     FIELDS = {
         "tech_execution": make_number_field(10),
-        "tech_control": make_number_field(10),
-        "tech_style": make_number_field(10),
+        "tech_control_stretching": make_number_field(10),
+        "tech_style_power": make_number_field(10),
         "group_sync": make_number_field(10),
         "group_similarity": make_number_field(10),
         "group_position": make_number_field(10),
         "choreography_art": make_number_field(10),
-        "choreography_performance": make_number_field(10),
+        "choreography_performance_effects": make_number_field(10),
         "choreography_complexity": make_number_field(10),
+        "impression": make_number_field(10),
+    }
+
+
+class ScoreContextCouple(ScoreContextDanceJudge):
+    FIELDS = {
+        "tech_fulfillment": make_number_field(10),
+        "tech_control": make_number_field(10),
+        "tech_power": make_number_field(10),
+        "tech_stretching": make_number_field(10),
+        "choreography_musicality": make_number_field(10),
+        "choreography_complexity": make_number_field(10),
+        "choreography_style": make_number_field(10),
+        "choreography_performance": make_number_field(10),
+        "group_sync": make_number_field(10),
         "impression": make_number_field(10),
     }
 

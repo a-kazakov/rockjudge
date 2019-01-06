@@ -5,6 +5,7 @@ import NumberSelectorInput from "tablet_ui/NumberSelectorInput";
 
 export default class ScoringSection extends React.Component {
     static propTypes = {
+        group: PT.string,
         max: PT.number,
         part: PT.string.isRequired,
         readOnly: PT.bool.isRequired,
@@ -18,10 +19,19 @@ export default class ScoringSection extends React.Component {
     handleChange = value => {
         this.props.onScoreUpdate(this.props.part, value);
     };
+
+    maybeRenderPrimaryHeader() {
+        const { group } = this.props;
+        if (group == null) {
+            return null;
+        }
+        return <h3 className="primary">{_(`score_parts.groups.long.${group}`)}</h3>;
+    }
     render() {
         const { max, score, part, readOnly } = this.props;
         return (
             <>
+                {this.maybeRenderPrimaryHeader()}
                 <h3>{_(`score_parts.components.long.${part}`)}</h3>
                 <NumberSelectorInput
                     compact

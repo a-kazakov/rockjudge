@@ -3,27 +3,84 @@ import { consoleError } from "common/logging";
 
 const JAZZ_GROUP_HINT = [
     [
-        ["ТИ", "Техника: исполнение"],
-        ["ТП", "Техника: положение, контроль, натянутость"],
+        ["Tвэ", "Техника: выполнение элементов"],
+        ["Ткп", "Техника: контроль положение теля"],
     ],
     [
-        ["ТС", "Техника: стиль, сила и амплитуда движений"],
-        ["ГС", "Гр. исполнение: синхронность, исп-е в ритм"],
+        ["Тс", "Техника: сила выполняемых движений"],
+        ["Тнг", "Техника: натянутость, гибкость, растяжка"],
+    ],
+    [["Хм", "Хореография: музыкальность"], ["Хс", "Хореография: сложность"]],
+    [
+        ["Хос", "Хореография: оригинальность, стиль"],
+        ["Хзк", "Хореография: зрелищность композиции"],
     ],
     [
-        ["ГО", "Гр. исполнение: однородность движений"],
-        ["ГР", "Гр. исполнение: равнение"],
+        ["Гср", "Гр. исполнение: синхронность, исп-е в ритм"],
+        ["ОВ", "Общее впечатление"],
     ],
-    [
-        ["ХМ", "Хореография: музык-ть, креативность, новизна"],
-        ["ХЗ", "Хореография: зрелищность / виз. эффекты"],
-    ],
-    [["ХС", "Хореография: уровень сложности"], ["ОВ", "Общее впечатление"]],
     [
         ["М", "Место у судьи (с учетом штрафа)"],
         ["Σ", "Сумма баллов (без учета штрафа)"],
     ],
 ];
+
+const COUPLE_HINT = [
+    [
+        ["Тиэ", "Техника: исполнение"],
+        ["Тпк", "Техника: положение, контроль, натянутость"],
+    ],
+    [
+        ["Тсс", "Техника: стиль, сила и амплитуда движений"],
+        ["Гср", "Гр. исполнение: синхронность, исп-е в ритм"],
+    ],
+    [
+        ["Год", "Гр. исполнение: однородность движений"],
+        ["Гр", "Гр. исполнение: равнение"],
+    ],
+    [
+        ["Хмк", "Хореография: музык-ть, креативность, новизна"],
+        ["Хзэ", "Хореография: зрелищность / виз. эффекты"],
+    ],
+    [["Хс", "Хореография: уровень сложности"], ["ОВ", "Общее впечатление"]],
+    [
+        ["М", "Место у судьи (с учетом штрафа)"],
+        ["Σ", "Сумма баллов (без учета штрафа)"],
+    ],
+];
+
+function makeHint(data) {
+    const body = data.map((pieces, idx) => (
+        <tr key={idx}>
+            {pieces.map(([short, long], idx_2) => (
+                <React.Fragment key={idx_2}>
+                    <td
+                        style={{
+                            width: "25pt",
+                            verticalAlign: "top",
+                            border: "0.5pt solid transparent",
+                        }}
+                    >
+                        <p style={{ fontWeight: "bold" }}>{short}</p>
+                    </td>
+                    <td
+                        style={{
+                            verticalAlign: "top",
+                            border: "0.5pt solid transparent",
+                        }}
+                    >
+                        <p>{long}</p>
+                    </td>
+                </React.Fragment>
+            ))}
+        </tr>
+    ));
+    return (
+        <table>
+            <tbody>{body}</tbody>
+        </table>
+    );
+}
 
 function chooseEnding(n, e1, e2, e5) {
     let x = n % 100;
@@ -212,38 +269,8 @@ const PHRASES = {
             short_RC: "КК",
         },
         hints: {
-            jazz_group: (() => {
-                const body = JAZZ_GROUP_HINT.map((pieces, idx) => (
-                    <tr key={idx}>
-                        {pieces.map(([short, long], idx_2) => (
-                            <React.Fragment key={idx_2}>
-                                <td
-                                    style={{
-                                        width: "25pt",
-                                        verticalAlign: "top",
-                                        border: "0.5pt solid transparent",
-                                    }}
-                                >
-                                    <p style={{ fontWeight: "bold" }}>{short}</p>
-                                </td>
-                                <td
-                                    style={{
-                                        verticalAlign: "top",
-                                        border: "0.5pt solid transparent",
-                                    }}
-                                >
-                                    <p>{long}</p>
-                                </td>
-                            </React.Fragment>
-                        ))}
-                    </tr>
-                ));
-                return (
-                    <table>
-                        <tbody>{body}</tbody>
-                    </table>
-                );
-            })(),
+            jazz_group: makeHint(JAZZ_GROUP_HINT),
+            couple: makeHint(COUPLE_HINT),
         },
     },
     global: {
@@ -288,31 +315,60 @@ const PHRASES = {
         tech_judge: "Технический судья",
     },
     score_parts: {
+        groups: {
+            long: {
+                tech: "Техника",
+                group: "Групповое исполнение",
+                choreography: "Хореография",
+                impression: "Общее впечатление",
+            },
+        },
         components: {
             short: {
-                tech_execution: "ТИ",
-                tech_control: "ТП",
-                tech_style: "ТС",
-                group_sync: "ГС",
-                group_similarity: "ГО",
-                group_position: "ГР",
-                choreography_art: "ХМ",
-                choreography_performance: "ХЗ",
-                choreography_complexity: "ХС",
+                tech_fulfillment: "Tвэ",
+                tech_control: "Ткп",
+                tech_stretching: "Тнг",
+                tech_control_stretching: "Тпк",
+                tech_power: "Тс",
+                tech_style_power: "Тсс",
+                tech_pompon: "Тп",
+                tech_dance: "Тт",
+                tech_execution: "Тиэ",
+                tech_execution_sport: "Тэс",
+                group_sync: "Гср",
+                group_similarity: "Год",
+                group_position: "Гр",
+                choreography_art: "Хмк",
+                choreography_performance_effects: "Хзэ",
+                choreography_complexity: "Хс",
+                choreography_performance: "Хзк",
+                choreography_style: "Хос",
+                choreography_musicality: "Хм",
                 impression: "ОВ",
                 place: "М",
                 total_score: "Σ",
             },
             medium: {
+                tech_fulfillment: "Выполнение элементов",
+                tech_control: "Контроль положения частей тела",
+                tech_stretching: "Натянутость / Гибкость / Растяжка",
+                tech_control_stretching: "Положение / Контроль / Натянутость",
+                tech_power: "Сила исполнения и амплитуда движений",
+                tech_style_power: "Стиль / Сила и амплитуда",
+                tech_pompon: "Техника работы с помпонами",
+                tech_dance: "Уровень исполнения танцевальной техники",
                 tech_execution: "Исполнение техн. элементов",
-                tech_control: "Положение / Контроль / Натянутость",
-                tech_style: "Стиль / Сила и амплитуда",
-                group_sync: "Синхронность / Исполнение в ритм",
-                group_similarity: "Однородность",
+                tech_execution_sport:
+                    "Уровень исп-я элементов / Исп-е спорт. элементов",
+                group_sync: "Синхронность / Исполнение в ритм музыки",
+                group_similarity: "Однородность движений",
                 group_position: "Равнение",
-                choreography_art: "Музыкальность / Креативность",
-                choreography_performance: "Зрелищность / Эффекты",
-                choreography_complexity: "Сложность",
+                choreography_art: "Музыкальность / Креативность / Новизна",
+                choreography_performance_effects: "Зрелищность / эффекты",
+                choreography_complexity: "Уровень сложности",
+                choreography_performance: "Зрелищность композиции",
+                choreography_style: "Оригинальность / Стиль",
+                choreography_musicality: "Музыкальность",
                 impression: "Артистичность",
                 time_penalty: "Время",
                 music_violated: "Музыка",
@@ -324,15 +380,28 @@ const PHRASES = {
                 other_penalties: "Другое",
             },
             long: {
-                tech_execution: "Исполнение технических элементов",
-                tech_control: "Положение частей тела / Контроль / Натянутость",
-                tech_style: "Стиль / Сила и амплитуда движений",
+                tech_fulfillment: "Выполнение элементов (Фристайл - Джаз - Хип-Хоп)",
+                tech_control: "Контроль положения частей тела ",
+                tech_stretching: "Натянутость / Гибкость / Растяжка",
+                tech_control_stretching:
+                    "Положение частей тела / Контроль / Натянутость",
+                tech_power: "Сила исполнения и амплитуда движений",
+                tech_style_power: "Стиль / Сила и амплитуда движений",
+                tech_pompon: "Техника работы с помпонами",
+                tech_dance: "Уровень исполнения танцевальной техники",
+                tech_execution: "Уровень исполнения технических элементов",
+                tech_execution_sport:
+                    "Уровень исполнения элементов / Исполнение спортивных элементов",
                 group_sync: "Синхронность / Исполнение в ритм музыки",
                 group_similarity: "Однородность движений",
                 group_position: "Равнение",
                 choreography_art: "Музыкальность / Креативность / Новизна",
-                choreography_performance: "Зрелищность композиции / Визуальные эффекты",
+                choreography_performance_effects:
+                    "Зрелищность композиции / Визуальные эффекты",
                 choreography_complexity: "Уровень сложности",
+                choreography_performance: "Зрелищность композиции",
+                choreography_style: "Оригинальность / Стиль",
+                choreography_musicality: "Музыкальность",
                 impression: "Артистичность / Воздействие на зрителей",
                 place: "Место",
                 time_penalty: "Штраф за временные ограничения",

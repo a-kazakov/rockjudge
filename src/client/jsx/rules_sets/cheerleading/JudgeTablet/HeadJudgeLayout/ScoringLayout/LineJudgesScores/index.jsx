@@ -8,13 +8,13 @@ import Row from "./Row";
 const PARTS_ORDER = new Map(
     [
         "tech_execution",
-        "tech_control",
-        "tech_style",
+        "tech_control_stretching",
+        "tech_style_power",
         "group_sync",
         "group_similarity",
         "group_position",
         "choreography_art",
-        "choreography_performance",
+        "choreography_performance_effects",
         "choreography_complexity",
         "impression",
     ].map((value, idx) => [value, idx + 1]),

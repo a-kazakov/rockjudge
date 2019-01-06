@@ -30,14 +30,14 @@ export default class JazzGroupScore extends React.Component {
                 />
                 <NumberBlock
                     nullable
-                    field="tech_control"
+                    field="tech_control_stretching"
                     label="Tc"
                     max={10}
                     step={0.5}
                 />
                 <NumberBlock
                     nullable
-                    field="tech_style"
+                    field="tech_style_power"
                     label="Ts"
                     max={10}
                     step={0.5}
@@ -72,7 +72,7 @@ export default class JazzGroupScore extends React.Component {
                 />
                 <NumberBlock
                     nullable
-                    field="choreography_performance"
+                    field="choreography_performance_effects"
                     label="Cp"
                     max={10}
                     step={0.5}
