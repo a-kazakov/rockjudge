@@ -1,3 +1,4 @@
+from collections import defaultdict
 from fractions import Fraction
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Tuple, cast
 
@@ -31,7 +32,7 @@ class RunContext(CachedClass):
     @property
     def scores(self) -> List[ScoreContextBase]:
         return [
-            ScoreContextBase.make_from_request(score_info, self.tour_context)
+            ScoreContextBase.make_from_request(score_info, self)
             for score_info in self.run_info.scores
         ]
 
@@ -109,7 +110,13 @@ class RunContext(CachedClass):
 
     @property
     def places_counts(self) -> List[int]:
-        return []  # FIXME
+        counts_dict: Dict[int, int] = defaultdict(lambda: 0)
+        for score in self.scores:
+            if isinstance(score, ScoreContextDanceJudge):
+                counts_dict[score.judge_place] += 1
+        return [
+            counts_dict[place] for place in range(1, len(self.tour_context.runs) + 1)
+        ]
 
     @property
     def display_score(self) -> str:

@@ -1,6 +1,5 @@
 from fractions import Fraction
-from typing import Any, Dict, Iterable, List, TypeVar
-
+from typing import Any, Dict, Iterable, List, TypeVar, Optional
 
 T = TypeVar("T")
 
@@ -42,3 +41,15 @@ def trim_scores(container: Iterable[T]) -> List[T]:
 
 def float_to_frac(value: float) -> Fraction:
     return Fraction(int(round(value * 10)), 10)
+
+
+def assign_places(totals: Iterable[T]) -> List[int]:
+    current_place = 1
+    prev_total: Optional[T] = None
+    result = []
+    for idx, next_total in enumerate(totals, start=1):
+        if prev_total != next_total:
+            current_place = idx
+            prev_total = next_total
+        result.append(current_place)
+    return result

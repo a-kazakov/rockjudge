@@ -11,6 +11,8 @@ const ROWS = [
     ["choreography_complexity|Right", "impression"],
 ];
 
+const BORDER_STYLE = "0.5pt solid #999";
+
 export default class JazzGroupScore extends React.Component {
     static propTypes = {
         example: PT.bool,
@@ -20,20 +22,25 @@ export default class JazzGroupScore extends React.Component {
         example: false,
     };
 
+    renderPartText = part => {
+        if (this.props.example) {
+            return _(`score_parts.components.short.${part}`);
+        }
+        switch (part) {
+            case "total_score":
+                return this.props.scoreResult.total_score_str;
+            case "place":
+                return formatScore(this.props.scoreResult.extra_data.place);
+            default:
+                return formatScore(this.props.scoreResult.extra_data.parts[part], "@");
+        }
+    };
     renderCell = data => {
         const [part, border] = data.split("|");
-        const style =
-            border == null ? null : { [`border${border}`]: "0.5pt solid #999" };
+        const style = border == null ? null : { [`border${border}`]: BORDER_STYLE };
         return (
             <td key={part} style={style}>
-                <p className="text-center">
-                    {this.props.example
-                        ? _(`score_parts.components.short.${part}`)
-                        : formatScore(
-                              this.props.scoreResult.extra_data.parts[part],
-                              "@",
-                          )}
-                </p>
+                <p className="text-center">{this.renderPartText(part)}</p>
             </td>
         );
     };
@@ -43,7 +50,26 @@ export default class JazzGroupScore extends React.Component {
     render() {
         return (
             <table className="score-breakdown" style={{ width: "50pt" }}>
-                <tbody style={{ width: "50pt" }}>{ROWS.map(this.renderRow)}</tbody>
+                <tbody style={{ width: "50pt" }}>
+                    {ROWS.map(this.renderRow)}
+                    <tr>
+                        <td style={{ borderTop: BORDER_STYLE }}>
+                            <p style={{ textAlign: "center" }}>
+                                {this.renderPartText("place")}
+                            </p>
+                        </td>
+                        <td
+                            style={{
+                                borderTop: BORDER_STYLE,
+                                borderLeft: BORDER_STYLE,
+                            }}
+                        >
+                            <p style={{ textAlign: "center", fontWeight: "bold" }}>
+                                {this.renderPartText("total_score")}
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         );
     }

@@ -349,19 +349,10 @@ class Api:
             "plan": {},
             "clubs": {},
             "disciplines": {
-                "participants": {
-                    "programs": {},
-                },
+                "participants": {"programs": {}},
                 "discipline_judges": {},
-                "tours": {
-                    "runs": {
-                        "acrobatics": {},
-                        "scores": {
-                            "parts": {},
-                        },
-                    }
-                }
-            }
+                "tours": {"runs": {"acrobatics": {}, "scores": {"parts": {}}}},
+            },
         }
         competition = Competition.get(self.session, competition_id, pf_schema)
         if not self.request.is_superuser():

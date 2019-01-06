@@ -13,8 +13,10 @@ from scoring_systems.cheerleading.implementation.common import (
     CachedClass,
     float_to_frac,
 )
+from utils import raise_if_none
 
 if TYPE_CHECKING:
+    from scoring_systems.cheerleading.implementation.run_contexts import RunContext
     from scoring_systems.cheerleading.implementation.tour_contexts import TourContext
 
 
@@ -69,7 +71,7 @@ class ScoreContextBase(CachedClass):
         self.judge_role = judge_role
         self.scoring_system_name = scoring_system_name
         self.score_info: Optional[ScoreInfo] = None
-        self.tour_context: Optional["TourContext"] = None
+        self._run_context: Optional["RunContext"] = None
 
     @staticmethod
     def get_class(
@@ -96,16 +98,26 @@ class ScoreContextBase(CachedClass):
 
     @classmethod
     def make_from_request(
-        cls, score_info: ScoreInfo, tour_context: "TourContext"
+        cls, score_info: ScoreInfo, run_context: "RunContext"
     ) -> "ScoreContextBase":
         db_data = score_info.data
-        judge_role = tour_context.tour_request.judge_roles[score_info.judge_id]
+        judge_role = run_context.tour_context.tour_request.judge_roles[
+            score_info.judge_id
+        ]
         result = cls.make_from_data(
-            db_data, judge_role, tour_context.scoring_system_name
+            db_data, judge_role, run_context.tour_context.scoring_system_name
         )
         result.score_info = score_info
-        result.tour_context = tour_context
+        result._run_context = run_context
         return result
+
+    @property
+    def run_context(self) -> "RunContext":
+        return raise_if_none(self._run_context)
+
+    @property
+    def tour_context(self) -> "TourContext":
+        return self.run_context.tour_context
 
     @property
     def total_score_str(self) -> str:
@@ -246,17 +258,22 @@ class ScoreContextDanceJudge(ScoreContextBase):
         return sum(map(float_to_frac, self.counting_score.values()))
 
     @property
+    def total_score_with_penalty(self) -> Fraction:
+        return self.total_score + self.run_context.penalty
+
+    @property
     def total_score_str(self) -> str:
         return "{:.1f}".format(float(self.total_score))
 
     @property
+    def judge_place(self) -> int:
+        return raise_if_none(self.tour_context).judges_places_by_score_id.get(
+            self.score_info.score_id
+        )
+
+    @property
     def extra_data(self) -> Dict[str, Any]:
-        return {
-            "parts": self.user_data,
-            # "place": raise_if_none(self.tour_context).place_by_score_id[
-            #     self.score_info.score_id
-            # ],
-        }
+        return {"parts": self.user_data, "place": self.judge_place}
 
 
 class ScoreContextJazzGroup(ScoreContextDanceJudge):

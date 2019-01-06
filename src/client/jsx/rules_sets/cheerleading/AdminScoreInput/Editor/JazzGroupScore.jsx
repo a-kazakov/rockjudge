@@ -26,7 +26,6 @@ export default class JazzGroupScore extends React.Component {
                     field="tech_execution"
                     label="Te"
                     max={10}
-                    min={1}
                     step={0.5}
                 />
                 <NumberBlock
@@ -34,7 +33,6 @@ export default class JazzGroupScore extends React.Component {
                     field="tech_control"
                     label="Tc"
                     max={10}
-                    min={1}
                     step={0.5}
                 />
                 <NumberBlock
@@ -42,7 +40,6 @@ export default class JazzGroupScore extends React.Component {
                     field="tech_style"
                     label="Ts"
                     max={10}
-                    min={1}
                     step={0.5}
                 />
                 <NumberBlock
@@ -50,7 +47,6 @@ export default class JazzGroupScore extends React.Component {
                     field="group_sync"
                     label="Gs"
                     max={10}
-                    min={1}
                     step={0.5}
                 />
                 <NumberBlock
@@ -58,7 +54,6 @@ export default class JazzGroupScore extends React.Component {
                     field="group_similarity"
                     label="Gs"
                     max={10}
-                    min={1}
                     step={0.5}
                 />
                 <NumberBlock
@@ -66,7 +61,6 @@ export default class JazzGroupScore extends React.Component {
                     field="group_position"
                     label="Gp"
                     max={10}
-                    min={1}
                     step={0.5}
                 />
                 <NumberBlock
@@ -74,7 +68,6 @@ export default class JazzGroupScore extends React.Component {
                     field="choreography_art"
                     label="Ca"
                     max={10}
-                    min={1}
                     step={0.5}
                 />
                 <NumberBlock
@@ -82,7 +75,6 @@ export default class JazzGroupScore extends React.Component {
                     field="choreography_performance"
                     label="Cp"
                     max={10}
-                    min={1}
                     step={0.5}
                 />
                 <NumberBlock
@@ -90,7 +82,6 @@ export default class JazzGroupScore extends React.Component {
                     field="choreography_complexity"
                     label="Cc"
                     max={10}
-                    min={1}
                     step={0.5}
                 />
                 <NumberBlock
@@ -98,7 +89,6 @@ export default class JazzGroupScore extends React.Component {
                     field="impression"
                     label="I"
                     max={10}
-                    min={1}
                     step={0.5}
                 />
             </GeneralEditor>
