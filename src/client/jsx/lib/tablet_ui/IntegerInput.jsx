@@ -7,6 +7,7 @@ import onTouchOrClick from "./onTouchOrClick";
 
 export default class IntegerInput extends React.PureComponent {
     static propTypes = {
+        displayText: PT.string,
         jumbo: PT.bool,
         max: PT.number,
         min: PT.number,
@@ -53,7 +54,9 @@ export default class IntegerInput extends React.PureComponent {
                 >
                     &minus;
                 </button>
-                <div className="value">{this.props.value}</div>
+                <div className="value">
+                    {this.props.displayText ?? this.props.value}
+                </div>
                 <button className="tbtn btn-plus" {...onTouchOrClick(this.handlePlus)}>
                     +
                 </button>

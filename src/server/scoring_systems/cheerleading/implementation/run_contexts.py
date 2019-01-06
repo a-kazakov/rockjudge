@@ -9,6 +9,8 @@ from scoring_systems.cheerleading.implementation.common import (
     trim_scores,
 )
 from scoring_systems.cheerleading.implementation.score_contexts import (
+    ScoreContextHeadJudge,
+    ScoreContextTechJudge,
     ScoreContextDanceJudge,
     ScoreContextBase,
 )
@@ -37,18 +39,8 @@ class RunContext(CachedClass):
     def scores_by_role(self) -> Dict[str, List[ScoreContextBase]]:
         return {
             role: [score for score in self.scores if score.judge_role == role]
-            for role in ("dance_judge", "head_judge")
+            for role in ("dance_judge", "tech_judge", "head_judge")
         }
-
-    @property
-    def bonus(self) -> int:
-        return sum(
-            (
-                score.counting_score["bonus"]
-                for score in self.scores_by_role["head_judge"]
-            ),
-            0,
-        )
 
     def make_result(
         self, place: int, advanced: bool, extra_data: Optional[Dict[str, Any]] = None
@@ -65,7 +57,7 @@ class RunContext(CachedClass):
         )
 
     @property
-    def sorting_score(self) -> Tuple[int, ...]:
+    def sorting_score(self) -> Tuple[Any, ...]:
         if self.run_info.status != RunStatus.OK:
             return (
                 1,
@@ -76,15 +68,36 @@ class RunContext(CachedClass):
             0,
             -self.primary_score,
             -self.secondary_score,
-            *tuple(-c for c in self.places_counts),
+            tuple(-c for c in self.places_counts),
+            -self.bonus,
         )
 
     @property
     def dance_judges_total_scores(self) -> List[Fraction]:
         return [
-            cast(ScoreContextDanceJudge, score).total_score
-            for score in self.scores_by_role["dance_judge"]
+            cast(ScoreContextDanceJudge, score).total_score + self.penalty
+            for score in self.scores_by_role.get("dance_judge", [])
         ]
+
+    @property
+    def accumulated_penalties(self) -> Dict[str, int]:
+        result: Dict[str, int] = {}
+        for score in self.scores_by_role["tech_judge"]:
+            score_data = cast(ScoreContextTechJudge, score).normalized_data
+            for key, value in score_data.items():
+                result[key] = min(result.get(key, 0), value)
+        return result
+
+    @property
+    def penalty(self) -> int:
+        return sum(self.accumulated_penalties.values(), 0)
+
+    @property
+    def bonus(self) -> int:
+        return sum(
+            cast(ScoreContextHeadJudge, score).total_score
+            for score in self.scores_by_role["head_judge"]
+        )
 
     @property
     def primary_score(self) -> Fraction:
@@ -111,4 +124,6 @@ class RunContext(CachedClass):
             "primary_score": float(self.primary_score),
             "secondary_score": float(self.secondary_score),
             "places_counts": self.places_counts,
+            "accumulated_penalties": self.accumulated_penalties,
+            "penalty": self.penalty,
         }

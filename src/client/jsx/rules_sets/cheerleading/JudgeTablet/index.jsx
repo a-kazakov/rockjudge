@@ -6,7 +6,8 @@ import _ from "l10n";
 import getScoringType from "common/getScoringType";
 
 import HeadJudgeLayout from "./HeadJudgeLayout";
-import JazzGroupLayout from "JudgeTablet/JazzGroupLayout";
+import JazzGroupLayout from "./JazzGroupLayout";
+import TechJudgeLayout from "./TechJudgeLayout";
 
 export default class JudgeTablet extends React.Component {
     static propTypes = {
@@ -17,6 +18,7 @@ export default class JudgeTablet extends React.Component {
     static LAYOUTS = {
         jazz_group: JazzGroupLayout,
         head: HeadJudgeLayout,
+        tech: TechJudgeLayout,
     };
 
     handleScoreUpdate = (score_id, score_data) => {

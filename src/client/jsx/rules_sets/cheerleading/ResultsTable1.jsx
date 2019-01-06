@@ -111,7 +111,7 @@ export default class ResultsTable1 extends React.Component {
                 participant_name: row.run.participant.name,
                 participant_club: row.run.participant.club.name,
                 total_score: row.run_result.total_score_str,
-                penalty: "-",
+                penalty: row.run_result.extra_data.penalty || "", // Intentional ||
             });
         }
         return result;

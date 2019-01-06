@@ -6,7 +6,9 @@ import _ from "l10n";
 import getScoringType from "common/getScoringType";
 import ConfirmationButton from "./ConfirmationButton";
 import { consoleError } from "common/logging";
-import JazzGroupScore from "AdminScoreInput/Editor/JazzGroupScore";
+import JazzGroupScore from "./JazzGroupScore";
+import HeadJudgeScore from "./HeadJudgeScore";
+import TechJudgeScore from "./TechJudgeScore";
 
 export default class Editor extends React.Component {
     static propTypes = {
@@ -52,6 +54,10 @@ export default class Editor extends React.Component {
             onDiscard: this.props.onDiscard,
         };
         switch (scoring_type) {
+            case "head":
+                return <HeadJudgeScore {...score_props} />;
+            case "tech":
+                return <TechJudgeScore {...score_props} />;
             case "jazz_group":
                 return <JazzGroupScore {...score_props} />;
             case null:

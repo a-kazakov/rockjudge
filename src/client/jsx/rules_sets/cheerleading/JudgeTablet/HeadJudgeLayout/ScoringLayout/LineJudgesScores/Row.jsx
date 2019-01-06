@@ -38,7 +38,7 @@ export default class Row extends React.Component {
         }
         return (
             <th className="criteria-name">
-                {_(`score_parts.components.short.${this.props.part}`)}
+                {_(`score_parts.components.medium.${this.props.part}`)}
             </th>
         );
     }

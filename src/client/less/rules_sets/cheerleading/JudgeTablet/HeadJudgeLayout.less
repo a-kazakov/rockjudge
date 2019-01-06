@@ -1,4 +1,49 @@
 .HeadJudgeLayout {
+    .panes {
+        .flex-row();
+        .left-pane {
+            flex-grow: 1;
+            padding-right: 10px;
+        }
+        .right-pane {
+            flex-shrink: 0;
+            width: 250px;
+            background-color: lighten(@color-light, 10%);
+            padding: 10px;
+        }
+    }
+    .run-metrics {
+        table-layout: fixed;
+        margin-left: -7px;
+        margin-right: -7px;
+        width: ~"calc(100% + 14px)";
+        border-collapse: separate;
+        border-spacing: 2px;
+        th,
+        td {
+            padding: 5px;
+        }
+        td {
+            text-align: center;
+            width: 35%;
+            background-color: lighten(@color-dark, 50%);
+            &.light-red {
+                background-color: darken(@color-light-red, 10%) !important;
+            }
+            &.green {
+                background-color: @color-green !important;
+                color: white;
+            }
+            &.yellow {
+                background-color: @color-yellow !important;
+                color: white;
+            }
+            &.red {
+                background-color: @color-red !important;
+                color: white;
+            }
+        }
+    }
     .status-switch {
         min-width: 250px;
         box-sizing: border-box;
@@ -17,7 +62,7 @@
         }
     }
     .line-judge-scores {
-        width: 100%;
+        max-width: 100%;
         margin: 5px auto;
         table-layout: fixed;
         border-collapse: separate;

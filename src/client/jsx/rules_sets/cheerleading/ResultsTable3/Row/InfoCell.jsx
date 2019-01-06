@@ -4,7 +4,17 @@ import lastOf from "common/tools/lastOf";
 import _ from "l10n";
 import PT from "prop-types";
 import getParticipantDisplay from "common/getParticipantDisplay";
-import checkSS from "common/checkSS";
+
+const PENALTIES = [
+    "time_penalty",
+    "music_violated",
+    "entry_exit_violated",
+    "dress_violated",
+    "cheer_block_violated",
+    "accessories_violated",
+    "complexity_violations",
+    "other_penalties",
+];
 
 export default class InfoCell extends React.Component {
     static propTypes = {
@@ -32,10 +42,32 @@ export default class InfoCell extends React.Component {
         );
     }
     renderPenalty() {
-        if (this.props.row.run_result.extra_data.status !== "OK") {
+        const {
+            status,
+            penalty,
+            accumulated_penalties: acc,
+        } = this.props.row.run_result.extra_data;
+        if (status !== "OK") {
             return null;
         }
-        return "-";
+        const explanation = PENALTIES.filter(p => acc[p] !== 0).map(p => {
+            const label = _(`score_parts.components.medium.${p}`);
+            return (
+                <p
+                    key={p}
+                    style={{ marginLeft: "10pt", fontStyle: "italic" }}
+                >{`- ${label} (${acc[p]})`}</p>
+            );
+        });
+        return (
+            <>
+                <p>
+                    <strong>{`${_("results.labels.penalty")}: `}</strong>
+                    {penalty}
+                </p>
+                {explanation}
+            </>
+        );
     }
     renderTotalScore() {
         if (this.props.row.run_result.extra_data.status !== "OK") {

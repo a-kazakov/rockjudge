@@ -13,9 +13,6 @@ export default class Cell extends React.Component {
     };
 
     formatValue(value) {
-        if (this.props.part === "cross") {
-            return value ? "X" : "";
-        }
         if (value == null) {
             return "—";
         }

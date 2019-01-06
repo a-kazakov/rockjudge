@@ -6,7 +6,7 @@ import { consoleError } from "common/logging";
 
 export default class SelectorBlock extends BaseBlock {
     static get propTypes() {
-        const prev = super.constructor.propTypes || {};
+        const prev = super.constructor.propTypes ?? {};
         return Object.assign({}, prev, {
             label: PT.string,
             options: PT.arrayOf(PT.array.isRequired),

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from fractions import Fraction
-from typing import Optional, TYPE_CHECKING, Type, Callable, Any, Dict
+from typing import Optional, TYPE_CHECKING, Type, Callable, Any, Dict, List
 
 from scoring_systems.base import (
     ScoreInfo,
@@ -78,6 +78,10 @@ class ScoreContextBase(CachedClass):
         if judge_role == "dance_judge":
             if scoring_system_name == "jazz_group":
                 return ScoreContextJazzGroup
+        if judge_role == "tech_judge":
+            return ScoreContextTechJudge
+        if judge_role == "head_judge":
+            return ScoreContextHeadJudge
         return ScoreContextNull
 
     @classmethod
@@ -144,6 +148,96 @@ class ScoreContextBase(CachedClass):
             total_score_str=self.total_score_str,
             extra_data=self.extra_data,
         )
+
+
+class ScoreContextTechJudge(ScoreContextBase):
+    FIELDS = {
+        "time": FieldDescrpitorBase(
+            default_value=0,
+            initial_value=0,
+            validator=make_validate_number(max_value=24 * 60 * 60, allow_none=True),
+        ),
+        "time_penalty": FieldDescrpitorBase(
+            default_value=0, initial_value=0, validator=lambda x: x in {0, -1, -3}
+        ),
+        "music_violated": FieldDescrpitorBase(
+            default_value=False,
+            initial_value=False,
+            validator=lambda x: isinstance(x, bool),
+        ),
+        "entry_exit_violated": FieldDescrpitorBase(
+            default_value=False,
+            initial_value=False,
+            validator=lambda x: isinstance(x, bool),
+        ),
+        "dress_violated": FieldDescrpitorBase(
+            default_value=False,
+            initial_value=False,
+            validator=lambda x: isinstance(x, bool),
+        ),
+        "cheer_block_violated": FieldDescrpitorBase(
+            default_value=False,
+            initial_value=False,
+            validator=lambda x: isinstance(x, bool),
+        ),
+        "accessories_violated": FieldDescrpitorBase(
+            default_value=False,
+            initial_value=False,
+            validator=lambda x: isinstance(x, bool),
+        ),
+        "complexity_violations": FieldDescrpitorBase(
+            default_value=0, initial_value=0, validator=make_validate_number(0, 100)
+        ),
+        "other_penalties": FieldDescrpitorBase(
+            default_value=0, initial_value=0, validator=make_validate_number(0, 100)
+        ),
+    }
+
+    @property
+    def total_score(self) -> int:
+        return Fraction(sum(self.normalized_data.values(), 0))
+
+    @property
+    def total_score_str(self) -> str:
+        return str(self.total_score)
+
+    @property
+    def normalized_data(self) -> Dict[str, int]:
+        result: Dict[str, int] = {}
+        for key, value in self.counting_score.items():
+            if key == "time":
+                pass
+            elif key.endswith("_penalty"):
+                result[key] = value
+            elif key == "other_penalties":
+                result[key] = -int(value)
+            else:
+                result[key] = -5 * int(value)
+        return result
+
+    @property
+    def extra_data(self) -> Dict[str, Any]:
+        return {"parts": self.user_data}
+
+
+class ScoreContextHeadJudge(ScoreContextBase):
+    FIELDS = {
+        "bonus": FieldDescrpitorBase(
+            default_value=0, initial_value=0, validator=make_validate_number(-10, 10)
+        )
+    }
+
+    @property
+    def total_score(self) -> int:
+        return self.counting_score["bonus"]
+
+    @property
+    def total_score_str(self) -> str:
+        return str(self.total_score)
+
+    @property
+    def extra_data(self) -> Dict[str, Any]:
+        return {"parts": self.user_data}
 
 
 class ScoreContextDanceJudge(ScoreContextBase):

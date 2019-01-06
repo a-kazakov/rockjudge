@@ -79,6 +79,13 @@ class Judge(ModelBase, BaseModel):
 
     # Update logic
 
+    def submit_update_mutations(
+        self, mk: "MutationsKeeper", data: Dict[str, Any]
+    ) -> None:
+        mk.submit_model_updated(self)
+        for dj in self.discipline_judges:
+            mk.submit_model_updated(dj)
+
     # Delete logic
 
     def before_delete(self) -> None:

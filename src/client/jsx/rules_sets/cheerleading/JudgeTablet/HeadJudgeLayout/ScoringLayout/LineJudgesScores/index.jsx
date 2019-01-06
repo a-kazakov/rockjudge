@@ -6,10 +6,18 @@ import _ from "l10n";
 import Row from "./Row";
 
 const PARTS_ORDER = new Map(
-    ["cross", "tech", "composition", "art", "place"].map((value, idx) => [
-        value,
-        idx + 1,
-    ]),
+    [
+        "tech_execution",
+        "tech_control",
+        "tech_style",
+        "group_sync",
+        "group_similarity",
+        "group_position",
+        "choreography_art",
+        "choreography_performance",
+        "choreography_complexity",
+        "impression",
+    ].map((value, idx) => [value, idx + 1]),
 );
 
 export default class LineJudgesScores extends React.Component {
@@ -160,9 +168,10 @@ export default class LineJudgesScores extends React.Component {
         const position_obj = event.touches ? event.touches[0] : event;
         const target = this._table;
         const rect = target.getBoundingClientRect();
-        const offset = position_obj.clientX - rect.left;
-        const selected_idx =
-            Math.floor(offset / (target.offsetWidth / (this.scores.length + 1))) - 1;
+        const offset = position_obj.clientX - rect.left - 300;
+        const selected_idx = Math.floor(
+            offset / ((target.offsetWidth - 300) / this.scores.length),
+        );
         this.setState({
             verboseIdx: selected_idx,
         });
@@ -212,12 +221,14 @@ export default class LineJudgesScores extends React.Component {
     }
     render() {
         this.resetCache();
+        const width = 300 + this.scores.length * 100;
         return (
             <div>
                 <h3>{_("tablet.head_judge.dance_judge_scores")}</h3>
                 <table
                     className="line-judge-scores"
                     ref={this.makeTableRef}
+                    style={{ width: `${width}px` }}
                     onMouseMove={this.handleShowVerboseScore}
                     onMouseOut={this.handleHideVerboseScore}
                     onMouseUp={this.handleHideVerboseScore}
@@ -228,7 +239,7 @@ export default class LineJudgesScores extends React.Component {
                 >
                     <tbody>
                         <tr className="numbers">
-                            {this.all_parts.length > 1 ? <td /> : null}
+                            <td style={{ width: "300px" }} />
                             {this.renderNumbers()}
                         </tr>
                         {this.renderRows()}

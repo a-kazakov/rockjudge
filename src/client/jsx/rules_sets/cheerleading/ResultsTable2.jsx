@@ -133,7 +133,7 @@ export default class ResultsTable1 extends React.Component {
                     text: getParticipantDisplay(row.run.participant),
                 },
                 total_score: row.run_result.total_score_str,
-                penalty: "-",
+                penalty: row.run_result.extra_data.penalty || "", // Intentional ||
                 ...Object.assign(
                     {},
                     ...dance_judge_ids.map(id => ({
@@ -142,7 +142,6 @@ export default class ResultsTable1 extends React.Component {
                 ),
             });
         }
-        console.log(result);
         return result;
     }
 

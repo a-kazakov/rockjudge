@@ -22,7 +22,7 @@ export default class ScoringSection extends React.Component {
         const { max, score, part, readOnly } = this.props;
         return (
             <>
-                <h3>{_(`tablet.dance_judge.${part}`)}</h3>
+                <h3>{_(`score_parts.components.long.${part}`)}</h3>
                 <NumberSelectorInput
                     compact
                     highlightLower

@@ -2,7 +2,6 @@ import { React } from "HostModules";
 
 import getScoringType from "common/getScoringType";
 import PT from "prop-types";
-import TechScore from "./TechScore";
 import JazzGroupScore from "common/VerboseJudgeScore/JazzGroupScore";
 
 export default class VerboseJudgeScore extends React.Component {
@@ -32,9 +31,6 @@ export default class VerboseJudgeScore extends React.Component {
         switch (scoring_type) {
             case "jazz_group":
                 ScoreComponent = JazzGroupScore;
-                break;
-            case "tech":
-                ScoreComponent = TechScore;
                 break;
             default:
                 return (

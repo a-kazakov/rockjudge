@@ -86,7 +86,6 @@ export default class SelectorInput extends React.PureComponent {
         let result = [];
         let first_value_idx = null;
         for (let idx = 0; idx < this.props.choices.length; ++idx) {
-            // eslint-disable-next-line no-unused-vars
             const [value, _text, _style] = this.props.choices[idx];
             if (this.props.value === value) {
                 first_value_idx = idx;

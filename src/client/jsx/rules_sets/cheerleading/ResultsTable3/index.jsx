@@ -54,9 +54,7 @@ export default class ResultsTable3 extends React.Component {
                         <tbody>
                             <tr>
                                 <td style={{ verticalAlign: "top", width: "50pt" }}>
-                                    <div style={{ border: "1pt solid black" }}>
-                                        <JazzGroupScore example />
-                                    </div>
+                                    <JazzGroupScore example />
                                 </td>
                                 <td style={{ verticalAlign: "top" }}>
                                     {_("results.hints.jazz_group")}
