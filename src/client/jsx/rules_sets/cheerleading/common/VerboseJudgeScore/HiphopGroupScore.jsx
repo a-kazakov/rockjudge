@@ -4,8 +4,8 @@ import formatScore from "./formatScore";
 import _ from "l10n";
 
 const ROWS = [
-    ["tech_pompon", "tech_dance|Bottom"],
-    ["tech_execution|Bottom", "group_sync|Left"],
+    ["tech_power", "tech_control|Bottom"],
+    ["tech_execution_sport|Bottom", "group_sync|Left"],
     ["group_similarity|Bottom", "group_position|Bottom"],
     ["choreography_art", "choreography_performance_effects|Bottom"],
     ["choreography_complexity|Right", "impression"],
@@ -13,7 +13,7 @@ const ROWS = [
 
 const BORDER_STYLE = "0.5pt solid #999";
 
-export default class FreestyleGroupScore extends React.Component {
+export default class HiphopGroupScore extends React.Component {
     static propTypes = {
         example: PT.bool,
         scoreResult: PT.object,

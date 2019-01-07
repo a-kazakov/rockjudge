@@ -51,7 +51,7 @@ class TourContext(CachedClass):
         ]
         scores_by_judge = zip(*scores_by_run)
         scores_by_judge_ordered = [
-            sorted(js, key=lambda s: s.total_score_with_penalty)
+            sorted(js, key=lambda s: -s.total_score_with_penalty)
             for js in scores_by_judge
         ]
         result = {}

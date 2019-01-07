@@ -32,7 +32,9 @@ export default class ScoringSection extends React.Component {
         return (
             <>
                 {this.maybeRenderPrimaryHeader()}
-                <h3>{_(`score_parts.components.long.${part}`)}</h3>
+                <h3 className="secondary">
+                    {_(`score_parts.components.long.${part}`)}
+                </h3>
                 <NumberSelectorInput
                     compact
                     highlightLower

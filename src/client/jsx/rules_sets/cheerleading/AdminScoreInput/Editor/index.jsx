@@ -10,6 +10,8 @@ import JazzGroupScore from "./JazzGroupScore";
 import HeadJudgeScore from "./HeadJudgeScore";
 import TechJudgeScore from "./TechJudgeScore";
 import CoupleScore from "./CoupleScore";
+import FreestyleGroupScore from "./FreestyleGroupScore";
+import HiphopGroupScore from "./HiphopGroupScore";
 
 export default class Editor extends React.Component {
     static propTypes = {
@@ -61,6 +63,10 @@ export default class Editor extends React.Component {
                 return <TechJudgeScore {...score_props} />;
             case "jazz_group":
                 return <JazzGroupScore {...score_props} />;
+            case "freestyle_group":
+                return <FreestyleGroupScore {...score_props} />;
+            case "hiphop_group":
+                return <HiphopGroupScore {...score_props} />;
             case "couple":
                 return <CoupleScore {...score_props} />;
             case null:

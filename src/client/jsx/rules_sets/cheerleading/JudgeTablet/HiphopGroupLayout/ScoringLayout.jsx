@@ -56,9 +56,9 @@ export default class ScoringLayout extends React.Component {
                 </div>
                 <SeveralColumns ratios={RATIOS}>
                     <div className="parts-block">
-                        {this.renderSelector("tech_pompon", "tech")}
-                        {this.renderSelector("tech_dance")}
-                        {this.renderSelector("tech_execution")}
+                        {this.renderSelector("tech_power", "tech")}
+                        {this.renderSelector("tech_control")}
+                        {this.renderSelector("tech_execution_sport")}
                     </div>
                     <div className="parts-block">
                         {this.renderSelector("group_sync", "group")}

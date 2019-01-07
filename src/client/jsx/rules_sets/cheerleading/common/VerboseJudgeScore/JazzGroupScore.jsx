@@ -49,7 +49,10 @@ export default class JazzGroupScore extends React.Component {
     };
     render() {
         return (
-            <table className="score-breakdown" style={{ width: "50pt" }}>
+            <table
+                className="score-breakdown"
+                style={{ width: "50pt", tableLayout: "fixed" }}
+            >
                 <tbody style={{ width: "50pt" }}>
                     {ROWS.map(this.renderRow)}
                     <tr>

@@ -1,6 +1,10 @@
-.skating-JudgeTablet {
+.cheerleading-JudgeTablet {
     .fill-space();
     .flex-col();
+    .GeneralLayout {
+        .fill-space();
+        .flex-col();
+    }
     header {
         .flex-item();
         .flex-row();
@@ -101,11 +105,13 @@
         h3 {
             font-size: 14px;
             margin: 5px 0;
-            text-align: right;
-            font-weight: initial;
+            font-weight: bold;
+            text-align: left;
+            &.secondary{
+                text-align: right;
+                font-weight: initial;
+            }
             &.primary {
-                text-align: left;
-                font-weight: bold;
                 float: left;
             }
         }

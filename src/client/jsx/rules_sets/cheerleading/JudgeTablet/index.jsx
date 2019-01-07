@@ -8,7 +8,9 @@ import getScoringType from "common/getScoringType";
 import HeadJudgeLayout from "./HeadJudgeLayout";
 import JazzGroupLayout from "./JazzGroupLayout";
 import TechJudgeLayout from "./TechJudgeLayout";
-import CoupleLayout from "JudgeTablet/CoupleLayout";
+import CoupleLayout from "./CoupleLayout";
+import FreestyleGroupLayout from "./FreestyleGroupLayout";
+import HiphopGroupLayout from "./HiphopGroupLayout";
 
 export default class JudgeTablet extends React.Component {
     static propTypes = {
@@ -18,6 +20,8 @@ export default class JudgeTablet extends React.Component {
 
     static LAYOUTS = {
         jazz_group: JazzGroupLayout,
+        freestyle_group: FreestyleGroupLayout,
+        hiphop_group: HiphopGroupLayout,
         couple: CoupleLayout,
         head: HeadJudgeLayout,
         tech: TechJudgeLayout,
@@ -53,7 +57,7 @@ export default class JudgeTablet extends React.Component {
         );
         if (scoring_type == null) {
             return (
-                <div className="skating-JudgeTablet">
+                <div className="cheerleading-JudgeTablet">
                     <div className="error-message">
                         {_("tablet.global.wrong_judge_role")}
                     </div>
@@ -65,7 +69,7 @@ export default class JudgeTablet extends React.Component {
             return <div>Not implemented!</div>;
         }
         return (
-            <div className="skating-JudgeTablet">
+            <div className="cheerleading-JudgeTablet">
                 <LayoutClass
                     disciplineJudge={this.props.disciplineJudge}
                     tour={this.props.tour}

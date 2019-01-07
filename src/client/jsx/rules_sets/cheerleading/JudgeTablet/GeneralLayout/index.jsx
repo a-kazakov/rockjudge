@@ -91,7 +91,6 @@ export default class GeneralLayout extends React.Component {
 
     getClassName() {
         return makeClassName({
-            "skating-JudgeTablet": true,
             GeneralLayout: true,
             ...this.props.classNames,
         });

@@ -228,7 +228,7 @@ export default class LineJudgesScores extends React.Component {
                 <table
                     className="line-judge-scores"
                     ref={this.makeTableRef}
-                    style={{ width: `${width}px` }}
+                    style={{ width: `${width}px`, maxWidth: "100%" }}
                     onMouseMove={this.handleShowVerboseScore}
                     onMouseOut={this.handleHideVerboseScore}
                     onMouseUp={this.handleHideVerboseScore}

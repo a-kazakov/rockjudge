@@ -7,6 +7,8 @@ import ColumnsWidths from "./ColumnsWidths";
 import Row from "./Row";
 import JazzGroupScore from "common/VerboseJudgeScore/JazzGroupScore";
 import CoupleScore from "common/VerboseJudgeScore/CoupleScore";
+import FreestyleGroupScore from "common/VerboseJudgeScore/FreestyleGroupScore";
+import HiphopGroupScore from "common/VerboseJudgeScore/HiphopGroupScore";
 
 export default class ResultsTable3 extends React.Component {
     static propTypes = {
@@ -67,6 +69,16 @@ export default class ResultsTable3 extends React.Component {
                 return this.renderHintBody(
                     JazzGroupScore,
                     _("results.hints.jazz_group"),
+                );
+            case "cheerleading.freestyle_group":
+                return this.renderHintBody(
+                    FreestyleGroupScore,
+                    _("results.hints.freestyle_group"),
+                );
+            case "cheerleading.hiphop_group":
+                return this.renderHintBody(
+                    HiphopGroupScore,
+                    _("results.hints.hiphop_group"),
                 );
             case "cheerleading.couple":
                 return this.renderHintBody(CoupleScore, _("results.hints.couple"));

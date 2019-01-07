@@ -80,6 +80,10 @@ class ScoreContextBase(CachedClass):
         if judge_role == "dance_judge":
             if scoring_system_name == "jazz_group":
                 return ScoreContextJazzGroup
+            if scoring_system_name == "freestyle_group":
+                return ScoreContextFreestyleGroup
+            if scoring_system_name == "hiphop_group":
+                return ScoreContextHiphopGroup
             if scoring_system_name == "couple":
                 return ScoreContextCouple
         if judge_role == "tech_judge":
@@ -283,6 +287,36 @@ class ScoreContextJazzGroup(ScoreContextDanceJudge):
         "tech_execution": make_number_field(10),
         "tech_control_stretching": make_number_field(10),
         "tech_style_power": make_number_field(10),
+        "group_sync": make_number_field(10),
+        "group_similarity": make_number_field(10),
+        "group_position": make_number_field(10),
+        "choreography_art": make_number_field(10),
+        "choreography_performance_effects": make_number_field(10),
+        "choreography_complexity": make_number_field(10),
+        "impression": make_number_field(10),
+    }
+
+
+class ScoreContextFreestyleGroup(ScoreContextDanceJudge):
+    FIELDS = {
+        "tech_pompon": make_number_field(10),
+        "tech_dance": make_number_field(10),
+        "tech_execution": make_number_field(10),
+        "group_sync": make_number_field(10),
+        "group_similarity": make_number_field(10),
+        "group_position": make_number_field(10),
+        "choreography_art": make_number_field(10),
+        "choreography_performance_effects": make_number_field(10),
+        "choreography_complexity": make_number_field(10),
+        "impression": make_number_field(10),
+    }
+
+
+class ScoreContextHiphopGroup(ScoreContextDanceJudge):
+    FIELDS = {
+        "tech_power": make_number_field(10),
+        "tech_control": make_number_field(10),
+        "tech_execution_sport": make_number_field(10),
         "group_sync": make_number_field(10),
         "group_similarity": make_number_field(10),
         "group_position": make_number_field(10),

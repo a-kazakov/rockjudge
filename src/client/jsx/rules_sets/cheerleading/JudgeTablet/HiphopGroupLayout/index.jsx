@@ -6,7 +6,7 @@ import GeneralLayout from "JudgeTablet/GeneralLayout";
 import ScoringLayout from "./ScoringLayout";
 import LastPage from "JudgeTablet/LastPage";
 
-export default class FreestyleGroupLayout extends React.Component {
+export default class HiphopGroupLayout extends React.Component {
     static propTypes = {
         disciplineJudge: PT.object.isRequired,
         tour: PT.object.isRequired,

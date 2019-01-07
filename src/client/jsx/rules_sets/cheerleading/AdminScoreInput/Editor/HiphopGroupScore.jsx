@@ -6,7 +6,7 @@ import PT from "prop-types";
 import GeneralEditor from "./GeneralEditor";
 import NumberBlock from "./GeneralEditor/blocks/NumberBlock";
 
-export default class FreestyleGroupScore extends React.Component {
+export default class HiphopGroupScore extends React.Component {
     static propTypes = {
         readOnly: PT.bool.isRequired,
         scoreData: PT.object.isRequired,
@@ -34,9 +34,9 @@ export default class FreestyleGroupScore extends React.Component {
                 onDiscard={this.props.onDiscard}
                 onSubmit={this.props.onSubmit}
             >
-                {this.renderBlock("tech_pompon")}
-                {this.renderBlock("tech_dance")}
-                {this.renderBlock("tech_execution")}
+                {this.renderBlock("tech_power")}
+                {this.renderBlock("tech_control")}
+                {this.renderBlock("tech_execution_sport")}
                 {this.renderBlock("group_sync")}
                 {this.renderBlock("group_similarity")}
                 {this.renderBlock("group_position")}
