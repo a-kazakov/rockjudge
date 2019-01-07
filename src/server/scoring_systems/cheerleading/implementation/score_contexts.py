@@ -88,6 +88,8 @@ class ScoreContextBase(CachedClass):
                 return ScoreContextCouple
             if scoring_system_name == "cl_group":
                 return ScoreContextClGroup
+            if scoring_system_name == "cl_stunt":
+                return ScoreContextClStunt
         if judge_role == "tech_judge":
             return ScoreContextTechJudge
         if judge_role == "head_judge":
@@ -353,6 +355,16 @@ class ScoreContextClGroup(ScoreContextDanceJudge):
         "acrobatics": make_number_field(10),
         "continuity": make_number_field(5),
         "impression": make_number_field(10),
+    }
+
+
+class ScoreContextClStunt(ScoreContextDanceJudge):
+    FIELDS = {
+        "stunt_tech": make_number_field(30),
+        "stunt_complexity": make_number_field(25),
+        "stunt_shape": make_number_field(20),
+        "presentation_transitions": make_number_field(15),
+        "presentation_complexity": make_number_field(10),
     }
 
 

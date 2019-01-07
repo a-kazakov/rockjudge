@@ -10,6 +10,7 @@ import CoupleScore from "common/VerboseJudgeScore/CoupleScore";
 import FreestyleGroupScore from "common/VerboseJudgeScore/FreestyleGroupScore";
 import HiphopGroupScore from "common/VerboseJudgeScore/HiphopGroupScore";
 import ClGroupScore from "common/VerboseJudgeScore/ClGroupScore";
+import ClStuntScore from "common/VerboseJudgeScore/ClStuntScore";
 
 export default class ResultsTable3 extends React.Component {
     static propTypes = {
@@ -85,6 +86,8 @@ export default class ResultsTable3 extends React.Component {
                 return this.renderHintBody(CoupleScore, _("results.hints.couple"));
             case "cheerleading.cl_group":
                 return this.renderHintBody(ClGroupScore, _("results.hints.cl_group"));
+            case "cheerleading.cl_stunt":
+                return this.renderHintBody(ClStuntScore, _("results.hints.cl_stunt"));
             default:
                 return null;
         }

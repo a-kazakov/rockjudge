@@ -3,6 +3,17 @@ import { React } from "HostModules";
 import PT from "prop-types";
 import makeClassName from "common/makeClassName";
 
+const SCALE_SIZES = new Map([
+    ["stunt_tech", 30],
+    ["stunt_complexity", 25],
+    ["stunt_shape", 20],
+    ["presentation_transitions", 15],
+    ["stunts", 25],
+    ["pyramids", 25],
+    ["tosses", 15],
+    ["continuity", 5],
+]);
+
 export default class Cell extends React.Component {
     static propTypes = {
         disciplineJudge: PT.object.isRequired,
@@ -36,7 +47,7 @@ export default class Cell extends React.Component {
             return "";
         }
         const median = this.props.medians.get(this.props.part);
-        const scale_size = 10;
+        const scale_size = SCALE_SIZES.get(this.props.part) ?? 10;
         const diff = Math.abs(median - cell_value) / scale_size - 1e-5;
         let result = diff < 0.15 ? "green" : diff < 0.3 ? "yellow" : "red";
         if (this.props.score.confirmed) {

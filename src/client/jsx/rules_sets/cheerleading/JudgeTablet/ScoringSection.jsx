@@ -22,7 +22,7 @@ export default class ScoringSection extends React.Component {
 
     maybeRenderPrimaryHeader() {
         const { group } = this.props;
-        if (group == null) {
+        if (group == null || group === "") {
             return null;
         }
         return <h3 className="primary">{_(`score_parts.groups.long.${group}`)}</h3>;

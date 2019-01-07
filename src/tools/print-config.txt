@@ -12,4 +12,4 @@
 ; В этой строке укажите путь к исполняемому файлу MS Word. Например:
 ; [WORD] C:\Program Files\Microsoft Office\Office16\winword.exe
 
-[WORD] C:\Program Files\Microsoft Office\Office16\winword.exe ; asdf ;sadf asdf
+[WORD] C:\Program Files (x86)\Microsoft Office\root\Office16\winword.exe ; asdf ;sadf asdf

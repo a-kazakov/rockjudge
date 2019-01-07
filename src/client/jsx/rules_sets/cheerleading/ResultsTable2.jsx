@@ -148,7 +148,7 @@ export default class ResultsTable1 extends React.Component {
     render() {
         this.setupCache();
         return (
-            <div className="ResultsTable1">
+            <div className="ResultsTable2">
                 <CustomTable
                     cols={this.getCols()}
                     fontSize="9pt"

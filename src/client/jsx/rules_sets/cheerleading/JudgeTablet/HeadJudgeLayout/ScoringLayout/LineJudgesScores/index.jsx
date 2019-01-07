@@ -7,6 +7,13 @@ import Row from "./Row";
 
 const PARTS_ORDER = new Map(
     [
+        "tech_fulfillment",
+        "tech_control",
+        "tech_power",
+        "tech_stretching",
+        "tech_execution_sport",
+        "tech_pompon",
+        "tech_dance",
         "tech_execution",
         "tech_control_stretching",
         "tech_style_power",
@@ -15,8 +22,23 @@ const PARTS_ORDER = new Map(
         "group_position",
         "choreography_art",
         "choreography_performance_effects",
+        "choreography_musicality",
         "choreography_complexity",
+        "choreography_style",
+        "choreography_performance",
         "impression_art",
+        "cheer_block",
+        "stunts",
+        "pyramids",
+        "tosses",
+        "acrobatics",
+        "continuity",
+        "impression",
+        "stunt_tech",
+        "stunt_complexity",
+        "stunt_shape",
+        "presentation_transitions",
+        "presentation_complexity",
     ].map((value, idx) => [value, idx + 1]),
 );
 
@@ -228,7 +250,7 @@ export default class LineJudgesScores extends React.Component {
                 <table
                     className="line-judge-scores"
                     ref={this.makeTableRef}
-                    style={{ width: `${width}px`, maxWidth: "100%" }}
+                    style={{ maxWidth: `${width}px` }}
                     onMouseMove={this.handleShowVerboseScore}
                     onMouseOut={this.handleHideVerboseScore}
                     onMouseUp={this.handleHideVerboseScore}

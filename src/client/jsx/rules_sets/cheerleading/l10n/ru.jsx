@@ -108,6 +108,22 @@ const CL_GROUP_HINT = [
     ],
 ];
 
+const CL_STUNT_HINT = [
+    [
+        ["Сти", "Станты и тоссы: техническое исполнение"],
+        ["Ссл", "Станты и тоссы: сложность"],
+    ],
+    [["Сфп", "Станты и тоссы: форма и появления"], []],
+    [
+        ["Пп", "Общее представление: переходы"],
+        ["Псл", "Общее представление: сложность"],
+    ],
+    [
+        ["М", "Место у судьи (с учетом штрафа)"],
+        ["Σ", "Сумма баллов (без учета штрафа)"],
+    ],
+];
+
 function makeHint(data) {
     const body = data.map((pieces, idx) => (
         <tr key={idx}>
@@ -333,6 +349,7 @@ const PHRASES = {
             hiphop_group: makeHint(HIPHOP_GROUP_HINT),
             couple: makeHint(COUPLE_HINT),
             cl_group: makeHint(CL_GROUP_HINT),
+            cl_stunt: makeHint(CL_STUNT_HINT),
         },
     },
     global: {
@@ -382,7 +399,9 @@ const PHRASES = {
                 tech: "Техника",
                 group: "Групповое исполнение",
                 choreography: "Хореография",
-                impression_art: "Общее впечатление",
+                impression: "Общее впечатление",
+                stunt: "Станты",
+                presentation: "Общее представление",
             },
         },
         components: {
@@ -414,6 +433,11 @@ const PHRASES = {
                 acrobatics: "Акр",
                 continuity: "НК",
                 impression: "ОВ",
+                stunt_tech: "Сти",
+                stunt_complexity: "Ссл",
+                stunt_shape: "Сфп",
+                presentation_transitions: "Пп",
+                presentation_complexity: "Псл",
                 place: "М",
                 total_score: "Σ",
             },
@@ -446,6 +470,11 @@ const PHRASES = {
                 acrobatics: "Акробатика",
                 continuity: "Непрерывность",
                 impression: "Общее впечатление",
+                stunt_tech: "Техническое исполнение",
+                stunt_complexity: "Сложность",
+                stunt_shape: "Форма и появления стантов",
+                presentation_transitions: "Переходы",
+                presentation_complexity: "Сложность",
                 time_penalty: "Время",
                 music_violated: "Музыка",
                 entry_exit_violated: "Вход/выход",
@@ -486,6 +515,11 @@ const PHRASES = {
                 acrobatics: "Акробатика",
                 continuity: "Непрерывность композиции",
                 impression: "Общее впечатление",
+                stunt_tech: "Техническое исполнение",
+                stunt_complexity: "Сложность",
+                stunt_shape: "Форма и появления стантов",
+                presentation_transitions: "Переходы",
+                presentation_complexity: "Сложность",
                 place: "Место",
                 time_penalty: "Штраф за временные ограничения",
                 music_violated: "Нарушения по музыке (−5)",
