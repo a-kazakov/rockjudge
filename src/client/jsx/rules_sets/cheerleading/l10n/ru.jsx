@@ -97,6 +97,17 @@ const COUPLE_HINT = [
     ],
 ];
 
+const CL_GROUP_HINT = [
+    [["ЧБ", "Чир-блок"], ["Стн", "Станты"]],
+    [["Пир", "Пирамиды"], ["Тос", "Тоссы"]],
+    [["Акр", "Акробатика"], ["НК", "Непрерывность композиции"]],
+    [["ОВ", "Общее впечатление"], []],
+    [
+        ["М", "Место у судьи (с учетом штрафа)"],
+        ["Σ", "Сумма баллов (без учета штрафа)"],
+    ],
+];
+
 function makeHint(data) {
     const body = data.map((pieces, idx) => (
         <tr key={idx}>
@@ -321,6 +332,7 @@ const PHRASES = {
             freestyle_group: makeHint(FREESTYLE_GROUP_HINT),
             hiphop_group: makeHint(HIPHOP_GROUP_HINT),
             couple: makeHint(COUPLE_HINT),
+            cl_group: makeHint(CL_GROUP_HINT),
         },
     },
     global: {
@@ -370,7 +382,7 @@ const PHRASES = {
                 tech: "Техника",
                 group: "Групповое исполнение",
                 choreography: "Хореография",
-                impression: "Общее впечатление",
+                impression_art: "Общее впечатление",
             },
         },
         components: {
@@ -394,6 +406,13 @@ const PHRASES = {
                 choreography_performance: "Хзк",
                 choreography_style: "Хос",
                 choreography_musicality: "Хм",
+                impression_art: "ОВ",
+                cheer_block: "ЧБ",
+                stunts: "Стн",
+                pyramids: "Пир",
+                tosses: "Тос",
+                acrobatics: "Акр",
+                continuity: "НК",
                 impression: "ОВ",
                 place: "М",
                 total_score: "Σ",
@@ -419,7 +438,14 @@ const PHRASES = {
                 choreography_performance: "Зрелищность композиции",
                 choreography_style: "Оригинальность / Стиль",
                 choreography_musicality: "Музыкальность",
-                impression: "Артистичность",
+                impression_art: "Артистичность",
+                cheer_block: "Чир-блок",
+                stunts: "Станты",
+                pyramids: "Пирамиды",
+                tosses: "Тоссы",
+                acrobatics: "Акробатика",
+                continuity: "Непрерывность",
+                impression: "Общее впечатление",
                 time_penalty: "Время",
                 music_violated: "Музыка",
                 entry_exit_violated: "Вход/выход",
@@ -452,7 +478,14 @@ const PHRASES = {
                 choreography_performance: "Зрелищность композиции",
                 choreography_style: "Оригинальность / Стиль",
                 choreography_musicality: "Музыкальность",
-                impression: "Артистичность / Воздействие на зрителей",
+                impression_art: "Артистичность / Воздействие на зрителей",
+                cheer_block: "Чир-блок",
+                stunts: "Станты",
+                pyramids: "Пирамиды",
+                tosses: "Тоссы",
+                acrobatics: "Акробатика",
+                continuity: "Непрерывность композиции",
+                impression: "Общее впечатление",
                 place: "Место",
                 time_penalty: "Штраф за временные ограничения",
                 music_violated: "Нарушения по музыке (−5)",

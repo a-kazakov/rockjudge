@@ -6,7 +6,8 @@ import SeveralColumns from "JudgeTablet/SeveralColumns";
 import ConfirmationButton from "JudgeTablet/ConfirmationButton";
 import ScoringSection from "JudgeTablet/ScoringSection";
 
-const RATIOS = [21, 21];
+const RATIOS_EQ = [21, 21];
+const RATIOS_15_5 = [31, 11];
 
 export default class ScoringLayout extends React.Component {
     static propTypes = {
@@ -24,11 +25,11 @@ export default class ScoringLayout extends React.Component {
         return Object.values(this.props.score.data).every(x => x != null);
     }
 
-    renderSelector(part, group = null) {
+    renderSelector(part, max = 10) {
         const { readOnly, score, onScoreUpdate } = this.props;
         return (
             <ScoringSection
-                group={group}
+                max={max}
                 part={part}
                 readOnly={readOnly}
                 score={score}
@@ -54,30 +55,19 @@ export default class ScoringLayout extends React.Component {
                         onConfirm={this.handleConfirm}
                     />
                 </div>
-                <SeveralColumns ratios={RATIOS}>
-                    <div className="parts-block">
-                        {this.renderSelector("tech_power", "tech")}
-                        {this.renderSelector("tech_control")}
-                        {this.renderSelector("tech_execution_sport")}
-                    </div>
-                    <div className="parts-block">
-                        {this.renderSelector("group_sync", "group")}
-                        {this.renderSelector("group_similarity")}
-                        {this.renderSelector("group_position")}
-                    </div>
+                <SeveralColumns ratios={RATIOS_EQ}>
+                    {this.renderSelector("cheer_block")}
+                    {this.renderSelector("acrobatics")}
                 </SeveralColumns>
-                <SeveralColumns ratios={RATIOS}>
-                    <div className="parts-block">
-                        {this.renderSelector("choreography_art", "choreography")}
-                        {this.renderSelector("choreography_performance_effects")}
-                        {this.renderSelector("choreography_complexity")}
-                    </div>
-                    <>
-                        <div className="parts-block">
-                            {this.renderSelector("impression_art", "impression_art")}
-                        </div>
-                        <br />
-                    </>
+                {this.renderSelector("stunts", 25)}
+                {this.renderSelector("pyramids", 25)}
+                <SeveralColumns ratios={RATIOS_15_5}>
+                    {this.renderSelector("tosses", 15)}
+                    {this.renderSelector("continuity", 5)}
+                </SeveralColumns>
+                <SeveralColumns ratios={RATIOS_EQ}>
+                    {this.renderSelector("impression")}
+                    <div />
                 </SeveralColumns>
             </div>
         );

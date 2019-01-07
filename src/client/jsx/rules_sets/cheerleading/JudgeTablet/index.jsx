@@ -11,6 +11,7 @@ import TechJudgeLayout from "./TechJudgeLayout";
 import CoupleLayout from "./CoupleLayout";
 import FreestyleGroupLayout from "./FreestyleGroupLayout";
 import HiphopGroupLayout from "./HiphopGroupLayout";
+import ClGroupLayout from "JudgeTablet/ClGroupLayout";
 
 export default class JudgeTablet extends React.Component {
     static propTypes = {
@@ -23,6 +24,7 @@ export default class JudgeTablet extends React.Component {
         freestyle_group: FreestyleGroupLayout,
         hiphop_group: HiphopGroupLayout,
         couple: CoupleLayout,
+        cl_group: ClGroupLayout,
         head: HeadJudgeLayout,
         tech: TechJudgeLayout,
     };

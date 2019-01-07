@@ -74,7 +74,7 @@ export default class ScoringLayout extends React.Component {
                     </div>
                     <>
                         <div className="parts-block">
-                            {this.renderSelector("impression", "impression")}
+                            {this.renderSelector("impression_art", "impression_art")}
                         </div>
                         <br />
                     </>

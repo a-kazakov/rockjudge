@@ -8,7 +8,7 @@ const ROWS = [
     ["tech_power|Bottom", "tech_stretching|Bottom"],
     ["choreography_musicality", "choreography_complexity"],
     ["choreography_style|Bottom", "choreography_performance|Bottom"],
-    ["group_sync|Right", "impression"],
+    ["group_sync|Right", "impression_art"],
 ];
 
 const BORDER_STYLE = "0.5pt solid #999";

@@ -73,7 +73,7 @@ export default class ScoringLayout extends React.Component {
                         {this.renderSelector("group_sync", "group")}
                     </div>
                     <div className="parts-block">
-                        {this.renderSelector("impression", "impression")}
+                        {this.renderSelector("impression_art", "impression_art")}
                     </div>
                 </SeveralColumns>
             </div>

@@ -28,11 +28,11 @@ export default class ScoringSection extends React.Component {
         return <h3 className="primary">{_(`score_parts.groups.long.${group}`)}</h3>;
     }
     render() {
-        const { max, score, part, readOnly } = this.props;
+        const { max, score, part, readOnly, group } = this.props;
         return (
             <>
                 {this.maybeRenderPrimaryHeader()}
-                <h3 className="secondary">
+                <h3 className={group != null ? "secondary" : ""}>
                     {_(`score_parts.components.long.${part}`)}
                 </h3>
                 <NumberSelectorInput

@@ -6,6 +6,7 @@ import JazzGroupScore from "./JazzGroupScore";
 import CoupleScore from "./CoupleScore";
 import FreestyleGroupScore from "./FreestyleGroupScore";
 import HiphopGroupScore from "./HiphopGroupScore";
+import ClGroupScore from "common/VerboseJudgeScore/ClGroupScore";
 
 export default class VerboseJudgeScore extends React.Component {
     static propTypes = {
@@ -43,6 +44,9 @@ export default class VerboseJudgeScore extends React.Component {
                 break;
             case "couple":
                 ScoreComponent = CoupleScore;
+                break;
+            case "cl_group":
+                ScoreComponent = ClGroupScore;
                 break;
             default:
                 return (

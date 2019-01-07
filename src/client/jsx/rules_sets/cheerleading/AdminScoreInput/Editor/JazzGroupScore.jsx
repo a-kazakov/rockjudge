@@ -43,7 +43,7 @@ export default class JazzGroupScore extends React.Component {
                 {this.renderBlock("choreography_art")}
                 {this.renderBlock("choreography_performance_effects")}
                 {this.renderBlock("choreography_complexity")}
-                {this.renderBlock("impression")}
+                {this.renderBlock("impression_art")}
             </GeneralEditor>
         );
     }

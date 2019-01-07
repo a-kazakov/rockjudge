@@ -86,6 +86,8 @@ class ScoreContextBase(CachedClass):
                 return ScoreContextHiphopGroup
             if scoring_system_name == "couple":
                 return ScoreContextCouple
+            if scoring_system_name == "cl_group":
+                return ScoreContextClGroup
         if judge_role == "tech_judge":
             return ScoreContextTechJudge
         if judge_role == "head_judge":
@@ -293,7 +295,7 @@ class ScoreContextJazzGroup(ScoreContextDanceJudge):
         "choreography_art": make_number_field(10),
         "choreography_performance_effects": make_number_field(10),
         "choreography_complexity": make_number_field(10),
-        "impression": make_number_field(10),
+        "impression_art": make_number_field(10),
     }
 
 
@@ -308,7 +310,7 @@ class ScoreContextFreestyleGroup(ScoreContextDanceJudge):
         "choreography_art": make_number_field(10),
         "choreography_performance_effects": make_number_field(10),
         "choreography_complexity": make_number_field(10),
-        "impression": make_number_field(10),
+        "impression_art": make_number_field(10),
     }
 
 
@@ -323,7 +325,7 @@ class ScoreContextHiphopGroup(ScoreContextDanceJudge):
         "choreography_art": make_number_field(10),
         "choreography_performance_effects": make_number_field(10),
         "choreography_complexity": make_number_field(10),
-        "impression": make_number_field(10),
+        "impression_art": make_number_field(10),
     }
 
 
@@ -338,6 +340,18 @@ class ScoreContextCouple(ScoreContextDanceJudge):
         "choreography_style": make_number_field(10),
         "choreography_performance": make_number_field(10),
         "group_sync": make_number_field(10),
+        "impression_art": make_number_field(10),
+    }
+
+
+class ScoreContextClGroup(ScoreContextDanceJudge):
+    FIELDS = {
+        "cheer_block": make_number_field(10),
+        "stunts": make_number_field(25),
+        "pyramids": make_number_field(25),
+        "tosses": make_number_field(15),
+        "acrobatics": make_number_field(10),
+        "continuity": make_number_field(5),
         "impression": make_number_field(10),
     }
 

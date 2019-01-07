@@ -16,7 +16,7 @@ const PARTS_ORDER = new Map(
         "choreography_art",
         "choreography_performance_effects",
         "choreography_complexity",
-        "impression",
+        "impression_art",
     ].map((value, idx) => [value, idx + 1]),
 );
 

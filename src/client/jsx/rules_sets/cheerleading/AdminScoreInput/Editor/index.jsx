@@ -12,6 +12,7 @@ import TechJudgeScore from "./TechJudgeScore";
 import CoupleScore from "./CoupleScore";
 import FreestyleGroupScore from "./FreestyleGroupScore";
 import HiphopGroupScore from "./HiphopGroupScore";
+import ClGroupScore from "AdminScoreInput/Editor/ClGroupScore";
 
 export default class Editor extends React.Component {
     static propTypes = {
@@ -67,6 +68,8 @@ export default class Editor extends React.Component {
                 return <FreestyleGroupScore {...score_props} />;
             case "hiphop_group":
                 return <HiphopGroupScore {...score_props} />;
+            case "cl_group":
+                return <ClGroupScore {...score_props} />;
             case "couple":
                 return <CoupleScore {...score_props} />;
             case null:

@@ -6,7 +6,7 @@ import PT from "prop-types";
 import GeneralEditor from "./GeneralEditor";
 import NumberBlock from "./GeneralEditor/blocks/NumberBlock";
 
-export default class CoupleScore extends React.Component {
+export default class ClGroupScore extends React.Component {
     static propTypes = {
         readOnly: PT.bool.isRequired,
         scoreData: PT.object.isRequired,
@@ -15,13 +15,13 @@ export default class CoupleScore extends React.Component {
         onSubmit: PT.func.isRequired,
     };
 
-    renderBlock(part) {
+    renderBlock(part, max = 10) {
         return (
             <NumberBlock
                 nullable
                 field={part}
                 label={_(`score_parts.components.short.${part}`)}
-                max={10}
+                max={max}
                 step={0.5}
             />
         );
@@ -34,16 +34,13 @@ export default class CoupleScore extends React.Component {
                 onDiscard={this.props.onDiscard}
                 onSubmit={this.props.onSubmit}
             >
-                {this.renderBlock("tech_fulfillment")}
-                {this.renderBlock("tech_control")}
-                {this.renderBlock("tech_power")}
-                {this.renderBlock("tech_stretching")}
-                {this.renderBlock("choreography_musicality")}
-                {this.renderBlock("choreography_complexity")}
-                {this.renderBlock("choreography_style")}
-                {this.renderBlock("choreography_performance")}
-                {this.renderBlock("group_sync")}
-                {this.renderBlock("impression_art")}
+                {this.renderBlock("cheer_block")}
+                {this.renderBlock("stunts", 25)}
+                {this.renderBlock("pyramids", 25)}
+                {this.renderBlock("tosses", 15)}
+                {this.renderBlock("acrobatics")}
+                {this.renderBlock("continuity", 5)}
+                {this.renderBlock("impression")}
             </GeneralEditor>
         );
     }
