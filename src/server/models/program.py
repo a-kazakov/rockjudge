@@ -30,7 +30,7 @@ class Element(NamedTuple):
         return cls.create(**src)
 
     def validate(self) -> None:
-        for key, type_ in self._field_types.items():
+        for key, type_ in self.__annotations__.items():
             if type_ is float:
                 type_ = (int, float)
             if not isinstance(getattr(self, key), type_):

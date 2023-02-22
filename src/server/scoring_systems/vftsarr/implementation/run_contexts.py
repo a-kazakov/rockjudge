@@ -119,10 +119,23 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
         return result
 
     @property
+    def card_penalty(self) -> frac:
+        return frac(0) if self.card != "RC" else frac(-30)
+
+    @property
+    def restarts(self) -> int:
+        scores = self.scores_by_role["tech_judge"]
+        if not scores:
+            return 0
+        return max(s.counting_score.get("restarts", 0) for s in scores)
+
+    @property
+    def restarts_penalty(self) -> frac:
+        return frac(-30) * self.restarts
+
+    @property
     def penalty(self) -> frac:
-        if self.card == "RC":
-            return frac(-30)
-        return frac(0)
+        return self.card_penalty + self.restarts_penalty
 
     @property
     def bonus(self) -> int:
@@ -197,6 +210,7 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
             "status": self.run_info.status.value,
             "fall_down": fall_down,
             "undercount": undercount,
+            "restarts": self.restarts,
         }
 
     def make_result(self, place: int, advanced: bool) -> RunResult:
@@ -227,7 +241,7 @@ class RunContextDance(RunContextBase):
 class RunContextSolo(RunContextBase):
     @property
     def scoring_criterias(self) -> Tuple[str, ...]:
-        return ("fw", "dance_figs", "composition", "mistakes")
+        return ("fw", "dance_figs", "mistakes")
 
 
 class RunContextAcroBase(RunContextBase):

@@ -26,7 +26,6 @@ export default class SoloScore extends React.Component {
             >
                 <ReductionBlock nullable field="fw" label="FW" />
                 <NumberBlock nullable field="dance_figs" label="DF" step={step} />
-                <NumberBlock nullable field="composition" label="DF" step={step} />
                 <NumberBlock field="small_mistakes" label="SM" max={100} />
                 <NumberBlock field="big_mistakes" label="BM" max={100} />
             </GeneralEditor>

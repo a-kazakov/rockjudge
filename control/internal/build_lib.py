@@ -251,6 +251,7 @@ class BuildController:
             stderr=sp.PIPE,
             cwd=chdir,
             creationflags=sp.ABOVE_NORMAL_PRIORITY_CLASS,
+            shell=True,
         )
         out, err = p.communicate()
         if p.returncode != 0:

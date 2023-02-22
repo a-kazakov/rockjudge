@@ -114,11 +114,12 @@ export default class Row extends React.Component {
         return result;
     }
     renderAdditionalData() {
-        const need_undercount =
-            (this.props.row.run_result.extra_data.undercount || 0) > 0;
-        const need_fall_down =
-            (this.props.row.run_result.extra_data.fall_down || 0) > 0;
-        if (!need_undercount && !need_fall_down) {
+        const {undercount, fall_down, restarts} =
+            this.props.row.run_result.extra_data;
+        const need_undercount = (undercount || 0) > 0;
+        const need_fall_down = (fall_down || 0) > 0;
+        const need_restarts = (restarts || 0) > 0;
+        if (!need_undercount && !need_fall_down && !need_restarts) {
             return null;
         }
         return (
@@ -131,7 +132,7 @@ export default class Row extends React.Component {
                                     <strong>
                                         {`${_("score_parts.tech.long.undercount")}: `}
                                     </strong>
-                                    {this.props.row.run_result.extra_data.undercount}
+                                    {undercount}
                                 </p>
                             </td>
                         ) : null}
@@ -141,7 +142,17 @@ export default class Row extends React.Component {
                                     <strong>
                                         {`${_("score_parts.tech.long.fall_down")}: `}
                                     </strong>
-                                    {this.props.row.run_result.extra_data.fall_down}
+                                    {fall_down}
+                                </p>
+                            </td>
+                        ) : null}
+                        {need_restarts ? (
+                            <td style={{ border: "none" }}>
+                                <p className="text-center">
+                                    <strong>
+                                        {`${_("score_parts.tech.long.restarts")}: `}
+                                    </strong>
+                                    {restarts}
                                 </p>
                             </td>
                         ) : null}

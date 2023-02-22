@@ -309,7 +309,7 @@ class ScoreContextDanceExtended(ScoreContextBase):
             df_accuracy=frac(5, 2), df_complexity=frac(5, 2), df_art=frac(5, 2)
         ),
         "composition": make_combine_fields(c_idea=2, c_performance=2, c_bonus=2),
-        "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-30),
+        "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-10),
     }
 
     @property
@@ -354,7 +354,7 @@ class ScoreContextDance(ScoreContextBase):
         "fw_man": make_apply_reduction("fw_man"),
         "dance_figs": make_multiply("dance_figs", frac(5, 2)),
         "composition": make_multiply("composition", frac(2)),
-        "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-30),
+        "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-10),
     }
 
     @property
@@ -388,7 +388,7 @@ class ScoreContextAmFinalDance(ScoreContextDanceExtended):
             df_accuracy=frac(5, 4), df_complexity=frac(5, 4), df_art=frac(5, 4)
         ),
         "composition": make_combine_fields(c_idea=1, c_performance=1, c_bonus=1),
-        "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-30),
+        "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-10),
     }
 
 
@@ -396,29 +396,25 @@ class ScoreContextSolo(ScoreContextBase):
     DEFAULT_SCORES = {
         "fw": 100,
         "dance_figs": 0,
-        "composition": 0,
         "small_mistakes": 0,
         "big_mistakes": 0,
     }
     INITIAL_SCORES = {
         "fw": None,
         "dance_figs": None,
-        "composition": None,
         "small_mistakes": 0,
         "big_mistakes": 0,
     }
     SCORES_VALIDATORS = {
         "fw": validate_reduction,
         "dance_figs": make_validate_number(allow_halves=True, allow_none=True),
-        "composition": make_validate_number(allow_halves=True, allow_none=True),
         "small_mistakes": make_validate_number(max_value=100),
         "big_mistakes": make_validate_number(max_value=100),
     }
     CRITERIAS_MODIFIERS = {
         "fw": make_apply_reduction("fw", max_value=20),
         "dance_figs": make_multiply("dance_figs", frac(5, 2)),
-        "composition": make_multiply("composition", frac(2)),
-        "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-30),
+        "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-10),
     }
 
     @property
@@ -437,7 +433,6 @@ class ScoreContextSoloRough(ScoreContextSolo):
     SCORES_VALIDATORS = {
         "fw": validate_reduction,
         "dance_figs": make_validate_number(allow_none=True),
-        "composition": make_validate_number(allow_none=True),
         "small_mistakes": make_validate_number(max_value=100),
         "big_mistakes": make_validate_number(max_value=100),
     }
@@ -627,18 +622,21 @@ class ScoreContextTechDance(ScoreContextBase):
         "time": None,
         "card": "OK",
         "card_reasons": {key: False for key in get_all_card_reasons("base")},
+        "restarts": 0,
     }
     INITIAL_SCORES = {
         "jump_steps": 0,
         "time": None,
         "card": "OK",
         "card_reasons": {key: False for key in get_all_card_reasons("base")},
+        "restarts": 0,
     }
     SCORES_VALIDATORS = {
         "jump_steps": make_validate_number(max_value=100),
         "time": make_validate_number(max_value=24 * 60 * 60, allow_none=True),
         "card": validate_card,
         "card_reasons": make_validate_card_reasons("base"),
+        "restarts": make_validate_number(max_value=100),
     }
 
     @property
@@ -685,6 +683,7 @@ class ScoreContextTechFormation(ScoreContextBase):
             key: False for key in get_all_card_reasons("base", "formation")
         },
         "undercount": 0,
+        "restarts": 0,
     }
     INITIAL_SCORES = {
         "jump_steps": 0,
@@ -694,6 +693,7 @@ class ScoreContextTechFormation(ScoreContextBase):
             key: False for key in get_all_card_reasons("base", "formation")
         },
         "undercount": 0,
+        "restarts": 0,
     }
     SCORES_VALIDATORS = {
         "jump_steps": make_validate_number(max_value=100),
@@ -701,6 +701,7 @@ class ScoreContextTechFormation(ScoreContextBase):
         "card": validate_card,
         "card_reasons": make_validate_card_reasons("base", "formation"),
         "undercount": make_validate_number(max_value=100),
+        "restarts": make_validate_number(max_value=100),
     }
 
     @property

@@ -59,7 +59,7 @@ class Sportsman(NamedTuple):
         )
 
     def validate(self) -> None:
-        for key, type_ in self._field_types.items():
+        for key, type_ in self.__annotations__.items():
             if not isinstance(getattr(self, key), type_):
                 src_type = type(getattr(self, key))
                 raise TypeError(

@@ -38,11 +38,6 @@ export default class ScoringLayout extends React.Component {
                     max: 10,
                     step: step,
                 })}
-                {this.renderPart("composition", "number", {
-                    min: 0,
-                    max: 10,
-                    step: step,
-                })}
                 <Mistakes
                     readOnly={this.props.score.confirmed}
                     scoreData={this.props.score.data}

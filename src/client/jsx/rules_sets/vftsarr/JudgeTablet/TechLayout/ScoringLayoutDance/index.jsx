@@ -33,6 +33,9 @@ export default class ScoringLayoutDance extends React.Component {
     handleUndercountChange = value => {
         this.props.onScoreUpdate("undercount", value);
     };
+    handleRestartsChange = value => {
+        this.props.onScoreUpdate("restarts", value);
+    };
 
     renderFormationUndercountInput() {
         if (!checkSS(this.props.score.run.tour.scoring_system_name, "formation")) {
@@ -54,12 +57,21 @@ export default class ScoringLayoutDance extends React.Component {
         return (
             <div className="dance-part">
                 <div className="side-part">
-                    <h3>{_("tablet.tech_judge.jump_steps")}</h3>
+                    <div className="big-plus">
+                        <h3>{_("tablet.tech_judge.jump_steps")}</h3>
+                        <IntegerInput
+                            jumbo
+                            readOnly={this.props.score.confirmed}
+                            value={this.props.score.data.jump_steps}
+                            onChange={this.handleJumpStepsChange}
+                        />
+                    </div>
+                    <h3>{_("tablet.tech_judge.restarts")}</h3>
                     <IntegerInput
                         jumbo
                         readOnly={this.props.score.confirmed}
-                        value={this.props.score.data.jump_steps}
-                        onChange={this.handleJumpStepsChange}
+                        value={this.props.score.data.restarts}
+                        onChange={this.handleRestartsChange}
                     />
                 </div>
                 <div className="main-part">

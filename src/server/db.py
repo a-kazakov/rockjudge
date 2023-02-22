@@ -33,7 +33,7 @@ class NewDatabase:
     def engine(self) -> Engine:
         if self._engine is None:
             self._engine = create_engine(
-                "postgres://{user}:{password}@{host}/{dbname}".format(**DB_CONFIG)
+                "postgresql://{user}:{password}@{host}/{dbname}".format(**DB_CONFIG)
             )
         return self._engine
 

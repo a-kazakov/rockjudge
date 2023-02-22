@@ -1,6 +1,20 @@
 import { consoleError } from "common/logging";
 
 export default function translate(src, ...args) {
+    function chooseEnding(n, e1, e2, e5) {
+        let x = n % 100;
+        if (Math.floor(x / 10) === 1) {
+            return e5;
+        }
+        if (x % 10 === 1) {
+            return e1;
+        }
+        if (x % 10 >= 5 || x % 10 === 0) {
+            return e5;
+        }
+        return e2;
+    }
+
     let PHRASES = {
         admin: {
             buttons: {
@@ -69,19 +83,19 @@ export default function translate(src, ...args) {
             },
             dance_judge: {
                 acrobatics: "Акробатика",
-                big_mistakes: "Большие ошибки (−30)",
+                big_mistakes: "Большие ошибки",
                 composition: "Композиция",
                 dance_figs: "Танцевальные фигуры",
                 dance_tech: "Техника танцевания",
-                form_fall_down: "Падения (−3)",
-                form_small_mistakes: "Мелкие ошибки (−2)",
-                form_big_mistakes: "Большие ошибки (−10)",
+                form_fall_down: "Падения",
+                form_small_mistakes: "Мелкие ошибки",
+                form_big_mistakes: "Большие ошибк",
                 fw: "Основной ход (сбавка в %)",
                 fw_man: "Основной ход, партнёр (сбавка в %)",
                 fw_woman: "Основной ход, партнёрша (сбавка в %)",
                 impression: "Общее впечатление",
                 points: "Оценка",
-                small_mistakes: "Мелкие ошибки (−5)",
+                small_mistakes: "Мелкие ошибки",
                 df_accuracy: "Точность",
                 df_complexity: "Сложность",
                 df_difficulty: "Сложность, разнообразие, оригинальность",
@@ -136,6 +150,7 @@ export default function translate(src, ...args) {
                 form_red_card: "Красная (−15)",
                 form_yellow_card: "Желтая",
                 jump_steps: "Осн. ходы",
+                restarts: "Рестарты",
                 ok: "OK",
                 fall_down: "Падения (−30)",
                 card_type: "Карточка",
@@ -241,20 +256,21 @@ export default function translate(src, ...args) {
                 short_YC: "ЖК",
                 short_RC: "КК",
             },
+            restarts: value => `${value} рестарт${chooseEnding(value, "", "а", "ов")}`,
         },
         cards: {
             verbose: {
-                OK: "Зеленая карточка",
+                OK: "",
                 YC: "Желтая карточка",
                 RC: "Красная карточка",
             },
             long: {
-                OK: "ОК",
+                OK: "",
                 YC: "Желтая",
                 RC: "Красная",
             },
             short: {
-                OK: "ОК",
+                OK: "",
                 YC: "ЖК",
                 RC: "КК",
             },
@@ -326,6 +342,7 @@ export default function translate(src, ...args) {
                     fall_down: "Падения",
                     time: "Время",
                     undercount: "Недостаток спортсменов",
+                    restarts: "Рестарты",
                 },
             },
         },

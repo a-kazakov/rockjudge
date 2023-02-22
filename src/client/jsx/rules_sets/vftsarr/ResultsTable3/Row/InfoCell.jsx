@@ -36,12 +36,13 @@ export default class InfoCell extends React.Component {
         );
     }
     renderCard() {
-        if (this.props.row.run_result.extra_data.status !== "OK") {
+        const {extra_data} = this.props.row.run_result;
+        if (extra_data.status !== "OK") {
             return null;
         }
-        const card = this.props.row.run_result.extra_data.card;
+        const card = extra_data.card;
         const texts = getCardReasons(this.props.tour.scoring_system_name)
-            .filter(cr => this.props.row.run_result.extra_data.card_reasons[cr])
+            .filter(cr => extra_data.card_reasons[cr])
             .map(cr => _(`card_reasons.long.${cr.toLowerCase()}`));
         let result = [];
         if (card === "OK") {
@@ -60,6 +61,17 @@ export default class InfoCell extends React.Component {
             )),
         );
         return result;
+    }
+    renderRestarts() {
+        const {restarts} = this.props.row.run_result.extra_data;
+        if (!restarts) {
+            return null;
+        }
+        return (
+            <p key="R">
+                <strong>{_(`results.restarts`, restarts)}</strong>
+            </p>
+        );
     }
     renderAcroTable() {
         if (this.props.row.run_result.extra_data.status !== "OK") {
@@ -228,6 +240,7 @@ export default class InfoCell extends React.Component {
             <td className="info-block">
                 {this.renderParticipantInfo()}
                 {this.renderCard()}
+                {this.renderRestarts()}
                 {this.renderAcroTable()}
                 {this.renderUndercount()}
                 {this.renderFallDown()}

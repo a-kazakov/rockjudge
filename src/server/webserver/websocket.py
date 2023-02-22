@@ -334,13 +334,16 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         if serialized is None:
             return
         msg_str = json.dumps(serialized, ensure_ascii=False)
-        await self.write_message(msg_str)
+        try:
+            await self.write_message(msg_str)
+        except tornado.websocket.WebSocketClosedError:
+            print(f"Client (ID={self.client}) is no longer able to receive messages")
 
-    def open(self):
+    def open(self) -> None:
         manager = WebSocketConnectionsManager.instance()
         self.client_id = manager.add_connection(self)
 
-    def on_close(self):
+    def on_close(self) -> None:
         WebSocketConnectionsManager.instance().remove_connection(self.client_id)
 
     def get_compression_options(self):

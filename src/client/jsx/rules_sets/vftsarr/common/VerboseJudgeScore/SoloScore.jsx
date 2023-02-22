@@ -32,7 +32,6 @@ export default class DanceScore extends React.Component {
                 <tbody>
                     {this.renderRow("fw", "-$%")}
                     {this.renderRow("dance_figs")}
-                    {this.renderRow("composition")}
                     {this.renderRow("small_mistakes", "$")}
                     {this.renderRow("big_mistakes", "$")}
                 </tbody>

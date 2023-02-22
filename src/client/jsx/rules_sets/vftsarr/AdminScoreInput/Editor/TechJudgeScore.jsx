@@ -41,6 +41,7 @@ export default class TechJudgeScore extends React.Component {
                 <TimeBlock nullable field="time" label="T" />
                 {this.renderFallDown()}
                 {this.renderUndercount()}
+                <NumberBlock field="restarts" label="RS" max={100} />
                 <SelectorBlock
                     nullable
                     field="card"
