@@ -32,7 +32,10 @@ export default class Unfinalize extends React.Component {
         showInput(
             _("admin.headers.unfinalize_tour"),
             _("admin.confirms.unfinalize_tour"),
-            () => {
+            result => {
+                if (result.dismiss) {
+                    return;
+                }
                 Api("tour/unfinalize", {
                     tour_id: Number(this._select.value),
                 })

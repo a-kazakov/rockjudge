@@ -1,9 +1,11 @@
+import inspect
+from dataclasses import dataclass, asdict
 from typing import Any, Dict, List, NamedTuple, TYPE_CHECKING, Tuple, Union
 
 from sqlalchemy import Column, ForeignKey, Integer, JSON, String, UniqueConstraint
 from sqlalchemy.orm import Session, relationship, backref
 
-from db import ModelBase
+from db import SqlAlchemyModel
 from enums import AccessLevel
 from models.base_model import BaseModel
 from models.client_auth import ClientAuth
@@ -15,7 +17,8 @@ if TYPE_CHECKING:
     from mutations import MutationsKeeper
 
 
-class Element(NamedTuple):
+@dataclass(frozen=True)
+class Element:
     description: str
     score: float
 
@@ -30,7 +33,11 @@ class Element(NamedTuple):
         return cls.create(**src)
 
     def validate(self) -> None:
-        for key, type_ in self.__annotations__.items():
+        # Import annotations here to avoid circular imports
+        from api import ApiRequest  # noqa
+        from mutations import MutationsKeeper  # noqa
+
+        for key, type_ in inspect.get_annotations(type(self), eval_str=True).items():
             if type_ is float:
                 type_ = (int, float)
             if not isinstance(getattr(self, key), type_):
@@ -42,10 +49,10 @@ class Element(NamedTuple):
             raise ValueError("Score can't be negative")
 
     def to_dict(self) -> Dict[str, Any]:
-        return self._asdict()
+        return asdict(self)
 
 
-class Program(ModelBase, BaseModel):
+class Program(SqlAlchemyModel, BaseModel):
     # DB schema
 
     __tablename__ = "programs"

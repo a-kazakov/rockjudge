@@ -3,7 +3,7 @@ from typing import Any, Dict, Optional, Tuple, Union, TYPE_CHECKING, Generator, 
 from sqlalchemy import Column, Enum as EnumColumn, ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import Session, relationship, backref
 
-from db import ModelBase
+from db import SqlAlchemyModel
 from enums import AccessLevel
 from exceptions import ApiError, InternalError
 from models.base_model import BaseModel
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from api import ApiRequest
 
 
-class ClientAuth(ModelBase, BaseModel):
+class ClientAuth(SqlAlchemyModel, BaseModel):
     # DB schema
 
     __tablename__ = "client_authorizations"

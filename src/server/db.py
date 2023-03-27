@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from models.base_model import BaseModel
 
 
-ModelBase = declarative_base()
+SqlAlchemyModel = declarative_base()
 
 
 class NewDatabase:

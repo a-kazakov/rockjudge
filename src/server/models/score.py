@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 from typing import Any, Dict, Iterable, TYPE_CHECKING, Tuple, Union
 
 from sqlalchemy import Boolean, Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship, backref
 
-from db import ModelBase
+from db import SqlAlchemyModel
 from enums import AccessLevel
 from exceptions import ImmediateResponse
 from models.base_model import BaseModel
@@ -18,7 +20,7 @@ if TYPE_CHECKING:
     from mutations import MutationsKeeper
 
 
-class Score(ModelBase, BaseModel):
+class Score(SqlAlchemyModel, BaseModel):
     # DB schema
 
     __tablename__ = "scores"
@@ -35,7 +37,7 @@ class Score(ModelBase, BaseModel):
         DisciplineJudge, backref=backref("scores", cascade="delete")
     )
 
-    parts: Iterable["ScorePart"]
+    parts: Iterable[ScorePart]
 
     VIRTUAL_FIELDS = {"data"}
 

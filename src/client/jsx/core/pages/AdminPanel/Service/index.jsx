@@ -46,7 +46,7 @@ export default class Service extends React.Component {
                     <h3>{_("admin.headers.shortcuts")}</h3>
                     <BulkTourInit competition={this.props.competition} />
                     <h3>{_("admin.headers.about")}</h3>
-                    {_("admin.alerts.about", "v2.1 (СПб)", "05.12.2021")}
+                    {_("admin.alerts.about", "v2.3", "26.03.2023")}
                 </div>
             </div>
         );

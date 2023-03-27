@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 from typing import Any, Dict, Iterable, TYPE_CHECKING, Tuple, Union, List
 
 from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import backref, relationship
 
-from db import ModelBase
+from db import SqlAlchemyModel
 from enums import AccessLevel
 from models.base_model import BaseModel
 from models.discipline import Discipline
@@ -18,7 +20,7 @@ if TYPE_CHECKING:
     from mutations import MutationsKeeper
 
 
-class DisciplineJudge(ModelBase, BaseModel):
+class DisciplineJudge(SqlAlchemyModel, BaseModel):
     # DB schema
 
     __tablename__ = "discipline_judges"
@@ -41,8 +43,8 @@ class DisciplineJudge(ModelBase, BaseModel):
     )
     judge = relationship(Judge, backref=backref("discipline_judges", cascade="delete"))
 
-    acrobatics_reviewed: Iterable["RunAcrobatic"]
-    scores: Iterable["Score"]
+    acrobatics_reviewed: Iterable[RunAcrobatic]
+    scores: Iterable[Score]
 
     # Virtual fields
 

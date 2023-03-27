@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import itertools
 from typing import (
     Any,
@@ -8,24 +10,23 @@ from typing import (
     Optional,
     Type,
     TypeVar,
-    TYPE_CHECKING,
+    TYPE_CHECKING, NewType,
 )
 
-from sqlalchemy.orm import joinedload, relationship, subqueryload, selectinload, Session
-from sqlalchemy.orm.strategy_options import loader_option, Load
+from sqlalchemy.orm import joinedload, relationship, selectinload, Session
 
 from db import db
-
 
 if TYPE_CHECKING:
     from models.base_model import BaseModel
 
-# Ideally this should be like this but it breaks PyCharm completely
+# Ideally this should be like this bucct it breaks PyCharm completely
 # RecursiveDict = Dict[str, "RecursiveDict"]
 RecursiveDict = Dict[str, Dict[str, Dict[str, Dict[str, Dict[str, Any]]]]]
 
 T = TypeVar("T", bound=Callable)
 
+_AbstractLoad = NewType("_AbstractLoad", Any)  # Introduced in SQLAlchemy 2.0
 
 class ModelTreeNode(NamedTuple):
     model: Type["BaseModel"]
@@ -50,8 +51,8 @@ class ModelTreeNode(NamedTuple):
 
     @staticmethod
     def uprgade_prefetcher(
-        base: Optional[loader_option], rel: relationship, *, use_joined: bool
-    ) -> loader_option:
+        base: Optional[_AbstractLoad], rel: relationship, *, use_joined: bool
+    ) -> _AbstractLoad:
         if base is None:
             if use_joined:
                 return joinedload(rel)
@@ -64,8 +65,8 @@ class ModelTreeNode(NamedTuple):
                 return base.selectinload(rel)
 
     def build_prefetcher(
-        self, parent: Optional[loader_option] = None
-    ) -> Generator[loader_option, None, None]:
+        self, parent: Optional[_AbstractLoad] = None
+    ) -> Generator[_AbstractLoad, None, None]:
         for rel_name, child in self.lower_children.items():
             next_pf = self.uprgade_prefetcher(
                 parent, getattr(self.model, rel_name), use_joined=False

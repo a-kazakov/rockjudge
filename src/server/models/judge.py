@@ -1,15 +1,16 @@
+from __future__ import annotations
+
 from typing import Any, Dict, Iterable, TYPE_CHECKING, Tuple, Union, List
 
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import Session, relationship
 
-from db import ModelBase
+from db import SqlAlchemyModel
 from enums import AccessLevel
 from exceptions import ApiError
 from models.base_model import BaseModel
 from models.client_auth import ClientAuth
 from models.competition import Competition
-
 
 if TYPE_CHECKING:
     from api import ApiRequest
@@ -17,7 +18,7 @@ if TYPE_CHECKING:
     from mutations import MutationsKeeper
 
 
-class Judge(ModelBase, BaseModel):
+class Judge(SqlAlchemyModel, BaseModel):
     # DB schema
 
     __tablename__ = "judges"
@@ -35,7 +36,7 @@ class Judge(ModelBase, BaseModel):
 
     competition = relationship("Competition", backref="judges")
 
-    discipline_judges: Iterable["DisciplineJudge"]
+    discipline_judges: Iterable[DisciplineJudge]
 
     # Virtual fields
 

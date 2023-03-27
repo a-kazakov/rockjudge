@@ -3,7 +3,7 @@ from typing import Any, Dict, TYPE_CHECKING, Tuple, Union, List
 from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Session, relationship, backref
 
-from db import ModelBase
+from db import SqlAlchemyModel
 from enums import AccessLevel
 from exceptions import ApiError
 from models.base_model import BaseModel
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from mutations import MutationsKeeper
 
 
-class CompetitionPlanItem(ModelBase, BaseModel):
+class CompetitionPlanItem(SqlAlchemyModel, BaseModel):
     # DB schema
 
     __tablename__ = "competition_plan_items"

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import functools
 import hashlib
 import operator
@@ -17,7 +19,7 @@ from typing import (
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import Session
 
-from db import ModelBase
+from db import SqlAlchemyModel
 from exceptions import ApiError, InternalError
 from models.base_model import BaseModel
 from utils import raise_if_none
@@ -38,7 +40,7 @@ class ServerDHBundle(NamedTuple):
         return dict(self._asdict())
 
 
-class Client(ModelBase, BaseModel):
+class Client(SqlAlchemyModel, BaseModel):
     # DB schema
 
     __tablename__ = "clients"
@@ -47,7 +49,7 @@ class Client(ModelBase, BaseModel):
     secret = Column(String(2000), nullable=True)
     dh_a_str = Column(String(2000), nullable=True)
 
-    authorizations: Iterable["ClientAuth"]
+    authorizations: Iterable[ClientAuth]
 
     HIDDEN_FIELDS = {"secret", "dh_a_str"}
 

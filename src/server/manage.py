@@ -3,13 +3,11 @@
 import asyncio
 import json
 import unittest
-from concurrent.futures.thread import ThreadPoolExecutor
 from sys import argv
 
 import tornado.gen
 import tornado.ioloop
 from tornado.platform.asyncio import AsyncIOMainLoop
-
 
 # This should happen before any app imports
 AsyncIOMainLoop().install()
@@ -40,7 +38,7 @@ class Commands:
 
     @staticmethod
     def reset(password=""):
-        from db import db, ModelBase
+        from db import db, SqlAlchemyModel
 
         if password != "yes-i-am-sure":
             print(
@@ -49,15 +47,15 @@ class Commands:
             if input() == "Yes, I'm sure!":
                 print("Resetting ...")
                 db.import_all_models()
-                ModelBase.metadata.drop_all(bind=db.engine)
-                ModelBase.metadata.create_all(bind=db.engine)
+                SqlAlchemyModel.metadata.drop_all(bind=db.engine)
+                SqlAlchemyModel.metadata.create_all(bind=db.engine)
                 print("Done")
             else:
                 print("Wrong password")
         else:
             db.import_all_models()
-            ModelBase.metadata.drop_all(bind=db.engine)
-            ModelBase.metadata.create_all(bind=db.engine)
+            SqlAlchemyModel.metadata.drop_all(bind=db.engine)
+            SqlAlchemyModel.metadata.create_all(bind=db.engine)
 
     @staticmethod
     def test():

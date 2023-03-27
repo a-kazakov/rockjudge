@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import itertools
 from typing import (
     Any,
@@ -15,7 +17,7 @@ from typing import (
 from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Session, relationship
 
-from db import ModelBase
+from db import SqlAlchemyModel
 from enums import AccessLevel
 from exceptions import ApiError
 from models.base_model import BaseModel
@@ -53,7 +55,7 @@ class DisciplineResults(NamedTuple):
         }
 
 
-class Discipline(ModelBase, BaseModel):
+class Discipline(SqlAlchemyModel, BaseModel):
     # DB schema
 
     __tablename__ = "disciplines"
@@ -72,9 +74,9 @@ class Discipline(ModelBase, BaseModel):
 
     competition = relationship(Competition, backref="disciplines")
 
-    discipline_judges: Iterable["DisciplineJudge"]
-    participants: Iterable["Participant"]
-    tours: Iterable["Tour"]
+    discipline_judges: Iterable[DisciplineJudge]
+    participants: Iterable[Participant]
+    tours: Iterable[Tour]
 
     # Virtual fields
 

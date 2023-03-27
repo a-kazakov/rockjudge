@@ -10,7 +10,7 @@ import Row from "./Row";
 const COMPLEX_CRITERIAS = new Map([
     ["mistakes", ["small_mistakes", "big_mistakes"]],
     ["dance_figs", ["df_accuracy", "df_difficulty", "df_art"]],
-    ["composition", ["c_ideas", "c_structure", "c_bonus"]],
+    ["composition", ["c_structure", "c_ideas", "c_bonus"]],
     ["figures", ["fig_execution", "fig_patterns", "fig_transitions"]],
 ]);
 

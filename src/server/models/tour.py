@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import itertools
 import random
 from collections import defaultdict
@@ -26,7 +28,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Session, joinedload, relationship
 
-from db import ModelBase
+from db import SqlAlchemyModel
 from enums import AccessLevel, RunStatus
 from exceptions import ApiError
 from models.base_model import BaseModel
@@ -109,7 +111,7 @@ class ComputedTour(NamedTuple):
         }
 
 
-class Tour(ModelBase, BaseModel):
+class Tour(SqlAlchemyModel, BaseModel):
     # DB schema
 
     __tablename__ = "tours"
@@ -134,8 +136,8 @@ class Tour(ModelBase, BaseModel):
 
     discipline = relationship(Discipline, backref="tours")
 
-    plan_items: Iterable["CompetitionPlanItem"]
-    runs: Iterable["Run"]
+    plan_items: Iterable[CompetitionPlanItem]
+    runs: Iterable[Run]
 
     HIDDEN_FIELDS = {"sp"}
 
@@ -238,10 +240,10 @@ class Tour(ModelBase, BaseModel):
             if prev_tour is None:
                 sp = 0
             else:
-                sp = prev_tour.sp + 2 ** 10
+                sp = prev_tour.sp + 2**10
         else:
             if prev_tour is None:
-                sp = next_tour.sp - 2 ** 10
+                sp = next_tour.sp - 2**10
             else:
                 sp = (prev_tour.sp + next_tour.sp) // 2
                 if sp == prev_tour.sp:
@@ -676,7 +678,7 @@ class Tour(ModelBase, BaseModel):
                 discipline.session,
                 {
                     "discipline": discipline,
-                    "sp": idx * 2 ** 10,
+                    "sp": idx * 2**10,
                     **cls.filter_non_managable_fields(obj),
                 },
                 mk,

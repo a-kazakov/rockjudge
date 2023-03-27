@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import random
 from typing import Any, Dict, Iterable, List, Optional, Set, TYPE_CHECKING, Tuple, Union
 
@@ -11,7 +13,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Session, relationship, backref
 
-from db import ModelBase
+from db import SqlAlchemyModel
 from enums import AccessLevel, RunStatus
 from exceptions import ApiError
 from models.base_model import BaseModel
@@ -28,7 +30,7 @@ if TYPE_CHECKING:
     from mutations import MutationsKeeper
 
 
-class Run(ModelBase, BaseModel):
+class Run(SqlAlchemyModel, BaseModel):
     # DB schema
 
     __tablename__ = "runs"
@@ -53,8 +55,8 @@ class Run(ModelBase, BaseModel):
     participant = relationship(Participant, backref=backref("runs", cascade="delete"))
     tour = relationship(Tour, backref=backref("runs", cascade="delete"))
 
-    acrobatics: Iterable["RunAcrobatic"]
-    scores: Iterable["Score"]
+    acrobatics: Iterable[RunAcrobatic]
+    scores: Iterable[Score]
 
     # Virtual fields
 

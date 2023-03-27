@@ -47,6 +47,8 @@ class BaseModel:
     id: int
     competition_id: int
 
+    __allow_unmapped__ = True
+
     # Helper inspections
 
     VIRTUAL_FIELDS: Set[str] = set()

@@ -62,14 +62,14 @@ export default class ScoringLayout extends React.Component {
                                 <h3 className="primary">
                                     {_("tablet.dance_judge.composition")}
                                 </h3>
-                                {this.renderPart("c_ideas", "number", {
+                                {this.renderPart("c_structure", "number", {
                                     min: 0,
                                     max: 5,
                                     step: 0.5,
                                 })}
                             </td>
                             <td className="part-2">
-                                {this.renderPart("c_structure", "number", {
+                                {this.renderPart("c_ideas", "number", {
                                     min: 0,
                                     max: 4,
                                     step: 0.5,

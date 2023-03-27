@@ -64,18 +64,24 @@ export default class ActionsPage extends React.Component {
         });
     };
 
+    /*
+     * Returns true if there are unconfirmed scores in the latest heat.
+     * Only works for tours with at least two heats. Otherwise, returns false.
+     * Only judges scored the second to last heat are considered. This is needed to consider
+     * the case when a judge is absent in that tour (e.g., extra tech judge roles were added).
+     */
     hasUnconfirmedScores() {
         const runs = this.props.tour.runs;
         if (runs.length === 0) {
-            return false;
+            return false;  // No runs at all, so no unconfirmed scores.
         }
         const latest_heat = lastOf(runs).heat;
         if (latest_heat === runs[0].heat) {
-            return false;
+            return false;  // Only one heat, unable to determine who is judging.
         }
         const latest_runs = runs.filter(r => r.heat === latest_heat);
         const prev_runs = runs.filter(r => r.heat === latest_heat - 1);
-        let scores = new Map();
+        let scores = new Map();  // Map<discipline_judge_id, {latest: number, prev: number}>
         const process_run = (run, type) => {
             for (const score of run.scores) {
                 const dj_id = score.discipline_judge_id;
@@ -97,6 +103,8 @@ export default class ActionsPage extends React.Component {
             process_run(run, "prev");
         }
         for (const stats of scores.values()) {
+            // If the judge scored anything in the second to last heat, but not everything
+            // in the latest heat, then there are unconfirmed scores.
             if (stats.prev > 0 && stats.latest < latest_runs.length) {
                 return true;
             }

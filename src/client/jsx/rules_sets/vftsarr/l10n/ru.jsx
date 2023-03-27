@@ -172,6 +172,7 @@ export default function translate(src, ...args) {
                     custom: pos =>
                         pos <= 6
                             ? [
+                                  "Нулевая",
                                   "Первая",
                                   "Вторая",
                                   "Третья",

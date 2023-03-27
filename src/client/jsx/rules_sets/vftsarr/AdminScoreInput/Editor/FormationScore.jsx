@@ -38,14 +38,14 @@ export default class FormationScore extends React.Component {
                     step={0.5}
                 />
                 <NumberBlock nullable field="df_art" label="DF-Ar" max={1} step={0.5} />
-                <NumberBlock nullable field="c_ideas" label="C-I" max={5} step={0.5} />
                 <NumberBlock
                     nullable
                     field="c_structure"
                     label="C-S"
-                    max={4}
+                    max={5}
                     step={0.5}
                 />
+                <NumberBlock nullable field="c_ideas" label="C-I" max={4} step={0.5} />
                 <NumberBlock nullable field="c_bonus" label="C-B" max={1} step={0.5} />
                 <NumberBlock
                     nullable

@@ -309,7 +309,7 @@ class ScoreContextDanceExtended(ScoreContextBase):
             df_accuracy=frac(5, 2), df_complexity=frac(5, 2), df_art=frac(5, 2)
         ),
         "composition": make_combine_fields(c_idea=2, c_performance=2, c_bonus=2),
-        "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-10),
+        "mistakes": make_combine_fields(small_mistakes=-2, big_mistakes=-10),
     }
 
     @property
@@ -354,7 +354,7 @@ class ScoreContextDance(ScoreContextBase):
         "fw_man": make_apply_reduction("fw_man"),
         "dance_figs": make_multiply("dance_figs", frac(5, 2)),
         "composition": make_multiply("composition", frac(2)),
-        "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-10),
+        "mistakes": make_combine_fields(small_mistakes=-2, big_mistakes=-10),
     }
 
     @property
@@ -388,7 +388,7 @@ class ScoreContextAmFinalDance(ScoreContextDanceExtended):
             df_accuracy=frac(5, 4), df_complexity=frac(5, 4), df_art=frac(5, 4)
         ),
         "composition": make_combine_fields(c_idea=1, c_performance=1, c_bonus=1),
-        "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-10),
+        "mistakes": make_combine_fields(small_mistakes=-2, big_mistakes=-10),
     }
 
 
@@ -414,7 +414,7 @@ class ScoreContextSolo(ScoreContextBase):
     CRITERIAS_MODIFIERS = {
         "fw": make_apply_reduction("fw", max_value=20),
         "dance_figs": make_multiply("dance_figs", frac(5, 2)),
-        "mistakes": make_combine_fields(small_mistakes=-5, big_mistakes=-10),
+        "mistakes": make_combine_fields(small_mistakes=-2, big_mistakes=-10),
     }
 
     @property
@@ -494,8 +494,8 @@ class ScoreContextFormation(ScoreContextBase):
         "df_accuracy": 0,
         "df_difficulty": 0,
         "df_art": 0,
-        "c_ideas": 0,
         "c_structure": 0,
+        "c_ideas": 0,
         "c_bonus": 0,
         "fig_execution": 0,
         "fig_patterns": 0,
@@ -508,8 +508,8 @@ class ScoreContextFormation(ScoreContextBase):
         "df_accuracy": None,
         "df_difficulty": None,
         "df_art": None,
-        "c_ideas": None,
         "c_structure": None,
+        "c_ideas": None,
         "c_bonus": None,
         "fig_execution": None,
         "fig_patterns": None,
@@ -526,10 +526,10 @@ class ScoreContextFormation(ScoreContextBase):
             max_value=4, allow_halves=True, allow_none=True
         ),
         "df_art": make_validate_number(max_value=1, allow_halves=True, allow_none=True),
-        "c_ideas": make_validate_number(
+        "c_structure": make_validate_number(
             max_value=5, allow_halves=True, allow_none=True
         ),
-        "c_structure": make_validate_number(
+        "c_ideas": make_validate_number(
             max_value=4, allow_halves=True, allow_none=True
         ),
         "c_bonus": make_validate_number(
@@ -651,6 +651,7 @@ class ScoreContextTechAcro(ScoreContextBase):
         "card": "OK",
         "card_reasons": {key: False for key in get_all_card_reasons("base", "acro")},
         "fall_down": 0,
+        "restarts": 0,
     }
     INITIAL_SCORES = {
         "jump_steps": 0,
@@ -658,6 +659,7 @@ class ScoreContextTechAcro(ScoreContextBase):
         "card": "OK",
         "card_reasons": {key: False for key in get_all_card_reasons("base", "acro")},
         "fall_down": 0,
+        "restarts": 0,
     }
     SCORES_VALIDATORS = {
         "jump_steps": make_validate_number(max_value=100),
@@ -665,6 +667,7 @@ class ScoreContextTechAcro(ScoreContextBase):
         "card": validate_card,
         "card_reasons": make_validate_card_reasons("base", "acro"),
         "fall_down": make_validate_number(max_value=100),
+        "restarts": 0,
     }
 
     @property
@@ -721,6 +724,7 @@ class ScoreContextTechFormationAcro(ScoreContextBase):
         },
         "undercount": 0,
         "fall_down": 0,
+        "restarts": 0,
     }
     INITIAL_SCORES = {
         "jump_steps": 0,
@@ -731,6 +735,7 @@ class ScoreContextTechFormationAcro(ScoreContextBase):
         },
         "undercount": 0,
         "fall_down": 0,
+        "restarts": 0,
     }
     SCORES_VALIDATORS = {
         "jump_steps": make_validate_number(max_value=100),
@@ -739,6 +744,7 @@ class ScoreContextTechFormationAcro(ScoreContextBase):
         "card_reasons": make_validate_card_reasons("base", "acro", "formation"),
         "undercount": make_validate_number(max_value=100),
         "fall_down": make_validate_number(max_value=100),
+        "restarts": make_validate_number(max_value=100),
     }
 
     @property

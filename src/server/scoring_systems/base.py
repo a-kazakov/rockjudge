@@ -1,8 +1,7 @@
 from abc import ABCMeta, abstractmethod
-from typing import Any, Dict, List, NamedTuple, NewType, Optional, Union
+from typing import Any, Dict, List, NamedTuple, NewType, Optional
 
 from enums import RunStatus
-
 
 # Scalar types
 

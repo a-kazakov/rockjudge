@@ -34,8 +34,8 @@ export default class FormationScore extends React.Component {
                     {this.renderRow("df_accuracy")}
                     {this.renderRow("df_difficulty")}
                     {this.renderRow("df_art")}
-                    {this.renderRow("c_ideas")}
                     {this.renderRow("c_structure")}
+                    {this.renderRow("c_ideas")}
                     {this.renderRow("c_bonus")}
                     {this.renderRow("fig_execution")}
                     {this.renderRow("fig_patterns")}

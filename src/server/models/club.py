@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 from typing import Any, Dict, Iterable, TYPE_CHECKING, Tuple, Union, List
 
 from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Session, relationship
 
-from db import ModelBase
+from db import SqlAlchemyModel
 from enums import AccessLevel
 from exceptions import ApiError
 from models.base_model import BaseModel
@@ -17,7 +19,7 @@ if TYPE_CHECKING:
     from mutations import MutationsKeeper
 
 
-class Club(ModelBase, BaseModel):
+class Club(SqlAlchemyModel, BaseModel):
     # DB schema
 
     __tablename__ = "clubs"
@@ -38,7 +40,7 @@ class Club(ModelBase, BaseModel):
 
     competition = relationship(Competition, backref="clubs")
 
-    participants: Iterable["Participant"]
+    participants: Iterable[Participant]
 
     # Base properties
 

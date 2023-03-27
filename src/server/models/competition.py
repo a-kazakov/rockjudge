@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 from typing import Any, Dict, Iterable, TYPE_CHECKING, Tuple, Union
 
 from sqlalchemy import Boolean, Column, Integer, JSON, String
 from sqlalchemy.orm import Session
 
-from db import ModelBase
+from db import SqlAlchemyModel
 from enums import AccessLevel
 from exceptions import ApiError
 from models.base_model import BaseModel
@@ -20,7 +22,7 @@ if TYPE_CHECKING:
     from mutations import MutationsKeeper
 
 
-class Competition(ModelBase, BaseModel):
+class Competition(SqlAlchemyModel, BaseModel):
     # DB schema
 
     __tablename__ = "competitions"
@@ -34,11 +36,11 @@ class Competition(ModelBase, BaseModel):
     rules_set = Column(String, nullable=False)
     deleted = Column(Boolean, default=False, nullable=False)
 
-    clients: Iterable["ClientAuth"]
-    clubs: Iterable["Club"]
-    plan: Iterable["CompetitionPlanItem"]
-    disciplines: Iterable["Discipline"]
-    judges: Iterable["Judge"]
+    clients: Iterable[ClientAuth]
+    clubs: Iterable[Club]
+    plan: Iterable[CompetitionPlanItem]
+    disciplines: Iterable[Discipline]
+    judges: Iterable[Judge]
 
     # Virtual fields
 

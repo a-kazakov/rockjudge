@@ -4,12 +4,12 @@ from typing import Any, Dict, List, Type
 from sqlalchemy import Column, ForeignKey, Integer, JSON, String, UniqueConstraint
 from sqlalchemy.orm import Session, relationship, backref
 
-from db import ModelBase
+from db import SqlAlchemyModel
 from models.base_model import BaseModel
 from models.score import Score
 
 
-class ScorePart(ModelBase, BaseModel):
+class ScorePart(SqlAlchemyModel, BaseModel):
     # DB schema
 
     __tablename__ = "score_parts"

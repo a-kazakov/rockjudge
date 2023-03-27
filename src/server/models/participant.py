@@ -1,4 +1,7 @@
-import json
+from __future__ import annotations
+
+import inspect
+from dataclasses import dataclass, asdict
 from typing import (
     Any,
     Dict,
@@ -14,7 +17,7 @@ from typing import (
 from sqlalchemy import Column, ForeignKey, Integer, JSON, String, UniqueConstraint
 from sqlalchemy.orm import Session, relationship
 
-from db import ModelBase
+from db import SqlAlchemyModel
 from enums import AccessLevel
 from exceptions import ApiError
 from models.base_model import BaseModel
@@ -23,7 +26,6 @@ from models.club import Club
 from models.discipline import Discipline
 from models.tour import Tour
 
-
 if TYPE_CHECKING:
     from api import ApiRequest
     from models.run import Run
@@ -31,7 +33,8 @@ if TYPE_CHECKING:
     from mutations import MutationsKeeper
 
 
-class Sportsman(NamedTuple):
+@dataclass(frozen=True)
+class Sportsman:
     first_name: str
     last_name: str
     year_of_birth: int
@@ -59,7 +62,14 @@ class Sportsman(NamedTuple):
         )
 
     def validate(self) -> None:
-        for key, type_ in self.__annotations__.items():
+        # Import annotations here to avoid circular imports
+        from api import ApiRequest  # noqa
+        from models.run import Run  # noqa
+        from models.program import Program  # noqa
+        from mutations import MutationsKeeper  # noqa
+        from mutations import MutationsKeeper  # noqa
+
+        for key, type_ in inspect.get_annotations(type(self), eval_str=True).items():
             if not isinstance(getattr(self, key), type_):
                 src_type = type(getattr(self, key))
                 raise TypeError(
@@ -75,10 +85,10 @@ class Sportsman(NamedTuple):
             raise ValueError("Gender value should be either M or F")
 
     def to_dict(self) -> Dict[str, Any]:
-        return self._asdict()
+        return asdict(self)
 
 
-class Participant(ModelBase, BaseModel):
+class Participant(SqlAlchemyModel, BaseModel):
     # DB schema
 
     __tablename__ = "participants"
@@ -105,8 +115,8 @@ class Participant(ModelBase, BaseModel):
     discipline = relationship(Discipline, backref="participants")
     club = relationship(Club, backref="participants")
 
-    programs: Iterable["Program"]
-    runs: Iterable["Run"]
+    programs: Iterable[Program]
+    runs: Iterable[Run]
 
     HIDDEN_FIELDS = {"sportsmen_json"}
 
@@ -152,7 +162,7 @@ class Participant(ModelBase, BaseModel):
 
     @property
     def sorting_key(self) -> Tuple[Union[int, str], ...]:
-        return (self.number, self.formation_name, self.external_id)
+        return self.number, self.formation_name, self.external_id
 
     def validate(self) -> None:
         if self.club.competition_id != self.discipline.competition_id:

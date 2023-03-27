@@ -69,7 +69,7 @@ def setup():
             )
         )
 
-        print("   Creating database table ...")
+        print("   Creating database ...")
         cursor.execute(
             """CREATE DATABASE {db_name}
           WITH ENCODING='UTF8'
@@ -79,12 +79,16 @@ def setup():
                 db_name=db_name, owner=db_name
             )
         )
-        print("   Adding hstore extension ...")
+
+        print("   Granting permission to public schema ...")
         local_conn = psycopg2.connect(
             user="postgres", password=db_admin_passwd, database=db_name
         )
         local_conn.autocommit = True
         local_cursor = local_conn.cursor()
+        local_cursor.execute(f"""GRANT ALL ON SCHEMA public TO {db_name}""")
+
+        print("   Adding hstore extension ...")
         local_cursor.execute("CREATE EXTENSION IF NOT EXISTS hstore")
     except Exception as ex:
         print("   Looks like you've already installed this version of RockJudge.")

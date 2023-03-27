@@ -5,6 +5,8 @@ if "%~1" equ ":main" (
   goto main
 )
 
+set SQLALCHEMY_WARN_20=1
+
 start cmd /d /c "%~f0" :main %*
 exit /b
 
@@ -12,7 +14,7 @@ exit /b
 pushd "%~dp0\..\sandbox"
 set PYTHONPATH=.
 set RJ_BASE_PATH=.
-call ..\env\venv\Scripts\activate.bat
+call ..\env\venv_311\Scripts\activate.bat
 python ..\src\server\manage.py start
 pause
 popd
