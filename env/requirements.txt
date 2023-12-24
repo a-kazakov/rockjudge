@@ -2,7 +2,7 @@ aiopg~=1.4.0
 Cython~=0.29.33
 psycopg2-binary~=2.9.5
 pycryptodome~=3.17
-PyInstaller~=5.9.0
+pyinstaller~=6.3.0
 pywin32-ctypes==0.2.0
 rsa~=4.9
 SQLAlchemy~=1.4.47  # TODO: Upgrade to 2.0+
