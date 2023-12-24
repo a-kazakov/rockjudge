@@ -667,7 +667,7 @@ class ScoreContextTechAcro(ScoreContextBase):
         "card": validate_card,
         "card_reasons": make_validate_card_reasons("base", "acro"),
         "fall_down": make_validate_number(max_value=100),
-        "restarts": 0,
+        "restarts": make_validate_number(max_value=100),
     }
 
     @property
