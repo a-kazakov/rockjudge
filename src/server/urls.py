@@ -1,4 +1,6 @@
 import os
+from functools import cache
+from pathlib import Path
 
 from webserver.handlers import (
     AdminHandler,
@@ -14,11 +16,19 @@ from webserver.handlers import (
 from webserver.websocket import WebSocketHandler
 
 
-BASE_PATH = os.environ.get("RJ_BASE_PATH") or os.path.dirname(__file__)
-STATIC_PATH = os.path.join(BASE_PATH, "static")
-SCREEN_STATIC_PATH = os.path.join(BASE_PATH, "screen")
+@cache
+def get_client_files_path() -> Path:
+    env_value = os.environ.get("RJ_BASE_PATH")
+    if env_value is not None:
+        return Path(env_value)
+    path_value = Path(__file__).parent
+    if path_value.name == "_internal":
+        path_value = path_value.parent
+    return path_value
 
-print("Base path is", BASE_PATH)
+
+STATIC_PATH = str(get_client_files_path() / "static")
+SCREEN_STATIC_PATH = str(get_client_files_path() / "screen")
 
 handlers = [
     (r"/$", StartPageHandler),
