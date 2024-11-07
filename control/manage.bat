@@ -12,7 +12,7 @@ exit /b
 pushd "%~dp0\..\sandbox"
 set PYTHONPATH=.
 set RJ_BASE_PATH=.
-call ..\env\venv_311\Scripts\activate.bat
+call ..\env\venv\Scripts\activate.bat
 python ..\src\server\manage.py %ARGS%
 pause
 popd
