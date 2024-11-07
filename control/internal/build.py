@@ -93,7 +93,7 @@ def bundle_python(ctl: BuildController, src_dir: Path, dest_dir: Path) -> None:
 
 @step("Copying templates")
 def copy_templates(ctl: BuildController, dest_dir: Path) -> None:
-    ctl.copytree(Path("src", "server", "templates"), dest_dir / "data" / "templates")
+    ctl.copytree(Path("src", "server", "templates"), dest_dir / "data" / "_internal" / "templates")
 
 
 @step("Building server")

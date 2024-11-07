@@ -18,6 +18,8 @@ BASE_PATH = os.environ.get("RJ_BASE_PATH") or os.path.dirname(__file__)
 STATIC_PATH = os.path.join(BASE_PATH, "static")
 SCREEN_STATIC_PATH = os.path.join(BASE_PATH, "screen")
 
+print("Base path is", BASE_PATH)
+
 handlers = [
     (r"/$", StartPageHandler),
     (r"/admin/(\d+)$", AdminHandler),
