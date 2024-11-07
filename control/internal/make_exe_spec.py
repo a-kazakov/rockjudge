@@ -65,7 +65,7 @@ def main() -> None:
     # )
     spec = gen(
         exe_name="rockjudge",
-        # hidden_imports=hidden_imports,
+        hidden_imports=[],
         work_dir=json.dumps(str(Path().absolute())),
         start_script_path="manage.py",
     )
