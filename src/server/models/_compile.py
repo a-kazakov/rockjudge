@@ -1,16 +1,8 @@
 import os
 import shutil
-import sys
-
 from distutils.core import setup
 
 from Cython.Build import cythonize
-
-
-# Bulding disable due to the following bug
-# https://github.com/cython/cython/issues/2552
-
-sys.exit(0)
 
 os.rename("__init__.py", "_init.py")
 
