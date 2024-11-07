@@ -11,7 +11,7 @@ DB_CONFIG = {
     "host": "127.0.0.1",
 }
 
-VERSION = "v2_3"
+VERSION = "v2_4"
 
 SERVER_ID = "1234567890"
 
