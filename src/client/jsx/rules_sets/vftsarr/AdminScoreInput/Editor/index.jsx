@@ -12,6 +12,7 @@ import FormationSimplifiedScore from "./FormationSimplifiedScore";
 import HeadJudgeScore from "./HeadJudgeScore";
 import SimplifiedScore from "./SimplifiedScore";
 import SoloScore from "./SoloScore";
+import SoloFinalScore from "./SoloFinalScore";
 import TechJudgeScore from "./TechJudgeScore";
 import { consoleError } from "common/logging";
 
@@ -74,6 +75,8 @@ export default class Editor extends React.Component {
                 return <SimplifiedScore {...score_props} />;
             case "solo":
                 return <SoloScore {...score_props} />;
+            case "solo_final":
+                return <SoloFinalScore {...score_props} />;
             case "head":
                 return <HeadJudgeScore {...score_props} />;
             case "tech":

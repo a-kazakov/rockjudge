@@ -137,6 +137,8 @@ class ScoreContextBase(CachedClass, metaclass=ABCMeta):
                 return ScoreContextSolo
             if scoring_system_name == "solo_rough":
                 return ScoreContextSoloRough
+            if scoring_system_name == "solo_final":
+                return ScoreContextSoloFinal
             if scoring_system_name in ("dance_extended", "acro_extended"):
                 return ScoreContextDanceExtended
             if scoring_system_name == "dance_rough":
@@ -320,7 +322,7 @@ class ScoreContextDanceExtended(ScoreContextBase):
         if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
             return "–"
         if num_set == len(self.DEFAULT_SCORES):
-            return "🗸"
+            return "✓"
         return "..."
 
 
@@ -365,7 +367,7 @@ class ScoreContextDance(ScoreContextBase):
         if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
             return "–"
         if num_set == len(self.DEFAULT_SCORES):
-            return "🗸"
+            return "✓"
         return "..."
 
 
@@ -425,7 +427,7 @@ class ScoreContextSolo(ScoreContextBase):
         if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
             return "–"
         if num_set == len(self.DEFAULT_SCORES):
-            return "🗸"
+            return "✓"
         return "..."
 
 
@@ -435,6 +437,25 @@ class ScoreContextSoloRough(ScoreContextSolo):
         "dance_figs": make_validate_number(allow_none=True),
         "small_mistakes": make_validate_number(max_value=100),
         "big_mistakes": make_validate_number(max_value=100),
+    }
+
+
+class ScoreContextSoloFinal(ScoreContextSolo):
+    DEFAULT_SCORES = {
+        "variations": 0,
+        **ScoreContextSolo.DEFAULT_SCORES,
+    }
+    INITIAL_SCORES = {
+        "variations": None,
+        **ScoreContextSolo.INITIAL_SCORES,
+    }
+    SCORES_VALIDATORS = {
+        "variations": make_validate_number(allow_halves=True, allow_none=True),
+        **ScoreContextSolo.SCORES_VALIDATORS,
+    }
+    CRITERIAS_MODIFIERS = {
+        "variations": make_multiply("variations", frac(1, 1)),
+        **ScoreContextSolo.CRITERIAS_MODIFIERS,
     }
 
 
@@ -567,7 +588,7 @@ class ScoreContextFormation(ScoreContextBase):
         if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
             return "–"
         if num_set == len(self.DEFAULT_SCORES):
-            return "🗸"
+            return "✓"
         return "..."
 
 
@@ -612,7 +633,7 @@ class ScoreContextFormationSimplified(ScoreContextBase):
         if num_set <= sum(value is not None for value in self.INITIAL_SCORES.values()):
             return "–"
         if num_set == len(self.DEFAULT_SCORES):
-            return "🗸"
+            return "✓"
         return "..."
 
 

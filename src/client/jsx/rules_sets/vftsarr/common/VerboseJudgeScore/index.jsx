@@ -8,6 +8,7 @@ import DanceScore from "./DanceScore";
 import FormationScore from "./FormationScore";
 import FormationSimplifiedScore from "./FormationSimplifiedScore";
 import SoloScore from "./SoloScore";
+import SoloFinalScore from "./SoloFinalScore";
 import TechScore from "./TechScore";
 
 export default class VerboseJudgeScore extends React.Component {
@@ -52,6 +53,9 @@ export default class VerboseJudgeScore extends React.Component {
                 break;
             case "solo":
                 ScoreComponent = SoloScore;
+                break;
+            case "solo_final":
+                ScoreComponent = SoloFinalScore;
                 break;
             case "tech":
                 ScoreComponent = TechScore;

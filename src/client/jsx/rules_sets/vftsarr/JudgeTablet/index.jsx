@@ -11,6 +11,7 @@ import FormationSimplifiedLayout from "./FormationSimplifiedLayout";
 import HeadJudgeLayout from "./HeadJudgeLayout";
 import SimplifiedLayout from "./SimplifiedLayout";
 import SoloLayout from "./SoloLayout";
+import SoloFinalLayout from "./SoloFinalLayout";
 import TechLayout from "./TechLayout";
 
 export default class JudgeTablet extends React.Component {
@@ -27,6 +28,7 @@ export default class JudgeTablet extends React.Component {
         formation_simplified: FormationSimplifiedLayout,
         simplified: SimplifiedLayout,
         solo: SoloLayout,
+        solo_final: SoloFinalLayout,
         head: HeadJudgeLayout,
         tech: TechLayout,
     };

@@ -17,6 +17,8 @@ export default function getScoringType(discipline_judge_role, scoring_system_nam
                 case "vftsarr.solo":
                 case "vftsarr.solo_rough":
                     return "solo";
+                case "vftsarr.solo_final":
+                    return "solo_final";
                 default:
                     return "dance";
             }

@@ -20,4 +20,4 @@ try:
 
     print("Loaded production settings")
 except ImportError:
-    print("Loaded develoment settings")
+    print("Loaded development settings")

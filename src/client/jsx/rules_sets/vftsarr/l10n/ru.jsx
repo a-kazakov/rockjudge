@@ -109,6 +109,7 @@ export default function translate(src, ...args) {
                 fig_patterns: "Построения",
                 fig_transitions: "Перестроения",
                 figures: "Формейшн-фигуры",
+                variations: "Вариации",
             },
             global: {
                 confirm_score: "Зафиксировать",
@@ -208,6 +209,7 @@ export default function translate(src, ...args) {
                 p: "М",
                 sm: "МО",
                 js: "ОХ",
+                vr: "Вар",
                 tv: "Время",
                 penalty: "Штраф",
                 time: "Время",
@@ -336,6 +338,7 @@ export default function translate(src, ...args) {
                     fig_patterns: "Пстр",
                     fig_transitions: "Пер",
                     figures: "ФФ",
+                    variations: "Вар",
                 },
             },
             tech: {
@@ -389,6 +392,7 @@ export default function translate(src, ...args) {
                 simplified: "ФТСАРР, упрощенная система (1–40)",
                 solo: "ФТСАРР, соло-дисциплины",
                 solo_rough: "ФТСАРР, соло-дисциплины (сокращенная шкала)",
+                solo_final: "ФТСАРР, соло-дисциплины (1/2 финала, финал)",
             },
         },
         judge_roles: {

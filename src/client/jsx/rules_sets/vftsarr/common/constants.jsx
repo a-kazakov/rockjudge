@@ -6,6 +6,7 @@ export const CRITERIAS_ORDER = new Map(
         "dance_figs",
         "composition",
         "figures",
+        "variations",
         "mistakes",
         "a1",
         "a2",

@@ -39,6 +39,8 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
             return RunContextSimplified
         if scoring_system_name in ("solo", "solo_rough"):
             return RunContextSolo
+        if scoring_system_name == "solo_final":
+            return RunContextSoloFinal
         return RunContextDance
 
     @classmethod
@@ -242,6 +244,12 @@ class RunContextSolo(RunContextBase):
     @property
     def scoring_criterias(self) -> Tuple[str, ...]:
         return ("fw", "dance_figs", "mistakes")
+
+
+class RunContextSoloFinal(RunContextBase):
+    @property
+    def scoring_criterias(self) -> Tuple[str, ...]:
+        return ("fw", "dance_figs", "variations", "mistakes")
 
 
 class RunContextAcroBase(RunContextBase):

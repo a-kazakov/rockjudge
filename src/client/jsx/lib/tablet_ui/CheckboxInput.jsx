@@ -32,7 +32,7 @@ export default class CheckboxInput extends React.PureComponent {
         return (
             <div className="CheckboxInput" {...onTouchEndOrClick(this.handleClick)}>
                 <div className={this.getSquareClassName()}>
-                    {this.props.value ? "🗸" : ""}
+                    {this.props.value ? "✓" : ""}
                 </div>
                 <div className="label">{this.props.label}</div>
             </div>

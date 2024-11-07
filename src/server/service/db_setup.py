@@ -2,6 +2,8 @@
 
 import sys
 import random
+from pathlib import Path
+
 import psycopg2
 import string
 
@@ -35,7 +37,11 @@ SERVER_ID = '{server_id}'
         server_id=random_string(),
     )
 
-    with open("settings_prod.py", "wt") as f:
+    base_path = Path("_internal")
+    if not base_path.exists():
+        base_path = Path()
+    config_path = base_path / "settings_prod.py"
+    with config_path.open("wt") as f:
         f.write(prod_settings)
 
 
@@ -48,7 +54,11 @@ def setup():
     while True:
         try:
             db_admin_passwd = input("Enter PostgreSQL admin password: ")
-            conn = psycopg2.connect(user="postgres", password=db_admin_passwd)
+            conn = psycopg2.connect(
+                host="localhost",
+                user="postgres",
+                password=db_admin_passwd,
+            )
             conn.autocommit = True
             cursor = conn.cursor()
             break
@@ -82,7 +92,10 @@ def setup():
 
         print("   Granting permission to public schema ...")
         local_conn = psycopg2.connect(
-            user="postgres", password=db_admin_passwd, database=db_name
+            host="localhost",
+            user="postgres",
+            password=db_admin_passwd,
+            database=db_name,
         )
         local_conn.autocommit = True
         local_cursor = local_conn.cursor()
@@ -91,6 +104,7 @@ def setup():
         print("   Adding hstore extension ...")
         local_cursor.execute("CREATE EXTENSION IF NOT EXISTS hstore")
     except Exception as ex:
+        print("   Got exception:", str(ex).strip())
         print("   Looks like you've already installed this version of RockJudge.")
         print("   Recreating configuration ... ", end="")
         restore_config(conn, db_name, passwd, db_admin_passwd)
