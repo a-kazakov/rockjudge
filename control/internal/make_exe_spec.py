@@ -56,16 +56,16 @@ def path_to_module(path: str) -> str:
 
 
 def main() -> None:
-    hidden_imports = json.dumps(
-        [
-            path_to_module(root) + "._imports"
-            for root, dirs, files in os.walk(".")
-            if "_imports.py" in files
-        ]
-    )
+    # hidden_imports = json.dumps(
+    #     [
+    #         path_to_module(root) + "._imports"
+    #         for root, dirs, files in os.walk(".")
+    #         if "_imports.py" in files
+    #     ]
+    # )
     spec = gen(
         exe_name="rockjudge",
-        hidden_imports=hidden_imports,
+        # hidden_imports=hidden_imports,
         work_dir=json.dumps(str(Path().absolute())),
         start_script_path="manage.py",
     )

@@ -34,7 +34,6 @@ from exceptions import ApiError
 from models.base_model import BaseModel
 from models.client_auth import ClientAuth
 from models.discipline import Discipline
-from protection.features_restriction import check_permissions
 from scoring_systems import get_scoring_system, check_scoring_system
 from scoring_systems.base import (
     BaseScoringSystem,
@@ -50,7 +49,6 @@ from scoring_systems.base import (
     TourId,
 )
 from utils import raise_if_none
-
 
 if TYPE_CHECKING:
     from api import ApiRequest
@@ -539,7 +537,6 @@ class Tour(SqlAlchemyModel, BaseModel):
         return [raise_if_none(run) for run in result]
 
     def start(self, mk: "MutationsKeeper") -> None:
-        check_permissions("tour.start", {"tour": self})
         if self.finalized:
             raise ApiError("errors.tour.start_finalized")
         if self.active:
