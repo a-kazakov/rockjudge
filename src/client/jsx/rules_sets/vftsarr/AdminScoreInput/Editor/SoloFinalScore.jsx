@@ -24,8 +24,8 @@ export default class SoloFinalScore extends React.Component {
                 onSubmit={this.props.onSubmit}
             >
                 <ReductionBlock nullable field="fw" label="FW" />
+                <ReductionBlock nullable field="variations" label="VR" />
                 <NumberBlock nullable field="dance_figs" label="DF" step={0.5} />
-                <NumberBlock nullable field="variations" label="VR" step={0.5} />
                 <NumberBlock field="small_mistakes" label="SM" max={100} />
                 <NumberBlock field="big_mistakes" label="BM" max={100} />
             </GeneralEditor>

@@ -249,7 +249,7 @@ class RunContextSolo(RunContextBase):
 class RunContextSoloFinal(RunContextBase):
     @property
     def scoring_criterias(self) -> Tuple[str, ...]:
-        return ("fw", "dance_figs", "variations", "mistakes")
+        return ("fw", "variations", "dance_figs", "mistakes")
 
 
 class RunContextAcroBase(RunContextBase):

@@ -31,8 +31,8 @@ export default class DanceScore extends React.Component {
             <table className="score-breakdown">
                 <tbody>
                     {this.renderRow("fw", "-$%")}
+                    {this.renderRow("variations", "-$%")}
                     {this.renderRow("dance_figs")}
-                    {this.renderRow("variations")}
                     {this.renderRow("small_mistakes", "$")}
                     {this.renderRow("big_mistakes", "$")}
                 </tbody>

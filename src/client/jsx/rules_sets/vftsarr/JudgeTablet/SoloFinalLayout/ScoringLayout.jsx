@@ -30,13 +30,8 @@ export default class ScoringLayout extends React.Component {
         return (
             <div>
                 {this.renderPart("fw", "reduction")}
+                {this.renderPart("variations", "reduction")}
                 {this.renderPart("dance_figs", "number", {
-                    min: 0,
-                    max: 10,
-                    step: 0.5,
-                })}
-
-                {this.renderPart("variations", "number", {
                     min: 0,
                     max: 10,
                     step: 0.5,

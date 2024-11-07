@@ -442,7 +442,7 @@ class ScoreContextSoloRough(ScoreContextSolo):
 
 class ScoreContextSoloFinal(ScoreContextSolo):
     DEFAULT_SCORES = {
-        "variations": 0,
+        "variations": 100,
         **ScoreContextSolo.DEFAULT_SCORES,
     }
     INITIAL_SCORES = {
@@ -450,11 +450,11 @@ class ScoreContextSoloFinal(ScoreContextSolo):
         **ScoreContextSolo.INITIAL_SCORES,
     }
     SCORES_VALIDATORS = {
-        "variations": make_validate_number(allow_halves=True, allow_none=True),
+        "variations": validate_reduction,
         **ScoreContextSolo.SCORES_VALIDATORS,
     }
     CRITERIAS_MODIFIERS = {
-        "variations": make_multiply("variations", frac(1, 1)),
+        "variations": make_apply_reduction("variations", max_value=10),
         **ScoreContextSolo.CRITERIAS_MODIFIERS,
     }
 
