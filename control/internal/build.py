@@ -79,32 +79,6 @@ def prepare_python_src(ctl: BuildController, dest_dir: Path) -> None:
             shutil.copy(str(base_dir / root / fn), str(dest_dir / root / fn))
 
 
-@step(lambda md, td: f"Compiling module {md.relative_to(td)}", terminal=True)
-def build_python_module(
-    ctl: BuildController, module_dir: Path, _temp_dir: Path
-) -> None:
-    ctl.run_exe(
-        "python", module_dir / "_compile.py", "build_ext", "--inplace", chdir=module_dir
-    )
-
-
-@step("Compiling Python modules")
-def build_python(ctl: BuildController, src_dir: Path) -> None:
-    modules_paths = [
-        src_dir / root
-        for root, files in ctl.walk_path(src_dir)
-        if "_compile.py" in files
-    ]
-    ctl.run_parallel(
-        *(
-            ctl.child_step(
-                "build_python_module", module_path.absolute(), src_dir.absolute()
-            )
-            for module_path in modules_paths
-        )
-    )
-
-
 @step("Bundling everything together", terminal=True)
 def bundle_python(ctl: BuildController, src_dir: Path, dest_dir: Path) -> None:
     ctl.run_exe(
@@ -126,7 +100,6 @@ def copy_templates(ctl: BuildController, dest_dir: Path) -> None:
 def server(ctl: BuildController, dest_dir: Path) -> None:
     with ctl.make_temp_dir() as src_temp_dir:
         ctl.child_step("prepare_python_src", src_temp_dir).run()
-        ctl.child_step("build_python", src_temp_dir).run()
         ctl.child_step("bundle_python", src_temp_dir, dest_dir).run()
         ctl.child_step("copy_templates", dest_dir).run()
 
