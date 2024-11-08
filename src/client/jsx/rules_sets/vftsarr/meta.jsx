@@ -12,7 +12,7 @@ const meta = {
         "vftsarr.simplified",
         "vftsarr.solo",
         "vftsarr.solo_rough",
-        "vftsarr.solo_final",
+        "vftsarr.solo_final_spb",
         "vftsarr.am_qual",
         "vftsarr.am_final_fw",
         "vftsarr.am_final_acro",

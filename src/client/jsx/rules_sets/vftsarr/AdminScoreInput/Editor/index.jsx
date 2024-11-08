@@ -75,7 +75,7 @@ export default class Editor extends React.Component {
                 return <SimplifiedScore {...score_props} />;
             case "solo":
                 return <SoloScore {...score_props} />;
-            case "solo_final":
+            case "solo_final_spb":
                 return <SoloFinalScore {...score_props} />;
             case "head":
                 return <HeadJudgeScore {...score_props} />;

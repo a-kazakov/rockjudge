@@ -30,7 +30,7 @@ class VftsarrScoringSystem(BaseScoringSystem):
             "simplified",
             "solo",
             "solo_rough",
-            "solo_final",
+            "solo_final_spb",
         ],
         supported_languages=["ru"],
         judges_roles=["head_judge", "dance_judge", "acro_judge", "tech_judge"],

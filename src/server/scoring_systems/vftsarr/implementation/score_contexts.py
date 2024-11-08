@@ -6,7 +6,6 @@ from typing import Any, Callable, Dict, Set, Union, List, Type, Optional
 from scoring_systems.base import ScoreInfo, RunInfo, TourComputationRequest, ScoreResult
 from .common import CachedClass, float_to_frac
 
-
 POSSIBLE_REDUCTIONS = (0, 5, 10, 15, 25, 35, 50, 75, 100)
 
 ARR_CARD_REASONS = {
@@ -137,8 +136,8 @@ class ScoreContextBase(CachedClass, metaclass=ABCMeta):
                 return ScoreContextSolo
             if scoring_system_name == "solo_rough":
                 return ScoreContextSoloRough
-            if scoring_system_name == "solo_final":
-                return ScoreContextSoloFinal
+            if scoring_system_name == "solo_final_spb":
+                return ScoreContextSoloFinalSpb
             if scoring_system_name in ("dance_extended", "acro_extended"):
                 return ScoreContextDanceExtended
             if scoring_system_name == "dance_rough":
@@ -440,22 +439,23 @@ class ScoreContextSoloRough(ScoreContextSolo):
     }
 
 
-class ScoreContextSoloFinal(ScoreContextSolo):
+class ScoreContextSoloFinalSpb(ScoreContextSolo):
     DEFAULT_SCORES = {
-        "variations": 100,
         **ScoreContextSolo.DEFAULT_SCORES,
+        "variations": 100,
     }
     INITIAL_SCORES = {
-        "variations": None,
         **ScoreContextSolo.INITIAL_SCORES,
+        "variations": None,
     }
     SCORES_VALIDATORS = {
-        "variations": validate_reduction,
         **ScoreContextSolo.SCORES_VALIDATORS,
+        "variations": validate_reduction,
     }
     CRITERIAS_MODIFIERS = {
-        "variations": make_apply_reduction("variations", max_value=10),
         **ScoreContextSolo.CRITERIAS_MODIFIERS,
+        "fw": make_apply_reduction("fw", max_value=10),
+        "variations": make_apply_reduction("variations", max_value=10),
     }
 
 

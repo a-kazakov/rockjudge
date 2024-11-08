@@ -54,7 +54,7 @@ export default class VerboseJudgeScore extends React.Component {
             case "solo":
                 ScoreComponent = SoloScore;
                 break;
-            case "solo_final":
+            case "solo_final_spb":
                 ScoreComponent = SoloFinalScore;
                 break;
             case "tech":

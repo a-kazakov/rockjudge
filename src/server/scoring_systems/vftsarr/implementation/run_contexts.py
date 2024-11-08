@@ -1,4 +1,5 @@
 import itertools
+import math
 from abc import ABCMeta, abstractmethod
 from collections import defaultdict
 from fractions import Fraction as frac
@@ -8,6 +9,16 @@ from enums import RunStatus
 from scoring_systems.base import RunInfo, RunResult, TourComputationRequest
 from .common import CachedClass, get_scaled_median, safe_max
 from .score_contexts import ScoreContextBase
+
+
+def round_score(score: frac, precision: frac | int) -> frac:
+    # Can't use system round since ties should be rounded up
+    base_value = math.floor(score / precision)
+    lower_option = base_value * precision
+    upper_option = lower_option + precision
+    lower_diff = score - lower_option
+    upper_diff = upper_option - score
+    return lower_option if lower_diff < upper_diff else upper_option
 
 
 class RunContextBase(CachedClass, metaclass=ABCMeta):
@@ -39,8 +50,8 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
             return RunContextSimplified
         if scoring_system_name in ("solo", "solo_rough"):
             return RunContextSolo
-        if scoring_system_name == "solo_final":
-            return RunContextSoloFinal
+        if scoring_system_name == "solo_final_spb":
+            return RunContextSoloFinalSpb
         return RunContextDance
 
     @classmethod
@@ -158,14 +169,18 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
     @property
     def criterias_scores(self) -> Dict[str, frac]:
         criterias = set(self.scoring_criterias)
-        scores_by_criteria: DefaultDict[List[str]] = defaultdict(list)
+        scores_by_criteria: DefaultDict[str, List[str]] = defaultdict(list)
         for score in self.scores:
             for criteria_name, criteria_value in score.criterias.items():
                 if criteria_name in criterias:
                     scores_by_criteria[criteria_name].append(criteria_value)
-        return {
-            key: get_scaled_median(values) for key, values in scores_by_criteria.items()
+        result = {
+            key: get_scaled_median(values)
+            for key, values in scores_by_criteria.items()
         }
+        if "mistakes" in result:
+            result["mistakes"] = round_score(result["mistakes"], precision=2)
+        return result
 
     @property
     def total_score(self) -> frac:
@@ -174,7 +189,7 @@ class RunContextBase(CachedClass, metaclass=ABCMeta):
     @property
     def std_total_score(self) -> frac:
         result = frac(0)
-        for score_value in self.criterias_scores.values():
+        for criteria, score_value in self.criterias_scores.items():
             result += score_value
         result += self.penalty
         return result
@@ -246,7 +261,7 @@ class RunContextSolo(RunContextBase):
         return ("fw", "dance_figs", "mistakes")
 
 
-class RunContextSoloFinal(RunContextBase):
+class RunContextSoloFinalSpb(RunContextBase):
     @property
     def scoring_criterias(self) -> Tuple[str, ...]:
         return ("fw", "variations", "dance_figs", "mistakes")

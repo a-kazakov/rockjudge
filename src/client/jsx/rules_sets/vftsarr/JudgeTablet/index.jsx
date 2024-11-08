@@ -28,7 +28,7 @@ export default class JudgeTablet extends React.Component {
         formation_simplified: FormationSimplifiedLayout,
         simplified: SimplifiedLayout,
         solo: SoloLayout,
-        solo_final: SoloFinalLayout,
+        solo_final_spb: SoloFinalLayout,
         head: HeadJudgeLayout,
         tech: TechLayout,
     };
